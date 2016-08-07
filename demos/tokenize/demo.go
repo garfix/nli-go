@@ -17,8 +17,8 @@ func main() {
     }
 
     inputSource := lib.NewSimpleRawInputSource(rawInput)
-
     tokenizer := lib.NewSimpleTokenizer()
+
     wordArray := tokenizer.Process(inputSource)
 
     fmt.Print(strings.Join(wordArray, "/"))

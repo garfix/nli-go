@@ -3,10 +3,10 @@ package main
 import "fmt"
 import "strings"
 import "os"
-import "nli/lib"
+import "nli-go/lib"
 
 // Provide a sentence as command line parameters (or as a single parameter within quotes)
-// and this app will provide the tokens, separarated by slashes
+// and this app will provide the tokens, separated by slashes
 func main() {
 
     rawInput := strings.Join(os.Args[1:], " ")
@@ -16,8 +16,10 @@ func main() {
         return
     }
 
-    tokenizer := new(lib.SimpleTokenizer)
-    wordArray := tokenizer.Process(rawInput)
+    inputSource := lib.NewSimpleRawInputSource(rawInput)
+
+    tokenizer := lib.NewSimpleTokenizer()
+    wordArray := tokenizer.Process(inputSource)
 
     fmt.Print(strings.Join(wordArray, "/"))
     fmt.Print("\n")

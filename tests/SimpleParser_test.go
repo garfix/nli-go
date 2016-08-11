@@ -1,20 +1,12 @@
-package main
+package tests
 
-import "fmt"
-import "strings"
-import "os"
-import "nli-go/lib"
+import (
+    "testing"
+    "nli-go/lib"
+    "fmt"
+)
 
-// Provide a sentence as command line parameters (or as a single parameter within quotes)
-// and this app will provide the tokens, separated by slashes
-func main() {
-
-    rawInput := strings.Join(os.Args[1:], " ")
-
-    if len(rawInput) == 0 {
-        fmt.Print("use: parser \"Provide a sentence here\"\n")
-        return
-    }
+func TestSimpleParser(test *testing.T) {
 
     rules := map[string][][]string{
         "S": {
@@ -44,25 +36,30 @@ func main() {
         "sings": {"verb"},
     }
 
+    rawInput := "the small shy girl sings"
     inputSource := lib.NewSimpleRawInputSource(rawInput)
     tokenizer := lib.NewSimpleTokenizer()
     parser := lib.NewSimpleParser(lib.NewSimpleGrammar(rules), lib.NewSimpleLexicon(lexItems))
 
     wordArray := tokenizer.Process(inputSource)
-
     length, parseTree, ok := parser.Process(wordArray)
 
-    if (ok) {
-        fmt.Print("ok")
-
-        fmt.Print(" (")
-        fmt.Print(length)
-        fmt.Print(")\n")
-
-        fmt.Print(parseTree)
-        fmt.Print("\n")
-        fmt.Print("\n")
-    } else {
-        fmt.Print("not ok\n")
+    if !ok {
+        test.Error("Parse failed")
+    }
+    if length != 5 {
+        test.Error(fmt.Sprintf("Length not equal to 5: %d", length))
+    }
+    if parseTree.SyntacticCategory != "S" {
+        test.Error("Missing S")
+    }
+    if parseTree.Children[1].SyntacticCategory != "VP" {
+        test.Error("Missing VP")
+    }
+    if parseTree.Children[0].Children[1].Children[0].SyntacticCategory != "adj" {
+        test.Error("Missing adj")
+    }
+    if parseTree.Children[0].Children[1].Children[0].Word != "small" {
+        test.Error("Wrong word")
     }
 }

@@ -6,11 +6,11 @@ import (
 )
 
 type simpleParser struct {
-    grammar types.Grammar
+    grammar *simpleGrammar
     lexicon types.Lexicon
 }
 
-func NewSimpleParser(grammar types.Grammar, lexicon types.Lexicon) *simpleParser {
+func NewSimpleParser(grammar *simpleGrammar, lexicon types.Lexicon) *simpleParser {
     return &simpleParser{grammar: grammar, lexicon: lexicon}
 }
 

@@ -79,16 +79,26 @@ func TestSimpleRelationizer(test *testing.T) {
 
     lexItems := map[string][]example2.SimpleLexItem{
         "all": {
-            {PartOfSpeech: "det", RelationTemplates: []example2.SimpleRelation{}},
+            {PartOfSpeech: "det", RelationTemplates: []example2.SimpleRelation{
+                {Predicate: "instance-of", Arguments: []string{"*", "all"}}},
+            },
         },
         "horses": {
-            {PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{{Predicate: "instance-of", Arguments: []string{"*", "horse"}}}},
+            {PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{
+                {Predicate: "instance-of", Arguments: []string{"*", "horse"}},
+                {Predicate: "plural", Arguments: []string{"*"}},
+            }},
         },
         "have": {
-            {PartOfSpeech: "verb", RelationTemplates: []example2.SimpleRelation{{Predicate: "predication", Arguments: []string{"*", "have"}}}},
+            {PartOfSpeech: "verb", RelationTemplates: []example2.SimpleRelation{
+                {Predicate: "predication", Arguments: []string{"*", "have"}},
+            }},
         },
         "hooves": {
-            {PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{{Predicate: "instance-of", Arguments: []string{"*", "hoove"}}}},
+            {PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{
+                {Predicate: "instance-of", Arguments: []string{"*", "hoove"}},
+                {Predicate: "plural", Arguments: []string{"*"}},
+            }},
         },
     }
 

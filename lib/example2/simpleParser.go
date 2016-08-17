@@ -1,16 +1,15 @@
 package example2
 
 import (
-    "nli-go/types"
     "strings"
 )
 
 type simpleParser struct {
     grammar *simpleGrammar
-    lexicon types.Lexicon
+    lexicon *simpleLexicon
 }
 
-func NewSimpleParser(grammar *simpleGrammar, lexicon types.Lexicon) *simpleParser {
+func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simpleParser {
     return &simpleParser{grammar: grammar, lexicon: lexicon}
 }
 
@@ -42,13 +41,16 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
     return 0, node, []SimpleRelation{}, false
 }
 
-// Try to parse tokens using the rule given in consequents
+// Try to parse tokens using the rule given
 func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start int)  (int, []SimpleParseTreeNode, []SimpleRelation, bool) {
 
     cursor := start
     childNodes := []SimpleParseTreeNode{}
     syntacticCategories := rule.SyntacticCategories
     relations := []SimpleRelation{}
+
+    relationTemplates := rule.RelationTemplates
+    relations = append(relations, relationTemplates...)
 
     for i := 1; i < len(syntacticCategories); i++ {
 
@@ -80,8 +82,16 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 
         if parser.lexicon.CheckPartOfSpeech(tokens[start], syntacticCategory) {
             node.Word = tokens[start]
-relations := []SimpleRelation{}
+
+            relations := []SimpleRelation{}
+
+            lexItem, found := parser.lexicon.GetLexItem(tokens[start], syntacticCategory)
+            if found {
+                relations = lexItem.RelationTemplates
+            }
+
             return start + 1, node, relations, true
+
         } else {
             return 0, node, []SimpleRelation{}, false
         }

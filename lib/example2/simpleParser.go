@@ -2,27 +2,62 @@ package example2
 
 import (
     "strings"
+    "fmt"
 )
 
 type simpleParser struct {
     grammar *simpleGrammar
     lexicon *simpleLexicon
+    varIndexCounter int
 }
 
 func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simpleParser {
-    return &simpleParser{grammar: grammar, lexicon: lexicon}
+    return &simpleParser{grammar: grammar, lexicon: lexicon, varIndexCounter: 0}
+}
+
+// Returns a new variable name (v#)
+func (parser *simpleParser) getNewVariable() string {
+    parser.varIndexCounter++
+    return fmt.Sprint("v", parser.varIndexCounter)
+}
+
+// Creates a map of formal variables to actual variables (new variables are created)
+func (parser *simpleParser) createVariableMap(variable string, entityVariables []string) map[string]string {
+
+    m := map[string]string{}
+
+    for i := 1; i < len(entityVariables); i++ {
+
+        entityVariable := entityVariables[i]
+
+        if entityVariable == entityVariables[0] {
+
+            // the consequent variable matches the antecedent variable, inherit its actual variable
+            m[entityVariable] = variable
+
+        } else {
+
+            // we're going to add a new actual variable, unless we already have
+            _, present := m[entityVariable]
+            if !present {
+                m[entityVariable] = parser.getNewVariable()
+            }
+        }
+    }
+
+    return m
 }
 
 // Parses tokens using parser.grammar and parser.lexicon
 func (parser *simpleParser) Process(tokens []string) (int, []SimpleRelation, bool) {
 
-    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0)
+    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable())
 // TODO: remove parse tree nodes?
     return length, relationList, ok
 }
 
 // Parses tokens, starting from start, using all rules with given antedecent
-func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, start int) (int, SimpleParseTreeNode, []SimpleRelation, bool) {
+func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, start int, antecedentVariable string) (int, SimpleParseTreeNode, []SimpleRelation, bool) {
 
     rules := parser.grammar.FindRules(antecedent)
     node := SimpleParseTreeNode{SyntacticCategory: antecedent}
@@ -30,7 +65,7 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
     for i := 0; i < len(rules); i++ {
 
         rule := rules[i]
-        cursor, childNodes, relations, ok := parser.parse(rule, tokens, start)
+        cursor, childNodes, relations, ok := parser.parse(rule, tokens, start, antecedentVariable)
 
         if ok {
             node.Children = childNodes
@@ -42,19 +77,25 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
 }
 
 // Try to parse tokens using the rule given
-func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start int)  (int, []SimpleParseTreeNode, []SimpleRelation, bool) {
+func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start int, antecedentVariable string)  (int, []SimpleParseTreeNode, []SimpleRelation, bool) {
 
     cursor := start
     childNodes := []SimpleParseTreeNode{}
     syntacticCategories := rule.SyntacticCategories
     relations := []SimpleRelation{}
 
-    relationTemplates := rule.RelationTemplates
-    relations = append(relations, relationTemplates...)
+    // create a map of formal variables to actual variables (new variables are created)
+    variableMap := parser.createVariableMap(antecedentVariable, rule.EntityVariables)
 
+    // non-leaf node relations
+    ruleRelations := parser.createGrammarRuleRelations(rule.RelationTemplates, variableMap)
+    relations = append(relations, ruleRelations...)
+
+    // parse each of the children
     for i := 1; i < len(syntacticCategories); i++ {
 
-        newCursor, childNode, childRelations, ok := parser.parseSingleConsequent(syntacticCategories[i], tokens, cursor)
+        consequentVariable := variableMap[rule.EntityVariables[i]]
+        newCursor, childNode, childRelations, ok := parser.parseSingleConsequent(syntacticCategories[i], tokens, cursor, consequentVariable)
         if ok {
             childNodes = append(childNodes, childNode)
             relations = append(relations, childRelations...)
@@ -69,7 +110,7 @@ func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start
 
 // Try to parse tokens given a single syntactic category
 // Returns the index to the token following the parsed sequence
-func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, tokens []string, start int)  (int, SimpleParseTreeNode, []SimpleRelation, bool) {
+func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, tokens []string, start int, v string)  (int, SimpleParseTreeNode, []SimpleRelation, bool) {
 
     node := SimpleParseTreeNode{SyntacticCategory:syntacticCategory}
 
@@ -80,6 +121,7 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 
     if strings.ToLower(syntacticCategory) == syntacticCategory {
 
+        // leaf node
         if parser.lexicon.CheckPartOfSpeech(tokens[start], syntacticCategory) {
             node.Word = tokens[start]
 
@@ -87,7 +129,8 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 
             lexItem, found := parser.lexicon.GetLexItem(tokens[start], syntacticCategory)
             if found {
-                relations = lexItem.RelationTemplates
+                // leaf node relations
+                relations = parser.createLexItemRelations(lexItem.RelationTemplates, v)
             }
 
             return start + 1, node, relations, true
@@ -98,8 +141,49 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 
     } else {
 
-        newCursor, node, relations, ok := parser.parseAllRules(syntacticCategory, tokens, start)
+        // non leaf-node
+        newCursor, node, relations, ok := parser.parseAllRules(syntacticCategory, tokens, start, v)
         return newCursor, node, relations, ok
 
     }
+}
+
+// Create actual relations given a set of templates and a variable map (formal to actual variables)
+func (parser *simpleParser) createGrammarRuleRelations(relationTemplates []SimpleRelation, variableMap map[string]string) []SimpleRelation {
+
+    relations := []SimpleRelation{}
+
+    for i := 0; i < len(relationTemplates); i++ {
+        relation := relationTemplates[i]
+
+        for a := 0; a < len(relation.Arguments); a++ {
+            argument := relation.Arguments[a]
+            relation.Arguments[a] = variableMap[argument]
+        }
+
+        relations = append(relations, relation)
+    }
+
+    return relations
+}
+
+// Create actual relations given a set of templates and an actual variable to replace any * positions
+func (parser *simpleParser) createLexItemRelations(relationTemplates []SimpleRelation, variable string) []SimpleRelation {
+
+    relations := []SimpleRelation{}
+
+    for i := 0; i < len(relationTemplates); i++ {
+        relation := relationTemplates[i]
+
+        for a := 0; a < len(relation.Arguments); a++ {
+            argument := relation.Arguments[a]
+            if argument == "*" {
+                relation.Arguments[a] = variable
+            }
+        }
+
+        relations = append(relations, relation)
+    }
+
+    return relations
 }

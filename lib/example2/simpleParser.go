@@ -16,9 +16,9 @@ func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simplePars
 }
 
 // Returns a new variable name (v#)
-func (parser *simpleParser) getNewVariable() string {
+func (parser *simpleParser) getNewVariable(formalVariable string) string {
     parser.varIndexCounter++
-    return fmt.Sprint("v", parser.varIndexCounter)
+    return fmt.Sprint(formalVariable[0:1], parser.varIndexCounter)
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
@@ -40,7 +40,7 @@ func (parser *simpleParser) createVariableMap(variable string, entityVariables [
             // we're going to add a new actual variable, unless we already have
             _, present := m[entityVariable]
             if !present {
-                m[entityVariable] = parser.getNewVariable()
+                m[entityVariable] = parser.getNewVariable(entityVariable)
             }
         }
     }
@@ -51,7 +51,7 @@ func (parser *simpleParser) createVariableMap(variable string, entityVariables [
 // Parses tokens using parser.grammar and parser.lexicon
 func (parser *simpleParser) Process(tokens []string) (int, []SimpleRelation, bool) {
 
-    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable())
+    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("root"))
 // TODO: remove parse tree nodes?
     return length, relationList, ok
 }

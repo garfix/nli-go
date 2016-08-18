@@ -54,16 +54,6 @@ func TestSimpleRelationizer(test *testing.T) {
                 RelationTemplates: []example2.SimpleRelation{},
             },
         },
-        //"noun": {
-        //    // noun(entity) = token(entity)
-        //    example2.SimpleGrammarRule{
-        //        SyntacticCategories: []string{"noun", "*"},
-        //        EntityVariables: []string{"entity", "entity"},
-        //        RelationTemplates: []example2.SimpleRelation{
-        //            {Predicate: "instance-of", Arguments: []string{"entity", "*"}},
-        //        },
-        //    },
-        //},
         "VP": {
             // VP(predication) = verb(predication) NP(entity)
             // object(predication, entity)
@@ -120,14 +110,14 @@ func TestSimpleRelationizer(test *testing.T) {
         test.Error("Parse failed")
     } else {
 
-        if len(relationList) != 5 {
+        if len(relationList) != 9 {
             test.Error(fmt.Sprintf("Wrong number of relations: %d", len(relationList)))
         }
         relationString := "";
         for i := 0; i < len(relationList); i++ {
             relationString += " " + RelationToString(relationList[i])
         }
-        if relationString != "" {
+        if relationString != " subject(r1, e2) determiner(e2, d3) instance-of(d3, all) instance-of(e2, horse) plural(e2) object(r1, e4) predication(r1, have) instance-of(e4, hoove) plural(e4)" {
             test.Error("Error in relations: " + relationString)
         }
     }

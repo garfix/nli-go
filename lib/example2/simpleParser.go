@@ -8,17 +8,23 @@ import (
 type simpleParser struct {
     grammar *simpleGrammar
     lexicon *simpleLexicon
-    varIndexCounter int
+    varIndexCounter map[string]int
 }
 
 func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simpleParser {
-    return &simpleParser{grammar: grammar, lexicon: lexicon, varIndexCounter: 0}
+    return &simpleParser{grammar: grammar, lexicon: lexicon, varIndexCounter: map[string]int{}}
 }
 
-// Returns a new variable name (v#)
+// Returns a new variable name
 func (parser *simpleParser) getNewVariable(formalVariable string) string {
-    parser.varIndexCounter++
-    return fmt.Sprint(formalVariable[0:1], parser.varIndexCounter)
+    initial := formalVariable[0:1]
+    _, present := parser.varIndexCounter[initial]
+    if !present {
+        parser.varIndexCounter[initial] = 1
+    } else {
+        parser.varIndexCounter[initial]++
+    }
+    return fmt.Sprint(initial, parser.varIndexCounter[initial])
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
@@ -51,7 +57,7 @@ func (parser *simpleParser) createVariableMap(variable string, entityVariables [
 // Parses tokens using parser.grammar and parser.lexicon
 func (parser *simpleParser) Process(tokens []string) (int, []SimpleRelation, bool) {
 
-    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("root"))
+    length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("sentence"))
 // TODO: remove parse tree nodes?
     return length, relationList, ok
 }
@@ -65,6 +71,7 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
     for i := 0; i < len(rules); i++ {
 
         rule := rules[i]
+
         cursor, childNodes, relations, ok := parser.parse(rule, tokens, start, antecedentVariable)
 
         if ok {

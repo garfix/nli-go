@@ -117,7 +117,7 @@ func TestSimpleRelationizer(test *testing.T) {
         for i := 0; i < len(relationList); i++ {
             relationString += " " + RelationToString(relationList[i])
         }
-        if relationString != " subject(r1, e2) determiner(e2, d3) instance-of(d3, all) instance-of(e2, horse) plural(e2) object(r1, e4) predication(r1, have) instance-of(e4, hoove) plural(e4)" {
+        if relationString != " subject(s1, e1) determiner(e1, d1) instance-of(d1, all) instance-of(e1, horse) plural(e1) object(s1, e2) predication(s1, have) instance-of(e2, hoove) plural(e2)" {
             test.Error("Error in relations: " + relationString)
         }
     }

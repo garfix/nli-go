@@ -1,4 +1,4 @@
-package lib
+package example1
 
 type simpleGrammar struct {
     rules map[string][][]string

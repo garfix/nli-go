@@ -3,7 +3,7 @@ package main
 import "fmt"
 import "strings"
 import "os"
-import "nli-go/lib"
+import "nli-go/lib/example1"
 
 // Provide a sentence as command line parameters (or as a single parameter within quotes)
 // and this app will provide the tokens, separated by slashes
@@ -44,9 +44,9 @@ func main() {
         "sings": {"verb"},
     }
 
-    inputSource := lib.NewSimpleRawInputSource(rawInput)
-    tokenizer := lib.NewSimpleTokenizer()
-    parser := lib.NewSimpleParser(lib.NewSimpleGrammar(rules), lib.NewSimpleLexicon(lexItems))
+    inputSource := example1.NewSimpleRawInputSource(rawInput)
+    tokenizer := example1.NewSimpleTokenizer()
+    parser := example1.NewSimpleParser(example1.NewSimpleGrammar(rules), example1.NewSimpleLexicon(lexItems))
 
     wordArray := tokenizer.Process(inputSource)
 

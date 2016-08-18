@@ -2,9 +2,9 @@ package tests
 
 import "testing"
 import (
-    "nli-go/lib/example2"
-    "nli-go/lib"
     "fmt"
+    "nli-go/lib/example1"
+    "nli-go/lib/example2"
 )
 
 func TestSimpleRelationizer(test *testing.T) {
@@ -93,8 +93,8 @@ func TestSimpleRelationizer(test *testing.T) {
     }
 
     rawInput := "all horses have hooves"
-    inputSource := lib.NewSimpleRawInputSource(rawInput)
-    tokenizer := lib.NewSimpleTokenizer()
+    inputSource := example1.NewSimpleRawInputSource(rawInput)
+    tokenizer := example1.NewSimpleTokenizer()
     grammar := example2.NewSimpleGrammar(rules)
     lexicon := example2.NewSimpleLexicon(lexItems)
     parser := example2.NewSimpleParser(grammar, lexicon)

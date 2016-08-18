@@ -1,13 +1,15 @@
 package tests
 
-import "testing"
-import "strings"
-import "nli-go/lib"
+import (
+    "testing"
+    "nli-go/lib/example1"
+    "strings"
+)
 
 func TestSimpleTokenizer(test *testing.T) {
 
-    rawInputSource := lib.NewSimpleRawInputSource("How old is Byron?")
-    tokenizer := lib.NewSimpleTokenizer()
+    rawInputSource := example1.NewSimpleRawInputSource("How old is Byron?")
+    tokenizer := example1.NewSimpleTokenizer()
 
     wordArray := tokenizer.Process(rawInputSource)
 

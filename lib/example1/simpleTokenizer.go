@@ -1,4 +1,4 @@
-package lib
+package example1
 
 import "regexp"
 import "nli-go/types"

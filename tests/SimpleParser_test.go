@@ -2,8 +2,8 @@ package tests
 
 import (
     "testing"
-    "nli-go/lib"
     "fmt"
+    "nli-go/lib/example1"
 )
 
 func TestSimpleParser(test *testing.T) {
@@ -37,9 +37,9 @@ func TestSimpleParser(test *testing.T) {
     }
 
     rawInput := "the small shy girl sings"
-    inputSource := lib.NewSimpleRawInputSource(rawInput)
-    tokenizer := lib.NewSimpleTokenizer()
-    parser := lib.NewSimpleParser(lib.NewSimpleGrammar(rules), lib.NewSimpleLexicon(lexItems))
+    inputSource := example1.NewSimpleRawInputSource(rawInput)
+    tokenizer := example1.NewSimpleTokenizer()
+    parser := example1.NewSimpleParser(example1.NewSimpleGrammar(rules), example1.NewSimpleLexicon(lexItems))
 
     wordArray := tokenizer.Process(inputSource)
     length, parseTree, ok := parser.Process(wordArray)

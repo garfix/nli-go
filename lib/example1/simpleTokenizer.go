@@ -8,17 +8,16 @@ import "nli-go/types"
 // It also treats any non-word-character as a single-character token
 // Returns an array of string tokens from rawInput.
 type simpleTokenizer struct {
-
 }
 
 func NewSimpleTokenizer() *simpleTokenizer {
-    return &simpleTokenizer{}
+	return &simpleTokenizer{}
 }
 
 func (*simpleTokenizer) Process(rawInput types.RawInputSource) []string {
 
-    expression, _ := regexp.Compile("([\\w]+|[^\\s])")
-    tokens := expression.FindAllString(rawInput.GetRawInput(), -1)
+	expression, _ := regexp.Compile("([\\w]+|[^\\s])")
+	tokens := expression.FindAllString(rawInput.GetRawInput(), -1)
 
-    return tokens
+	return tokens
 }

@@ -1,7 +1,7 @@
 package example2
 
 type SimpleGrammarRule struct {
-    SyntacticCategories []string
-    EntityVariables []string
-    RelationTemplates []SimpleRelation
+	SyntacticCategories []string
+	EntityVariables     []string
+	RelationTemplates   []SimpleRelation
 }

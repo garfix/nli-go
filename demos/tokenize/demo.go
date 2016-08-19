@@ -9,18 +9,18 @@ import "nli-go/lib/example1"
 // and this app will provide the tokens, separated by slashes
 func main() {
 
-    rawInput := strings.Join(os.Args[1:], " ")
+	rawInput := strings.Join(os.Args[1:], " ")
 
-    if len(rawInput) == 0 {
-        fmt.Print("use: tokenizer \"Provide a sentence here\"\n")
-        return
-    }
+	if len(rawInput) == 0 {
+		fmt.Print("use: tokenizer \"Provide a sentence here\"\n")
+		return
+	}
 
-    inputSource := example1.NewSimpleRawInputSource(rawInput)
-    tokenizer := example1.NewSimpleTokenizer()
+	inputSource := example1.NewSimpleRawInputSource(rawInput)
+	tokenizer := example1.NewSimpleTokenizer()
 
-    wordArray := tokenizer.Process(inputSource)
+	wordArray := tokenizer.Process(inputSource)
 
-    fmt.Print(strings.Join(wordArray, "/"))
-    fmt.Print("\n")
+	fmt.Print(strings.Join(wordArray, "/"))
+	fmt.Print("\n")
 }

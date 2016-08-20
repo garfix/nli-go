@@ -17,13 +17,16 @@ func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simplePars
 
 // Returns a new variable name
 func (parser *simpleParser) getNewVariable(formalVariable string) string {
+
 	initial := formalVariable[0:1]
+
 	_, present := parser.varIndexCounter[initial]
 	if !present {
 		parser.varIndexCounter[initial] = 1
 	} else {
 		parser.varIndexCounter[initial]++
 	}
+
 	return fmt.Sprint(initial, parser.varIndexCounter[initial])
 }
 
@@ -69,9 +72,7 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
 	rules := parser.grammar.FindRules(antecedent)
 	node := SimpleParseTreeNode{SyntacticCategory: antecedent}
 
-	for i := 0; i < len(rules); i++ {
-
-		rule := rules[i]
+	for _, rule := range rules {
 
 		cursor, childNodes, relations, ok := parser.parse(rule, tokens, start, antecedentVariable)
 
@@ -130,12 +131,12 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 	if strings.ToLower(syntacticCategory) == syntacticCategory {
 
 		// leaf node
-		if parser.lexicon.CheckPartOfSpeech(tokens[start], syntacticCategory) {
+		lexItem, found := parser.lexicon.GetLexItem(tokens[start], syntacticCategory)
+		if found {
 			node.Word = tokens[start]
 
 			relations := []SimpleRelation{}
 
-			lexItem, found := parser.lexicon.GetLexItem(tokens[start], syntacticCategory)
 			if found {
 				// leaf node relations
 				relations = parser.createLexItemRelations(lexItem.RelationTemplates, v)
@@ -161,11 +162,8 @@ func (parser *simpleParser) createGrammarRuleRelations(relationTemplates []Simpl
 
 	relations := []SimpleRelation{}
 
-	for i := 0; i < len(relationTemplates); i++ {
-		relation := relationTemplates[i]
-
-		for a := 0; a < len(relation.Arguments); a++ {
-			argument := relation.Arguments[a]
+	for _, relation := range relationTemplates {
+		for a, argument := range relation.Arguments {
 			relation.Arguments[a] = variableMap[argument]
 		}
 
@@ -180,11 +178,8 @@ func (parser *simpleParser) createLexItemRelations(relationTemplates []SimpleRel
 
 	relations := []SimpleRelation{}
 
-	for i := 0; i < len(relationTemplates); i++ {
-		relation := relationTemplates[i]
-
-		for a := 0; a < len(relation.Arguments); a++ {
-			argument := relation.Arguments[a]
+	for _, relation := range relationTemplates {
+		for a, argument := range relation.Arguments {
 			if argument == "*" {
 				relation.Arguments[a] = variable
 			}

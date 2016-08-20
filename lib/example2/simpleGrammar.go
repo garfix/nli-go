@@ -18,32 +18,3 @@ func (grammar *simpleGrammar) FindRules(antecedent string) []SimpleGrammarRule {
 		return []SimpleGrammarRule{}
 	}
 }
-
-// returns rules, ok (where rules is an array of string-arrays)
-func (grammar *simpleGrammar) FindRule(syntacticCategories []string) (SimpleGrammarRule, bool) {
-
-	rules, ok := grammar.rules[syntacticCategories[0]]
-	if ok {
-
-		for i := 0; i < len(rules); i++ {
-
-			rule := rules[0]
-			ruleCategories := rule.SyntacticCategories
-
-			found := true
-			for c := 1; c < len(ruleCategories); c++ {
-				if ruleCategories[c] != syntacticCategories[c] {
-					found = false
-					break
-				}
-			}
-
-			if found {
-				return rule, true
-			}
-		}
-
-	}
-
-	return SimpleGrammarRule{}, false
-}

@@ -28,25 +28,26 @@ func (parser *simpleParser) getNewVariable(formalVariable string) string {
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
-func (parser *simpleParser) createVariableMap(variable string, entityVariables []string) map[string]string {
+func (parser *simpleParser) createVariableMap(actualAntecedent string, formalVariables []string) map[string]string {
 
 	m := map[string]string{}
+	antecedentVariable := formalVariables[0]
 
-	for i := 1; i < len(entityVariables); i++ {
+	for i := 1; i < len(formalVariables); i++ {
 
-		entityVariable := entityVariables[i]
+		consequentVariable := formalVariables[i]
 
-		if entityVariable == entityVariables[0] {
+		if consequentVariable == antecedentVariable {
 
 			// the consequent variable matches the antecedent variable, inherit its actual variable
-			m[entityVariable] = variable
+			m[consequentVariable] = actualAntecedent
 
 		} else {
 
 			// we're going to add a new actual variable, unless we already have
-			_, present := m[entityVariable]
+			_, present := m[consequentVariable]
 			if !present {
-				m[entityVariable] = parser.getNewVariable(entityVariable)
+				m[consequentVariable] = parser.getNewVariable(consequentVariable)
 			}
 		}
 	}

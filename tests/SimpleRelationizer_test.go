@@ -15,9 +15,9 @@ func TestSimpleRelationizer(test *testing.T) {
 			// subject(predication, entity)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"S", "NP", "VP"},
-				EntityVariables:     []string{"predication", "entity", "predication"},
+				EntityVariables:     []string{"Predication", "Entity", "Predication"},
 				RelationTemplates: []example2.SimpleRelation{
-					{Predicate: "subject", Arguments: []string{"predication", "entity"}},
+					{Predicate: "subject", Arguments: []string{"Predication", "Entity"}},
 				},
 			},
 		},
@@ -25,16 +25,16 @@ func TestSimpleRelationizer(test *testing.T) {
 			// NP(entity) = NBar(entity)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NP", "NBar"},
-				EntityVariables:     []string{"entity", "entity"},
+				EntityVariables:     []string{"Entity", "Entity"},
 				RelationTemplates:   []example2.SimpleRelation{},
 			},
 			// NP(entity) = DP(d1) NBar(entity)
 			// determiner(entity, d1)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NP", "DP", "NBar"},
-				EntityVariables:     []string{"entity", "d1", "entity"},
+				EntityVariables:     []string{"Entity", "Determiner", "Entity"},
 				RelationTemplates: []example2.SimpleRelation{
-					{Predicate: "determiner", Arguments: []string{"entity", "d1"}},
+					{Predicate: "determiner", Arguments: []string{"Entity", "Determiner"}},
 				},
 			},
 		},
@@ -42,7 +42,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			// DP(determiner) = det(determiner)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"DP", "det"},
-				EntityVariables:     []string{"determiner", "determiner"},
+				EntityVariables:     []string{"Determiner", "Determiner"},
 				RelationTemplates:   []example2.SimpleRelation{},
 			},
 		},
@@ -50,7 +50,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			// NBar(entity = noun(entity)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NBar", "noun"},
-				EntityVariables:     []string{"entity", "entity"},
+				EntityVariables:     []string{"Entity", "Entity"},
 				RelationTemplates:   []example2.SimpleRelation{},
 			},
 		},
@@ -59,9 +59,9 @@ func TestSimpleRelationizer(test *testing.T) {
 			// object(predication, entity)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"VP", "verb", "NP"},
-				EntityVariables:     []string{"predication", "predication", "entity"},
+				EntityVariables:     []string{"Predication", "Predication", "Entity"},
 				RelationTemplates: []example2.SimpleRelation{
-					{Predicate: "object", Arguments: []string{"predication", "entity"}},
+					{Predicate: "object", Arguments: []string{"Predication", "Entity"}},
 				},
 			},
 		},
@@ -70,12 +70,12 @@ func TestSimpleRelationizer(test *testing.T) {
 	lexItems := map[string][]example2.SimpleLexItem{
 		"all": {
 			{PartOfSpeech: "det", RelationTemplates: []example2.SimpleRelation{
-				{Predicate: "instance-of", Arguments: []string{"*", "all"}}},
+				{Predicate: "instance_of", Arguments: []string{"*", "all"}}},
 			},
 		},
 		"horses": {
 			{PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{
-				{Predicate: "instance-of", Arguments: []string{"*", "horse"}},
+				{Predicate: "instance_of", Arguments: []string{"*", "horse"}},
 				{Predicate: "plural", Arguments: []string{"*"}},
 			}},
 		},
@@ -86,7 +86,7 @@ func TestSimpleRelationizer(test *testing.T) {
 		},
 		"hooves": {
 			{PartOfSpeech: "noun", RelationTemplates: []example2.SimpleRelation{
-				{Predicate: "instance-of", Arguments: []string{"*", "hoove"}},
+				{Predicate: "instance_of", Arguments: []string{"*", "hoove"}},
 				{Predicate: "plural", Arguments: []string{"*"}},
 			}},
 		},
@@ -117,7 +117,9 @@ func TestSimpleRelationizer(test *testing.T) {
 		for i := 0; i < len(relationList); i++ {
 			relationString += " " + RelationToString(relationList[i])
 		}
-		if relationString != " subject(s1, e1) determiner(e1, d1) instance-of(d1, all) instance-of(e1, horse) plural(e1) object(s1, e2) predication(s1, have) instance-of(e2, hoove) plural(e2)" {
+		if relationString != " subject(S1, E1) determiner(E1, D1) instance_of(D1, all) instance_of(E1, horse) plural(E1) object(S1, E2) predication(S1, have) instance_of(E2, hoove) plural(E2)" {
+
+
 			test.Error("Error in relations: " + relationString)
 		}
 	}

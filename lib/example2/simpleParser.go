@@ -61,12 +61,12 @@ func (parser *simpleParser) createVariableMap(actualAntecedent string, formalVar
 // Parses tokens using parser.grammar and parser.lexicon
 func (parser *simpleParser) Process(tokens []string) (int, []SimpleRelation, bool) {
 
-	length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("sentence"))
+	length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("Sentence"))
 	// TODO: remove parse tree nodes?
 	return length, relationList, ok
 }
 
-// Parses tokens, starting from start, using all rules with given antedecent
+// Parses tokens, starting from start, using all rules with given antecedent
 func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, start int, antecedentVariable string) (int, SimpleParseTreeNode, []SimpleRelation, bool) {
 
 	rules := parser.grammar.FindRules(antecedent)

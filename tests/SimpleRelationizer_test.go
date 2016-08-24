@@ -115,31 +115,11 @@ func TestSimpleRelationizer(test *testing.T) {
 		}
 		relationString := ""
 		for i := 0; i < len(relationList); i++ {
-			relationString += " " + RelationToString(relationList[i])
+			relationString += " " + relationList[i].ToString()
 		}
 		if relationString != " subject(S1, E1) determiner(E1, D1) instance_of(D1, all) instance_of(E1, horse) number(E1, plural) object(S1, E2) predication(S1, have) instance_of(E2, hoove) number(E2, plural)" {
-
 
 			test.Error("Error in relations: " + relationString)
 		}
 	}
-}
-
-func RelationToString(relation example2.SimpleRelation) string {
-	text := relation.Predicate
-
-	text += "("
-
-	for i := 0; i < len(relation.Arguments); i++ {
-
-		if i > 0 {
-			text += ", "
-		}
-
-		text += relation.Arguments[i]
-	}
-
-	text += ")"
-
-	return text
 }

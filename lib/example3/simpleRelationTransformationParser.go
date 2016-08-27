@@ -1,7 +1,6 @@
 package example3
 
 import (
-	"math"
 	"nli-go/lib/example2"
 )
 
@@ -116,6 +115,9 @@ func (parser *simpleRelationTransformationParser) parseRelation(tokens []SimpleT
 				relation.Arguments = append(relation.Arguments, argument)
 			}
 		}
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_parenthesis)
+		}
 	}
 
 	return relation, startIndex, ok
@@ -151,7 +153,9 @@ func (parser *simpleRelationTransformationParser) parseSingleToken(tokens []Simp
 		ok = (token.TokenId == tokenId)
 		if ok {
 			tokenValue = token.TokenValue
-			parser.lastParsedLine = math.Max(parser.lastParsedLine, tokens[startIndex].LineNumber)
+			if tokens[startIndex].LineNumber > parser.lastParsedLine {
+				parser.lastParsedLine = tokens[startIndex].LineNumber
+			}
 			startIndex++
 		}
 	}

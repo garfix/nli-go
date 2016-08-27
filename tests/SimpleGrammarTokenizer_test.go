@@ -54,12 +54,12 @@ func TestSimpleGrammarTokenizer(test *testing.T) {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[4].TokenValue))
 	}
 
-	tokens, _, _ = tok.Tokenize("mature(X) := age(X, 18)")
+	tokens, _, _ = tok.Tokenize("mature(X) :- age(X, 18)")
 
 	if len(tokens) != 11 {
 		test.Error(fmt.Sprintf("Incorrect number of tokens: %d", len(tokens)))
 	}
-	if tokens[4].TokenValue != ":=" {
+	if tokens[4].TokenValue != ":-" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[4].TokenValue))
 	}
 	if tokens[9].TokenValue != "18" {

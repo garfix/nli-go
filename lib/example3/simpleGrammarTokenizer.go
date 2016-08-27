@@ -65,7 +65,8 @@ func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, int, 
 		tokenValue := ""
 
 		for i := 1; i < len(tokenValues); i++  {
-			if tokenValues[i] != "" {
+			// http://stackoverflow.com/a/18595217
+			if len(tokenValues[i]) != 0 {
 				tokenId = i
 				tokenValue = tokenValues[i]
 			}

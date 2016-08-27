@@ -58,11 +58,11 @@ func (parser *simpleRelationTransformationParser) parseTransformation(tokens []S
 	transformation := SimpleRelationTransformation{}
 	ok := true
 
-	transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
+	transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
 	if ok {
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_implication)
 		if ok {
-			transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		}
 	}
 
@@ -76,17 +76,18 @@ func (parser *simpleRelationTransformationParser) parseRelations(tokens []Simple
 	commaFound := false
 
 	for ok {
+
+		if len(relations) > 0 {
+			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
+			if !commaFound {
+				break;
+			}
+		}
+
 		relation := example2.SimpleRelation{}
 		relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
 		if ok {
 			relations = append(relations, relation)
-		} else {
-			break;
-		}
-
-		_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
-		if !commaFound {
-			break;
 		}
 	}
 
@@ -97,22 +98,38 @@ func (parser *simpleRelationTransformationParser) parseRelation(tokens []SimpleT
 
 	relation := example2.SimpleRelation{}
 	ok := true
-	commaFound := false
+	commaFound, argumentFound := false, false
+	argument := ""
+	newStartIndex := 0
 
 	relation.Predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 	if ok {
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_parenthesis)
 		for ok {
 			if len(relation.Arguments) > 0 {
+
+				// second and further arguments
 				_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
-				if (!commaFound) {
+				if !commaFound {
 					break;
+				} else {
+					argument, startIndex, ok = parser.parseArgument(tokens, startIndex)
+					if ok {
+						relation.Arguments = append(relation.Arguments, argument)
+					}
 				}
-			}
-			argument := ""
-			argument, startIndex, ok = parser.parseArgument(tokens, startIndex)
-			if ok {
-				relation.Arguments = append(relation.Arguments, argument)
+
+			} else {
+
+				// first argument (there may not be one, zero arguments are allowed)
+				argument, newStartIndex, argumentFound = parser.parseArgument(tokens, startIndex)
+				if !argumentFound {
+					break;
+				} else {
+					relation.Arguments = append(relation.Arguments, argument)
+					startIndex = newStartIndex
+				}
+
 			}
 		}
 		if ok {

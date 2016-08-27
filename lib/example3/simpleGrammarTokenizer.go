@@ -28,7 +28,7 @@ func NewSimpleGrammarTokenizer() *simpleGrammarTokenizer {
 	return &simpleGrammarTokenizer{}
 }
 
-func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, bool, int) {
+func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, int, bool) {
 
 	// 2x \ = 1x escape for Go; 4x \ = 1x escape for Regexp engine
 
@@ -85,5 +85,5 @@ func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, bool,
 		tokens = append(tokens, SimpleToken{tokenId, lineNumber, tokenValue})
 	}
 
-	return tokens, success, lineNumber
+	return tokens, lineNumber, success
 }

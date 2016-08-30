@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"nli-go/lib/example2"
 	"nli-go/lib/example3"
 	"testing"
 )
@@ -10,7 +9,7 @@ import (
 func TestSimpleRelationTransformer(test *testing.T) {
 
 	// "name all customers"
-	relations := []example2.SimpleRelation{
+	relations := []example3.SimpleRelation{
 		{Predicate: "predicate", Arguments: []string{"S1", "name"}},
 		{Predicate: "object", Arguments: []string{"S1", "E1"}},
 		{Predicate: "instance_of", Arguments: []string{"E1", "customer"}},
@@ -21,12 +20,12 @@ func TestSimpleRelationTransformer(test *testing.T) {
 	transformations := []example3.SimpleRelationTransformation {
 		// list-customers(P1) :- predicate(P1, name), object(P1, E1), instance_of(E1, customer)
 		{
-			Pattern: []example2.SimpleRelation{
+			Pattern: []example3.SimpleRelation{
 				{Predicate: "predicate", Arguments: []string{"P1", "name"}},
 				{Predicate: "object", Arguments: []string{"P1", "O1"}},
 				{Predicate: "instance_of", Arguments: []string{"O1", "customer"}},
 			},
-			Replacement: []example2.SimpleRelation{
+			Replacement: []example3.SimpleRelation{
 				{Predicate: "task", Arguments: []string{"P1", "list_customers"}},
 			},
 		},

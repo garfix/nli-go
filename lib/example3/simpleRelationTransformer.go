@@ -1,7 +1,6 @@
 package example3
 
 import (
-	"nli-go/lib/example2"
 	"regexp"
 )
 
@@ -14,33 +13,33 @@ func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation)
 }
 
 // return the original relations, but replace the ones that have matched with their replacements
-func (transformer *simpleRelationTransformer) Replace(relations []example2.SimpleRelation) []example2.SimpleRelation {
-	return []example2.SimpleRelation{}
+func (transformer *simpleRelationTransformer) Replace(relations []SimpleRelation) []SimpleRelation {
+	return []SimpleRelation{}
 }
 
 // like replace, but attempt replacement recursively
-func (transformer *simpleRelationTransformer) ReplaceRecursively(relations []example2.SimpleRelation) []example2.SimpleRelation {
-	return []example2.SimpleRelation{}
+func (transformer *simpleRelationTransformer) ReplaceRecursively(relations []SimpleRelation) []SimpleRelation {
+	return []SimpleRelation{}
 }
 
 // return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relations []example2.SimpleRelation) []example2.SimpleRelation {
+func (transformer *simpleRelationTransformer) Extract(relations []SimpleRelation) []SimpleRelation {
 
 	_, replacements := transformer.matchAllTransformations(relations)
 	return replacements
 }
 
 // only add the replacements to the original relations
-func (transformer *simpleRelationTransformer) Append(relations []example2.SimpleRelation) []example2.SimpleRelation {
-	return []example2.SimpleRelation{}
+func (transformer *simpleRelationTransformer) Append(relations []SimpleRelation) []SimpleRelation {
+	return []SimpleRelation{}
 }
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(relations []example2.SimpleRelation) ([]int, []example2.SimpleRelation){
+func (transformer *simpleRelationTransformer) matchAllTransformations(relations []SimpleRelation) ([]int, []SimpleRelation){
 
 	matchedIndexes := []int{}
-	replacements := []example2.SimpleRelation{}
+	replacements := []SimpleRelation{}
 
 	for _, transformation := range transformer.transformations {
 
@@ -54,10 +53,10 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 
 // Attempts to match a single transformation
 // Returns the indexes of matched relations, and the replacements
-func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []example2.SimpleRelation, transformation SimpleRelationTransformation) ([]int, []example2.SimpleRelation){
+func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation){
 
 	matchedIndexes := []int{}
-	replacements := []example2.SimpleRelation{}
+	replacements := []SimpleRelation{}
 
 	boundVariables := map[string]string{}
 
@@ -70,7 +69,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 			matchedIndexes = append(matchedIndexes, index)
 
 		} else {
-			return []int{}, []example2.SimpleRelation{}
+			return []int{}, []SimpleRelation{}
 		}
 	}
 
@@ -80,7 +79,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (transformer *simpleRelationTransformer) matchSingleRelation(relations []example2.SimpleRelation, patternRelation example2.SimpleRelation, boundVariables map[string]string) (int, map[string]string, bool) {
+func (transformer *simpleRelationTransformer) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]string) (int, map[string]string, bool) {
 
 	for index, relation := range relations {
 
@@ -94,7 +93,7 @@ func (transformer *simpleRelationTransformer) matchSingleRelation(relations []ex
 	return 0, map[string]string{}, false
 }
 
-func (transformer *simpleRelationTransformer) matchRelationToRelation(relation example2.SimpleRelation, patternRelation example2.SimpleRelation, boundVariables map[string]string) (map[string]string, bool) {
+func (transformer *simpleRelationTransformer) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]string) (map[string]string, bool) {
 
 	success := true
 
@@ -155,9 +154,9 @@ func (transformer *simpleRelationTransformer) bindArgument(argument string, patt
 	return boundVariables, success
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []example2.SimpleRelation, boundVariables map[string]string) []example2.SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables map[string]string) []SimpleRelation {
 
-	replacements := []example2.SimpleRelation{}
+	replacements := []SimpleRelation{}
 
 	for _, relation := range relations {
 

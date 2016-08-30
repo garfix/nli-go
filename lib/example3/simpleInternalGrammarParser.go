@@ -1,9 +1,5 @@
 package example3
 
-import (
-	"nli-go/lib/example2"
-)
-
 const field_form = "form"
 const field_pos = "pos"
 const field_sense = "sense"
@@ -108,9 +104,9 @@ func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, st
 	return lexicon, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, startIndex int) (example2.SimpleLexItem, int, bool) {
+func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, startIndex int) (SimpleLexItem, int, bool) {
 
-	lexItem := example2.SimpleLexItem{}
+	lexItem := SimpleLexItem{}
 	ok, formFound, posFound := true, false, false
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
@@ -147,9 +143,9 @@ func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, st
 	return lexItem, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, startIndex int) ([]example2.SimpleRelation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, startIndex int) ([]SimpleRelation, int, bool) {
 
-	relations := []example2.SimpleRelation{}
+	relations := []SimpleRelation{}
 	ok := true
 	commaFound := false
 
@@ -162,7 +158,7 @@ func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, 
 			}
 		}
 
-		relation := example2.SimpleRelation{}
+		relation := SimpleRelation{}
 		relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
 		if ok {
 			relations = append(relations, relation)
@@ -172,9 +168,9 @@ func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, 
 	return relations, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseRelation(tokens []SimpleToken, startIndex int) (example2.SimpleRelation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseRelation(tokens []SimpleToken, startIndex int) (SimpleRelation, int, bool) {
 
-	relation := example2.SimpleRelation{}
+	relation := SimpleRelation{}
 	ok := true
 	commaFound, argumentFound := false, false
 	argument := ""

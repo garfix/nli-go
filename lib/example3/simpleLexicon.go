@@ -1,25 +1,23 @@
 package example3
 
-import "nli-go/lib/example2"
-
 type simpleLexicon struct {
-	lexItems map[string][]example2.SimpleLexItem
+	lexItems map[string][]SimpleLexItem
 }
 
 func NewSimpleLexicon() *simpleLexicon{
-	return &simpleLexicon{lexItems: map[string][]example2.SimpleLexItem{}}
+	return &simpleLexicon{lexItems: map[string][]SimpleLexItem{}}
 }
 
-func (lexicon *simpleLexicon) AddLexItem(lexItem example2.SimpleLexItem) {
+func (lexicon *simpleLexicon) AddLexItem(lexItem SimpleLexItem) {
 	form := lexItem.Form
 	_, found := lexicon.lexItems[form]
 	if !found {
-		lexicon.lexItems[form] = []example2.SimpleLexItem{}
+		lexicon.lexItems[form] = []SimpleLexItem{}
 	}
 	lexicon.lexItems[form] = append(lexicon.lexItems[form], lexItem)
 }
 
-func (lexicon *simpleLexicon) GetLexItem(word string, partOfSpeech string) (example2.SimpleLexItem, bool) {
+func (lexicon *simpleLexicon) GetLexItem(word string, partOfSpeech string) (SimpleLexItem, bool) {
 	lexItems, found := lexicon.lexItems[word]
 
 	if found {
@@ -30,5 +28,5 @@ func (lexicon *simpleLexicon) GetLexItem(word string, partOfSpeech string) (exam
 		}
 	}
 
-	return example2.SimpleLexItem{}, false
+	return SimpleLexItem{}, false
 }

@@ -6,3 +6,31 @@ Ok, maar daarmee is je representatie echt NIET logisch te noemen
 Niet alleen komen EN en OF niet overeen met hun logische equivalenten en is pragmatische interpretatie mogelijk,
     ook is keihard weergegeven NIET te beperkt, omdat er ook MISSCHIEN en NAUWELIJKS bestaan.
 FOPC is in zijn algemeenheid gewoon te beperkt, en er is geen goed alternatief.
+
+Er is een probleem met left-recursion in de simpele parser NP :- NP VP
+
+een agent
+
+agent: {
+    grammar: {
+        rules ...
+    }
+    lexicon: [
+        entries ...
+    ]
+}
+
+een lexicon op zichzelf:
+
+lexicon: [
+    {
+        form: ..
+        pos: ..
+        sense: ..
+    }
+    {
+        form: ..
+        pos: ..
+        sense: ..
+    }
+]

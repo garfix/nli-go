@@ -4,38 +4,56 @@ import (
 	"nli-go/lib/example2"
 )
 
-// parses a string of transformations like
-//
-// list-customers(P1) :- predicate(P1, name), object(P1, E1), instance_of(E1, customer)
+const field_form = "form"
+const field_pos = "pos"
+const field_sense = "sense"
 
-
-type simpleRelationTransformationParser struct {
+type simpleInternalGrammarParser struct {
+	tokenizer      *simpleGrammarTokenizer
 	lastParsedLine int
 }
 
-func NewSimpleRelationTransformationParser() *simpleRelationTransformationParser{
-	return &simpleRelationTransformationParser{}
+func NewSimpleInternalGrammarParser() *simpleInternalGrammarParser{
+	return &simpleInternalGrammarParser{tokenizer: new(simpleGrammarTokenizer), lastParsedLine: 0}
 }
 
-// Parses source and returns its transformations
-func (parser *simpleRelationTransformationParser) ParseString(source string) ([]SimpleRelationTransformation, int, bool) {
+// Parses source into a lexicon
+func (parser *simpleInternalGrammarParser) CreateLexicon(source string) (*simpleLexicon, int, bool) {
 
-	transformations := []SimpleRelationTransformation{}
-	tok := NewSimpleGrammarTokenizer()
+	lexicon := NewSimpleLexicon()
 
 	// tokenize
-	tokens, lineNumber, tokensOk := tok.Tokenize(source)
+	tokens, lineNumber, ok := parser.tokenizer.Tokenize(source)
+	if !ok {
+		return lexicon, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	lexicon, _, ok = parser.parseLexicon(tokens, 0)
+
+	return lexicon, parser.lastParsedLine, ok
+}
+
+// Parses source into transformations
+func (parser *simpleInternalGrammarParser) CreateTransformations(source string) ([]SimpleRelationTransformation, int, bool) {
+
+	transformations := []SimpleRelationTransformation{}
+
+	// tokenize
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
 	if !tokensOk {
 		return transformations, lineNumber, false
 	}
 
 	// parse
+	parser.lastParsedLine = 0
 	transformations, _, ok := parser.parseTransformations(tokens, 0)
 
 	return transformations, parser.lastParsedLine, ok
 }
 
-func (parser *simpleRelationTransformationParser) parseTransformations(tokens []SimpleToken, startIndex int) ([]SimpleRelationTransformation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseTransformations(tokens []SimpleToken, startIndex int) ([]SimpleRelationTransformation, int, bool) {
 
 	transformations := []SimpleRelationTransformation{}
 	ok := true
@@ -53,7 +71,7 @@ func (parser *simpleRelationTransformationParser) parseTransformations(tokens []
 	return transformations, startIndex, ok
 }
 
-func (parser *simpleRelationTransformationParser) parseTransformation(tokens []SimpleToken, startIndex int) (SimpleRelationTransformation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseTransformation(tokens []SimpleToken, startIndex int) (SimpleRelationTransformation, int, bool) {
 
 	transformation := SimpleRelationTransformation{}
 	ok := true
@@ -69,7 +87,67 @@ func (parser *simpleRelationTransformationParser) parseTransformation(tokens []S
 	return transformation, startIndex, ok
 }
 
-func (parser *simpleRelationTransformationParser) parseRelations(tokens []SimpleToken, startIndex int) ([]example2.SimpleRelation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, startIndex int) (*simpleLexicon, int, bool) {
+
+	lexicon := NewSimpleLexicon()
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	for ok {
+		lexItem, newStartIndex, lexItemFound := parser.parseLexItem(tokens, startIndex)
+		if lexItemFound {
+			lexicon.AddLexItem(lexItem)
+			startIndex = newStartIndex
+		} else {
+			ok = false
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return lexicon, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, startIndex int) (example2.SimpleLexItem, int, bool) {
+
+	lexItem := example2.SimpleLexItem{}
+	ok, formFound, posFound := true, false, false
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
+	for ok {
+		field := ""
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				switch field {
+				case field_form:
+					lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+					formFound = true
+				case field_pos:
+					lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+					posFound = true;
+				case field_sense:
+					lexItem.RelationTemplates, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				default:
+					ok = false
+				}
+			}
+		}
+	}
+
+	// required fields
+	if formFound && posFound {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	} else {
+		ok = false
+	}
+
+	return lexItem, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, startIndex int) ([]example2.SimpleRelation, int, bool) {
 
 	relations := []example2.SimpleRelation{}
 	ok := true
@@ -94,7 +172,7 @@ func (parser *simpleRelationTransformationParser) parseRelations(tokens []Simple
 	return relations, startIndex, ok
 }
 
-func (parser *simpleRelationTransformationParser) parseRelation(tokens []SimpleToken, startIndex int) (example2.SimpleRelation, int, bool) {
+func (parser *simpleInternalGrammarParser) parseRelation(tokens []SimpleToken, startIndex int) (example2.SimpleRelation, int, bool) {
 
 	relation := example2.SimpleRelation{}
 	ok := true
@@ -140,7 +218,7 @@ func (parser *simpleRelationTransformationParser) parseRelation(tokens []SimpleT
 	return relation, startIndex, ok
 }
 
-func (parser *simpleRelationTransformationParser) parseArgument(tokens []SimpleToken, startIndex int) (string, int, bool) {
+func (parser *simpleInternalGrammarParser) parseArgument(tokens []SimpleToken, startIndex int) (string, int, bool) {
 
 	ok := false
 	tokenValue := ""
@@ -160,7 +238,7 @@ func (parser *simpleRelationTransformationParser) parseArgument(tokens []SimpleT
 }
 
 // (!) startIndex increases only if the specified token could be matched
-func (parser *simpleRelationTransformationParser) parseSingleToken(tokens []SimpleToken, startIndex int, tokenId int) (string, int, bool) {
+func (parser *simpleInternalGrammarParser) parseSingleToken(tokens []SimpleToken, startIndex int, tokenId int) (string, int, bool) {
 
 	ok := false
 	tokenValue := ""

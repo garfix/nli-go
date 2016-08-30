@@ -15,10 +15,15 @@ const t_stringConstant = 3
 const t_number = 4
 const t_comma = 5
 const t_implication = 6
-const t_opening_parenthesis = 7
-const t_closing_parenthesis = 8
-const _newline = 9
-const _other = 10
+const t_colon = 7
+const t_opening_parenthesis = 8
+const t_closing_parenthesis = 9
+const t_opening_bracket = 10
+const t_closing_bracket = 11
+const t_opening_brace = 12
+const t_closing_brace = 13
+const _newline = 14
+const _other = 15
 
 type simpleGrammarTokenizer struct {
 
@@ -41,8 +46,13 @@ func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, int, 
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
 		{t_implication, ":-"},
+		{t_colon, ":"},
 		{t_opening_parenthesis, "\\("},
 		{t_closing_parenthesis, "\\)"},
+		{t_opening_bracket, "\\["},
+		{t_closing_bracket, "\\]"},
+		{t_opening_brace, "\\{"},
+		{t_closing_brace, "\\}"},
 		{_newline, "(?:\r\n|\n|\r)"},
 		{_other, "."},
 	}

@@ -1,9 +1,5 @@
 package example3
 
-import (
-	"regexp"
-)
-
 type simpleRelationTransformer struct {
 	transformations []SimpleRelationTransformation
 }
@@ -58,7 +54,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 	matchedIndexes := []int{}
 	replacements := []SimpleRelation{}
 
-	boundVariables := map[string]string{}
+	boundVariables := map[string]SimpleTerm{}
 
 	for _, patternRelation := range transformation.Pattern {
 
@@ -79,7 +75,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (transformer *simpleRelationTransformer) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]string) (int, map[string]string, bool) {
+func (transformer *simpleRelationTransformer) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]SimpleTerm) (int, map[string]SimpleTerm, bool) {
 
 	for index, relation := range relations {
 
@@ -90,10 +86,10 @@ func (transformer *simpleRelationTransformer) matchSingleRelation(relations []Si
 		}
 	}
 
-	return 0, map[string]string{}, false
+	return 0, map[string]SimpleTerm{}, false
 }
 
-func (transformer *simpleRelationTransformer) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]string) (map[string]string, bool) {
+func (transformer *simpleRelationTransformer) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]SimpleTerm) (map[string]SimpleTerm, bool) {
 
 	success := true
 
@@ -118,27 +114,26 @@ func (transformer *simpleRelationTransformer) matchRelationToRelation(relation S
 	return boundVariables, success
 }
 
-func (transformer *simpleRelationTransformer) bindArgument(argument string, patternRelationArgument string, boundVariables map[string]string) (map[string]string, bool) {
+func (transformer *simpleRelationTransformer) bindArgument(argument SimpleTerm, patternRelationArgument SimpleTerm, boundVariables map[string]SimpleTerm) (map[string]SimpleTerm, bool) {
 
 	success := false
-	isVariable, _ := regexp.MatchString("^[A-Z]", patternRelationArgument)
 
-	if isVariable {
+	if patternRelationArgument.IsVariable() {
 
 		// variable
 
-		value := ""
+		value := SimpleTerm{}
 
 		// does patternRelationArgument occur in boundVariables?
-		value, match := boundVariables[patternRelationArgument]
+		value, match := boundVariables[patternRelationArgument.AsKey()]
 		if match {
 			// it does, use the bound variable
-			if argument == value {
+			if argument.Equals(value) {
 				success = true
 			}
 		} else {
 			// it does not, just assign the actual argument
-			boundVariables[patternRelationArgument] = argument
+			boundVariables[patternRelationArgument.AsKey()] = argument
 			success = true
 		}
 
@@ -146,7 +141,7 @@ func (transformer *simpleRelationTransformer) bindArgument(argument string, patt
 
 		// atom, constant
 
-		if argument == patternRelationArgument {
+		if argument.Equals(patternRelationArgument) {
 			success = true
 		}
 	}
@@ -154,7 +149,7 @@ func (transformer *simpleRelationTransformer) bindArgument(argument string, patt
 	return boundVariables, success
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables map[string]string) []SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables map[string]SimpleTerm) []SimpleRelation {
 
 	replacements := []SimpleRelation{}
 
@@ -162,9 +157,8 @@ func (transformer *simpleRelationTransformer) createReplacements(relations []Sim
 
 		for i, argument := range relation.Arguments {
 
-			isVariable, _ := regexp.MatchString("^[A-Z]", argument)
-			if isVariable {
-				value, found := boundVariables[argument]
+			if argument.IsVariable() {
+				value, found := boundVariables[argument.AsKey()]
 				if found {
 					relation.Arguments[i] = value
 				} else {

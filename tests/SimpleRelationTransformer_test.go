@@ -10,23 +10,23 @@ func TestSimpleRelationTransformer(test *testing.T) {
 
 	// "name all customers"
 	relations := []example3.SimpleRelation{
-		{Predicate: "predicate", Arguments: []string{"S1", "name"}},
-		{Predicate: "object", Arguments: []string{"S1", "E1"}},
-		{Predicate: "instance_of", Arguments: []string{"E1", "customer"}},
-		{Predicate: "determiner", Arguments: []string{"E1", "D1"}},
-		{Predicate: "instance_of", Arguments: []string{"D1", "all"}},
+		{Predicate: "predicate", Arguments: []example3.SimpleTerm{{example3.Term_variable, "S1"}, {example3.Term_predicateAtom, "name"}}},
+		{Predicate: "object", Arguments: []example3.SimpleTerm{{example3.Term_variable, "S1"}, {example3.Term_variable, "E1"}}},
+		{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "E1"}, {example3.Term_predicateAtom, "customer"}}},
+		{Predicate: "determiner", Arguments: []example3.SimpleTerm{{example3.Term_variable, "E1"}, {example3.Term_variable, "D1"}}},
+		{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "D1"}, {example3.Term_predicateAtom, "all"}}},
 	}
 
 	transformations := []example3.SimpleRelationTransformation {
 		// list-customers(P1) :- predicate(P1, name), object(P1, E1), instance_of(E1, customer)
 		{
 			Pattern: []example3.SimpleRelation{
-				{Predicate: "predicate", Arguments: []string{"P1", "name"}},
-				{Predicate: "object", Arguments: []string{"P1", "O1"}},
-				{Predicate: "instance_of", Arguments: []string{"O1", "customer"}},
+				{Predicate: "predicate", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_predicateAtom, "name"}}},
+				{Predicate: "object", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_variable, "O1"}}},
+				{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "O1"}, {example3.Term_predicateAtom, "customer"}}},
 			},
 			Replacement: []example3.SimpleRelation{
-				{Predicate: "task", Arguments: []string{"P1", "list_customers"}},
+				{Predicate: "task", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_predicateAtom, "list_customers"}}},
 			},
 		},
 	}

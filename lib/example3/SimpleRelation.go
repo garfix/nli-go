@@ -2,7 +2,7 @@ package example3
 
 type SimpleRelation struct {
 	Predicate string
-	Arguments []string
+	Arguments []SimpleTerm
 }
 
 func (relation *SimpleRelation) ToString() string {
@@ -10,7 +10,7 @@ func (relation *SimpleRelation) ToString() string {
 	args, sep := "", ""
 
 	for _, Argument := range relation.Arguments {
-		args += sep + Argument
+		args += sep + Argument.TermValue
 		sep = ", "
 	}
 

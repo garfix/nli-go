@@ -88,6 +88,7 @@ func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, int, 
 		} else if tokenId == t_stringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
+			tokenValue = tokenValue[1:len(tokenValue)-1]
 		} else if tokenId == _other || tokenId == 0 {
 			success = false
 			break;

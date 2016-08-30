@@ -38,7 +38,7 @@ func TestSimpleGrammarTokenizer(test *testing.T) {
 	if tokens[2].TokenValue != "Dog" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[2].TokenValue))
 	}
-	if tokens[4].TokenValue != "'Fido_dido2'" {
+	if tokens[4].TokenValue != "Fido_dido2" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[4].TokenValue))
 	}
 
@@ -50,7 +50,7 @@ func TestSimpleGrammarTokenizer(test *testing.T) {
 	if tokens[2].TokenValue != "Dog" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[2].TokenValue))
 	}
-	if tokens[4].TokenValue != "'Fido_dido2'" {
+	if tokens[4].TokenValue != "Fido_dido2" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[4].TokenValue))
 	}
 
@@ -71,13 +71,13 @@ func TestSimpleGrammarTokenizer(test *testing.T) {
 	if len(tokens) != 8 {
 		test.Error(fmt.Sprintf("Incorrect number of tokens: %d", len(tokens)))
 	}
-	if tokens[2].TokenValue != "'it's'" {
+	if tokens[2].TokenValue != "it's" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[2].TokenValue))
 	}
-	if tokens[4].TokenValue != "'\\'" {
+	if tokens[4].TokenValue != "\\" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[4].TokenValue))
 	}
-	if tokens[6].TokenValue != "''" {
+	if tokens[6].TokenValue != "" {
 		test.Error(fmt.Sprintf("Error in value: %s", tokens[6].TokenValue))
 	}
 

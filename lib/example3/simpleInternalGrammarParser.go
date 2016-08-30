@@ -173,7 +173,7 @@ func (parser *simpleInternalGrammarParser) parseRelation(tokens []SimpleToken, s
 	relation := SimpleRelation{}
 	ok := true
 	commaFound, argumentFound := false, false
-	argument := ""
+	argument := SimpleTerm{}
 	newStartIndex := 0
 
 	relation.Predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
@@ -214,23 +214,37 @@ func (parser *simpleInternalGrammarParser) parseRelation(tokens []SimpleToken, s
 	return relation, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseArgument(tokens []SimpleToken, startIndex int) (string, int, bool) {
+func (parser *simpleInternalGrammarParser) parseArgument(tokens []SimpleToken, startIndex int) (SimpleTerm, int, bool) {
 
 	ok := false
 	tokenValue := ""
+	term := SimpleTerm{}
 
 	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
-	if !ok {
+	if ok {
+		term.TermType = Term_predicateAtom
+		term.TermValue = tokenValue
+	} else {
 		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
-		if !ok {
+		if ok {
+			term.TermType = Term_variable
+			term.TermValue = tokenValue
+		} else {
 			tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_number)
-			if !ok {
+			if ok {
+				term.TermType = Term_number
+				term.TermValue = tokenValue
+			} else {
 				tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+				if ok {
+					term.TermType = Term_stringConstant
+					term.TermValue = tokenValue
+				}
 			}
 		}
 	}
 
-	return tokenValue, startIndex, ok
+	return term, startIndex, ok
 }
 
 // (!) startIndex increases only if the specified token could be matched

@@ -8,38 +8,32 @@ import (
 
 func TestSimpleRelationTransformer(test *testing.T) {
 
-	// "name all customers"
-	relations := []example3.SimpleRelation{
-		{Predicate: "predicate", Arguments: []example3.SimpleTerm{{example3.Term_variable, "S1"}, {example3.Term_predicateAtom, "name"}}},
-		{Predicate: "object", Arguments: []example3.SimpleTerm{{example3.Term_variable, "S1"}, {example3.Term_variable, "E1"}}},
-		{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "E1"}, {example3.Term_predicateAtom, "customer"}}},
-		{Predicate: "determiner", Arguments: []example3.SimpleTerm{{example3.Term_variable, "E1"}, {example3.Term_variable, "D1"}}},
-		{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "D1"}, {example3.Term_predicateAtom, "all"}}},
-	}
+	internalGrammarParser := example3.NewSimpleInternalGrammarParser()
 
-	transformations := []example3.SimpleRelationTransformation {
-		// list-customers(P1) :- predicate(P1, name), object(P1, E1), instance_of(E1, customer)
-		{
-			Pattern: []example3.SimpleRelation{
-				{Predicate: "predicate", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_predicateAtom, "name"}}},
-				{Predicate: "object", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_variable, "O1"}}},
-				{Predicate: "instance_of", Arguments: []example3.SimpleTerm{{example3.Term_variable, "O1"}, {example3.Term_predicateAtom, "customer"}}},
-			},
-			Replacement: []example3.SimpleRelation{
-				{Predicate: "task", Arguments: []example3.SimpleTerm{{example3.Term_variable, "P1"}, {example3.Term_predicateAtom, "list_customers"}}},
-			},
-		},
-	}
+	// "name all customers"
+	relations, _, _ := internalGrammarParser.CreateRelationSet(
+		"[" +
+			"predicate(S1, name)" +
+			"object(S1, E1)" +
+			"instance_of(E1, customer)" +
+			"determiner(E1, D1)" +
+			"instance_of(D1, all)" +
+		"]")
+
+	transformations, _, _ := internalGrammarParser.CreateTransformations(
+		"[" +
+			"task(P1, list_customers) :- predicate(P1, name), object(P1, O1), instance_of(O1, customer)" +
+		"]")
 
 	transformer := example3.NewSimpleRelationTransformer(transformations)
-	transformedRelations := transformer.Extract(relations)
+	transformedSet := transformer.Extract(relations)
 
-	if len(transformedRelations) != 1 {
-		test.Error(fmt.Sprintf("Wrong number of relations: %d", len(transformedRelations)))
+	if len(transformedSet.Relations) != 1 {
+		test.Error(fmt.Sprintf("Wrong number of relations: %d", len(transformedSet.Relations)))
 	}
 
 	relationString, sep := "", ""
-	for _, relation := range transformedRelations {
+	for _, relation := range transformedSet.Relations {
 		relationString += sep + relation.ToString()
 		sep = " "
 	}

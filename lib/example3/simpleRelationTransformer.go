@@ -9,25 +9,25 @@ func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation)
 }
 
 // return the original relations, but replace the ones that have matched with their replacements
-func (transformer *simpleRelationTransformer) Replace(relations []SimpleRelation) []SimpleRelation {
-	return []SimpleRelation{}
+func (transformer *simpleRelationTransformer) Replace(relationSet *SimpleRelationSet) *SimpleRelationSet {
+	return &SimpleRelationSet{}
 }
 
 // like replace, but attempt replacement recursively
-func (transformer *simpleRelationTransformer) ReplaceRecursively(relations []SimpleRelation) []SimpleRelation {
-	return []SimpleRelation{}
+func (transformer *simpleRelationTransformer) ReplaceRecursively(relationSet *SimpleRelationSet) *SimpleRelationSet {
+	return &SimpleRelationSet{}
 }
 
 // return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relations []SimpleRelation) []SimpleRelation {
+func (transformer *simpleRelationTransformer) Extract(relationSet *SimpleRelationSet) *SimpleRelationSet {
 
-	_, replacements := transformer.matchAllTransformations(relations)
-	return replacements
+	_, replacements := transformer.matchAllTransformations(relationSet.Relations)
+	return NewSimpleRelationSet2(replacements)
 }
 
 // only add the replacements to the original relations
-func (transformer *simpleRelationTransformer) Append(relations []SimpleRelation) []SimpleRelation {
-	return []SimpleRelation{}
+func (transformer *simpleRelationTransformer) Append(relations *SimpleRelationSet) *SimpleRelationSet {
+	return NewSimpleRelationSet()
 }
 
 // Attempts all transformations on all relations

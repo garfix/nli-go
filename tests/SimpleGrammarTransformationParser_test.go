@@ -13,7 +13,7 @@ func TestSimpleGrammarTransformationParser(test *testing.T) {
 	ok := true
 	lastLine := 0
 
-	transformations, lastLine, ok = parser.CreateTransformations("father(A, B) :- parent(A, B), male(A)")
+	transformations, lastLine, ok = parser.CreateTransformations("[ father(A, B) :- parent(A, B), male(A) ]")
 	if !ok {
 		test.Error("Parse error")
 	}
@@ -33,14 +33,14 @@ func TestSimpleGrammarTransformationParser(test *testing.T) {
 	if ok {
 		test.Error("Parse should have failed")
 	}
-	transformations, lastLine, ok = parser.CreateTransformations("\n")
+	transformations, lastLine, ok = parser.CreateTransformations("[\n]")
 	if !ok {
 		test.Error("Parse should have succeeded")
 	}
 
-	transformations, lastLine, ok = parser.CreateTransformations("\n" +
+	transformations, lastLine, ok = parser.CreateTransformations("[\n" +
 		"\tfather(A, B) :- parent(A, B), male(A)\n" +
-		"\tcommand(A1), owner(Owner), done(true), fixed() :- tell(A1, Owner), prime_number(7)\n")
+		"\tcommand(A1), owner(Owner), done(true), fixed() :- tell(A1, Owner), prime_number(7)]\n")
 	if !ok {
 		test.Error("Parse error")
 	}

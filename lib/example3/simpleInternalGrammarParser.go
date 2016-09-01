@@ -76,6 +76,8 @@ func (parser *simpleInternalGrammarParser) parseTransformations(tokens []SimpleT
 	transformations := []SimpleRelationTransformation{}
 	ok := true
 
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+
 	for startIndex < len(tokens) {
 		transformation := SimpleRelationTransformation{}
 		transformation, startIndex, ok = parser.parseTransformation(tokens, startIndex)
@@ -85,6 +87,8 @@ func (parser *simpleInternalGrammarParser) parseTransformations(tokens []SimpleT
 			break;
 		}
 	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 
 	return transformations, startIndex, ok
 }

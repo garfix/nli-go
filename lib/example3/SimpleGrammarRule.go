@@ -1,4 +1,4 @@
-package example2
+package example3
 
 type SimpleGrammarRule struct {
 	SyntacticCategories []string

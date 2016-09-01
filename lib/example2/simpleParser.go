@@ -6,12 +6,12 @@ import (
 )
 
 type simpleParser struct {
-	grammar         *simpleGrammar
+	grammar         *SimpleGrammar
 	lexicon         *simpleLexicon
 	varIndexCounter map[string]int
 }
 
-func NewSimpleParser(grammar *simpleGrammar, lexicon *simpleLexicon) *simpleParser {
+func NewSimpleParser(grammar *SimpleGrammar, lexicon *simpleLexicon) *simpleParser {
 	return &simpleParser{grammar: grammar, lexicon: lexicon, varIndexCounter: map[string]int{}}
 }
 
@@ -97,7 +97,7 @@ func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start
 	variableMap := parser.createVariableMap(antecedentVariable, rule.EntityVariables)
 
 	// non-leaf node relations
-	ruleRelations := parser.createGrammarRuleRelations(rule.RelationTemplates, variableMap)
+	ruleRelations := parser.createGrammarRuleRelations(rule.Sense, variableMap)
 	relations = append(relations, ruleRelations...)
 
 	// parse each of the children

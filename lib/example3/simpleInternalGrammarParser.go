@@ -1,8 +1,11 @@
 package example3
 
-const field_form = "form"
-const field_pos = "pos"
-const field_sense = "sense"
+const (
+	field_form = "form"
+	field_pos = "pos"
+	field_sense = "sense"
+	field_rule = "rule"
+)
 
 type simpleInternalGrammarParser struct {
 	tokenizer      *simpleGrammarTokenizer
@@ -47,6 +50,25 @@ func (parser *simpleInternalGrammarParser) CreateTransformations(source string) 
 	transformations, _, ok := parser.parseTransformations(tokens, 0)
 
 	return transformations, parser.lastParsedLine, ok
+}
+
+// S(predication) = NP(entity) VP(predication)
+// subject(predication, entity)
+func (parser *simpleInternalGrammarParser) CreateGrammar(source string) (*SimpleGrammar, int, bool) {
+
+	grammar := NewSimpleGrammar()
+
+	// tokenize
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return grammar, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	grammar, _, ok := parser.parseGrammar(tokens, 0)
+
+	return grammar, parser.lastParsedLine, ok
 }
 
 func (parser *simpleInternalGrammarParser) parseTransformations(tokens []SimpleToken, startIndex int) ([]SimpleRelationTransformation, int, bool) {
@@ -141,6 +163,99 @@ func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, st
 	}
 
 	return lexItem, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseGrammar(tokens []SimpleToken, startIndex int) (*SimpleGrammar, int, bool) {
+
+	grammar := NewSimpleGrammar()
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	for ok {
+		lexItem, newStartIndex, ruleFound := parser.parseGrammarRule(tokens, startIndex)
+		if ruleFound {
+			grammar.AddRule(lexItem)
+			startIndex = newStartIndex
+		} else {
+			ok = false
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return grammar, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseGrammarRule(tokens []SimpleToken, startIndex int) (SimpleGrammarRule, int, bool) {
+
+	rule := SimpleGrammarRule{}
+	ok, ruleFound := true, false
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
+	for ok {
+		field := ""
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				switch field {
+				case field_rule:
+					rule.SyntacticCategories, rule.EntityVariables, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
+					ruleFound = true
+				case field_sense:
+					rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				default:
+					ok = false
+				}
+			}
+		}
+	}
+
+	// required fields
+	if ruleFound {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	} else {
+		ok = false
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseSyntacticRewriteRule(tokens []SimpleToken, startIndex int) ([]string, []string, int, bool) {
+
+	ok := false
+	syntacticCategories := []string{}
+	entityVariables := []string{}
+
+	rule, startIndex, ok := parser.parseTransformation(tokens, startIndex)
+
+	// check the constraints on this transformation
+	if len(rule.Replacement) != 1 {
+		ok = false
+	} else if len(rule.Replacement[0].Arguments) != 1 {
+		ok = false
+	} else {
+		for _, patternRelation := range rule.Pattern {
+			if len(patternRelation.Arguments) != 1 {
+				ok = false
+			} else if !patternRelation.Arguments[0].IsVariable() {
+				ok = false
+			}
+		}
+	}
+
+	if ok {
+		syntacticCategories = append(syntacticCategories, rule.Replacement[0].Predicate)
+		entityVariables = append(entityVariables, rule.Replacement[0].Arguments[0].TermValue)
+
+		for _, patternRelation := range rule.Pattern {
+			syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
+			entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
+		}
+	}
+
+	return syntacticCategories, entityVariables, startIndex, ok
 }
 
 func (parser *simpleInternalGrammarParser) parseRelations(tokens []SimpleToken, startIndex int) ([]SimpleRelation, int, bool) {

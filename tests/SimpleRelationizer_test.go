@@ -16,7 +16,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"S", "NP", "VP"},
 				EntityVariables:     []string{"Predication", "Entity", "Predication"},
-				RelationTemplates: []example2.SimpleRelation{
+				Sense: []example2.SimpleRelation{
 					{Predicate: "subject", Arguments: []string{"Predication", "Entity"}},
 				},
 			},
@@ -26,14 +26,14 @@ func TestSimpleRelationizer(test *testing.T) {
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NP", "NBar"},
 				EntityVariables:     []string{"Entity", "Entity"},
-				RelationTemplates:   []example2.SimpleRelation{},
+				Sense:   []example2.SimpleRelation{},
 			},
 			// NP(entity) = DP(d1) NBar(entity)
 			// determiner(entity, d1)
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NP", "DP", "NBar"},
 				EntityVariables:     []string{"Entity", "Determiner", "Entity"},
-				RelationTemplates: []example2.SimpleRelation{
+				Sense: []example2.SimpleRelation{
 					{Predicate: "determiner", Arguments: []string{"Entity", "Determiner"}},
 				},
 			},
@@ -43,7 +43,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"DP", "det"},
 				EntityVariables:     []string{"Determiner", "Determiner"},
-				RelationTemplates:   []example2.SimpleRelation{},
+				Sense:   []example2.SimpleRelation{},
 			},
 		},
 		"NBar": {
@@ -51,7 +51,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"NBar", "noun"},
 				EntityVariables:     []string{"Entity", "Entity"},
-				RelationTemplates:   []example2.SimpleRelation{},
+				Sense:   []example2.SimpleRelation{},
 			},
 		},
 		"VP": {
@@ -60,7 +60,7 @@ func TestSimpleRelationizer(test *testing.T) {
 			example2.SimpleGrammarRule{
 				SyntacticCategories: []string{"VP", "verb", "NP"},
 				EntityVariables:     []string{"Predication", "Predication", "Entity"},
-				RelationTemplates: []example2.SimpleRelation{
+				Sense: []example2.SimpleRelation{
 					{Predicate: "object", Arguments: []string{"Predication", "Entity"}},
 				},
 			},

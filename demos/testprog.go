@@ -7,20 +7,19 @@ import (
 
 func main() {
 
-	transformations := []example3.SimpleRelationTransformation{}
+	parser := example3.NewSimpleInternalGrammarParser()
 	ok := true
-	lastLine := 0
 
-	parser := example3.NewSimpleRelationTransformationParser()
-	transformations, lastLine, ok = parser.ParseString("father(A, B) :- parent(A, B), male(A)")
-
+	lexicon, _, ok := parser.CreateLexicon("" +
+		"[" +
+		"\t{ form: 'boek'\npos: noun }" +
+		"]")
 	if !ok {
 		fmt.Print("Parse error")
 	}
-	if lastLine != 1 {
-		fmt.Printf("Error in line: %d", lastLine)
-	}
-	if len(transformations) != 1 {
-		fmt.Printf("Wrong number of transformations: %d", len(transformations))
+
+	_, ok = lexicon.GetLexItem("boek", "noun")
+	if !ok {
+		fmt.Print("Parse error")
 	}
 }

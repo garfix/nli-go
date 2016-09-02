@@ -11,7 +11,7 @@ func TestSimpleRelationTransformer(test *testing.T) {
 	internalGrammarParser := example3.NewSimpleInternalGrammarParser()
 
 	// "name all customers"
-	relations, _, _ := internalGrammarParser.CreateRelationSet(
+	relationSet, _, _ := internalGrammarParser.CreateRelationSet(
 		"[" +
 			"predicate(S1, name)" +
 			"object(S1, E1)" +
@@ -25,20 +25,25 @@ func TestSimpleRelationTransformer(test *testing.T) {
 			"task(P1, list_customers) :- predicate(P1, name), object(P1, O1), instance_of(O1, customer)" +
 		"]")
 
+	transformations2, _, _ := internalGrammarParser.CreateTransformations(
+		"[" +
+		"task(A, B), subject(Y) :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)" +
+		"]")
+
 	transformer := example3.NewSimpleRelationTransformer(transformations)
-	transformedSet := transformer.Extract(relations)
+	transformer2 := example3.NewSimpleRelationTransformer(transformations2)
 
-	if len(transformedSet.Relations) != 1 {
-		test.Error(fmt.Sprintf("Wrong number of relations: %d", len(transformedSet.Relations)))
+	// extract
+
+	transformedSet := transformer.Extract(relationSet)
+
+	if transformedSet.String() != "[task(S1, list_customers)]" {
+		test.Error(fmt.Printf("Error in result: %s", transformedSet))
 	}
 
-	relationString, sep := "", ""
-	for _, relation := range transformedSet.Relations {
-		relationString += sep + relation.ToString()
-		sep = " "
-	}
+	transformedSet = transformer2.Extract(relationSet)
 
-	if relationString != "task(S1, list_customers)" {
-		test.Error("Error in relations: " + relationString)
+	if transformedSet.String() != "[task(S1, all) subject(E1)]" {
+		test.Error(fmt.Printf("Error in result: %s", transformedSet))
 	}
 }

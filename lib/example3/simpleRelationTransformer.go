@@ -21,7 +21,7 @@ func (transformer *simpleRelationTransformer) ReplaceRecursively(relationSet *Si
 // return only the replacements
 func (transformer *simpleRelationTransformer) Extract(relationSet *SimpleRelationSet) *SimpleRelationSet {
 
-	_, replacements := transformer.matchAllTransformations(relationSet.Relations)
+	_, replacements := transformer.matchAllTransformations(relationSet.relations)
 	return NewSimpleRelationSet2(replacements)
 }
 

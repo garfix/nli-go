@@ -5,7 +5,7 @@ type SimpleRelation struct {
 	Arguments []SimpleTerm
 }
 
-func (relation *SimpleRelation) ToString() string {
+func (relation *SimpleRelation) String() string {
 
 	args, sep := "", ""
 

@@ -25,11 +25,6 @@ func (transformer *simpleRelationTransformer) Replace(relationSet *SimpleRelatio
 	return newRelations
 }
 
-// like replace, but attempt replacement recursively
-func (transformer *simpleRelationTransformer) ReplaceRecursively(relationSet *SimpleRelationSet) *SimpleRelationSet {
-	return &SimpleRelationSet{}
-}
-
 // return only the replacements
 func (transformer *simpleRelationTransformer) Extract(relationSet *SimpleRelationSet) *SimpleRelationSet {
 
@@ -38,8 +33,14 @@ func (transformer *simpleRelationTransformer) Extract(relationSet *SimpleRelatio
 }
 
 // only add the replacements to the original relations
-func (transformer *simpleRelationTransformer) Append(relations *SimpleRelationSet) *SimpleRelationSet {
-	return NewSimpleRelationSet()
+func (transformer *simpleRelationTransformer) Append(relationSet *SimpleRelationSet) *SimpleRelationSet {
+
+	_, replacements := transformer.matchAllTransformations(relationSet.relations)
+
+	newRelations := NewSimpleRelationSet2(relationSet.GetRelations())
+	newRelations.AddRelations(replacements)
+
+	return newRelations
 }
 
 // Attempts all transformations on all relations

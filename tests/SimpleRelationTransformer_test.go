@@ -57,4 +57,13 @@ func TestSimpleRelationTransformer(test *testing.T) {
 	if transformedSet.String() != "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]" {
 		test.Error(fmt.Printf("Error in result: %s", transformedSet))
 	}
+
+	// append
+
+	transformedSet = transformer2.Append(relationSet)
+
+	if transformedSet.String() != "[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) " +
+		"instance_of(D1, all) task(S1, all) subject(E1) done()]" {
+		test.Error(fmt.Printf("Error in result: %s", transformedSet))
+	}
 }

@@ -2,10 +2,11 @@ package example3
 
 type simpleRelationTransformer struct {
 	transformations []SimpleRelationTransformation
+	matcher simpleRelationMatcher
 }
 
 func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation) *simpleRelationTransformer {
-	return &simpleRelationTransformer{transformations: transformations}
+	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
 }
 
 // return the original relations, but replace the ones that have matched with their replacements
@@ -64,7 +65,7 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 // Returns the indexes of matched relations, and the replacements
 func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation){
 
-	matchedIndexes, boundVariables := matchRelations(relations, transformation.Pattern)
+	matchedIndexes, boundVariables := transformer.matcher.matchRelations(relations, transformation.Pattern)
 
 	replacements := []SimpleRelation{}
 	if len(matchedIndexes) > 0 {

@@ -10,7 +10,19 @@ func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation)
 
 // return the original relations, but replace the ones that have matched with their replacements
 func (transformer *simpleRelationTransformer) Replace(relationSet *SimpleRelationSet) *SimpleRelationSet {
-	return &SimpleRelationSet{}
+
+	matchedIndexes, replacements := transformer.matchAllTransformations(relationSet.relations)
+	newRelations := NewSimpleRelationSet()
+
+	for i, oldRelation := range relationSet.GetRelations()  {
+		if !intArrayContains(matchedIndexes, i) {
+			newRelations.AddRelation(oldRelation)
+		}
+	}
+
+	newRelations.AddRelations(replacements)
+
+	return newRelations
 }
 
 // like replace, but attempt replacement recursively
@@ -44,7 +56,7 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 		replacements = append(replacements, newReplacements...)
 	}
 
-	return matchedIndexes, replacements
+	return intArrayDeduplicate(matchedIndexes), replacements
 }
 
 // Attempts to match a single transformation

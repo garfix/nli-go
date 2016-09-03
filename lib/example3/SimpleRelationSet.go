@@ -20,7 +20,7 @@ func (set *SimpleRelationSet) AddRelations(relations []SimpleRelation) {
 	set.relations = append(set.relations, relations...)
 }
 
-func (set *SimpleRelationSet) GetRelationss() []SimpleRelation {
+func (set *SimpleRelationSet) GetRelations() []SimpleRelation {
 	return set.relations
 }
 

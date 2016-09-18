@@ -34,3 +34,11 @@ lexicon: [
         sense: ..
     }
 ]
+
+
+
+
+		predication(S1, marry)
+		object(S1, E2)
+		subject(S1, who)
+		name(E1, 'Kurt Cobain')

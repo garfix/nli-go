@@ -9,21 +9,24 @@ import (
 	"strings"
 )
 
-const t_predicate = 1
-const t_variable = 2
-const t_stringConstant = 3
-const t_number = 4
-const t_comma = 5
-const t_implication = 6
-const t_colon = 7
-const t_opening_parenthesis = 8
-const t_closing_parenthesis = 9
-const t_opening_bracket = 10
-const t_closing_bracket = 11
-const t_opening_brace = 12
-const t_closing_brace = 13
-const _newline = 14
-const _other = 15
+const (
+	_ = iota // number these constants 1, 2, ...
+	t_predicate
+	t_variable
+	t_stringConstant
+	t_number
+	t_comma
+	t_implication
+	t_colon
+	t_opening_parenthesis
+	t_closing_parenthesis
+	t_opening_bracket
+	t_closing_bracket
+	t_opening_brace
+	t_closing_brace
+	_newline
+	_other
+)
 
 type simpleGrammarTokenizer struct {
 

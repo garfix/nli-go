@@ -60,6 +60,103 @@ func (parser *simpleInternalGrammarParser) parseTransformation(tokens []SimpleTo
 	return transformation, startIndex, ok
 }
 
+func (parser *simpleInternalGrammarParser) parseRules(tokens []SimpleToken, startIndex int) ([]SimpleRule, int, bool) {
+
+	rules := []SimpleRule{}
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+
+	for startIndex < len(tokens) {
+		rule := SimpleRule{}
+		rule, startIndex, ok = parser.parseRule(tokens, startIndex)
+		if ok {
+			rules = append(rules, rule)
+		} else {
+			break;
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return rules, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseRule(tokens []SimpleToken, startIndex int) (SimpleRule, int, bool) {
+
+	rule := SimpleRule{}
+	ok := true
+
+	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_implication)
+		if ok {
+			rule.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
+		}
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseQAPairs(tokens []SimpleToken, startIndex int) ([]SimpleQAPair, int, bool) {
+
+	qaPairs := []SimpleQAPair{}
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+
+	for startIndex < len(tokens) {
+		qaPair := SimpleRelationTransformation{}
+		qaPair, startIndex, ok = parser.parseQAPair(tokens, startIndex)
+		if ok {
+			qaPairs = append(qaPairs, qaPair)
+		} else {
+			break;
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return qaPairs, startIndex, ok
+}
+
+func (parser *simpleInternalGrammarParser) parseQAPair(tokens []SimpleToken, startIndex int) (SimpleLexItem, int, bool) {
+
+	qaPair := SimpleQAPair{}
+	ok, formFound, posFound := true, false, false
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
+	for ok {
+		field := ""
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				switch field {
+				case field_question:
+					qaPair.Question, startIndex, ok = parser.parseRelations(tokens, startIndex)
+					formFound = true
+				case field_answer:
+					qaPair.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
+					posFound = true;
+				default:
+					ok = false
+				}
+			}
+		}
+	}
+
+	// required fields
+	if formFound && posFound {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	} else {
+		ok = false
+	}
+
+	return qaPair, startIndex, ok
+}
+
 func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, startIndex int) (*simpleLexicon, int, bool) {
 
 	lexicon := NewSimpleLexicon()

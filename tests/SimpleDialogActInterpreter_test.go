@@ -1,7 +1,6 @@
 package tests
 
 import (
-//	"fmt"
 	"testing"
 	"nli-go/lib/example3"
 )

@@ -5,6 +5,8 @@ const (
 	field_pos = "pos"
 	field_sense = "sense"
 	field_rule = "rule"
+	field_question = 'Q'
+	field_answer = 'A'
 )
 
 type simpleInternalGrammarParser struct {
@@ -52,6 +54,24 @@ func (parser *simpleInternalGrammarParser) CreateTransformations(source string) 
 	return transformations, parser.lastParsedLine, ok
 }
 
+// Parses source into rules
+func (parser *simpleInternalGrammarParser) CreateRules(source string) ([]SimpleRule, int, bool) {
+
+	rules := []SimpleRule{}
+
+	// tokenize
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return rules, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	rules, _, ok := parser.parseRules(tokens, 0)
+
+	return rules, parser.lastParsedLine, ok
+}
+
 // Parses source into a grammar
 func (parser *simpleInternalGrammarParser) CreateGrammar(source string) (*SimpleGrammar, int, bool) {
 
@@ -86,4 +106,21 @@ func (parser *simpleInternalGrammarParser) CreateRelationSet(source string) (*Si
 	relationSet, _, ok := parser.parseRelationSet(tokens, 0)
 
 	return relationSet, parser.lastParsedLine, ok
+}
+
+func (parser *simpleInternalGrammarParser) CreateQAPairs(source string) ([]SimpleQAPair, int, bool) {
+
+	qaPairs := []SimpleQAPair{}
+
+	// tokenize
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return qaPairs, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	qaPairs, _, ok := parser.parseQAPairs(tokens, 0)
+
+	return qaPairs, parser.lastParsedLine, ok
 }

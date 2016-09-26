@@ -13,10 +13,10 @@ func (matcher *simpleRelationMatcher) Match(pattern *SimpleRelationSet, subject 
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation, pattern []SimpleRelation) ([]int, map[string]SimpleTerm){
+func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation, pattern []SimpleRelation) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
-	boundVariables := map[string]SimpleTerm{}
+	boundVariables := SimpleBinding{}
 
 	for _, patternRelation := range pattern {
 
@@ -27,7 +27,7 @@ func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation,
 			matchedIndexes = append(matchedIndexes, index)
 
 		} else {
-			return []int{}, map[string]SimpleTerm{}
+			return []int{}, SimpleBinding{}
 		}
 	}
 
@@ -35,7 +35,7 @@ func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation,
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (matcher *simpleRelationMatcher) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]SimpleTerm) (int, map[string]SimpleTerm, bool) {
+func (matcher *simpleRelationMatcher) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
 
 	for index, relation := range relations {
 
@@ -46,10 +46,10 @@ func (matcher *simpleRelationMatcher) matchSingleRelation(relations []SimpleRela
 		}
 	}
 
-	return 0, map[string]SimpleTerm{}, false
+	return 0, SimpleBinding{}, false
 }
 
-func (matcher *simpleRelationMatcher) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables map[string]SimpleTerm) (map[string]SimpleTerm, bool) {
+func (matcher *simpleRelationMatcher) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
 
@@ -74,7 +74,7 @@ func (matcher *simpleRelationMatcher) matchRelationToRelation(relation SimpleRel
 	return boundVariables, success
 }
 
-func (matcher *simpleRelationMatcher) bindArgument(argument SimpleTerm, patternRelationArgument SimpleTerm, boundVariables map[string]SimpleTerm) (map[string]SimpleTerm, bool) {
+func (matcher *simpleRelationMatcher) bindArgument(argument SimpleTerm, patternRelationArgument SimpleTerm, boundVariables SimpleBinding) (SimpleBinding, bool) {
 
 	success := false
 
@@ -107,4 +107,39 @@ func (matcher *simpleRelationMatcher) bindArgument(argument SimpleTerm, patternR
 	}
 
 	return boundVariables, success
+}
+
+func (matcher *simpleRelationMatcher) bindSingleRelationSingleBinding(relation SimpleRelation, binding SimpleBinding) SimpleRelation {
+
+	for i, argument := range relation.Arguments {
+
+		if argument.IsVariable() {
+			newValue, found := binding[argument.TermValue]
+			if found {
+				relation.Arguments[i] = newValue
+			}
+		}
+	}
+
+	return relation
+}
+
+func (matcher *simpleRelationMatcher) bindMultipleRelationsSingleBinding(relations []SimpleRelation, binding SimpleBinding) []SimpleRelation {
+
+	for i, relation:= range relations {
+		relations[i] = matcher.bindSingleRelationSingleBinding(relation, binding)
+	}
+
+	return relations
+}
+
+func (matcher *simpleRelationMatcher) bindMultipleRelationsMultipleBindings(relations []SimpleRelation, bindings []SimpleBinding) [][]SimpleRelation {
+
+	relationSets := [][]SimpleRelation{}
+
+	for _, binding := range bindings {
+		relationSets = append(relationSets, matcher.bindMultipleRelationsSingleBinding(relations, binding))
+	}
+
+	return relationSets
 }

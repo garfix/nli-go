@@ -72,6 +72,11 @@ func TestSimpleGoalSpecification(test *testing.T) {
 		gender(A, female) :- person(A, _, 'f', _)
 	]`)
 
+	// voorbeeld van wanneer dit niet werkt:
+	// marriages('Kurt Cobain', 'Courtney Love', '1992')
+	// married_to(A, B), name(A, AN), name(B, BN) :- marriages(AN, BN)
+	// kan echter wel, door de full names als person ids te beschouwen
+
 	// note! db specific
 	facts, _, _ := internalGrammarParser.CreateRelationSet(`[
 		marriages(14, 11, '1992')
@@ -84,7 +89,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	problemSolver := example3.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
-	domainSpecificResponseSense := problemSolver.solve(goalSense)
+	domainSpecificResponseSense := problemSolver.Solve(goalSense)
 
 	//// turn domain specific response into generic response
 	//specificResponseSpec, _, _ := internalGrammarParser.CreateTransformations(`[
@@ -95,7 +100,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	//transformer = example3.NewSimpleRelationTransformer(specificResponseSpec)
 	//genericResponseSense := transformer.Extract(domainSpecificResponseSense)
 	//
-	if len(domainSpecificResponseSense.GetRelations()) != 1 {
+	if len(domainSpecificResponseSense) != 1 {
 		test.Error("Wrong number of results")
 	}
 

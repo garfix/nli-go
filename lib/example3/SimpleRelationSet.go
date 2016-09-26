@@ -1,5 +1,6 @@
 package example3
 
+// TODO type SimpleRelationSet relations []SimpleRelation
 type SimpleRelationSet struct {
 	relations []SimpleRelation
 }

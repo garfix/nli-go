@@ -5,7 +5,22 @@ type simpleRelationTransformer struct {
 	matcher simpleRelationMatcher
 }
 
+// using transformations
 func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation) *simpleRelationTransformer {
+	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
+}
+
+// using rules (subset of transformations)
+func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer {
+
+	transformations := []SimpleRelationTransformation{}
+
+	for _, rule := range rules {
+
+		transformation := SimpleRelationTransformation{Replacement: []SimpleRelation{ rule.Goal }, Pattern: rule.Pattern }
+		transformations = append(transformations, transformation)
+	}
+
 	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
 }
 
@@ -75,7 +90,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 	return matchedIndexes, replacements
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables map[string]SimpleTerm) []SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables SimpleBinding) []SimpleRelation {
 
 	replacements := []SimpleRelation{}
 

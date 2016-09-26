@@ -106,7 +106,7 @@ func (parser *simpleInternalGrammarParser) parseQAPairs(tokens []SimpleToken, st
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 
 	for startIndex < len(tokens) {
-		qaPair := SimpleRelationTransformation{}
+		qaPair := SimpleQAPair{}
 		qaPair, startIndex, ok = parser.parseQAPair(tokens, startIndex)
 		if ok {
 			qaPairs = append(qaPairs, qaPair)
@@ -120,7 +120,7 @@ func (parser *simpleInternalGrammarParser) parseQAPairs(tokens []SimpleToken, st
 	return qaPairs, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseQAPair(tokens []SimpleToken, startIndex int) (SimpleLexItem, int, bool) {
+func (parser *simpleInternalGrammarParser) parseQAPair(tokens []SimpleToken, startIndex int) (SimpleQAPair, int, bool) {
 
 	qaPair := SimpleQAPair{}
 	ok, formFound, posFound := true, false, false

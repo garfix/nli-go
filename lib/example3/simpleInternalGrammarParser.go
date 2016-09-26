@@ -5,8 +5,8 @@ const (
 	field_pos = "pos"
 	field_sense = "sense"
 	field_rule = "rule"
-	field_question = 'Q'
-	field_answer = 'A'
+	field_question = "Q"
+	field_answer = "A"
 )
 
 type simpleInternalGrammarParser struct {

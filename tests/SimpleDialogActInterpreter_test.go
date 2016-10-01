@@ -26,7 +26,7 @@ func TestSimpleDialogActInterpreter(test *testing.T) {
 	`)
 
 	analyser := example3.NewSimpleRelationTransformer(analysis)
-	dialogActs := analyser.Extract(sense.GetRelations())
+	dialogActs, _ := analyser.Extract(sense.GetRelations())
 
 	infoRequestRelations, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)
 

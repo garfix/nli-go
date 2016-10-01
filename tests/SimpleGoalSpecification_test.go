@@ -31,9 +31,9 @@ func TestSimpleGoalSpecification(test *testing.T) {
 
 	// create domain specific representation
 	transformer := example3.NewSimpleRelationTransformer(domainSpecificAnalysis)
-	domainSpecificSense := transformer.Extract(genericSense.GetRelations())[0]
+	domainSpecificSense, _ := transformer.Extract(genericSense.GetRelations())
 
-fmt.Println("DS sense " + domainSpecificSense[0].String())
+fmt.Printf("DS sense %v\n", domainSpecificSense)
 
 
 //fmt.Println("DS sense " + domainSpecificSense.String())
@@ -71,7 +71,7 @@ fmt.Println("DS sense " + domainSpecificSense[0].String())
 	// optimalisatie-fase: doe eerst de meest gerestricteerde doelen (bv name(A, 'Kurt Cobain')
 
 	transformer = example3.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
-	goalSense := transformer.Extract(domainSpecificSense)[0]
+	goalSense, _ := transformer.Extract(domainSpecificSense[0])
 
 fmt.Println("")
 //fmt.Println("Goal sense " + goalSense.String())
@@ -116,7 +116,7 @@ fmt.Println("")
 	problemSolver := example3.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
-	domainSpecificResponseSense := problemSolver.Solve(*goalSense)
+	domainSpecificResponseSense := problemSolver.Solve(goalSense[0])
 
 // ERR
 

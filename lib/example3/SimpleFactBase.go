@@ -22,15 +22,19 @@ fmt.Printf("Factbase start %v\n", goal);
 
 	transformer := NewSimpleRelationTransformer2(factBase.ds2db)
 
-	fmt.Printf("DB: %v\n", factBase.ds2db)
+fmt.Printf("DB: %v\n", factBase.ds2db)
 
-	dbRelationSets := transformer.Extract([]SimpleRelation{goal})
+	dbRelationSets, dbBindings := transformer.Extract([]SimpleRelation{goal})
 
-fmt.Printf("Extracted: %v\n", dbRelationSets);
+// bij het extracten moet je bijhouden aan hoe de oorspronkelijke variabelen gebonden worden
+// gebruik deze bindings ook als defaults hieronder
+
+fmt.Printf("Extracted: %v %v\n", dbRelationSets, dbBindings);
 
 	matcher := NewSimpleRelationMatcher()
+	newSimpleBinding := SimpleBinding{}
 
-	for _, dbRelationSet := range dbRelationSets {
+	for i, dbRelationSet := range dbRelationSets {
 
 		simpleBinding := SimpleBinding{}
 		relationsFound := true
@@ -43,13 +47,14 @@ fmt.Printf("Extracted: %v\n", dbRelationSets);
 
 			for _, dbFact := range factBase.facts {
 
-				fmt.Printf("Match %v %v\n", dbRelation, dbFact);
+				fmt.Printf("Match %v %v %s\n", dbRelation, dbFact, simpleBinding);
 
-				simpleBinding, factFound = matcher.matchSubjectToPattern(dbRelation, dbFact, simpleBinding)
+				newSimpleBinding, factFound = matcher.matchSubjectToPattern(dbRelation, dbFact, simpleBinding)
 
-				fmt.Printf("Binding %v %b\n", simpleBinding, factFound);
+				fmt.Printf("Binding %v %b\n", newSimpleBinding, factFound);
 
 				if factFound {
+					simpleBinding = newSimpleBinding
 					break
 				}
 			}
@@ -66,7 +71,7 @@ fmt.Printf("Relations found %b\n", relationsFound);
 			subgoalRelationSet := []SimpleRelation{}
 
 			subgoalRelationSets = append(subgoalRelationSets, subgoalRelationSet)
-			subgoalBindings = append(subgoalBindings, simpleBinding)
+			subgoalBindings = append(subgoalBindings, dbBindings[i].Merge(simpleBinding))
 		}
 	}
 

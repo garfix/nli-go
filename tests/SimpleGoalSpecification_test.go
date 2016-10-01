@@ -36,6 +36,9 @@ func TestSimpleGoalSpecification(test *testing.T) {
 fmt.Println("DS sense " + domainSpecificSense[0].String())
 
 
+//fmt.Println("DS sense " + domainSpecificSense.String())
+
+
 	// goal specification
 	// if X was the request, Y is what the user really wants to know
 	// turn X into Y
@@ -69,6 +72,10 @@ fmt.Println("DS sense " + domainSpecificSense[0].String())
 
 	transformer = example3.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
 	goalSense := transformer.Extract(domainSpecificSense)[0]
+
+fmt.Println("")
+//fmt.Println("Goal sense " + goalSense.String())
+// OK
 
 fmt.Println("")
 //fmt.Println("Goal sense " + goalSense.String())
@@ -109,7 +116,9 @@ fmt.Println("")
 	problemSolver := example3.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
-	domainSpecificResponseSense := problemSolver.Solve(goalSense)
+	domainSpecificResponseSense := problemSolver.Solve(*goalSense)
+
+// ERR
 
 // ERR
 

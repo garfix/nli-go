@@ -26,11 +26,14 @@ func TestSimpleDialogActInterpreter(test *testing.T) {
 	`)
 
 	analyser := example3.NewSimpleRelationTransformer(analysis)
-	dialogActs := analyser.Extract(sense)
+	dialogActs := analyser.Extract(sense.GetRelations())
 
 	infoRequestRelations, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)
 
-	if !relationMatcher.Match(infoRequestRelations, dialogActs) {
+	set := example3.NewSimpleRelationSet()
+	set.AddRelations(dialogActs[0])
+
+	if !relationMatcher.Match(infoRequestRelations, set) {
 		test.Error("No match")
 	}
 }

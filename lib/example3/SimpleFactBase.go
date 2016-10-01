@@ -21,51 +21,53 @@ fmt.Printf("Factbase start %v\n", goal);
 	subgoalBindings := []SimpleBinding{}
 
 	transformer := NewSimpleRelationTransformer2(factBase.ds2db)
-	goalSet := NewSimpleRelationSet()
-	goalSet.AddRelation(goal)
 
-	fmt.Printf("Goalset: %v\n", goalSet.GetRelations())
 	fmt.Printf("DB: %v\n", factBase.ds2db)
 
-	dbRelations := transformer.Extract(goalSet)
+	dbRelationSets := transformer.Extract([]SimpleRelation{goal})
 
-	// TODO: deze dbRelations hebben nog vrije variabelen die in goal al gebonden waren!
-
-fmt.Printf("Extracted: %v\n", dbRelations);
+fmt.Printf("Extracted: %v\n", dbRelationSets);
 
 	matcher := NewSimpleRelationMatcher()
 
-	for _, dbRelation := range dbRelations.GetRelations() {
-
-fmt.Printf("Relation %v\n", dbRelation);
+	for _, dbRelationSet := range dbRelationSets {
 
 		simpleBinding := SimpleBinding{}
-		success := true
+		relationsFound := true
 
-		for _, dbFact := range factBase.facts {
+		for _, dbRelation := range dbRelationSet {
 
-			// reset binding
-			simpleBinding = SimpleBinding{}
+			fmt.Printf("Relation %v\n", dbRelation);
 
-			fmt.Printf("Match %v %v\n", dbRelation, dbFact);
+			factFound := false
 
-			simpleBinding, success = matcher.matchSubjectToPattern(dbRelation, dbFact, simpleBinding)
+			for _, dbFact := range factBase.facts {
 
-			fmt.Printf("Binding %v\n", simpleBinding);
+				fmt.Printf("Match %v %v\n", dbRelation, dbFact);
 
-			if success {
+				simpleBinding, factFound = matcher.matchSubjectToPattern(dbRelation, dbFact, simpleBinding)
+
+				fmt.Printf("Binding %v %b\n", simpleBinding, factFound);
+
+				if factFound {
+					break
+				}
+			}
+
+			if !factFound {
+				relationsFound = false
 				break
 			}
 		}
 
-		if !success {
-			continue
+fmt.Printf("Relations found %b\n", relationsFound);
+
+		if relationsFound {
+			subgoalRelationSet := []SimpleRelation{}
+
+			subgoalRelationSets = append(subgoalRelationSets, subgoalRelationSet)
+			subgoalBindings = append(subgoalBindings, simpleBinding)
 		}
-
-		subgoalRelationSet := []SimpleRelation{}
-
-		subgoalRelationSets = append(subgoalRelationSets, subgoalRelationSet)
-		subgoalBindings = append(subgoalBindings, simpleBinding)
 	}
 
 fmt.Printf("Factbase end %v %v\n", subgoalRelationSets, subgoalBindings);

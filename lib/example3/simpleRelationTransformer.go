@@ -26,63 +26,69 @@ func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer
 	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
 }
 
-// return the original relations, but replace the ones that have matched with their replacements
-func (transformer *simpleRelationTransformer) Replace(relationSet *SimpleRelationSet) *SimpleRelationSet {
-
-	matchedIndexes, replacements := transformer.matchAllTransformations(relationSet.relations)
-	newRelations := NewSimpleRelationSet()
-
-	for i, oldRelation := range relationSet.GetRelations()  {
-		if !intArrayContains(matchedIndexes, i) {
-			newRelations.AddRelation(oldRelation)
-		}
-	}
-
-	newRelations.AddRelations(replacements)
-
-	return newRelations
-}
+//// return the original relations, but replace the ones that have matched with their replacements
+//func (transformer *simpleRelationTransformer) Replace(relationSet *SimpleRelationSet) *SimpleRelationSet {
+//
+//	matchedIndexes, replacements := transformer.matchAllTransformations(relationSet.relations)
+//	newRelations := NewSimpleRelationSet()
+//
+//	for i, oldRelation := range relationSet.GetRelations()  {
+//		if !intArrayContains(matchedIndexes, i) {
+//			newRelations.AddRelation(oldRelation)
+//		}
+//	}
+//
+//	newRelations.AddRelations(replacements)
+//
+//	return newRelations
+//}
 
 // return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relationSet *SimpleRelationSet) *SimpleRelationSet {
+func (transformer *simpleRelationTransformer) Extract(relationSet []SimpleRelation) [][]SimpleRelation {
 
-	_, replacements := transformer.matchAllTransformations(relationSet.relations)
-	return NewSimpleRelationSet2(replacements)
+	_, replacements := transformer.matchAllTransformations(relationSet)
+	return replacements
 }
 
-// only add the replacements to the original relations
-func (transformer *simpleRelationTransformer) Append(relationSet *SimpleRelationSet) *SimpleRelationSet {
-
-	_, replacements := transformer.matchAllTransformations(relationSet.relations)
-
-	newRelations := NewSimpleRelationSet2(relationSet.GetRelations())
-	newRelations.AddRelations(replacements)
-
-	return newRelations
-}
+//// only add the replacements to the original relations
+//func (transformer *simpleRelationTransformer) Append(relationSet *SimpleRelationSet) *SimpleRelationSet {
+//
+//	_, replacements := transformer.matchAllTransformations(relationSet.relations)
+//
+//	newRelations := NewSimpleRelationSet2(relationSet.GetRelations())
+//	newRelations.AddRelations(replacements)
+//
+//	return newRelations
+//}
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(relations []SimpleRelation) ([]int, []SimpleRelation){
+func (transformer *simpleRelationTransformer) matchAllTransformations(relations []SimpleRelation) ([][]int, [][]SimpleRelation){
 
-	matchedIndexes := []int{}
-	replacements := []SimpleRelation{}
+	matchedIndexes := [][]int{}
+	replacements := [][]SimpleRelation{}
 
 	for _, transformation := range transformer.transformations {
 
 		newMatchedIndexes, newReplacements := transformer.matchSingleTransformation(relations, transformation)
-		matchedIndexes = append(matchedIndexes, newMatchedIndexes...)
-		replacements = append(replacements, newReplacements...)
+		if len(newMatchedIndexes) > 0 {
+			matchedIndexes = append(matchedIndexes, intArrayDeduplicate(newMatchedIndexes))
+			replacements = append(replacements, newReplacements)
+		}
 	}
 
-	return intArrayDeduplicate(matchedIndexes), replacements
+	return matchedIndexes, replacements
 }
 
 // Attempts to match a single transformation
 // Returns the indexes of matched relations, and the replacements
 func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation){
 
-	matchedIndexes, binding := transformer.matcher.matchSubjectsToPatterns(relations, transformation.Pattern)
+	fmt.Printf("Matching: %v / %v\n", transformation.Pattern, relations)
+
+	matchedIndexes, binding := transformer.matcher.matchSubjectsToPatterns(transformation.Pattern, relations, true)
+
+fmt.Printf("Matched: %v %v\n", matchedIndexes, binding)
 
 	replacements := []SimpleRelation{}
 	if len(matchedIndexes) > 0 {

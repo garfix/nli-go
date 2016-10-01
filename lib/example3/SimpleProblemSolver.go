@@ -20,11 +20,11 @@ func (solver *simpleProblemSolver) AddKnowledgeBase(source SimpleKnowledgeBase) 
 //  { father('john', 'jack'), father('jack', 'joe') }
 //  { father('bob', 'jonathan'), father('jonathan', 'bill') }
 // }
-func (solver simpleProblemSolver) Solve(goals SimpleRelationSet) [][]SimpleRelation {
+func (solver simpleProblemSolver) Solve(goals []SimpleRelation) [][]SimpleRelation {
 
 fmt.Print("Solve start\n")
-	bindings := solver.SolveMultipleRelations(goals.GetRelations())
-	solutions := solver.matcher.bindMultipleRelationsMultipleBindings(goals.GetRelations(), bindings)
+	bindings := solver.SolveMultipleRelations(goals)
+	solutions := solver.matcher.bindMultipleRelationsMultipleBindings(goals, bindings)
 
 fmt.Printf("Solve end %v\n", solutions)
 	return solutions

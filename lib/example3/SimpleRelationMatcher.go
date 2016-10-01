@@ -9,11 +9,11 @@ func NewSimpleRelationMatcher() *simpleRelationMatcher {
 }
 
 func (matcher *simpleRelationMatcher) Match(subject *SimpleRelationSet, pattern *SimpleRelationSet) bool {
-	matchedIndexes, _ := matcher.matchSubjectsToPatterns(subject.relations, pattern.relations)
+	matchedIndexes, _ := matcher.matchSubjectsToPatterns(subject.relations, pattern.relations, false)
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations []SimpleRelation, patternRelations []SimpleRelation) ([]int, SimpleBinding){
+func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations []SimpleRelation, patternRelations []SimpleRelation, allowPartial bool) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
 	boundVariables := SimpleBinding{}
@@ -27,7 +27,10 @@ func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations [
 			matchedIndexes = append(matchedIndexes, index)
 
 		} else {
-			return []int{}, SimpleBinding{}
+
+			if !allowPartial {
+				return []int{}, SimpleBinding{}
+			}
 		}
 	}
 
@@ -49,7 +52,7 @@ func (matcher *simpleRelationMatcher) matchSubjectsToPattern(subjectRelations []
 	return 0, SimpleBinding{}, false
 }
 
-func (matcher *simpleRelationMatcher) matchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (SimpleBinding, bool) {
+func (matcher *simpleRelationMatcher) matchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
 
@@ -60,10 +63,10 @@ func (matcher *simpleRelationMatcher) matchSubjectToPattern(subjectRelation Simp
 
 		// arguments
 		for i, subjectArgument := range subjectRelation.Arguments {
-			newBoundVariables, ok := matcher.bindArgument(subjectArgument, patternRelation.Arguments[i], boundVariables)
+			newBinding, ok := matcher.bindArgument(subjectArgument, patternRelation.Arguments[i], binding)
 
 			if ok {
-				boundVariables = newBoundVariables
+				binding = newBinding
 			} else {
 				success = false
 				break;
@@ -71,7 +74,7 @@ func (matcher *simpleRelationMatcher) matchSubjectToPattern(subjectRelation Simp
 		}
 	}
 
-	return boundVariables, success
+	return binding, success
 }
 
 // Extends the binding with new variable bindings for the variables of subjectArgument

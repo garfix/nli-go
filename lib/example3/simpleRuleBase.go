@@ -19,7 +19,7 @@ func (ruleBase *SimpleRuleBase) Bind(goal SimpleRelation) ([][]SimpleRelation, [
 		binding := SimpleBinding{}
 
 		// match goal
-		simpleBinding, success := matcher.matchRelationToRelation(goal, rule.Goal, binding)
+		simpleBinding, success := matcher.matchSubjectToPattern(goal, rule.Goal, binding)
 		if !success {
 			continue
 		}

@@ -406,6 +406,12 @@ func (parser *simpleInternalGrammarParser) parseArgument(tokens []SimpleToken, s
 				if ok {
 					term.TermType = Term_stringConstant
 					term.TermValue = tokenValue
+				} else {
+					tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_anonymousVariable)
+					if ok {
+						term.TermType = Term_anonymousVariable
+						term.TermValue = tokenValue
+					}
 				}
 			}
 		}

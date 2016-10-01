@@ -16,3 +16,15 @@ func (b SimpleBinding) Merge(b2 SimpleBinding) SimpleBinding {
 
 	return result
 }
+
+func (b SimpleBinding) String() string {
+
+	s, sep := "", ""
+
+	for k, v := range b {
+		s += sep + k + "=" + v.String()
+		sep = ", "
+	}
+
+	return "{" + s + "}"
+}

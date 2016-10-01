@@ -1,12 +1,14 @@
 package example3
 
+import "fmt"
+
 type simpleProblemSolver struct {
 	sources []SimpleKnowledgeBase
 	matcher *simpleRelationMatcher
 }
 
 func NewSimpleProblemSolver() *simpleProblemSolver {
-	return &simpleProblemSolver{sources: []*SimpleKnowledgeBase{}, matcher:NewSimpleRelationMatcher()}
+	return &simpleProblemSolver{sources: []SimpleKnowledgeBase{}, matcher:NewSimpleRelationMatcher()}
 }
 
 func (solver *simpleProblemSolver) AddKnowledgeBase(source SimpleKnowledgeBase) {
@@ -20,9 +22,11 @@ func (solver *simpleProblemSolver) AddKnowledgeBase(source SimpleKnowledgeBase) 
 // }
 func (solver simpleProblemSolver) Solve(goals SimpleRelationSet) [][]SimpleRelation {
 
+fmt.Print("Solve start\n")
 	bindings := solver.SolveMultipleRelations(goals.GetRelations())
-	solutions := solver.matcher.bindMultipleRelationsMultipleBindings(goals, bindings)
+	solutions := solver.matcher.bindMultipleRelationsMultipleBindings(goals.GetRelations(), bindings)
 
+fmt.Printf("Solve end %v\n", solutions)
 	return solutions
 }
 
@@ -33,12 +37,14 @@ func (solver simpleProblemSolver) Solve(goals SimpleRelationSet) [][]SimpleRelat
 // }
 func (solver simpleProblemSolver) SolveMultipleRelations(goals []SimpleRelation) []SimpleBinding {
 
+fmt.Printf("SolveMultipleRelations start %v\n", goals)
+	
 	bindings := []SimpleBinding{}
 
 	for _, goal := range goals {
 		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
 	}
-
+fmt.Printf("SolveMultipleRelations end %v\n", bindings)
 	return bindings
 }
 
@@ -53,12 +59,19 @@ func (solver simpleProblemSolver) SolveMultipleRelations(goals []SimpleRelation)
 // }
 func (solver simpleProblemSolver) SolveSingleRelationMultipleBindings(goalRelation SimpleRelation, bindings []SimpleBinding) []SimpleBinding {
 
+	fmt.Printf("SolveSingleRelationMultipleBindings start %v ; %v\n", goalRelation, bindings)
+
+	if len(bindings) == 0 {
+		return solver.SolveSingleRelationSingleBinding(goalRelation, SimpleBinding{})
+	}
+
 	newBindings := []SimpleBinding{}
 
 	for _, binding := range bindings {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding))
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
 	}
 
+fmt.Printf("SolveSingleRelationMultipleBindings end %v\n", newBindings)
 	return newBindings
 }
 
@@ -70,15 +83,19 @@ func (solver simpleProblemSolver) SolveSingleRelationMultipleBindings(goalRelati
 // }
 func (solver simpleProblemSolver) SolveSingleRelationSingleBinding(goalRelation SimpleRelation, binding SimpleBinding) []SimpleBinding {
 
+fmt.Printf("SolveSingleRelationSingleBinding start %v %v\n", goalRelation, binding)
 	newBindings := []SimpleBinding{}
 
 	boundRelation := solver.matcher.bindSingleRelationSingleBinding(goalRelation, binding)
 
 	// go through all knowledge sources
 	for _, source := range solver.sources {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleSource(boundRelation, binding, source))
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleSource(boundRelation, binding, source)...)
+//panic("end")
 	}
+//panic("end")
 
+fmt.Printf("SolveSingleRelationSingleBinding end %v\n", newBindings)
 	return newBindings
 }
 
@@ -89,6 +106,8 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBinding(goalRelation 
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
 func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(boundRelation SimpleRelation, binding SimpleBinding, source SimpleKnowledgeBase) []SimpleBinding {
+
+fmt.Printf("SolveSingleRelationSingleBindingSingleSource start %v %v\n", boundRelation, binding)
 
 	newBindings := []SimpleBinding{}
 
@@ -104,13 +123,15 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(b
 	sourceSubgoalSets, sourceBindings := source.Bind(boundRelation)
 
 	for i, sourceSubgoalSet := range sourceSubgoalSets {
+
 		sourceBinding := sourceBindings[i]
 
 		combinedBinding := binding.Merge(sourceBinding)
 
 		subgoalSetBindings := solver.SolveMultipleRelationsSingleBinding(sourceSubgoalSet, combinedBinding)
-		newBindings = append(newBindings, subgoalSetBindings)
+		newBindings = append(newBindings, subgoalSetBindings...)
 	}
+fmt.Printf("SolveSingleRelationSingleBindingSingleSource end %v\n", newBindings)
 
 	return newBindings
 }
@@ -123,12 +144,14 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(b
 // }
 func (solver simpleProblemSolver) SolveMultipleRelationsSingleBinding(goals []SimpleRelation, binding SimpleBinding) []SimpleBinding {
 
-	bindings := []SimpleBinding{}
+fmt.Printf("SolveMultipleRelationsSingleBinding start %v %v\n", goals, binding)
+	bindings := []SimpleBinding{binding}
 
 	for _, goal := range goals {
-		bindings = solver.SolveSingleRelationSingleBinding(goal, bindings)
+		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
 	}
 
-	return bindings
+	fmt.Printf("SolveMultipleRelationsSingleBinding end %v\n", bindings)
 
+	return bindings
 }

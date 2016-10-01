@@ -8,19 +8,19 @@ func NewSimpleRelationMatcher() *simpleRelationMatcher {
 	return &simpleRelationMatcher{}
 }
 
-func (matcher *simpleRelationMatcher) Match(pattern *SimpleRelationSet, subject *SimpleRelationSet) bool {
-	matchedIndexes, _ := matcher.matchRelations(subject.relations, pattern.relations)
+func (matcher *simpleRelationMatcher) Match(subject *SimpleRelationSet, pattern *SimpleRelationSet) bool {
+	matchedIndexes, _ := matcher.matchSubjectsToPatterns(subject.relations, pattern.relations)
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation, pattern []SimpleRelation) ([]int, SimpleBinding){
+func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations []SimpleRelation, patternRelations []SimpleRelation) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
 	boundVariables := SimpleBinding{}
 
-	for _, patternRelation := range pattern {
+	for _, patternRelation := range patternRelations {
 
-		index, newBoundVariables, found := matcher.matchSingleRelation(relations, patternRelation, boundVariables)
+		index, newBoundVariables, found := matcher.matchSubjectsToPattern(subjectRelations, patternRelation, boundVariables)
 		if found {
 
 			boundVariables = newBoundVariables
@@ -35,11 +35,11 @@ func (matcher *simpleRelationMatcher) matchRelations(relations []SimpleRelation,
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (matcher *simpleRelationMatcher) matchSingleRelation(relations []SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
+func (matcher *simpleRelationMatcher) matchSubjectsToPattern(subjectRelations []SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
 
-	for index, relation := range relations {
+	for index, subjectRelation := range subjectRelations {
 
-		newBoundVariables, matched := matcher.matchRelationToRelation(relation, patternRelation, boundVariables)
+		newBoundVariables, matched := matcher.matchSubjectToPattern(subjectRelation, patternRelation, boundVariables)
 
 		if matched {
 			return index, newBoundVariables, true
@@ -49,18 +49,18 @@ func (matcher *simpleRelationMatcher) matchSingleRelation(relations []SimpleRela
 	return 0, SimpleBinding{}, false
 }
 
-func (matcher *simpleRelationMatcher) matchRelationToRelation(relation SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (SimpleBinding, bool) {
+func (matcher *simpleRelationMatcher) matchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
 
 	// predicate
-	if relation.Predicate != patternRelation.Predicate {
+	if subjectRelation.Predicate != patternRelation.Predicate {
 		success = false
 	} else {
 
 		// arguments
-		for i, argument := range relation.Arguments {
-			newBoundVariables, ok := matcher.bindArgument(argument, patternRelation.Arguments[i], boundVariables)
+		for i, subjectArgument := range subjectRelation.Arguments {
+			newBoundVariables, ok := matcher.bindArgument(subjectArgument, patternRelation.Arguments[i], boundVariables)
 
 			if ok {
 				boundVariables = newBoundVariables
@@ -74,39 +74,49 @@ func (matcher *simpleRelationMatcher) matchRelationToRelation(relation SimpleRel
 	return boundVariables, success
 }
 
-func (matcher *simpleRelationMatcher) bindArgument(argument SimpleTerm, patternRelationArgument SimpleTerm, boundVariables SimpleBinding) (SimpleBinding, bool) {
+// Extends the binding with new variable bindings for the variables of subjectArgument
+func (matcher *simpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, patternArgument SimpleTerm, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := false
 
-	if patternRelationArgument.IsVariable() {
+	if subjectArgument.IsAnonymousVariable() || patternArgument.IsAnonymousVariable() {
+
+		// anonymous variables always match, but do not bind
+
+		success = true
+
+	} else if subjectArgument.IsVariable() {
 
 		// variable
 
 		value := SimpleTerm{}
 
 		// does patternRelationArgument occur in boundVariables?
-		value, match := boundVariables[patternRelationArgument.AsKey()]
+		value, match := binding[subjectArgument.String()]
 		if match {
 			// it does, use the bound variable
-			if argument.Equals(value) {
+			if patternArgument.Equals(value) {
 				success = true
 			}
 		} else {
 			// it does not, just assign the actual argument
-			boundVariables[patternRelationArgument.AsKey()] = argument
+			binding[subjectArgument.String()] = patternArgument
 			success = true
 		}
 
 	} else {
 
-		// atom, constant
+		// subject is atom, constant
 
-		if argument.Equals(patternRelationArgument) {
+		if patternArgument.IsVariable() {
+			// note: no binding is made
+			success = true
+		} else if patternArgument.Equals(subjectArgument) {
 			success = true
 		}
 	}
 
-	return boundVariables, success
+	return binding, success
 }
 
 func (matcher *simpleRelationMatcher) bindSingleRelationSingleBinding(relation SimpleRelation, binding SimpleBinding) SimpleRelation {

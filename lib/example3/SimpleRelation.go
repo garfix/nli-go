@@ -5,12 +5,18 @@ type SimpleRelation struct {
 	Arguments []SimpleTerm
 }
 
-func (relation *SimpleRelation) String() string {
+func (relation SimpleRelation) String() string {
 
 	args, sep := "", ""
 
 	for _, Argument := range relation.Arguments {
-		args += sep + Argument.TermValue
+
+		term := Argument.TermValue
+		if Argument.TermType == Term_stringConstant {
+			term = "'" + term + "'"
+		}
+
+		args += sep + term
 		sep = ", "
 	}
 

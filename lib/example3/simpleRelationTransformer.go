@@ -1,5 +1,7 @@
 package example3
 
+import "fmt"
+
 type simpleRelationTransformer struct {
 	transformations []SimpleRelationTransformation
 	matcher simpleRelationMatcher
@@ -80,28 +82,32 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 // Returns the indexes of matched relations, and the replacements
 func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation){
 
-	matchedIndexes, boundVariables := transformer.matcher.matchRelations(relations, transformation.Pattern)
+	matchedIndexes, binding := transformer.matcher.matchSubjectsToPatterns(relations, transformation.Pattern)
 
 	replacements := []SimpleRelation{}
 	if len(matchedIndexes) > 0 {
-		replacements = append(replacements, transformer.createReplacements(transformation.Replacement, boundVariables)...)
+		replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
 	}
 
 	return matchedIndexes, replacements
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, boundVariables SimpleBinding) []SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, bindings SimpleBinding) []SimpleRelation {
 
 	replacements := []SimpleRelation{}
 
+	fmt.Printf("Replace! %v %v\n", relations, bindings)
+
 	for _, relation := range relations {
+
+		newRelation := relation
 
 		for i, argument := range relation.Arguments {
 
 			if argument.IsVariable() {
-				value, found := boundVariables[argument.AsKey()]
+				value, found := bindings[argument.String()]
 				if found {
-					relation.Arguments[i] = value
+					newRelation.Arguments[i] = value
 				} else {
 					// replacement could not be bound!
 				}

@@ -3,6 +3,7 @@ package tests
 import (
 	"testing"
 	"nli-go/lib/example3"
+	"fmt"
 )
 
 func TestSimpleGoalSpecification(test *testing.T) {
@@ -11,14 +12,13 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	internalGrammarParser := example3.NewSimpleInternalGrammarParser()
 
 	// who did Kurt Cobain marry?
-	// Note: this representation is rubbish :) I will get to that later
 	// non-domain specific
 	genericSense, _, _ := internalGrammarParser.CreateRelationSet(`[
 		predication(S1, marry)
 		tense(S1, past)
 		subject(S1, E1)
 		object(S1, E2)
-		info_request(E3)
+		info_request(E1)
 		name(E2, 'Kurt Cobain')
 	]`)
 
@@ -26,11 +26,15 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	domainSpecificAnalysis, _, _ := internalGrammarParser.CreateTransformations(`[
 		married_to(A, B) :- predication(P1, marry), subject(P1, A), object(P1, B)
 		name(A, N) :- name(A, N)
+		question(A) :- info_request(A)
 	]`)
 
 	// create domain specific representation
 	transformer := example3.NewSimpleRelationTransformer(domainSpecificAnalysis)
 	domainSpecificSense := transformer.Extract(genericSense)
+
+//fmt.Println("DS sense " + domainSpecificSense.String())
+
 
 	// goal specification
 	// if X was the request, Y is what the user really wants to know
@@ -45,12 +49,18 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	// date er direct een antwoord-template beschikbaar is, is omdat die eerder bedacht is; als er nog geen beschikbaar is,
 	// moet die misschien bedacht worden; dat is een meta-probleem
 
-	domainSpecificGoalAnalysis, _, _ := internalGrammarParser.CreateQAPairs(`[
-		{
-			Q: married_to(A, B), info_request(B)
-			A: married_to(A, B), gender(A, G), name(B, N)
-		}
+	//domainSpecificGoalAnalysis, _, _ := internalGrammarParser.CreateQAPairs(`[
+	//	{
+	//		Q: married_to(A, B), info_request(B)
+	//		A: married_to(A, B), gender(A, G), name(B, N)
+	//	}
+	//]`)
+
+	domainSpecificGoalAnalysis, _, _ := internalGrammarParser.CreateTransformations(`[
+		married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
 	]`)
+
+//fmt.Println(domainSpecificGoalAnalysis)
 
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
 	// 			RQ: B
@@ -60,17 +70,25 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	transformer = example3.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
 	goalSense := transformer.Extract(domainSpecificSense)
 
+fmt.Println("")
+//fmt.Println("Goal sense " + goalSense.String())
+// OK
+
 	rules, _, _ := internalGrammarParser.CreateRules(`
-		married_to(X, Y) :- married_to(Y, X)
 	`)
+//		married_to(X, Y) :- married_to(Y, X)
+
 	ruleBase1 := example3.NewSimpleRuleBase(rules)
 
 	ds2db, _, _ := internalGrammarParser.CreateRules(`[
-		married_to(A, B) :- marriages(A, B)
-		name(A, N) :- person(A, N, _, _)
-		gender(A, male) :- person(A, _, 'm', _)
-		gender(A, female) :- person(A, _, 'f', _)
+		marriages(A, B, _) :- married_to(A, B)
+		person(A, N, _, _) :- name(A, N)
+		person(A, _, 'M', _) :- gender(A, male)
+		person(A, _, 'F', _) :- gender(A, female)
 	]`)
+
+//fmt.Println(ds2db)
+// OK
 
 	// voorbeeld van wanneer dit niet werkt:
 	// marriages('Kurt Cobain', 'Courtney Love', '1992')
@@ -79,17 +97,21 @@ func TestSimpleGoalSpecification(test *testing.T) {
 
 	// note! db specific
 	facts, _, _ := internalGrammarParser.CreateRelationSet(`[
-		marriages(14, 11, '1992')
-		person(11, 'Kurt Cobain', 'M', '1967')
-		person(14, 'Courtney Love', 'F', '1964')
+		marriages(11, 14, '1992')
+		person(11, 'Courtney Love', 'F', '1964')
+		person(14, 'Kurt Cobain', 'M', '1967')
 	]`)
-	factBase1 := example3.NewSimpleFactBase(facts, ds2db)
+//		marriages(14, 11, '1992')
+
+	factBase1 := example3.NewSimpleFactBase(facts.GetRelations(), ds2db)
 
 	// produce response
 	problemSolver := example3.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
-	domainSpecificResponseSense := problemSolver.Solve(goalSense)
+	domainSpecificResponseSense := problemSolver.Solve(*goalSense)
+
+// ERR
 
 	//// turn domain specific response into generic response
 	//specificResponseSpec, _, _ := internalGrammarParser.CreateTransformations(`[
@@ -101,7 +123,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	//genericResponseSense := transformer.Extract(domainSpecificResponseSense)
 	//
 	if len(domainSpecificResponseSense) != 1 {
-		test.Error("Wrong number of results")
+		test.Errorf("Wrong number of results: %d", len(domainSpecificResponseSense))
 	}
 
 }

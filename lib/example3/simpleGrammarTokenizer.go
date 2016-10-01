@@ -13,6 +13,7 @@ const (
 	_ = iota // number these constants 1, 2, ...
 	t_predicate
 	t_variable
+	t_anonymousVariable
 	t_stringConstant
 	t_number
 	t_comma
@@ -45,6 +46,7 @@ func (tok *simpleGrammarTokenizer) Tokenize(source string) ([]SimpleToken, int, 
 		pattern string} {
 		{t_predicate, "[a-z][a-z_]*"},
 		{t_variable, "[A-Z][A-Za-z0-9_]*"},
+		{t_anonymousVariable, "_"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
 		{t_number, "[0-9]+"},
 		{t_comma, ","},

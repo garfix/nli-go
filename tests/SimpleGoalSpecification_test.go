@@ -2,14 +2,15 @@ package tests
 
 import (
 	"testing"
-	"nli-go/lib/example3"
 	"fmt"
+	"nli-go/lib/importer"
+	"nli-go/lib/process"
 )
 
 func TestSimpleGoalSpecification(test *testing.T) {
 
 	// relations
-	internalGrammarParser := example3.NewSimpleInternalGrammarParser()
+	internalGrammarParser := importer.NewSimpleInternalGrammarParser()
 
 	// who did Kurt Cobain marry?
 	// non-domain specific
@@ -30,7 +31,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	]`)
 
 	// create domain specific representation
-	transformer := example3.NewSimpleRelationTransformer(domainSpecificAnalysis)
+	transformer := process.NewSimpleRelationTransformer(domainSpecificAnalysis)
 	domainSpecificSense, _ := transformer.Extract(genericSense.GetRelations())
 
 fmt.Printf("DS sense %v\n", domainSpecificSense)
@@ -70,7 +71,7 @@ fmt.Printf("DS sense %v\n", domainSpecificSense)
 
 	// optimalisatie-fase: doe eerst de meest gerestricteerde doelen (bv name(A, 'Kurt Cobain')
 
-	transformer = example3.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
+	transformer = process.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
 	goalSense, _ := transformer.Extract(domainSpecificSense[0])
 
 fmt.Println("")
@@ -85,7 +86,7 @@ fmt.Println("")
 	`)
 //		married_to(X, Y) :- married_to(Y, X)
 
-	ruleBase1 := example3.NewSimpleRuleBase(rules)
+	ruleBase1 := process.NewSimpleRuleBase(rules)
 
 	ds2db, _, _ := internalGrammarParser.CreateRules(`[
 		marriages(A, B, _) :- married_to(A, B)
@@ -110,10 +111,10 @@ fmt.Println("")
 	]`)
 //		marriages(14, 11, '1992')
 
-	factBase1 := example3.NewSimpleFactBase(facts.GetRelations(), ds2db)
+	factBase1 := process.NewSimpleFactBase(facts.GetRelations(), ds2db)
 
 	// produce response
-	problemSolver := example3.NewSimpleProblemSolver()
+	problemSolver := process.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
 	domainSpecificResponseSense := problemSolver.Solve(goalSense[0])

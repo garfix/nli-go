@@ -2,17 +2,16 @@ package tests
 
 import (
 	"testing"
-	"nli-go/lib/example3"
 	"fmt"
+	"nli-go/lib/importer"
 )
 
 func TestSimpleGrammar(test *testing.T) {
 
-	parser := example3.NewSimpleInternalGrammarParser()
-	grammar := example3.NewSimpleGrammar()
+	parser := importer.NewSimpleInternalGrammarParser()
 	ok := true
 
-	grammar, _, ok = parser.CreateGrammar("[" +
+	grammar, _, ok := parser.CreateGrammar("[" +
 		"{" +
 		"rule: s(P) :- np(E), vp(P)" +
 		"sense: subject(P, E)" +

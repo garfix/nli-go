@@ -2,16 +2,15 @@ package tests
 
 import (
 	"testing"
-	"nli-go/lib/example3"
+	"nli-go/lib/importer"
 )
 
 func TestSimpleLexiconParser(test *testing.T) {
 
-	parser := example3.NewSimpleInternalGrammarParser()
-	lexicon := example3.NewSimpleLexicon()
+	parser := importer.NewSimpleInternalGrammarParser()
 	ok := true
 
-	lexicon, _, ok = parser.CreateLexicon("" +
+	lexicon, _, ok := parser.CreateLexicon("" +
 		"[" +
 		"{ form: 'boek'\npos: noun }" +
 		"]")

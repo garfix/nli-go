@@ -2,14 +2,15 @@ package tests
 
 import (
 	"testing"
-	"nli-go/lib/example3"
 	"fmt"
+	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
 )
 
 func TestSimpleGrammarTransformationParser(test *testing.T) {
 
-	parser := example3.NewSimpleInternalGrammarParser()
-	transformations := []example3.SimpleRelationTransformation{}
+	parser := importer.NewSimpleInternalGrammarParser()
+	transformations := []mentalese.SimpleRelationTransformation{}
 	ok := true
 	lastLine := 0
 

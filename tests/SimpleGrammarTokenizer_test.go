@@ -2,13 +2,13 @@ package tests
 
 import (
 	"testing"
-	"nli-go/lib/example3"
 	"fmt"
+	"nli-go/lib/importer"
 )
 
 func TestSimpleGrammarTokenizer(test *testing.T) {
 
-	tok := example3.NewSimpleGrammarTokenizer()
+	tok := importer.NewSimpleGrammarTokenizer()
 
 	// test token values
 

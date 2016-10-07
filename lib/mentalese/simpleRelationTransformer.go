@@ -21,7 +21,7 @@ func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer
 
 	for _, rule := range rules {
 
-		transformation := SimpleRelationTransformation{Replacement: []SimpleRelation{ rule.Goal }, Pattern: rule.Pattern }
+		transformation := SimpleRelationTransformation{Replacement: SimpleRelationSet{ rule.Goal }, Pattern: rule.Pattern }
 		transformations = append(transformations, transformation)
 	}
 
@@ -46,7 +46,7 @@ func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer
 //}
 
 // return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relationSet []SimpleRelation) ([][]SimpleRelation, []SimpleBinding) {
+func (transformer *simpleRelationTransformer) Extract(relationSet SimpleRelationSet) ([]SimpleRelationSet, []SimpleBinding) {
 
 	_, replacements, bindings := transformer.matchAllTransformations(relationSet)
 	return replacements, bindings
@@ -65,10 +65,10 @@ func (transformer *simpleRelationTransformer) Extract(relationSet []SimpleRelati
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(relations []SimpleRelation) ([][]int, [][]SimpleRelation, []SimpleBinding){
+func (transformer *simpleRelationTransformer) matchAllTransformations(relations SimpleRelationSet) ([][]int, []SimpleRelationSet, []SimpleBinding){
 
 	matchedIndexes := [][]int{}
-	replacements := [][]SimpleRelation{}
+	replacements := []SimpleRelationSet{}
 	bindings := []SimpleBinding{}
 
 	for _, transformation := range transformer.transformations {
@@ -86,7 +86,7 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 
 // Attempts to match a single transformation
 // Returns the indexes of matched relations, and the replacements
-func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation, SimpleBinding){
+func (transformer *simpleRelationTransformer) matchSingleTransformation(relations SimpleRelationSet, transformation SimpleRelationTransformation) ([]int, SimpleRelationSet, SimpleBinding){
 
 	common.Logf("Matching: %v / %v\n", transformation.Pattern, relations)
 
@@ -95,7 +95,7 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 
 	common.Logf("Matched: %v %v %v\n", matchedIndexes, oldBinding, binding)
 
-	replacements := []SimpleRelation{}
+	replacements := SimpleRelationSet{}
 	if len(matchedIndexes) > 0 {
 		replacements = transformer.createReplacements(transformation.Replacement, oldBinding)
 	}
@@ -103,9 +103,9 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 	return matchedIndexes, replacements, binding
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, bindings SimpleBinding) []SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations SimpleRelationSet, bindings SimpleBinding) SimpleRelationSet {
 
-	replacements := []SimpleRelation{}
+	replacements := SimpleRelationSet{}
 
 	common.Logf("Replace! %v %v\n", relations, bindings)
 

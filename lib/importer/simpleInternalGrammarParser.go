@@ -96,9 +96,9 @@ func (parser *simpleInternalGrammarParser) CreateGrammar(source string) (*parse.
 }
 
 // Parses source into a relation set
-func (parser *simpleInternalGrammarParser) CreateRelationSet(source string) (*mentalese.SimpleRelationSet, int, bool) {
+func (parser *simpleInternalGrammarParser) CreateRelationSet(source string) (mentalese.SimpleRelationSet, int, bool) {
 
-	relationSet := mentalese.NewSimpleRelationSet()
+	relationSet := mentalese.SimpleRelationSet{}
 
 	// tokenize
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)

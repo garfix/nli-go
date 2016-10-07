@@ -1,6 +1,6 @@
 package mentalese
 
 type SimpleRelationTransformation struct {
-	Pattern     []SimpleRelation
-	Replacement []SimpleRelation
+	Pattern     SimpleRelationSet
+	Replacement SimpleRelationSet
 }

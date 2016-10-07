@@ -5,9 +5,9 @@ import (
 	"nli-go/lib/parse"
 )
 
-func (parser *simpleInternalGrammarParser) parseRelationSet(tokens []SimpleToken, startIndex int) (*mentalese.SimpleRelationSet, int, bool) {
+func (parser *simpleInternalGrammarParser) parseRelationSet(tokens []SimpleToken, startIndex int) (mentalese.SimpleRelationSet, int, bool) {
 
-	relationSet := mentalese.NewSimpleRelationSet()
+	relationSet := mentalese.SimpleRelationSet{}
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -16,7 +16,7 @@ func (parser *simpleInternalGrammarParser) parseRelationSet(tokens []SimpleToken
 		relation := mentalese.SimpleRelation{}
 		relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
 		if ok {
-			relationSet.AddRelation(relation)
+			relationSet = append(relationSet, relation)
 		} else {
 			break;
 		}

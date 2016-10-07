@@ -8,12 +8,12 @@ func NewSimpleRelationMatcher() *SimpleRelationMatcher {
 	return &SimpleRelationMatcher{}
 }
 
-func (matcher *SimpleRelationMatcher) Match(subject *SimpleRelationSet, pattern *SimpleRelationSet) bool {
-	matchedIndexes, _ := matcher.MatchSubjectsToPatterns(subject.Relations, pattern.Relations, false)
+func (matcher *SimpleRelationMatcher) Match(subject SimpleRelationSet, pattern SimpleRelationSet) bool {
+	matchedIndexes, _ := matcher.MatchSubjectsToPatterns(subject, pattern, false)
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *SimpleRelationMatcher) MatchSubjectsToPatterns(subjectRelations []SimpleRelation, patternRelations []SimpleRelation, allowPartial bool) ([]int, SimpleBinding){
+func (matcher *SimpleRelationMatcher) MatchSubjectsToPatterns(subjectRelations SimpleRelationSet, patternRelations SimpleRelationSet, allowPartial bool) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
 	boundVariables := SimpleBinding{}
@@ -38,7 +38,7 @@ func (matcher *SimpleRelationMatcher) MatchSubjectsToPatterns(subjectRelations [
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations []SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations SimpleRelationSet, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
 
 	for index, subjectRelation := range subjectRelations {
 
@@ -137,7 +137,7 @@ func (matcher *SimpleRelationMatcher) BindSingleRelationSingleBinding(relation S
 	return relation
 }
 
-func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relations []SimpleRelation, binding SimpleBinding) []SimpleRelation {
+func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relations SimpleRelationSet, binding SimpleBinding) SimpleRelationSet {
 
 	for i, relation:= range relations {
 		relations[i] = matcher.BindSingleRelationSingleBinding(relation, binding)
@@ -146,9 +146,9 @@ func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relatio
 	return relations
 }
 
-func (matcher *SimpleRelationMatcher) BindMultipleRelationsMultipleBindings(relations []SimpleRelation, bindings []SimpleBinding) [][]SimpleRelation {
+func (matcher *SimpleRelationMatcher) BindMultipleRelationsMultipleBindings(relations SimpleRelationSet, bindings []SimpleBinding) []SimpleRelationSet {
 
-	relationSets := [][]SimpleRelation{}
+	relationSets := []SimpleRelationSet{}
 
 	for _, binding := range bindings {
 		relationSets = append(relationSets, matcher.bindMultipleRelationsSingleBinding(relations, binding))

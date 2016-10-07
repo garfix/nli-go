@@ -34,7 +34,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 
 	// create domain specific representation
 	transformer := mentalese.NewSimpleRelationTransformer(domainSpecificAnalysis)
-	domainSpecificSense, _ := transformer.Extract(genericSense.GetRelations())
+	domainSpecificSense, _ := transformer.Extract(genericSense)
 
 	common.Logf("DS sense %v\n", domainSpecificSense)
 
@@ -98,7 +98,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	]`)
 //		marriages(14, 11, '1992')
 
-	factBase1 := knowledge.NewSimpleFactBase(facts.GetRelations(), ds2db)
+	factBase1 := knowledge.NewSimpleFactBase(facts, ds2db)
 
 	// produce response
 	problemSolver := central.NewSimpleProblemSolver()

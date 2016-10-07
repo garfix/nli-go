@@ -27,12 +27,11 @@ func TestSimpleDialogActInterpreter(test *testing.T) {
 	`)
 
 	analyser := mentalese.NewSimpleRelationTransformer(analysis)
-	dialogActs, _ := analyser.Extract(sense.GetRelations())
+	dialogActs, _ := analyser.Extract(sense)
 
 	infoRequestRelations, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)
 
-	set := mentalese.NewSimpleRelationSet()
-	set.AddRelations(dialogActs[0])
+	set := dialogActs[0]
 
 	if !relationMatcher.Match(infoRequestRelations, set) {
 		test.Error("No match")

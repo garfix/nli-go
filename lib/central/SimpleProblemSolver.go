@@ -24,7 +24,7 @@ func (solver *simpleProblemSolver) AddKnowledgeBase(source knowledge.SimpleKnowl
 //  { father('john', 'jack'), father('jack', 'joe') }
 //  { father('bob', 'jonathan'), father('jonathan', 'bill') }
 // }
-func (solver simpleProblemSolver) Solve(goals []mentalese.SimpleRelation) [][]mentalese.SimpleRelation {
+func (solver simpleProblemSolver) Solve(goals []mentalese.SimpleRelation) []mentalese.SimpleRelationSet {
 
 	common.Log("Solve start\n")
 	bindings := solver.SolveMultipleRelations(goals)

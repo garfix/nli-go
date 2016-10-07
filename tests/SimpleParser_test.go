@@ -34,15 +34,15 @@ func TestSimpleParser(test *testing.T) {
 	//	"sings": {"verb"},
 	//}
 	//
-	//grammar := natlang.NewSimpleGrammar()
+	//grammar := parse.NewSimpleGrammar()
 	//for _, rule := range rules {
 	//	grammar.AddRule(rule)
 	//}
 	//
 	//rawInput := "the small shy girl sings"
-	//tokenizer := natlang.NewSimpleTokenizer()
+	//tokenizer := parse.NewSimpleTokenizer()
 	//
-	//parser := natlang.NewSimpleParser(grammar, example1.NewSimpleLexicon(lexItems))
+	//parser := parse.NewSimpleParser(grammar, example1.NewSimpleLexicon(lexItems))
 	//
 	//wordArray := tokenizer.Process(rawInput)
 	//length, relations, ok := parser.Process(wordArray)

@@ -1,4 +1,4 @@
-package natlang
+package parse
 
 import "nli-go/lib/mentalese"
 

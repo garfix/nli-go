@@ -1,4 +1,4 @@
-package natlang
+package parse
 
 type SimpleGrammar struct {
 	rules map[string][]SimpleGrammarRule

@@ -6,11 +6,11 @@ import (
 
 func TestSimpleRelationizer(test *testing.T) {
 
-	//rules := map[string][]natlang.SimpleGrammarRule{
+	//rules := map[string][]parse.SimpleGrammarRule{
 	//	"S": {
 	//		// S(predication) = NP(entity) VP(predication)
 	//		// subject(predication, entity)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"S", "NP", "VP"},
 	//			EntityVariables:     []string{"Predication", "Entity", "Predication"},
 	//			Sense: []mentalese.SimpleRelation{
@@ -20,14 +20,14 @@ func TestSimpleRelationizer(test *testing.T) {
 	//	},
 	//	"NP": {
 	//		// NP(entity) = NBar(entity)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"NP", "NBar"},
 	//			EntityVariables:     []string{"Entity", "Entity"},
 	//			Sense:   []mentalese.SimpleRelation{},
 	//		},
 	//		// NP(entity) = DP(d1) NBar(entity)
 	//		// determiner(entity, d1)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"NP", "DP", "NBar"},
 	//			EntityVariables:     []string{"Entity", "Determiner", "Entity"},
 	//			Sense: []mentalese.SimpleRelation{
@@ -37,7 +37,7 @@ func TestSimpleRelationizer(test *testing.T) {
 	//	},
 	//	"DP": {
 	//		// DP(determiner) = det(determiner)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"DP", "det"},
 	//			EntityVariables:     []string{"Determiner", "Determiner"},
 	//			Sense:   []mentalese.SimpleRelation{},
@@ -45,7 +45,7 @@ func TestSimpleRelationizer(test *testing.T) {
 	//	},
 	//	"NBar": {
 	//		// NBar(entity = noun(entity)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"NBar", "noun"},
 	//			EntityVariables:     []string{"Entity", "Entity"},
 	//			Sense:   []mentalese.SimpleRelation{},
@@ -54,7 +54,7 @@ func TestSimpleRelationizer(test *testing.T) {
 	//	"VP": {
 	//		// VP(predication) = verb(predication) NP(entity)
 	//		// object(predication, entity)
-	//		natlang.SimpleGrammarRule{
+	//		parse.SimpleGrammarRule{
 	//			SyntacticCategories: []string{"VP", "verb", "NP"},
 	//			EntityVariables:     []string{"Predication", "Predication", "Entity"},
 	//			Sense: []mentalese.SimpleRelation{
@@ -64,7 +64,7 @@ func TestSimpleRelationizer(test *testing.T) {
 	//	},
 	//}
 	//
-	//lexItems := map[string][]natlang.SimpleLexItem{
+	//lexItems := map[string][]parse.SimpleLexItem{
 	//	"all": {
 	//		{PartOfSpeech: "det", RelationTemplates: []mentalese.SimpleRelation{
 	//			{Predicate: "instance_of", Arguments: []string{"*", "all"}}},
@@ -91,16 +91,16 @@ func TestSimpleRelationizer(test *testing.T) {
 	//
 	//rawInput := "all horses have hooves"
 	//inputSource := example1.NewSimpleRawInputSource(rawInput)
-	//tokenizer := natlang.NewSimpleTokenizer()
-	//grammar := natlang.NewSimpleGrammar()
+	//tokenizer := parse.NewSimpleTokenizer()
+	//grammar := parse.NewSimpleGrammar()
 	//for _, rule := range rules {
 	//	grammar.AddRule(rule)
 	//}
-	//lexicon := natlang.NewSimpleLexicon()
+	//lexicon := parse.NewSimpleLexicon()
 	//for _, lexItem := range lexItems {
 	//	lexicon.AddLexItem(lexItem)
 	//}
-	//parser := natlang.NewSimpleParser(grammar, lexicon)
+	//parser := parse.NewSimpleParser(grammar, lexicon)
 	//
 	//wordArray := tokenizer.Process(inputSource)
 	//parsedWords, relationList, ok := parser.Process(wordArray)

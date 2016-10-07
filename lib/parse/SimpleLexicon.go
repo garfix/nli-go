@@ -1,4 +1,4 @@
-package natlang
+package parse
 
 type SimpleLexicon struct {
 	lexItems map[string][]SimpleLexItem

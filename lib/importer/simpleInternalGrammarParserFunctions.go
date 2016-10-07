@@ -2,7 +2,7 @@ package importer
 
 import (
 	"nli-go/lib/mentalese"
-	"nli-go/lib/natlang"
+	"nli-go/lib/parse"
 )
 
 func (parser *simpleInternalGrammarParser) parseRelationSet(tokens []SimpleToken, startIndex int) (*mentalese.SimpleRelationSet, int, bool) {
@@ -162,9 +162,9 @@ func (parser *simpleInternalGrammarParser) parseQAPair(tokens []SimpleToken, sta
 	return qaPair, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, startIndex int) (*natlang.SimpleLexicon, int, bool) {
+func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, startIndex int) (*parse.SimpleLexicon, int, bool) {
 
-	lexicon := natlang.NewSimpleLexicon()
+	lexicon := parse.NewSimpleLexicon()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -183,9 +183,9 @@ func (parser *simpleInternalGrammarParser) parseLexicon(tokens []SimpleToken, st
 	return lexicon, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, startIndex int) (natlang.SimpleLexItem, int, bool) {
+func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, startIndex int) (parse.SimpleLexItem, int, bool) {
 
-	lexItem := natlang.SimpleLexItem{}
+	lexItem := parse.SimpleLexItem{}
 	ok, formFound, posFound := true, false, false
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
@@ -222,9 +222,9 @@ func (parser *simpleInternalGrammarParser) parseLexItem(tokens []SimpleToken, st
 	return lexItem, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseGrammar(tokens []SimpleToken, startIndex int) (*natlang.SimpleGrammar, int, bool) {
+func (parser *simpleInternalGrammarParser) parseGrammar(tokens []SimpleToken, startIndex int) (*parse.SimpleGrammar, int, bool) {
 
-	grammar := natlang.NewSimpleGrammar()
+	grammar := parse.NewSimpleGrammar()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -243,9 +243,9 @@ func (parser *simpleInternalGrammarParser) parseGrammar(tokens []SimpleToken, st
 	return grammar, startIndex, ok
 }
 
-func (parser *simpleInternalGrammarParser) parseGrammarRule(tokens []SimpleToken, startIndex int) (natlang.SimpleGrammarRule, int, bool) {
+func (parser *simpleInternalGrammarParser) parseGrammarRule(tokens []SimpleToken, startIndex int) (parse.SimpleGrammarRule, int, bool) {
 
-	rule := natlang.SimpleGrammarRule{}
+	rule := parse.SimpleGrammarRule{}
 	ok, ruleFound := true, false
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)

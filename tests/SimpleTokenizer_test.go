@@ -3,12 +3,12 @@ package tests
 import (
 	"strings"
 	"testing"
-	"nli-go/lib/natlang"
+	"nli-go/lib/parse"
 )
 
 func TestSimpleTokenizer(test *testing.T) {
 
-	tokenizer := natlang.NewSimpleTokenizer()
+	tokenizer := parse.NewSimpleTokenizer()
 	wordArray := tokenizer.Process("How old is Byron?")
 
 	wordString := strings.Join(wordArray, "/")

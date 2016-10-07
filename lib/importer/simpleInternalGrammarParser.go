@@ -2,7 +2,7 @@ package importer
 
 import (
 	"nli-go/lib/mentalese"
-	"nli-go/lib/natlang"
+	"nli-go/lib/parse"
 )
 
 const (
@@ -24,9 +24,9 @@ func NewSimpleInternalGrammarParser() *simpleInternalGrammarParser{
 }
 
 // Parses source into a lexicon
-func (parser *simpleInternalGrammarParser) CreateLexicon(source string) (*natlang.SimpleLexicon, int, bool) {
+func (parser *simpleInternalGrammarParser) CreateLexicon(source string) (*parse.SimpleLexicon, int, bool) {
 
-	lexicon := natlang.NewSimpleLexicon()
+	lexicon := parse.NewSimpleLexicon()
 
 	// tokenize
 	tokens, lineNumber, ok := parser.tokenizer.Tokenize(source)
@@ -78,9 +78,9 @@ func (parser *simpleInternalGrammarParser) CreateRules(source string) ([]mentale
 }
 
 // Parses source into a grammar
-func (parser *simpleInternalGrammarParser) CreateGrammar(source string) (*natlang.SimpleGrammar, int, bool) {
+func (parser *simpleInternalGrammarParser) CreateGrammar(source string) (*parse.SimpleGrammar, int, bool) {
 
-	grammar := natlang.NewSimpleGrammar()
+	grammar := parse.NewSimpleGrammar()
 
 	// tokenize
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)

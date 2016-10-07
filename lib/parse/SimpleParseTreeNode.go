@@ -1,4 +1,4 @@
-package natlang
+package parse
 
 type SimpleParseTreeNode struct {
 	SyntacticCategory string

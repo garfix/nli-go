@@ -1,8 +1,8 @@
 package process
 
 import (
-	"fmt"
 	"nli-go/lib/mentalese"
+	"nli-go/lib/common"
 )
 
 type SimpleFactBase struct {
@@ -18,21 +18,21 @@ func NewSimpleFactBase(facts []mentalese.SimpleRelation, ds2db []mentalese.Simpl
 // This is an simulation of an external database
 func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
 
-fmt.Printf("Factbase start %v\n", goal);
+	common.Logf("Factbase start %v\n", goal);
 
 	subgoalRelationSets := [][]mentalese.SimpleRelation{}
 	subgoalBindings := []mentalese.SimpleBinding{}
 
 	transformer := NewSimpleRelationTransformer2(factBase.ds2db)
 
-fmt.Printf("DB: %v\n", factBase.ds2db)
+	common.Logf("DB: %v\n", factBase.ds2db)
 
 	dbRelationSets, dbBindings := transformer.Extract([]mentalese.SimpleRelation{goal})
 
 // bij het extracten moet je bijhouden aan hoe de oorspronkelijke variabelen gebonden worden
 // gebruik deze bindings ook als defaults hieronder
 
-fmt.Printf("Extracted: %v %v\n", dbRelationSets, dbBindings);
+	common.Logf("Extracted: %v %v\n", dbRelationSets, dbBindings);
 
 	matcher := NewSimpleRelationMatcher()
 	newSimpleBinding := mentalese.SimpleBinding{}
@@ -44,17 +44,17 @@ fmt.Printf("Extracted: %v %v\n", dbRelationSets, dbBindings);
 
 		for _, dbRelation := range dbRelationSet {
 
-			fmt.Printf("Relation %v\n", dbRelation);
+			common.Logf("Relation %v\n", dbRelation);
 
 			factFound := false
 
 			for _, dbFact := range factBase.facts {
 
-				fmt.Printf("Match %v %v %s\n", dbRelation, dbFact, simpleBinding);
+				common.Logf("Match %v %v %s\n", dbRelation, dbFact, simpleBinding);
 
 				newSimpleBinding, factFound = matcher.MatchSubjectToPattern(dbRelation, dbFact, simpleBinding)
 
-				fmt.Printf("Binding %v %b\n", newSimpleBinding, factFound);
+				common.Logf("Binding %v %b\n", newSimpleBinding, factFound);
 
 				if factFound {
 					simpleBinding = newSimpleBinding
@@ -68,7 +68,7 @@ fmt.Printf("Extracted: %v %v\n", dbRelationSets, dbBindings);
 			}
 		}
 
-fmt.Printf("Relations found %b\n", relationsFound);
+		common.Logf("Relations found %b\n", relationsFound);
 
 		if relationsFound {
 			subgoalRelationSet := []mentalese.SimpleRelation{}
@@ -78,7 +78,7 @@ fmt.Printf("Relations found %b\n", relationsFound);
 		}
 	}
 
-fmt.Printf("Factbase end %v %v\n", subgoalRelationSets, subgoalBindings);
+	common.Logf("Factbase end %v %v\n", subgoalRelationSets, subgoalBindings);
 
 	return subgoalRelationSets, subgoalBindings
 }

@@ -2,9 +2,9 @@ package tests
 
 import (
 	"testing"
-	"fmt"
 	"nli-go/lib/importer"
 	"nli-go/lib/process"
+	"nli-go/lib/common"
 )
 
 func TestSimpleGoalSpecification(test *testing.T) {
@@ -34,11 +34,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	transformer := process.NewSimpleRelationTransformer(domainSpecificAnalysis)
 	domainSpecificSense, _ := transformer.Extract(genericSense.GetRelations())
 
-fmt.Printf("DS sense %v\n", domainSpecificSense)
-
-
-//fmt.Println("DS sense " + domainSpecificSense.String())
-
+	common.Logf("DS sense %v\n", domainSpecificSense)
 
 	// goal specification
 	// if X was the request, Y is what the user really wants to know
@@ -64,8 +60,6 @@ fmt.Printf("DS sense %v\n", domainSpecificSense)
 		married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
 	]`)
 
-//fmt.Println(domainSpecificGoalAnalysis)
-
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
 	// 			RQ: B
 
@@ -74,13 +68,7 @@ fmt.Printf("DS sense %v\n", domainSpecificSense)
 	transformer = process.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
 	goalSense, _ := transformer.Extract(domainSpecificSense[0])
 
-fmt.Println("")
-//fmt.Println("Goal sense " + goalSense.String())
-// OK
-
-fmt.Println("")
-//fmt.Println("Goal sense " + goalSense.String())
-// OK
+	common.Logf("Goal sense %v", goalSense)
 
 	rules, _, _ := internalGrammarParser.CreateRules(`
 	`)
@@ -94,9 +82,6 @@ fmt.Println("")
 		person(A, _, 'M', _) :- gender(A, male)
 		person(A, _, 'F', _) :- gender(A, female)
 	]`)
-
-//fmt.Println(ds2db)
-// OK
 
 	// voorbeeld van wanneer dit niet werkt:
 	// marriages('Kurt Cobain', 'Courtney Love', '1992')

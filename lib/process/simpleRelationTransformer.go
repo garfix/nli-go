@@ -1,7 +1,6 @@
 package process
 
 import (
-	"fmt"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
 )
@@ -90,12 +89,12 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 // Returns the indexes of matched relations, and the replacements
 func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []mentalese.SimpleRelation, transformation mentalese.SimpleRelationTransformation) ([]int, []mentalese.SimpleRelation, mentalese.SimpleBinding){
 
-	fmt.Printf("Matching: %v / %v\n", transformation.Pattern, relations)
+	common.Logf("Matching: %v / %v\n", transformation.Pattern, relations)
 
 	matchedIndexes, oldBinding := transformer.matcher.matchSubjectsToPatterns(transformation.Pattern, relations, true)
 	_, binding := transformer.matcher.matchSubjectsToPatterns(relations, transformation.Pattern, true)
 
-fmt.Printf("Matched: %v %v %v\n", matchedIndexes, oldBinding, binding)
+	common.Logf("Matched: %v %v %v\n", matchedIndexes, oldBinding, binding)
 
 	replacements := []mentalese.SimpleRelation{}
 	if len(matchedIndexes) > 0 {
@@ -109,7 +108,7 @@ func (transformer *simpleRelationTransformer) createReplacements(relations []men
 
 	replacements := []mentalese.SimpleRelation{}
 
-	fmt.Printf("Replace! %v %v\n", relations, bindings)
+	common.Logf("Replace! %v %v\n", relations, bindings)
 
 	for _, relation := range relations {
 

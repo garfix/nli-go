@@ -1,4 +1,4 @@
-package process
+package knowledge
 
 import (
 	"nli-go/lib/mentalese"
@@ -14,7 +14,7 @@ func NewSimpleRuleBase(rules []mentalese.SimpleRule) *SimpleRuleBase {
 
 func (ruleBase *SimpleRuleBase) Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
 
-	matcher := NewSimpleRelationMatcher()
+	matcher := mentalese.NewSimpleRelationMatcher()
 	subgoalRelationSets := [][]mentalese.SimpleRelation{}
 	subgoalBindings := []mentalese.SimpleBinding{}
 

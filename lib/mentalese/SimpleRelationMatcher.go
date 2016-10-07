@@ -1,24 +1,22 @@
-package process
+package mentalese
 
-import "nli-go/lib/mentalese"
-
-type simpleRelationMatcher struct {
+type SimpleRelationMatcher struct {
 
 }
 
-func NewSimpleRelationMatcher() *simpleRelationMatcher {
-	return &simpleRelationMatcher{}
+func NewSimpleRelationMatcher() *SimpleRelationMatcher {
+	return &SimpleRelationMatcher{}
 }
 
-func (matcher *simpleRelationMatcher) Match(subject *mentalese.SimpleRelationSet, pattern *mentalese.SimpleRelationSet) bool {
-	matchedIndexes, _ := matcher.matchSubjectsToPatterns(subject.Relations, pattern.Relations, false)
+func (matcher *SimpleRelationMatcher) Match(subject *SimpleRelationSet, pattern *SimpleRelationSet) bool {
+	matchedIndexes, _ := matcher.MatchSubjectsToPatterns(subject.Relations, pattern.Relations, false)
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations []mentalese.SimpleRelation, patternRelations []mentalese.SimpleRelation, allowPartial bool) ([]int, mentalese.SimpleBinding){
+func (matcher *SimpleRelationMatcher) MatchSubjectsToPatterns(subjectRelations []SimpleRelation, patternRelations []SimpleRelation, allowPartial bool) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
-	boundVariables := mentalese.SimpleBinding{}
+	boundVariables := SimpleBinding{}
 
 	for _, patternRelation := range patternRelations {
 
@@ -31,7 +29,7 @@ func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations [
 		} else {
 
 			if !allowPartial {
-				return []int{}, mentalese.SimpleBinding{}
+				return []int{}, SimpleBinding{}
 			}
 		}
 	}
@@ -40,7 +38,7 @@ func (matcher *simpleRelationMatcher) matchSubjectsToPatterns(subjectRelations [
 }
 
 // Attempts to match a single pattern relation to a series of relations
-func (matcher *simpleRelationMatcher) matchSubjectsToPattern(subjectRelations []mentalese.SimpleRelation, patternRelation mentalese.SimpleRelation, boundVariables mentalese.SimpleBinding) (int, mentalese.SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations []SimpleRelation, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
 
 	for index, subjectRelation := range subjectRelations {
 
@@ -51,10 +49,10 @@ func (matcher *simpleRelationMatcher) matchSubjectsToPattern(subjectRelations []
 		}
 	}
 
-	return 0, mentalese.SimpleBinding{}, false
+	return 0, SimpleBinding{}, false
 }
 
-func (matcher *simpleRelationMatcher) MatchSubjectToPattern(subjectRelation mentalese.SimpleRelation, patternRelation mentalese.SimpleRelation, binding mentalese.SimpleBinding) (mentalese.SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) MatchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
 
@@ -80,7 +78,7 @@ func (matcher *simpleRelationMatcher) MatchSubjectToPattern(subjectRelation ment
 }
 
 // Extends the binding with new variable bindings for the variables of subjectArgument
-func (matcher *simpleRelationMatcher) bindArgument(subjectArgument mentalese.SimpleTerm, patternArgument mentalese.SimpleTerm, binding mentalese.SimpleBinding) (mentalese.SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, patternArgument SimpleTerm, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := false
 
@@ -94,7 +92,7 @@ func (matcher *simpleRelationMatcher) bindArgument(subjectArgument mentalese.Sim
 
 		// variable
 
-		value := mentalese.SimpleTerm{}
+		value := SimpleTerm{}
 
 		// does patternRelationArgument occur in boundVariables?
 		value, match := binding[subjectArgument.String()]
@@ -124,7 +122,7 @@ func (matcher *simpleRelationMatcher) bindArgument(subjectArgument mentalese.Sim
 	return binding, success
 }
 
-func (matcher *simpleRelationMatcher) BindSingleRelationSingleBinding(relation mentalese.SimpleRelation, binding mentalese.SimpleBinding) mentalese.SimpleRelation {
+func (matcher *SimpleRelationMatcher) BindSingleRelationSingleBinding(relation SimpleRelation, binding SimpleBinding) SimpleRelation {
 
 	for i, argument := range relation.Arguments {
 
@@ -139,7 +137,7 @@ func (matcher *simpleRelationMatcher) BindSingleRelationSingleBinding(relation m
 	return relation
 }
 
-func (matcher *simpleRelationMatcher) bindMultipleRelationsSingleBinding(relations []mentalese.SimpleRelation, binding mentalese.SimpleBinding) []mentalese.SimpleRelation {
+func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relations []SimpleRelation, binding SimpleBinding) []SimpleRelation {
 
 	for i, relation:= range relations {
 		relations[i] = matcher.BindSingleRelationSingleBinding(relation, binding)
@@ -148,9 +146,9 @@ func (matcher *simpleRelationMatcher) bindMultipleRelationsSingleBinding(relatio
 	return relations
 }
 
-func (matcher *simpleRelationMatcher) bindMultipleRelationsMultipleBindings(relations []mentalese.SimpleRelation, bindings []mentalese.SimpleBinding) [][]mentalese.SimpleRelation {
+func (matcher *SimpleRelationMatcher) BindMultipleRelationsMultipleBindings(relations []SimpleRelation, bindings []SimpleBinding) [][]SimpleRelation {
 
-	relationSets := [][]mentalese.SimpleRelation{}
+	relationSets := [][]SimpleRelation{}
 
 	for _, binding := range bindings {
 		relationSets = append(relationSets, matcher.bindMultipleRelationsSingleBinding(relations, binding))

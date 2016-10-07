@@ -3,7 +3,6 @@ package tests
 import (
 	"testing"
 	"nli-go/lib/importer"
-	"nli-go/lib/process"
 	"nli-go/lib/mentalese"
 )
 
@@ -11,7 +10,7 @@ func TestSimpleDialogActInterpreter(test *testing.T) {
 
 	// relations
 	internalGrammarParser := importer.NewSimpleInternalGrammarParser()
-	relationMatcher := process.NewSimpleRelationMatcher()
+	relationMatcher := mentalese.NewSimpleRelationMatcher()
 
 	// who did Kurt Cobain marry?
 	// Note: this representation is rubbish :) I will get to that later
@@ -27,7 +26,7 @@ func TestSimpleDialogActInterpreter(test *testing.T) {
 		dialog_act(S1, info_request) :- subject(S1, who)
 	`)
 
-	analyser := process.NewSimpleRelationTransformer(analysis)
+	analyser := mentalese.NewSimpleRelationTransformer(analysis)
 	dialogActs, _ := analyser.Extract(sense.GetRelations())
 
 	infoRequestRelations, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)

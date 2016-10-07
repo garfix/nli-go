@@ -1,4 +1,4 @@
-package process
+package knowledge
 
 import (
 	"nli-go/lib/mentalese"
@@ -23,7 +23,7 @@ func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentale
 	subgoalRelationSets := [][]mentalese.SimpleRelation{}
 	subgoalBindings := []mentalese.SimpleBinding{}
 
-	transformer := NewSimpleRelationTransformer2(factBase.ds2db)
+	transformer := mentalese.NewSimpleRelationTransformer2(factBase.ds2db)
 
 	common.Logf("DB: %v\n", factBase.ds2db)
 
@@ -34,7 +34,7 @@ func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentale
 
 	common.Logf("Extracted: %v %v\n", dbRelationSets, dbBindings);
 
-	matcher := NewSimpleRelationMatcher()
+	matcher := mentalese.NewSimpleRelationMatcher()
 	newSimpleBinding := mentalese.SimpleBinding{}
 
 	for i, dbRelationSet := range dbRelationSets {

@@ -1,4 +1,4 @@
-package process
+package central
 
 import (
 	"nli-go/lib/mentalese"
@@ -8,11 +8,11 @@ import (
 
 type simpleProblemSolver struct {
 	sources []knowledge.SimpleKnowledgeBase
-	matcher *simpleRelationMatcher
+	matcher *mentalese.SimpleRelationMatcher
 }
 
 func NewSimpleProblemSolver() *simpleProblemSolver {
-	return &simpleProblemSolver{sources: []knowledge.SimpleKnowledgeBase{}, matcher:NewSimpleRelationMatcher()}
+	return &simpleProblemSolver{sources: []knowledge.SimpleKnowledgeBase{}, matcher:mentalese.NewSimpleRelationMatcher()}
 }
 
 func (solver *simpleProblemSolver) AddKnowledgeBase(source knowledge.SimpleKnowledgeBase) {
@@ -28,7 +28,7 @@ func (solver simpleProblemSolver) Solve(goals []mentalese.SimpleRelation) [][]me
 
 	common.Log("Solve start\n")
 	bindings := solver.SolveMultipleRelations(goals)
-	solutions := solver.matcher.bindMultipleRelationsMultipleBindings(goals, bindings)
+	solutions := solver.matcher.BindMultipleRelationsMultipleBindings(goals, bindings)
 
 	common.Logf("Solve end %v\n", solutions)
 	return solutions

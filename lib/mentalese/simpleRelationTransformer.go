@@ -1,32 +1,31 @@
-package process
+package mentalese
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
 )
 
 type simpleRelationTransformer struct {
-	transformations []mentalese.SimpleRelationTransformation
-	matcher simpleRelationMatcher
+	transformations []SimpleRelationTransformation
+	matcher SimpleRelationMatcher
 }
 
 // using transformations
-func NewSimpleRelationTransformer(transformations[]mentalese.SimpleRelationTransformation) *simpleRelationTransformer {
-	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
+func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation) *simpleRelationTransformer {
+	return &simpleRelationTransformer{transformations: transformations, matcher: SimpleRelationMatcher{}}
 }
 
 // using rules (subset of transformations)
-func NewSimpleRelationTransformer2(rules[]mentalese.SimpleRule) *simpleRelationTransformer {
+func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer {
 
-	transformations := []mentalese.SimpleRelationTransformation{}
+	transformations := []SimpleRelationTransformation{}
 
 	for _, rule := range rules {
 
-		transformation := mentalese.SimpleRelationTransformation{Replacement: []mentalese.SimpleRelation{ rule.Goal }, Pattern: rule.Pattern }
+		transformation := SimpleRelationTransformation{Replacement: []SimpleRelation{ rule.Goal }, Pattern: rule.Pattern }
 		transformations = append(transformations, transformation)
 	}
 
-	return &simpleRelationTransformer{transformations: transformations, matcher: simpleRelationMatcher{}}
+	return &simpleRelationTransformer{transformations: transformations, matcher: SimpleRelationMatcher{}}
 }
 
 //// return the original relations, but replace the ones that have matched with their replacements
@@ -47,7 +46,7 @@ func NewSimpleRelationTransformer2(rules[]mentalese.SimpleRule) *simpleRelationT
 //}
 
 // return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relationSet []mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
+func (transformer *simpleRelationTransformer) Extract(relationSet []SimpleRelation) ([][]SimpleRelation, []SimpleBinding) {
 
 	_, replacements, bindings := transformer.matchAllTransformations(relationSet)
 	return replacements, bindings
@@ -66,11 +65,11 @@ func (transformer *simpleRelationTransformer) Extract(relationSet []mentalese.Si
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(relations []mentalese.SimpleRelation) ([][]int, [][]mentalese.SimpleRelation, []mentalese.SimpleBinding){
+func (transformer *simpleRelationTransformer) matchAllTransformations(relations []SimpleRelation) ([][]int, [][]SimpleRelation, []SimpleBinding){
 
 	matchedIndexes := [][]int{}
-	replacements := [][]mentalese.SimpleRelation{}
-	bindings := []mentalese.SimpleBinding{}
+	replacements := [][]SimpleRelation{}
+	bindings := []SimpleBinding{}
 
 	for _, transformation := range transformer.transformations {
 
@@ -87,16 +86,16 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 
 // Attempts to match a single transformation
 // Returns the indexes of matched relations, and the replacements
-func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []mentalese.SimpleRelation, transformation mentalese.SimpleRelationTransformation) ([]int, []mentalese.SimpleRelation, mentalese.SimpleBinding){
+func (transformer *simpleRelationTransformer) matchSingleTransformation(relations []SimpleRelation, transformation SimpleRelationTransformation) ([]int, []SimpleRelation, SimpleBinding){
 
 	common.Logf("Matching: %v / %v\n", transformation.Pattern, relations)
 
-	matchedIndexes, oldBinding := transformer.matcher.matchSubjectsToPatterns(transformation.Pattern, relations, true)
-	_, binding := transformer.matcher.matchSubjectsToPatterns(relations, transformation.Pattern, true)
+	matchedIndexes, oldBinding := transformer.matcher.MatchSubjectsToPatterns(transformation.Pattern, relations, true)
+	_, binding := transformer.matcher.MatchSubjectsToPatterns(relations, transformation.Pattern, true)
 
 	common.Logf("Matched: %v %v %v\n", matchedIndexes, oldBinding, binding)
 
-	replacements := []mentalese.SimpleRelation{}
+	replacements := []SimpleRelation{}
 	if len(matchedIndexes) > 0 {
 		replacements = transformer.createReplacements(transformation.Replacement, oldBinding)
 	}
@@ -104,9 +103,9 @@ func (transformer *simpleRelationTransformer) matchSingleTransformation(relation
 	return matchedIndexes, replacements, binding
 }
 
-func (transformer *simpleRelationTransformer) createReplacements(relations []mentalese.SimpleRelation, bindings mentalese.SimpleBinding) []mentalese.SimpleRelation {
+func (transformer *simpleRelationTransformer) createReplacements(relations []SimpleRelation, bindings SimpleBinding) []SimpleRelation {
 
-	replacements := []mentalese.SimpleRelation{}
+	replacements := []SimpleRelation{}
 
 	common.Logf("Replace! %v %v\n", relations, bindings)
 

@@ -43,19 +43,19 @@ func TestSimpleParser(test *testing.T) {
 		} {
 			form: 'boy'
 			pos: noun
-			sense: instance_of('*', boy)
+			sense: instance_of(this, boy)
 		} {
 			form: 'girl'
 			pos: noun
-			sense: instance_of('*', girl)
+			sense: instance_of(this, girl)
 		} {
 			form: 'cries'
 			pos: verb
-			sense: predication('*', cry)
+			sense: predication(this, cry)
 		} {
 			form: 'sings'
 			pos: verb
-			sense: predication('*', sing)
+			sense: predication(this, sing)
 		}
 	]`)
 

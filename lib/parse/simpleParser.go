@@ -175,7 +175,7 @@ func (parser *simpleParser) createGrammarRuleRelations(relationTemplates []menta
 
 	for _, relation := range relationTemplates {
 		for a, argument := range relation.Arguments {
-// OK????
+
 			relation.Arguments[a].TermType = mentalese.Term_variable
 			relation.Arguments[a].TermValue = variableMap[argument.TermValue]
 		}
@@ -193,8 +193,8 @@ func (parser *simpleParser) createLexItemRelations(relationTemplates []mentalese
 
 	for _, relation := range relationTemplates {
 		for a, argument := range relation.Arguments {
-			if argument.TermValue == "*" {
-// OK???
+			if argument.TermType == mentalese.Term_predicateAtom && argument.TermValue == "this" {
+
 				relation.Arguments[a].TermType = mentalese.Term_variable
 				relation.Arguments[a].TermValue = variable
 			}

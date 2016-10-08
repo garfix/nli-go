@@ -2,8 +2,8 @@ package parse
 
 import (
 	"fmt"
-	"strings"
 	"nli-go/lib/mentalese"
+	"nli-go/lib/common"
 )
 
 type simpleParser struct {
@@ -60,15 +60,20 @@ func (parser *simpleParser) createVariableMap(actualAntecedent string, formalVar
 }
 
 // Parses tokens using parser.grammar and parser.lexicon
-func (parser *simpleParser) Process(tokens []string) (int, []mentalese.SimpleRelation, bool) {
+func (parser *simpleParser) Process(tokens []string) (int, mentalese.SimpleRelationSet, bool) {
 
-	length, _, relationList, ok := parser.parseAllRules("S", tokens, 0, parser.getNewVariable("Sentence"))
+	length, _, relationList, ok := parser.parseAllRules("s", tokens, 0, parser.getNewVariable("Sentence"))
+
+	set := mentalese.SimpleRelationSet{}
+	set = append(set, relationList...)
 	// TODO: remove parse tree nodes?
-	return length, relationList, ok
+	return length, set, ok
 }
 
 // Parses tokens, starting from start, using all rules with given antecedent
 func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, start int, antecedentVariable string) (int, SimpleParseTreeNode, []mentalese.SimpleRelation, bool) {
+
+	common.Logf("parseAllRules: %s\n", antecedent)
 
 	rules := parser.grammar.FindRules(antecedent)
 	node := SimpleParseTreeNode{SyntacticCategory: antecedent}
@@ -79,9 +84,14 @@ func (parser *simpleParser) parseAllRules(antecedent string, tokens []string, st
 
 		if ok {
 			node.Children = childNodes
+
+			common.Log("parseAllRules end 1\n")
+
 			return cursor, node, relations, true
 		}
 	}
+
+	common.Log("parseAllRules end 2\n")
 
 	return 0, node, []mentalese.SimpleRelation{}, false
 }
@@ -93,6 +103,8 @@ func (parser *simpleParser) parse(rule SimpleGrammarRule, tokens []string, start
 	childNodes := []SimpleParseTreeNode{}
 	syntacticCategories := rule.SyntacticCategories
 	relations := []mentalese.SimpleRelation{}
+
+	common.Logf("parse %v\n", rule)
 
 	// create a map of formal variables to actual variables (new variables are created)
 	variableMap := parser.createVariableMap(antecedentVariable, rule.EntityVariables)
@@ -129,25 +141,23 @@ func (parser *simpleParser) parseSingleConsequent(syntacticCategory string, toke
 		return 0, node, []mentalese.SimpleRelation{}, false
 	}
 
-	if strings.ToLower(syntacticCategory) == syntacticCategory {
+	token := tokens[start]
 
-		// leaf node
-		lexItem, found := parser.lexicon.GetLexItem(tokens[start], syntacticCategory)
-		if found {
-			node.Word = tokens[start]
+	common.Logf("parseSingleConsequent: %s (%s)\n", token, syntacticCategory)
 
-			relations := []mentalese.SimpleRelation{}
+	// leaf node?
+	lexItem, found := parser.lexicon.GetLexItem(token, syntacticCategory)
+	if found {
+		node.Word = tokens[start]
 
-			if found {
-				// leaf node relations
-				relations = parser.createLexItemRelations(lexItem.RelationTemplates, v)
-			}
+		common.Logf("Leaf node: %s\n", token)
 
-			return start + 1, node, relations, true
+		relations := []mentalese.SimpleRelation{}
 
-		} else {
-			return 0, node, []mentalese.SimpleRelation{}, false
-		}
+		// leaf node relations
+		relations = parser.createLexItemRelations(lexItem.RelationTemplates, v)
+
+		return start + 1, node, relations, true
 
 	} else {
 

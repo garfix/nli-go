@@ -1,56 +1,77 @@
 package tests
 
 import (
+	"testing"
+	"nli-go/lib/importer"
+	"fmt"
+	"nli-go/lib/parse"
 )
-import "testing"
 
 func TestSimpleParser(test *testing.T) {
 
-	//rules := map[string][][]string{
-	//	"S": {
-	//		{"NP", "VP"},
-	//	},
-	//	"NP": {
-	//		{"NBar"},
-	//		{"det", "NBar"},
-	//	},
-	//	"NBar": {
-	//		{"noun"},
-	//		{"adj", "NBar"},
-	//	},
-	//	"VP": {
-	//		{"verb"},
-	//	},
-	//}
-	//
-	//lexItems := map[string][]string{
-	//	"the":   {"det"},
-	//	"a":     {"det"},
-	//	"shy":   {"adj"},
-	//	"small": {"adj"},
-	//	"boy":   {"noun"},
-	//	"girl":  {"noun"},
-	//	"cries": {"verb"},
-	//	"sings": {"verb"},
-	//}
-	//
-	//grammar := parse.NewSimpleGrammar()
-	//for _, rule := range rules {
-	//	grammar.AddRule(rule)
-	//}
-	//
-	//rawInput := "the small shy girl sings"
-	//tokenizer := parse.NewSimpleTokenizer()
-	//
-	//parser := parse.NewSimpleParser(grammar, example1.NewSimpleLexicon(lexItems))
-	//
-	//wordArray := tokenizer.Process(rawInput)
-	//length, relations, ok := parser.Process(wordArray)
-	//
-	//if !ok {
-	//	test.Error("Parse failed")
-	//}
-	//if relations != 3 {
-	//	test.Error(fmt.Sprintf("Length not equal to 5: %d", length))
-	//}
+	internalGrammarParser := importer.NewSimpleInternalGrammarParser()
+	grammar, _, _ := internalGrammarParser.CreateGrammar(`[
+		{
+			rule: s(P) :- np(E), vp(P)
+			sense: subject(P, E)
+		} {
+			rule: np(E) :- nbar(E)
+		} {
+			rule: np(E) :- det(E), nbar(E)
+		} {
+			rule: nbar(E) :- noun(E)
+		} {
+			rule: nbar(E) :- adj(E), nbar(E)
+		} {
+			rule: vp(P) :- verb(P)
+		}
+	]`)
+
+	lexicon, _, _ := internalGrammarParser.CreateLexicon(`[
+		{
+			form: 'the'
+			pos: det
+		} {
+			form: 'a'
+			pos: det
+		} {
+			form: 'shy'
+			pos: adj
+		} {
+			form: 'small'
+			pos: adj
+		} {
+			form: 'boy'
+			pos: noun
+			sense: instance_of('*', boy)
+		} {
+			form: 'girl'
+			pos: noun
+			sense: instance_of('*', girl)
+		} {
+			form: 'cries'
+			pos: verb
+			sense: predication('*', cry)
+		} {
+			form: 'sings'
+			pos: verb
+			sense: predication('*', sing)
+		}
+	]`)
+
+	rawInput := "the small shy girl sings"
+	tokenizer := parse.NewSimpleTokenizer()
+
+	parser := parse.NewSimpleParser(grammar, lexicon)
+
+	wordArray := tokenizer.Process(rawInput)
+
+	length, relations, ok := parser.Process(wordArray)
+
+	if !ok {
+		test.Errorf("Parse failed at pos %d", length)
+	}
+	if relations.String() != "[subject(S1, E1) instance_of(E1, girl) predication(S1, sing)]" {
+		test.Error(fmt.Sprintf("Relations: %v", relations))
+	}
 }

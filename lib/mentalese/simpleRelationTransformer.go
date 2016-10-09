@@ -71,7 +71,7 @@ func (transformer *simpleRelationTransformer) Append(relationSet SimpleRelationS
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(relations SimpleRelationSet) ([]int, []SimpleRelationSet, []SimpleBinding){
+func (transformer *simpleRelationTransformer) matchAllTransformations(needleSequences SimpleRelationSet) ([]int, []SimpleRelationSet, []SimpleBinding){
 
 	matchedIndexes := []int{}
 	replacements := []SimpleRelationSet{}
@@ -79,7 +79,7 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 
 	for _, transformation := range transformer.transformations {
 
-		newMatchedIndexes, newReplacements, newBinding := transformer.matchSingleTransformation(relations, transformation)
+		newMatchedIndexes, newReplacements, newBinding := transformer.matchSingleTransformation(needleSequences, transformation)
 		if len(newMatchedIndexes) > 0 {
 			matchedIndexes = append(matchedIndexes, common.IntArrayDeduplicate(newMatchedIndexes)...)
 			replacements = append(replacements, newReplacements)

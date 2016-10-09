@@ -33,14 +33,14 @@ func (matcher *SimpleRelationMatcher) MatchSequenceToSet(needleSequence SimpleRe
 
 	common.Logf("MatchSequenceToSet: %v / %v\n", needleSequence, haystackSet)
 
-	for _, haystackRelation := range haystackSet {
+	for _, needleRelation := range needleSequence {
 
-		index, newBoundVariables, found := matcher.matchSequenceToRelation(needleSequence, haystackRelation, binding)
+		//index, newBoundVariables, found := matcher.matchSequenceToRelation(needleSequence, haystackRelation, binding)
+		index, newBinding, found := matcher.matchRelationToSet(needleRelation, haystackSet, binding)
+
 		if found {
-
-			binding = newBoundVariables
+			binding = newBinding
 			matchedIndexes = append(matchedIndexes, index)
-
 		}
 	}
 
@@ -49,42 +49,43 @@ func (matcher *SimpleRelationMatcher) MatchSequenceToSet(needleSequence SimpleRe
 	return matchedIndexes, binding
 }
 
+
 // Attempts to match a single pattern relation to a single relation
-func (matcher *SimpleRelationMatcher) matchSequenceToRelation(subjectRelations SimpleRelationSet, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) matchRelationToSet(needleRelation SimpleRelation, haystackSet SimpleRelationSet, binding SimpleBinding) (int, SimpleBinding, bool) {
 
-	common.Logf("matchSubjectsToPattern: %v / %v\n", subjectRelations, patternRelation)
+	common.Logf("matchRelationToSet: %v / %v\n", needleRelation, haystackSet)
 
-	for index, subjectRelation := range subjectRelations {
+	for index, haystackRelation := range haystackSet {
 
-		newBoundVariables, matched := matcher.MatchSubjectToPattern(subjectRelation, patternRelation, boundVariables)
+		newBinding, matched := matcher.MatchNeedleToHaystack(needleRelation, haystackRelation, binding)
 
 		if matched {
 
-			common.Logf("matchSubjectsToPattern end: %d %v\n", index, newBoundVariables)
+			common.Logf("matchRelationToSet end: %d %v\n", index, newBinding)
 
-			return index, newBoundVariables, true
+			return index, newBinding, true
 		}
 	}
 
-	common.Log("matchSubjectsToPattern end: failed\n")
+	common.Log("matchRelationToSet end: failed\n")
 
 	return 0, SimpleBinding{}, false
 }
 
-func (matcher *SimpleRelationMatcher) MatchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
+func (matcher *SimpleRelationMatcher) MatchNeedleToHaystack(needleRelation SimpleRelation, haystackRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
 
-	common.Logf("MatchSubjectToPattern: %v / %v\n", subjectRelation, patternRelation)
+	common.Logf("MatchSubjectToPattern: %v / %v\n", needleRelation, haystackRelation)
 
 	// predicate
-	if subjectRelation.Predicate != patternRelation.Predicate {
+	if needleRelation.Predicate != haystackRelation.Predicate {
 		success = false
 	} else {
 
 		// arguments
-		for i, subjectArgument := range subjectRelation.Arguments {
-			newBinding, ok := matcher.bindArgument(subjectArgument, patternRelation.Arguments[i], binding)
+		for i, subjectArgument := range needleRelation.Arguments {
+			newBinding, ok := matcher.bindArgument(subjectArgument, haystackRelation.Arguments[i], binding)
 
 			if ok {
 				binding = newBinding

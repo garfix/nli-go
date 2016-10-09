@@ -46,14 +46,14 @@ func TestSimpleRelationTransformer(test *testing.T) {
 
 	transformedSet, _ = transformer2.Extract(relationSet)
 
-	if transformedSet[0].String() != "[task(S1, name) subject(E1)]" {
+	if transformedSet[0].String() != "[task(S1, all) subject(E1)]" {
 		test.Errorf("Error in result: %s", transformedSet[0].String())
 	}
 	if transformedSet[1].String() != "[done()]" {
 		test.Errorf("Error in result: %s", transformedSet[1].String())
 	}
-	if len(transformedSet) != 2 {
-//		test.Errorf("Error in length: %d", len(transformedSet))
+	if len(transformedSet) > 2 {
+//		test.Errorf("Error in result: %s", transformedSet[2].String())
 	}
 
 	// replace

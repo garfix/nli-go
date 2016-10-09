@@ -52,7 +52,7 @@ func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentale
 
 				common.Logf("Match %v %v %s\n", dbRelation, dbFact, simpleBinding);
 
-				newSimpleBinding, factFound = matcher.MatchSubjectToPattern(dbRelation, dbFact, simpleBinding)
+				newSimpleBinding, factFound = matcher.MatchNeedleToHaystack(dbRelation, dbFact, simpleBinding)
 
 				common.Logf("Binding %v %b\n", newSimpleBinding, factFound);
 

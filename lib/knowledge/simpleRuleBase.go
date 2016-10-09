@@ -23,7 +23,7 @@ func (ruleBase *SimpleRuleBase) Bind(goal mentalese.SimpleRelation) ([][]mentale
 		binding := mentalese.SimpleBinding{}
 
 		// match goal
-		simpleBinding, success := matcher.MatchSubjectToPattern(goal, rule.Goal, binding)
+		simpleBinding, success := matcher.MatchNeedleToHaystack(goal, rule.Goal, binding)
 		if !success {
 			continue
 		}

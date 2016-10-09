@@ -119,8 +119,8 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	//transformer = example3.NewSimpleRelationTransformer(specificResponseSpec)
 	//genericResponseSense := transformer.Extract(domainSpecificResponseSense)
 	//
-	if len(domainSpecificResponseSense) != 1 {
-		test.Errorf("Wrong number of results: %d", len(domainSpecificResponseSense))
+	if domainSpecificResponseSense[0].String() != "[married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
+		test.Errorf("Wrong response: %s", domainSpecificResponseSense[0].String())
 	}
 
 }

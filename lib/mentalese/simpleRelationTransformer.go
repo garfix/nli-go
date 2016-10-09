@@ -92,23 +92,23 @@ func (transformer *simpleRelationTransformer) matchAllTransformations(relations 
 
 // Attempts to match a single transformation
 // Returns the indexes of matched relations, and the replacements
-func (transformer *simpleRelationTransformer) matchSingleTransformation(relations SimpleRelationSet, transformation SimpleRelationTransformation) ([]int, SimpleRelationSet, SimpleBinding){
+func (transformer *simpleRelationTransformer) matchSingleTransformation(needleSequence SimpleRelationSet, transformation SimpleRelationTransformation) ([]int, SimpleRelationSet, SimpleBinding){
 
-	common.Logf("Matching: %v / %v\n", transformation.Pattern, relations)
+	needleBinding := SimpleBinding{}
+	replacements := SimpleRelationSet{}
+
+	common.Logf("Matching: %v / %v\n", transformation.Pattern, needleSequence)
 
 	// match the pattern part of the transformation to the available relations
-	matchedIndexes, oldBinding := transformer.matcher.MatchSequenceToSet(transformation.Pattern, relations)
+	matchedIndexes, transformationBinding := transformer.matcher.MatchSequenceToSet(transformation.Pattern, needleSequence)
 
-	matchedIndexes2, binding := transformer.matcher.MatchSequenceToSet(relations, transformation.Pattern)
-
-	common.Logf("Matched: %v %v %v %v\n", matchedIndexes, oldBinding, matchedIndexes2, binding)
-
-	replacements := SimpleRelationSet{}
 	if len(matchedIndexes) > 0 {
-		replacements = transformer.createReplacements(transformation.Replacement, oldBinding)
+
+		_, needleBinding = transformer.matcher.MatchSequenceToSet(needleSequence, transformation.Pattern)
+		replacements = transformer.createReplacements(transformation.Replacement, transformationBinding)
 	}
 
-	return matchedIndexes, replacements, binding
+	return matchedIndexes, replacements, needleBinding
 }
 
 func (transformer *simpleRelationTransformer) createReplacements(relations SimpleRelationSet, bindings SimpleBinding) SimpleRelationSet {

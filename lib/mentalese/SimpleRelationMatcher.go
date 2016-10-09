@@ -26,16 +26,16 @@ func (matcher *SimpleRelationMatcher) Match(needleSequence SimpleRelationSet, ha
 }
 
 // matches a sequence to a set
-func (matcher *SimpleRelationMatcher) MatchSequenceToSet(sequenceNeedle SimpleRelationSet, haystackSet SimpleRelationSet) ([]int, SimpleBinding){
+func (matcher *SimpleRelationMatcher) MatchSequenceToSet(needleSequence SimpleRelationSet, haystackSet SimpleRelationSet) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
 	binding := SimpleBinding{}
 
-	common.Logf("MatchSequenceToSet: %v / %v\n", sequenceNeedle, haystackSet)
+	common.Logf("MatchSequenceToSet: %v / %v\n", needleSequence, haystackSet)
 
-	for _, patternRelation := range haystackSet {
+	for _, haystackRelation := range haystackSet {
 
-		index, newBoundVariables, found := matcher.matchSubjectsToPattern(sequenceNeedle, patternRelation, binding)
+		index, newBoundVariables, found := matcher.matchSequenceToRelation(needleSequence, haystackRelation, binding)
 		if found {
 
 			binding = newBoundVariables
@@ -49,8 +49,8 @@ func (matcher *SimpleRelationMatcher) MatchSequenceToSet(sequenceNeedle SimpleRe
 	return matchedIndexes, binding
 }
 
-// Attempts to match a single pattern relation to a series of relations
-func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations SimpleRelationSet, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
+// Attempts to match a single pattern relation to a single relation
+func (matcher *SimpleRelationMatcher) matchSequenceToRelation(subjectRelations SimpleRelationSet, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
 
 	common.Logf("matchSubjectsToPattern: %v / %v\n", subjectRelations, patternRelation)
 
@@ -98,84 +98,4 @@ func (matcher *SimpleRelationMatcher) MatchSubjectToPattern(subjectRelation Simp
 	common.Logf("MatchSubjectToPattern: %v / %v\n", binding, success)
 
 	return binding, success
-}
-
-// Extends the binding with new variable bindings for the variables of subjectArgument
-func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, patternArgument SimpleTerm, binding SimpleBinding) (SimpleBinding, bool) {
-
-	success := false
-
-	if subjectArgument.IsAnonymousVariable() || patternArgument.IsAnonymousVariable() {
-
-		// anonymous variables always match, but do not bind
-
-		success = true
-
-	} else if subjectArgument.IsVariable() {
-
-		// variable
-
-		value := SimpleTerm{}
-
-		// does patternRelationArgument occur in boundVariables?
-		value, match := binding[subjectArgument.String()]
-		if match {
-			// it does, use the bound variable
-			if patternArgument.Equals(value) {
-				success = true
-			}
-		} else {
-			// it does not, just assign the actual argument
-			binding[subjectArgument.String()] = patternArgument
-			success = true
-		}
-
-	} else {
-
-		// subject is atom, constant
-
-		if patternArgument.IsVariable() {
-			// note: no binding is made
-			success = true
-		} else if patternArgument.Equals(subjectArgument) {
-			success = true
-		}
-	}
-
-	return binding, success
-}
-
-func (matcher *SimpleRelationMatcher) BindSingleRelationSingleBinding(relation SimpleRelation, binding SimpleBinding) SimpleRelation {
-
-	for i, argument := range relation.Arguments {
-
-		if argument.IsVariable() {
-			newValue, found := binding[argument.TermValue]
-			if found {
-				relation.Arguments[i] = newValue
-			}
-		}
-	}
-
-	return relation
-}
-
-func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relations SimpleRelationSet, binding SimpleBinding) SimpleRelationSet {
-
-	for i, relation:= range relations {
-		relations[i] = matcher.BindSingleRelationSingleBinding(relation, binding)
-	}
-
-	return relations
-}
-
-func (matcher *SimpleRelationMatcher) BindMultipleRelationsMultipleBindings(relations SimpleRelationSet, bindings []SimpleBinding) []SimpleRelationSet {
-
-	relationSets := []SimpleRelationSet{}
-
-	for _, binding := range bindings {
-		relationSets = append(relationSets, matcher.bindMultipleRelationsSingleBinding(relations, binding))
-	}
-
-	return relationSets
 }

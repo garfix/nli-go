@@ -1,5 +1,16 @@
 package mentalese
 
+import "nli-go/lib/common"
+
+// This class matches relations to other relations and reports their bindings
+// These concepts are used:
+//
+// sequence: a set of relations that is matched as a whole and shares a single binding
+// set: a set of unordered relations
+//
+// needle: the active subject, whose variables are to be bound
+// haystack: the base of relations that serve as matching candidates
+
 type SimpleRelationMatcher struct {
 
 }
@@ -8,46 +19,54 @@ func NewSimpleRelationMatcher() *SimpleRelationMatcher {
 	return &SimpleRelationMatcher{}
 }
 
-func (matcher *SimpleRelationMatcher) Match(subject SimpleRelationSet, pattern SimpleRelationSet) bool {
-	matchedIndexes, _ := matcher.MatchSubjectsToPatterns(subject, pattern, false)
+// matches a sequence to a set
+func (matcher *SimpleRelationMatcher) Match(needleSequence SimpleRelationSet, haystackSet SimpleRelationSet) bool {
+	matchedIndexes, _ := matcher.MatchSequenceToSet(needleSequence, haystackSet)
 	return len(matchedIndexes) > 0
 }
 
-func (matcher *SimpleRelationMatcher) MatchSubjectsToPatterns(subjectRelations SimpleRelationSet, patternRelations SimpleRelationSet, allowPartial bool) ([]int, SimpleBinding){
+// matches a sequence to a set
+func (matcher *SimpleRelationMatcher) MatchSequenceToSet(sequenceNeedle SimpleRelationSet, haystackSet SimpleRelationSet) ([]int, SimpleBinding){
 
 	matchedIndexes := []int{}
-	boundVariables := SimpleBinding{}
+	binding := SimpleBinding{}
 
-	for _, patternRelation := range patternRelations {
+	common.Logf("MatchSequenceToSet: %v / %v\n", sequenceNeedle, haystackSet)
 
-		index, newBoundVariables, found := matcher.matchSubjectsToPattern(subjectRelations, patternRelation, boundVariables)
+	for _, patternRelation := range haystackSet {
+
+		index, newBoundVariables, found := matcher.matchSubjectsToPattern(sequenceNeedle, patternRelation, binding)
 		if found {
 
-			boundVariables = newBoundVariables
+			binding = newBoundVariables
 			matchedIndexes = append(matchedIndexes, index)
 
-		} else {
-
-			if !allowPartial {
-				return []int{}, SimpleBinding{}
-			}
 		}
 	}
 
-	return matchedIndexes, boundVariables
+	common.Logf("MatchSequenceToSet end: %v / %v\n", matchedIndexes, binding)
+
+	return matchedIndexes, binding
 }
 
 // Attempts to match a single pattern relation to a series of relations
 func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations SimpleRelationSet, patternRelation SimpleRelation, boundVariables SimpleBinding) (int, SimpleBinding, bool) {
+
+	common.Logf("matchSubjectsToPattern: %v / %v\n", subjectRelations, patternRelation)
 
 	for index, subjectRelation := range subjectRelations {
 
 		newBoundVariables, matched := matcher.MatchSubjectToPattern(subjectRelation, patternRelation, boundVariables)
 
 		if matched {
+
+			common.Logf("matchSubjectsToPattern end: %d %v\n", index, newBoundVariables)
+
 			return index, newBoundVariables, true
 		}
 	}
+
+	common.Log("matchSubjectsToPattern end: failed\n")
 
 	return 0, SimpleBinding{}, false
 }
@@ -55,6 +74,8 @@ func (matcher *SimpleRelationMatcher) matchSubjectsToPattern(subjectRelations Si
 func (matcher *SimpleRelationMatcher) MatchSubjectToPattern(subjectRelation SimpleRelation, patternRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := true
+
+	common.Logf("MatchSubjectToPattern: %v / %v\n", subjectRelation, patternRelation)
 
 	// predicate
 	if subjectRelation.Predicate != patternRelation.Predicate {
@@ -73,6 +94,8 @@ func (matcher *SimpleRelationMatcher) MatchSubjectToPattern(subjectRelation Simp
 			}
 		}
 	}
+
+	common.Logf("MatchSubjectToPattern: %v / %v\n", binding, success)
 
 	return binding, success
 }

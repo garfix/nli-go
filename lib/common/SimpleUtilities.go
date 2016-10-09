@@ -1,6 +1,6 @@
 package common
 
-func intArrayContains(haystack []int, needle int) bool {
+func IntArrayContains(haystack []int, needle int) bool {
 	for _, value := range haystack  {
 		if needle == value {
 			return true

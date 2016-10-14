@@ -38,38 +38,32 @@ func TestSimpleRelationTransformer(test *testing.T) {
 
 	// extract
 
-	transformedSet, _ := transformer.Extract(relationSet)
+	transformedSet := transformer.Extract(relationSet)
 
-	if transformedSet[0].String() != "[task(S1, list_customers)]" {
+	if transformedSet.String() != "[task(S1, list_customers)]" {
 		test.Errorf("Error in result: %s", transformedSet[0].String())
 	}
 
-	transformedSet, _ = transformer2.Extract(relationSet)
+	transformedSet = transformer2.Extract(relationSet)
 
-	if transformedSet[0].String() != "[task(S1, all) subject(E1)]" {
-		test.Errorf("Error in result: %s", transformedSet[0].String())
-	}
-	if transformedSet[1].String() != "[done()]" {
-		test.Errorf("Error in result: %s", transformedSet[1].String())
-	}
-	if len(transformedSet) > 2 {
-//		test.Errorf("Error in result: %s", transformedSet[2].String())
+	if transformedSet.String() != "[task(S1, all) subject(E1) done()]" {
+		test.Errorf("Error in result: %s", transformedSet.String())
 	}
 
 	// replace
 
-	//transformedSet2 := transformer2.Replace(relationSet)
-	//
-	//if transformedSet2.String() != "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]" {
-	//	test.Errorf("Error in result: %s", transformedSet2.String())
-	//}
-	//
-	//// append
-	//
-	//transformedSet2 = transformer2.Append(relationSet)
-	//
-	//if transformedSet2.String() != "[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) " +
-	//	"instance_of(D1, all) task(S1, name) subject(E1) done()]" {
-	//	test.Errorf("Error in result: %s", transformedSet2.String())
-	//}
+	transformedSet2 := transformer2.Replace(relationSet)
+
+	if transformedSet2.String() != "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]" {
+		test.Errorf("Error in result: %s", transformedSet2.String())
+	}
+
+	// append
+
+	transformedSet2 = transformer2.Append(relationSet)
+
+	if transformedSet2.String() != "[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) " +
+		"task(S1, all) subject(E1) done()]" {
+		test.Errorf("Error in result: %s", transformedSet2.String())
+	}
 }

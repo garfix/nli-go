@@ -32,9 +32,11 @@ func TestSimpleGoalSpecification(test *testing.T) {
 		question(A) :- info_request(A)
 	]`)
 
+//	common.LoggerActive=true
+
 	// create domain specific representation
 	transformer := mentalese.NewSimpleRelationTransformer(domainSpecificAnalysis)
-	domainSpecificSense, _ := transformer.Extract(genericSense)
+	domainSpecificSense := transformer.Extract(genericSense)
 
 	common.Logf("DS sense %v\n", domainSpecificSense)
 
@@ -68,9 +70,9 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	// optimalisatie-fase: doe eerst de meest gerestricteerde doelen (bv name(A, 'Kurt Cobain')
 
 	transformer = mentalese.NewSimpleRelationTransformer(domainSpecificGoalAnalysis)
-	goalSense, _ := transformer.Extract(domainSpecificSense[0])
+	goalSense := transformer.Extract(domainSpecificSense)
 
-	common.Logf("Goal sense %v", goalSense)
+	common.Logf("Goal sense %v\n", goalSense)
 
 	rules, _, _ := internalGrammarParser.CreateRules(`
 	`)
@@ -79,10 +81,10 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	ruleBase1 := knowledge.NewSimpleRuleBase(rules)
 
 	ds2db, _, _ := internalGrammarParser.CreateRules(`[
-		marriages(A, B, _) :- married_to(A, B)
-		person(A, N, _, _) :- name(A, N)
-		person(A, _, 'M', _) :- gender(A, male)
-		person(A, _, 'F', _) :- gender(A, female)
+		married_to(A, B) :- marriages(A, B, _)
+		name(A, N) :- person(A, N, _, _)
+		gender(A, male) :- person(A, _, 'M', _)
+		gender(A, female) :- person(A, _, 'F', _)
 	]`)
 
 	// voorbeeld van wanneer dit niet werkt:
@@ -104,7 +106,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	problemSolver := central.NewSimpleProblemSolver()
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
-	domainSpecificResponseSense := problemSolver.Solve(goalSense[0])
+	domainSpecificResponseSense := problemSolver.Solve(goalSense)
 
 // ERR
 
@@ -119,7 +121,10 @@ func TestSimpleGoalSpecification(test *testing.T) {
 	//transformer = example3.NewSimpleRelationTransformer(specificResponseSpec)
 	//genericResponseSense := transformer.Extract(domainSpecificResponseSense)
 	//
-	if domainSpecificResponseSense[0].String() != "[married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
+
+	if len(domainSpecificResponseSense) == 0 {
+		test.Error("Wrong response")
+	} else if domainSpecificResponseSense[0].String() != "[married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
 		test.Errorf("Wrong response: %s", domainSpecificResponseSense[0].String())
 	}
 

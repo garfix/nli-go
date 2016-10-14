@@ -5,6 +5,7 @@ package mentalese
 func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, patternArgument SimpleTerm, binding SimpleBinding) (SimpleBinding, bool) {
 
 	success := false
+	newBinding := SimpleBinding{}.Merge(binding)
 
 	if subjectArgument.IsAnonymousVariable() || patternArgument.IsAnonymousVariable() {
 
@@ -19,7 +20,7 @@ func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, p
 		value := SimpleTerm{}
 
 		// does patternRelationArgument occur in boundVariables?
-		value, match := binding[subjectArgument.String()]
+		value, match := newBinding[subjectArgument.String()]
 		if match {
 			// it does, use the bound variable
 			if patternArgument.Equals(value) {
@@ -27,7 +28,7 @@ func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, p
 			}
 		} else {
 			// it does not, just assign the actual argument
-			binding[subjectArgument.String()] = patternArgument
+			newBinding[subjectArgument.String()] = patternArgument
 			success = true
 		}
 
@@ -43,7 +44,7 @@ func (matcher *SimpleRelationMatcher) bindArgument(subjectArgument SimpleTerm, p
 		}
 	}
 
-	return binding, success
+	return newBinding, success
 }
 
 func (matcher *SimpleRelationMatcher) BindSingleRelationSingleBinding(relation SimpleRelation, binding SimpleBinding) SimpleRelation {

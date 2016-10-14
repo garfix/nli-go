@@ -14,24 +14,10 @@ func NewSimpleRelationTransformer(transformations[]SimpleRelationTransformation)
 	return &simpleRelationTransformer{transformations: transformations, matcher: SimpleRelationMatcher{}}
 }
 
-// using rules (subset of transformations)
-func NewSimpleRelationTransformer2(rules[]SimpleRule) *simpleRelationTransformer {
-
-	transformations := []SimpleRelationTransformation{}
-
-	for _, rule := range rules {
-
-		transformation := SimpleRelationTransformation{Replacement: SimpleRelationSet{ rule.Goal }, Pattern: rule.Pattern }
-		transformations = append(transformations, transformation)
-	}
-
-	return &simpleRelationTransformer{transformations: transformations, matcher: SimpleRelationMatcher{}}
-}
-
 // return the original relations, but replace the ones that have matched with their replacements
 func (transformer *simpleRelationTransformer) Replace(relationSet SimpleRelationSet) SimpleRelationSet {
 
-	matchedIndexes, replacements, _ := transformer.matchAllTransformations(relationSet)
+	matchedIndexes, replacements := transformer.matchAllTransformations(relationSet)
 	newRelations := SimpleRelationSet{}
 
 	for i, oldRelation := range relationSet  {
@@ -40,101 +26,90 @@ func (transformer *simpleRelationTransformer) Replace(relationSet SimpleRelation
 		}
 	}
 
-	for _, replacementSet := range replacements {
-		newRelations = append(newRelations, replacementSet...)
-	}
+	newRelations = append(newRelations, replacements...)
 
 	return newRelations
 }
 
-// return only the replacements
-func (transformer *simpleRelationTransformer) Extract(relationSet SimpleRelationSet) ([]SimpleRelationSet, []SimpleBinding) {
+// Try to match all transformations to relationSet, and return the replacements that resulted from the transformations
+func (transformer *simpleRelationTransformer) Extract(relationSet SimpleRelationSet) (SimpleRelationSet) {
 
-	_, replacements, bindings := transformer.matchAllTransformations(relationSet)
-	return replacements, bindings
+	common.LogTree("Extract", relationSet)
+
+	_, replacements := transformer.matchAllTransformations(relationSet)
+
+	common.LogTree("Extract", replacements)
+
+	return replacements
 }
 
 // only add the replacements to the original relations
 func (transformer *simpleRelationTransformer) Append(relationSet SimpleRelationSet) SimpleRelationSet {
 
-	_, replacements, _ := transformer.matchAllTransformations(relationSet)
+	_, replacements := transformer.matchAllTransformations(relationSet)
 
 	newRelations := SimpleRelationSet{}
 	newRelations = append(newRelations, relationSet...)
-
-	for _, replacementSet := range replacements {
-		newRelations = append(newRelations, replacementSet...)
-	}
+	newRelations = append(newRelations, replacements...)
 
 	return newRelations
 }
 
 // Attempts all transformations on all relations
-// Returns the indexes of the matched relations, and the replacements that were created
-func (transformer *simpleRelationTransformer) matchAllTransformations(needleSequences SimpleRelationSet) ([]int, []SimpleRelationSet, []SimpleBinding){
+// Returns the indexes of the matched relations, and the replacements that were created, each in a single set
+func (transformer *simpleRelationTransformer) matchAllTransformations(haystackSet SimpleRelationSet) ([]int, SimpleRelationSet){
+
+	common.LogTree("matchAllTransformations", haystackSet)
 
 	matchedIndexes := []int{}
-	replacements := []SimpleRelationSet{}
-	bindings := []SimpleBinding{}
+	replacements := SimpleRelationSet{}
 
 	for _, transformation := range transformer.transformations {
 
-		newMatchedIndexes, newReplacements, newBinding := transformer.matchSingleTransformation(needleSequences, transformation)
-		if len(newMatchedIndexes) > 0 {
-			matchedIndexes = append(matchedIndexes, common.IntArrayDeduplicate(newMatchedIndexes)...)
-			replacements = append(replacements, newReplacements)
-			bindings = append(bindings, newBinding)
+		// each transformation application is completely independent from the others
+		newIndexes, binding, match := transformer.matcher.MatchSequenceToSet(transformation.Pattern, haystackSet, SimpleBinding{})
+		if match {
+			matchedIndexes = append(matchedIndexes, common.IntArrayDeduplicate(newIndexes)...)
+			replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
 		}
 	}
 
-	return matchedIndexes, replacements, bindings
-}
+	common.LogTree("matchAllTransformations", matchedIndexes, replacements)
 
-// Attempts to match a single transformation
-// Returns the indexes of matched relations, and the replacements
-func (transformer *simpleRelationTransformer) matchSingleTransformation(needleSequence SimpleRelationSet, transformation SimpleRelationTransformation) ([]int, SimpleRelationSet, SimpleBinding){
-
-	needleBinding := SimpleBinding{}
-	replacements := SimpleRelationSet{}
-
-	common.Logf("Matching: %v / %v\n", transformation.Pattern, needleSequence)
-
-	// match the pattern part of the transformation to the available relations
-	matchedIndexes, transformationBinding := transformer.matcher.MatchSequenceToSet(transformation.Pattern, needleSequence)
-
-	if len(matchedIndexes) > 0 {
-
-		_, needleBinding = transformer.matcher.MatchSequenceToSet(needleSequence, transformation.Pattern)
-		replacements = transformer.createReplacements(transformation.Replacement, transformationBinding)
-	}
-
-	return matchedIndexes, replacements, needleBinding
+	return matchedIndexes, replacements
 }
 
 func (transformer *simpleRelationTransformer) createReplacements(relations SimpleRelationSet, bindings SimpleBinding) SimpleRelationSet {
 
 	replacements := SimpleRelationSet{}
 
-	common.Logf("Replace! %v %v\n", relations, bindings)
+	common.LogTree("createReplacements", relations, bindings)
 
 	for _, relation := range relations {
 
-		newRelation := relation
+		newRelation := SimpleRelation{}
+		newRelation.Predicate = relation.Predicate
 
-		for i, argument := range relation.Arguments {
+		for _, argument := range relation.Arguments {
+
+			arg := argument
 
 			if argument.IsVariable() {
 				value, found := bindings[argument.String()]
 				if found {
-					newRelation.Arguments[i] = value
+					arg = value
 				} else {
-					// replacement could not be bound!
+					// replacement could not be bound, leave variable unchanged
 				}
 			}
+
+			newRelation.Arguments = append(newRelation.Arguments, arg)
 		}
 
-		replacements = append(replacements, relation)
+		replacements = append(replacements, newRelation)
 	}
+
+	common.LogTree("createReplacements", replacements)
 
 	return replacements
 }

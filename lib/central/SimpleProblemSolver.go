@@ -26,11 +26,11 @@ func (solver *simpleProblemSolver) AddKnowledgeBase(source knowledge.SimpleKnowl
 // }
 func (solver simpleProblemSolver) Solve(goals []mentalese.SimpleRelation) []mentalese.SimpleRelationSet {
 
-	common.Log("Solve start\n")
+	common.LogTree("Solve")
 	bindings := solver.SolveMultipleRelations(goals)
 	solutions := solver.matcher.BindMultipleRelationsMultipleBindings(goals, bindings)
 
-	common.Logf("Solve end %v\n", solutions)
+	common.LogTree("Solve", solutions)
 	return solutions
 }
 
@@ -41,7 +41,7 @@ func (solver simpleProblemSolver) Solve(goals []mentalese.SimpleRelation) []ment
 // }
 func (solver simpleProblemSolver) SolveMultipleRelations(goals []mentalese.SimpleRelation) []mentalese.SimpleBinding {
 
-	common.Logf("SolveMultipleRelations start %v\n", goals)
+	common.LogTree("SolveMultipleRelations", goals)
 	
 	bindings := []mentalese.SimpleBinding{}
 
@@ -49,7 +49,7 @@ func (solver simpleProblemSolver) SolveMultipleRelations(goals []mentalese.Simpl
 		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
 	}
 
-	common.Logf("SolveMultipleRelations end %v\n", bindings)
+	common.LogTree("SolveMultipleRelations", bindings)
 
 	return bindings
 }
@@ -65,7 +65,7 @@ func (solver simpleProblemSolver) SolveMultipleRelations(goals []mentalese.Simpl
 // }
 func (solver simpleProblemSolver) SolveSingleRelationMultipleBindings(goalRelation mentalese.SimpleRelation, bindings []mentalese.SimpleBinding) []mentalese.SimpleBinding {
 
-	common.Logf("SolveSingleRelationMultipleBindings start %v ; %v\n", goalRelation, bindings)
+	common.LogTree("SolveSingleRelationMultipleBindings", goalRelation, bindings)
 
 	if len(bindings) == 0 {
 		return solver.SolveSingleRelationSingleBinding(goalRelation, mentalese.SimpleBinding{})
@@ -77,7 +77,7 @@ func (solver simpleProblemSolver) SolveSingleRelationMultipleBindings(goalRelati
 		newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
 	}
 
-	common.Logf("SolveSingleRelationMultipleBindings end %v\n", newBindings)
+	common.LogTree("SolveSingleRelationMultipleBindings", newBindings)
 
 	return newBindings
 }
@@ -90,7 +90,7 @@ func (solver simpleProblemSolver) SolveSingleRelationMultipleBindings(goalRelati
 // }
 func (solver simpleProblemSolver) SolveSingleRelationSingleBinding(goalRelation mentalese.SimpleRelation, binding mentalese.SimpleBinding) []mentalese.SimpleBinding {
 
-	common.Logf("SolveSingleRelationSingleBinding start %v %v\n", goalRelation, binding)
+	common.LogTree("SolveSingleRelationSingleBinding", goalRelation, binding)
 
 	newBindings := []mentalese.SimpleBinding{}
 
@@ -101,7 +101,7 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBinding(goalRelation 
 		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleSource(boundRelation, binding, source)...)
 	}
 
-	common.Logf("SolveSingleRelationSingleBinding end %v\n", newBindings)
+	common.LogTree("SolveSingleRelationSingleBinding", newBindings)
 
 	return newBindings
 }
@@ -114,7 +114,7 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBinding(goalRelation 
 // }
 func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(boundRelation mentalese.SimpleRelation, binding mentalese.SimpleBinding, source knowledge.SimpleKnowledgeBase) []mentalese.SimpleBinding {
 
-	common.Logf("SolveSingleRelationSingleBindingSingleSource start %v %v\n", boundRelation, binding)
+	common.LogTree("SolveSingleRelationSingleBindingSingleSource", boundRelation, binding)
 
 	newBindings := []mentalese.SimpleBinding{}
 
@@ -139,7 +139,7 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(b
 		newBindings = append(newBindings, subgoalSetBindings...)
 	}
 
-	common.Logf("SolveSingleRelationSingleBindingSingleSource end %v\n", newBindings)
+	common.LogTree("SolveSingleRelationSingleBindingSingleSource", newBindings)
 
 	return newBindings
 }
@@ -152,7 +152,7 @@ func (solver simpleProblemSolver) SolveSingleRelationSingleBindingSingleSource(b
 // }
 func (solver simpleProblemSolver) SolveMultipleRelationsSingleBinding(goals []mentalese.SimpleRelation, binding mentalese.SimpleBinding) []mentalese.SimpleBinding {
 
-	common.Logf("SolveMultipleRelationsSingleBinding start %v %v\n", goals, binding)
+	common.LogTree("SolveMultipleRelationsSingleBinding", goals, binding)
 
 	bindings := []mentalese.SimpleBinding{binding}
 
@@ -160,7 +160,7 @@ func (solver simpleProblemSolver) SolveMultipleRelationsSingleBinding(goals []me
 		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
 	}
 
-	common.Logf("SolveMultipleRelationsSingleBinding end %v\n", bindings)
+	common.LogTree("SolveMultipleRelationsSingleBinding", bindings)
 
 	return bindings
 }

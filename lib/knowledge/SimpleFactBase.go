@@ -18,67 +18,40 @@ func NewSimpleFactBase(facts []mentalese.SimpleRelation, ds2db []mentalese.Simpl
 // This is an simulation of an external database
 func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
 
-	common.Logf("Factbase start %v\n", goal);
-
-	subgoalRelationSets := [][]mentalese.SimpleRelation{}
-	subgoalBindings := []mentalese.SimpleBinding{}
-
-	transformer := mentalese.NewSimpleRelationTransformer2(factBase.ds2db)
-
-	common.Logf("DB: %v\n", factBase.ds2db)
-
-	dbRelationSets, dbBindings := transformer.Extract([]mentalese.SimpleRelation{goal})
-
-// bij het extracten moet je bijhouden aan hoe de oorspronkelijke variabelen gebonden worden
-// gebruik deze bindings ook als defaults hieronder
-
-	common.Logf("Extracted: %v %v\n", dbRelationSets, dbBindings);
+	common.LogTree("Factbase Bind", goal);
 
 	matcher := mentalese.NewSimpleRelationMatcher()
-	newSimpleBinding := mentalese.SimpleBinding{}
 
-	for i, dbRelationSet := range dbRelationSets {
+	subgoalRelationSets := []mentalese.SimpleRelationSet{}
+	subgoalBindings := []mentalese.SimpleBinding{}
 
-		simpleBinding := mentalese.SimpleBinding{}
-		relationsFound := true
+	for _, ds2db := range factBase.ds2db {
 
-		for _, dbRelation := range dbRelationSet {
+		externalBinding := mentalese.SimpleBinding{}
+		match := false
 
-			common.Logf("Relation %v\n", dbRelation);
+		externalBinding, match = matcher.MatchTwoRelations(goal, ds2db.Goal, externalBinding)
+		if match {
 
-			factFound := false
+			transBinding := mentalese.SimpleBinding{}
+			transBinding, match = matcher.MatchTwoRelations(goal, ds2db.Goal, transBinding)
 
-			for _, dbFact := range factBase.facts {
+			_, internalBinding, match := matcher.MatchSequenceToSet(ds2db.Pattern, factBase.facts, mentalese.SimpleBinding{})
 
-				common.Logf("Match %v %v %s\n", dbRelation, dbFact, simpleBinding);
-
-				newSimpleBinding, factFound = matcher.MatchNeedleToHaystack(dbRelation, dbFact, simpleBinding)
-
-				common.Logf("Binding %v %b\n", newSimpleBinding, factFound);
-
-				if factFound {
-					simpleBinding = newSimpleBinding
-					break
-				}
+			if match {
+				subgoalRelationSets = append(subgoalRelationSets, []mentalese.SimpleRelation{})
+				subgoalBindings = append(subgoalBindings, externalBinding.Bind(internalBinding))
 			}
-
-			if !factFound {
-				relationsFound = false
-				break
-			}
-		}
-
-		common.Logf("Relations found %b\n", relationsFound);
-
-		if relationsFound {
-			subgoalRelationSet := []mentalese.SimpleRelation{}
-
-			subgoalRelationSets = append(subgoalRelationSets, subgoalRelationSet)
-			subgoalBindings = append(subgoalBindings, dbBindings[i].Merge(simpleBinding))
 		}
 	}
 
-	common.Logf("Factbase end %v %v\n", subgoalRelationSets, subgoalBindings);
+	subgoalRelationSets3 := [][]mentalese.SimpleRelation{}
+// TODO: ieuw!
+	for _, r := range subgoalRelationSets {
+		subgoalRelationSets3 = append(subgoalRelationSets3, r)
+	}
 
-	return subgoalRelationSets, subgoalBindings
+	common.LogTree("Factbase Bind", subgoalRelationSets3, subgoalBindings);
+
+	return subgoalRelationSets3, subgoalBindings
 }

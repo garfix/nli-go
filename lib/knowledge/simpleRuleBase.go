@@ -12,10 +12,10 @@ func NewSimpleRuleBase(rules []mentalese.SimpleRule) *SimpleRuleBase {
 	return &SimpleRuleBase{rules: rules}
 }
 
-func (ruleBase *SimpleRuleBase) Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
+func (ruleBase *SimpleRuleBase) Bind(goal mentalese.SimpleRelation) ([]mentalese.SimpleRelationSet, []mentalese.SimpleBinding) {
 
 	matcher := mentalese.NewSimpleRelationMatcher()
-	subgoalRelationSets := [][]mentalese.SimpleRelation{}
+	subgoalRelationSets := []mentalese.SimpleRelationSet{}
 	subgoalBindings := []mentalese.SimpleBinding{}
 
 	for _, rule := range ruleBase.rules {

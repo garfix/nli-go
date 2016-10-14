@@ -12,5 +12,5 @@ type SimpleKnowledgeBase interface {
 	//    { X='Jack' },
 	// }
 	// Note: bindings are linked to subgoalSets, one on one; but usually just one of the arrays is used
-	Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding)
+	Bind(goal mentalese.SimpleRelation) ([]mentalese.SimpleRelationSet, []mentalese.SimpleBinding)
 }

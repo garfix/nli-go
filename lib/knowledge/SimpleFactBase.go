@@ -16,7 +16,7 @@ func NewSimpleFactBase(facts []mentalese.SimpleRelation, ds2db []mentalese.Simpl
 
 // Note! An internal fact base would use the same predicates as the domain language;
 // This is an simulation of an external database
-func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentalese.SimpleRelation, []mentalese.SimpleBinding) {
+func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([]mentalese.SimpleRelationSet, []mentalese.SimpleBinding) {
 
 	common.LogTree("Factbase Bind", goal);
 
@@ -45,13 +45,7 @@ func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([][]mentale
 		}
 	}
 
-	subgoalRelationSets3 := [][]mentalese.SimpleRelation{}
-// TODO: ieuw!
-	for _, r := range subgoalRelationSets {
-		subgoalRelationSets3 = append(subgoalRelationSets3, r)
-	}
+	common.LogTree("Factbase Bind", subgoalRelationSets, subgoalBindings);
 
-	common.LogTree("Factbase Bind", subgoalRelationSets3, subgoalBindings);
-
-	return subgoalRelationSets3, subgoalBindings
+	return subgoalRelationSets, subgoalBindings
 }

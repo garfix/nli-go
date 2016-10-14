@@ -32,7 +32,7 @@ func TestSimpleGoalSpecification(test *testing.T) {
 		question(A) :- info_request(A)
 	]`)
 
-//	common.LoggerActive=true
+//common.LoggerActive=true
 
 	// create domain specific representation
 	transformer := mentalese.NewSimpleRelationTransformer(domainSpecificAnalysis)

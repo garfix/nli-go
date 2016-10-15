@@ -27,20 +27,21 @@ func (factBase *SimpleFactBase) Bind(goal mentalese.SimpleRelation) ([]mentalese
 
 	for _, ds2db := range factBase.ds2db {
 
-		externalBinding := mentalese.SimpleBinding{}
-		match := false
-
-		externalBinding, match = matcher.MatchTwoRelations(goal, ds2db.Goal, externalBinding)
+		// gender(14, G), gender(A, male) => externalBinding: G = male
+		externalBinding, match := matcher.MatchTwoRelations(goal, ds2db.Goal, mentalese.SimpleBinding{})
 		if match {
 
-			transBinding := mentalese.SimpleBinding{}
-			transBinding, match = matcher.MatchTwoRelations(goal, ds2db.Goal, transBinding)
+			// gender(14, G), gender(A, male) => internalBinding: A = 14
+			internalBinding, _ := matcher.MatchTwoRelations(ds2db.Goal, goal, mentalese.SimpleBinding{})
 
-			_, internalBinding, match := matcher.MatchSequenceToSet(ds2db.Pattern, factBase.facts, mentalese.SimpleBinding{})
+			// create a version of the conditions with bound variables
+			boundConditions := matcher.BindMultipleRelationsSingleBinding(ds2db.Pattern, internalBinding)
+			// match this bound version to the database
+			_, internalBinding, match = matcher.MatchSequenceToSet(boundConditions, factBase.facts, mentalese.SimpleBinding{})
 
 			if match {
-				subgoalRelationSets = append(subgoalRelationSets, []mentalese.SimpleRelation{})
-				subgoalBindings = append(subgoalBindings, externalBinding.Bind(internalBinding))
+				subgoalRelationSets = append(subgoalRelationSets, mentalese.SimpleRelationSet{})
+				subgoalBindings = append(subgoalBindings, externalBinding.Merge(internalBinding))
 			}
 		}
 	}

@@ -62,7 +62,7 @@ func (matcher *SimpleRelationMatcher) BindSingleRelationSingleBinding(relation S
 	return relation
 }
 
-func (matcher *SimpleRelationMatcher) bindMultipleRelationsSingleBinding(relations SimpleRelationSet, binding SimpleBinding) SimpleRelationSet {
+func (matcher *SimpleRelationMatcher) BindMultipleRelationsSingleBinding(relations SimpleRelationSet, binding SimpleBinding) SimpleRelationSet {
 
 	for i, relation:= range relations {
 		relations[i] = matcher.BindSingleRelationSingleBinding(relation, binding)
@@ -76,7 +76,7 @@ func (matcher *SimpleRelationMatcher) BindMultipleRelationsMultipleBindings(rela
 	relationSets := []SimpleRelationSet{}
 
 	for _, binding := range bindings {
-		relationSets = append(relationSets, matcher.bindMultipleRelationsSingleBinding(relations, binding))
+		relationSets = append(relationSets, matcher.BindMultipleRelationsSingleBinding(relations, binding))
 	}
 
 	return relationSets

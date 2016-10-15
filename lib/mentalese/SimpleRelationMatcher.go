@@ -32,7 +32,7 @@ func (matcher *SimpleRelationMatcher) MatchSequenceToSet(needleSequence SimpleRe
 	matchedIndexes := []int{}
 	match := true
 
-	common.LogTree("MatchSequenceToSet", needleSequence, haystackSet)
+	common.LogTree("MatchSequenceToSet", needleSequence, haystackSet, binding)
 
 	newBinding := SimpleBinding{}.Merge(binding)
 
@@ -51,7 +51,7 @@ func (matcher *SimpleRelationMatcher) MatchSequenceToSet(needleSequence SimpleRe
 		}
 	}
 
-	common.LogTree("MatchSequenceToSet", matchedIndexes, binding, match)
+	common.LogTree("MatchSequenceToSet", matchedIndexes, newBinding, match)
 
 	return matchedIndexes, newBinding, match
 }
@@ -87,6 +87,7 @@ func (matcher *SimpleRelationMatcher) matchRelationToSet(needleRelation SimpleRe
 
 func (matcher *SimpleRelationMatcher) MatchTwoRelations(needleRelation SimpleRelation, haystackRelation SimpleRelation, binding SimpleBinding) (SimpleBinding, bool) {
 
+	newBinding := SimpleBinding{}.Merge(binding)
 	success := true
 
 	common.LogTree("MatchTwoRelations", needleRelation, haystackRelation, binding)
@@ -98,10 +99,10 @@ func (matcher *SimpleRelationMatcher) MatchTwoRelations(needleRelation SimpleRel
 
 		// arguments
 		for i, subjectArgument := range needleRelation.Arguments {
-			newBinding, ok := matcher.bindArgument(subjectArgument, haystackRelation.Arguments[i], binding)
+			aBinding, ok := matcher.bindArgument(subjectArgument, haystackRelation.Arguments[i], newBinding)
 
 			if ok {
-				binding = newBinding
+				newBinding = aBinding
 			} else {
 				success = false
 				break;
@@ -109,7 +110,7 @@ func (matcher *SimpleRelationMatcher) MatchTwoRelations(needleRelation SimpleRel
 		}
 	}
 
-	common.LogTree("MatchTwoRelations", binding, success)
+	common.LogTree("MatchTwoRelations", newBinding, success)
 
-	return binding, success
+	return newBinding, success
 }

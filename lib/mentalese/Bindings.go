@@ -2,6 +2,7 @@ package mentalese
 
 type Binding map[string]Term
 
+// Returns a new binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 
 	result := Binding{}
@@ -17,6 +18,7 @@ func (b Binding) Merge(b2 Binding) Binding {
 	return result
 }
 
+// Returns a copy
 func (b Binding) Copy() Binding {
 
 	result := Binding{}
@@ -58,6 +60,7 @@ func (b Binding) Bind(c Binding) Binding {
 	return result
 }
 
+// Returns a string version
 func (b Binding) String() string {
 
 	s, sep := "", ""
@@ -69,7 +72,6 @@ func (b Binding) String() string {
 
 	return "{" + s + "}"
 }
-
 
 func (b Binding) Equals(c Binding) bool {
 

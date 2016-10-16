@@ -53,37 +53,48 @@ func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument T
 	}
 }
 
+// Returns a new relation, that has all variables bound to bindings
 func (matcher *RelationMatcher) BindSingleRelationSingleBinding(relation Relation, binding Binding) Relation {
 
-	for i, argument := range relation.Arguments {
+	boundRelation := Relation{}
+	boundRelation.Predicate = relation.Predicate
 
+	for _, argument := range relation.Arguments {
+
+		arg := argument
 		if argument.IsVariable() {
 			newValue, found := binding[argument.TermValue]
 			if found {
-				relation.Arguments[i] = newValue
+				arg = newValue
 			}
 		}
+
+		boundRelation.Arguments = append(boundRelation.Arguments, arg)
 	}
 
-	return relation
+	return boundRelation
 }
 
-func (matcher *RelationMatcher) BindMultipleRelationsSingleBinding(relations RelationSet, binding Binding) RelationSet {
+// Returns a new relation set, that has all variables bound to bindings
+func (matcher *RelationMatcher) BindRelationSetSingleBinding(relations RelationSet, binding Binding) RelationSet {
 
-	for i, relation:= range relations {
-		relations[i] = matcher.BindSingleRelationSingleBinding(relation, binding)
+	boundRelations := RelationSet{}
+
+	for _, relation:= range relations {
+		boundRelations = append(boundRelations, matcher.BindSingleRelationSingleBinding(relation, binding))
 	}
 
-	return relations
+	return boundRelations
 }
 
-func (matcher *RelationMatcher) BindMultipleRelationsMultipleBindings(relations RelationSet, bindings []Binding) []RelationSet {
+// Returns new relation sets, that have all variables bound to bindings
+func (matcher *RelationMatcher) BindRelationSetMultipleBindings(relations RelationSet, bindings []Binding) []RelationSet {
 
-	relationSets := []RelationSet{}
+	boundRelationSets := []RelationSet{}
 
 	for _, binding := range bindings {
-		relationSets = append(relationSets, matcher.BindMultipleRelationsSingleBinding(relations, binding))
+		boundRelationSets = append(boundRelationSets, matcher.BindRelationSetSingleBinding(relations, binding))
 	}
 
-	return relationSets
+	return boundRelationSets
 }

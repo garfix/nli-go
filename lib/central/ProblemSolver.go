@@ -28,7 +28,7 @@ func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.Relati
 
 	common.LogTree("Solve")
 	bindings := solver.SolveMultipleRelations(goals)
-	solutions := solver.matcher.BindMultipleRelationsMultipleBindings(goals, bindings)
+	solutions := solver.matcher.BindRelationSetMultipleBindings(goals, bindings)
 
 	common.LogTree("Solve", solutions)
 	return solutions

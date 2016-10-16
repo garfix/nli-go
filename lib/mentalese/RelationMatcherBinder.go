@@ -5,31 +5,34 @@ package mentalese
 func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
 
 	success := false
-	newBinding := binding.Copy()
 
 	if subjectArgument.IsAnonymousVariable() || patternArgument.IsAnonymousVariable() {
 
 		// anonymous variables always match, but do not bind
 
-		success = true
+		// A, _
+		// _, A
+		return binding, true
 
 	} else if subjectArgument.IsVariable() {
 
-		// variable
+		// subject is variable
 
-		value := Term{}
-
-		// does patternRelationArgument occur in boundVariables?
-		value, match := newBinding[subjectArgument.String()]
+		value, match := binding[subjectArgument.String()]
 		if match {
-			// it does, use the bound variable
+
+			// A, 13 {A:13}
 			if patternArgument.Equals(value) {
 				success = true
 			}
+			return binding, success
+
 		} else {
-			// it does not, just assign the actual argument
+
+			// A, 13, {B:7} => {B:7, A:13}
+			newBinding := binding.Copy()
 			newBinding[subjectArgument.String()] = patternArgument
-			success = true
+			return newBinding, true
 		}
 
 	} else {
@@ -37,14 +40,17 @@ func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument T
 		// subject is atom, constant
 
 		if patternArgument.IsVariable() {
-			// note: no binding is made
+			// 13, V
 			success = true
 		} else if patternArgument.Equals(subjectArgument) {
+			// 13, 13
+			// female, female
+			// 'Jack', 'Jack'
 			success = true
 		}
-	}
 
-	return newBinding, success
+		return binding, success
+	}
 }
 
 func (matcher *RelationMatcher) BindSingleRelationSingleBinding(relation Relation, binding Binding) Relation {

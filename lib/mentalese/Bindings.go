@@ -17,6 +17,17 @@ func (b Binding) Merge(b2 Binding) Binding {
 	return result
 }
 
+func (b Binding) Copy() Binding {
+
+	result := Binding{}
+
+	for k, v := range b {
+		result[k] = v
+	}
+
+	return result
+}
+
 // Binds the variables of b to the values of c
 // example:
 // b: A = E

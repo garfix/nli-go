@@ -5,7 +5,7 @@ package mentalese
 func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
 
 	success := false
-	newBinding := Binding{}.Merge(binding)
+	newBinding := binding.Copy()
 
 	if subjectArgument.IsAnonymousVariable() || patternArgument.IsAnonymousVariable() {
 

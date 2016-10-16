@@ -30,5 +30,22 @@ func (term Term) AsKey() string {
 }
 
 func (term Term) String() string {
-	return fmt.Sprintf("%s", term.TermValue)
+
+	s := ""
+
+	switch term.TermType {
+	case Term_variable:
+		s = term.TermValue
+	case Term_predicateAtom:
+		s = term.TermValue
+	case Term_stringConstant:
+		s = "'" + term.TermValue + "'"
+	case Term_number:
+		s = term.TermValue
+	case Term_anonymousVariable:
+		s = "_"
+	default:
+		s = "<unknown>"
+	}
+	return s
 }

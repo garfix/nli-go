@@ -414,7 +414,7 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 
 		variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
 		if ok {
-			_, startIndex, ok := parser.parseSingleToken(tokens, startIndex, t_colon)
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
 			if ok {
 				value, startIndex, ok = parser.parseTerm(tokens, startIndex)
 				if ok {

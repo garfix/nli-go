@@ -20,12 +20,6 @@ func NewRelationMatcher() *RelationMatcher {
 }
 
 // matches a sequence to a set
-func (matcher *RelationMatcher) Match(needleSequence RelationSet, haystackSet RelationSet) bool {
-	_, _, match := matcher.MatchSequenceToSet(needleSequence, haystackSet, Binding{})
-	return match
-}
-
-// matches a sequence to a set
 // NB!! should return multiple bindings
 func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]int, Binding, bool){
 

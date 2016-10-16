@@ -36,3 +36,10 @@ For the semantic language holds:
         sense: subject(P, E)
     }
 ]
+
+## Binding
+
+{
+    A: 'John',
+    B: C 
+}

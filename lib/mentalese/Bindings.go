@@ -52,9 +52,25 @@ func (b Binding) String() string {
 	s, sep := "", ""
 
 	for k, v := range b {
-		s += sep + k + "=" + v.String()
+		s += sep + k + ":" + v.String()
 		sep = ", "
 	}
 
 	return "{" + s + "}"
+}
+
+
+func (b Binding) Equals(c Binding) bool {
+
+	if len(b) != len(c) {
+		return false
+	}
+
+	for key, value := range b {
+		if c[key] != value {
+			return false
+		}
+	}
+
+	return true
 }

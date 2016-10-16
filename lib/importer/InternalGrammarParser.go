@@ -129,3 +129,31 @@ func (parser *InternalGrammarParser) CreateQAPairs(source string) ([]mentalese.Q
 
 	return qaPairs, parser.lastParsedLine, ok
 }
+
+func (parser *InternalGrammarParser) CreateTerm(source string) (mentalese.Term, bool) {
+
+	// tokenize
+	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return mentalese.Term{}, false
+	}
+
+	// parse
+	term, _, ok := parser.parseTerm(tokens, 0)
+
+	return term, ok
+}
+
+func (parser *InternalGrammarParser) CreateBinding(source string) (mentalese.Binding, bool) {
+
+	// tokenize
+	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return mentalese.Binding{}, false
+	}
+
+	// parse
+	binding, _, ok := parser.parseBinding(tokens, 0)
+
+	return binding, ok
+}

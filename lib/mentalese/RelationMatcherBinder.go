@@ -2,7 +2,7 @@ package mentalese
 
 
 // Extends the binding with new variable bindings for the variables of subjectArgument
-func (matcher *RelationMatcher) bindArgument(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
 
 	success := false
 	newBinding := Binding{}.Merge(binding)

@@ -13,22 +13,22 @@ const Term_stringConstant = 3
 const Term_number = 4
 const Term_anonymousVariable = 5
 
-func (term *Term) IsVariable() bool {
+func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
 }
 
-func (term *Term) IsAnonymousVariable() bool {
+func (term Term) IsAnonymousVariable() bool {
 	return term.TermType == Term_anonymousVariable
 }
 
-func (term *Term) Equals(otherTerm Term) bool {
+func (term Term) Equals(otherTerm Term) bool {
 	return term.TermType == otherTerm.TermType && term.TermValue == otherTerm.TermValue
 }
 
-func (term *Term) AsKey() string {
+func (term Term) AsKey() string {
 	return fmt.Sprintf("%d/%s", term.TermType, term.TermValue)
 }
 
-func (term *Term) String() string {
+func (term Term) String() string {
 	return fmt.Sprintf("%s", term.TermValue)
 }

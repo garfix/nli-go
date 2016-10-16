@@ -359,7 +359,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				if !commaFound {
 					break;
 				} else {
-					argument, startIndex, ok = parser.parseArgument(tokens, startIndex)
+					argument, startIndex, ok = parser.parseTerm(tokens, startIndex)
 					if ok {
 						relation.Arguments = append(relation.Arguments, argument)
 					}
@@ -368,7 +368,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			} else {
 
 				// first argument (there may not be one, zero arguments are allowed)
-				argument, newStartIndex, argumentFound = parser.parseArgument(tokens, startIndex)
+				argument, newStartIndex, argumentFound = parser.parseTerm(tokens, startIndex)
 				if !argumentFound {
 					break;
 				} else {
@@ -386,7 +386,51 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 	return relation, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseArgument(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
+// {A: 13, B: 'banaan'}
+// {}
+func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int) (mentalese.Binding, int, bool) {
+
+	binding := mentalese.Binding{}
+	ok := true
+	commaFound := false
+	variable := ""
+	value := mentalese.Term{}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+	for ok {
+		if len(binding) > 0 {
+			// second and further bindings
+			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
+			if !commaFound {
+				break;
+			}
+		} else {
+			// check for zero bindings
+			_, _, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+			if ok {
+				break;
+			}
+		}
+
+		variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
+		if ok {
+			_, startIndex, ok := parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				value, startIndex, ok = parser.parseTerm(tokens, startIndex)
+				if ok {
+					binding[variable] = value
+				}
+			}
+		}
+	}
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	}
+
+	return binding, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
 
 	ok := false
 	tokenValue := ""

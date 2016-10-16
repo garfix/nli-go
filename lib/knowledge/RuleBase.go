@@ -23,8 +23,8 @@ func (ruleBase *RuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 		binding := mentalese.Binding{}
 
 		// match goal
-		aBinding, success := matcher.MatchTwoRelations(goal, rule.Goal, binding)
-		if !success {
+		aBinding, match := matcher.MatchTwoRelations(goal, rule.Goal, binding)
+		if !match {
 			continue
 		}
 

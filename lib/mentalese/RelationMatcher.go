@@ -38,7 +38,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 	for _, needleRelation := range needleSequence {
 
-		index, aBinding, found := matcher.matchRelationToSet(needleRelation, haystackSet, newBinding)
+		index, aBinding, found := matcher.MatchRelationToSet(needleRelation, haystackSet, newBinding)
 
 		if found {
 			newBinding = aBinding
@@ -58,7 +58,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 
 // Attempts to match a single pattern relation to a single relation
-func (matcher *RelationMatcher) matchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (int, Binding, bool) {
+func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (int, Binding, bool) {
 
 	common.LogTree("matchRelationToSet", needleRelation, haystackSet, binding)
 
@@ -69,9 +69,9 @@ func (matcher *RelationMatcher) matchRelationToSet(needleRelation Relation, hays
 
 	for index, haystackRelation := range haystackSet {
 
-		aBinding, matched := matcher.MatchTwoRelations(needleRelation, haystackRelation, aBinding)
+		aBinding, match := matcher.MatchTwoRelations(needleRelation, haystackRelation, aBinding)
 
-		if matched {
+		if match {
 
 			i = index
 			newBinding = aBinding
@@ -88,29 +88,29 @@ func (matcher *RelationMatcher) matchRelationToSet(needleRelation Relation, hays
 func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, haystackRelation Relation, binding Binding) (Binding, bool) {
 
 	newBinding := Binding{}.Merge(binding)
-	success := true
+	match := true
 
 	common.LogTree("MatchTwoRelations", needleRelation, haystackRelation, binding)
 
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
-		success = false
+		match = false
 	} else {
 
 		// arguments
 		for i, subjectArgument := range needleRelation.Arguments {
-			aBinding, ok := matcher.bindArgument(subjectArgument, haystackRelation.Arguments[i], newBinding)
+			aBinding, ok := matcher.BindTerm(subjectArgument, haystackRelation.Arguments[i], newBinding)
 
 			if ok {
 				newBinding = aBinding
 			} else {
-				success = false
+				match = false
 				break;
 			}
 		}
 	}
 
-	common.LogTree("MatchTwoRelations", newBinding, success)
+	common.LogTree("MatchTwoRelations", newBinding, match)
 
-	return newBinding, success
+	return newBinding, match
 }

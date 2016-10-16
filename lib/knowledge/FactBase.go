@@ -36,7 +36,7 @@ func (factBase *FactBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 			// create a version of the conditions with bound variables
 			boundConditions := factBase.matcher.BindRelationSetSingleBinding(ds2db.Pattern, internalBinding)
 			// match this bound version to the database
-			_, internalBinding, match = factBase.matcher.MatchSequenceToSet(boundConditions, factBase.facts, mentalese.Binding{})
+			internalBinding, _, match = factBase.matcher.MatchSequenceToSet(boundConditions, factBase.facts, mentalese.Binding{})
 
 			if match {
 				subgoalRelationSets = append(subgoalRelationSets, mentalese.RelationSet{})

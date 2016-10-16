@@ -19,69 +19,61 @@ func NewRelationMatcher() *RelationMatcher {
 	return &RelationMatcher{}
 }
 
-// matches a sequence to a set
+// matches a relation sequence to a set
 // NB!! should return multiple bindings
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]int, Binding, bool){
-
-	matchedIndexes := []int{}
-	match := true
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Binding, []int, bool){
 
 	common.LogTree("MatchSequenceToSet", needleSequence, haystackSet, binding)
 
-	newBinding := Binding{}.Merge(binding)
+	newBinding := binding.Copy()
+	matchedIndexes := []int{}
+	match := true
+	index := 0
 
 	for _, needleRelation := range needleSequence {
 
-		index, aBinding, found := matcher.MatchRelationToSet(needleRelation, haystackSet, newBinding)
+		newBinding, index, match = matcher.MatchRelationToSet(needleRelation, haystackSet, newBinding)
 
-		if found {
-			newBinding = aBinding
+		if match {
 			matchedIndexes = append(matchedIndexes, index)
 		} else {
-			newBinding = binding
-			matchedIndexes = []int{}
-			match = false
 			break
 		}
 	}
 
-	common.LogTree("MatchSequenceToSet", matchedIndexes, newBinding, match)
+	common.LogTree("MatchSequenceToSet", newBinding, matchedIndexes, match)
 
-	return matchedIndexes, newBinding, match
+	return newBinding, matchedIndexes, match
 }
 
-
 // Attempts to match a single pattern relation to a single relation
-func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (int, Binding, bool) {
+func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (Binding, int, bool) {
 
 	common.LogTree("matchRelationToSet", needleRelation, haystackSet, binding)
 
-	aBinding := Binding{}.Merge(binding)
-	newBinding := binding
-	i := 0
-	bound := false
+	newBinding := binding.Copy()
+	match := false
+	index := 0
 
-	for index, haystackRelation := range haystackSet {
+	for i, haystackRelation := range haystackSet {
 
-		aBinding, match := matcher.MatchTwoRelations(needleRelation, haystackRelation, aBinding)
+		newBinding, match = matcher.MatchTwoRelations(needleRelation, haystackRelation, newBinding)
 
 		if match {
-
-			i = index
-			newBinding = aBinding
-			bound = true
+			index = i
 			break
 		}
 	}
 
-	common.LogTree("matchRelationToSet", bound, i, newBinding)
+	common.LogTree("matchRelationToSet", newBinding, index, match)
 
-	return i, newBinding, bound
+	return newBinding, index, match
 }
 
+// Matches needleRelation to haystackRelation, using binding
 func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, haystackRelation Relation, binding Binding) (Binding, bool) {
 
-	newBinding := Binding{}.Merge(binding)
+	newBinding := binding.Copy()
 	match := true
 
 	common.LogTree("MatchTwoRelations", needleRelation, haystackRelation, binding)
@@ -93,12 +85,9 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 
 		// arguments
 		for i, subjectArgument := range needleRelation.Arguments {
-			aBinding, ok := matcher.BindTerm(subjectArgument, haystackRelation.Arguments[i], newBinding)
+			newBinding, match = matcher.BindTerm(subjectArgument, haystackRelation.Arguments[i], newBinding)
 
-			if ok {
-				newBinding = aBinding
-			} else {
-				match = false
+			if !match {
 				break;
 			}
 		}

@@ -19,37 +19,55 @@ func NewRelationMatcher() *RelationMatcher {
 	return &RelationMatcher{}
 }
 
-// matches a relation sequence to a set
-// NB!! should return multiple bindings
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Binding, []int, bool){
+type solutionNode struct {
+	binding Binding
+	indexes []int
+}
+
+// Matches a relation sequence to a set
+// Returns multiple bindings
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, bool){
 
 	common.LogTree("MatchSequenceToSet", needleSequence, haystackSet, binding)
 
-	newBinding := binding.Copy()
+	newBindings := []Binding{}
 	matchedIndexes := []int{}
 	match := true
-	indexes := []int{}
-	someBindings := []Binding{}
+
+	nodes := []solutionNode{
+		{binding, []int{}},
+	}
 
 	for _, needleRelation := range needleSequence {
 
-		someBindings, indexes = matcher.MatchRelationToSet(needleRelation, haystackSet, newBinding)
-		match = len(someBindings) > 0
+		newNodes := []solutionNode{}
 
-		if match {
-			newBinding = someBindings[0]
-			matchedIndexes = append(matchedIndexes, indexes[0])
-		} else {
-			break
+		for _, node := range nodes {
+
+			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.binding)
+			for i, someBinding := range someBindings {
+				someIndex := someIndexes[i]
+				newIndexes := append(node.indexes, someIndex)
+				newNodes = append(newNodes, solutionNode{someBinding, newIndexes})
+			}
 		}
+
+		nodes = newNodes
 	}
 
-	common.LogTree("MatchSequenceToSet", newBinding, matchedIndexes, match)
+	for _, node := range nodes {
+		newBindings = append(newBindings, node.binding)
+		matchedIndexes = append(matchedIndexes, node.indexes...)
+	}
 
-	return newBinding, matchedIndexes, match
+	match = len(matchedIndexes) > 0
+
+	common.LogTree("MatchSequenceToSet", newBindings, matchedIndexes, match)
+
+	return newBindings, matchedIndexes, match
 }
 
-// Attempts to match a single pattern relation to a single relation
+// Matches a single relation to a relation set
 // Returns multiple bindings
 func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) ([]Binding, []int) {
 

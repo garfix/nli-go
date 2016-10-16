@@ -32,7 +32,7 @@ func TestDialogActInterpreter(test *testing.T) {
 	infoRequest, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)
 
 	binding, _, _ := relationMatcher.MatchSequenceToSet(infoRequest, dialogActs, mentalese.Binding{})
-	if binding.String() != "{S:S1}" {
+	if binding[0].String() != "{S:S1}" {
 		test.Error("No match")
 	}
 }

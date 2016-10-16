@@ -36,11 +36,13 @@ func (factBase *FactBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 			// create a version of the conditions with bound variables
 			boundConditions := factBase.matcher.BindRelationSetSingleBinding(ds2db.Pattern, internalBinding)
 			// match this bound version to the database
-			internalBinding, _, match = factBase.matcher.MatchSequenceToSet(boundConditions, factBase.facts, mentalese.Binding{})
+			internalBindings, _, match := factBase.matcher.MatchSequenceToSet(boundConditions, factBase.facts, mentalese.Binding{})
 
 			if match {
-				subgoalRelationSets = append(subgoalRelationSets, mentalese.RelationSet{})
-				subgoalBindings = append(subgoalBindings, externalBinding.Merge(internalBinding))
+				for _, binding := range internalBindings {
+					subgoalRelationSets = append(subgoalRelationSets, mentalese.RelationSet{})
+					subgoalBindings = append(subgoalBindings, externalBinding.Merge(binding))
+				}
 			}
 		}
 	}

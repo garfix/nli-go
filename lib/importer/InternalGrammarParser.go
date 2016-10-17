@@ -96,6 +96,24 @@ func (parser *InternalGrammarParser) CreateGrammar(source string) (*parse.Gramma
 }
 
 // Parses source into a relation set
+func (parser *InternalGrammarParser) CreateRelation(source string) (mentalese.Relation, bool) {
+
+	relation := mentalese.Relation{}
+
+	// tokenize
+	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return relation, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	relation, _, ok := parser.parseRelation(tokens, 0)
+
+	return relation, ok
+}
+
+// Parses source into a relation set
 func (parser *InternalGrammarParser) CreateRelationSet(source string) (mentalese.RelationSet, int, bool) {
 
 	relationSet := mentalese.RelationSet{}

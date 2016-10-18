@@ -115,6 +115,7 @@ func TestMatchSequenceToSet(t *testing.T) {
 		{"[parent(X, Y) gender(Y, female)]", haystack, "{X: 'Quincy'}", "[]", []int{}, false},
 		{"[parent(X, Y) gender(X, female)]", haystack, "{}", "[{X:'Carry', Y:'Steven'} {X:'Carry', Y:'Jeanne'}]", []int{4,6,5}, true},
 		{"[parent('Carry', Y) gender(Y, M)]", haystack, "{Q: 3}", "[{Q: 3, Y:'Jeanne', M: female}]", []int{5,2}, true},
+		{"[gender(Y, M) parent(X, Y) gender(X, M)]", haystack, "{}", "[{X:'Luke', Y:'George', M:male} {X:'Carry', Y:'Jeanne', M:female}]", []int{1,3,0,2,5,6}, true},
 	}
 
 	for _, test := range tests {

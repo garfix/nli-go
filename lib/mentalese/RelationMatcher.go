@@ -60,6 +60,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 		matchedIndexes = append(matchedIndexes, node.indexes...)
 	}
 
+	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
 	match = len(matchedIndexes) > 0
 
 	common.LogTree("MatchSequenceToSet", newBindings, matchedIndexes, match)

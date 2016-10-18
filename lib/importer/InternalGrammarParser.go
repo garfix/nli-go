@@ -175,3 +175,17 @@ func (parser *InternalGrammarParser) CreateBinding(source string) (mentalese.Bin
 
 	return binding, ok
 }
+
+func (parser *InternalGrammarParser) CreateBindings(source string) ([]mentalese.Binding, bool) {
+
+	// tokenize
+	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return []mentalese.Binding{}, false
+	}
+
+	// parse
+	bindings, _, ok := parser.parseBindings(tokens, 0)
+
+	return bindings, ok
+}

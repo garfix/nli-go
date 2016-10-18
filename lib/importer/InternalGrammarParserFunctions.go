@@ -430,6 +430,31 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 	return binding, startIndex, ok
 }
 
+// [{A:1, B:2} {C:'hello', D:'goodbye'}]
+func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex int) ([]mentalese.Binding, int, bool) {
+
+	bindings := []mentalese.Binding{}
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+
+	for ok {
+		binding, newStartIndex, bindingFound := parser.parseBinding(tokens, startIndex)
+		if bindingFound {
+			bindings = append(bindings, binding)
+			startIndex = newStartIndex
+		} else {
+			break
+		}
+	}
+
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+	}
+
+	return bindings, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
 
 	ok := false

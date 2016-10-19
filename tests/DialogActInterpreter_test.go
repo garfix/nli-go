@@ -26,8 +26,8 @@ func TestDialogActInterpreter(test *testing.T) {
 		dialog_act(S1, info_request) :- subject(S1, who)
 	`)
 
-	analyser := mentalese.NewRelationTransformer(analysis)
-	dialogActs := analyser.Extract(sense)
+	analyser := mentalese.NewRelationTransformer()
+	dialogActs := analyser.Extract(analysis, sense)
 
 	infoRequest, _, _ := internalGrammarParser.CreateRelationSet(`dialog_act(S, info_request)`)
 

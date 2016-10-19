@@ -33,8 +33,8 @@ func TestGoalSpecification(test *testing.T) {
 	]`)
 
 	// create domain specific representation
-	transformer := mentalese.NewRelationTransformer(domainSpecificAnalysis)
-	domainSpecificSense := transformer.Extract(genericSense)
+	transformer := mentalese.NewRelationTransformer()
+	domainSpecificSense := transformer.Extract(domainSpecificAnalysis, genericSense)
 
 	common.Logf("DS sense %v\n", domainSpecificSense)
 
@@ -67,8 +67,8 @@ func TestGoalSpecification(test *testing.T) {
 
 	// optimalisatie-fase: doe eerst de meest gerestricteerde doelen (bv name(A, 'Kurt Cobain')
 
-	transformer = mentalese.NewRelationTransformer(domainSpecificGoalAnalysis)
-	goalSense := transformer.Extract(domainSpecificSense)
+	transformer = mentalese.NewRelationTransformer()
+	goalSense := transformer.Extract(domainSpecificGoalAnalysis, domainSpecificSense)
 
 	common.Logf("Goal sense %v\n", goalSense)
 

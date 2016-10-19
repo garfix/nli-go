@@ -5,19 +5,18 @@ import (
 )
 
 type RelationTransformer struct {
-	transformations []RelationTransformation
 	matcher         RelationMatcher
 }
 
 // using transformations
-func NewRelationTransformer(transformations[]RelationTransformation) *RelationTransformer {
-	return &RelationTransformer{transformations: transformations, matcher: RelationMatcher{}}
+func NewRelationTransformer() *RelationTransformer {
+	return &RelationTransformer{matcher: RelationMatcher{}}
 }
 
 // return the original relations, but replace the ones that have matched with their replacements
-func (transformer *RelationTransformer) Replace(relationSet RelationSet) RelationSet {
+func (transformer *RelationTransformer) Replace(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
-	matchedIndexes, replacements := transformer.matchAllTransformations(relationSet)
+	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, relationSet)
 	newRelations := RelationSet{}
 
 	for i, oldRelation := range relationSet  {
@@ -32,21 +31,17 @@ func (transformer *RelationTransformer) Replace(relationSet RelationSet) Relatio
 }
 
 // Try to match all transformations to relationSet, and return the replacements that resulted from the transformations
-func (transformer *RelationTransformer) Extract(relationSet RelationSet) (RelationSet) {
+func (transformer *RelationTransformer) Extract(transformations []RelationTransformation, relationSet RelationSet) (RelationSet) {
 
-	common.LogTree("Extract", relationSet)
-
-	_, replacements := transformer.matchAllTransformations(relationSet)
-
-	common.LogTree("Extract", replacements)
+	_, replacements := transformer.matchAllTransformations(transformations, relationSet)
 
 	return replacements
 }
 
 // only add the replacements to the original relations
-func (transformer *RelationTransformer) Append(relationSet RelationSet) RelationSet {
+func (transformer *RelationTransformer) Append(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
-	_, replacements := transformer.matchAllTransformations(relationSet)
+	_, replacements := transformer.matchAllTransformations(transformations, relationSet)
 
 	newRelations := RelationSet{}
 	newRelations = append(newRelations, relationSet...)
@@ -57,14 +52,14 @@ func (transformer *RelationTransformer) Append(relationSet RelationSet) Relation
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created, each in a single set
-func (transformer *RelationTransformer) matchAllTransformations(haystackSet RelationSet) ([]int, RelationSet){
+func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet){
 
 	common.LogTree("matchAllTransformations", haystackSet)
 
 	matchedIndexes := []int{}
 	replacements := RelationSet{}
 
-	for _, transformation := range transformer.transformations {
+	for _, transformation := range transformations {
 
 		// each transformation application is completely independent from the others
 		bindings, newIndexes, match := transformer.matcher.MatchSequenceToSet(transformation.Pattern, haystackSet, Binding{})

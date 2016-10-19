@@ -9,6 +9,7 @@ import (
 func TestRelationTransformer(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
+	transformer := mentalese.NewRelationTransformer()
 
 	// "name all customers"
 	relationSet, _, _ := parser.CreateRelationSet(`[
@@ -40,15 +41,13 @@ func TestRelationTransformer(t *testing.T) {
 
 		transformations, _, _ := parser.CreateTransformations(test.transformations)
 
-		transformer := mentalese.NewRelationTransformer(transformations)
-
 		wantExtracted, _, _ := parser.CreateRelationSet(test.wantExtracted)
 		wantReplaced, _, _ := parser.CreateRelationSet(test.wantReplaced)
 		wantAppended, _, _ := parser.CreateRelationSet(test.wantAppended)
 
-		extractedResult := transformer.Extract(relationSet)
-		replacedResult := transformer.Replace(relationSet)
-		appendedResult := transformer.Append(relationSet)
+		extractedResult := transformer.Extract(transformations, relationSet)
+		replacedResult := transformer.Replace(transformations, relationSet)
+		appendedResult := transformer.Append(transformations, relationSet)
 
 		if extractedResult.String() != wantExtracted.String() || replacedResult.String() != wantReplaced.String() || appendedResult.String() != wantAppended.String() {
 			t.Errorf("RelationTransformer: got\n%v\n%v\n%v,\nwant\n%v\n%v\n%v", extractedResult, replacedResult, appendedResult, wantExtracted, wantReplaced, wantAppended)

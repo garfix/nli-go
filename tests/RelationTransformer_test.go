@@ -33,8 +33,17 @@ func TestRelationTransformer(t *testing.T) {
 				done() :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)
 				magic(A, X) :- predicate(A, X), predicate(X, A)
 			]`,
-			"[task(S1, all) subject(E1) done()]", "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]",
-			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all)  task(S1, all) subject(E1) done()]",
+			"[task(S1, all) subject(E1) done()]",
+			"[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]",
+			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) task(S1, all) subject(E1) done()]",
+		},
+		{
+			`[
+				isa(Z, B) :- instance_of(Z, B)
+			]`,
+			"[isa(E2, name) isa(E1, customer) isa(D1, all)]",
+			"[predicate(S1, name) object(S1, E1) determiner(E1, D1) isa(E2, name) isa(E1, customer) isa(D1, all)]",
+			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) isa(E2, name) isa(E1, customer) isa(D1, all)]",
 		},
 	}
 	for _, test := range tests {

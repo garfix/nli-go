@@ -69,12 +69,14 @@ func (transformer *RelationTransformer) matchAllTransformations(haystackSet Rela
 		// each transformation application is completely independent from the others
 		bindings, newIndexes, match := transformer.matcher.MatchSequenceToSet(transformation.Pattern, haystackSet, Binding{})
 		if match {
-			matchedIndexes = append(matchedIndexes, common.IntArrayDeduplicate(newIndexes)...)
+			matchedIndexes = append(matchedIndexes, newIndexes...)
 			for _, binding := range bindings {
 				replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
 			}
 		}
 	}
+
+	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
 
 	common.LogTree("matchAllTransformations", matchedIndexes, replacements)
 

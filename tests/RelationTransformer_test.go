@@ -6,64 +6,52 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-func TestRelationTransformer(test *testing.T) {
+func TestRelationTransformer(t *testing.T) {
 
-	internalGrammarParser := importer.NewInternalGrammarParser()
+	parser := importer.NewInternalGrammarParser()
 
 	// "name all customers"
-	relationSet, _, _ := internalGrammarParser.CreateRelationSet(
-		"[" +
-			"instance_of(E2, name)" +
-			"predicate(S1, name)" +
-			"object(S1, E1)" +
-			"instance_of(E1, customer)" +
-			"determiner(E1, D1)" +
-			"instance_of(D1, all)" +
-		"]")
+	relationSet, _, _ := parser.CreateRelationSet(`[
+		instance_of(E2, name)
+		predicate(S1, name)
+		object(S1, E1)
+		instance_of(E1, customer)
+		determiner(E1, D1)
+		instance_of(D1, all)
+	]`)
 
-	transformations, _, _ := internalGrammarParser.CreateTransformations(
-		"[" +
-			"task(P1, list_customers) :- predicate(P1, name), object(P1, O1), instance_of(O1, customer)" +
-		"]")
-
-	transformations2, _, _ := internalGrammarParser.CreateTransformations(
-		"[" +
-			"task(A, B), subject(Y) :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)" +
-			"done() :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)" +
-			"magic(A, X) :- predicate(A, X), predicate(X, A)" +
-		"]")
-
-	transformer := mentalese.NewRelationTransformer(transformations)
-	transformer2 := mentalese.NewRelationTransformer(transformations2)
-
-	// extract
-
-	transformedSet := transformer.Extract(relationSet)
-
-	if transformedSet.String() != "[task(S1, list_customers)]" {
-		test.Errorf("Error in result: %s", transformedSet[0].String())
+	tests := []struct {
+		transformations string
+		wantExtracted string
+		wantReplaced string
+		wantAppended string
+	} {
+		{
+			`[
+				task(A, B), subject(Y) :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)
+				done() :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)
+				magic(A, X) :- predicate(A, X), predicate(X, A)
+			]`,
+			"[task(S1, all) subject(E1) done()]", "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]",
+			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all)  task(S1, all) subject(E1) done()]",
+		},
 	}
+	for _, test := range tests {
 
-	transformedSet = transformer2.Extract(relationSet)
+		transformations, _, _ := parser.CreateTransformations(test.transformations)
 
-	if transformedSet.String() != "[task(S1, all) subject(E1) done()]" {
-		test.Errorf("Error in result: %s", transformedSet.String())
-	}
+		transformer := mentalese.NewRelationTransformer(transformations)
 
-	// replace
+		wantExtracted, _, _ := parser.CreateRelationSet(test.wantExtracted)
+		wantReplaced, _, _ := parser.CreateRelationSet(test.wantReplaced)
+		wantAppended, _, _ := parser.CreateRelationSet(test.wantAppended)
 
-	transformedSet2 := transformer2.Replace(relationSet)
+		extractedResult := transformer.Extract(relationSet)
+		replacedResult := transformer.Replace(relationSet)
+		appendedResult := transformer.Append(relationSet)
 
-	if transformedSet2.String() != "[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]" {
-		test.Errorf("Error in result: %s", transformedSet2.String())
-	}
-
-	// append
-
-	transformedSet2 = transformer2.Append(relationSet)
-
-	if transformedSet2.String() != "[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) " +
-		"task(S1, all) subject(E1) done()]" {
-		test.Errorf("Error in result: %s", transformedSet2.String())
+		if extractedResult.String() != wantExtracted.String() || replacedResult.String() != wantReplaced.String() || appendedResult.String() != wantAppended.String() {
+			t.Errorf("RelationTransformer: got\n%v\n%v\n%v,\nwant\n%v\n%v\n%v", extractedResult, replacedResult, appendedResult, wantExtracted, wantReplaced, wantAppended)
+		}
 	}
 }

@@ -19,7 +19,7 @@ func (b Binding) Merge(b2 Binding) Binding {
 }
 
 // Returns a new binding that is contains just the keys of b, and whose values may be overwritten by those of b2
-func (b Binding) Union(b2 Binding) Binding {
+func (b Binding) Intersection(b2 Binding) Binding {
 
 	result := Binding{}
 

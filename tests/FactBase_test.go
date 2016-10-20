@@ -4,7 +4,6 @@ import (
 	"testing"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/common"
 	"fmt"
 )
 
@@ -50,9 +49,7 @@ func TestFactBase(t *testing.T) {
 
 		input, _ := parser.CreateRelation(test.input)
 
-common.LoggerActive=false
 		_, resultBindings := factBase.Bind(input)
-common.LoggerActive=false
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
 			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)

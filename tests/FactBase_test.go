@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/common"
+	"fmt"
 )
 
 func TestFactBase(t *testing.T) {
@@ -30,6 +31,7 @@ func TestFactBase(t *testing.T) {
 
 	rules, _, _ := parser.CreateRules(`
 		write(PersonName, BookName) :- book(BookId, BookName, _), author(PersonId, BookId), person(PersonId, PersonName)
+		publish(PubName, BookName) :- book(BookId, BookName, PubId), publisher(PubId, PubName)
 	`)
 
 	factBase := knowledge.NewFactBase(facts, rules)
@@ -39,23 +41,21 @@ func TestFactBase(t *testing.T) {
 		wantRelations string
 		wantBindings string
 	} {
-		{"write('Sally Klein', B)", "", "[{B:'The red book'}{B:'The green book'}]"},
+		{"write('Sally Klein', B)", "", "[{B:'The red book'} {B:'The green book'}]"},
+		{"publish(X, Y)", "", "[{X:'Orbital', Y:'The red book'} {X:'Bookworm inc', Y:'The green book'} {X:'Bookworm inc', Y:'The blue book'}]"},
+		{"write('Keith Partridge', 'The red book')", "", "[{}]"},
 	}
 
 	for _, test := range tests {
 
 		input, _ := parser.CreateRelation(test.input)
+
 common.LoggerActive=false
 		_, resultBindings := factBase.Bind(input)
 common.LoggerActive=false
-		bind := "["
-		for _, resultBinding := range resultBindings  {
-			bind += resultBinding.String()
-		}
-		bind += "]"
 
-		if bind != test.wantBindings {
-			t.Errorf("FactBase,Bind(%v): got %s, want %s", test.input, bind, test.wantBindings)
+		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
+			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)
 		}
 	}
 }

@@ -18,6 +18,25 @@ func (b Binding) Merge(b2 Binding) Binding {
 	return result
 }
 
+// Returns a new binding that is contains just the keys of b, and whose values may be overwritten by those of b2
+func (b Binding) Union(b2 Binding) Binding {
+
+	result := Binding{}
+
+	for k, v := range b {
+		result[k] = v
+	}
+
+	for k, v := range b2 {
+		_, found := result[k]
+		if found {
+			result[k] = v
+		}
+	}
+
+	return result
+}
+
 // Returns a copy
 func (b Binding) Copy() Binding {
 

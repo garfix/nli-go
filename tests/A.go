@@ -5,7 +5,8 @@ import (
 )
 
 func TestA(t *testing.T) {
-	var tests = []struct {
+
+	tests := []struct {
 		input string
 		want string
 	} {

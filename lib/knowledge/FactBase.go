@@ -41,7 +41,7 @@ func (factBase *FactBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 			if match {
 				for _, binding := range internalBindings {
 					subgoalRelationSets = append(subgoalRelationSets, mentalese.RelationSet{})
-					subgoalBindings = append(subgoalBindings, externalBinding.Merge(binding))
+					subgoalBindings = append(subgoalBindings, externalBinding.Union(binding))
 				}
 			}
 		}

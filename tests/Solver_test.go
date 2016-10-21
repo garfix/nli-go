@@ -44,6 +44,7 @@ func TestSolver(t *testing.T) {
 		wantRelationSets string
 	} {
 		{"[write('Sally Klein', B)]", "[[write('Sally Klein', 'The red book')] [write('Sally Klein', 'The green book')]]"},
+		{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book')] [write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]]"},
 	}
 
 	for _, test := range tests {

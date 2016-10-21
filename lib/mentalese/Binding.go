@@ -1,5 +1,7 @@
 package mentalese
 
+import "sort"
+
 type Binding map[string]Term
 
 // Returns a new binding that is a copy of b, merged with b2
@@ -83,9 +85,16 @@ func (b Binding) Bind(c Binding) Binding {
 func (b Binding) String() string {
 
 	s, sep := "", ""
+	keys := []string{}
 
-	for k, v := range b {
-		s += sep + k + ":" + v.String()
+	for k := range b {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		s += sep + k + ":" + b[k].String()
 		sep = ", "
 	}
 

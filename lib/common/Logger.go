@@ -21,6 +21,10 @@ func Logf(text string, vals ...interface{}) {
 
 func LogTree(text string, vals ...interface{}) {
 
+	if !LoggerActive {
+		return
+	}
+
 	sameText := len(logStack) > 0 && text == logStack[len(logStack) - 1]
 
 	if !sameText {

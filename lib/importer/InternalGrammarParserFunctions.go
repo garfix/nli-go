@@ -3,6 +3,7 @@ package importer
 import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
+	"nli-go/lib/generate"
 )
 
 func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
@@ -49,6 +50,7 @@ func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startI
 	return transformations, startIndex, ok
 }
 
+// a(A), b(B) := c(A), d(B)
 func (parser *InternalGrammarParser) parseTransformation(tokens []Token, startIndex int) (mentalese.RelationTransformation, int, bool) {
 
 	transformation := mentalese.RelationTransformation{}
@@ -183,6 +185,27 @@ func (parser *InternalGrammarParser) parseLexicon(tokens []Token, startIndex int
 	return lexicon, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseGenerationLexicon(tokens []Token, startIndex int) (*generate.GenerationLexicon, int, bool) {
+
+	lexicon := generate.NewGenerationLexicon()
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	for ok {
+		lexItem, newStartIndex, lexItemFound := parser.parseGenerationLexItem(tokens, startIndex)
+		if lexItemFound {
+			lexicon.AddLexItem(lexItem)
+			startIndex = newStartIndex
+		} else {
+			ok = false
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return lexicon, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int) (parse.LexItem, int, bool) {
 
 	lexItem := parse.LexItem{}
@@ -222,6 +245,45 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 	return lexItem, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, startIndex int) (generate.GenerationLexeme, int, bool) {
+
+	lexItem := generate.GenerationLexeme{}
+	ok, formFound, posFound := true, false, false
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
+	for ok {
+		field := ""
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				switch field {
+				case field_form:
+					lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+					formFound = true
+				case field_pos:
+					lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+					posFound = true;
+				case field_condition:
+					lexItem.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				default:
+					ok = false
+				}
+			}
+		}
+	}
+
+	// required fields
+	if formFound && posFound {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	} else {
+		ok = false
+	}
+
+	return lexItem, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int) (*parse.Grammar, int, bool) {
 
 	grammar := parse.NewGrammar()
@@ -230,6 +292,27 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 	for ok {
 		lexItem, newStartIndex, ruleFound := parser.parseGrammarRule(tokens, startIndex)
+		if ruleFound {
+			grammar.AddRule(lexItem)
+			startIndex = newStartIndex
+		} else {
+			ok = false
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return grammar, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*generate.GenerationGrammar, int, bool) {
+
+	grammar := generate.NewGenerationGrammar()
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	for ok {
+		lexItem, newStartIndex, ruleFound := parser.parseGenerationGrammarRule(tokens, startIndex)
 		if ruleFound {
 			grammar.AddRule(lexItem)
 			startIndex = newStartIndex
@@ -262,6 +345,42 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 					ruleFound = true
 				case field_sense:
 					rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				default:
+					ok = false
+				}
+			}
+		}
+	}
+
+	// required fields
+	if ruleFound {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+	} else {
+		ok = false
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (generate.GenerationGrammarRule, int, bool) {
+
+	rule := generate.GenerationGrammarRule{}
+	ok, ruleFound := true, false
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
+	for ok {
+		field := ""
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			if ok {
+				switch field {
+				case field_rule:
+					rule.Antecedent, rule.Consequents, startIndex, ok = parser.parseSyntacticRewriteRule2(tokens, startIndex)
+					ruleFound = true
+				case field_condition:
+					rule.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 				default:
 					ok = false
 				}
@@ -313,6 +432,37 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	}
 
 	return syntacticCategories, entityVariables, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, startIndex int) (mentalese.Relation, []mentalese.Relation, int, bool) {
+
+	ok := false
+	antecedent := mentalese.Relation{}
+	consequents := mentalese.RelationSet{}
+
+	rule, startIndex, ok := parser.parseTransformation(tokens, startIndex)
+
+	// check the constraints on this transformation
+	if len(rule.Replacement) != 1 {
+		ok = false
+	} else if len(rule.Replacement[0].Arguments) != 1 {
+		ok = false
+	} else {
+		for _, patternRelation := range rule.Pattern {
+			if len(patternRelation.Arguments) != 1 {
+				ok = false
+			} else if !patternRelation.Arguments[0].IsVariable() {
+				ok = false
+			}
+		}
+	}
+
+	if ok {
+		antecedent = rule.Replacement[0]
+		consequents = rule.Pattern
+	}
+
+	return antecedent, consequents, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int) ([]mentalese.Relation, int, bool) {

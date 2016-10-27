@@ -3,12 +3,14 @@ package importer
 import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
+	"nli-go/lib/generate"
 )
 
 const (
 	field_form = "form"
 	field_pos = "pos"
 	field_sense = "sense"
+	field_condition = "condition"
 	field_rule = "rule"
 	field_question = "Q"
 	field_answer = "A"
@@ -37,6 +39,24 @@ func (parser *InternalGrammarParser) CreateLexicon(source string) (*parse.Lexico
 	// parse
 	parser.lastParsedLine = 0
 	lexicon, _, ok = parser.parseLexicon(tokens, 0)
+
+	return lexicon, parser.lastParsedLine, ok
+}
+
+// Parses source into a lexicon
+func (parser *InternalGrammarParser) CreateGenerationLexicon(source string) (*generate.GenerationLexicon, int, bool) {
+
+	lexicon := generate.NewGenerationLexicon()
+
+	// tokenize
+	tokens, lineNumber, ok := parser.tokenizer.Tokenize(source)
+	if !ok {
+		return lexicon, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	lexicon, _, ok = parser.parseGenerationLexicon(tokens, 0)
 
 	return lexicon, parser.lastParsedLine, ok
 }
@@ -91,6 +111,24 @@ func (parser *InternalGrammarParser) CreateGrammar(source string) (*parse.Gramma
 	// parse
 	parser.lastParsedLine = 0
 	grammar, _, ok := parser.parseGrammar(tokens, 0)
+
+	return grammar, parser.lastParsedLine, ok
+}
+
+// Parses source into a grammar
+func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) (*generate.GenerationGrammar, int, bool) {
+
+	grammar := generate.NewGenerationGrammar()
+
+	// tokenize
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	if !tokensOk {
+		return grammar, lineNumber, false
+	}
+
+	// parse
+	parser.lastParsedLine = 0
+	grammar, _, ok := parser.parseGenerationGrammar(tokens, 0)
 
 	return grammar, parser.lastParsedLine, ok
 }

@@ -59,7 +59,7 @@ func TestGoalSpecification(test *testing.T) {
 	//]`)
 
 	domainSpecificGoalAnalysis, _, _ := internalGrammarParser.CreateTransformations(`[
-		married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
+		grammatical_subject(B), married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
 	]`)
 
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
@@ -67,7 +67,6 @@ func TestGoalSpecification(test *testing.T) {
 
 	// optimalisatie-fase: doe eerst de meest gerestricteerde doelen (bv name(A, 'Kurt Cobain')
 
-	transformer = mentalese.NewRelationTransformer()
 	goalSense := transformer.Extract(domainSpecificGoalAnalysis, domainSpecificSense)
 
 	common.Logf("Goal sense %v\n", goalSense)
@@ -106,23 +105,26 @@ func TestGoalSpecification(test *testing.T) {
 	problemSolver.AddKnowledgeBase(ruleBase1)
 	domainSpecificResponseSense := problemSolver.Solve(goalSense)
 
-// ERR
+	// turn domain specific response into generic response
+	specificResponseSpec, _, _ := internalGrammarParser.CreateTransformations(`[
+		predication(P1, marry), object(P1, E2), subject(P1, A), object(S1, B) :- married_to(A, B)
+		name(A, N) :- name(A, N)
+		gender(A, N) :- gender(A, N)
+		grammatical_subject(S) :- grammatical_subject(S)
+	]`)
 
-// ERR
+	// NB ^ the introduced P1 must be replaced by a "new" variable
 
-	//// turn domain specific response into generic response
-	//specificResponseSpec, _, _ := internalGrammarParser.CreateTransformations(`[
-	//	predication(S1, marry), object(S1, E2), subject(S1, A), object(S1, B) :- marry(A, B)
-	//	name(A, N) :- name(A, N)
-	//	gender(A, N) :- gender(A, N)
-	//]`)
-	//transformer = example3.NewRelationTransformer(specificResponseSpec)
-	//genericResponseSense := transformer.Extract(domainSpecificResponseSense)
-	//
+	for _, singleSense := range domainSpecificResponseSense {
+
+		genericSolutionSense := transformer.Extract(specificResponseSpec, singleSense);
+
+		common.Logf("%v\n", genericSolutionSense)
+	}
 
 	if len(domainSpecificResponseSense) == 0 {
 		test.Error("Wrong response")
-	} else if domainSpecificResponseSense[0].String() != "[married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
+	} else if domainSpecificResponseSense[0].String() != "[grammatical_subject(14) married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
 		test.Errorf("Wrong response: %s", domainSpecificResponseSense[0].String())
 	}
 

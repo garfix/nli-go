@@ -42,3 +42,6 @@ lexicon: [
 		object(S1, E2)
 		subject(S1, who)
 		name(E1, 'Kurt Cobain')
+
+Ik maak 'grammatical_subject' nu het predicaat dat aangeeft waar de hoofdzin is. Een predicatie-object is niet aanwezig in het domein-specifieke resultaat. 
+Dit grammatical_subject geeft ook aan of de zin actief is of passief.

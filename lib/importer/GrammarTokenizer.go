@@ -44,7 +44,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 	tokenExpressions := []struct{
 		id int
 		pattern string} {
-		{t_predicate, "[a-z][a-z_]*"},
+		{t_predicate, "[a-z][a-zA-Z_]*"},
 		{t_variable, "[A-Z][A-Za-z0-9_]*"},
 		{t_anonymousVariable, "_"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},

@@ -5,16 +5,13 @@ import (
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"strings"
-	"nli-go/lib/common"
 )
 
 func TestGenerator(t *testing.T) {
 
-	common.LoggerActive=false
-
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammar, _, _ := internalGrammarParser.CreateGenerationGrammar(`[
+	grammar := internalGrammarParser.CreateGenerationGrammar(`[
 	    {
 	        rule: s(P) :- np(E), vp(P)
 	        condition: grammatical_subject(E), subject(P, E)
@@ -27,11 +24,16 @@ func TestGenerator(t *testing.T) {
 	        condition: object(V, E)
 	    }
 	]`)
-	lexicon, _, _ := internalGrammarParser.CreateGenerationLexicon(`[
+	lexicon := internalGrammarParser.CreateGenerationLexicon(`[
 		{
 			form: 'book'
 			pos: noun
 			condition: instance_of(This, book)
+		}
+		{
+			form: 'kissed'
+			pos: verb
+			condition: predication(This, kiss)
 		}
 		{
 			form: 'married'
@@ -39,7 +41,7 @@ func TestGenerator(t *testing.T) {
 			condition: predication(This, marry)
 		}
 		{
-			form: 'name'
+			form: '*unused*'
 			pos: proper_noun
 			condition: name(This, Name)
 		}
@@ -55,7 +57,7 @@ func TestGenerator(t *testing.T) {
 
 	for _, test := range tests {
 
-		input, _, _ := internalGrammarParser.CreateRelationSet(test.input)
+		input := internalGrammarParser.CreateRelationSet(test.input)
 		result := generator.Generate(input)
 		if strings.Join(result, " ") != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, strings.Join(result, " "), test.want)

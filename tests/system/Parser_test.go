@@ -10,7 +10,7 @@ import (
 func TestParser(test *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	grammar, _, _ := internalGrammarParser.CreateGrammar(`[
+	grammar := internalGrammarParser.CreateGrammar(`[
 		{
 			rule: s(P) :- np(E), vp(P)
 			sense: subject(P, E)
@@ -27,7 +27,7 @@ func TestParser(test *testing.T) {
 		}
 	]`)
 
-	lexicon, _, _ := internalGrammarParser.CreateLexicon(`[
+	lexicon := internalGrammarParser.CreateLexicon(`[
 		{
 			form: 'the'
 			pos: det
@@ -66,7 +66,7 @@ func TestParser(test *testing.T) {
 
 	wordArray := tokenizer.Process(rawInput)
 
-	length, relations, ok := parser.Process(wordArray)
+	relations, length, ok := parser.Process(wordArray)
 
 	if !ok {
 		test.Errorf("Parse failed at pos %d", length)

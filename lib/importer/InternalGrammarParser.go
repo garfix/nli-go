@@ -18,212 +18,277 @@ const (
 
 type InternalGrammarParser struct {
 	tokenizer      *GrammarTokenizer
-	lastParsedLine int
+	lastParsedResult ParseResult
+	panicOnParseFail bool
 }
 
 func NewInternalGrammarParser() *InternalGrammarParser {
-	return &InternalGrammarParser{tokenizer: new(GrammarTokenizer), lastParsedLine: 0}
+	return &InternalGrammarParser{
+		tokenizer: new(GrammarTokenizer),
+		lastParsedResult: ParseResult{},
+		panicOnParseFail: false,
+	}
+}
+
+// automatically panic with meaningful error message on tokenization / parse fail
+func (parser *InternalGrammarParser) SetPanicOnParseFail(doPanic bool) {
+	parser.panicOnParseFail = doPanic
+}
+
+func (parser *InternalGrammarParser) GetLastParseResult() (ParseResult) {
+	return parser.lastParsedResult
 }
 
 // Parses source into a lexicon
-func (parser *InternalGrammarParser) CreateLexicon(source string) (*parse.Lexicon, int, bool) {
+func (parser *InternalGrammarParser) CreateLexicon(source string) *parse.Lexicon {
 
 	lexicon := parse.NewLexicon()
 
 	// tokenize
-	tokens, lineNumber, ok := parser.tokenizer.Tokenize(source)
-	if !ok {
-		return lexicon, lineNumber, false
+	parser.lastParsedResult.LineNumber = 0
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
+	if !tokensOk {
+		return lexicon
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	lexicon, _, ok = parser.parseLexicon(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	lexicon, _, parseOk := parser.parseLexicon(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return lexicon, parser.lastParsedLine, ok
+	return lexicon
 }
 
 // Parses source into a lexicon
-func (parser *InternalGrammarParser) CreateGenerationLexicon(source string) (*generate.GenerationLexicon, int, bool) {
+func (parser *InternalGrammarParser) CreateGenerationLexicon(source string) *generate.GenerationLexicon {
 
 	lexicon := generate.NewGenerationLexicon()
 
 	// tokenize
-	tokens, lineNumber, ok := parser.tokenizer.Tokenize(source)
-	if !ok {
-		return lexicon, lineNumber, false
+	parser.lastParsedResult.LineNumber = 0
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
+	if !tokensOk {
+		return lexicon
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	lexicon, _, ok = parser.parseGenerationLexicon(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	lexicon, _, parseOk := parser.parseGenerationLexicon(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return lexicon, parser.lastParsedLine, ok
+	return lexicon
 }
 
 // Parses source into transformations
-func (parser *InternalGrammarParser) CreateTransformations(source string) ([]mentalese.RelationTransformation, int, bool) {
+func (parser *InternalGrammarParser) CreateTransformations(source string) []mentalese.RelationTransformation {
 
 	transformations := []mentalese.RelationTransformation{}
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return transformations, lineNumber, false
+		return transformations
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	transformations, _, ok := parser.parseTransformations(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	transformations, _, parseOk := parser.parseTransformations(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return transformations, parser.lastParsedLine, ok
+	return transformations
 }
 
 // Parses source into rules
-func (parser *InternalGrammarParser) CreateRules(source string) ([]mentalese.Rule, int, bool) {
+func (parser *InternalGrammarParser) CreateRules(source string) []mentalese.Rule {
 
 	rules := []mentalese.Rule{}
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return rules, lineNumber, false
+		return rules
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	rules, _, ok := parser.parseRules(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	rules, _, parseOk := parser.parseRules(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return rules, parser.lastParsedLine, ok
+	return rules
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGrammar(source string) (*parse.Grammar, int, bool) {
+func (parser *InternalGrammarParser) CreateGrammar(source string) *parse.Grammar {
 
 	grammar := parse.NewGrammar()
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return grammar, lineNumber, false
+		return grammar
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	grammar, _, ok := parser.parseGrammar(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	grammar, _, parseOk := parser.parseGrammar(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return grammar, parser.lastParsedLine, ok
+	return grammar
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) (*generate.GenerationGrammar, int, bool) {
+func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *generate.GenerationGrammar {
 
 	grammar := generate.NewGenerationGrammar()
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return grammar, lineNumber, false
+		return grammar
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	grammar, _, ok := parser.parseGenerationGrammar(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	grammar, _, parseOk := parser.parseGenerationGrammar(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return grammar, parser.lastParsedLine, ok
+	return grammar
 }
 
 // Parses source into a relation set
-func (parser *InternalGrammarParser) CreateRelation(source string) (mentalese.Relation, bool) {
+func (parser *InternalGrammarParser) CreateRelation(source string) mentalese.Relation {
 
 	relation := mentalese.Relation{}
 
 	// tokenize
-	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.lastParsedResult.LineNumber = 0
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return relation, false
+		return relation
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	relation, _, ok := parser.parseRelation(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	relation, _, parseOk := parser.parseRelation(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return relation, ok
+	return relation
 }
 
 // Parses source into a relation set
-func (parser *InternalGrammarParser) CreateRelationSet(source string) (mentalese.RelationSet, int, bool) {
+func (parser *InternalGrammarParser) CreateRelationSet(source string) mentalese.RelationSet {
 
 	relationSet := mentalese.RelationSet{}
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return relationSet, lineNumber, false
+		return relationSet
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	relationSet, _, ok := parser.parseRelationSet(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	relationSet, _, parseOk := parser.parseRelationSet(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return relationSet, parser.lastParsedLine, ok
+	return relationSet
 }
 
-func (parser *InternalGrammarParser) CreateQAPairs(source string) ([]mentalese.QAPair, int, bool) {
+func (parser *InternalGrammarParser) CreateQAPairs(source string) []mentalese.QAPair {
 
 	qaPairs := []mentalese.QAPair{}
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return qaPairs, lineNumber, false
+		return qaPairs
 	}
 
 	// parse
-	parser.lastParsedLine = 0
-	qaPairs, _, ok := parser.parseQAPairs(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	qaPairs, _, parseOk := parser.parseQAPairs(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return qaPairs, parser.lastParsedLine, ok
+	return qaPairs
 }
 
-func (parser *InternalGrammarParser) CreateTerm(source string) (mentalese.Term, bool) {
+func (parser *InternalGrammarParser) CreateTerm(source string) mentalese.Term {
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return mentalese.Term{}, false
+		return mentalese.Term{}
 	}
 
 	// parse
-	term, _, ok := parser.parseTerm(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	term, _, tokensOk := parser.parseTerm(tokens, 0)
+	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
-	return term, ok
+	return term
 }
 
-func (parser *InternalGrammarParser) CreateBinding(source string) (mentalese.Binding, bool) {
+func (parser *InternalGrammarParser) CreateBinding(source string) mentalese.Binding {
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return mentalese.Binding{}, false
+		return mentalese.Binding{}
 	}
 
 	// parse
-	binding, _, ok := parser.parseBinding(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	binding, _, tokensOk := parser.parseBinding(tokens, 0)
+	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
-	return binding, ok
+	return binding
 }
 
-func (parser *InternalGrammarParser) CreateBindings(source string) ([]mentalese.Binding, bool) {
+func (parser *InternalGrammarParser) CreateBindings(source string) []mentalese.Binding {
 
 	// tokenize
+	parser.lastParsedResult.LineNumber = 0
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return []mentalese.Binding{}, false
+		return []mentalese.Binding{}
 	}
 
 	// parse
-	bindings, _, ok := parser.parseBindings(tokens, 0)
+	parser.lastParsedResult.LineNumber = 0
+	bindings, _, tokensOk := parser.parseBindings(tokens, 0)
+	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
-	return bindings, ok
+	return bindings
+}
+
+func (parser *InternalGrammarParser) processResult(service string, ok bool, source string, lineNumber int) {
+
+	parser.lastParsedResult.Service = service
+	parser.lastParsedResult.Ok = ok
+	parser.lastParsedResult.LineNumber = lineNumber
+	parser.lastParsedResult.Source = source
+
+	if !ok && parser.panicOnParseFail {
+		panic(parser.lastParsedResult.String())
+	}
 }

@@ -10,27 +10,22 @@ func TestLexiconParser(test *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	ok := true
 
-	lexicon, _, ok := parser.CreateLexicon("" +
+	lexicon := parser.CreateLexicon("" +
 		"[" +
 		"{ form: 'boek'\npos: noun }" +
 		"]")
-	if !ok {
-		test.Error("Parse error")
-	}
 
 	_, ok = lexicon.GetLexItem("boek", "noun")
 	if !ok {
 		test.Error("Parse error")
 	}
 
-	lexicon, _, ok = parser.CreateLexicon("" +
+	lexicon = parser.CreateLexicon("" +
 		"[" +
 		"{ form: 'boek' pos: noun }" +
 		"{ form: 'lees' pos: verb }" +
 		"]")
-	if !ok {
-		test.Error("Parse error")
-	}
+
 	_, ok = lexicon.GetLexItem("boek", "noun")
 	if !ok {
 		test.Error("Parse error")

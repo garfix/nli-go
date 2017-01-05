@@ -28,10 +28,10 @@ func TestMatchTwoRelations(t *testing.T) {
 
 	for _, test := range tests {
 
-		needle, _ := parser.CreateRelation(test.needle)
-		haystack, _ := parser.CreateRelation(test.haystack)
-		binding, _ := parser.CreateBinding(test.binding)
-		wantBinding, _ := parser.CreateBinding(test.wantBinding)
+		needle := parser.CreateRelation(test.needle)
+		haystack := parser.CreateRelation(test.haystack)
+		binding := parser.CreateBinding(test.binding)
+		wantBinding := parser.CreateBinding(test.wantBinding)
 		wantMatch := test.wantMatch
 
 		resultBinding, resultMatch := matcher.MatchTwoRelations(needle, haystack, binding)
@@ -46,7 +46,7 @@ func TestMatchRelationToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	matcher := mentalese.NewRelationMatcher()
-	haystack, _, _ := parser.CreateRelationSet("[gender('Luke', male) gender('George', male) parent('Luke', 'George') parent('Carry', 'Steven') gender('Carry', female)]")
+	haystack := parser.CreateRelationSet("[gender('Luke', male) gender('George', male) parent('Luke', 'George') parent('Carry', 'Steven') gender('Carry', female)]")
 
 	var tests = []struct {
 		needle       string
@@ -65,9 +65,9 @@ func TestMatchRelationToSet(t *testing.T) {
 
 	for _, test := range tests {
 
-		needle, _ := parser.CreateRelation(test.needle)
-		binding, _ := parser.CreateBinding(test.binding)
-		wantBindings, _ := parser.CreateBindings(test.wantBindings)
+		needle := parser.CreateRelation(test.needle)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
 		wantIndexes := test.wantIndexes
 
 		resultBindings, resultIndexes := matcher.MatchRelationToSet(needle, haystack, binding)
@@ -92,7 +92,7 @@ func TestMatchSequenceToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	matcher := mentalese.NewRelationMatcher()
-	haystack, _, _ := parser.CreateRelationSet(`[
+	haystack := parser.CreateRelationSet(`[
 		gender('Luke', male)
 		gender('George', male)
 		gender('Jeanne', female)
@@ -120,9 +120,9 @@ func TestMatchSequenceToSet(t *testing.T) {
 
 	for _, test := range tests {
 
-		needle, _, _ := parser.CreateRelationSet(test.needle)
-		binding, _ := parser.CreateBinding(test.binding)
-		wantBindings, _ := parser.CreateBindings(test.wantBindings)
+		needle := parser.CreateRelationSet(test.needle)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
 		wantIndexes := test.wantIndexes
 		wantMatch := test.wantMatch
 		resultBindings, resultIndexes, resultMatch := matcher.MatchSequenceToSet(needle, haystack, binding)

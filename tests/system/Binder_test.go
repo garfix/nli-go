@@ -30,11 +30,11 @@ func TestBinder(t *testing.T) {
 
 	for _, test := range tests {
 
-		subject, _ := parser.CreateTerm(test.subject)
-		object, _ := parser.CreateTerm(test.object)
-		binding, _ := parser.CreateBinding(test.binding)
+		subject := parser.CreateTerm(test.subject)
+		object := parser.CreateTerm(test.object)
+		binding := parser.CreateBinding(test.binding)
 		originalBinding := binding
-		wantBinding, _ := parser.CreateBinding(test.wantBinding)
+		wantBinding := parser.CreateBinding(test.wantBinding)
 		resultBinding, resultOk := matcher.BindTerm(subject, object, binding)
 
 		if !resultBinding.Equals(wantBinding) || resultOk != test.wantOk {

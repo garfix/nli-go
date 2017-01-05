@@ -16,7 +16,7 @@ func TestGoalSpecification(test *testing.T) {
 
 	// who did Kurt Cobain marry?
 	// non-domain specific
-	genericSense, _, _ := internalGrammarParser.CreateRelationSet(`[
+	genericSense := internalGrammarParser.CreateRelationSet(`[
 		predication(S1, marry)
 		tense(S1, past)
 		subject(S1, E1)
@@ -26,7 +26,7 @@ func TestGoalSpecification(test *testing.T) {
 	]`)
 
 	// transform the generic sense into a domain specific sense. Leaving out material, but making it more compact
-	domainSpecificAnalysis, _, _ := internalGrammarParser.CreateTransformations(`[
+	domainSpecificAnalysis := internalGrammarParser.CreateTransformations(`[
 		married_to(A, B) :- predication(P1, marry), subject(P1, A), object(P1, B)
 		name(A, N) :- name(A, N)
 		question(A) :- info_request(A)
@@ -58,7 +58,7 @@ func TestGoalSpecification(test *testing.T) {
 	//	}
 	//]`)
 
-	domainSpecificGoalAnalysis, _, _ := internalGrammarParser.CreateTransformations(`[
+	domainSpecificGoalAnalysis := internalGrammarParser.CreateTransformations(`[
 		grammatical_subject(B), married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
 	]`)
 
@@ -71,13 +71,13 @@ func TestGoalSpecification(test *testing.T) {
 
 	common.Logf("Goal sense %v\n", goalSense)
 
-	rules, _, _ := internalGrammarParser.CreateRules(`
+	rules := internalGrammarParser.CreateRules(`
 	`)
 //		married_to(X, Y) :- married_to(Y, X)
 
 	ruleBase1 := knowledge.NewRuleBase(rules)
 
-	ds2db, _, _ := internalGrammarParser.CreateRules(`[
+	ds2db := internalGrammarParser.CreateRules(`[
 		married_to(A, B) :- marriages(A, B, _)
 		name(A, N) :- person(A, N, _, _)
 		gender(A, male) :- person(A, _, 'M', _)
@@ -90,7 +90,7 @@ func TestGoalSpecification(test *testing.T) {
 	// kan echter wel, door de full names als person ids te beschouwen
 
 	// note! db specific
-	facts, _, _ := internalGrammarParser.CreateRelationSet(`[
+	facts := internalGrammarParser.CreateRelationSet(`[
 		marriages(11, 14, '1992')
 		person(11, 'Courtney Love', 'F', '1964')
 		person(14, 'Kurt Cobain', 'M', '1967')
@@ -106,7 +106,7 @@ func TestGoalSpecification(test *testing.T) {
 	domainSpecificResponseSense := problemSolver.Solve(goalSense)
 
 	// turn domain specific response into generic response
-	specificResponseSpec, _, _ := internalGrammarParser.CreateTransformations(`[
+	specificResponseSpec := internalGrammarParser.CreateTransformations(`[
 		predication(P1, marry), object(P1, E2), subject(P1, A), object(S1, B) :- married_to(A, B)
 		name(A, N) :- name(A, N)
 		gender(A, N) :- gender(A, N)

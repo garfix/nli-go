@@ -1,5 +1,7 @@
 package parse
 
+import "strings"
+
 type Lexicon struct {
 	lexItems map[string][]LexItem
 }
@@ -18,7 +20,14 @@ func (lexicon *Lexicon) AddLexItem(lexItem LexItem) {
 }
 
 func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, bool) {
+
+	// try the word as is
 	lexItems, found := lexicon.lexItems[word]
+
+	// try the lowercase version
+	if !found {
+		lexItems, found = lexicon.lexItems[strings.ToLower(word)]
+	}
 
 	if found {
 		for _, lexItem := range lexItems {

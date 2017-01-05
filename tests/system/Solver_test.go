@@ -12,7 +12,7 @@ func TestSolver(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 
-	facts, _, _ := parser.CreateRelationSet(`
+	facts := parser.CreateRelationSet(`
 		book(1, 'The red book', 5)
 		book(2, 'The green book', 6)
 		book(3, 'The blue book', 6)
@@ -29,7 +29,7 @@ func TestSolver(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	rules, _, _ := parser.CreateRules(`
+	rules := parser.CreateRules(`
 		write(PersonName, BookName) :- book(BookId, BookName, _), author(PersonId, BookId), person(PersonId, PersonName)
 		publish(PubName, BookName) :- book(BookId, BookName, PubId), publisher(PubId, PubName)
 	`)
@@ -49,7 +49,7 @@ func TestSolver(t *testing.T) {
 
 	for _, test := range tests {
 
-		input, _, _ := parser.CreateRelationSet(test.input)
+		input := parser.CreateRelationSet(test.input)
 
 		resultRelationSets := solver.Solve(input)
 

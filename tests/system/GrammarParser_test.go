@@ -9,18 +9,13 @@ import (
 func TestGrammar(test *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	ok := true
 
-	grammar, _, ok := parser.CreateGrammar("[" +
+	grammar := parser.CreateGrammar("[" +
 		"{" +
 		"rule: s(P) :- np(E), vp(P)" +
 		"sense: subject(P, E)" +
 		"}" +
 		"]")
-
-	if !ok {
-		test.Error("Parse error")
-	}
 
 	rules := grammar.FindRules("s")
 	if len(rules) == 0 {
@@ -43,7 +38,7 @@ func TestGrammar(test *testing.T) {
 		test.Error(fmt.Printf("Error in number of sense relations: %s", len(rules[0].Sense)))
 	}
 
-	grammar, _, ok = parser.CreateGrammar("[" +
+	grammar = parser.CreateGrammar("[" +
 		"{" +
 		"rule: s(P) :- np(E), vp(P)" +
 		"sense: subject(P, E)" +
@@ -62,8 +57,5 @@ func TestGrammar(test *testing.T) {
 		test.Error("No rules found")
 	}
 
-	grammar, _, ok = parser.CreateGrammar("[]")
-	if !ok {
-		test.Error("Parse error")
-	}
+	grammar = parser.CreateGrammar("[]")
 }

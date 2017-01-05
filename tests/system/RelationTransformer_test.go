@@ -12,7 +12,7 @@ func TestRelationTransformer(t *testing.T) {
 	transformer := mentalese.NewRelationTransformer()
 
 	// "name all customers"
-	relationSet, _, _ := parser.CreateRelationSet(`[
+	relationSet := parser.CreateRelationSet(`[
 		instance_of(E2, name)
 		predicate(S1, name)
 		object(S1, E1)
@@ -48,11 +48,11 @@ func TestRelationTransformer(t *testing.T) {
 	}
 	for _, test := range tests {
 
-		transformations, _, _ := parser.CreateTransformations(test.transformations)
+		transformations := parser.CreateTransformations(test.transformations)
 
-		wantExtracted, _, _ := parser.CreateRelationSet(test.wantExtracted)
-		wantReplaced, _, _ := parser.CreateRelationSet(test.wantReplaced)
-		wantAppended, _, _ := parser.CreateRelationSet(test.wantAppended)
+		wantExtracted := parser.CreateRelationSet(test.wantExtracted)
+		wantReplaced := parser.CreateRelationSet(test.wantReplaced)
+		wantAppended := parser.CreateRelationSet(test.wantAppended)
 
 		extractedResult := transformer.Extract(transformations, relationSet)
 		replacedResult := transformer.Replace(transformations, relationSet)

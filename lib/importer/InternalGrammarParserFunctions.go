@@ -652,12 +652,14 @@ func (parser *InternalGrammarParser) parseSingleToken(tokens []Token, startIndex
 
 	if startIndex < len(tokens) {
 		token := tokens[startIndex]
+
+		if tokens[startIndex].LineNumber > parser.lastParsedResult.LineNumber {
+			parser.lastParsedResult.LineNumber = tokens[startIndex].LineNumber
+		}
+
 		ok = (token.TokenId == tokenId)
 		if ok {
 			tokenValue = token.TokenValue
-			if tokens[startIndex].LineNumber > parser.lastParsedLine {
-				parser.lastParsedLine = tokens[startIndex].LineNumber
-			}
 			startIndex++
 		}
 	}

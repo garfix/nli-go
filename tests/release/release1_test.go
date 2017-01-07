@@ -18,8 +18,17 @@ func TestRelease1(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 		{
-			rule: s(P) :- np(E), vp(P)
-			sense: subject(P, E)
+			rule: s(P) :- whword(), verb(P), np(E)
+			sense: object(P, E)
+		} {
+			rule: s(P) :- auxDo(), np(E1), verb(P), np(E2)
+			sense: subject(P, E1), object(P, E2)
+		} {
+			rule: s(P) :- auxBe(), np(E1), np(E2)
+			sense: subject(P, E1), object(P, E2)
+		} {
+			rule: np(E) :- nbar(E1), and(), nbar(E2)
+			sense: and(E, E1, E2)
 		} {
 			rule: np(E) :- nbar(E)
 		} {
@@ -35,33 +44,30 @@ func TestRelease1(t *testing.T) {
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		{
-			form: 'the'
-			pos: det
+			form: 'who'
+			pos: whword
 		} {
-			form: 'a'
-			pos: det
-		} {
-			form: 'shy'
-			pos: adj
-		} {
-			form: 'small'
-			pos: adj
-		} {
-			form: 'boy'
-			pos: noun
-			sense: instance_of(this, boy)
-		} {
-			form: 'girl'
-			pos: noun
-			sense: instance_of(this, girl)
-		} {
-			form: 'cries'
+			form: 'married'
 			pos: verb
-			sense: predication(this, cry)
+			sense: predication(this, marry)
 		} {
-			form: 'sings'
+			form: 'did'
+			pos: auxDo
+		} {
+			form: 'marry'
 			pos: verb
-			sense: predication(this, sing)
+			sense: predication(this, marry)
+		} {
+			form: 'are'
+			pos: auxBe
+			sense: predication(this, be)
+		} {
+			form: 'and'
+			pos: and
+		} {
+			form: 'siblings'
+			pos: noun
+			sense: instance_of(this, sibling)
 		}
 	]`)
 

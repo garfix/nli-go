@@ -1,3 +1,11 @@
+2017-01-07
+
+I decided to work with releases. Each release has a goal functionality, and must be documented so as to be usable to others.
+
+I cannot just use Erik T. Mueller's syntax rules (mueller-rewrites), because they have many constraints. I prefer to solve these constraints in the rules themselves (if that's possible). I keep them for inspiration.
+
+2016
+
 Als je wilt dat de representatie een Horn clause repr is, moet je NOT en OR expliciet noemen.
 Maar is het wel mogelijk om deze in de eerste parse op te nemen, of zijn
 Maar is het wel nodig om ze op te nemen? Je kunt de meeste determiners ook niet opnemen.

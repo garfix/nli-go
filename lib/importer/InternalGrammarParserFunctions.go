@@ -412,22 +412,22 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	} else if len(rule.Replacement[0].Arguments) != 1 {
 		ok = false
 	} else {
-		for _, patternRelation := range rule.Pattern {
-			if len(patternRelation.Arguments) != 1 {
-				ok = false
-			} else if !patternRelation.Arguments[0].IsVariable() {
-				ok = false
-			}
-		}
-	}
 
-	if ok {
 		syntacticCategories = append(syntacticCategories, rule.Replacement[0].Predicate)
 		entityVariables = append(entityVariables, rule.Replacement[0].Arguments[0].TermValue)
 
 		for _, patternRelation := range rule.Pattern {
-			syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
-			entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
+			if len(patternRelation.Arguments) == 0 {
+				patternRelation.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
+			} else if len(patternRelation.Arguments) != 1 {
+				ok = false
+			} else if !patternRelation.Arguments[0].IsVariable() {
+				ok = false
+			}
+			if ok {
+				syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
+				entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
+			}
 		}
 	}
 

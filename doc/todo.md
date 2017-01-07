@@ -18,7 +18,10 @@
 
 ## Syntax
 
+- Must be able to write whword in place of whword(); but wait, maybe we need multiple variables as well?
 - The syntax is not very useful. Both too little and too much extra tokens.
+- Must have a proper grammar syntax => relations
+- Earley parser
 
 ## Domains
 

@@ -1,10 +1,18 @@
-2017-01-07
+## 2017-01-07
 
 I decided to work with releases. Each release has a goal functionality, and must be documented so as to be usable to others.
 
 I cannot just use Erik T. Mueller's syntax rules (mueller-rewrites), because they have many constraints. I prefer to solve these constraints in the rules themselves (if that's possible). I keep them for inspiration.
 
-2016
+I checked the grammar rules of The Structure of Modern English. It's quite amazing really. It is still the best book I know for rewrite rules. It says
+
+>The version of the grammar presented here is not the most recent one, which has become highly theoretical and quite abstract, but takes those aspects of the various generative models which are most useful for empirical and pedagogical purposes.
+
+This is very impressive. I think he refers to the Minimalist Program.
+
+I reconsidered using a solely top-down or bottom-up parser. The top-down parsers can't handle left recursive grammars, and this is quite a heavy constraint. ThoughtTreasure uses a bottom-up parser, but I read in Speech and Language Processing that it can be quite inefficient. So I will recreate a Earley parser in Go. I love this :)
+
+## 2016
 
 Als je wilt dat de representatie een Horn clause repr is, moet je NOT en OR expliciet noemen.
 Maar is het wel mogelijk om deze in de eerste parse op te nemen, of zijn

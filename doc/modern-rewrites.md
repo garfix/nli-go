@@ -18,6 +18,9 @@ ADJP -> ADVP adjective
 ADJP -> adjective PP
 ADJP -> Deg adjective PP
 ADJP -> ADVP adjective PP
+ADJP -> adjective SBar                              (he was) certain that coffee grows in Brasil
+ADJP -> Deg adjective SBar
+ADJP -> ADVP adjective SBar
 ADJP -> ADJP conjunction ADJP                       very slow and quite tedious
 
 adverb -> adverb conjunction adverb                 quietly and smoothly
@@ -30,13 +33,20 @@ noun => noun conjunction noun                       cats and dogs
 
 NP -> NBar                                          large dog on the sofa
 NP -> Det NBar                                      the large dog on the sofa
+NP -> NBar SBar
+NP -> Det NBar SBar
+NP -> Det NBar                                      the large dog on the sofa
 NP -> pronoun                                       he
 NP -> propernoun                                    Goldy
 NP -> NP conjunction NP                             the tortoise and the hare
+NP -> SBar                                          (I know) that coffee grows in Brasil
+NP -> NP SBar                                       the claim that coffee crows in Brasil
 
 NBar -> noun                                        dog
 NBar -> ADJP NBar                                   large dogs, loudly barking dogs
 NBar -> NBar PP                                     dog on the sofa
+NBar -> ADJP NBar SBar
+NBar -> NBar PP SBar                                the girl who has red hair
 NBar -> NBar conjunction NBar                       cold coffee and warm beer
 
 Poss -> NP possesive-marker                         that man 's                                     ('s must be separated from man)
@@ -64,19 +74,28 @@ VBar -> Vgp ADVP                                    feel lonely
 VBar -> Vgp NP ADVP                                 make the dog angry
 VBar -> Vgp PP                                      jump into the pool
 VBar -> Vgp PP PP                                   talk about the problem with a friend
+VBar -> Vgp SBar                                    know that coffee grows in Brasil
 VBar -> Vgp NP particle                             look it up
 
 VP -> VBar
 VP -> VBar PP
 VP -> VBar ADVP
 VP -> VBar NP
+VP -> VBar SBar
+
+Comp                                                that, although, when, whether
+
+SBar -> Comp S
 
 S -> NP VP
 S -> NP Aux VP                                      The dog will bite
-S -> Aux NP VP                                      Was Zelda leaving for Paris
+S -> Aux NP VP                                      Was Zelda leaving for Paris?
+S -> VP                                             Dress yoourself!
 S -> ADVP S                                         seriously, that's the most shocking news I've heard
 S -> PP S                                           to my regret, i have never met Gerard
 S -> S ADVP                                         that's the most shocking news I've heard, frankly
 S -> S PP                                           i have never met Gerard, to my regret
+S -> S NP
+S -> S SBar                                         he thinks that the world is flat
 
 ```

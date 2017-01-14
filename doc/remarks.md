@@ -28,6 +28,11 @@ I name it "relation" (even though it is a wordt that already has too many meanin
 
 (https://en.wikipedia.org/wiki/Preposition_and_postposition)
 
+I am happy I have introduced the relations "declaration", "question" and "command", in stead of the more general sentence relation "predication". It is much more useful in transformations I think.
+
+I had not heard of prepositional object, but today this way exactly what I needed.
+
+https://en.wikipedia.org/wiki/Object_(grammar)
 
 ## 2017-01-13
 

@@ -10,20 +10,21 @@ For the semantic language holds:
 
 In the general relational representation I have these senses:
 
- * declaration(P)           Based on a verb, this forms the main node of a sentence.
- * command(I)               Based on the sentence structure, the verb must be interpretered as a command (Go!)
- * question(Q)              Based on a verb, this sentence forms a question.
- * subject(P, S)            The semantic subject of a sentence (may differ from the syntactic subject)
- * object(P, O)             Idem for object.
- * indirectObject(P, I)     Idem for indirect object.
- * determiner(O, D)         Singles out which discourse entities are involved.
- * possession(E1, E2)       Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
- * modality(P, M)           Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
- * relation(R, P, E)        Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)
- * specification(E1, E2)    The specification of an entity (which is a set) is its intersection with another entity (set)
- * modifier(V, P)           Modifies the meaning of a verb because it has a particle (look at is different from look into)
- * conjunction(C, E1, E2)   A new entity (C) formed out of two other entities.
- * degree(E, D)             Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
+ * declaration(P)               Based on a verb, this forms the main node of a sentence.
+ * command(I)                   Based on the sentence structure, the verb must be interpretered as a command (Go!)
+ * question(Q)                  Based on a verb, this sentence forms a question.
+ * subject(P, S)                The semantic subject of a sentence (may differ from the syntactic subject)
+ * object(P, O)                 Idem for object.
+ * indirectObject(P, I)         Idem for indirect object.
+ * prepositionalObject(P, PO)   Like object, but linked via a preposition. "to the teacher"
+ * determiner(O, D)             Singles out which discourse entities are involved.
+ * possession(E1, E2)           Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
+ * modality(P, M)               Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
+ * relation(R, P, E)            Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)
+ * specification(E1, E2)        The specification of an entity (which is a set) is its intersection with another entity (set)
+ * modifier(V, P)               Modifies the meaning of a verb because it has a particle (look at is different from look into)
+ * conjunction(C, E1, E2)       A new entity (C) formed out of two other entities.
+ * degree(E, D)                 Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
  * complement(P, C)
 
 More of these means that it is easier to create specific transformations based on these relations.

@@ -28,12 +28,15 @@
     form 'right',               pos: PSpec,                 sense: isa(this, right);
 
     form 'have',                pos: Verb,                  sense: isa(this, have);
-    form 'is',                  pos: Verb,                  sense: isa(this, are);
-    form 'are',                 pos: Verb,                  sense: isa(this, are);
+    form 'is',                  pos: Verb,                  sense: isa(this, be);
+    form 'are',                 pos: Verb,                  sense: isa(this, be);
 
     form 'at',                  pos: Particle,              sense: isa(this, are);
 
     form 'can',                 pos: Modal,                 sense: isa(this, can);
     form 'must',                pos: Modal,                 sense: isa(this, must);
     form 'will',                pos: Modal,                 sense: isa(this, will);
+
+    form 'is'                   pos: AuxVerb,               sense: isa(this, be)
+    form 'was'                  pos: AuxVerb,               sense: isa(this, be)
 ]

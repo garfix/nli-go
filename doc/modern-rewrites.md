@@ -90,12 +90,12 @@ SBar -> Comp S
 S -> NP VP
 S -> NP Aux VP                                      The dog will bite
 S -> Aux NP VP                                      Was Zelda leaving for Paris?
-S -> VP                                             Dress yoourself!
+S -> VP                                             Dress yourself!
 S -> ADVP S                                         seriously, that's the most shocking news I've heard
 S -> PP S                                           to my regret, i have never met Gerard
 S -> S ADVP                                         that's the most shocking news I've heard, frankly
 S -> S PP                                           i have never met Gerard, to my regret
 S -> S NP
-S -> S SBar                                         he thinks that the world is flat
+S -> S SBar
 
 ```

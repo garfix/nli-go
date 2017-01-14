@@ -12,18 +12,18 @@ func TestParser(test *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	grammar := internalGrammarParser.CreateGrammar(`[
 		{
-			rule: s(P) :- np(E), vp(P)
+			rule: s(P) -> np(E), vp(P)
 			sense: subject(P, E)
 		} {
-			rule: np(E) :- nbar(E)
+			rule: np(E) -> nbar(E)
 		} {
-			rule: np(E) :- det(E), nbar(E)
+			rule: np(E) -> det(E), nbar(E)
 		} {
-			rule: nbar(E) :- noun(E)
+			rule: nbar(E) -> noun(E)
 		} {
-			rule: nbar(E) :- adj(E), nbar(E)
+			rule: nbar(E) -> adj(E), nbar(E)
 		} {
-			rule: vp(P) :- verb(P)
+			rule: vp(P) -> verb(P)
 		}
 	]`)
 

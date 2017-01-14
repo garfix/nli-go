@@ -17,6 +17,7 @@ const (
 	t_stringConstant
 	t_number
 	t_comma
+	t_rewrite
 	t_implication
 	t_colon
 	t_opening_parenthesis
@@ -50,6 +51,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
+		{t_rewrite, "->"},
 		{t_implication, ":-"},
 		{t_colon, ":"},
 		{t_opening_parenthesis, "\\("},

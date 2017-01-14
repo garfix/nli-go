@@ -18,27 +18,27 @@ func TestRelease1(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 		{
-			rule: s(P) :- whword(), verb(P), np(E)
+			rule: s(P) -> whword(), verb(P), np(E)
 			sense: object(P, E)
 		} {
-			rule: s(P) :- auxDo(), np(E1), verb(P), np(E2)
+			rule: s(P) -> auxDo(), np(E1), verb(P), np(E2)
 			sense: subject(P, E1), object(P, E2)
 		} {
-			rule: s(P) :- auxBe(), np(E1), np(E2)
+			rule: s(P) -> auxBe(), np(E1), np(E2)
 			sense: subject(P, E1), object(P, E2)
 		} {
-			rule: np(E) :- nbar(E1), and(), nbar(E2)
+			rule: np(E) -> nbar(E1), and(), nbar(E2)
 			sense: and(E, E1, E2)
 		} {
-			rule: np(E) :- nbar(E)
+			rule: np(E) -> nbar(E)
 		} {
-			rule: np(E) :- det(E), nbar(E)
+			rule: np(E) -> det(E), nbar(E)
 		} {
-			rule: nbar(E) :- noun(E)
+			rule: nbar(E) -> noun(E)
 		} {
-			rule: nbar(E) :- adj(E), nbar(E)
+			rule: nbar(E) -> adj(E), nbar(E)
 		} {
-			rule: vp(P) :- verb(P)
+			rule: vp(P) -> verb(P)
 		}
 	]`)
 

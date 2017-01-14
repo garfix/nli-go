@@ -400,33 +400,38 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 
 func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, []string, int, bool) {
 
-	ok := false
 	syntacticCategories := []string{}
 	entityVariables := []string{}
+	ok := true
 
-	rule, startIndex, ok := parser.parseTransformation(tokens, startIndex)
+	headRelation := mentalese.Relation{}
+	headRelation, startIndex, ok = parser.parseRelation(tokens, startIndex)
+	if ok {
+		ok = len(headRelation.Arguments) == 1
+		if ok {
 
-	// check the constraints on this transformation
-	if len(rule.Replacement) != 1 {
-		ok = false
-	} else if len(rule.Replacement[0].Arguments) != 1 {
-		ok = false
-	} else {
+			syntacticCategories = append(syntacticCategories, headRelation.Predicate)
+			entityVariables = append(entityVariables, headRelation.Arguments[0].TermValue)
 
-		syntacticCategories = append(syntacticCategories, rule.Replacement[0].Predicate)
-		entityVariables = append(entityVariables, rule.Replacement[0].Arguments[0].TermValue)
-
-		for _, patternRelation := range rule.Pattern {
-			if len(patternRelation.Arguments) == 0 {
-				patternRelation.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
-			} else if len(patternRelation.Arguments) != 1 {
-				ok = false
-			} else if !patternRelation.Arguments[0].IsVariable() {
-				ok = false
-			}
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
 			if ok {
-				syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
-				entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
+				tailRelations := []mentalese.Relation{}
+				tailRelations, startIndex, ok = parser.parseRelations(tokens, startIndex)
+
+				for _, patternRelation := range tailRelations {
+					if len(patternRelation.Arguments) == 0 {
+						patternRelation.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
+					} else if len(patternRelation.Arguments) != 1 {
+						ok = false
+					} else if !patternRelation.Arguments[0].IsVariable() {
+						ok = false
+					}
+					if ok {
+						syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
+						entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
+					}
+				}
+
 			}
 		}
 	}

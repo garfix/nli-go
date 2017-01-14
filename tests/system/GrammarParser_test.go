@@ -12,7 +12,7 @@ func TestGrammar(test *testing.T) {
 
 	grammar := parser.CreateGrammar("[" +
 		"{" +
-		"rule: s(P) :- np(E), vp(P)" +
+		"rule: s(P) -> np(E), vp(P)" +
 		"sense: subject(P, E)" +
 		"}" +
 		"]")
@@ -40,11 +40,11 @@ func TestGrammar(test *testing.T) {
 
 	grammar = parser.CreateGrammar("[" +
 		"{" +
-		"rule: s(P) :- np(E), vp(P)" +
+		"rule: s(P) -> np(E), vp(P)" +
 		"sense: subject(P, E)" +
 		"}" +
 		"{" +
-		"rule: np(P) :- nbar(E)" +
+		"rule: np(P) -> nbar(E)" +
 		"}" +
 		"]")
 

@@ -35,7 +35,6 @@ NP -> NBar                                          large dog on the sofa
 NP -> Det NBar                                      the large dog on the sofa
 NP -> NBar SBar
 NP -> Det NBar SBar
-NP -> Det NBar                                      the large dog on the sofa
 NP -> pronoun                                       he
 NP -> propernoun                                    Goldy
 NP -> NP conjunction NP                             the tortoise and the hare
@@ -45,13 +44,14 @@ NP -> NP SBar                                       the claim that coffee crows 
 NBar -> noun                                        dog
 NBar -> ADJP NBar                                   large dogs, loudly barking dogs
 NBar -> NBar PP                                     dog on the sofa
+NBar -> NBar SBar                                   the girl who has red hair
 NBar -> ADJP NBar SBar
-NBar -> NBar PP SBar                                the girl who has red hair
+NBar -> NBar PP SBar
 NBar -> NBar conjunction NBar                       cold coffee and warm beer
 
-Poss -> NP possesive-marker                         that man 's                                     ('s must be separated from man)
+Poss -> NP possessive-marker                         that man 's                                     ('s must be separated from man)
 
-preposition => preposition conjunction preposition  over or under the covers
+preposition -> preposition conjunction preposition  over or under the covers
 
 PP -> preposition NP                                behind the door
 PP -> preposition PP                                from behind the door

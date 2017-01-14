@@ -1,0 +1,39 @@
+[
+    form: 'a',                  pos: Article,               sense: isa(this, a);
+    form: 'an',                 pos: Article,               sense: isa(this, a);
+    form: 'the',                pos: Article,               sense: isa(this, the);
+
+    form: 'very',               pos: Degree,                sense: isa(this, very);
+
+    form: 'quickly',            pos: Adverb,                sense: isa(this, quick);
+
+    form: 'small',              pos: Adjective,             sense: isa(this, small);
+    form: 'large',              pos: Adjective,             sense: isa(this, large);
+
+    form: 'i',                  pos: Pronoun,               sense: isa(this, i);
+    form: 'you',                pos: Pronoun,               sense: isa(this, you);
+
+    form: 'that',               pos: Complementizer,        sense: isa(this, that);
+
+    form: 'and',                pos: Conjunction,           sense: isa(this, and);
+    form: 'or',                 pos: Conjunction,           sense: isa(this, or);
+
+    form: 'person',             pos: Noun,                  sense: isa(this, person);
+
+    form '\'s',                 pos: PossessiveMarker;
+
+    form 'on',                  pos: Preposition,           sense: isa(this, on);
+    form 'at',                  pos: Preposition,           sense: isa(this, at);
+
+    form 'right',               pos: PSpec,                 sense: isa(this, right);
+
+    form 'have',                pos: Verb,                  sense: isa(this, have);
+    form 'is',                  pos: Verb,                  sense: isa(this, are);
+    form 'are',                 pos: Verb,                  sense: isa(this, are);
+
+    form 'at',                  pos: Particle,              sense: isa(this, are);
+
+    form 'can',                 pos: Modal,                 sense: isa(this, can);
+    form 'must',                pos: Modal,                 sense: isa(this, must);
+    form 'will',                pos: Modal,                 sense: isa(this, will);
+]

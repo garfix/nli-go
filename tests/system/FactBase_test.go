@@ -29,8 +29,8 @@ func TestFactBase(t *testing.T) {
 	`)
 
 	rules := parser.CreateRules(`
-		write(PersonName, BookName) :- book(BookId, BookName, _), author(PersonId, BookId), person(PersonId, PersonName)
-		publish(PubName, BookName) :- book(BookId, BookName, PubId), publisher(PubId, PubName)
+		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	`)
 
 	factBase := knowledge.NewFactBase(facts, rules)

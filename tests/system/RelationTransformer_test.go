@@ -29,9 +29,9 @@ func TestRelationTransformer(t *testing.T) {
 	} {
 		{
 			`[
-				task(A, B), subject(Y) :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)
-				done() :- predicate(A, X), object(A, Y), determiner(Y, Z), instance_of(Z, B)
-				magic(A, X) :- predicate(A, X), predicate(X, A)
+				task(A, B) subject(Y) :- predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B);
+				done() :- predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B);
+				magic(A, X) :- predicate(A, X) predicate(X, A);
 			]`,
 			"[task(S1, all) subject(E1) done()]",
 			"[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]",
@@ -39,7 +39,7 @@ func TestRelationTransformer(t *testing.T) {
 		},
 		{
 			`[
-				isa(Z, B) :- instance_of(Z, B)
+				isa(Z, B) :- instance_of(Z, B);
 			]`,
 			"[isa(E2, name) isa(E1, customer) isa(D1, all)]",
 			"[predicate(S1, name) object(S1, E1) determiner(E1, D1) isa(E2, name) isa(E1, customer) isa(D1, all)]",

@@ -23,6 +23,7 @@
 - The syntax is not very useful. Both too little and too much extra tokens.
 - Must have a proper grammar syntax => relations
 - Earley parser
+- is het misschien nodig om predicates en constants te namespacen? Eigenlijk is de predicate al een namespace
 
 ## Domains
 

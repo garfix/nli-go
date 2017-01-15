@@ -38,6 +38,8 @@ func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startI
 	for startIndex < len(tokens) {
 		transformation := mentalese.RelationTransformation{}
 		transformation, startIndex, ok = parser.parseTransformation(tokens, startIndex)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
+
 		if ok {
 			transformations = append(transformations, transformation)
 		} else {
@@ -50,7 +52,7 @@ func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startI
 	return transformations, startIndex, ok
 }
 
-// a(A), b(B) := c(A), d(B)
+// a(A) b(B) := c(A) d(B)
 func (parser *InternalGrammarParser) parseTransformation(tokens []Token, startIndex int) (mentalese.RelationTransformation, int, bool) {
 
 	transformation := mentalese.RelationTransformation{}
@@ -77,6 +79,7 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 	for startIndex < len(tokens) {
 		rule := mentalese.Rule{}
 		rule, startIndex, ok = parser.parseRule(tokens, startIndex)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
 		if ok {
 			rules = append(rules, rule)
 		} else {
@@ -209,11 +212,9 @@ func (parser *InternalGrammarParser) parseGenerationLexicon(tokens []Token, star
 func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int) (parse.LexItem, int, bool) {
 
 	lexItem := parse.LexItem{}
-	ok, formFound, posFound := true, false, false
+	ok, done, formFound, posFound := true, false, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
-
-	for ok {
+	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if ok {
@@ -231,14 +232,25 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 				default:
 					ok = false
 				}
+				if ok {
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					if separatorFound {
+						startIndex = newStartIndex
+					} else {
+						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+						if separatorFound {
+							startIndex = newStartIndex
+							done = true
+						}
+					}
+				}
+
 			}
 		}
 	}
 
 	// required fields
-	if formFound && posFound {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
-	} else {
+	if !formFound || !posFound {
 		ok = false
 	}
 
@@ -248,11 +260,9 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, startIndex int) (generate.GenerationLexeme, int, bool) {
 
 	lexItem := generate.GenerationLexeme{}
-	ok, formFound, posFound := true, false, false
+	ok, done, formFound, posFound := true, false, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
-
-	for ok {
+	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if ok {
@@ -270,14 +280,25 @@ func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, star
 				default:
 					ok = false
 				}
+				if ok {
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					if separatorFound {
+						startIndex = newStartIndex
+					} else {
+						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+						if separatorFound {
+							startIndex = newStartIndex
+							done = true
+						}
+					}
+				}
+
 			}
 		}
 	}
 
 	// required fields
-	if formFound && posFound {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
-	} else {
+	if !formFound || !posFound {
 		ok = false
 	}
 
@@ -291,9 +312,9 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 	for ok {
-		lexItem, newStartIndex, ruleFound := parser.parseGrammarRule(tokens, startIndex)
+		rule, newStartIndex, ruleFound := parser.parseGrammarRule(tokens, startIndex)
 		if ruleFound {
-			grammar.AddRule(lexItem)
+			grammar.AddRule(rule)
 			startIndex = newStartIndex
 		} else {
 			ok = false
@@ -312,9 +333,9 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 	for ok {
-		lexItem, newStartIndex, ruleFound := parser.parseGenerationGrammarRule(tokens, startIndex)
+		rule, newStartIndex, ruleFound := parser.parseGenerationGrammarRule(tokens, startIndex)
 		if ruleFound {
-			grammar.AddRule(lexItem)
+			grammar.AddRule(rule)
 			startIndex = newStartIndex
 		} else {
 			ok = false
@@ -326,14 +347,13 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 	return grammar, startIndex, ok
 }
 
+// rule: S(S) -> NP(E) VP(S), sense: declaration(S) object(S, E);
 func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (parse.GrammarRule, int, bool) {
 
 	rule := parse.GrammarRule{}
-	ok, ruleFound := true, false
+	ok, ruleFound, done := true, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
-
-	for ok {
+	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if ok {
@@ -348,14 +368,23 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 				default:
 					ok = false
 				}
+				if ok {
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					if separatorFound {
+						startIndex = newStartIndex
+					} else {
+						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+						if separatorFound {
+							startIndex = newStartIndex
+							done = true
+						}
+					}
+				}
 			}
 		}
 	}
 
-	// required fields
-	if ruleFound {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
-	} else {
+	if !ruleFound || !done {
 		ok = false
 	}
 
@@ -365,11 +394,9 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (generate.GenerationGrammarRule, int, bool) {
 
 	rule := generate.GenerationGrammarRule{}
-	ok, ruleFound := true, false
+	ok, ruleFound, done := true, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
-
-	for ok {
+	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if ok {
@@ -384,14 +411,23 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 				default:
 					ok = false
 				}
+				if ok {
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					if separatorFound {
+						startIndex = newStartIndex
+					} else {
+						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+						if separatorFound {
+							startIndex = newStartIndex
+							done = true
+						}
+					}
+				}
 			}
 		}
 	}
 
-	// required fields
-	if ruleFound {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
-	} else {
+	if !ruleFound || !done {
 		ok = false
 	}
 
@@ -474,16 +510,8 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 
 	relations := []mentalese.Relation{}
 	ok := true
-	commaFound := false
 
 	for ok {
-
-		if len(relations) > 0 {
-			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
-			if !commaFound {
-				break;
-			}
-		}
 
 		relation := mentalese.Relation{}
 		relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
@@ -491,6 +519,8 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 			relations = append(relations, relation)
 		}
 	}
+
+	ok = len(relations) > 0
 
 	return relations, startIndex, ok
 }

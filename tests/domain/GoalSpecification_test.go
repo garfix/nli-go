@@ -13,6 +13,7 @@ func TestGoalSpecification(test *testing.T) {
 
 	// relations
 	internalGrammarParser := importer.NewInternalGrammarParser()
+	internalGrammarParser.SetPanicOnParseFail(true);
 
 	// who did Kurt Cobain marry?
 	// non-domain specific
@@ -27,9 +28,9 @@ func TestGoalSpecification(test *testing.T) {
 
 	// transform the generic sense into a domain specific sense. Leaving out material, but making it more compact
 	domainSpecificAnalysis := internalGrammarParser.CreateTransformations(`[
-		married_to(A, B) :- predication(P1, marry), subject(P1, A), object(P1, B)
-		name(A, N) :- name(A, N)
-		question(A) :- info_request(A)
+		married_to(A, B) :- predication(P1, marry) subject(P1, A) object(P1, B);
+		name(A, N) :- name(A, N);
+		question(A) :- info_request(A);
 	]`)
 
 	// create domain specific representation
@@ -59,7 +60,7 @@ func TestGoalSpecification(test *testing.T) {
 	//]`)
 
 	domainSpecificGoalAnalysis := internalGrammarParser.CreateTransformations(`[
-		grammatical_subject(B), married_to(A, B), gender(B, G), name(A, N) :- married_to(A, B), question(A)
+		grammatical_subject(B) married_to(A, B) gender(B, G) name(A, N) :- married_to(A, B) question(A);
 	]`)
 
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
@@ -71,17 +72,17 @@ func TestGoalSpecification(test *testing.T) {
 
 	common.Logf("Goal sense %v\n", goalSense)
 
-	rules := internalGrammarParser.CreateRules(`
-	`)
+	rules := internalGrammarParser.CreateRules(`[
+	]`)
 //		married_to(X, Y) :- married_to(Y, X)
 
 	ruleBase1 := knowledge.NewRuleBase(rules)
 
 	ds2db := internalGrammarParser.CreateRules(`[
-		married_to(A, B) :- marriages(A, B, _)
-		name(A, N) :- person(A, N, _, _)
-		gender(A, male) :- person(A, _, 'M', _)
-		gender(A, female) :- person(A, _, 'F', _)
+		married_to(A, B) :- marriages(A, B, _);
+		name(A, N) :- person(A, N, _, _);
+		gender(A, male) :- person(A, _, 'M', _);
+		gender(A, female) :- person(A, _, 'F', _);
 	]`)
 
 	// voorbeeld van wanneer dit niet werkt:
@@ -107,10 +108,10 @@ func TestGoalSpecification(test *testing.T) {
 
 	// turn domain specific response into generic response
 	specificResponseSpec := internalGrammarParser.CreateTransformations(`[
-		predication(P1, marry), object(P1, E2), subject(P1, A), object(S1, B) :- married_to(A, B)
-		name(A, N) :- name(A, N)
-		gender(A, N) :- gender(A, N)
-		grammatical_subject(S) :- grammatical_subject(S)
+		predication(P1, marry) object(P1, E2) subject(P1, A) object(S1, B) :- married_to(A, B);
+		name(A, N) :- name(A, N);
+		gender(A, N) :- gender(A, N);
+		grammatical_subject(S) :- grammatical_subject(S);
 	]`)
 
 	// NB ^ the introduced P1 must be replaced by a "new" variable

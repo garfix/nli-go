@@ -23,7 +23,7 @@ func TestDialogActInterpreter(test *testing.T) {
 
 	// interpret dialog act (via transformations)
 	analysis := internalGrammarParser.CreateTransformations(`
-		dialog_act(S1, info_request) :- subject(S1, who)
+		dialog_act(S1, info_request) :- subject(S1, who);
 	`)
 
 	analyser := mentalese.NewRelationTransformer()

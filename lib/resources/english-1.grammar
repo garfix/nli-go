@@ -73,7 +73,7 @@
 
     rule: SImperative(S1) -> VP(S1),                                           sense: command(S1);
 
-    rule S(S1) -> SDeclarative(S1),                                            sense: mood(S1, declarative);
-    rule S(S1) -> SInterrogative(S1),                                          sense: mood(S1, interrogative);
-    rule S(S1) -> SImperative(S1),                                             sense: mood(S1, interrogative);
+    rule: S(S1) -> SDeclarative(S1),                                           sense: mood(S1, declarative);
+    rule: S(S1) -> SInterrogative(S1),                                         sense: mood(S1, interrogative);
+    rule: S(S1) -> SImperative(S1),                                            sense: mood(S1, interrogative);
 ]

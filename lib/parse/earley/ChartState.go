@@ -13,7 +13,6 @@ type chartState struct {
 	sense mentalese.RelationSet
 	children []int
 	id int
-//	text string
 }
 
 func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
@@ -25,6 +24,5 @@ func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, 
 		sense: mentalese.RelationSet{},
 		children: []int{},
 		id: 0,
-//		text: "",
 	}
 }

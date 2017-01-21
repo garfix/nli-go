@@ -9,8 +9,8 @@ type chart struct {
 	stateIdGenerator int
 }
 
-func newChart(words []string) chart {
-	return chart{
+func newChart(words []string) *chart {
+	return &chart{
 		states: make([][]chartState, len(words) + 1),
 		words: words,
 		treeInfoSentences: []chartState{},

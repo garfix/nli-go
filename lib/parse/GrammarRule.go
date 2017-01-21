@@ -25,7 +25,7 @@ func (rule GrammarRule) GetConsequents() []string {
 }
 
 func (rule GrammarRule) GetConsequent(i int) string {
-	return rule.SyntacticCategories[i]
+	return rule.SyntacticCategories[i + 1]
 }
 
 func (rule GrammarRule) GetConsequentCount() int {

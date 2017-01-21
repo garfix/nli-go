@@ -9,6 +9,7 @@ package earley
 import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
+	"nli-go/lib/common"
 )
 
 type parser struct {
@@ -28,25 +29,32 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
 // Parses tokens using parser.grammar and parser.lexicon
 func (parser *parser) Parse(words []string) (mentalese.RelationSet, ParseTreeNode, bool) {
 
+	common.LogTree("Parse", words);
+
 	rootNode := ParseTreeNode{}
 	set := mentalese.RelationSet{}
 
 	chart, ok := parser.createChart(words)
 
-	if !ok {
-		return set, rootNode, false
+	if ok {
+
+
+		rootNode = parser.extractFirstTree(chart)
+
+		//length, relationList, ok := parser.parseAllRules("s", tokens, 0, parser.getNewVariable("Sentence"))
+		//
+		//set = append(set, relationList...)
+
 	}
 
-	rootNode = parser.extractFirstTree(chart)
-
-	//length, relationList, ok := parser.parseAllRules("s", tokens, 0, parser.getNewVariable("Sentence"))
-	//
-	//set = append(set, relationList...)
+	common.LogTree("Parse", set, rootNode, ok);
 
 	return set, rootNode, ok
 }
 
-func (parser *parser) createChart(words []string) (chart, bool) {
+func (parser *parser) createChart(words []string) (*chart, bool) {
+
+	common.LogTree("createChart", words);
 
 	chart := newChart(words)
 
@@ -57,7 +65,7 @@ func (parser *parser) createChart(words []string) (chart, bool) {
 	wordCount := len(words)
 
 	//for ($i = 0; $i <= $wordCount; $i++) {
-	for i, _ := range words {
+	for i := 0; i <= wordCount; i++ {
 
 		// go through all chart entries in this position (entries will be added while we're in the loop)
 		// for ($j = 0; $j < count($this->chart[$i]); $j++) {
@@ -103,11 +111,16 @@ func (parser *parser) createChart(words []string) (chart, bool) {
 
 				// NB if ($this->singleTree && $treeComplete) {
 				if treeComplete {
+
+					common.LogTree("createChart", true);
+
 					return chart, true
 				}
 			}
 		}
 	}
+
+	common.LogTree("createChart", false);
 
 	return chart, false
 }
@@ -122,7 +135,7 @@ func (parser *parser) createInitialState(words []string) chartState {
 	return initialState
 }
 
-func (parser *parser) enqueue(chart chart, state chartState, position int) {
+func (parser *parser) enqueue(chart *chart, state chartState, position int) {
 
 	// check for completeness
 	// if ($this->isIncomplete($state)) {
@@ -159,7 +172,7 @@ func (parser *parser) isStateIncomplete(state chartState) bool {
 	return state.dotPosition < state.rule.GetConsequentCount() + 1
 }
 
-func (parser *parser) isStateInChart(chart chart, state chartState, position int) bool {
+func (parser *parser) isStateInChart(chart *chart, state chartState, position int) bool {
 
 	//        foreach ($this->chart[$position] as $presentState) {
 	for _, presentState := range chart.states[position] {
@@ -185,7 +198,7 @@ func (parser *parser) isStateInChart(chart chart, state chartState, position int
 	return false
 }
 
-func (parser *parser) pushState(chart chart, state chartState, position int) {
+func (parser *parser) pushState(chart *chart, state chartState, position int) {
 
 	//        static $stateIDs = 0;
 	//
@@ -205,11 +218,11 @@ func (parser *parser) pushState(chart chart, state chartState, position int) {
 /**
  * Reserved for later use: check for semantic conflicts.
  */
-func (parser *parser) unifyState(chart chart, state chartState) bool {
+func (parser *parser) unifyState(chart *chart, state chartState) bool {
 	return true
 }
 
-func (parser *parser) applySense(chart chart, state chartState) bool {
+func (parser *parser) applySense(chart *chart, state chartState) bool {
 
 // NB ignored        $state['text'] = $text = implode(' ', $this->getWordRange($state['startWordIndex'], $state['endWordIndex'] - 1));
 //	state.text = strings.Join(parser.getWordRange(chart, state.startWordIndex, state.endWordIndex - 1), " ")
@@ -239,7 +252,7 @@ variableMap := map[string]string{}
 	return true
 }
 
-//func (parser parser) listChildTexts(chart chart, state chartState) map[string]string {
+//func (parser parser) listChildTexts(chart *chart, state chartState) map[string]string {
 ////        $childTexts = array();
 //	childTexts := map[string]string{}
 ////
@@ -264,13 +277,13 @@ variableMap := map[string]string{}
 //	return childTexts
 //}
 
-func (parser *parser) getWordRange(chart chart, startWordIndex int, endWordIndex int) []string {
+func (parser *parser) getWordRange(chart *chart, startWordIndex int, endWordIndex int) []string {
 // NB! return array_slice($this->words, $startIndex, $endIndex - $startIndex + 1);
 	return chart.words[startWordIndex:(endWordIndex + 1) + 1]
 }
 
 // Returns an array of one sense (relation set) per consequent
-func (parser *parser) listChildSenses(chart chart, state chartState ) []mentalese.RelationSet {
+func (parser *parser) listChildSenses(chart *chart, state chartState ) []mentalese.RelationSet {
 
 	//        $childSemantics = array();
 	childSenses := []mentalese.RelationSet{}
@@ -303,7 +316,9 @@ func (parser *parser) getNextCat(state chartState) string {
 	return state.rule.GetConsequent(state.dotPosition - 1)
 }
 
-func (parser *parser) predict(chart chart, state chartState) {
+func (parser *parser) predict(chart *chart, state chartState) {
+
+	common.LogTree("predict", state);
 
 	// $nextConsequent = $state['rule']->getProduction()->getConsequentCategory($state['dotPosition'] - 1);
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
@@ -327,9 +342,13 @@ func (parser *parser) predict(chart chart, state chartState) {
 		// $this->enqueue($predictedState, $endWordIndex);
 		parser.enqueue(chart, predictedState, endWordIndex)
 	}
+
+	common.LogTree("predict");
 }
 
-func (parser *parser) scan(chart chart, state chartState) {
+func (parser *parser) scan(chart *chart, state chartState) {
+
+	common.LogTree("scan", state);
 
 	//	$nextConsequent = $state['rule']->getProduction()->getConsequentCategory($state['dotPosition'] - 1);
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
@@ -370,9 +389,13 @@ func (parser *parser) scan(chart chart, state chartState) {
 //            $this->enqueue($scannedState, $endWordIndex + 1);
 		parser.enqueue(chart, scannedState, endWordIndex + 1)
 	}
+
+	common.LogTree("scan", endWord, lexItemFound);
 }
 
-func (parser *parser) complete(chart chart, completedState chartState) bool {
+func (parser *parser) complete(chart *chart, completedState chartState) bool {
+
+	common.LogTree("complete", completedState);
 
 //	$treeComplete = false;
 	treeComplete := false;
@@ -417,13 +440,15 @@ func (parser *parser) complete(chart chart, completedState chartState) bool {
 //
 //            $this->enqueue($advancedState, $completedState['endWordIndex']);
 		parser.enqueue(chart, advancedState, completedState.endWordIndex)
+
+		common.LogTree("complete");
     }
 //
 //        return $treeComplete;
 	return treeComplete
 }
 
-func (parser *parser) storeStateInfo(chart chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
+func (parser *parser) storeStateInfo(chart *chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
 
 	//        $treeComplete = false;
 	treeComplete := false
@@ -467,7 +492,75 @@ func (parser *parser) storeStateInfo(chart chart, completedState chartState, cha
 	return treeComplete, advancedState
 }
 
-func (parser *parser) extractFirstTree(chart chart) ParseTreeNode {
-	node := ParseTreeNode{}
-	return node
+func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
+	tree := ParseTreeNode{}
+
+	//		if (!empty($this->treeInfo['sentences'])) {
+	if len(chart.treeInfoSentences) > 0 {
+	//			$root = $this->treeInfo['sentences'][0];
+		root := chart.treeInfoSentences[0]
+	//			$tree = $this->extractParseTreeBranch($root);
+		tree = parser.extractParseTreeBranch(chart, root)
+	} else {
+	//			$tree = null;
+
+	}
+	//
+	//		return $tree;
+
+
+	return tree
+}
+
+func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
+
+	//		$rule = $state['rule'];
+	rule := state.rule
+	//
+	//		$antecedent = $rule->getProduction()->getAntecedent();
+	antecedent := rule.GetAntecedent()
+	//		$antecedentCategory = $rule->getProduction()->getAntecedentCategory();
+	//
+	//		if ($antecedent == 'gamma') {
+	if antecedent == "gamma" {
+	//			$constituentId = $state['children'][0];
+		constituentId := state.children[0]
+	//			$constituent = $this->treeInfo['states'][$constituentId];
+		constituent := chart.treeInfoStates[constituentId]
+	//			return $this->extractParseTreeBranch($constituent);
+		return parser.extractParseTreeBranch(chart, constituent)
+	}
+	//
+	//		$branch = array(
+	//			'part-of-speech' => $antecedentCategory
+	//		);
+
+	branch := ParseTreeNode{category: antecedent, constituents: []ParseTreeNode{}, form: ""}
+	//
+	//		if ($this->Grammar->isPartOfSpeech($antecedent)) {
+	//			$branch['word'] = $rule->getProduction()->getConsequentCategory(0);
+	//		}
+// NB!
+	if len(state.children) == 0 {
+		branch.form = rule.GetConsequent(0)
+	}
+	//
+	//		$branch['semantics'] = $state['semantics'];
+	//
+	//		if (isset($state['children'])) {
+	if len(state.children) > 0 {
+	//
+	//			$constituents = array();
+	//			foreach ($state['children'] as $constituentId) {
+		for _, constituentId := range state.children {
+	//				$constituent = $this->treeInfo['states'][$constituentId];
+			constituent := chart.treeInfoStates[constituentId]
+	//				$constituents[] = $this->extractParseTreeBranch($constituent);
+			branch.constituents = append(branch.constituents, parser.extractParseTreeBranch(chart, constituent))
+		}
+	//			$branch['constituents'] = $constituents;
+	}
+	//
+	//		return $branch;
+	return branch
 }

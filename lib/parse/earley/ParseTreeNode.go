@@ -1,9 +1,9 @@
 package earley
 
 type ParseTreeNode struct {
-	category    string
-	children    []ParseTreeNode
-	form        string
+	category     string
+	constituents []ParseTreeNode
+	form         string
 }
 
 func (node ParseTreeNode) String() string {
@@ -14,7 +14,7 @@ func (node ParseTreeNode) String() string {
 		body = node.form
 	} else {
 		sep := ""
-		for _, child := range node.children {
+		for _, child := range node.constituents {
 			body += sep + child.String()
 			sep = ", "
 		}

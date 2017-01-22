@@ -13,20 +13,6 @@ func NewSenseBuilder() SenseBuilder {
 	return SenseBuilder{varIndexCounter: map[string]int{}}
 }
 
-// Joins the senses of a parent node with those of its children.
-//
-// parentSense: declaration(S1) object(S1, E1)
-// childSenses: [isa(E13, horse), isa(V24, fall) specifier(V24, S9) isa(S9, the)]
-// childVariables: {NP: E13, VP: V24}
-// return: isa(E13, horse) isa(V24, fall) declaration(V24) object(V24, E13)
-func (builder SenseBuilder) Join(parentSense mentalese.RelationSet, childSenses []mentalese.RelationSet, childVariables map[string] string) (mentalese.RelationSet, string) {
-
-	join := mentalese.RelationSet{}
-	parentVariable := ""
-
-	return join, parentVariable
-}
-
 // Returns a new variable name
 func (builder SenseBuilder) GetNewVariable(formalVariable string) string {
 

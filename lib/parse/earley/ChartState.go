@@ -2,7 +2,6 @@ package earley
 
 import (
 	"nli-go/lib/parse"
-	"nli-go/lib/mentalese"
 )
 
 type chartState struct {
@@ -10,7 +9,6 @@ type chartState struct {
 	dotPosition int
 	startWordIndex int
 	endWordIndex int
-	sense mentalese.RelationSet
 	children []int
 	id int
 }
@@ -21,7 +19,6 @@ func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, 
 		dotPosition: dotPosition,
 		startWordIndex: startWordIndex,
 		endWordIndex: endWordIndex,
-		sense: mentalese.RelationSet{},
 		children: []int{},
 		id: 0,
 	}

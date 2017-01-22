@@ -16,7 +16,7 @@ func (node ParseTreeNode) String() string {
 		sep := ""
 		for _, child := range node.constituents {
 			body += sep + child.String()
-			sep = ", "
+			sep = " "
 		}
 	}
 

@@ -22,7 +22,7 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
 	return &parser{
 		grammar: grammar,
 		lexicon: lexicon,
-		senseBuilder: parse.SenseBuilder{},
+		senseBuilder: parse.NewSenseBuilder(),
 	}
 }
 
@@ -44,6 +44,12 @@ func (parser *parser) Parse(words []string) (mentalese.RelationSet, ParseTreeNod
 		//length, relationList, ok := parser.parseAllRules("s", tokens, 0, parser.getNewVariable("Sentence"))
 		//
 		//set = append(set, relationList...)
+
+		common.LoggerActive = false
+
+		set = parser.extractFirstSense(chart)
+
+		common.LoggerActive = false
 
 	}
 
@@ -137,6 +143,8 @@ func (parser *parser) createInitialState(words []string) chartState {
 
 func (parser *parser) enqueue(chart *chart, state chartState, position int) {
 
+	ok := false
+
 	// check for completeness
 	// if ($this->isIncomplete($state)) {
 	if parser.isStateIncomplete(state) {
@@ -152,7 +160,8 @@ func (parser *parser) enqueue(chart *chart, state chartState, position int) {
 	} else if parser.unifyState(chart, state) {
 
 		// if ($this->applySemantics($state)) {
-		if parser.applySense(chart, state) {
+		state, ok = parser.applySense(chart, state)
+		if ok {
 
 			// if (!$this->isStateInChart($state, $position)) {
 			if !parser.isStateInChart(chart, state, position) {
@@ -222,93 +231,76 @@ func (parser *parser) unifyState(chart *chart, state chartState) bool {
 	return true
 }
 
-func (parser *parser) applySense(chart *chart, state chartState) bool {
+func (parser *parser) applySense(chart *chart, state chartState) (chartState, bool) {
 
-// NB ignored        $state['text'] = $text = implode(' ', $this->getWordRange($state['startWordIndex'], $state['endWordIndex'] - 1));
-//	state.text = strings.Join(parser.getWordRange(chart, state.startWordIndex, state.endWordIndex - 1), " ")
-	//
-	//        $Rule = $state['rule']->getSemantics();
-	parentSense := state.rule.Sense
-	//
-	//        if ($Rule) {
-	//
-	//            $childSemantics = $this->listChildSemantics($state);
-	childSenses := parser.listChildSenses(chart, state)
-	//            $childNodeTexts = $this->listChildTexts($state);
-//		childNodeTexts := parser.listChildTexts(chart, state)
-	//
-	//            // combine the semantics of the children to determine the semantics of the parent
-	//            $Applier = new SemanticApplier();
-	//            $Semantics = $Applier->apply($Rule, $childSemantics, $childNodeTexts);
+	return state, true
 
-// todo!!
-variableMap := map[string]string{}
-
-	sense, _ := parser.senseBuilder.Join(parentSense, childSenses, variableMap)
-	//            $state['semantics'] = $Semantics;
-	state.sense = sense
-	//
-	//        return true;
-	return true
+//// NB ignored        $state['text'] = $text = implode(' ', $this->getWordRange($state['startWordIndex'], $state['endWordIndex'] - 1));
+////	state.text = strings.Join(parser.getWordRange(chart, state.startWordIndex, state.endWordIndex - 1), " ")
+//	//
+//	//        $Rule = $state['rule']->getSemantics();
+//	parentSense := state.rule.Sense
+//	//
+//	//        if ($Rule) {
+//	//
+//	//            $childSemantics = $this->listChildSemantics($state);
+////	childSenses := parser.listChildSenses(chart, state)
+//	//            $childNodeTexts = $this->listChildTexts($state);
+////		childNodeTexts := parser.listChildTexts(chart, state)
+//	//
+//	//            // combine the semantics of the children to determine the semantics of the parent
+//	//            $Applier = new SemanticApplier();
+//	//            $Semantics = $Applier->apply($Rule, $childSemantics, $childNodeTexts);
+//
+//// todo!!
+////variableMap := map[string]string{}
+//
+//	//sense, _ := parser.senseBuilder.Join(parentSense, childSenses, variableMap)
+//	//            $state['semantics'] = $Semantics;
+//	state.sense = parentSense
+//
+//	if len(state.children) == 0 {
+//		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
+//		state.sense = lexItem.RelationTemplates
+//	}
+//
+//	//
+//	//        return true;
+//	return state, true
 }
-
-//func (parser parser) listChildTexts(chart *chart, state chartState) map[string]string {
-////        $childTexts = array();
-//	childTexts := map[string]string{}
-////
-////        /** @var ProductionRule $ProductionRule */
-////        $ProductionRule = $state['rule']->getProduction();
-//	productionRule := state.rule
-////
-////        foreach ($state['children'] as $i => $childNodeId) {
-//	for i, childNodeId := range state.children {
-////
-////            $childState = $this->treeInfo['states'][$childNodeId];
-//		childState := chart.treeInfoStates[childNodeId]
-////
-////            $childId = 	$ProductionRule->getConsequent($i);
-//		childId := productionRule.GetConsequent(i)
-////
-////            $childTexts[$childId] = $childState['text'];
-//		childTexts[childId] = childState.text
-//}
-////
-////        return $childTexts;
-//	return childTexts
-//}
 
 func (parser *parser) getWordRange(chart *chart, startWordIndex int, endWordIndex int) []string {
 // NB! return array_slice($this->words, $startIndex, $endIndex - $startIndex + 1);
 	return chart.words[startWordIndex:(endWordIndex + 1) + 1]
 }
 
-// Returns an array of one sense (relation set) per consequent
-func (parser *parser) listChildSenses(chart *chart, state chartState ) []mentalese.RelationSet {
-
-	//        $childSemantics = array();
-	childSenses := []mentalese.RelationSet{}
-	//
-	//        /** @var ProductionRule $ProductionRule */
-	//        $ProductionRule = $state['rule']->getProduction();
-	//productionRule := state.rule
-	//
-	//        foreach ($state['children'] as $i => $childNodeId) {
-	for _, childNodeId := range state.children {
-
-	//
-	//            $childState = $this->treeInfo['states'][$childNodeId];
-		childState := chart.treeInfoStates[childNodeId]
-	//
-	// $childId = $ProductionRule->getConsequent($i);
-	// category := productionRule.GetConsequent(i)
-	//
-	// $childSemantics[$childId] = $childState['semantics'];
-		childSenses = append(childSenses, childState.sense)
-	}
-	//
-	//        return $childSemantics;
-	return childSenses
-}
+//// Returns an array of one sense (relation set) per consequent
+//func (parser *parser) listChildSenses(chart *chart, state chartState ) []mentalese.RelationSet {
+//
+//	//        $childSemantics = array();
+//	childSenses := []mentalese.RelationSet{}
+//	//
+//	//        /** @var ProductionRule $ProductionRule */
+//	//        $ProductionRule = $state['rule']->getProduction();
+//	//productionRule := state.rule
+//	//
+//	//        foreach ($state['children'] as $i => $childNodeId) {
+//	for _, childNodeId := range state.children {
+//
+//	//
+//	//            $childState = $this->treeInfo['states'][$childNodeId];
+//		childState := chart.treeInfoStates[childNodeId]
+//	//
+//	// $childId = $ProductionRule->getConsequent($i);
+//	// category := productionRule.GetConsequent(i)
+//	//
+//	// $childSemantics[$childId] = $childState['semantics'];
+//		childSenses = append(childSenses, childState.sense)
+//	}
+//	//
+//	//        return $childSemantics;
+//	return childSenses
+//}
 
 func (parser *parser) getNextCat(state chartState) string {
 
@@ -493,6 +485,7 @@ func (parser *parser) storeStateInfo(chart *chart, completedState chartState, ch
 }
 
 func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
+
 	tree := ParseTreeNode{}
 
 	//		if (!empty($this->treeInfo['sentences'])) {
@@ -501,6 +494,7 @@ func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
 		root := chart.treeInfoSentences[0]
 	//			$tree = $this->extractParseTreeBranch($root);
 		tree = parser.extractParseTreeBranch(chart, root)
+
 	} else {
 	//			$tree = null;
 
@@ -563,4 +557,53 @@ func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) Par
 	//
 	//		return $branch;
 	return branch
+}
+
+
+func (parser *parser) extractFirstSense(chart *chart) mentalese.RelationSet {
+
+	constituentId := chart.treeInfoSentences[0].children[0]
+	return parser.extractSenseFromState(chart, chart.treeInfoStates[constituentId], parser.senseBuilder.GetNewVariable("Sentence"))
+}
+
+// Returns the sense of a state and its children
+// state contains a rule with NP -> Det NBar
+// antecedentVariable contains the actual variable used for the antecedent (for example: E1)
+func (parser *parser) extractSenseFromState(chart *chart, state chartState, antecedentVariable string) mentalese.RelationSet {
+
+	common.LogTree("extractSenseFromState", state, antecedentVariable)
+
+	relations := mentalese.RelationSet{}
+	variableMap := parser.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
+	rule := state.rule
+
+	if len(state.children) > 0 {
+		ruleRelations := parser.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
+		relations = append(relations, ruleRelations...)
+
+		// parse each of the children
+		for i, _ := range rule.GetConsequents() {
+
+			childConsequentId := state.children[i]
+			childState := chart.treeInfoStates[childConsequentId]
+
+			consequentVariable := variableMap[rule.EntityVariables[i + 1]]
+			childRelations := parser.extractSenseFromState(chart, childState, consequentVariable)
+			//parser.parseSingleConsequent(syntacticCategories[i], tokens, cursor, consequentVariable)
+			relations = append(relations, childRelations...)
+
+		}
+
+	} else {
+
+		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
+		//state.sense = lexItem.RelationTemplates
+
+		ruleRelations := parser.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		relations = append(relations, ruleRelations...)
+	}
+
+	common.LogTree("extractSenseFromState", relations)
+
+	return relations
 }

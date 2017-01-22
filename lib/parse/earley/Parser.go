@@ -33,7 +33,7 @@ func (parser *parser) Parse(words []string) (mentalese.RelationSet, ParseTreeNod
 	rootNode := ParseTreeNode{}
 	sense := mentalese.RelationSet{}
 
-	chart, ok := parser.createChart(words)
+	chart, ok := parser.buildChart(words)
 
 	if ok {
 
@@ -47,14 +47,15 @@ func (parser *parser) Parse(words []string) (mentalese.RelationSet, ParseTreeNod
 }
 
 // The body of Earley's algorithm
-func (parser *parser) createChart(words []string) (*chart, bool) {
+func (parser *parser) buildChart(words []string) (*chart, bool) {
 
 	common.LogTree("createChart", words);
 
 	chart := newChart(words)
 	wordCount := len(words)
 
-	parser.enqueue(chart, parser.createInitialState(words), 0)
+	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, []mentalese.Relation{}), 1, 0, 0)
+	parser.enqueue(chart, initialState, 0)
 
 	// go through all word positions in the sentence
 	for i := 0; i <= wordCount; i++ {
@@ -105,55 +106,7 @@ func (parser *parser) createChart(words []string) (*chart, bool) {
 	return chart, false
 }
 
-func (parser *parser) createInitialState(words []string) chartState {
-
-	rule := parse.GrammarRule{SyntacticCategories: []string{"gamma", "s"}, EntityVariables: []string{"g1", "s1"}, Sense: []mentalese.Relation{}}
-
-	return newChartState(rule, 1, 0, 0)
-}
-
-func (parser *parser) enqueue(chart *chart, state chartState, position int) {
-
-	if !parser.isStateInChart(chart, state, position) {
-		parser.pushState(chart, state, position)
-	}
-}
-
-func (parser *parser) isStateIncomplete(state chartState) bool {
-
-	return state.dotPosition < state.rule.GetConsequentCount() + 1
-}
-
-func (parser *parser) isStateInChart(chart *chart, state chartState, position int) bool {
-
-	for _, presentState := range chart.states[position] {
-
-		if
-			presentState.rule.Equals(state.rule) &&
-			presentState.dotPosition == state.dotPosition &&
-			presentState.startWordIndex == state.startWordIndex &&
-			presentState.endWordIndex == state.endWordIndex {
-
-			return true
-		}
-
-	}
-	return false
-}
-
-func (parser *parser) pushState(chart *chart, state chartState, position int) {
-
-	chart.stateIdGenerator++
-	state.id = chart.stateIdGenerator
-	chart.treeInfoStates[state.id] = state
-	chart.states[position] = append(chart.states[position], state)
-}
-
-func (parser *parser) getNextCat(state chartState) string {
-
-	return state.rule.GetConsequent(state.dotPosition - 1)
-}
-
+// Adds all entries to the chart that have the current consequent of $state as their antecedent.
 func (parser *parser) predict(chart *chart, state chartState) {
 
 	common.LogTree("predict", state);
@@ -171,6 +124,9 @@ func (parser *parser) predict(chart *chart, state chartState) {
 	common.LogTree("predict");
 }
 
+// If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
+// of the parts of speech associated with the current word in the sentence,
+// then a new, completed, entry is added to the chart: (cat => word)
 func (parser *parser) scan(chart *chart, state chartState) {
 
 	common.LogTree("scan", state);
@@ -182,7 +138,7 @@ func (parser *parser) scan(chart *chart, state chartState) {
 	_, lexItemFound := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if lexItemFound {
 
-		rule := parse.GrammarRule{ SyntacticCategories: []string{ nextConsequent, endWord }, EntityVariables: []string{"a", "b"}, Sense: mentalese.RelationSet{} }
+		rule := parse.NewGrammarRule([]string{ nextConsequent, endWord }, []string{"a", "b"}, mentalese.RelationSet{})
 		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex + 1)
 		parser.enqueue(chart, scannedState, endWordIndex + 1)
 	}
@@ -190,6 +146,12 @@ func (parser *parser) scan(chart *chart, state chartState) {
 	common.LogTree("scan", endWord, lexItemFound);
 }
 
+// This function is called whenever a state is completed.
+// Its purpose is to advance other states.
+//
+// For example:
+// - this state is NP -> noun, it has been completed
+// - now proceed all other states in the chart that are waiting for an NP at the current position
 func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
 	common.LogTree("complete", completedState);
@@ -200,7 +162,7 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
 		dotPosition := chartedState.dotPosition
 		rule := chartedState.rule
-//
+
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition - 1) != completedAntecedent) {
 			continue;
@@ -222,26 +184,68 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 	return treeComplete
 }
 
+
+func (parser *parser) enqueue(chart *chart, state chartState, position int) {
+
+	if !parser.isStateInChart(chart, state, position) {
+		parser.pushState(chart, state, position)
+	}
+}
+
+func (parser *parser) isStateIncomplete(state chartState) bool {
+
+	return state.dotPosition < state.rule.GetConsequentCount() + 1
+}
+
+func (parser *parser) isStateInChart(chart *chart, state chartState, position int) bool {
+
+	for _, presentState := range chart.states[position] {
+
+		if  presentState.rule.Equals(state.rule) &&
+			presentState.dotPosition == state.dotPosition &&
+			presentState.startWordIndex == state.startWordIndex &&
+			presentState.endWordIndex == state.endWordIndex {
+
+			return true
+		}
+
+	}
+
+	return false
+}
+
+func (parser *parser) pushState(chart *chart, state chartState, position int) {
+
+	// index the state for later lookup
+	chart.stateIdGenerator++
+	state.id = chart.stateIdGenerator
+	chart.indexedStates[state.id] = state
+
+	chart.states[position] = append(chart.states[position], state)
+}
+
+func (parser *parser) getNextCat(state chartState) string {
+
+	return state.rule.GetConsequent(state.dotPosition - 1)
+}
+
 func (parser *parser) storeStateInfo(chart *chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
 
 	treeComplete := false
 
 	// store the state's "children" to ease building the parse trees from the packed forest
-	advancedState.children = append(chartedState.children, completedState.id)
+	advancedState.childStateIds = append(chartedState.childStateIds, completedState.id)
 
 	// rule complete?
-	consequentCount := chartedState.rule.GetConsequentCount()
-	if chartedState.dotPosition == consequentCount {
+	if chartedState.dotPosition == chartedState.rule.GetConsequentCount() {
 
 		// complete sentence?
-		antecedent := chartedState.rule.GetAntecedent()
-
-		if antecedent == "gamma" {
+		if chartedState.rule.GetAntecedent() == "gamma" {
 
 			// that matches all words?
 			if completedState.endWordIndex == len(chart.words) {
 
-				chart.treeInfoSentences = append(chart.treeInfoSentences, advancedState)
+				chart.sentenceStates = append(chart.sentenceStates, advancedState)
 
 				// set a flag to allow the parser to stop at the first complete parse
 				treeComplete = true
@@ -256,11 +260,11 @@ func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
 
 	tree := ParseTreeNode{}
 
-	if len(chart.treeInfoSentences) > 0 {
+	if len(chart.sentenceStates) > 0 {
 
-		root := chart.treeInfoSentences[0]
+		rootStateId := chart.sentenceStates[0].childStateIds[0]
+		root := chart.indexedStates[rootStateId]
 		tree = parser.extractParseTreeBranch(chart, root)
-
 	}
 
 	return tree
@@ -269,39 +273,28 @@ func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
 func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
 
 	rule := state.rule
+	branch := ParseTreeNode{ category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "" }
 
-	antecedent := rule.GetAntecedent()
-	if antecedent == "gamma" {
-
-		constituentId := state.children[0]
-		constituent := chart.treeInfoStates[constituentId]
-
-		return parser.extractParseTreeBranch(chart, constituent)
-	}
-
-	branch := ParseTreeNode{category: antecedent, constituents: []ParseTreeNode{}, form: ""}
-
-	if len(state.children) == 0 {
+	if state.isLeafState() {
 
 		branch.form = rule.GetConsequent(0)
 
 	} else {
 
-		for _, constituentId := range state.children {
+		for _, childStateId := range state.childStateIds {
 
-			constituent := chart.treeInfoStates[constituentId]
-			branch.constituents = append(branch.constituents, parser.extractParseTreeBranch(chart, constituent))
+			childState := chart.indexedStates[childStateId]
+			branch.constituents = append(branch.constituents, parser.extractParseTreeBranch(chart, childState))
 		}
 	}
 
 	return branch
 }
 
-
 func (parser *parser) extractFirstSense(chart *chart) mentalese.RelationSet {
 
-	constituentId := chart.treeInfoSentences[0].children[0]
-	return parser.extractSenseFromState(chart, chart.treeInfoStates[constituentId], parser.senseBuilder.GetNewVariable("Sentence"))
+	rootStateId := chart.sentenceStates[0].childStateIds[0]
+	return parser.extractSenseFromState(chart, chart.indexedStates[rootStateId], parser.senseBuilder.GetNewVariable("Sentence"))
 }
 
 // Returns the sense of a state and its children
@@ -312,30 +305,32 @@ func (parser *parser) extractSenseFromState(chart *chart, state chartState, ante
 	common.LogTree("extractSenseFromState", state, antecedentVariable)
 
 	relations := mentalese.RelationSet{}
-	variableMap := parser.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
 	rule := state.rule
 
-	if len(state.children) > 0 {
-		ruleRelations := parser.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
-		relations = append(relations, ruleRelations...)
+	if state.isLeafState() {
+
+		// leaf state rule: category -> word
+		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
+		lexItemRelations := parser.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		relations = append(relations, lexItemRelations...)
+
+	} else {
+
+		variableMap := parser.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
+		parentRelations := parser.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
+		relations = append(relations, parentRelations...)
 
 		// parse each of the children
 		for i, _ := range rule.GetConsequents() {
 
-			childConsequentId := state.children[i]
-			childState := chart.treeInfoStates[childConsequentId]
+			childStateId := state.childStateIds[i]
+			childState := chart.indexedStates[childStateId]
 
 			consequentVariable := variableMap[rule.EntityVariables[i + 1]]
 			childRelations := parser.extractSenseFromState(chart, childState, consequentVariable)
 			relations = append(relations, childRelations...)
 
 		}
-
-	} else {
-
-		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
-		ruleRelations := parser.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
-		relations = append(relations, ruleRelations...)
 	}
 
 	common.LogTree("extractSenseFromState", relations)

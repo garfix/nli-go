@@ -5,12 +5,13 @@ import (
 )
 
 type chartState struct {
-	rule parse.GrammarRule
-	dotPosition int
+	rule           parse.GrammarRule
+	dotPosition    int
 	startWordIndex int
-	endWordIndex int
-	children []int
-	id int
+	endWordIndex   int
+
+	childStateIds  []int
+	id             int
 }
 
 func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
@@ -19,7 +20,12 @@ func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, 
 		dotPosition: dotPosition,
 		startWordIndex: startWordIndex,
 		endWordIndex: endWordIndex,
-		children: []int{},
+
+		childStateIds: []int{},
 		id: 0,
 	}
+}
+
+func (state chartState) isLeafState() bool {
+	return len(state.childStateIds) == 0
 }

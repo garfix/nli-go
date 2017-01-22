@@ -118,7 +118,7 @@ func TestBlocksWorld(t *testing.T) {
 		rawInput := test.input
 		tokenizer := parse.NewTokenizer()
 		wordArray := tokenizer.Process(rawInput)
-		genericSense,_, _ := parser.Process(wordArray)
+		genericSense,_, _ := parser.Parse(wordArray)
 		dsSense := transformer.Extract(genericSense2domainSpecificSense, genericSense)
 
 		questionSense := transformer.Extract(question2answer, dsSense)

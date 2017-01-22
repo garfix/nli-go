@@ -84,7 +84,7 @@ func TestRelease1(t *testing.T) {
 	for _, test := range tests {
 
 		tokens := tokenizer.Process(test.question)
-		genericSense, _, _ := parser.Process(tokens)
+		genericSense, _, _ := parser.Parse(tokens)
 		domainSpecificSense := transformer.Extract(domainSpecificAnalysis, genericSense)
 		goalSense := transformer.Extract(domainSpecificGoalAnalysis, domainSpecificSense)
 		//domainSpecificResponseSenses :=

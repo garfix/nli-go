@@ -37,7 +37,7 @@ func TestParser(test *testing.T) {
 
 	wordArray := tokenizer.Process(rawInput)
 
-	relations, length, ok := parser.Process(wordArray)
+	relations, length, ok := parser.Parse(wordArray)
 
 	if !ok {
 		test.Errorf("Parse failed at pos %d", length)

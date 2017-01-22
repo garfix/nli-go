@@ -5,6 +5,9 @@ import (
 	"nli-go/lib/common"
 )
 
+// A simple top-down parser
+// Note: does not support left-recursive rewrite rules; infinite looping
+
 type TopDownParser struct {
 	grammar         *Grammar
 	lexicon         *Lexicon
@@ -16,14 +19,11 @@ func NewTopDownParser(grammar *Grammar, lexicon *Lexicon) *TopDownParser {
 }
 
 // Parses tokens using parser.grammar and parser.lexicon
-func (parser *TopDownParser) Process(tokens []string) (mentalese.RelationSet, int, bool) {
+func (parser *TopDownParser) Parse(tokens []string) (mentalese.RelationSet, int, bool) {
 
 	length, relationList, ok := parser.parseAllRules("s", tokens, 0, parser.senseBuilder.GetNewVariable("Sentence"))
 
-	set := mentalese.RelationSet{}
-	set = append(set, relationList...)
-
-	return set, length, ok
+	return relationList, length, ok
 }
 
 // Parses tokens, starting from start, using all rules with given antecedent
@@ -37,7 +37,7 @@ func (parser *TopDownParser) parseAllRules(antecedent string, tokens []string, s
 	relations := []mentalese.Relation{}
 
 	for _, rule := range rules {
-		cursor, relations, ok = parser.parse(rule, tokens, start, antecedentVariable)
+		cursor, relations, ok = parser.parseWithRule(rule, tokens, start, antecedentVariable)
 
 		if ok {
 			break
@@ -50,7 +50,7 @@ func (parser *TopDownParser) parseAllRules(antecedent string, tokens []string, s
 }
 
 // Try to parse tokens using the rule given
-func (parser *TopDownParser) parse(rule GrammarRule, tokens []string, start int, antecedentVariable string) (int, []mentalese.Relation, bool) {
+func (parser *TopDownParser) parseWithRule(rule GrammarRule, tokens []string, start int, antecedentVariable string) (int, []mentalese.Relation, bool) {
 
 	cursor := start
 	syntacticCategories := rule.SyntacticCategories
@@ -123,4 +123,3 @@ func (parser *TopDownParser) parseSingleConsequent(syntacticCategory string, tok
 
 	return cursor, relations, ok
 }
-

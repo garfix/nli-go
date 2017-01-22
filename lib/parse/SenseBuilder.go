@@ -58,9 +58,9 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVar
 
 
 // Create actual relations given a set of templates and a variable map (formal to actual variables)
-func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates []mentalese.Relation, variableMap map[string]string) []mentalese.Relation {
+func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet, variableMap map[string]string) mentalese.RelationSet {
 
-	relations := []mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 
 	for _, relation := range relationTemplates {
 		for a, argument := range relation.Arguments {
@@ -76,9 +76,9 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates []menta
 }
 
 // Create actual relations given a set of templates and an actual variable to replace any * positions
-func (builder SenseBuilder) CreateLexItemRelations(relationTemplates []mentalese.Relation, variable string) []mentalese.Relation {
+func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.RelationSet, variable string) mentalese.RelationSet {
 
-	relations := []mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 
 	for _, relationTemplate := range relationTemplates {
 

@@ -5,6 +5,6 @@ import "nli-go/lib/mentalese"
 type GenerationLexeme struct {
 	Form         string
 	PartOfSpeech string
-	Condition    []mentalese.Relation
+	Condition    mentalese.RelationSet
 }
 

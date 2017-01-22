@@ -54,7 +54,7 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, []mentalese.Relation{}), 1, 0, 0)
+	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, mentalese.RelationSet{}), 1, 0, 0)
 	parser.enqueue(chart, initialState, 0)
 
 	// go through all word positions in the sentence

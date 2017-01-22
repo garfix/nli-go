@@ -6,12 +6,12 @@ import (
 )
 
 type FactBase struct {
-	facts []mentalese.Relation
+	facts mentalese.RelationSet
 	ds2db []mentalese.Rule
 	matcher *mentalese.RelationMatcher
 }
 
-func NewFactBase(facts []mentalese.Relation, ds2db []mentalese.Rule) *FactBase {
+func NewFactBase(facts mentalese.RelationSet, ds2db []mentalese.Rule) *FactBase {
 	return &FactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
 }
 

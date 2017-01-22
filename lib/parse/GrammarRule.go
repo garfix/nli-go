@@ -5,10 +5,10 @@ import "nli-go/lib/mentalese"
 type GrammarRule struct {
 	SyntacticCategories []string
 	EntityVariables     []string
-	Sense               []mentalese.Relation
+	Sense               mentalese.RelationSet
 }
 
-func NewGrammarRule(syntacticCategories []string, entityVariables []string, sense []mentalese.Relation) GrammarRule {
+func NewGrammarRule(syntacticCategories []string, entityVariables []string, sense mentalese.RelationSet) GrammarRule {
 	return GrammarRule{
 		SyntacticCategories: syntacticCategories,
 		EntityVariables: entityVariables,

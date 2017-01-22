@@ -29,7 +29,7 @@ func (ruleBase *RuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 		}
 
 		// create relation set from the goal conditions
-		subgoalRelationSet := []mentalese.Relation{}
+		subgoalRelationSet := mentalese.RelationSet{}
 
 		for _, condition := range rule.Pattern {
 			subgoalRelationSet = append(subgoalRelationSet, matcher.BindSingleRelationSingleBinding(condition, aBinding))

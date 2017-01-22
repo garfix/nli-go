@@ -27,14 +27,14 @@ func (parser *TopDownParser) Parse(tokens []string) (mentalese.RelationSet, int,
 }
 
 // Parses tokens, starting from start, using all rules with given antecedent
-func (parser *TopDownParser) parseAllRules(antecedent string, tokens []string, start int, antecedentVariable string) (int, []mentalese.Relation, bool) {
+func (parser *TopDownParser) parseAllRules(antecedent string, tokens []string, start int, antecedentVariable string) (int, mentalese.RelationSet, bool) {
 
 	common.LogTree("parseAllRules", antecedent)
 
 	rules := parser.grammar.FindRules(antecedent)
 	cursor := 0
 	ok := false
-	relations := []mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 
 	for _, rule := range rules {
 		cursor, relations, ok = parser.parseWithRule(rule, tokens, start, antecedentVariable)
@@ -50,11 +50,11 @@ func (parser *TopDownParser) parseAllRules(antecedent string, tokens []string, s
 }
 
 // Try to parse tokens using the rule given
-func (parser *TopDownParser) parseWithRule(rule GrammarRule, tokens []string, start int, antecedentVariable string) (int, []mentalese.Relation, bool) {
+func (parser *TopDownParser) parseWithRule(rule GrammarRule, tokens []string, start int, antecedentVariable string) (int, mentalese.RelationSet, bool) {
 
 	cursor := start
 	syntacticCategories := rule.SyntacticCategories
-	relations := []mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 	success := true
 
 	common.LogTree("parse", rule)
@@ -76,7 +76,7 @@ func (parser *TopDownParser) parseWithRule(rule GrammarRule, tokens []string, st
 			cursor = newCursor
 		} else {
 			cursor = 0
-			relations = []mentalese.Relation{}
+			relations = mentalese.RelationSet{}
 			success = false
 			break
 		}
@@ -89,10 +89,10 @@ func (parser *TopDownParser) parseWithRule(rule GrammarRule, tokens []string, st
 
 // Try to parse tokens given a single syntactic category
 // Returns the index to the token following the parsed sequence
-func (parser *TopDownParser) parseSingleConsequent(syntacticCategory string, tokens []string, start int, v string) (int, []mentalese.Relation, bool) {
+func (parser *TopDownParser) parseSingleConsequent(syntacticCategory string, tokens []string, start int, v string) (int, mentalese.RelationSet, bool) {
 
 	cursor := 0
-	relations := []mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 	ok := false
 
 	common.LogTree("parseSingleConsequent", syntacticCategory, tokens, start, v)

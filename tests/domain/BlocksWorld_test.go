@@ -48,7 +48,7 @@ func TestBlocksWorld(t *testing.T) {
 		{ form: 'support'       pos: verb       sense: predication(this, support) }
 	]`)
 
-	parser := parse.NewParser(grammar, lexicon)
+	parser := parse.NewTopDownParser(grammar, lexicon)
 
 	genericSense2domainSpecificSense := internalGrammarParser.CreateTransformations(`[
 		support(A, B) :- predication(P, support), subject(P, A), object(P, B)

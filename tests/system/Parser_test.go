@@ -33,7 +33,7 @@ func TestParser(test *testing.T) {
 	rawInput := "the small shy girl sings"
 	tokenizer := parse.NewTokenizer()
 
-	parser := parse.NewParser(grammar, lexicon)
+	parser := parse.NewTopDownParser(grammar, lexicon)
 
 	wordArray := tokenizer.Process(rawInput)
 

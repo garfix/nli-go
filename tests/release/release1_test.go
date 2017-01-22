@@ -64,7 +64,7 @@ func TestRelease1(t *testing.T) {
 	// Services
 
 	tokenizer := parse.NewTokenizer()
-	parser := parse.NewParser(grammar, lexicon)
+	parser := parse.NewTopDownParser(grammar, lexicon)
 	transformer := mentalese.NewRelationTransformer()
 	factBase1 := knowledge.NewFactBase(facts, ds2db)
 	problemSolver := central.NewProblemSolver()

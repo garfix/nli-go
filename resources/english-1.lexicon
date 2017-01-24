@@ -37,6 +37,6 @@
     form 'must',                pos: modal,                 sense: isa(this, must);
     form 'will',                pos: modal,                 sense: isa(this, will);
 
-    form 'is'                   pos: auxVerb,               sense: isa(this, be)
-    form 'was'                  pos: auxVerb,               sense: isa(this, be)
+    form 'is'                   pos: auxVerb,               sense: isa(this, be);
+    form 'was'                  pos: auxVerb,               sense: isa(this, be);
 ]

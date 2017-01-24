@@ -65,8 +65,11 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 	for _, relation := range relationTemplates {
 		for a, argument := range relation.Arguments {
 
-			relation.Arguments[a].TermType = mentalese.Term_variable
-			relation.Arguments[a].TermValue = variableMap[argument.TermValue]
+			if argument.TermType == mentalese.Term_variable {
+
+				relation.Arguments[a].TermType = mentalese.Term_variable
+				relation.Arguments[a].TermValue = variableMap[argument.TermValue]
+			}
 		}
 
 		relations = append(relations, relation)

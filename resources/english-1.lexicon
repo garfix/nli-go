@@ -1,42 +1,42 @@
 [
-    form: 'a',                  pos: Article,               sense: isa(this, a);
-    form: 'an',                 pos: Article,               sense: isa(this, a);
-    form: 'the',                pos: Article,               sense: isa(this, the);
+    form: 'a',                  pos: article,               sense: isa(this, a);
+    form: 'an',                 pos: article,               sense: isa(this, a);
+    form: 'the',                pos: article,               sense: isa(this, the);
 
-    form: 'very',               pos: Degree,                sense: isa(this, very);
+    form: 'very',               pos: degree,                sense: isa(this, very);
 
-    form: 'quickly',            pos: Adverb,                sense: isa(this, quick);
+    form: 'quickly',            pos: adverb,                sense: isa(this, quick);
 
-    form: 'small',              pos: Adjective,             sense: isa(this, small);
-    form: 'large',              pos: Adjective,             sense: isa(this, large);
+    form: 'small',              pos: adjective,             sense: isa(this, small);
+    form: 'large',              pos: adjective,             sense: isa(this, large);
 
-    form: 'i',                  pos: Pronoun,               sense: isa(this, i);
-    form: 'you',                pos: Pronoun,               sense: isa(this, you);
+    form: 'i',                  pos: pronoun,               sense: isa(this, i);
+    form: 'you',                pos: pronoun,               sense: isa(this, you);
 
-    form: 'that',               pos: Complementizer,        sense: isa(this, that);
+    form: 'that',               pos: complementizer,        sense: isa(this, that);
 
-    form: 'and',                pos: Conjunction,           sense: isa(this, and);
-    form: 'or',                 pos: Conjunction,           sense: isa(this, or);
+    form: 'and',                pos: conjunction,           sense: isa(this, and);
+    form: 'or',                 pos: conjunction,           sense: isa(this, or);
 
-    form: 'person',             pos: Noun,                  sense: isa(this, person);
+    form: 'person',             pos: noun,                  sense: isa(this, person);
 
-    form '\'s',                 pos: PossessiveMarker;
+    form '\'s',                 pos: possessiveMarker;
 
-    form 'on',                  pos: Preposition,           sense: isa(this, on);
-    form 'at',                  pos: Preposition,           sense: isa(this, at);
+    form 'on',                  pos: preposition,           sense: isa(this, on);
+    form 'at',                  pos: preposition,           sense: isa(this, at);
 
-    form 'right',               pos: PSpec,                 sense: isa(this, right);
+    form 'right',               pos: pSpec,                 sense: isa(this, right);
 
-    form 'have',                pos: Verb,                  sense: isa(this, have);
-    form 'is',                  pos: Verb,                  sense: isa(this, be);
-    form 'are',                 pos: Verb,                  sense: isa(this, be);
+    form 'have',                pos: verb,                  sense: isa(this, have);
+    form 'is',                  pos: verb,                  sense: isa(this, be);
+    form 'are',                 pos: verb,                  sense: isa(this, be);
 
-    form 'at',                  pos: Particle,              sense: isa(this, are);
+    form 'at',                  pos: particle,              sense: isa(this, are);
 
-    form 'can',                 pos: Modal,                 sense: isa(this, can);
-    form 'must',                pos: Modal,                 sense: isa(this, must);
-    form 'will',                pos: Modal,                 sense: isa(this, will);
+    form 'can',                 pos: modal,                 sense: isa(this, can);
+    form 'must',                pos: modal,                 sense: isa(this, must);
+    form 'will',                pos: modal,                 sense: isa(this, will);
 
-    form 'is'                   pos: AuxVerb,               sense: isa(this, be)
-    form 'was'                  pos: AuxVerb,               sense: isa(this, be)
+    form 'is'                   pos: auxVerb,               sense: isa(this, be)
+    form 'was'                  pos: auxVerb,               sense: isa(this, be)
 ]

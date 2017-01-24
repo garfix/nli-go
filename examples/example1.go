@@ -5,18 +5,12 @@ import (
 	"nli-go/lib/importer"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/parse"
+	"nli-go/lib/common"
 )
 
 func main() {
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	grammar := internalGrammarParser.CreateGrammar(`[
-		rule: s(P) -> np(E) vp(P),			sense: subject(P, E);
-		rule: np(E) -> nbar(E);
-		rule: np(E) -> det(D) nbar(E),      sense: determiner(E, D);
-		rule: nbar(E) -> noun(E);
-		rule: nbar(E) -> adj(E) nbar(E);
-		rule: vp(P) -> verb(P);
-	]`)
+	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../resources/english-1.grammar")
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		form: 'the',			pos: det,            sense: isa(this, the);

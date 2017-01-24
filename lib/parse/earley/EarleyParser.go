@@ -69,20 +69,14 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 			// check if the entry is parsed completely
 			if parser.isStateIncomplete(state) {
 
-				// fetch the next consequent in the rule of the entry
-				nextCat := parser.getNextCat(state)
+				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
 
-				// is this an 'abstract' consequent like NP, VP, PP?
-				if len(parser.grammar.FindRules(nextCat)) > 0 {
+				// add all entries that have this abstract consequent as their antecedent
+				parser.predict(chart, state)
 
-					// yes it is; add all entries that have this abstract consequent as their antecedent
-					parser.predict(chart, state)
-
-				} else if i < wordCount {
-
-					// no it isn't, it is a low-level part-of-speech like noun, verb or adverb
-					// if the current word in the sentence has this part-of-speech, then
-					// we add a completed entry to the chart ($part-of-speech => $word)
+				// if the current word in the sentence has this part-of-speech, then
+				// we add a completed entry to the chart (part-of-speech => word)
+				if i < wordCount {
 					parser.scan(chart, state)
 				}
 
@@ -177,9 +171,9 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 		}
 
 		parser.enqueue(chart, advancedState, completedState.endWordIndex)
-
-		common.LogTree("complete");
     }
+
+	common.LogTree("complete");
 
 	return treeComplete
 }
@@ -208,7 +202,6 @@ func (parser *parser) isStateInChart(chart *chart, state chartState, position in
 
 			return true
 		}
-
 	}
 
 	return false

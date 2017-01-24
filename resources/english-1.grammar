@@ -1,79 +1,80 @@
 [
-    rule: Determiner(D1) -> Article(D1);
+    rule: determiner(D1) -> article(D1);
 
-    rule: Adjective(A1) -> Adjective(A2) Conjunction(A1) Adjective(A3),        sense: conjunction(A1, A2, A3);
+    rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3);
 
-    rule: Adverb(A1) -> Adverb(A2) Conjunction(A1) Adverb(A3),                 sense: conjunction(A1, A2, A3);
+    rule: adverb(A1) -> adverb(A2) conjunction(A1) adverb(A3),                 sense: conjunction(A1, A2, A3);
 
-    rule: ADVP(A1) -> Adverb(A1);
-    rule: ADVP(A1) -> Degree(D1) Adverb(A1),                                   sense: degree(A1, D1)
-    rule: ADVP(A1) -> ADVP(A2) Conjunction(A1) ADVP(A3),                       sense: conjunction(A1, A2, A3);
+    rule: advp(A1) -> adverb(A1);
+    rule: advp(A1) -> degree(D1) adverb(A1),                                   sense: degree(A1, D1);
+    rule: advp(A1) -> advp(A2) conjunction(A1) advp(A3),                       sense: conjunction(A1, A2, A3);
 
-    rule: ADJP(A1) -> Adjective(A1);
-    rule: ADJP(A1) -> Degree(D1) Adjective(A1),                                sense: degree(A1, D1);
-    rule: ADJP(A1) -> ADVP(ADV1) Adjective(A1),                                sense: specification(A1, ADV1);
-    rule: ADJP(A1) -> ADJP(A2) Conjunction(A1) ADJP(A3),                       sense: conjunction(A1, A2, A3);
+    rule: adjp(A1) -> adjective(A1);
+    rule: adjp(A1) -> degree(D1) adjective(A1),                                sense: degree(A1, D1);
+    rule: adjp(A1) -> advp(ADV1) adjective(A1),                                sense: specification(A1, ADV1);
+    rule: adjp(A1) -> adjp(A2) conjunction(A1) adjp(A3),                       sense: conjunction(A1, A2, A3);
 
-    rule: Noun(E1) -> Noun(E2) Conjunction(E1) Noun(E3),                       sense: conjunction(E1, E2, E3);
+    rule: noun(E1) -> noun(E2) conjunction(E1) noun(E3),                       sense: conjunction(E1, E2, E3);
 
-    rule: NP(E1) -> NBar(E1);
-    rule: NP(E1) -> Determiner(D1) NBar(E1),                                   sense: determiner(E1, D1);
-    rule: NP(E1) -> Poss(E2) NBar(E1),                                         sense: possession(E1, E2);
-    rule: NP(E1) -> Pronoun(E1);
-    rule: NP(E1) -> ProperNoun(E1);
-    rule: NP(E1) -> SBar(E1);
+    rule: np(E1) -> nbar(E1);
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(E1, D1);
+    rule: np(E1) -> poss(E2) nbar(E1),                                         sense: possession(E1, E2);
+    rule: np(E1) -> pronoun(E1);
+    rule: np(E1) -> propernoun(E1);
+    rule: np(E1) -> sbar(E1);
 
-    rule: NBar(E1) -> noun(E1);
-    rule: NBar(E1) -> ADJP(A) NBar(E1),                                        sense: specification(E1, A1);
-    rule: NBar(E1) -> NBar(E1) PP(P),                                          sense: specification(E1, P);
-    rule: NBar(E1) -> NBar(E1) SBar(S),                                        sense: specification(E1, S);
-    rule: NBar(E1) -> NBar(E2) Conjunction(E1) NBar(E3),                       sense: conjunction(E1, E2, E3);
+    rule: nbar(E1) -> noun(E1);
+    rule: nbar(E1) -> adjp(A) nbar(E1),                                        sense: specification(E1, A1);
+    rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: specification(E1, P);
+    rule: nbar(E1) -> nbar(E1) sbar(S),                                        sense: specification(E1, S);
+    rule: nbar(E1) -> nbar(E2) conjunction(E1) nbar(E3),                       sense: conjunction(E1, E2, E3);
 
-    rule: Poss(E1) -> NP(E1) PossessiveMarker();
+    rule: poss(E1) -> np(E1) possessiveMarker();
 
-    rule: Preposition(P1) -> Preposition(P2) Conjunction(P1) preposition(P3),  sense: conjunction(P1, P2, P3);
+    rule: preposition(P1) -> preposition(P2) conjunction(P1) preposition(P3),  sense: conjunction(P1, P2, P3);
 
-    rule: PP(R1) -> Preposition(P1) NP(E1),                                    sense: relation(R1, P1, E1);
-    rule: PP(R1) -> Preposition(P1) PP(P2),                                    sense: relation(R1, P1, P2);
-    rule: PP(R1) -> PSpec(P1) Preposition(P2) NP(E1),                          sense: relation(R1, P2, E1) specification(R1, P1);
-    rule: PP(R1) -> PP(P1) conjunction(R1) PP(P2),                             sense: conjunction(R1, P1, P2);
+    rule: pp(R1) -> preposition(P1) np(E1),                                    sense: relation(R1, P1, E1);
+    rule: pp(R1) -> preposition(P1) pp(P2),                                    sense: relation(R1, P1, P2);
+    rule: pp(R1) -> pSpec(P1) preposition(P2) np(E1),                          sense: relation(R1, P2, E1) specification(R1, P1);
+    rule: pp(R1) -> pp(P1) conjunction(R1) pp(P2),                             sense: conjunction(R1, P1, P2);
 
-    rule: Vgp(V1) -> Verb(V1);
-    rule: Vgp(V1) -> Verb(V1) Particle(P1),                                    sense: modifier(V1, P1);
-    rule: Vgp(V1) -> Modal(A1) Verb(V1),                                       sense: modality(V1, A1);
-    rule: Vgp(V1) -> Modal(A1) Verb(V1) Particle(P1),                          sense: modifier(V1, P1) modality(V1, A1);
+    rule: vgp(V1) -> verb(V1);
+    rule: vgp(V1) -> verb(V1) particle(P1),                                    sense: modifier(V1, P1);
+    rule: vgp(V1) -> modal(A1) verb(V1),                                       sense: modality(V1, A1);
+    rule: vgp(V1) -> modal(A1) verb(V1) particle(P1),                          sense: modifier(V1, P1) modality(V1, A1);
 
-    rule: VBar(V1) -> Vgp(V1);
-    rule: VBar(V1) -> Vgp(V1) NP(E1),                                          sense: object(V1, E1);
-    rule: VBar(V1) -> Vgp(V1) NP(E1) NP(E2),                                   sense: object(V1, E1) indirectObject(V1, E2);
-    rule: VBar(V1) -> Vgp(V1) NP(E1) PP(P1),                                   sense: object(V1, E1) prepositionalObject(V1, P1);
-    rule: VBar(V1) -> Vgp(V1) ADVP(A1),                                        sense: specification(V1, A1);
-    rule: VBar(V1) -> Vgp(V1) NP(E1) ADVP(A1),                                 sense: object(V1, E1) specification(V1, A1);
-    rule: VBar(V1) -> Vgp(V1) PP(P1),                                          sense: prepositionalObject(V1, P1);
-    rule: VBar(V1) -> Vgp(V1) PP(P1) PP(P2),                                   sense: prepositionalObject(V1, P1) prepositionalObject(V1, P2);
-    rule: VBar(V1) -> Vgp(V1) SBar(S),                                         sense: object(V1, S);
-    rule: VBar(V1) -> Vgp(V1) NP(E1) Particle(P),                              sense: modifier(V1, P) object(V1, E1);
+    rule: vbar(V1) -> vgp(V1);
+    rule: vbar(V1) -> vgp(V1) np(E1),                                          sense: object(V1, E1);
+    rule: vbar(V1) -> vgp(V1) np(E1) np(E2),                                   sense: object(V1, E1) indirectObject(V1, E2);
+    rule: vbar(V1) -> vgp(V1) np(E1) pp(P1),                                   sense: object(V1, E1) prepositionalObject(V1, P1);
+    rule: vbar(V1) -> vgp(V1) advp(A1),                                        sense: specification(V1, A1);
+    rule: vbar(V1) -> vgp(V1) np(E1) advp(A1),                                 sense: object(V1, E1) specification(V1, A1);
+    rule: vbar(V1) -> vgp(V1) pp(P1),                                          sense: prepositionalObject(V1, P1);
+    rule: vbar(V1) -> vgp(V1) pp(P1) pp(P2),                                   sense: prepositionalObject(V1, P1) prepositionalObject(V1, P2);
+    rule: vbar(V1) -> vgp(V1) sbar(S),                                         sense: object(V1, S);
+    rule: vbar(V1) -> vgp(V1) np(E1) particle(P),                              sense: modifier(V1, P) object(V1, E1);
 
-    rule: VP(V1) -> VBar(V1);
-    rule: VP(V1) -> VBar(V1) PP(P1),                                           sense: prepositionalObject(V1, P1);
-    rule: VP(V1) -> VBar(V1) ADVP(A1),                                         sense: specification(V1, A1);
-    rule: VP(V1) -> VBar(V1) NP(E1),                                           sense: object(V1, E1);
+    rule: vp(V1) -> vbar(V1);
+    rule: vp(V1) -> vbar(V1) pp(P1),                                           sense: prepositionalObject(V1, P1);
+    rule: vp(V1) -> vbar(V1) advp(A1),                                         sense: specification(V1, A1);
+    rule: vp(V1) -> vbar(V1) np(E1),                                           sense: object(V1, E1);
 
-    rule: SBar(S1) -> Complementizer(C) SDeclarative(S1),                      sense: complement(S1, C);
+    rule: sbar(S1) -> complementizer(C) sDeclarative(S1),                      sense: complement(S1, C);
 
-    rule: SDeclarative(S1) -> NP(E1) VP(S1),                                   sense: declaration(S1) object(S1, E1);
-    rule: SDeclarative(S1) -> NP(E1) Modal(M) VP(S1),                          sense: declaration(S1) subject(S1, E1) modality(S1, M);
-    rule: SDeclarative(S1) -> ADVP(A) SDeclarative(S1),                        sense: declaration(S1);
-    rule: SDeclarative(S1) -> PP(P) SDeclarative(S1),                          sense: declaration(S1);
-    rule: SDeclarative(S1) -> SDeclarative(S1) ADVP(A),                        sense: declaration(S1);
-    rule: SDeclarative(S1) -> SDeclarative(S1) PP(P),                          sense: declaration(S1);
-    rule: SDeclarative(S1) -> S(S1) SBar(S2),                                  sense: declaration(S1) object(S1, S2);
+    rule: sDeclarative(S1) -> np(E1) vp(S1),                                   sense: declaration(S1) object(S1, E1);
+    rule: sDeclarative(S1) -> np(E1) modal(M) vp(S1),                          sense: declaration(S1) subject(S1, E1) modality(S1, M);
+    rule: sDeclarative(S1) -> advp(A) sDeclarative(S1),                        sense: declaration(S1);
+    rule: sDeclarative(S1) -> pp(P) sDeclarative(S1),                          sense: declaration(S1);
+    rule: sDeclarative(S1) -> sDeclarative(S1) advp(A),                        sense: declaration(S1);
+    rule: sDeclarative(S1) -> sDeclarative(S1) pp(P),                          sense: declaration(S1);
+    rule: sDeclarative(S1) -> s(S1) sbar(S2),                                  sense: declaration(S1) object(S1, S2);
 
-    rule: SInterrogative(S1) -> AuxVerb(A) NP(E1) VP(S1),                      sense: question(S1) subject(S1, E1);
+    rule: sInterrogative(S1) -> auxVerb(A) np(E1) vp(S1),                      sense: question(S1) subject(S1, E1);
+    rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2),                      sense: question(S1) subject(S1, E1) object(S1, E2);
 
-    rule: SImperative(S1) -> VP(S1),                                           sense: command(S1);
+    rule: sImperative(S1) -> vp(S1),                                           sense: command(S1);
 
-    rule: S(S1) -> SDeclarative(S1),                                           sense: mood(S1, declarative);
-    rule: S(S1) -> SInterrogative(S1),                                         sense: mood(S1, interrogative);
-    rule: S(S1) -> SImperative(S1),                                            sense: mood(S1, interrogative);
+    rule: s(S1) -> sDeclarative(S1),                                           sense: mood(S1, declarative);
+    rule: s(S1) -> sInterrogative(S1),                                         sense: mood(S1, interrogative);
+    rule: s(S1) -> sImperative(S1),                                            sense: mood(S1, imperative);
 ]

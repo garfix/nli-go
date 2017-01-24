@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	file_read = "file_read"
 	service_tokenizer = "tokenizer"
 	service_parser = "parser"
 )
@@ -19,7 +20,11 @@ type ParseResult struct {
 
 func (result ParseResult) String() string {
 	lines := strings.Split(result.Source, "\n")
-	lines[result.LineNumber - 1] = "* " + lines[result.LineNumber - 1]
+	line := result.LineNumber - 1
+	if line < 0 {
+		line = 0
+	}
+	lines[line] = "* " + lines[line]
 	errorString := strings.Join(lines, "\n")
 
 	return fmt.Sprintf("%s failed in line %d:\n%s", result.Service, result.LineNumber, errorString);

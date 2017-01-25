@@ -9,7 +9,7 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
-//	"fmt"
+	"fmt"
 )
 
 func TestRelease1(t *testing.T) {
@@ -19,7 +19,6 @@ func TestRelease1(t *testing.T) {
 
 	// Data
 
-
 	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../../resources/english-1.grammar")
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
@@ -27,9 +26,11 @@ func TestRelease1(t *testing.T) {
 		form: 'married',    pos: verb, 	        sense: isa(this, marry);
 		form: 'did',		pos: auxDo;
 		form: 'marry',		pos: verb,		    sense: isa(this, marry);
+		form: 'de',		    pos: insertion      sense: name(this, 'de', insertion);
 		form: 'are',		pos: auxBe,		    sense: isa(this, be);
 		form: 'and',		pos: conjunction;
 		form: 'siblings',	pos: noun,		    sense: isa(this, sibling);
+		form: '?'           pos: questionMark;
 	]`)
 
 	domainSpecificAnalysis := internalGrammarParser.CreateTransformations(`[
@@ -70,7 +71,7 @@ func TestRelease1(t *testing.T) {
 		question string
 		want string
 	} {
-		{"who married siblings", "Marty"},
+		{"Who married Jacqueline de Boer?", "Marty"},
 		//{"Did Bob marry Sally?", "Yes"},
 		//{"Are Jane and Janelle siblings?", "No"},
 	}
@@ -78,10 +79,11 @@ func TestRelease1(t *testing.T) {
 	for _, test := range tests {
 
 		tokens := tokenizer.Process(test.question)
+
 common.LoggerActive=false
 		genericSense, _, _ := parser.Parse(tokens)
 common.LoggerActive=false
-//fmt.Print(genericSense)
+fmt.Print(genericSense)
 		domainSpecificSense := transformer.Extract(domainSpecificAnalysis, genericSense)
 		goalSense := transformer.Extract(domainSpecificGoalAnalysis, domainSpecificSense)
 		//domainSpecificResponseSenses :=

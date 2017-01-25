@@ -1,3 +1,38 @@
+## 2017-01-24
+
+Pooh, I finally managed to port the Earley parser over to Go. Quite a bit of work, still.
+
+I added terminal punctuation marks to the grammar (?.!). They need to be parsed, after all.
+
+Now I am stuck with the following question: how to parse proper names?
+
+In Echo I used the grammar to encode them:
+
+    PN => propernoun1 insertion propernoun2,
+
+I like this, because it does not require a database; the lexicon can determine that something is a proper name just because it starts with a capital.
+
+Furthermore, it should be possible to parse sentences like "Is the name of your boss Charles?", even if "Charles" is not in the database.
+
+My current solution:
+
+    rule: properNoun(N1) -> fullName(N1);
+    rule: properNoun(N1) -> firstName(N1) insertion(N1) lastName(N1);
+
+    name(E2, 'Jacqueline', firstName) name(E2, 'de', insertion) name(E2, 'Boer', lastName)
+
+fullName is used when there's only 1 name-word.
+fullName, firstName, and lastName are recognized if they start with a capital letter
+insertion must be part of the lexicon, i.e.
+
+    form: 'de',		    pos: insertion      sense: name(this, 'de', insertion);
+
+What about these possible syntaxes?
+
+    form: '[A-Z]*',		    pos: lastName      sense: name(this, that, lastName);
+    form: '<name>',		    pos: lastName      sense: name(this, name, lastName);
+
+LastName could be part of the lexicon.
 
 ## 2017-01-14
 

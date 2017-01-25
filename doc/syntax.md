@@ -25,6 +25,7 @@ In the general relational representation I have these senses:
  * conjunction(C, E1, E2)       A new entity (C) formed out of two other entities.
  * degree(E, D)                 Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
  * complement(P, C)
+ * name(E, N, T)                Here E is an entity, N is a name string constant (i.e. "Charles") and T is its type (fullName, firstName, lastName, insertion)
 
 More of these means that it is easier to create specific transformations based on these relations.
 

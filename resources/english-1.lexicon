@@ -39,4 +39,8 @@
 
     form 'is'                   pos: auxVerb,               sense: isa(this, be);
     form 'was'                  pos: auxVerb,               sense: isa(this, be);
+
+    form '?'                    pos: questionMark;
+    form '.'                    pos: period;
+    form '!'                    pos: exclamationMark;
 ]

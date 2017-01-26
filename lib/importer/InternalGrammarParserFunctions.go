@@ -228,11 +228,18 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 			if ok {
 				switch field {
 				case field_form:
-					lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
 					if formFound {
 						ok = false
+					} else {
+						formFound = true
+						lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+						if ok {
+							lexItem.IsRegExp = false
+						} else {
+							lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+							lexItem.IsRegExp = true
+						}
 					}
-					formFound = true
 				case field_pos:
 					lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 					if posFound {
@@ -286,11 +293,18 @@ func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, star
 			if ok {
 				switch field {
 				case field_form:
-					lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
 					if formFound {
 						ok = false
+					} else {
+						formFound = true
+						lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+						if ok {
+							lexItem.IsRegExp = false
+						} else {
+							lexItem.Form, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+							lexItem.IsRegExp = true
+						}
 					}
-					formFound = true
 				case field_pos:
 					lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 					if posFound {
@@ -710,6 +724,12 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 					if ok {
 						term.TermType = mentalese.Term_anonymousVariable
 						term.TermValue = tokenValue
+					} else {
+						tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+						if ok {
+							term.TermType = mentalese.Term_regExp
+							term.TermValue = tokenValue
+						}
 					}
 				}
 			}

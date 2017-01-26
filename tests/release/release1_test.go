@@ -27,8 +27,8 @@ func TestRelease1(t *testing.T) {
 		form: 'did',		pos: auxDo;
 		form: 'marry',		pos: verb,		    sense: isa(this, marry);
 		form: 'de',		    pos: insertion      sense: name(this, 'de', insertion);
-		form: '[A-Z].*',	pos: lastName       sense: name(this, form, lastName);
-		form: '[A-Z].*',	pos: firstName      sense: name(this, form, firstName);
+		form: /[A-Z].*/,	pos: lastName       sense: name(this, form, lastName);
+		form: /[A-Z].*/,	pos: firstName      sense: name(this, form, firstName);
 		form: 'are',		pos: auxBe,		    sense: isa(this, be);
 		form: 'and',		pos: conjunction;
 		form: 'siblings',	pos: noun,		    sense: isa(this, sibling);

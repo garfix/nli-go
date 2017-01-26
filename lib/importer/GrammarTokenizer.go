@@ -15,6 +15,7 @@ const (
 	t_variable
 	t_anonymousVariable
 	t_stringConstant
+	t_regExp
 	t_number
 	t_comma
 	t_rewrite
@@ -50,6 +51,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_variable, "[A-Z][A-Za-z0-9_]*"},
 		{t_anonymousVariable, "_"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
+		{t_regExp, "/(?:\\\\/|\\\\\\\\|[^/])*/"},
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
 		{t_rewrite, "->"},
@@ -96,6 +98,10 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 			continue;
 		} else if tokenId == t_stringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)
+			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
+			tokenValue = tokenValue[1:len(tokenValue)-1]
+		} else if tokenId == t_regExp {
+			tokenValue = strings.Replace(tokenValue, "\\/", "/", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
 			tokenValue = tokenValue[1:len(tokenValue)-1]
 		} else if tokenId == _other || tokenId == 0 {

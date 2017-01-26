@@ -12,9 +12,14 @@ const Term_predicateAtom = 2
 const Term_stringConstant = 3
 const Term_number = 4
 const Term_anonymousVariable = 5
+const Term_regExp = 6
 
 func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
+}
+
+func (term Term) IsRegExp() bool {
+	return term.TermType == Term_regExp
 }
 
 func (term Term) IsAnonymousVariable() bool {
@@ -40,6 +45,8 @@ func (term Term) String() string {
 		s = term.TermValue
 	case Term_stringConstant:
 		s = "'" + term.TermValue + "'"
+	case Term_regExp:
+		s = "/" + term.TermValue + "/"
 	case Term_number:
 		s = term.TermValue
 	case Term_anonymousVariable:

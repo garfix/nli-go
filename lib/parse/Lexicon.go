@@ -25,8 +25,7 @@ func (lexicon *Lexicon) AddLexItem(lexItem LexItem) {
 	form := lexItem.Form
 	partOfSpeech := lexItem.PartOfSpeech
 
-// NIET OK!
-	if string(form[0]) == "[" {
+	if lexItem.IsRegExp {
 
 		_, found := lexicon.regexps[partOfSpeech]
 		if !found {

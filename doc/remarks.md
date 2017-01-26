@@ -32,6 +32,12 @@ What about these possible syntaxes?
     form: '[A-Z]*',		    pos: lastName      sense: name(this, that, lastName);
     form: '<name>',		    pos: lastName      sense: name(this, name, lastName);
 
+or allow full regexpses
+
+    form: '/[A-Z]*/',	    pos: lastName      sense: name(this, name, lastName);
+
+this would allow me to parse items like numbers and even e-mail addresses, given that the tokens created with the tokenizer would allow it.
+
 LastName could be part of the lexicon.
 
 ## 2017-01-14

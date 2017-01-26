@@ -40,6 +40,12 @@ Note that the most important entity (the governor, is that what it's called?) is
     form: 'read',   pos: verb,  sense: predication(this, read);
 ]
 
+Lexicon definitions may use these variables:
+
+this            Will be replaced by a sense-node variable (ex. E1)
+form            Will be replaced by the word-form in the sentence. Only to be used with regular expressions.
+/expr/          A regular expression that matches a range of possible forms.
+
 ## Transformation rules
 
 [

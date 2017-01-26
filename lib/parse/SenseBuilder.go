@@ -81,6 +81,15 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 // Create actual relations given a set of templates and an actual variable to replace any * positions
 func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.RelationSet, variable string) mentalese.RelationSet {
 
+	from := mentalese.Term{ TermType: mentalese.Term_predicateAtom, TermValue: "this" }
+	to := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: variable }
+
+	return builder.ReplaceTerm(relationTemplates, from, to)
+}
+
+// Replaces all occurrences in relationTemplates from from to to
+func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet, from mentalese.Term, to mentalese.Term) mentalese.RelationSet {
+
 	relations := mentalese.RelationSet{}
 
 	for _, relationTemplate := range relationTemplates {
@@ -92,10 +101,10 @@ func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.R
 
 			relationArgument := argument
 
-			if argument.TermType == mentalese.Term_predicateAtom && argument.TermValue == "this" {
+			if argument.TermType == from.TermType && argument.TermValue == from.TermValue {
 
-				relationArgument.TermType = mentalese.Term_variable
-				relationArgument.TermValue = variable
+				relationArgument.TermType = to.TermType
+				relationArgument.TermValue = to.TermValue
 			}
 
 			relation.Arguments = append(relation.Arguments, relationArgument)

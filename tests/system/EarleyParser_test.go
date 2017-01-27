@@ -21,14 +21,14 @@ func TestEarleyParser(test *testing.T) {
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		form: 'the',			pos: det,            sense: isa(this, the);
+		form: 'the',			pos: det,            sense: isa(E, the);
 		form: 'a',  			pos: det;
 		form: 'shy',			pos: adj;
 		form: 'small',			pos: adj;
-		form: 'boy',			pos: noun,			sense: isa(this, boy);
-		form: 'girl',			pos: noun,			sense: isa(this, girl);
-		form: 'cries',  		pos: verb,  		sense: predication(this, cry);
-		form: 'sings',			pos: verb,			sense: predication(this, sing);
+		form: 'boy',			pos: noun,			sense: isa(E, boy);
+		form: 'girl',			pos: noun,			sense: isa(E, girl);
+		form: 'cries',  		pos: verb,  		sense: predication(E, cry);
+		form: 'sings',			pos: verb,			sense: predication(E, sing);
 	]`)
 
 	rawInput := "the small shy girl sings"

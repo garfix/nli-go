@@ -31,7 +31,7 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 
 	common.LogTree("GetLexemeForGeneration", consequent)
 
-	binding := mentalese.Binding{"This": consequent.Arguments[0]}
+	binding := mentalese.Binding{"E": consequent.Arguments[0]}
 
 	partOfSpeech := consequent.Predicate
 

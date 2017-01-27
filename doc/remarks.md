@@ -1,3 +1,18 @@
+## 2017-01-27
+
+I added regular expressions as alternative for the word form. There are 2 sense variables now:
+
+E            Will be replaced by the entity variable of current node (ex. E1)
+Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions.
+
+I replaced all occurrences of atom this with variable E.
+
+The result of these changes:
+
+		form: 'de',		    pos: insertion      sense: name(E, 'de', insertion);
+		form: /^[A-Z]/,	    pos: lastName       sense: name(E, Form, lastName);
+		form: /^[A-Z]/,	    pos: firstName      sense: name(E, Form, firstName);
+
 ## 2017-01-24
 
 Pooh, I finally managed to port the Earley parser over to Go. Quite a bit of work, still.

@@ -18,10 +18,10 @@ func TestGenerator(t *testing.T) {
         rule: vp(V) :- verb(V) proper_noun(E),  condition: object(V, E);
 	]`)
 	lexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		form: 'book',       pos: noun,          condition: instance_of(This, book);
-		form: 'kissed',     pos: verb,		    condition: predication(This, kiss);
-		form: 'married',	pos: verb,		    condition: predication(This, marry);
-		form: '*unused*',	pos: proper_noun,	condition: name(This, Name);
+		form: 'book',       pos: noun,          condition: instance_of(E, book);
+		form: 'kissed',     pos: verb,		    condition: predication(E, kiss);
+		form: 'married',	pos: verb,		    condition: predication(E, marry);
+		form: '*unused*',	pos: proper_noun,	condition: name(E, Name);
 	]`)
 	generator := generate.NewGenerator(grammar, lexicon)
 

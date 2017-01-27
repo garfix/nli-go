@@ -81,7 +81,7 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 // Create actual relations given a set of templates and an actual variable to replace any * positions
 func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.RelationSet, variable string) mentalese.RelationSet {
 
-	from := mentalese.Term{ TermType: mentalese.Term_predicateAtom, TermValue: "this" }
+	from := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: "E" }
 	to := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: variable }
 
 	return builder.ReplaceTerm(relationTemplates, from, to)

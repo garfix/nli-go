@@ -24,10 +24,10 @@ func TestParser(test *testing.T) {
 		form: 'a',  			pos: det;
 		form: 'shy',			pos: adj;
 		form: 'small',			pos: adj;
-		form: 'boy',			pos: noun,			sense: instance_of(this, boy);
-		form: 'girl',			pos: noun,			sense: instance_of(this, girl);
-		form: 'cries',  		pos: verb,  		sense: predication(this, cry);
-		form: 'sings',			pos: verb,			sense: predication(this, sing);
+		form: 'boy',			pos: noun,			sense: instance_of(E, boy);
+		form: 'girl',			pos: noun,			sense: instance_of(E, girl);
+		form: 'cries',  		pos: verb,  		sense: predication(E, cry);
+		form: 'sings',			pos: verb,			sense: predication(E, sing);
 	]`)
 
 	rawInput := "the small shy girl sings"

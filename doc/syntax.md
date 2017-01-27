@@ -36,15 +36,15 @@ Note that the most important entity (the governor, is that what it's called?) is
 ## Lexicon
  
 [
-    form: 'book',   pos: noun,  sense: instance_of(this, book);
-    form: 'read',   pos: verb,  sense: predication(this, read);
+    form: 'book',           pos: noun,              sense: isa(E, book);
+    form: 'read',           pos: verb,              sense: isa(E, read);
+    form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, firstName);
 ]
 
-Lexicon definitions may use these variables:
+Lexicon definitions may use either a string constant or an expression for the form and use these variables in the sense:
 
-this            Will be replaced by a sense-node variable (ex. E1)
-form            Will be replaced by the word-form in the sentence. Only to be used with regular expressions.
-/expr/          A regular expression that matches a range of possible forms.
+E            Will be replaced by the entity variable of current node (ex. E1)
+Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions.
 
 ## Transformation rules
 
@@ -56,7 +56,7 @@ form            Will be replaced by the word-form in the sentence. Only to be us
 ## Grammar
 
 [
-    rule: s(P) :- np(E) vp(P),     sense: subject(P, E);
+    rule: s(P) -> np(E) vp(P),     sense: subject(P, E);
 ]
 
 ## Binding

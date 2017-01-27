@@ -23,15 +23,15 @@ func TestRelease1(t *testing.T) {
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		form: 'who',        pos: whWord;
-		form: 'married',    pos: verb, 	        sense: isa(this, marry);
+		form: 'married',    pos: verb, 	        sense: isa(E, marry);
 		form: 'did',		pos: auxDo;
-		form: 'marry',		pos: verb,		    sense: isa(this, marry);
-		form: 'de',		    pos: insertion      sense: name(this, 'de', insertion);
-		form: /[A-Z].*/,	pos: lastName       sense: name(this, form, lastName);
-		form: /[A-Z].*/,	pos: firstName      sense: name(this, form, firstName);
-		form: 'are',		pos: auxBe,		    sense: isa(this, be);
+		form: 'marry',		pos: verb,		    sense: isa(E, marry);
+		form: 'de',		    pos: insertion      sense: name(E, 'de', insertion);
+		form: /^[A-Z]/,	    pos: lastName       sense: name(E, Form, lastName);
+		form: /^[A-Z]/,	    pos: firstName      sense: name(E, Form, firstName);
+		form: 'are',		pos: auxBe,		    sense: isa(E, be);
 		form: 'and',		pos: conjunction;
-		form: 'siblings',	pos: noun,		    sense: isa(this, sibling);
+		form: 'siblings',	pos: noun,		    sense: isa(E, sibling);
 		form: '?'           pos: questionMark;
 	]`)
 

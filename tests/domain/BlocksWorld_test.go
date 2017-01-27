@@ -42,10 +42,10 @@ func TestBlocksWorld(t *testing.T) {
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		{ form: 'does'          pos: auxDo }
 		{ form: 'the'           pos: det }
-		{ form: 'red'           pos: adj        sense: instance_of(this, red) }
-		{ form: 'blue'          pos: adj        sense: instance_of(this, blue) }
-		{ form: 'block'         pos: noun       sense: instance_of(this, block) }
-		{ form: 'support'       pos: verb       sense: predication(this, support) }
+		{ form: 'red'           pos: adj        sense: instance_of(E, red) }
+		{ form: 'blue'          pos: adj        sense: instance_of(E, blue) }
+		{ form: 'block'         pos: noun       sense: instance_of(E, block) }
+		{ form: 'support'       pos: verb       sense: predication(E, support) }
 	]`)
 
 	parser := parse.NewTopDownParser(grammar, lexicon)
@@ -95,7 +95,7 @@ func TestBlocksWorld(t *testing.T) {
 	]`)
 
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		{ form: 'yes'       pos: adverb     sense: adverb(This, yes)}
+		{ form: 'yes'       pos: adverb     sense: adverb(E, yes)}
 	]`)
 
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)

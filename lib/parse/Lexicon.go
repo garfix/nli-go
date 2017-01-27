@@ -64,7 +64,7 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 				expression, _ := regexp.Compile(regExpItem.Form)
 				if expression.FindString(word) != "" {
 
-					from := mentalese.Term{ TermType: mentalese.Term_predicateAtom, TermValue: "form" }
+					from := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: "Form" }
 					to := mentalese.Term{ TermType: mentalese.Term_stringConstant, TermValue: word }
 
 					sense := lexicon.senseBuilder.ReplaceTerm(regExpItem.RelationTemplates, from, to)

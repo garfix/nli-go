@@ -264,6 +264,8 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 						if separatorFound {
 							startIndex = newStartIndex
 							done = true
+						} else {
+							ok = false
 						}
 					}
 				}
@@ -329,6 +331,8 @@ func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, star
 						if separatorFound {
 							startIndex = newStartIndex
 							done = true
+						} else {
+							ok = false
 						}
 					}
 				}
@@ -424,6 +428,8 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 						if separatorFound {
 							startIndex = newStartIndex
 							done = true
+						} else {
+							ok = false
 						}
 					}
 				}
@@ -474,6 +480,8 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 						if separatorFound {
 							startIndex = newStartIndex
 							done = true
+						} else {
+							ok = false
 						}
 					}
 				}

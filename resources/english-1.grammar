@@ -14,9 +14,8 @@
     rule: adjp(A1) -> advp(ADV1) adjective(A1),                                sense: specification(A1, ADV1);
     rule: adjp(A1) -> adjp(A2) conjunction(A1) adjp(A3),                       sense: conjunction(A1, A2, A3);
 
-    rule: noun(E1) -> noun(E2) conjunction(E1) noun(E3),                       sense: conjunction(E1, E2, E3);
-
     rule: properNoun(N1) -> fullName(N1);
+    rule: properNoun(N1) -> firstName(N1) lastName(N1);
     rule: properNoun(N1) -> firstName(N1) insertion(N1) lastName(N1);
 
     rule: np(E1) -> nbar(E1);

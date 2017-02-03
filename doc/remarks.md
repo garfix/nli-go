@@ -1,3 +1,194 @@
+## 2017-02-02
+
+There are several reasons why quantifier-constructs (exists, numberOf) should not be added to the lexicon:
+
+ * the word itself is not always enough to determine the quantifier ('how many': the combination of these words means 'numberOf').
+ * expressions can always give surface expressions another meaning than is apparent from the words. (every now and again, worth every penny)
+ * some quantifiers cannot be deduced from the words alone and must be added later on ('not a lot', 'very little (people voted for Hillary)')
+
+Trying some things:
+
+How many children had Beatrice?
+
+    solution: [
+        condition: act(interrogation) focus(O) child(S, O)
+        plan: numberOf(child(S, O), N)
+        answer: numberOfAnswer(N)
+    ]
+
+Was Mary a child of Charles?
+
+    solution: [
+        condition: act(interrogation) focus(O)  child(S, O)
+        plan: ifExists(child(S, O), E) if(E, yes, no, A)
+        answer: yesNoAnswer(A)
+    ]
+
+ds2generic
+
+    yesNoAnswer(E) -> declaration(S1) specification(S1, Sp) isa(Sp, E)
+
+The idea of a plan, though intriguing, is wrong. The question itself, rewritten in Domain Specific relations, is the plan. The reason is that the question contains many delicate details that are lost in a gross 'plan'. What is called a 'plan' is actually just a preparation for the answer.
+
+Variables of the condition are populated by the matching variables of the question.
+
+We find a new aspect of the domain specific representation: it is procedural. This makes the properties:
+
+ * allow second order predicates
+ * procedural: the representation is purposeful: it must contribute to the finding the answer
+
+New question
+
+    act(interrogation) focus(N) numberOf(hasChild(P, C), N) name(P, 'Janice')
+
+New solution
+
+    solutions: [
+        condition: act(interrogation) focus(N) numberOf(hasChild(P, C), N),              // a question, about the number of children
+        prep: gender(P, G),                                                              // look up the gender of the parent
+        answer: gender(P, G) hasChild(P, C) numberOfAnswer(N);                           // "she, has children, number"
+    ]
+
+All relations of the solution are posed in the domain-specific language.
+
+* Condition is matched against the input question. The first solution that matches is used.
+* The variable set (S) used for the match is used for prep and answer.
+* At that point the question itself is evaluated. Knowledge bases are used to look up answers.
+* Then prep is evaluated and S is extended with its results.
+* Finally the answer is formed by replacing the variables of answer with S. This answer is domain specific.
+
+What needs to be done:
+
+* second orderness in relations
+* solutions
+* processing solutions
+
+## 2017-02-01
+
+I am now looking at quantifiers and aggregations. Isn't it true that these are determined by determiners? May be, but I don't think you can link them at parse time. generic->domain specific would be fine. This means something like this:
+
+generic:
+
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how)
+
+generic 2 domain specific:
+
+    isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> act(interrogation) focus(N) numberOf(O, isa(O, child), N)
+    isa(Q, have) subject(Q, S) object(Q, O) isa(O, child) -> child(S, O)
+
+By 'solution' I mean the matching of a question to an answer
+
+    solution: [
+        condition: act(interrogation) focus(N) numberOf(O, isa(O, child), N) child(S, O)
+        answer: declaration(S1) isa(S1, have) subject(S1, S) gender(S, female) object(S1, O) isa(O, child) determiner(O, Det) numeral(Det, N)
+    ]
+
+To answer a yes/no question I could use
+
+    solution: [
+        condition: act(interrogation) focus(N) exists(O, isa(O, child), E) child(S, O)
+        answer: declaration(S1) specification(S1, Sp) isa(Sp, E)
+    ]
+
+If 'exists' yields a 'yes' or 'no' constant. Or if that's silly
+
+    solution: [
+        condition: act(interrogation) focus(O)  child(S, O)
+        answer: declaration(S1) specification(S1, Sp) isa(Sp, E)
+    ]
+
+I could use the predicate 'focus(Entity)' to specify the activeness / passiveness of a sentences.
+
+## 2017-01-31
+
+surface:
+
+    How many children had Janice?
+
+generic:
+
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how)
+
+domain specific (no aggregation, no second order constructs):
+
+    speechAct(question) questionType(howMany) child(A, B) fullName(A, "Janice")
+
+conversion of domain specific to database:
+
+    questionType(howMany) child(A, B) -> COUNT[ person(A, B) ]
+
+database (variants, with and without aggregation):
+
+    person(Id, "Janice", ParentId)      SELECT COUNT( ParentId ) FROM person
+    person(Id, "Janice", ChildCount)    SELECT ChildCount FROM person
+
+generic:
+
+    declaration(S1) isa(S1, have) subject(S1, Subj) gender(Subj, female) object(S1, Obj) isa(Obj, child) determiner(Obj, Det) numeral(Det, 2)
+
+surface:
+
+    She had 2 children
+
+Question: which types of aggregations do we need for NLI questions?
+
+ * Is A married to B -> EXISTS
+ * How many A -> COUNT
+ * What is the total area -> SUM
+ * Tallest child in the class -> MAX
+ * Are some of the girls larger than all of the boys -> EXISTS
+
+## 2017-01-29
+
+And so it appears that even for the simplest of questions we need to resort to second order constructions. That I had wanted to postpone to release 2.
+
+This is problem of aggregations, in database parlor. And the question is where in the chain first order forms are converted to second order ones. And back.
+
+Let's have an example:
+
+How many children had Janice?
+
+The generic representation is:
+
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how)
+
+So the second order representation is not in the generic representation, and it should not be there either.
+
+I don't really think it should be in the database representation either, because we want to keep the database layer as simple as possible as well. It's hard enough as it is. DB code should just be about retrieving simple records.
+
+Let's imagine a domain specific representation for the question.
+
+    speechAct(question) questionType(howMany) child(A, B)
+
+next we need to find out what a proper response should look like
+
+and how it would be turned into a generic representation.
+
+    declaration(S1) isa(S1, have) subject(S1, Subj) gender(Subj, female) object(S1, Obj) isa(Obj, child) determiner(Obj, Det) numeral(Det, 2)
+
+    (she had 2 children)
+
+Note that the answer must be found by counting the number of child records. I mean: in _this_ case the answer is found by record counting. In another database, from the same domain, the answer could be stored directly (for example: person(id, name, numChildren)). This means that the aggregation must not be stored at the ds level. It should be stored at the database level.
+
+## 2017-01-28
+
+Insertions of Dutch persons: https://nl.wikipedia.org/wiki/Tussenvoegsel
+
+1 woord: heel veel mogelijkheden (lijkt op lidwoord)
+2 woorden: 1e woord: in, onder, op, over, uijt, uit, van, von, voor, vor (lijkt op voorzetsel)
+3 woorden: de die le, de van der, uijt te de, uit te de, van de l, van de l', van van de, voor in 't, voor in t
+
+I thought about solutions for multiple insertions, but currently I have none. The order of the insertions must be reconstructable from the semantic structure,
+but I don't want to introduce several predicates for distinct insertion types. It gets too crowded that way.
+
+Another question I must solve is how to represent questions. Questions are often of a meta level, second order predicate calculus. So we may think of
+
+    act(question, who) who[A] married_to(A, B) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B)
+    act(question, yesno) yesno[married_to(A, B)] :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B)
+    act(question, howmany) count[B] child(A, B) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B)
+
+and how do I solve a second order problem?
+
 ## 2017-01-27
 
 I added regular expressions as alternative for the word form. There are 2 sense variables now:

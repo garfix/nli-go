@@ -1,3 +1,59 @@
+## 2017-02-04
+
+A sentence like this
+
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how)
+
+needs to be converted to a "program" and be executed. This is the essence of SHRDLU and this works. I want this to be done with as less human coding as possible. So how should we do it?
+
+We have to convert the "how many" clause into a second order construct
+
+    object(Q, O) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> numberOf(O, N) focus(Q, N)
+
+This forms
+
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) numberOf(O, N)
+
+Can we execute this? No we have to combine "have" with "child"
+
+    isa(Q, have) subject(Q, S) object(Q, O) isa(O, child) -> child(S, O)
+
+This gives us
+
+    question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(O, N) focus(Q, N)
+
+Can we execute this? Yes, after child() and name() are processed, there are 3 possible value for O left. Processing numberOf() fills N with 3.
+
+====
+
+Can we do "largest"
+
+Which is the largest block?
+
+    question(Q) isa(Q, be) object(Q, O), determiner(O, D) isa(D, the) isa(O, block) specification(O, S) isa(S, largest)
+
+How do we turn 'largest' into a program? (Note: this has to be domain-specific)
+
+    isa(B1, block) specification(B1, Sp) isa(Sp, largest) -> block(B1) size(B1, S1) block(B2) size(B2, S2) greater(S2, S1, G) isFalse(G)
+
+Does that work?
+
+ * block(B1) : results for each block ID
+ * size(B1, S1) : results for each block ID with its size
+ * block(B2) : results for each block ID B1 cross joined with again each block ID B2, along with the sizes of B1
+ * size(B2, S2) : the cross join of all blocks with all blocks, both containing size
+ * greater(S2, S1, G) : goes through all results and keeps only the ones where S2 > S1, and sets G to (any entries left)
+
+ No this doesn't work, but the version below does:
+
+    isa(B1, block) specification(B1, Sp) isa(Sp, largest) -> block(B1) size(B1, S1) max(S1)
+
+ * block(B1) : results for each block ID
+ * size(B1, S1) : results for each block ID with its size
+ * max(S1) : filter only the result with the highest S1
+
+ Second order predicates like numberOf() and max() act on result sets.
+
 ## 2017-02-02
 
 There are several reasons why quantifier-constructs (exists, numberOf) should not be added to the lexicon:

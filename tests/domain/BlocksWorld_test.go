@@ -20,41 +20,31 @@ func TestBlocksWorld(t *testing.T) {
 	transformer := mentalese.NewRelationTransformer()
 
 	grammar := internalGrammarParser.CreateGrammar(`[
-		{
-			rule: s(P) -> np(E), vp(P)
-			sense: subject(P, E)
-		} {
-			rule: s(P1) -> auxDo(X), np(E1), verb(P1), np(E2)
-			sense: subject(P1, E1), object(P1, E2)
-		} {
-			rule: np(E) -> nbar(E)
-		} {
-			rule: np(E) -> det(E), nbar(E)
-		} {
-			rule: nbar(E) -> noun(E)
-		} {
-			rule: nbar(E) -> adj(E), nbar(E)
-		} {
-			rule: vp(P) -> verb(P)
-		}
+		rule: s(P) -> np(E) vp(P),                         sense: subject(P, E);
+		rule: s(P1) -> auxDo(X) np(E1) verb(P1) np(E2),    sense: subject(P1, E1) object(P1, E2);
+		rule: np(E) -> nbar(E);
+		rule: np(E) -> det(E) nbar(E);
+		rule: nbar(E) -> noun(E);
+		rule: nbar(E) -> adj(E) nbar(E);
+		rule: vp(P) -> verb(P);
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		{ form: 'does'          pos: auxDo }
-		{ form: 'the'           pos: det }
-		{ form: 'red'           pos: adj        sense: instance_of(E, red) }
-		{ form: 'blue'          pos: adj        sense: instance_of(E, blue) }
-		{ form: 'block'         pos: noun       sense: instance_of(E, block) }
-		{ form: 'support'       pos: verb       sense: predication(E, support) }
+		form: 'does',          pos: auxDo;
+		form: 'the',           pos: det;
+		form: 'red',           pos: adj,        sense: instance_of(E, red);
+		form: 'blue',          pos: adj,        sense: instance_of(E, blue);
+		form: 'block',         pos: noun,       sense: instance_of(E, block);
+		form: 'support',       pos: verb,       sense: predication(E, support);
 	]`)
 
 	parser := parse.NewTopDownParser(grammar, lexicon)
 
 	genericSense2domainSpecificSense := internalGrammarParser.CreateTransformations(`[
-		support(A, B) :- predication(P, support), subject(P, A), object(P, B)
-		is(A, block) :- instance_of(A, block)
-		color(A, red) :- instance_of(A, red)
-		color(A, blue) :- instance_of(A, blue)
+		support(A, B) :- predication(P, support) subject(P, A) object(P, B);
+		is(A, block) :- instance_of(A, block);
+		color(A, red) :- instance_of(A, red);
+		color(A, blue) :- instance_of(A, blue);
 	]`)
 
 	question2answer := internalGrammarParser.CreateTransformations(`[
@@ -64,9 +54,9 @@ func TestBlocksWorld(t *testing.T) {
 
 	// domain specific sense to database relations
 	domainSpecific2database := internalGrammarParser.CreateRules(`[
-		isa(A, B) :- is(A, B)
-		support(A, B) :- support(A, B)
-		color(A, B) :- color(A, B)
+		isa(A, B) :- is(A, B);
+		support(A, B) :- support(A, B);
+		color(A, B) :- color(A, B);
 	]`)
 
 	// domain knowledge
@@ -88,14 +78,11 @@ func TestBlocksWorld(t *testing.T) {
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
-		{
-			rule: s(P) :- adverb(P)
-			condition: adverb(P)
-		}
+		rule: s(P) :- adverb(P),    condition: adverb(P);
 	]`)
 
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		{ form: 'yes'       pos: adverb     sense: adverb(E, yes)}
+		form: 'yes',                pos: adverb,         condition: adverb(E, yes);
 	]`)
 
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)

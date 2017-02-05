@@ -5,9 +5,10 @@ import (
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
 	"fmt"
+	"nli-go/lib/central"
 )
 
-func TestFactBase(t *testing.T) {
+func TestAnswerer(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 
@@ -33,26 +34,33 @@ func TestFactBase(t *testing.T) {
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
+	solutions := parser.CreateSolutions(`[
+		condition: write(X, Y),
+		answer: write(X, Y);
+	]`)
+
 	factBase := knowledge.NewFactBase(facts, rules)
+
+	answerer := central.NewAnswerer()
+	answerer.AddKnowledgeBase(factBase)
+	answerer.AddSolutions(solutions)
 
 	tests := []struct {
 		input string
-		wantRelations string
-		wantBindings string
+		wantRelationSet string
 	} {
-		{"write('Sally Klein', B)", "", "[{B:'The red book'} {B:'The green book'}]"},
-		{"publish(X, Y)", "", "[{X:'Orbital', Y:'The red book'} {X:'Bookworm inc', Y:'The green book'} {X:'Bookworm inc', Y:'The blue book'}]"},
-		{"write('Keith Partridge', 'The red book')", "", "[{}]"},
+		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
+		{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book') write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]"},
 	}
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 
-		_, resultBindings := factBase.Bind(input)
+		resultRelationSet := answerer.Answer(input)
 
-		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
-			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)
+		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
+			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)
 		}
 	}
 }

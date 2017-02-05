@@ -5,6 +5,17 @@ type Relation struct {
 	Arguments []Term
 }
 
+func (relation Relation) Equals(otherRelation Relation) bool {
+
+	equals := relation.Predicate == otherRelation.Predicate
+
+	for i, argument := range relation.Arguments {
+		equals = equals && argument	== otherRelation.Arguments[i]
+	}
+
+	return equals
+}
+
 func (relation Relation) String() string {
 
 	args, sep := "", ""

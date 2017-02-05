@@ -34,6 +34,19 @@ func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.Relati
 	return solutions
 }
 
+func (solver ProblemSolver) SolveRelationSet(goals []mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
+
+	common.LogTree("SolveRelationSet", goals)
+
+	for _, goal := range goals {
+		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
+	}
+
+	common.LogTree("SolveRelationSet", bindings)
+
+	return bindings
+}
+
 // goals e.g. { father(X, Y), father(Y, Z)}
 // return e.g. {
 //  { {X='john', Y='jack', Z='joe'} }

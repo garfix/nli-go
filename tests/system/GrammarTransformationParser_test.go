@@ -20,12 +20,14 @@ func TestGrammarTransformationParser(test *testing.T) {
 		test.Error(fmt.Printf("Wrong number of transformations: %d", len(transformations)))
 	}
 
+	parser.SetPanicOnParseFail(false)
+
 	transformations = parser.CreateTransformations("[\n]")
 	if !parser.GetLastParseResult().Ok {
 		test.Error("Parse should have succeeded")
 	}
 
-	transformations = parser.CreateTransformations("father(A, B) :- ")
+	transformations = parser.CreateTransformations("[ father(A, B) :- ")
 	if parser.GetLastParseResult().Ok {
 		test.Error("Parse should have failed")
 	}

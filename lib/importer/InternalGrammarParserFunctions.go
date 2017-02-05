@@ -12,18 +12,19 @@ func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
-	for startIndex < len(tokens) {
-		relation := mentalese.Relation{}
-		relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
-		if ok {
-			relationSet = append(relationSet, relation)
-		} else {
-			break;
+	if ok {
+		for startIndex < len(tokens) {
+			relation := mentalese.Relation{}
+			relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
+			if ok {
+				relationSet = append(relationSet, relation)
+			} else {
+				break;
+			}
 		}
-	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+	}
 
 	return relationSet, startIndex, ok
 }
@@ -108,18 +109,18 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 	return rule, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseQAPairs(tokens []Token, startIndex int) ([]mentalese.QAPair, int, bool) {
+func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex int) ([]mentalese.Solution, int, bool) {
 
-	qaPairs := []mentalese.QAPair{}
+	solutions := []mentalese.Solution{}
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 
 	for startIndex < len(tokens) {
-		qaPair := mentalese.QAPair{}
-		qaPair, startIndex, ok = parser.parseQAPair(tokens, startIndex)
+		solution := mentalese.Solution{}
+		solution, startIndex, ok = parser.parseSolution(tokens, startIndex)
 		if ok {
-			qaPairs = append(qaPairs, qaPair)
+			solutions = append(solutions, solution)
 		} else {
 			break;
 		}
@@ -127,50 +128,67 @@ func (parser *InternalGrammarParser) parseQAPairs(tokens []Token, startIndex int
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 
-	return qaPairs, startIndex, ok
+	return solutions, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseQAPair(tokens []Token, startIndex int) (mentalese.QAPair, int, bool) {
+func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex int) (mentalese.Solution, int, bool) {
 
-	qaPair := mentalese.QAPair{}
-	ok, qFound, aFound := true, false, false
+	solution := mentalese.Solution{}
+	ok, done, conditionFound, prepationFound, answerFound := true, false, false, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
-
-	for ok {
+	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if ok {
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
 			if ok {
 				switch field {
-				case field_question:
-					qaPair.Question, startIndex, ok = parser.parseRelations(tokens, startIndex)
-					if qFound {
+				case field_condition:
+					solution.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
+					if conditionFound {
 						ok = false
 					}
-					qFound = true
+					conditionFound = true
+				case field_preparation:
+					solution.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
+					if prepationFound {
+						ok = false
+					}
+					prepationFound = true;
 				case field_answer:
-					qaPair.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
-					if aFound {
+					solution.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
+					if answerFound {
 						ok = false
 					}
-					aFound = true;
+					answerFound = true
 				default:
 					ok = false
 				}
+				if ok {
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					if separatorFound {
+						startIndex = newStartIndex
+					} else {
+						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+						if separatorFound {
+							startIndex = newStartIndex
+							done = true
+						} else {
+							ok = false
+						}
+					}
+				}
+
 			}
 		}
 	}
 
 	// required fields
-	if qFound && aFound {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
-	} else {
+	if !conditionFound || !answerFound {
 		ok = false
 	}
 
-	return qaPair, startIndex, ok
+	return solution, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseLexicon(tokens []Token, startIndex int) (*parse.Lexicon, int, bool) {

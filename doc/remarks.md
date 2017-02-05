@@ -54,6 +54,15 @@ Does that work?
 
  Second order predicates like numberOf() and max() act on result sets.
 
+ ====
+
+ When I started programming this I came across the problem that for some questions you have multiple answers. Can we handle these?
+
+ Who were Mary's children?
+
+    answer: name(C, N)
+
+
 ## 2017-02-02
 
 There are several reasons why quantifier-constructs (exists, numberOf) should not be added to the lexicon:

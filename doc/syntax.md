@@ -59,6 +59,18 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
     rule: s(P) -> np(E) vp(P),     sense: subject(P, E);
 ]
 
+## Solutions
+
+[
+    condition: relationSet,
+    preparation: relationSet,
+    answer: relationSet;
+
+    condition: relationSet,
+    preparation: relationSet,
+    answer: relationSet;
+]
+
 ## Binding
 
 {

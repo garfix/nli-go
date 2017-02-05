@@ -14,8 +14,8 @@ const (
 	field_sense = "sense"
 	field_condition = "condition"
 	field_rule = "rule"
-	field_question = "Q"
-	field_answer = "A"
+	field_preparation = "preparation"
+	field_answer = "answer"
 )
 
 type InternalGrammarParser struct {
@@ -28,7 +28,7 @@ func NewInternalGrammarParser() *InternalGrammarParser {
 	return &InternalGrammarParser{
 		tokenizer: new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
-		panicOnParseFail: false,
+		panicOnParseFail: true,
 	}
 }
 
@@ -222,24 +222,24 @@ func (parser *InternalGrammarParser) CreateRelationSet(source string) mentalese.
 	return relationSet
 }
 
-func (parser *InternalGrammarParser) CreateQAPairs(source string) []mentalese.QAPair {
+func (parser *InternalGrammarParser) CreateSolutions(source string) []mentalese.Solution {
 
-	qaPairs := []mentalese.QAPair{}
+	solutions := []mentalese.Solution{}
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
 	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return qaPairs
+		return solutions
 	}
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	qaPairs, _, parseOk := parser.parseQAPairs(tokens, 0)
+	solutions, _, parseOk := parser.parseSolutions(tokens, 0)
 	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return qaPairs
+	return solutions
 }
 
 func (parser *InternalGrammarParser) CreateTerm(source string) mentalese.Term {

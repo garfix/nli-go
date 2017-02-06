@@ -34,12 +34,12 @@ func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.Relati
 	return solutions
 }
 
-func (solver ProblemSolver) SolveRelationSet(goals []mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings []mentalese.Binding) []mentalese.Binding {
 
-	common.LogTree("SolveRelationSet", goals)
+	common.LogTree("SolveRelationSet", set, bindings)
 
-	for _, goal := range goals {
-		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
+	for _, relation := range set {
+		bindings = solver.SolveSingleRelationMultipleBindings(relation, bindings)
 	}
 
 	common.LogTree("SolveRelationSet", bindings)
@@ -80,14 +80,14 @@ func (solver ProblemSolver) SolveSingleRelationMultipleBindings(goalRelation men
 
 	common.LogTree("SolveSingleRelationMultipleBindings", goalRelation, bindings)
 
-	if len(bindings) == 0 {
-		return solver.SolveSingleRelationSingleBinding(goalRelation, mentalese.Binding{})
-	}
-
 	newBindings := []mentalese.Binding{}
 
-	for _, binding := range bindings {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
+	if len(bindings) == 0 {
+		newBindings = solver.SolveSingleRelationSingleBinding(goalRelation, mentalese.Binding{})
+	} else {
+		for _, binding := range bindings {
+			newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
+		}
 	}
 
 	common.LogTree("SolveSingleRelationMultipleBindings", newBindings)

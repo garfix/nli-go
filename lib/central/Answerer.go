@@ -48,7 +48,9 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		}
 
 		// extend solution bindings by executing the preparation
-		solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+		if !solution.Preparation.IsEmpty() {
+			solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+		}
 
 		// create answers relation sets by binding 'answer' to solutionBindings
 		answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
@@ -70,10 +72,11 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 	bindings := []mentalese.Binding{}
 	found := false
 
-	for _,solution := range answerer.solutions  {
+	for _, aSolution := range answerer.solutions  {
 
-		bindings, _, found = answerer.matcher.MatchSequenceToSet(solution.Condition, goal, mentalese.Binding{})
+		bindings, _, found = answerer.matcher.MatchSequenceToSet(aSolution.Condition, goal, mentalese.Binding{})
 		if found {
+			solution = aSolution
 			break
 		}
 	}

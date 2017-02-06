@@ -13,6 +13,10 @@ func (set RelationSet) Copy() RelationSet {
 	return copiedSet
 }
 
+func (set RelationSet) IsEmpty() bool {
+	return len(set) == 0
+}
+
 func (set RelationSet) Merge(newSet RelationSet) RelationSet {
 
 	mergedSet := set.Copy()

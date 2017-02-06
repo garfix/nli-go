@@ -35,8 +35,15 @@ func TestAnswerer(t *testing.T) {
 	]`)
 
 	solutions := parser.CreateSolutions(`[
+		condition: write(PersonName, BookName) publish(PubName, BookName),
+		answer: book(BookName);
+
 		condition: write(X, Y),
 		answer: write(X, Y);
+
+		condition: publish(A, B),
+		preparation: write(C, B),
+		answer: publishAuthor(A, C);
 	]`)
 
 	factBase := knowledge.NewFactBase(facts, rules)
@@ -49,8 +56,12 @@ func TestAnswerer(t *testing.T) {
 		input string
 		wantRelationSet string
 	} {
+		// simple
 		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
-		//{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book') write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]"},
+		// preparation
+		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
+		// return each relation only once
+		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
 	}
 
 	// todo: test that each relation is returned once

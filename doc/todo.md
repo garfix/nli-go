@@ -25,6 +25,11 @@
 - is het misschien nodig om predicates en constants te namespacen? Eigenlijk is de predicate al een namespace
 - find a solution for multiple (2, 3) insertions
 
+## Aggregations
+
+- The aggregate base has currently more power than it needs. It can all bindings completely.
+- Add min, max
+
 ## Domains
 
 The domain tests are not a goal in themselves, but only help to make up test cases.

@@ -8,15 +8,24 @@ import (
 
 type ProblemSolver struct {
 	sources []knowledge.KnowledgeBase
+	multipleBindingsBases []knowledge.MultipleBindingsBase
 	matcher *mentalese.RelationMatcher
 }
 
 func NewProblemSolver() *ProblemSolver {
-	return &ProblemSolver{sources: []knowledge.KnowledgeBase{}, matcher:mentalese.NewRelationMatcher()}
+	return &ProblemSolver{
+		sources: []knowledge.KnowledgeBase{},
+		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
+		matcher:mentalese.NewRelationMatcher(),
+	}
 }
 
 func (solver *ProblemSolver) AddKnowledgeBase(source knowledge.KnowledgeBase) {
 	solver.sources = append(solver.sources, source)
+}
+
+func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
+	solver.multipleBindingsBases = append(solver.multipleBindingsBases, source)
 }
 
 // goals e.g. { father(X, Y), father(Y, Z)}
@@ -81,12 +90,23 @@ func (solver ProblemSolver) SolveSingleRelationMultipleBindings(goalRelation men
 	common.LogTree("SolveSingleRelationMultipleBindings", goalRelation, bindings)
 
 	newBindings := []mentalese.Binding{}
+	multiFound := false
 
-	if len(bindings) == 0 {
-		newBindings = solver.SolveSingleRelationSingleBinding(goalRelation, mentalese.Binding{})
-	} else {
-		for _, binding := range bindings {
-			newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
+	for _ , multipleBindingsBase := range solver.multipleBindingsBases {
+		newBindings, multiFound = multipleBindingsBase.Bind(goalRelation, bindings)
+		if multiFound {
+			break
+		}
+	}
+
+	if !multiFound {
+
+		if len(bindings) == 0 {
+			newBindings = solver.SolveSingleRelationSingleBinding(goalRelation, mentalese.Binding{})
+		} else {
+			for _, binding := range bindings {
+				newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(goalRelation, binding)...)
+			}
 		}
 	}
 

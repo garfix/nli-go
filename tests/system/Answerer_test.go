@@ -38,6 +38,9 @@ func TestAnswerer(t *testing.T) {
 		condition: write(PersonName, BookName) publish(PubName, BookName),
 		answer: book(BookName);
 
+		condition: write(Person, Book) numberOf(Book, N),
+		answer: focus(N);
+
 		condition: write(X, Y),
 		answer: write(X, Y);
 
@@ -47,8 +50,10 @@ func TestAnswerer(t *testing.T) {
 	]`)
 
 	factBase := knowledge.NewFactBase(facts, rules)
+	systemPredicateBase := knowledge.NewSystemPredicateBase()
 
 	answerer := central.NewAnswerer()
+	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	answerer.AddKnowledgeBase(factBase)
 	answerer.AddSolutions(solutions)
 
@@ -62,10 +67,9 @@ func TestAnswerer(t *testing.T) {
 		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
 		// return each relation only once
 		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
+		// numberOf
+		{"[write('Sally Klein', Book) numberOf(Book, N)]", "[focus(2)]"},
 	}
-
-	// todo: test that each relation is returned once
-	// test prep
 
 	for _, test := range tests {
 

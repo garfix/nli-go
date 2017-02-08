@@ -20,6 +20,10 @@ func (answerer *Answerer) AddKnowledgeBase(source knowledge.KnowledgeBase) {
 	answerer.solver.AddKnowledgeBase(source)
 }
 
+func (answerer *Answerer) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
+	answerer.solver.AddMultipleBindingsBase(source)
+}
+
 func (solver *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	solver.solutions = append(solver.solutions, solutions...)
 }

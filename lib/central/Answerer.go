@@ -43,21 +43,24 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		// resultBindings: map goal variables to answers
 		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
 
-		// solutionBindings: map condition variables to results
-		solutionBindings := []mentalese.Binding{}
-		for _, conditionBinding := range conditionBindings {
-			for _, resultBinding := range resultBindings {
-				solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
+		if len(resultBindings) > 0 {
+
+			// solutionBindings: map condition variables to results
+			solutionBindings := []mentalese.Binding{}
+			for _, conditionBinding := range conditionBindings {
+				for _, resultBinding := range resultBindings {
+					solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
+				}
 			}
-		}
 
-		// extend solution bindings by executing the preparation
-		if !solution.Preparation.IsEmpty() {
-			solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
-		}
+			// extend solution bindings by executing the preparation
+			if !solution.Preparation.IsEmpty() {
+				solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+			}
 
-		// create answers relation sets by binding 'answer' to solutionBindings
-		answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
+			// create answers relation sets by binding 'answer' to solutionBindings
+			answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
+		}
 	}
 
 	singleAnswer := mentalese.RelationSet{}

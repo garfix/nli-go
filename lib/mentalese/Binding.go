@@ -81,6 +81,18 @@ func (b Binding) Bind(c Binding) Binding {
 	return result
 }
 
+// Returns a new binding with just key, if exists
+func (b Binding) Extract(key string) Binding {
+	newBinding := Binding{}
+
+	val, found := b[key]
+	if found {
+		newBinding[key] = val
+	}
+
+	return newBinding
+}
+
 // Returns a string version
 func (b Binding) String() string {
 

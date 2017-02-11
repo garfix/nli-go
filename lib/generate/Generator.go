@@ -20,27 +20,30 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 
 	rootAntecedent := mentalese.Relation{Predicate:"s", Arguments:[]mentalese.Term{{mentalese.Term_variable, "S1"}}}
 
-	return generator.GenerateNode(rootAntecedent, sentenceSense)
+	return generator.GenerateNode(rootAntecedent, sentenceSense, mentalese.Binding{})
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
-func (generator *Generator) GenerateNode(antecedent mentalese.Relation, sentenceSense mentalese.RelationSet) []string {
+// antecedentBinding i.e. { E1: 1 }
+func (generator *Generator) GenerateNode(antecedent mentalese.Relation, sentenceSense mentalese.RelationSet, antecedentBinding mentalese.Binding) []string {
 
 	words := []string{}
 
-	common.LogTree("GenerateNode", antecedent)
+	common.LogTree("GenerateNode", antecedent, antecedentBinding)
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
-	rule, binding, ok := generator.findMatchingRule(antecedent, sentenceSense)
+	rule, conditionBinding, ok := generator.findMatchingRule(antecedent, antecedentBinding, sentenceSense)
 
 	if ok {
 
-		boundConsequents := generator.matcher.BindRelationSetSingleBinding(rule.Consequents, binding)
+		//boundConsequents := generator.matcher.BindRelationSetSingleBinding(rule.Consequents, ruleBinding)
 
-		for _, consequent:= range boundConsequents {
-			words = append(words, generator.generateSingleConsequent(consequent, sentenceSense)...)
+		for _, consequent:= range rule.Consequents {
+
+			consequentBinding := conditionBinding.Extract(consequent.Arguments[0].TermValue)
+			words = append(words, generator.generateSingleConsequent(consequent, consequentBinding, sentenceSense)...)
 		}
 	}
 
@@ -51,62 +54,70 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, sentence
 
 // From a set of rules (with a shared antecedent), find the first one whose conditions match
 // antecedent: i.e. np(E1)
-func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, sentenceSense mentalese.RelationSet) (GenerationGrammarRule, mentalese.Binding, bool) {
+// bindingL i.e { E1: 3 }
+func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) (GenerationGrammarRule, mentalese.Binding, bool) {
 
 	found := false
 	resultRule := GenerationGrammarRule{}
-	binding := mentalese.Binding{}
+	conditionBinding := mentalese.Binding{}
 
-	common.LogTree("findMatchingRule", antecedent)
+	common.LogTree("findMatchingRule", antecedent, antecedentBinding)
 
 	rules := generator.Grammar.FindRules(antecedent)
 
 	for _, rule := range rules {
 
+		antecedentVariable := antecedent.Arguments[0].TermValue
+		conditionBinding = mentalese.Binding{}
+		if len(antecedentBinding) > 0 {
+			conditionBinding[rule.Antecedent.Arguments[0].TermValue] = antecedentBinding[antecedentVariable]
+		}
+
 		if len(rule.Condition) == 0 {
 
 			// no condition
-
-// note: this binding should probably be done in the else case as well (?)
-
-			binding, _ = generator.matcher.MatchTwoRelations(rule.Antecedent, antecedent, mentalese.Binding{})
 			resultRule = rule
 			found = true
 			break
 
 		} else {
 
-			bindings, _, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, mentalese.Binding{})
+			matchBindings, _, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, conditionBinding)
 
 			if match {
+				conditionBinding = matchBindings[0]
 				resultRule = rule
-				binding = bindings[0]
 				found = true
 				break
 			}
 		}
-
 	}
 
-	common.LogTree("findMatchingRule", resultRule, binding, found)
+	if found {
+		conditionBinding, _ = generator.matcher.MatchTwoRelations(resultRule.Antecedent, antecedent, conditionBinding)
+	}
 
-	return resultRule, binding, found
+	common.LogTree("findMatchingRule", resultRule, conditionBinding, found)
+
+	return resultRule, conditionBinding, found
 }
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(consequent mentalese.Relation, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(consequent mentalese.Relation, consequentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 	found := false
 
-	common.LogTree("generateSingleConsequent", consequent)
+	common.LogTree("generateSingleConsequent", consequent, consequentBinding)
 
-	lexItem, found := generator.Lexicon.GetLexemeForGeneration(consequent, sentenceSense)
+	boundConsequent := generator.matcher.BindSingleRelationSingleBinding(consequent, consequentBinding)
+
+	lexItem, found := generator.Lexicon.GetLexemeForGeneration(boundConsequent, sentenceSense)
 	if found {
 		words = append(words, lexItem.Form)
 	} else {
-		words = generator.GenerateNode(consequent, sentenceSense)
+		words = generator.GenerateNode(consequent, sentenceSense, consequentBinding)
 	}
 
 	common.LogTree("generateSingleConsequent", words)

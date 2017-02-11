@@ -78,7 +78,7 @@
 
     rule: sImperative(S1) -> vp(S1) exclamationMark(),                         sense: command(S1);
 
-    rule: s(S1) -> sDeclarative(S1),                                           sense: mood(S1, declarative);
-    rule: s(S1) -> sInterrogative(S1),                                         sense: mood(S1, interrogative);
-    rule: s(S1) -> sImperative(S1),                                            sense: mood(S1, imperative);
+    rule: s(S1) -> sDeclarative(S1);
+    rule: s(S1) -> sInterrogative(S1);
+    rule: s(S1) -> sImperative(S1);
 ]

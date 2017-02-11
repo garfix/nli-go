@@ -3,41 +3,84 @@ package main
 import (
 	"fmt"
 	"nli-go/lib/importer"
-	"nli-go/lib/parse/earley"
-	"nli-go/lib/parse"
+	"nli-go/lib/central"
+	"nli-go/lib/knowledge"
 	"nli-go/lib/common"
 )
 
 func main() {
-	internalGrammarParser := importer.NewInternalGrammarParser()
-	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../resources/english-1.grammar")
+	parser := importer.NewInternalGrammarParser()
 
-	lexicon := internalGrammarParser.CreateLexicon(`[
-		form: 'the',			pos: det,            sense: isa(E, the);
-		form: 'a',  			pos: det;
-		form: 'shy',			pos: adj;
-		form: 'small',			pos: adj;
-		form: 'boy',			pos: noun,			sense: isa(E, boy);
-		form: 'girl',			pos: noun,			sense: isa(E, girl);
-		form: 'cries',  		pos: verb,  		sense: predication(E, cry);
-		form: 'sings',			pos: verb,			sense: predication(E, sing);
+	facts := parser.CreateRelationSet(`[
+		book(1, 'The red book', 5)
+		book(2, 'The green book', 6)
+		book(3, 'The blue book', 6)
+		publisher(5, 'Orbital')
+		publisher(6, 'Bookworm inc')
+		author(8, 1)
+		author(9, 1)
+		author(9, 2)
+		author(10, 1)
+		author(11, 3)
+		person(8, 'John Graydon')
+		person(9, 'Sally Klein')
+		person(10, 'Keith Partridge')
+		person(11, 'Onslow Bigbrain')
 	]`)
 
-	rawInput := "the small shy girl sings"
-	tokenizer := parse.NewTokenizer()
+	rules := parser.CreateRules(`[
+		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
+	]`)
 
-	parser := earley.NewParser(grammar, lexicon)
+	solutions := parser.CreateSolutions(`[
 
-	wordArray := tokenizer.Process(rawInput)
+		condition: write(PersonName, BookName) publish(PubName, BookName),
+		answer: book(BookName);
 
-	relations, tree, _ := parser.Parse(wordArray)
+		condition: write(Person, Book) numberOf(Book, N),
+		answer: focus(N);
 
-	if tree.String() != "[s [np [det the] [nbar [adj small] [nbar [adj shy] [nbar [noun girl]]]]] [vp [verb sings]]]" {
-		fmt.Printf("Tree: %v", tree.String())
+		condition: write(X, Y),
+		answer: write(X, Y);
+
+		condition: publish(A, B),
+		preparation: write(C, B),
+		answer: publishAuthor(A, C);
+	]`)
+
+	factBase := knowledge.NewFactBase(facts, rules)
+	systemPredicateBase := knowledge.NewSystemPredicateBase()
+
+	answerer := central.NewAnswerer()
+	answerer.AddMultipleBindingsBase(systemPredicateBase)
+	answerer.AddKnowledgeBase(factBase)
+	answerer.AddSolutions(solutions)
+
+	tests := []struct {
+		input string
+		wantRelationSet string
+	} {
+		// simple
+		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
+		//// preparation
+		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
+		// return each relation only once
+		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
+		// numberOf
+		{"[write('Sally Klein', Book) numberOf(Book, N)]", "[focus(2)]"},
 	}
 
-	if relations.String() != "[subject(S1, E1) determiner(E1, D1) isa(D1, the) isa(E1, girl) predication(S1, sing)]" {
-		fmt.Printf("Relations: %v", relations)
-	}
+	common.LoggerActive = false
 
+	for _, test := range tests {
+
+		input := parser.CreateRelationSet(test.input)
+
+		resultRelationSet := answerer.Answer(input)
+
+		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
+			fmt.Printf("FactBase,Bind(%v): got %v, want %s\n", test.input, resultRelationSet, test.wantRelationSet)
+		}
+	}
 }

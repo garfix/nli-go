@@ -45,6 +45,10 @@ func TestSolver(t *testing.T) {
 	} {
 		{"[write('Sally Klein', B)]", "[[write('Sally Klein', 'The red book')] [write('Sally Klein', 'The green book')]]"},
 		{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book')] [write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]]"},
+		// sttop processing when a predicate fails
+		{"[missingPredicate() write('Sally Klein', B)]", "[]"},
+		// a failing predicate should remove existing bindings
+		{"[write('Sally Klein', B) missingPredicate()]", "[]"},
 	}
 
 	for _, test := range tests {
@@ -54,7 +58,7 @@ func TestSolver(t *testing.T) {
 		resultRelationSets := solver.Solve(input)
 
 		if fmt.Sprintf("%v", resultRelationSets) != test.wantRelationSets {
-			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultRelationSets, test.wantRelationSets)
+			t.Errorf("SolverTest: got %v, want %s", resultRelationSets, test.wantRelationSets)
 		}
 	}
 }

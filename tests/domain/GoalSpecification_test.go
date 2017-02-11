@@ -60,7 +60,7 @@ func TestGoalSpecification(test *testing.T) {
 	//]`)
 
 	domainSpecificGoalAnalysis := internalGrammarParser.CreateTransformations(`[
-		grammatical_subject(B) married_to(A, B) gender(B, G) name(A, N) :- married_to(A, B) question(A);
+		married_to(A, B) gender(B, G) name(A, N) :- married_to(A, B) question(A);
 	]`)
 
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
@@ -111,7 +111,6 @@ func TestGoalSpecification(test *testing.T) {
 		predication(P1, marry) object(P1, E2) subject(P1, A) object(S1, B) :- married_to(A, B);
 		name(A, N) :- name(A, N);
 		gender(A, N) :- gender(A, N);
-		grammatical_subject(S) :- grammatical_subject(S);
 	]`)
 
 	// NB ^ the introduced P1 must be replaced by a "new" variable
@@ -125,7 +124,7 @@ func TestGoalSpecification(test *testing.T) {
 
 	if len(domainSpecificResponseSense) == 0 {
 		test.Error("Wrong response")
-	} else if domainSpecificResponseSense[0].String() != "[grammatical_subject(14) married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
+	} else if domainSpecificResponseSense[0].String() != "[married_to(11, 14) gender(14, male) name(11, 'Courtney Love')]" {
 		test.Errorf("Wrong response: %s", domainSpecificResponseSense[0].String())
 	}
 

@@ -36,7 +36,7 @@ func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBi
 func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.RelationSet {
 
 	common.LogTree("Solve")
-	bindings := solver.SolveMultipleRelations(goals)
+	bindings := solver.SolveRelationSet(goals, []mentalese.Binding{})
 	solutions := solver.matcher.BindRelationSetMultipleBindings(goals, bindings)
 
 	common.LogTree("Solve", solutions)
@@ -49,29 +49,13 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	for _, relation := range set {
 		bindings = solver.SolveSingleRelationMultipleBindings(relation, bindings)
+
+		if len(bindings) == 0 {
+			break
+		}
 	}
 
 	common.LogTree("SolveRelationSet", bindings)
-
-	return bindings
-}
-
-// goals e.g. { father(X, Y), father(Y, Z)}
-// return e.g. {
-//  { {X='john', Y='jack', Z='joe'} }
-//  { {X='bob', Y='jonathan', Z='bill'} }
-// }
-func (solver ProblemSolver) SolveMultipleRelations(goals []mentalese.Relation) []mentalese.Binding {
-
-	common.LogTree("SolveMultipleRelations", goals)
-	
-	bindings := []mentalese.Binding{}
-
-	for _, goal := range goals {
-		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
-	}
-
-	common.LogTree("SolveMultipleRelations", bindings)
 
 	return bindings
 }

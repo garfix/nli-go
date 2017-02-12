@@ -1,6 +1,8 @@
 package generate
 
-import "strings"
+import (
+	"strings"
+)
 
 type SurfaceRepresentation struct {
 }
@@ -14,6 +16,7 @@ func (r *SurfaceRepresentation) Create(tokens []string) string {
 	result := ""
 
 	for i, token := range tokens {
+
 		if token == "." {
 			result += token
 		} else if i == 0 {

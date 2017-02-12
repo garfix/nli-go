@@ -10,13 +10,11 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
-	"strings"
 )
 
 func TestRelease1(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	internalGrammarParser.SetPanicOnParseFail(true)
 
 	// Data
 
@@ -114,18 +112,19 @@ person(1, 'Jacqueline', 'F', '1964')
 	factBase1 := knowledge.NewFactBase(dbFacts, ds2db)
 	factBase2 := knowledge.NewFactBase(systemFacts, ds2system)
 	ruleBase1 := knowledge.NewRuleBase(dsInferenceRules)
-	problemSolver := central.NewAnswerer()
-	problemSolver.AddSolutions(dsSolutions)
-	problemSolver.AddKnowledgeBase(factBase1)
-	problemSolver.AddKnowledgeBase(factBase2)
-	problemSolver.AddKnowledgeBase(ruleBase1)
+	answerer := central.NewAnswerer()
+	answerer.AddSolutions(dsSolutions)
+	answerer.AddKnowledgeBase(factBase1)
+	answerer.AddKnowledgeBase(factBase2)
+	answerer.AddKnowledgeBase(ruleBase1)
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
+	surfacer := generate.NewSurfaceRepresentation()
 
 	// Tests
 
 	var tests = []struct {
 		question string
-		want string
+		answer   string
 	} {
 		//{"Who married Jacqueline de Boer?", "Mark van Dongen"},
 		{"Who married Jacqueline?", "Mark van Dongen married her"},
@@ -140,18 +139,13 @@ person(1, 'Jacqueline', 'F', '1964')
 		tokens := tokenizer.Process(test.question)
 		genericSense, _, _ := parser.Parse(tokens)
 		domainSpecificSense := transformer.Extract(generic2ds, genericSense)
-		dsAnswer := problemSolver.Answer(domainSpecificSense)
-
+		dsAnswer := answerer.Answer(domainSpecificSense)
 		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
-
-common.LoggerActive=false
 		answerWords := generator.Generate(genericAnswer)
-common.LoggerActive=false
+		answer := surfacer.Create(answerWords)
 
-		answer := strings.Join(answerWords, " ")
-
-		if answer != test.want {
-			t.Errorf("release1: got %v, want %v", answer, test.want)
+		if answer != test.answer {
+			t.Errorf("release1: got %v, want %v", answer, test.answer)
 		}
 	}
 }

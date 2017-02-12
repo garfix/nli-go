@@ -20,13 +20,13 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 
 	rootAntecedent := mentalese.Relation{Predicate:"s", Arguments:[]mentalese.Term{{mentalese.Term_variable, "S1"}}}
 
-	return generator.GenerateNode(rootAntecedent, sentenceSense, mentalese.Binding{})
+	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, sentenceSense)
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(antecedent mentalese.Relation, sentenceSense mentalese.RelationSet, antecedentBinding mentalese.Binding) []string {
+func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
@@ -38,9 +38,7 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, sentence
 
 	if ok {
 
-		//boundConsequents := generator.matcher.BindRelationSetSingleBinding(rule.Consequents, ruleBinding)
-
-		for _, consequent:= range rule.Consequents {
+		for _, consequent := range rule.Consequents {
 
 			consequentBinding := conditionBinding.Extract(consequent.Arguments[0].TermValue)
 			words = append(words, generator.generateSingleConsequent(consequent, consequentBinding, sentenceSense)...)
@@ -67,10 +65,12 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 
 	for _, rule := range rules {
 
-		antecedentVariable := antecedent.Arguments[0].TermValue
+		// copy the value of the antecedent
 		conditionBinding = mentalese.Binding{}
 		if len(antecedentBinding) > 0 {
-			conditionBinding[rule.Antecedent.Arguments[0].TermValue] = antecedentBinding[antecedentVariable]
+			parentAntecedentVariable := antecedent.Arguments[0].TermValue
+			ruleAntecedentVariable := rule.Antecedent.Arguments[0].TermValue
+			conditionBinding[ruleAntecedentVariable] = antecedentBinding[parentAntecedentVariable]
 		}
 
 		if len(rule.Condition) == 0 {
@@ -82,6 +82,7 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 
 		} else {
 
+			// match the condition
 			matchBindings, _, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, conditionBinding)
 
 			if match {
@@ -91,10 +92,6 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 				break
 			}
 		}
-	}
-
-	if found {
-		conditionBinding, _ = generator.matcher.MatchTwoRelations(resultRule.Antecedent, antecedent, conditionBinding)
 	}
 
 	common.LogTree("findMatchingRule", resultRule, conditionBinding, found)
@@ -117,7 +114,7 @@ func (generator *Generator) generateSingleConsequent(consequent mentalese.Relati
 	if found {
 		words = append(words, lexItem.Form)
 	} else {
-		words = generator.GenerateNode(consequent, sentenceSense, consequentBinding)
+		words = generator.GenerateNode(consequent, consequentBinding, sentenceSense)
 	}
 
 	common.LogTree("generateSingleConsequent", words)

@@ -1,3 +1,28 @@
+## 2017-02-12
+
+I answered the first release-1 question. Yay! But I took a shortcut. I still have a problem for both processing and generating proper nouns.
+I will use this space to experiment.
+
+    Sentence: 'Jaqueline de Boer'
+    Generic: firstName = 'Jacqueline', middleName = 'de', lastName = 'Boer'
+    Database: 'Jaqueline de Boer' 'Mark van Dongen'
+    Answer: 'Mark' 'van' 'Dongen'
+
+generic2ds
+
+    fullName(A, N) :- name(A, F, firstName) + " " + name(A, M, middleName) + " " + name(A, L, lastName);
+
+of
+
+    fullName(A, N) :- name(A, F, firstName) name(A, M, middleName) name(A, L, lastName) serialize(F, M, S1) serialize(S1, L, N);
+    fullName(A, N) :- name(A, F, firstName) name(A, M, middleName) name(A, L, lastName) concat(N, ' ', F, M, L);
+
+Nieuw hier is het gebruik van systeem-predikaten in een transformation.
+
+Dan moeten we misschien een db2ds introduceren:
+
+    firstName(A, F) middleName(A, M) lastName(A, L) :- name(A, N) split(N, ' ', F, M, L)
+
 ## 2017-02-04
 
 A sentence like this

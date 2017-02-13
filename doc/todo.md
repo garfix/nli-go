@@ -20,6 +20,7 @@
 
 ## Syntax
 
+- disable the use of underscores in predicates? don't want to encourage both snake and camelcasing
 - Permanent goal: improve the grammar; extend it with new phrases, make it more precise. I think there's such a thing as an NLI-English grammar that exists of grammar rules commonly used when talking to a computer. It's a small subset of full English grammar, with an emphasis on questions.
 - Must be able to write whword in place of whword(); but wait, maybe we need multiple variables as well?
 - is het misschien nodig om predicates en constants te namespacen? Eigenlijk is de predicate al een namespace

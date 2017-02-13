@@ -12,7 +12,7 @@ func TestGrammarTransformationParser(test *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	transformations := []mentalese.RelationTransformation{}
 
-	transformations = parser.CreateTransformations("[ father(A, B) :- parent(A, B) male(A); ]")
+	transformations = parser.CreateTransformations("[ parent(A, B) male(A) => father(A, B); ]")
 	if !parser.GetLastParseResult().Ok {
 		test.Error("Parse should have succeeded")
 	}
@@ -32,14 +32,14 @@ func TestGrammarTransformationParser(test *testing.T) {
 		test.Error("Parse should have failed")
 	}
 
-	transformations = parser.CreateTransformations(":- parent(A, B), male(A)")
+	transformations = parser.CreateTransformations("=> parent(A, B), male(A)")
 	if parser.GetLastParseResult().Ok {
 		test.Error("Parse should have failed")
 	}
 
 	transformations = parser.CreateTransformations("[\n" +
-		"father(A, B) :- parent(A, B) male(A);\n" +
-		"command(A1) owner(Owner) done(true) fixed() :- tell(A1, Owner) prime_number(7);\n" +
+		"parent(A, B) male(A) => father(A, B);\n" +
+		"tell(A1, Owner) prime_number(7) => command(A1) owner(Owner) done(true) fixed();\n" +
 		"]")
 	if !parser.GetLastParseResult().Ok {
 		test.Error("Parse error")

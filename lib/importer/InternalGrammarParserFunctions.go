@@ -59,11 +59,11 @@ func (parser *InternalGrammarParser) parseTransformation(tokens []Token, startIn
 	transformation := mentalese.RelationTransformation{}
 	ok := true
 
-	transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
+	transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_implication)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_transform)
 		if ok {
-			transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		}
 	}
 

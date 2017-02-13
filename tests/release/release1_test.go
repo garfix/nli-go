@@ -38,11 +38,11 @@ func TestRelease1(t *testing.T) {
 	]`)
 
 	generic2ds := internalGrammarParser.CreateTransformations(`[
-		married_to(A, B) :- isa(P1, marry) subject(P1, A) object(P1, B);
-		siblings(A1, A2) :- isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
-name(A, N) :- name(A, N, firstName);
-		name(A, N) :- name(A, N, fullName);
-		act(question, who) focus(B) :- question(Q) isa(Q, _) subject(Q, B) isa(B, who);
+		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
+name(A, N, firstName) => name(A, N);
+		name(A, N, fullName) => name(A, N);
+		question(Q) isa(Q, _) subject(Q, B) isa(B, who) => act(question, who) focus(B);
 	]`)
 	//act(question, yesno) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
 	//act(question, howmany) child(A, B) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
@@ -86,10 +86,10 @@ person(1, 'Jacqueline', 'F', '1964')
 	]`)
 
 	ds2generic := internalGrammarParser.CreateTransformations(`[
-		isa(P1, marry) subject(P1, A) object(P1, B) :- married_to(A, B);
-		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) :- siblings(A1, A2);
-		name(A, N) :- name(A, N);
-		isa(A, female) :- gender(A, female);
+		married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
+		siblings(A1, A2) => isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
+		name(A, N) => name(A, N);
+		gender(A, female) => isa(A, female);
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[

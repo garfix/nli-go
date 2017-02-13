@@ -41,14 +41,14 @@ func TestBlocksWorld(t *testing.T) {
 	parser := parse.NewTopDownParser(grammar, lexicon)
 
 	genericSense2domainSpecificSense := internalGrammarParser.CreateTransformations(`[
-		support(A, B) :- predication(P, support) subject(P, A) object(P, B);
-		is(A, block) :- instance_of(A, block);
-		color(A, red) :- instance_of(A, red);
-		color(A, blue) :- instance_of(A, blue);
+		predication(P, support) subject(P, A) object(P, B) => support(A, B);
+		instance_of(A, block) => is(A, block);
+		instance_of(A, red) => color(A, red);
+		instance_of(A, blue) => color(A, blue);
 	]`)
 
 	question2answer := internalGrammarParser.CreateTransformations(`[
-		answer(yes) :- support(A, B)
+		support(A, B) => answer(yes);
 	]`)
 
 
@@ -74,7 +74,7 @@ func TestBlocksWorld(t *testing.T) {
 	problemSolver.AddKnowledgeBase(factBase1)
 
 	domainSpecific2generic := internalGrammarParser.CreateTransformations(`[
-		adverb(P1, yes) :- answer(yes)
+		answer(yes) => adverb(P1, yes);
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[

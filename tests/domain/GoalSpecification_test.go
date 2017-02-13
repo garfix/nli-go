@@ -28,9 +28,9 @@ func TestGoalSpecification(test *testing.T) {
 
 	// transform the generic sense into a domain specific sense. Leaving out material, but making it more compact
 	domainSpecificAnalysis := internalGrammarParser.CreateTransformations(`[
-		married_to(A, B) :- predication(P1, marry) subject(P1, A) object(P1, B);
-		name(A, N) :- name(A, N);
-		question(A) :- info_request(A);
+		predication(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+		name(A, N) => name(A, N);
+		info_request(A) => question(A);
 	]`)
 
 	// create domain specific representation
@@ -60,7 +60,7 @@ func TestGoalSpecification(test *testing.T) {
 	//]`)
 
 	domainSpecificGoalAnalysis := internalGrammarParser.CreateTransformations(`[
-		married_to(A, B) gender(B, G) name(A, N) :- married_to(A, B) question(A);
+		married_to(A, B) question(A) => married_to(A, B) gender(B, G) name(A, N);
 	]`)
 
 	// A: married_to(A, B), person(A, _, G, _), person(B, N, _, _)
@@ -108,9 +108,9 @@ func TestGoalSpecification(test *testing.T) {
 
 	// turn domain specific response into generic response
 	specificResponseSpec := internalGrammarParser.CreateTransformations(`[
-		predication(P1, marry) object(P1, E2) subject(P1, A) object(S1, B) :- married_to(A, B);
-		name(A, N) :- name(A, N);
-		gender(A, N) :- gender(A, N);
+		married_to(A, B) => predication(P1, marry) object(P1, E2) subject(P1, A) object(S1, B);
+		name(A, N) => name(A, N);
+		gender(A, N) => gender(A, N);
 	]`)
 
 	// NB ^ the introduced P1 must be replaced by a "new" variable

@@ -19,6 +19,7 @@ const (
 	t_number
 	t_comma
 	t_rewrite
+	t_transform
 	t_implication
 	t_colon
 	t_semicolon
@@ -55,6 +56,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
 		{t_rewrite, "->"},
+		{t_transform, "=>"},
 		{t_implication, ":-"},
 		{t_colon, ":"},
 		{t_semicolon, ";"},

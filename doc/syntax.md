@@ -50,14 +50,26 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 ## Transformation rules
 
 [
-    father(A, B) :- parent(A, B) male(A);
-    mother(A, B) child(B, A) :- parent(A, B) female(A);
+    parent(A, B) male(A) => father(A, B);
+    parent(A, B) female(A) => mother(A, B) child(B, A);
 ]
 
 ## Grammar
 
 [
     rule: s(P) -> np(E) vp(P),     sense: subject(P, E);
+]
+
+## Inference
+
+[
+    father(A, B) :- parent(A, B) male(A);
+]
+
+## domain specific 2 database conversion
+
+[
+    name(A, N) :- person(A, N, _, _);
 ]
 
 ## Solutions

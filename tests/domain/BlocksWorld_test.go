@@ -78,7 +78,7 @@ func TestBlocksWorld(t *testing.T) {
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
-		rule: s(P) :- adverb(P),    condition: adverb(P);
+		rule: s(P) -> adverb(P),    condition: adverb(P);
 	]`)
 
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[

@@ -10,6 +10,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
+	"strings"
 )
 
 func TestRelease1(t *testing.T) {
@@ -92,10 +93,10 @@ person(1, 'Jacqueline', 'F', '1964')
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
-        rule: s(P) :- np(E) vp(P),              condition: subject(P, E);
-        rule: vp(V) :- verb(V) np(H),           condition: object(V, H);
-        rule: np(F) :- proper_noun(F),          condition: name(F, Name);
-        rule: np(G) :- pronoun(G),              condition: isa(G, female);
+        rule: s(P) -> np(E) vp(P),              condition: subject(P, E);
+        rule: vp(V) -> verb(V) np(H),           condition: object(V, H);
+        rule: np(F) -> proper_noun(F),          condition: name(F, Name);
+        rule: np(G) -> pronoun(G),              condition: isa(G, female);
 	]`)
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
 		form: 'married',	pos: verb,		    condition: isa(E, marry);
@@ -118,7 +119,7 @@ person(1, 'Jacqueline', 'F', '1964')
 	answerer.AddKnowledgeBase(factBase2)
 	answerer.AddKnowledgeBase(ruleBase1)
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
-	surfacer := generate.NewSurfaceRepresentation()
+//	surfacer := generate.NewSurfaceRepresentation()
 
 	// Tests
 
@@ -142,7 +143,7 @@ person(1, 'Jacqueline', 'F', '1964')
 		dsAnswer := answerer.Answer(domainSpecificSense)
 		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
-		answer := surfacer.Create(answerWords)
+		answer := strings.Join(answerWords, " ")//surfacer.Create(answerWords)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

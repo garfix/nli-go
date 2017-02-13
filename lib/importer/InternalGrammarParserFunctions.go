@@ -561,26 +561,27 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, 
 	antecedent := mentalese.Relation{}
 	consequents := mentalese.RelationSet{}
 
-	rule, startIndex, ok := parser.parseTransformation(tokens, startIndex)
+	antecedent, startIndex, ok = parser.parseRelation(tokens, startIndex)
+	if ok {
+		ok = len(antecedent.Arguments) == 1
+		if ok {
 
-	// check the constraints on this transformation
-	if len(rule.Replacement) != 1 {
-		ok = false
-	} else if len(rule.Replacement[0].Arguments) != 1 {
-		ok = false
-	} else {
-		for _, patternRelation := range rule.Pattern {
-			if len(patternRelation.Arguments) != 1 {
-				ok = false
-			} else if !patternRelation.Arguments[0].IsVariable() {
-				ok = false
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
+			if ok {
+				consequents, startIndex, ok = parser.parseRelations(tokens, startIndex)
+
+				for _, consequent := range consequents {
+					if len(consequent.Arguments) == 0 {
+						consequent.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
+					} else if len(consequent.Arguments) != 1 {
+						ok = false
+					} else if !consequent.Arguments[0].IsVariable() {
+						ok = false
+					}
+				}
+
 			}
 		}
-	}
-
-	if ok {
-		antecedent = rule.Replacement[0]
-		consequents = rule.Pattern
 	}
 
 	return antecedent, consequents, startIndex, ok

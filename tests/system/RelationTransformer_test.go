@@ -9,7 +9,8 @@ import (
 func TestRelationTransformer(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	transformer := mentalese.NewRelationTransformer()
+	matcher := mentalese.NewRelationMatcher()
+	transformer := mentalese.NewRelationTransformer(matcher)
 
 	// "name all customers"
 	relationSet := parser.CreateRelationSet(`[

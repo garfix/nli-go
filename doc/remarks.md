@@ -1,3 +1,12 @@
+
+## 2017-02-14
+
+I want to keep database access as simple as possible. Only simple record retrieval. Laying complexity in database access leads to all sorts of complications. Think for instance of the inference rules that are applied. These should not become part of the sql query.
+
+The problem with this approach is of course that we don't use the optimization techniques of the database to make the query faster. So the engine is not as fast as it could be. To this I objection I reply that the main use of an NLI engine is about questions that involve relatively little data. Questions like "Give me 5 bank transfers from Belgian customers in the last three years" are simple not the best use case for an NLI, and SQL will still be needed.
+
+On the other hand, I will be adding optimization techniques to ensure that the nli queries are executed as efficient as possible (without rewriting the full query into an sql query).
+
 ## 2017-02-12
 
 I answered the first release-1 question. Yay! But I took a shortcut. I still have a problem for both processing and generating proper nouns.

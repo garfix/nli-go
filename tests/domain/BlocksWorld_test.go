@@ -17,7 +17,8 @@ import (
 func TestBlocksWorld(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	transformer := mentalese.NewRelationTransformer()
+	matcher := mentalese.NewRelationMatcher()
+	transformer := mentalese.NewRelationTransformer(matcher)
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 		rule: s(P) -> np(E) vp(P),                         sense: subject(P, E);

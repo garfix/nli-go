@@ -34,7 +34,8 @@ func TestGoalSpecification(test *testing.T) {
 	]`)
 
 	// create domain specific representation
-	transformer := mentalese.NewRelationTransformer()
+	matcher := mentalese.NewRelationMatcher()
+	transformer := mentalese.NewRelationTransformer(matcher)
 	domainSpecificSense := transformer.Extract(domainSpecificAnalysis, genericSense)
 
 	common.Logf("DS sense %v\n", domainSpecificSense)

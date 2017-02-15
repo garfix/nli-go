@@ -1,6 +1,8 @@
 package mentalese
 
-import "nli-go/lib/common"
+import (
+	"nli-go/lib/common"
+)
 
 // This class matches relations to other relations and reports their bindings
 // These concepts are used:
@@ -12,12 +14,17 @@ import "nli-go/lib/common"
 // haystack: the base of relations that serve as matching candidates
 
 type RelationMatcher struct {
-
+	functionBases []FunctionBase
 }
 
 func NewRelationMatcher() *RelationMatcher {
 	return &RelationMatcher{}
 }
+
+func (matcher *RelationMatcher) AddFunctionBase(functionBase FunctionBase) {
+	matcher.functionBases = append(matcher.functionBases, functionBase)
+}
+
 
 type solutionNode struct {
 	binding Binding
@@ -43,6 +50,21 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 		newNodes := []solutionNode{}
 
 		for _, node := range nodes {
+
+
+			// functions like join(N, ' ', F, I, L)
+
+			for _, functionBase := range matcher.functionBases {
+				functionBinding := node.binding.Copy()
+				returnValue, ok := functionBase.Execute(needleRelation, functionBinding)
+				if ok {
+					functionBinding[needleRelation.Arguments[0].TermValue] = returnValue
+					newIndexes := append(node.indexes, 0)
+					newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
+				}
+			}
+
+
 
 			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.binding)
 			for i, someBinding := range someBindings {

@@ -10,7 +10,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
-	"strings"
+	"fmt"
 )
 
 func TestRelease1(t *testing.T) {
@@ -26,10 +26,10 @@ func TestRelease1(t *testing.T) {
 		form: 'married',    pos: verb, 	        sense: isa(E, marry);
 		form: 'did',		pos: auxDo;
 		form: 'marry',		pos: verb,		    sense: isa(E, marry);
+		form: /^[A-Z]/,	    pos: firstName,     sense: name(E, Form, firstName);
 		form: 'de',		    pos: insertion,     sense: name(E, 'de', insertion);
 		form: 'van',		pos: insertion,     sense: name(E, 'van', insertion);
 		form: /^[A-Z]/,	    pos: lastName,      sense: name(E, Form, lastName);
-		form: /^[A-Z]/,	    pos: firstName,     sense: name(E, Form, firstName);
 		form: /^[A-Z]/,	    pos: fullName,      sense: name(E, Form, fullName);
 		form: 'are',		pos: auxBe,		    sense: isa(E, be);
 		form: 'and',		pos: conjunction;
@@ -40,7 +40,7 @@ func TestRelease1(t *testing.T) {
 	generic2ds := internalGrammarParser.CreateTransformations(`[
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
-name(A, N, firstName) => name(A, N);
+		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(Q) isa(Q, _) subject(Q, B) isa(B, who) => act(question, who) focus(B);
 	]`)
@@ -68,8 +68,7 @@ name(A, N, firstName) => name(A, N);
 		marriages(2, 1, '1992')
 		parent(4, 2)
 		parent(4, 3)
-person(11, 'Jacqueline de Boer', 'F', '1964')
-person(1, 'Jacqueline', 'F', '1964')
+		person(1, 'Jacqueline de Boer', 'F', '1964')
 		person(2, 'Mark van Dongen', 'M', '1967')
 		person(3, 'Suzanne van Dongen', 'F', '1967')
 		person(4, 'John van Dongen', 'M', '1938')
@@ -109,7 +108,10 @@ person(1, 'Jacqueline', 'F', '1964')
 
 	tokenizer := parse.NewTokenizer()
 	parser := earley.NewParser(grammar, lexicon)
-	transformer := mentalese.NewRelationTransformer()
+	systemFunctionBase := knowledge.NewSystemFunctionBase()
+	matcher := mentalese.NewRelationMatcher()
+	matcher.AddFunctionBase(systemFunctionBase)
+	transformer := mentalese.NewRelationTransformer(matcher)
 	factBase1 := knowledge.NewFactBase(dbFacts, ds2db)
 	factBase2 := knowledge.NewFactBase(systemFacts, ds2system)
 	ruleBase1 := knowledge.NewRuleBase(dsInferenceRules)
@@ -119,7 +121,7 @@ person(1, 'Jacqueline', 'F', '1964')
 	answerer.AddKnowledgeBase(factBase2)
 	answerer.AddKnowledgeBase(ruleBase1)
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
-//	surfacer := generate.NewSurfaceRepresentation()
+	surfacer := generate.NewSurfaceRepresentation()
 
 	// Tests
 
@@ -127,8 +129,7 @@ person(1, 'Jacqueline', 'F', '1964')
 		question string
 		answer   string
 	} {
-		//{"Who married Jacqueline de Boer?", "Mark van Dongen"},
-		{"Who married Jacqueline?", "Mark van Dongen married her"},
+		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
 		//{"Did Bob marry Sally?", "Yes"},
 		//{"Are Jane and Janelle siblings?", "No"},
 		//{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen"},
@@ -143,7 +144,9 @@ person(1, 'Jacqueline', 'F', '1964')
 		dsAnswer := answerer.Answer(domainSpecificSense)
 		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
-		answer := strings.Join(answerWords, " ")//surfacer.Create(answerWords)
+		answer := surfacer.Create(answerWords)
+
+		fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

@@ -5,12 +5,14 @@ import (
 )
 
 type RelationTransformer struct {
-	matcher         RelationMatcher
+	matcher         *RelationMatcher
 }
 
 // using transformations
-func NewRelationTransformer() *RelationTransformer {
-	return &RelationTransformer{matcher: RelationMatcher{}}
+func NewRelationTransformer(matcher *RelationMatcher) *RelationTransformer {
+	return &RelationTransformer{
+		matcher: matcher,
+	}
 }
 
 // return the original relations, but replace the ones that have matched with their replacements

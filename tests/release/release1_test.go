@@ -10,7 +10,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
-	"fmt"
 )
 
 func TestRelease1(t *testing.T) {
@@ -145,8 +144,6 @@ func TestRelease1(t *testing.T) {
 		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
-
-		fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

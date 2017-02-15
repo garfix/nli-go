@@ -2,6 +2,7 @@ package generate
 
 import (
 	"strings"
+	"fmt"
 )
 
 type SurfaceRepresentation struct {
@@ -20,7 +21,7 @@ func (r *SurfaceRepresentation) Create(tokens []string) string {
 		if token == "." {
 			result += token
 		} else if i == 0 {
-			result += strings.Title(token)
+			result += fmt.Sprintf("%s%s", strings.Title(string(token[0])), token[1:])
 		} else {
 			result += " " + token
 		}

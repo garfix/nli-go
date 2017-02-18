@@ -41,13 +41,12 @@ func TestRelease1(t *testing.T) {
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
+		name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)
-	//act(question, yesno) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
-	//act(question, howmany) child(A, B) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
 
 	dsSolutions := internalGrammarParser.CreateSolutions(`[
 		condition: act(question, who) married_to(A, B) focus(A),
@@ -97,6 +96,7 @@ func TestRelease1(t *testing.T) {
 		name(A, N) => name(A, N);
 		gender(A, female) => isa(A, female);
 		result(true) => declaration(S) modifier(S, M) isa(M, yes);
+		result(false) => declaration(S) modifier(S, M) isa(M, no);
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
@@ -109,6 +109,7 @@ func TestRelease1(t *testing.T) {
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
 		form: 'married',	pos: verb,		    condition: isa(E, marry);
 		form: 'yes',	    pos: adverb,	    condition: isa(E, yes);
+		form: 'no',	        pos: adverb,	    condition: isa(E, no);
 		form: 'she',	    pos: pronoun,	    condition: subject(P, S) isa(S, female);
 		form: 'her',	    pos: pronoun,	    condition: object(S, O) isa(O, female);
 		form: '?',	        pos: proper_noun,	condition: name(E, Name);
@@ -142,7 +143,7 @@ func TestRelease1(t *testing.T) {
 		answer   string
 	} {
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
 		//{"Did Jacqueline de Boer marry Gerard Blokker?", "No"},
 		//{"Are Jane and Janelle siblings?", "No"},
 		//{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen"},

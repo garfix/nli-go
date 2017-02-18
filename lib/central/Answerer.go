@@ -24,8 +24,8 @@ func (answerer *Answerer) AddMultipleBindingsBase(source knowledge.MultipleBindi
 	answerer.solver.AddMultipleBindingsBase(source)
 }
 
-func (solver *Answerer) AddSolutions(solutions []mentalese.Solution) {
-	solver.solutions = append(solver.solutions, solutions...)
+func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
+	answerer.solutions = append(answerer.solutions, solutions...)
 }
 
 // goal e.g. [ question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(N, O) focus(Q, N) ]
@@ -43,7 +43,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		// resultBindings: map goal variables to answers
 		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
 
-		if len(resultBindings) > 0 {
+//		if len(resultBindings) > 0 {
 
 			// solutionBindings: map condition variables to results
 			solutionBindings := []mentalese.Binding{}
@@ -60,7 +60,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 
 			// create answers relation sets by binding 'answer' to solutionBindings
 			answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
-		}
+//		}
 	}
 
 	singleAnswer := mentalese.RelationSet{}

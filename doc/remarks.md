@@ -1,3 +1,35 @@
+## 2017-02-18
+
+I am thinking about introducing the not-operator. For example
+
+    name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
+
+How would that work? This makes me need to specifcy what a simple predicate-"operator" actually does. An operator like
+
+    name(A, I, insertion)
+
+Does this:
+
+* It finds all predicates name() in the available sets, that match its variables A and I.
+* If this is the first relation, A and I have no values yet, and a new binding is created for each relation that matches.
+* For consequent relations, A and I do have values, and these limit the possible results. However, a new binding is created for each relation that matches the bound relation.
+
+Now, what would this do?
+
+    !name(A, I, insertion)
+
+* If it is the first relation, and name() would match, !name() would return 0 bindings. The sequence ends.
+* If it is the first relation, and name() does not match, !name() would return 0 bindings. But the sequence may continue.
+* If it is a further relation, and name() matches, all these name() matches need to be removed from the set of bindings.
+* If it is a further relation, and name() does not match, all earlier bindings continue to be used.
+
+To make case 3 more clear:
+
+    parent(X, Y) !male(X) => mother(X, Y)
+
+parent() may yield [{X: 1, Y: 89} {X: 2, Y: 89}]
+
+Now, !male(X) has male(X), and this may happen to succeed for X = 1; then this succeeding binding is removed.
 
 ## 2017-02-14
 

@@ -48,10 +48,20 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 
 	if ok {
 		newBindings = []mentalese.Binding{}
-		for _, binding := range bindings {
-			newBinding := binding.Copy()
+
+		if len(newBindings) > 0 {
+
+			for _, binding := range bindings {
+				newBinding := binding.Copy()
+				newBinding[resultVariable] = aggregate
+				newBindings = append(newBindings, newBinding)
+			}
+		} else {
+
+			newBinding := mentalese.Binding{}
 			newBinding[resultVariable] = aggregate
 			newBindings = append(newBindings, newBinding)
+
 		}
 	}
 

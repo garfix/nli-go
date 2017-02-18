@@ -6,6 +6,7 @@ import (
 	"nli-go/lib/knowledge"
 	"fmt"
 	"nli-go/lib/central"
+	"nli-go/lib/mentalese"
 )
 
 func TestSolver(t *testing.T) {
@@ -36,7 +37,8 @@ func TestSolver(t *testing.T) {
 
 	factBase := knowledge.NewFactBase(facts, rules)
 
-	solver := central.NewProblemSolver()
+	matcher := mentalese.NewRelationMatcher()
+	solver := central.NewProblemSolver(matcher)
 	solver.AddKnowledgeBase(factBase)
 
 	tests := []struct {

@@ -102,7 +102,7 @@ func TestGoalSpecification(test *testing.T) {
 	factBase1 := knowledge.NewFactBase(facts, ds2db)
 
 	// produce response
-	problemSolver := central.NewProblemSolver()
+	problemSolver := central.NewProblemSolver(matcher)
 	problemSolver.AddKnowledgeBase(factBase1)
 	problemSolver.AddKnowledgeBase(ruleBase1)
 	domainSpecificResponseSense := problemSolver.Solve(goalSense)

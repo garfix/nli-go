@@ -68,7 +68,7 @@ func main() {
 		// return each relation only once
 		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
 		// numberOf
-		{"[write('Sally Klein', Book) numberOf(Book, N)]", "[focus(2)]"},
+		{"[write('Sally Klein', Book) numberOf(N, Book)]", "[focus(2)]"},
 	}
 
 	common.LoggerActive = false

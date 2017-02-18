@@ -71,7 +71,7 @@ func TestBlocksWorld(t *testing.T) {
 
 	factBase1 := knowledge.NewFactBase(databaseRelations, domainSpecific2database)
 
-	problemSolver := central.NewProblemSolver()
+	problemSolver := central.NewProblemSolver(matcher)
 	problemSolver.AddKnowledgeBase(factBase1)
 
 	domainSpecific2generic := internalGrammarParser.CreateTransformations(`[

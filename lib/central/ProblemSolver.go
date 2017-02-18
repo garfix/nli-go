@@ -12,11 +12,11 @@ type ProblemSolver struct {
 	matcher *mentalese.RelationMatcher
 }
 
-func NewProblemSolver() *ProblemSolver {
+func NewProblemSolver(matcher *mentalese.RelationMatcher) *ProblemSolver {
 	return &ProblemSolver{
 		sources: []knowledge.KnowledgeBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
-		matcher:mentalese.NewRelationMatcher(),
+		matcher: matcher,
 	}
 }
 

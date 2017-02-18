@@ -20,6 +20,11 @@
 
 ## Syntax
 
+- Perhaps replace the syntax of functions like numberOf(N, X) to
+    numberOf(X: N)
+    join('', firstName, lastName: name)
+    join('', firstName, lastName -> name)
+    name = join('', firstName, lastName)
 - De syntax voor 'domain specific 2 database conversion' is dezelfde als inference, dat klopt niet :- should be -> (?) Can this not be a transformation?
 - disable the use of underscores in predicates? don't want to encourage both snake and camelcasing
 - should you be allowed to mix predicates of several sets? Is this confusing or a necessity to keep things manageable?

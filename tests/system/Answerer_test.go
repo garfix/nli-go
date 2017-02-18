@@ -6,6 +6,7 @@ import (
 	"nli-go/lib/knowledge"
 	"fmt"
 	"nli-go/lib/central"
+	"nli-go/lib/mentalese"
 )
 
 func TestAnswerer(t *testing.T) {
@@ -38,7 +39,7 @@ func TestAnswerer(t *testing.T) {
 		condition: write(PersonName, BookName) publish(PubName, BookName),
 		answer: book(BookName);
 
-		condition: write(Person, Book) numberOf(Book, N),
+		condition: write(Person, Book) numberOf(N, Book),
 		answer: focus(N);
 
 		condition: write(X, Y),
@@ -52,7 +53,8 @@ func TestAnswerer(t *testing.T) {
 	factBase := knowledge.NewFactBase(facts, rules)
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 
-	answerer := central.NewAnswerer()
+	matcher := mentalese.NewRelationMatcher()
+	answerer := central.NewAnswerer(matcher)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	answerer.AddKnowledgeBase(factBase)
 	answerer.AddSolutions(solutions)
@@ -68,7 +70,7 @@ func TestAnswerer(t *testing.T) {
 		// return each relation only once
 		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
 		// numberOf
-		{"[write('Sally Klein', Book) numberOf(Book, N)]", "[focus(2)]"},
+		{"[write('Sally Klein', Book) numberOf(N, Book)]", "[focus(2)]"},
 	}
 
 	for _, test := range tests {

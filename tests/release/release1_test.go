@@ -10,6 +10,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
+	"fmt"
 )
 
 func TestRelease1(t *testing.T) {
@@ -21,16 +22,16 @@ func TestRelease1(t *testing.T) {
 	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../../resources/english-1.grammar")
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		form: 'who',        pos: whWord,         sense: isa(E, who);
+		form: 'who',        pos: whWord,        sense: isa(E, who);
 		form: 'married',    pos: verb, 	        sense: isa(E, marry);
-		form: 'did',		pos: auxDo;
+		form: 'did',		pos: auxVerb,       sense: isa(E, do);
 		form: 'marry',		pos: verb,		    sense: isa(E, marry);
 		form: /^[A-Z]/,	    pos: firstName,     sense: name(E, Form, firstName);
 		form: 'de',		    pos: insertion,     sense: name(E, 'de', insertion);
 		form: 'van',		pos: insertion,     sense: name(E, 'van', insertion);
 		form: /^[A-Z]/,	    pos: lastName,      sense: name(E, Form, lastName);
 		form: /^[A-Z]/,	    pos: fullName,      sense: name(E, Form, fullName);
-		form: 'are',		pos: auxBe,		    sense: isa(E, be);
+		form: 'are',		pos: auxVerb,		sense: isa(E, be);
 		form: 'and',		pos: conjunction;
 		form: 'siblings',	pos: noun,		    sense: isa(E, sibling);
 		form: '?',          pos: questionMark;
@@ -41,7 +42,9 @@ func TestRelease1(t *testing.T) {
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
-		question(Q) isa(Q, _) subject(Q, B) isa(B, who) => act(question, who) focus(B);
+		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
+		question(S, yesNoQuestion) => act(question, yesNo);
+		focus(E1) => focus(E1);
 	]`)
 	//act(question, yesno) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
 	//act(question, howmany) child(A, B) :- question(Q) isa(Q, marry) subject(Q, A) object(Q, B);
@@ -50,6 +53,10 @@ func TestRelease1(t *testing.T) {
 		condition: act(question, who) married_to(A, B) focus(A),
 		preparation: gender(B, G) name(A, N),
 		answer: focus(A) married_to(A, B) gender(B, G) name(A, N);
+
+		condition: act(question, yesNo) married_to(A, B),
+		preparation: exists(G, A),
+		answer: result(G);
 	]`)
 
 	dsInferenceRules := internalGrammarParser.CreateRules(`[
@@ -75,11 +82,12 @@ func TestRelease1(t *testing.T) {
 
 	systemFacts := internalGrammarParser.CreateRelationSet(`[
 		act(question, who)
+		act(question, yesNo)
 		focus(A)
 	]`)
 
 	ds2system := internalGrammarParser.CreateRules(`[
-		act(question, who) :- act(question, who);
+		act(question, X) :- act(question, X);
 		focus(A) :- focus(A);
 	]`)
 
@@ -88,16 +96,19 @@ func TestRelease1(t *testing.T) {
 		siblings(A1, A2) => isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
 		name(A, N) => name(A, N);
 		gender(A, female) => isa(A, female);
+		result(true) => declaration(S) modifier(S, M) isa(M, yes);
 	]`)
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
         rule: s(P) -> np(E) vp(P),              condition: subject(P, E);
+        rule: s(P) -> adverb(M),                condition: modifier(P, M);
         rule: vp(V) -> verb(V) np(H),           condition: object(V, H);
         rule: np(F) -> proper_noun(F),          condition: name(F, Name);
         rule: np(G) -> pronoun(G),              condition: isa(G, female);
 	]`)
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
 		form: 'married',	pos: verb,		    condition: isa(E, marry);
+		form: 'yes',	    pos: adverb,	    condition: isa(E, yes);
 		form: 'she',	    pos: pronoun,	    condition: subject(P, S) isa(S, female);
 		form: 'her',	    pos: pronoun,	    condition: object(S, O) isa(O, female);
 		form: '?',	        pos: proper_noun,	condition: name(E, Name);
@@ -114,11 +125,13 @@ func TestRelease1(t *testing.T) {
 	factBase1 := knowledge.NewFactBase(dbFacts, ds2db)
 	factBase2 := knowledge.NewFactBase(systemFacts, ds2system)
 	ruleBase1 := knowledge.NewRuleBase(dsInferenceRules)
-	answerer := central.NewAnswerer()
+	systemPredicateBase := knowledge.NewSystemPredicateBase()
+	answerer := central.NewAnswerer(matcher)
 	answerer.AddSolutions(dsSolutions)
 	answerer.AddKnowledgeBase(factBase1)
 	answerer.AddKnowledgeBase(factBase2)
 	answerer.AddKnowledgeBase(ruleBase1)
+	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
 	surfacer := generate.NewSurfaceRepresentation()
 
@@ -129,7 +142,8 @@ func TestRelease1(t *testing.T) {
 		answer   string
 	} {
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		//{"Did Bob marry Sally?", "Yes"},
+		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		//{"Did Jacqueline de Boer marry Gerard Blokker?", "No"},
 		//{"Are Jane and Janelle siblings?", "No"},
 		//{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen"},
 		//{"How many children has John van Dongen?", "He has 2 children"},
@@ -140,10 +154,17 @@ func TestRelease1(t *testing.T) {
 		tokens := tokenizer.Process(test.question)
 		genericSense, _, _ := parser.Parse(tokens)
 		domainSpecificSense := transformer.Extract(generic2ds, genericSense)
+common.LoggerActive=false
 		dsAnswer := answerer.Answer(domainSpecificSense)
+common.LoggerActive=false
 		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
+
+		fmt.Println(genericSense)
+		fmt.Println(domainSpecificSense)
+		fmt.Println(dsAnswer)
+		fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

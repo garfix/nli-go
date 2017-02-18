@@ -12,8 +12,8 @@ type Answerer struct {
 	solver *ProblemSolver
 }
 
-func NewAnswerer() *Answerer {
-	return &Answerer{solutions: []mentalese.Solution{}, matcher:mentalese.NewRelationMatcher(), solver: NewProblemSolver()}
+func NewAnswerer(matcher *mentalese.RelationMatcher) *Answerer {
+	return &Answerer{solutions: []mentalese.Solution{}, matcher: matcher, solver: NewProblemSolver(matcher)}
 }
 
 func (answerer *Answerer) AddKnowledgeBase(source knowledge.KnowledgeBase) {
@@ -28,8 +28,8 @@ func (solver *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	solver.solutions = append(solver.solutions, solutions...)
 }
 
-// goal e.g. [ question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(O, N) focus(Q, N) ]
-// return e.g. [ child(S, O) gender(S, female) numberOf(O, N) ]
+// goal e.g. [ question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(N, O) focus(Q, N) ]
+// return e.g. [ child(S, O) gender(S, female) numberOf(N, O) ]
 func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSet {
 
 	common.LogTree("Answer")

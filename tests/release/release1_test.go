@@ -41,7 +41,6 @@ func TestRelease1(t *testing.T) {
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
-		name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
 		question(S, yesNoQuestion) => act(question, yesNo);
@@ -143,8 +142,8 @@ func TestRelease1(t *testing.T) {
 		answer   string
 	} {
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		//{"Did Jacqueline de Boer marry Gerard Blokker?", "No"},
+		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
 		//{"Are Jane and Janelle siblings?", "No"},
 		//{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen"},
 		//{"How many children has John van Dongen?", "He has 2 children"},
@@ -162,10 +161,11 @@ common.LoggerActive=false
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
 
-		fmt.Println(genericSense)
-		fmt.Println(domainSpecificSense)
-		fmt.Println(dsAnswer)
-		fmt.Println(genericAnswer)
+		fmt.Println()
+		//fmt.Println(genericSense)
+		//fmt.Println(domainSpecificSense)
+		//fmt.Println(dsAnswer)
+		//fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

@@ -1,5 +1,9 @@
 package earley
 
+import "nli-go/lib/parse"
+
+// Contains more than the strict chart that the Earley algorithm prescribes; it is used to hold all state of a parse.
+
 type chart struct {
 	states           [][]chartState
 	words            []string
@@ -7,6 +11,8 @@ type chart struct {
 	sentenceStates   []chartState
 	indexedStates    map[int]chartState
 	stateIdGenerator int
+
+	senseBuilder    parse.SenseBuilder
 }
 
 func newChart(words []string) *chart {
@@ -16,5 +22,6 @@ func newChart(words []string) *chart {
 		sentenceStates: []chartState{},
 		indexedStates: map[int]chartState{},
 		stateIdGenerator: 0,
+		senseBuilder: parse.NewSenseBuilder(),
 	}
 }

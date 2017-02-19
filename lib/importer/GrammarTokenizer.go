@@ -22,6 +22,7 @@ const (
 	t_transform
 	t_implication
 	t_colon
+	t_negation
 	t_semicolon
 	t_opening_parenthesis
 	t_closing_parenthesis
@@ -59,6 +60,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_transform, "=>"},
 		{t_implication, ":-"},
 		{t_colon, ":"},
+		{t_negation, "!"},
 		{t_semicolon, ";"},
 		{t_opening_parenthesis, "\\("},
 		{t_closing_parenthesis, "\\)"},

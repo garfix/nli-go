@@ -16,6 +16,17 @@ func (relation Relation) Equals(otherRelation Relation) bool {
 	return equals
 }
 
+func (relation Relation) Copy() Relation {
+
+	newRelation := Relation{}
+	newRelation.Predicate = relation.Predicate
+	newRelation.Arguments = []Term{}
+	for _, argument := range relation.Arguments {
+		newRelation.Arguments = append(newRelation.Arguments, argument)
+	}
+	return newRelation
+}
+
 func (relation Relation) String() string {
 
 	args, sep := "", ""

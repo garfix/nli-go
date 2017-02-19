@@ -16,6 +16,8 @@
 
 ### 2: omschrijving
 
+* grouped relations in matcher and solver: (), and, or, not
+
 # Known issues
 
 ## Syntax

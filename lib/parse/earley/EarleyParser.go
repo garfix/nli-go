@@ -13,14 +13,12 @@ import (
 type parser struct {
 	grammar         *parse.Grammar
 	lexicon         *parse.Lexicon
-	senseBuilder    parse.SenseBuilder
 }
 
 func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
 	return &parser{
 		grammar: grammar,
 		lexicon: lexicon,
-		senseBuilder: parse.NewSenseBuilder(),
 	}
 }
 
@@ -287,7 +285,7 @@ func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) Par
 func (parser *parser) extractFirstSense(chart *chart) mentalese.RelationSet {
 
 	rootStateId := chart.sentenceStates[0].childStateIds[0]
-	return parser.extractSenseFromState(chart, chart.indexedStates[rootStateId], parser.senseBuilder.GetNewVariable("Sentence"))
+	return parser.extractSenseFromState(chart, chart.indexedStates[rootStateId], chart.senseBuilder.GetNewVariable("Sentence"))
 }
 
 // Returns the sense of a state and its children
@@ -304,17 +302,17 @@ func (parser *parser) extractSenseFromState(chart *chart, state chartState, ante
 
 		// leaf state rule: category -> word
 		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
-		lexItemRelations := parser.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		lexItemRelations := chart.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
 		relations = append(relations, lexItemRelations...)
 
 	} else {
 
-		variableMap := parser.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
-		parentRelations := parser.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
+		variableMap := chart.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
+		parentRelations := chart.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
 		relations = append(relations, parentRelations...)
 
 		// parse each of the children
-		for i, _ := range rule.GetConsequents() {
+		for i := range rule.GetConsequents() {
 
 			childStateId := state.childStateIds[i]
 			childState := chart.indexedStates[childStateId]

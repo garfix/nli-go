@@ -1,3 +1,11 @@
+## 2017-02-19
+
+The !male(X) construction should be executed last, to prevent successive relations from introducing new values of X that match male(X) once more.
+
+When I started to implement ! as a member of relation, I struck me as odd to do it this way. I _know_ the operator is not part of the relation, but it seemed easiest to do it this way. I will postpone this whole business to the second release, when I introduce grouped relations, not, and or.
+
+I must not now introduce new stuff, and focus on the first release.
+
 ## 2017-02-18
 
 I am thinking about introducing the not-operator. For example
@@ -518,52 +526,3 @@ This is very impressive. I think she refers to the Minimalist Program.
 
 I reconsidered using a solely top-down or bottom-up parser. The top-down parsers can't handle left recursive grammars, and this is quite a heavy constraint. ThoughtTreasure uses a bottom-up parser, but I read in Speech and Language Processing that it can be quite inefficient. So I will recreate a Earley parser in Go. I love this :)
 
-## 2016
-
-Als je wilt dat de representatie een Horn clause repr is, moet je NOT en OR expliciet noemen.
-Maar is het wel mogelijk om deze in de eerste parse op te nemen, of zijn
-Maar is het wel nodig om ze op te nemen? Je kunt de meeste determiners ook niet opnemen.
-En je neemt modale elementen (ik dacht dat ..) ook niet op
-Ok, maar daarmee is je representatie echt NIET logisch te noemen
-Niet alleen komen EN en OF niet overeen met hun logische equivalenten en is pragmatische interpretatie mogelijk,
-    ook is keihard weergegeven NIET te beperkt, omdat er ook MISSCHIEN en NAUWELIJKS bestaan.
-FOPC is in zijn algemeenheid gewoon te beperkt, en er is geen goed alternatief.
-
-Er is een probleem met left-recursion in de simpele parser NP :- NP VP
-
-een agent
-
-agent: {
-    grammar: {
-        rules ...
-    }
-    lexicon: [
-        entries ...
-    ]
-}
-
-een lexicon op zichzelf:
-
-lexicon: [
-    {
-        form: ..
-        pos: ..
-        sense: ..
-    }
-    {
-        form: ..
-        pos: ..
-        sense: ..
-    }
-]
-
-
-
-
-		predication(S1, marry)
-		object(S1, E2)
-		subject(S1, who)
-		name(E1, 'Kurt Cobain')
-
-Ik maak 'grammatical_subject' nu het predicaat dat aangeeft waar de hoofdzin is. Een predicatie-object is niet aanwezig in het domein-specifieke resultaat. 
-Dit grammatical_subject geeft ook aan of de zin actief is of passief.

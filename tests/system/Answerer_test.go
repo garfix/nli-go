@@ -56,7 +56,7 @@ func TestAnswerer(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher()
 	answerer := central.NewAnswerer(matcher)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
-	answerer.AddKnowledgeBase(factBase)
+	answerer.AddFactBase(factBase)
 	answerer.AddSolutions(solutions)
 
 	tests := []struct {

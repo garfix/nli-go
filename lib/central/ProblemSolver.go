@@ -7,21 +7,27 @@ import (
 )
 
 type ProblemSolver struct {
-	sources []knowledge.KnowledgeBase
+	factBases []knowledge.FactBase
+	ruleBases []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
 	matcher *mentalese.RelationMatcher
 }
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher) *ProblemSolver {
 	return &ProblemSolver{
-		sources: []knowledge.KnowledgeBase{},
+		factBases: []knowledge.FactBase{},
+		ruleBases: []knowledge.RuleBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
 		matcher: matcher,
 	}
 }
 
-func (solver *ProblemSolver) AddKnowledgeBase(source knowledge.KnowledgeBase) {
-	solver.sources = append(solver.sources, source)
+func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
+	solver.factBases = append(solver.factBases, factBase)
+}
+
+func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
+	solver.ruleBases = append(solver.ruleBases, ruleBase)
 }
 
 func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
@@ -113,9 +119,14 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 
 	boundRelation := solver.matcher.BindSingleRelationSingleBinding(goalRelation, binding)
 
-	// go through all knowledge sources
-	for _, source := range solver.sources {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleSource(boundRelation, binding, source)...)
+	// go through all fact bases
+	for _, factBase := range solver.factBases {
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(boundRelation, binding, factBase)...)
+	}
+
+	// go through all rule bases
+	for _, ruleBase := range solver.ruleBases {
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(boundRelation, binding, ruleBase)...)
 	}
 
 	common.LogTree("SolveSingleRelationSingleBinding", newBindings)
@@ -129,7 +140,36 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleSource(boundRelation mentalese.Relation, binding mentalese.Binding, source knowledge.KnowledgeBase) []mentalese.Binding {
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(boundRelation mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) []mentalese.Binding {
+
+	common.LogTree("SolveSingleRelationSingleBindingSingleSource", boundRelation, binding)
+
+	newBindings := []mentalese.Binding{}
+
+	// boundRelation e.g. father(X, 'john')
+	// sourceBindings e.g. {
+	//    { X='Jack' },
+	// }
+	sourceBindings := factBase.Bind(boundRelation)
+
+	for _, sourceBinding := range sourceBindings {
+
+		combinedBinding := binding.Merge(sourceBinding)
+		newBindings = append(newBindings, combinedBinding)
+	}
+
+	common.LogTree("SolveSingleRelationSingleBindingSingleSource", newBindings)
+
+	return newBindings
+}
+
+// boundRelation e.g. father('jack', Z)
+// binding e.g. { X='john', Y='jack' }
+// return e.g. {
+//  { {X='john', Y='jack', Z='joe'} }
+//  { {X='bob', Y='jonathan', Z='bill'} }
+// }
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(boundRelation mentalese.Relation, binding mentalese.Binding, ruleBase knowledge.RuleBase) []mentalese.Binding {
 
 	common.LogTree("SolveSingleRelationSingleBindingSingleSource", boundRelation, binding)
 
@@ -144,7 +184,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleSource(boundRe
 	//    { X='Jack' },
 	// }
 	// Note: bindings are linked to subgoalSets, one on one; but usually just one of the arrays is used
-	sourceSubgoalSets, sourceBindings := source.Bind(boundRelation)
+	sourceSubgoalSets, sourceBindings := ruleBase.Bind(boundRelation)
 
 	for i, sourceSubgoalSet := range sourceSubgoalSets {
 

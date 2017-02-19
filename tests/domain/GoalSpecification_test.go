@@ -103,8 +103,8 @@ func TestGoalSpecification(test *testing.T) {
 
 	// produce response
 	problemSolver := central.NewProblemSolver(matcher)
-	problemSolver.AddKnowledgeBase(factBase1)
-	problemSolver.AddKnowledgeBase(ruleBase1)
+	problemSolver.AddFactBase(factBase1)
+	problemSolver.AddRuleBase(ruleBase1)
 	domainSpecificResponseSense := problemSolver.Solve(goalSense)
 
 	// turn domain specific response into generic response

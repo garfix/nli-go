@@ -39,7 +39,7 @@ func TestSolver(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher()
 	solver := central.NewProblemSolver(matcher)
-	solver.AddKnowledgeBase(factBase)
+	solver.AddFactBase(factBase)
 
 	tests := []struct {
 		input string

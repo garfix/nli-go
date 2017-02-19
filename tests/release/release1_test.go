@@ -55,15 +55,20 @@ func TestRelease1(t *testing.T) {
 		condition: act(question, yesNo) married_to(A, B),
 		preparation: exists(G, A),
 		answer: result(G);
+
+		condition: act(question, yesNo) siblings(A, B),
+		preparation: exists(G, A),
+		answer: result(G);
 	]`)
 
 	dsInferenceRules := internalGrammarParser.CreateRules(`[
-		sibling(A, B) :- parent(C, A) parent(C, B);
+		siblings(A, B) :- parent(C, A) parent(C, B);
 	]`)
 
 	ds2db := internalGrammarParser.CreateRules(`[
 		married_to(A, B) :- marriages(A, B, _);
 		name(A, N) :- person(A, N, _, _);
+		parent(P, C) :- parent(P, C);
 		gender(A, male) :- person(A, _, 'M', _);
 		gender(A, female) :- person(A, _, 'F', _);
 	]`)
@@ -128,9 +133,9 @@ func TestRelease1(t *testing.T) {
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 	answerer := central.NewAnswerer(matcher)
 	answerer.AddSolutions(dsSolutions)
-	answerer.AddKnowledgeBase(factBase1)
-	answerer.AddKnowledgeBase(factBase2)
-	answerer.AddKnowledgeBase(ruleBase1)
+	answerer.AddFactBase(factBase1)
+	answerer.AddFactBase(factBase2)
+	answerer.AddRuleBase(ruleBase1)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
 	surfacer := generate.NewSurfaceRepresentation()
@@ -144,7 +149,8 @@ func TestRelease1(t *testing.T) {
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
 		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
 		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		//{"Are Jane and Janelle siblings?", "No"},
+		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		//{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen"},
 		//{"How many children has John van Dongen?", "He has 2 children"},
 	}

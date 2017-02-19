@@ -16,8 +16,12 @@ func NewAnswerer(matcher *mentalese.RelationMatcher) *Answerer {
 	return &Answerer{solutions: []mentalese.Solution{}, matcher: matcher, solver: NewProblemSolver(matcher)}
 }
 
-func (answerer *Answerer) AddKnowledgeBase(source knowledge.KnowledgeBase) {
-	answerer.solver.AddKnowledgeBase(source)
+func (answerer *Answerer) AddFactBase(source knowledge.FactBase) {
+	answerer.solver.AddFactBase(source)
+}
+
+func (answerer *Answerer) AddRuleBase(source knowledge.RuleBase) {
+	answerer.solver.AddRuleBase(source)
 }
 
 func (answerer *Answerer) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {

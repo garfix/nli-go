@@ -25,7 +25,6 @@ func (matcher *RelationMatcher) AddFunctionBase(functionBase FunctionBase) {
 	matcher.functionBases = append(matcher.functionBases, functionBase)
 }
 
-
 type solutionNode struct {
 	binding Binding
 	indexes []int

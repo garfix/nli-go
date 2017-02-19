@@ -49,7 +49,7 @@ func TestFactBase(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 
-		_, resultBindings := factBase.Bind(input)
+		resultBindings := factBase.Bind(input)
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
 			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)

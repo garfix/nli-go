@@ -11,17 +11,16 @@ type FactBase struct {
 	matcher *mentalese.RelationMatcher
 }
 
-func NewFactBase(facts mentalese.RelationSet, ds2db []mentalese.Rule) *FactBase {
-	return &FactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
+func NewFactBase(facts mentalese.RelationSet, ds2db []mentalese.Rule) FactBase {
+	return FactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
 }
 
 // Note! An internal fact base would use the same predicates as the domain language;
 // This is an simulation of an external database
-func (factBase *FactBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
+func (factBase *FactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
 
 	common.LogTree("Factbase Bind", goal);
 
-	subgoalRelationSets := []mentalese.RelationSet{}
 	subgoalBindings := []mentalese.Binding{}
 
 	for _, ds2db := range factBase.ds2db {
@@ -40,14 +39,13 @@ func (factBase *FactBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 
 			if match {
 				for _, binding := range internalBindings {
-					subgoalRelationSets = append(subgoalRelationSets, mentalese.RelationSet{})
 					subgoalBindings = append(subgoalBindings, externalBinding.Intersection(binding))
 				}
 			}
 		}
 	}
 
-	common.LogTree("Factbase Bind", subgoalRelationSets, subgoalBindings);
+	common.LogTree("Factbase Bind", subgoalBindings);
 
-	return subgoalRelationSets, subgoalBindings
+	return subgoalBindings
 }

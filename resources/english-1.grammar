@@ -24,12 +24,12 @@
     rule: np(E1) -> pronoun(E1);
     rule: np(E1) -> properNoun(E1);
     rule: np(E1) -> sbar(E1);
+    rule: np(E1) -> np(E2) conjunction(E1) np(E3),                             sense: conjunction(E1, E2, E3);
 
     rule: nbar(E1) -> noun(E1);
     rule: nbar(E1) -> adjp(A) nbar(E1),                                        sense: specification(E1, A1);
     rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: specification(E1, P);
     rule: nbar(E1) -> nbar(E1) sbar(S),                                        sense: specification(E1, S);
-    rule: nbar(E1) -> nbar(E2) conjunction(E1) nbar(E3),                       sense: conjunction(E1, E2, E3);
 
     rule: poss(E1) -> np(E1) possessiveMarker();
 
@@ -74,6 +74,7 @@
     rule: sDeclarative(S1) -> clause(S1) period(),                             sense: declaration(S1);
 
     rule: sInterrogative(S1) -> auxVerb(A) np(E1) vp(S1) questionMark(),       sense: question(S1, yesNoQuestion) subject(S1, E1);
+    rule: sInterrogative(S1) -> auxVerb(S1) np(E1) np(E2) questionMark(),      sense: question(S1, yesNoQuestion) subject(S1, E1) object(S1, E2);
     rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2) questionMark(),       sense: question(S1, whQuestion) focus(E1) subject(S1, E1) object(S1, E2);
 
     rule: sImperative(S1) -> vp(S1) exclamationMark(),                         sense: command(S1);

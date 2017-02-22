@@ -20,7 +20,7 @@ func (b Binding) Merge(b2 Binding) Binding {
 	return result
 }
 
-// Returns a new binding that is contains just the keys of b, and whose values may be overwritten by those of b2
+// Returns a new binding that contains just the keys of b, and whose values may be overwritten by those of b2
 func (b Binding) Intersection(b2 Binding) Binding {
 
 	result := Binding{}
@@ -80,6 +80,39 @@ func (b Binding) Bind(c Binding) Binding {
 
 	return result
 }
+
+// Returns a version of b without the keys that have variable values
+func (b Binding) RemoveVariables() Binding {
+
+	result := Binding{}
+
+	for key, value := range b {
+		if value.TermType != Term_variable {
+			result[key] = value
+		}
+	}
+
+	return result
+}
+
+// Returns a version of b with key and value swapped. Only variable values survive
+// In:
+// { A:11, B: X }
+// Out:
+// { X: B }
+func (b Binding) Swap() Binding {
+
+	result := Binding{}
+
+	for key, value := range b {
+		if value.TermType == Term_variable {
+			result[value.TermValue] = Term{ TermType: Term_variable, TermValue: key }
+		}
+	}
+
+	return result
+}
+
 
 // Returns a new binding with just key, if exists
 func (b Binding) Extract(key string) Binding {

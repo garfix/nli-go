@@ -47,24 +47,21 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		// resultBindings: map goal variables to answers
 		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
 
-//		if len(resultBindings) > 0 {
-
-			// solutionBindings: map condition variables to results
-			solutionBindings := []mentalese.Binding{}
-			for _, conditionBinding := range conditionBindings {
-				for _, resultBinding := range resultBindings {
-					solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
-				}
+		// solutionBindings: map condition variables to results
+		solutionBindings := []mentalese.Binding{}
+		for _, conditionBinding := range conditionBindings {
+			for _, resultBinding := range resultBindings {
+				solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
 			}
+		}
 
-			// extend solution bindings by executing the preparation
-			if !solution.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
-			}
+		// extend solution bindings by executing the preparation
+		if !solution.Preparation.IsEmpty() {
+			solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+		}
 
-			// create answers relation sets by binding 'answer' to solutionBindings
-			answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
-//		}
+		// create answers relation sets by binding 'answer' to solutionBindings
+		answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
 	}
 
 	singleAnswer := mentalese.RelationSet{}
@@ -79,6 +76,8 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 // Returns the solution whose condition matches the goal
 func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Solution, []mentalese.Binding, bool) {
 
+	common.LogTree("findSolution", goal)
+
 	solution := mentalese.Solution{}
 	bindings := []mentalese.Binding{}
 	found := false
@@ -91,6 +90,8 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 			break
 		}
 	}
+
+	common.LogTree("findSolution", solution, bindings, found)
 
 	return solution, bindings, found
 }

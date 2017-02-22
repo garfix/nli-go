@@ -23,24 +23,12 @@ func (ruleBase *RuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 
 	for _, rule := range ruleBase.rules {
 
-		binding := mentalese.Binding{}
-
 		// match goal
-		aBinding, match := matcher.MatchTwoRelations(rule.Goal, goal, binding)
-		if !match {
-			continue
+		aBinding, match := matcher.MatchTwoRelations(rule.Goal, goal, mentalese.Binding{})
+		if match {
+			subgoalRelationSets = append(subgoalRelationSets, rule.Pattern)
+			subgoalBindings = append(subgoalBindings, aBinding)
 		}
-
-		// create relation set from the goal conditions
-		subgoalRelationSet := mentalese.RelationSet{}
-
-		for _, condition := range rule.Pattern {
-			//subgoalRelationSet = append(subgoalRelationSet, matcher.BindSingleRelationSingleBinding(condition, aBinding))
-			subgoalRelationSet = append(subgoalRelationSet, condition)
-		}
-
-		subgoalRelationSets = append(subgoalRelationSets, subgoalRelationSet)
-		subgoalBindings = append(subgoalBindings, aBinding)
 	}
 
 	common.LogTree("RuleBase Bind", subgoalRelationSets, subgoalBindings);

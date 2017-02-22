@@ -67,15 +67,16 @@ func TestAnswerer(t *testing.T) {
 		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
 		// preparation
 		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
-		// return each relation only once
+		//// return each relation only once
 		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
-		// numberOf
+		//// numberOf
 		{"[write('Sally Klein', Book) numberOf(N, Book)]", "[focus(2)]"},
 	}
 
 	for _, test := range tests {
 
 		input := parser.CreateRelationSet(test.input)
+
 
 		resultRelationSet := answerer.Answer(input)
 

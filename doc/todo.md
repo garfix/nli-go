@@ -40,6 +40,16 @@
 - The aggregate base has currently more power than it needs. It can all bindings completely.
 - Add min, max
 
+## Solutions
+
+In this solution:
+
+		condition: act(question, who) child(A, B) focus(A),
+		preparation: name(A, N),
+		answer: name(A, N);
+
+If there are no children, or if the DB mapping is not defined, preparation is still executed (and needs to be so, for 'exists' clauses), and yields ALL names
+
 ## Domains
 
 The domain tests are not a goal in themselves, but only help to make up test cases.

@@ -42,6 +42,61 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		}
 		aggregate = mentalese.Term{ TermType:mentalese.Term_predicateAtom, TermValue: val }
 
+	} else if goal.Predicate == "and" {
+
+		entityVar := goal.Arguments[0].TermValue
+		conjVar := goal.Arguments[1].TermValue
+		leftVar := goal.Arguments[2].TermValue
+		rightVar := goal.Arguments[3].TermValue
+
+		if len(bindings) > 1 {
+
+			newBindings = []mentalese.Binding{}
+
+			binding1 := bindings[0].Copy()
+			left := binding1[entityVar]
+
+			binding2 := bindings[1].Copy()
+			right := binding2[entityVar]
+			conj := mentalese.Term{ TermType:mentalese.Term_predicateAtom, TermValue: "q1" }
+
+			binding1[conjVar] = conj
+			binding1[leftVar] = left
+			binding1[rightVar] = right
+
+			binding2[conjVar] = conj
+			binding2[leftVar] = left
+			binding2[rightVar] = right
+
+			newBindings = append(newBindings, binding1)
+			newBindings = append(newBindings, binding2)
+
+			left = conj
+
+			for i := 2; i < len(bindings); i++ {
+
+				binding := bindings[i].Copy()
+				right = binding[entityVar]
+
+				conj = mentalese.Term{ TermType:mentalese.Term_predicateAtom, TermValue: "q" + strconv.Itoa(i)}
+				binding[conjVar] = conj
+				binding[leftVar] = left
+				binding[rightVar] = right
+				newBindings = append(newBindings, binding)
+
+				left = conj
+			}
+
+			// reverse the relations to have the topmost conjunction first
+			newBindings2 := []mentalese.Binding{}
+			for i := len(newBindings) - 1; i >= 0; i-- {
+				newBindings2 = append(newBindings2, newBindings[i])
+			}
+			newBindings = newBindings2
+
+			ok = false
+		}
+
 	} else {
 		ok = false
 	}
@@ -49,7 +104,7 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 	if ok {
 		newBindings = []mentalese.Binding{}
 
-		if len(newBindings) > 0 {
+		if len(bindings) > 0 {
 
 			for _, binding := range bindings {
 				newBinding := binding.Copy()

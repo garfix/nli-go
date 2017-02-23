@@ -76,6 +76,7 @@
     rule: sInterrogative(S1) -> auxVerb(A) np(E1) vp(S1) questionMark(),       sense: question(S1, yesNoQuestion) subject(S1, E1);
     rule: sInterrogative(S1) -> auxVerb(S1) np(E1) np(E2) questionMark(),      sense: question(S1, yesNoQuestion) subject(S1, E1) object(S1, E2);
     rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2) questionMark(),       sense: question(S1, whQuestion) focus(E1) subject(S1, E1) object(S1, E2);
+    rule: sInterrogative(S1) -> whWord(D1) np(E1) auxVerb(S1) np(E2) questionMark(), sense: question(S1, whQuestion) focus(E1) determiner(E1, D1) subject(S1, E1) object(S1, E2);
 
     rule: sImperative(S1) -> vp(S1) exclamationMark(),                         sense: command(S1);
 

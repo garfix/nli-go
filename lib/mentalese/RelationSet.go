@@ -25,7 +25,7 @@ func (set RelationSet) Merge(newSet RelationSet) RelationSet {
 
 		found := false
 
-		for _, existingRelation := range set {
+		for _, existingRelation := range mergedSet {
 			if newRelation.Equals(existingRelation) {
 				found = true
 			}

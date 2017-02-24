@@ -87,6 +87,18 @@ func (matcher *RelationMatcher) BindRelationSetSingleBinding(relations RelationS
 	return boundRelations
 }
 
+// Returns multiple relations, that has all variables bound to bindings
+func (matcher *RelationMatcher) BindSingleRelationMultipleBindings(relation Relation, bindings []Binding) []Relation {
+
+	boundRelations := []Relation{}
+
+	for _, binding := range bindings {
+		boundRelations = append(boundRelations, matcher.BindSingleRelationSingleBinding(relation, binding))
+	}
+
+	return boundRelations
+}
+
 // Returns new relation sets, that have all variables bound to bindings
 func (matcher *RelationMatcher) BindRelationSetMultipleBindings(relations RelationSet, bindings []Binding) []RelationSet {
 

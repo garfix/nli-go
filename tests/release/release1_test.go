@@ -66,8 +66,8 @@ func TestRelease1(t *testing.T) {
 		answer: result(G);
 
 		condition: act(question, who) child(A, B) focus(A),
-		preparation: name(A, N) and(A, R1, LEFT, RIGHT),
-		answer: name(A, N) and(R1, LEFT, RIGHT);
+		preparation: name(A, N),
+		answer: name(A, N) make_and(A, R);
 	]`)
 
 	dsInferenceRules := internalGrammarParser.CreateRules(`[
@@ -120,7 +120,7 @@ func TestRelease1(t *testing.T) {
 
 	generationGrammar := internalGrammarParser.CreateGenerationGrammar(`[
         rule: s(P) -> np(E) vp(P),                                                  condition: subject(P, E);
-        rule: s(C) -> s(P1) conjunction(C) np(P2),                                  condition: conjunction(C, P1, P2) conjunction(P1, _, _);
+        rule: s(C) -> np(P1) comma(C) s(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _);
         rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2);
         rule: s(P) -> adverb(M),                                                    condition: modifier(P, M);
         rule: vp(V) -> verb(V) np(H),                                               condition: object(V, H);
@@ -136,6 +136,7 @@ func TestRelease1(t *testing.T) {
 		form: 'her',	    pos: pronoun,	    condition: object(S, O) isa(O, female);
 		form: '?',	        pos: proper_noun,	condition: name(E, Name);
 		form: 'and',	    pos: conjunction,	condition: isa(E, and);
+		form: ',',	        pos: comma,         condition: isa(E, and);
 	]`)
 
 	// Services
@@ -165,12 +166,12 @@ func TestRelease1(t *testing.T) {
 		question string
 		answer   string
 	} {
-		//{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		//{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		//{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
-		//{"Are Mark van Dongen and John van Dongen siblings?", "No"},
-		{"Which children has John van Dongen?", "Mark van Dongen and Suzanne van Dongen and Dirk van Dongen and Durkje van Dongen"},
+		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
+		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
+		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
+		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		//{"How many children has John van Dongen?", "He has 2 children"},
 	}
 

@@ -10,10 +10,20 @@ type Answerer struct {
 	solutions []mentalese.Solution
 	matcher *mentalese.RelationMatcher
 	solver *ProblemSolver
+	builder *RelationSetBuilder
 }
 
 func NewAnswerer(matcher *mentalese.RelationMatcher) *Answerer {
-	return &Answerer{solutions: []mentalese.Solution{}, matcher: matcher, solver: NewProblemSolver(matcher)}
+
+	builder := NewRelationSetBuilder()
+	builder.addGenerator(NewSystemGenerator())
+
+	return &Answerer{
+		solutions: []mentalese.Solution{},
+		matcher: matcher,
+		solver: NewProblemSolver(matcher),
+		builder: builder,
+	}
 }
 
 func (answerer *Answerer) AddFactBase(source knowledge.FactBase) {
@@ -38,7 +48,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 
 	common.LogTree("Answer")
 
-	answers := []mentalese.RelationSet{}
+	answer := mentalese.RelationSet{}
 
 	// conditionBindings: map condition variables to goal variables
 	solution, conditionBindings, found := answerer.findSolution(goal)
@@ -60,17 +70,12 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 			solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
 		}
 
-		// create answers relation sets by binding 'answer' to solutionBindings
-		answers = answerer.matcher.BindRelationSetMultipleBindings(solution.Answer, solutionBindings)
+		// create answer relation sets by binding 'answer' to solutionBindings
+		answer = answerer.builder.Build(solution.Answer, solutionBindings)
 	}
 
-	singleAnswer := mentalese.RelationSet{}
-	for _, answer := range answers {
-		singleAnswer = singleAnswer.Merge(answer)
-	}
-
-	common.LogTree("Answer", singleAnswer)
-	return singleAnswer
+	common.LogTree("Answer", answer)
+	return answer
 }
 
 // Returns the solution whose condition matches the goal

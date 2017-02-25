@@ -1,5 +1,6 @@
 [
     rule: determiner(D1) -> article(D1);
+    rule: determiner(D1) -> number(D1);
 
     rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3);
 
@@ -27,7 +28,7 @@
     rule: np(E1) -> np(E2) conjunction(E1) np(E3),                             sense: conjunction(E1, E2, E3);
 
     rule: nbar(E1) -> noun(E1);
-    rule: nbar(E1) -> adjp(A) nbar(E1),                                        sense: specification(E1, A1);
+    rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: specification(E1, A1);
     rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: specification(E1, P);
     rule: nbar(E1) -> nbar(E1) sbar(S),                                        sense: specification(E1, S);
 
@@ -75,8 +76,11 @@
 
     rule: sInterrogative(S1) -> auxVerb(A) np(E1) vp(S1) questionMark(),       sense: question(S1, yesNoQuestion) subject(S1, E1);
     rule: sInterrogative(S1) -> auxVerb(S1) np(E1) np(E2) questionMark(),      sense: question(S1, yesNoQuestion) subject(S1, E1) object(S1, E2);
+    rule: sInterrogative(S1) -> whWord(W1) adjective(A1) nbar(E1) auxVerb(S1)
+        np(E2) questionMark(),                                                 sense: question(S1, whQuestion) focus(E1) determiner(E1, A1) specifier(A1, W1) subject(S1, E1) object(S1, E2);
     rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2) questionMark(),       sense: question(S1, whQuestion) focus(E1) subject(S1, E1) object(S1, E2);
-    rule: sInterrogative(S1) -> whWord(D1) np(E1) auxVerb(S1) np(E2) questionMark(), sense: question(S1, whQuestion) focus(E1) determiner(E1, D1) subject(S1, E1) object(S1, E2);
+    rule: sInterrogative(S1) -> whWord(D1) np(E1) auxVerb(S1)
+        np(E2) questionMark(),                                                 sense: question(S1, whQuestion) focus(E1) determiner(E1, D1) subject(S1, E1) object(S1, E2);
 
     rule: sImperative(S1) -> vp(S1) exclamationMark(),                         sense: command(S1);
 

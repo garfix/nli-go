@@ -31,12 +31,19 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 
 	common.LogTree("GetLexemeForGeneration", consequent)
 
-	binding := mentalese.Binding{"E": consequent.Arguments[0]}
+	if consequent.Predicate == "number" {
+		resultLexeme.Form = consequent.Arguments[0].TermValue
+		return resultLexeme, true
+	}
+
 
 	partOfSpeech := consequent.Predicate
 
 	lexemes, found := lexicon.lexemes[partOfSpeech]
 	if found {
+
+		binding := mentalese.Binding{"E": consequent.Arguments[0]}
+
 		for _, lexeme := range lexemes {
 
 			bindings, _, match := lexicon.matcher.MatchSequenceToSet(lexeme.Condition, sentenseSense, binding)

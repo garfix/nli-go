@@ -23,6 +23,8 @@ func TestRelease1(t *testing.T) {
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		form: 'who',        pos: whWord,        sense: isa(E, who);
+		form: 'how',        pos: whWord,        sense: isa(E, how);
+		form: 'many',       pos: adjective,     sense: isa(E, many);
 		form: 'which',      pos: whWord,        sense: isa(E, which);
 		form: 'married',    pos: verb, 	        sense: isa(E, marry);
 		form: 'did',		pos: auxVerb,       sense: isa(E, do);
@@ -48,6 +50,7 @@ func TestRelease1(t *testing.T) {
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
 		question(S, whQuestion) subject(S, E) determiner(E, D) isa(D, which) => act(question, who);
+		question(S, whQuestion) subject(S, E) determiner(E, D1) isa(D1, many) specifier(D1, W1) isa(W1, how) => act(question, howMany);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)
@@ -68,6 +71,10 @@ func TestRelease1(t *testing.T) {
 		condition: act(question, who) child(A, B) focus(A),
 		preparation: name(A, N),
 		answer: name(A, N) make_and(A, R);
+
+		condition: act(question, howMany) child(A, B) focus(A),
+		preparation: gender(B, G) numberOf(N, A),
+		answer: gender(B, G) count(C, N) have_child(B, C);
 	]`)
 
 	dsInferenceRules := internalGrammarParser.CreateRules(`[
@@ -98,9 +105,8 @@ func TestRelease1(t *testing.T) {
 	]`)
 
 	systemFacts := internalGrammarParser.CreateRelationSet(`[
-		act(question, who)
-		act(question, yesNo)
-		focus(A)
+		act(question, _)
+		focus(_)
 	]`)
 
 	ds2system := internalGrammarParser.CreateRules(`[
@@ -111,8 +117,11 @@ func TestRelease1(t *testing.T) {
 	ds2generic := internalGrammarParser.CreateTransformations(`[
 		married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
 		siblings(A1, A2) => isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
+		have_child(A, B) => declaration(P1) isa(P1, have) subject(P1, A) object(P1, B) isa(B, child);
 		name(A, N) => name(A, N);
 		and(R, A, B) => conjunction(R, A, B) isa(R, and);
+		gender(A, male) => isa(A, male);
+		count(A, N) => determiner(A, D) isa(D, N);
 		gender(A, female) => isa(A, female);
 		result(true) => declaration(S) modifier(S, M) isa(M, yes);
 		result(false) => declaration(S) modifier(S, M) isa(M, no);
@@ -126,12 +135,19 @@ func TestRelease1(t *testing.T) {
         rule: vp(V) -> verb(V) np(H),                                               condition: object(V, H);
         rule: np(F) -> proper_noun(F),                                              condition: name(F, Name);
         rule: np(G) -> pronoun(G),                                                  condition: isa(G, female);
+        rule: np(G) -> pronoun(G),                                                  condition: isa(G, male);
+        rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: determiner(E1, D1);
+        rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1);
+        rule: nbar(E1) -> noun(E1);
 	]`)
 
 	generationLexicon := internalGrammarParser.CreateGenerationLexicon(`[
 		form: 'married',	pos: verb,		    condition: isa(E, marry);
+		form: 'children',	pos: noun,		    condition: isa(E, child);
+		form: 'has',	    pos: verb,		    condition: isa(E, have);
 		form: 'yes',	    pos: adverb,	    condition: isa(E, yes);
 		form: 'no',	        pos: adverb,	    condition: isa(E, no);
+		form: 'he',	        pos: pronoun,	    condition: subject(P, S) isa(S, male);
 		form: 'she',	    pos: pronoun,	    condition: subject(P, S) isa(S, female);
 		form: 'her',	    pos: pronoun,	    condition: object(S, O) isa(O, female);
 		form: '?',	        pos: proper_noun,	condition: name(E, Name);
@@ -172,7 +188,7 @@ func TestRelease1(t *testing.T) {
 		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
-		//{"How many children has John van Dongen?", "He has 2 children"},
+		{"How many children has John van Dongen?", "He has 4 children"},
 	}
 
 	for _, test := range tests {
@@ -187,7 +203,7 @@ common.LoggerActive=false
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
 
-		fmt.Println()
+		fmt.Print()
 		//fmt.Println(genericSense)
 		//fmt.Println(domainSpecificSense)
 		//fmt.Println(dsAnswer)

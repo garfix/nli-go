@@ -5,19 +5,19 @@ import (
 	"nli-go/lib/common"
 )
 
-type FactBase struct {
+type InMemoryFactBase struct {
 	facts mentalese.RelationSet
 	ds2db []mentalese.Rule
 	matcher *mentalese.RelationMatcher
 }
 
-func NewFactBase(facts mentalese.RelationSet, ds2db []mentalese.Rule) FactBase {
-	return FactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
+func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.Rule) mentalese.FactBase {
+	return InMemoryFactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
 }
 
 // Note! An internal fact base would use the same predicates as the domain language;
 // This is an simulation of an external database
-func (factBase *FactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
+func (factBase InMemoryFactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
 
 	common.LogTree("Factbase Bind", goal);
 

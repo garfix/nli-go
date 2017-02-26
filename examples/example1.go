@@ -49,7 +49,7 @@ func main() {
 		answer: publishAuthor(A, C);
 	]`)
 
-	factBase := knowledge.NewFactBase(facts, rules)
+	factBase := knowledge.NewInMemoryFactBase(facts, rules)
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 
 	answerer := central.NewAnswerer()

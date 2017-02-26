@@ -33,7 +33,7 @@ func TestFactBase(t *testing.T) {
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	factBase := knowledge.NewFactBase(facts, rules)
+	factBase := knowledge.NewInMemoryFactBase(facts, rules)
 
 	tests := []struct {
 		input string

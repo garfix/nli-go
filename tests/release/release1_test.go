@@ -155,6 +155,26 @@ func TestRelease1(t *testing.T) {
 		form: ',',	        pos: comma,         condition: isa(E, and);
 	]`)
 
+	// database initialization
+
+//  create database my_nligo;
+//  use my_nligo;
+//  create table marriages ( person1_id int, person2_id int, year char(4) );
+//  create table parent ( parent_id int, child_id int );
+//  create table person ( person_id int, name varchar(255), gender char(1), birthyear char(4) );
+//	insert into marriages values (2, 1, '1992');
+//	insert into parent values (4, 2);
+//	insert into parent values (4, 3);
+//	insert into parent values (4, 5);
+//	insert into parent values (4, 6);
+//	insert into person values (1, 'Jacqueline de Boer', 'F', '1964');
+//	insert into person values (2, 'Mark van Dongen', 'M', '1967');
+//	insert into person values (3, 'Suzanne van Dongen', 'F', '1967');
+//	insert into person values (4, 'John van Dongen', 'M', '1938');
+//	insert into person values (5, 'Dirk van Dongen', 'M', '1972');
+//	insert into person values (6, 'Durkje van Dongen', 'M', '1982');
+
+
 	// Services
 
 	tokenizer := parse.NewTokenizer()
@@ -163,13 +183,20 @@ func TestRelease1(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher()
 	matcher.AddFunctionBase(systemFunctionBase)
 	transformer := mentalese.NewRelationTransformer(matcher)
-	factBase1 := knowledge.NewFactBase(dbFacts, ds2db)
-	factBase2 := knowledge.NewFactBase(systemFacts, ds2system)
+	//factBase1 :=
+		knowledge.NewInMemoryFactBase(dbFacts, ds2db)
+	mySqlBase := knowledge.NewMySqlFactBase("localhost", "root", "", "my_nligo", ds2db)
+	mySqlBase.AddTableDescription("marriages", []string{"person1_id", "person2_id", "year"})
+	mySqlBase.AddTableDescription("parent", []string{"parent_id", "child_id"})
+	mySqlBase.AddTableDescription("person", []string{"person_id", "name", "gender", "birthyear"})
+
+	factBase2 := knowledge.NewInMemoryFactBase(systemFacts, ds2system)
 	ruleBase1 := knowledge.NewRuleBase(dsInferenceRules)
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 	answerer := central.NewAnswerer(matcher)
 	answerer.AddSolutions(dsSolutions)
-	answerer.AddFactBase(factBase1)
+	//answerer.AddFactBase(factBase1)
+answerer.AddFactBase(mySqlBase)
 	answerer.AddFactBase(factBase2)
 	answerer.AddRuleBase(ruleBase1)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)

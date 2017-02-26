@@ -99,7 +99,7 @@ func TestGoalSpecification(test *testing.T) {
 	]`)
 //		marriages(14, 11, '1992')
 
-	factBase1 := knowledge.NewFactBase(facts, ds2db)
+	factBase1 := knowledge.NewInMemoryFactBase(facts, ds2db)
 
 	// produce response
 	problemSolver := central.NewProblemSolver(matcher)

@@ -50,7 +50,7 @@ func TestAnswerer(t *testing.T) {
 		answer: publishAuthor(A, C);
 	]`)
 
-	factBase := knowledge.NewFactBase(facts, rules)
+	factBase := knowledge.NewInMemoryFactBase(facts, rules)
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 
 	matcher := mentalese.NewRelationMatcher()

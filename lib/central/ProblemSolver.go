@@ -7,7 +7,7 @@ import (
 )
 
 type ProblemSolver struct {
-	factBases []knowledge.FactBase
+	factBases []mentalese.FactBase
 	ruleBases []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
 	matcher *mentalese.RelationMatcher
@@ -15,14 +15,14 @@ type ProblemSolver struct {
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher) *ProblemSolver {
 	return &ProblemSolver{
-		factBases: []knowledge.FactBase{},
+		factBases: []mentalese.FactBase{},
 		ruleBases: []knowledge.RuleBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
 		matcher: matcher,
 	}
 }
 
-func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
+func (solver *ProblemSolver) AddFactBase(factBase mentalese.FactBase) {
 	solver.factBases = append(solver.factBases, factBase)
 }
 
@@ -144,15 +144,15 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalRelation mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) []mentalese.Binding {
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalRelation mentalese.Relation, binding mentalese.Binding, factBase mentalese.FactBase) []mentalese.Binding {
 
 	common.LogTree("SolveSingleRelationSingleBindingSingleFactBase", goalRelation, binding)
 
-	for key, val := range binding {
-		if val.TermType == mentalese.Term_variable {
-			panic("Variable bound to variable " + key);
-		}
-	}
+	//for key, val := range binding {
+	//	if val.TermType == mentalese.Term_variable {
+	//		panic("Variable bound to variable " + key);
+	//	}
+	//}
 
 	boundRelation := solver.matcher.BindSingleRelationSingleBinding(goalRelation, binding)
 

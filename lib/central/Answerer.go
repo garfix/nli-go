@@ -26,7 +26,7 @@ func NewAnswerer(matcher *mentalese.RelationMatcher) *Answerer {
 	}
 }
 
-func (answerer *Answerer) AddFactBase(source knowledge.FactBase) {
+func (answerer *Answerer) AddFactBase(source mentalese.FactBase) {
 	answerer.solver.AddFactBase(source)
 }
 

@@ -69,7 +69,7 @@ func TestBlocksWorld(t *testing.T) {
 		color(block2, blue)
 	]`)
 
-	factBase1 := knowledge.NewFactBase(databaseRelations, domainSpecific2database)
+	factBase1 := knowledge.NewInMemoryFactBase(databaseRelations, domainSpecific2database)
 
 	problemSolver := central.NewProblemSolver(matcher)
 	problemSolver.AddFactBase(factBase1)

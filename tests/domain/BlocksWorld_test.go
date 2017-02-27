@@ -8,6 +8,7 @@ import (
 	"nli-go/lib/parse"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/generate"
+	"nli-go/lib/parse/earley"
 )
 
 // Mimics some of SHRDLU's functions, but in the nli-go way
@@ -39,7 +40,7 @@ func TestBlocksWorld(t *testing.T) {
 		form: 'support',       pos: verb,       sense: predication(E, support);
 	]`)
 
-	parser := parse.NewTopDownParser(grammar, lexicon)
+	parser := earley.NewParser(grammar, lexicon)
 
 	genericSense2domainSpecificSense := internalGrammarParser.CreateTransformations(`[
 		predication(P, support) subject(P, A) object(P, B) => support(A, B);

@@ -1,3 +1,7 @@
+## 2017-02-27
+
+I have solved all of the sentence puzzles of release 1 and I have fixed MySql access (which proved to be quite a hassle). Time to start writing documentation! (looking forward to that :)
+
 ## 2017-02-19
 
 The !male(X) construction should be executed last, to prevent successive relations from introducing new values of X that match male(X) once more.

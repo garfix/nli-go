@@ -8,7 +8,6 @@ import "database/sql"
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"nli-go/lib/common"
-	"fmt"
 	"strings"
 	"log"
 )
@@ -36,8 +35,6 @@ func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []st
 
 // todo: remove code duplication
 func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
-
-common.LoggerActive=true
 
 	common.LogTree("MySqlFactBase.Bind", goal)
 
@@ -67,14 +64,13 @@ common.LoggerActive=true
 
 	common.LogTree("MySqlFactBase.Bind", bindings)
 
-	common.LoggerActive=false
-
 	return bindings
 }
 
 // Matches a sequence of relations to the relations of the MySql database
 // sequence: [ marriages(A, C) person(A, 'John', _, _) ]
-func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.RelationSet) ([]mentalese.Binding, bool){
+// return: [ { C: 1, A: 5 } ]
+func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.RelationSet) ([]mentalese.Binding, bool) {
 
 	common.LogTree("MatchSequenceToDatabase", sequence)
 
@@ -86,26 +82,33 @@ func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.Relatio
 
 		relationBindings := []mentalese.Binding{}
 
-		if (len(relationBindings) == 0) {
+		if len(relationBindings) == 0 {
 
 			resultBindings := factBase.matchRelationToDatabase(relation)
-			relationBindings = append(relationBindings, resultBindings...)
+			relationBindings = resultBindings
 
 		} else {
 
+			// go through the bindings resulting from previous relation
 			for _, binding := range sequenceBindings {
+
 				boundRelation := factBase.matcher.BindSingleRelationSingleBinding(relation, binding)
 				resultBindings := factBase.matchRelationToDatabase(boundRelation)
-				relationBindings = append(relationBindings, resultBindings...)
+
+				// found bindings must be extended with the bindings already present
+				for _, resultBinding := range resultBindings {
+					newRelationBinding := binding.Merge(resultBinding)
+					relationBindings = append(relationBindings, newRelationBinding)
+				}
 			}
 		}
 
-		if len(relationBindings) == 0 {
+		sequenceBindings = relationBindings
+
+		if len(sequenceBindings) == 0 {
 			match = false
 			break
 		}
-
-		sequenceBindings = relationBindings
 	}
 
 	common.LogTree("MatchSequenceToDatabase", sequenceBindings, match)
@@ -113,6 +116,8 @@ func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.Relatio
 	return sequenceBindings, match
 }
 
+// Matches needleRelation to all relations in the database
+// Returns a set of bindings
 func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
 	common.LogTree("matchRelationToDatabase", needleRelation)
@@ -136,7 +141,7 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 	columnClause := strings.Join(columns, ", ")
 
 	query := "SELECT " + columnClause + " FROM " + table + " WHERE TRUE" + whereClause
-	fmt.Printf("        %s, %v\n", query, values)
+//	fmt.Printf("        %s, %v\n", query, values)
 
 	rows, err := factBase.db.Query(query, values...)
 	if err != nil {

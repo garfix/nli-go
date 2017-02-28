@@ -31,9 +31,9 @@ func TestSolver(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	]`)
 
-	ds2db := parser.CreateRules(`[
-		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
-		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
+	ds2db := parser.CreateDbMappings(`[
+		write(PersonName, BookName) ->> book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
 	factBase := knowledge.NewInMemoryFactBase(facts, ds2db)
@@ -101,8 +101,8 @@ func TestSolver(t *testing.T) {
 		link('blue', 'yellow')
 	]`);
 
-	ds2db2 := parser.CreateRules(`[
-		link(A, B) :- link(A, B);
+	ds2db2 := parser.CreateDbMappings(`[
+		link(A, B) ->> link(A, B);
 	]`)
 
 	factBase2 := knowledge.NewInMemoryFactBase(facts2, ds2db2)

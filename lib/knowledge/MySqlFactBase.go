@@ -15,11 +15,11 @@ import (
 type MySqlFactBase struct{
 	db *sql.DB
 	tableDescriptions map[string] []string
-	ds2db []mentalese.Rule
+	ds2db []mentalese.DbMapping
 	matcher *mentalese.RelationMatcher
 }
 
-func NewMySqlFactBase(domain string, username string, password string, database string, ds2db []mentalese.Rule) *MySqlFactBase {
+func NewMySqlFactBase(domain string, username string, password string, database string, ds2db []mentalese.DbMapping) *MySqlFactBase {
 
 	db, err := sql.Open("mysql", username + ":" + password + "@/" + database)
 	if err != nil {
@@ -43,14 +43,14 @@ func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding 
 	for _, ds2db := range factBase.ds2db {
 
 		// gender(14, G), gender(A, male) => externalBinding: G = male
-		externalBinding, match := factBase.matcher.MatchTwoRelations(goal, ds2db.Goal, mentalese.Binding{})
+		externalBinding, match := factBase.matcher.MatchTwoRelations(goal, ds2db.DsSource, mentalese.Binding{})
 		if match {
 
 			// gender(14, G), gender(A, male) => internalBinding: A = 14
-			internalBinding, _ := factBase.matcher.MatchTwoRelations(ds2db.Goal, goal, mentalese.Binding{})
+			internalBinding, _ := factBase.matcher.MatchTwoRelations(ds2db.DsSource, goal, mentalese.Binding{})
 
 			// create a version of the conditions with bound variables
-			boundConditions := factBase.matcher.BindRelationSetSingleBinding(ds2db.Pattern, internalBinding)
+			boundConditions := factBase.matcher.BindRelationSetSingleBinding(ds2db.DbTarget, internalBinding)
 			// match this bound version to the database
 			internalBindings, match := factBase.MatchSequenceToDatabase(boundConditions)
 

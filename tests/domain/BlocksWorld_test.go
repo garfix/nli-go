@@ -55,10 +55,10 @@ func TestBlocksWorld(t *testing.T) {
 
 
 	// domain specific sense to database relations
-	domainSpecific2database := internalGrammarParser.CreateRules(`[
-		isa(A, B) :- is(A, B);
-		support(A, B) :- support(A, B);
-		color(A, B) :- color(A, B);
+	domainSpecific2database := internalGrammarParser.CreateDbMappings(`[
+		isa(A, B) ->> is(A, B);
+		support(A, B) ->> support(A, B);
+		color(A, B) ->> color(A, B);
 	]`)
 
 	// domain knowledge

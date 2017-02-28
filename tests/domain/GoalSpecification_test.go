@@ -79,11 +79,11 @@ func TestGoalSpecification(test *testing.T) {
 
 	ruleBase1 := knowledge.NewRuleBase(rules)
 
-	ds2db := internalGrammarParser.CreateRules(`[
-		married_to(A, B) :- marriages(A, B, _);
-		name(A, N) :- person(A, N, _, _);
-		gender(A, male) :- person(A, _, 'M', _);
-		gender(A, female) :- person(A, _, 'F', _);
+	ds2db := internalGrammarParser.CreateDbMappings(`[
+		married_to(A, B) ->> marriages(A, B, _);
+		name(A, N) ->> person(A, N, _, _);
+		gender(A, male) ->> person(A, _, 'M', _);
+		gender(A, female) ->> person(A, _, 'F', _);
 	]`)
 
 	// voorbeeld van wanneer dit niet werkt:

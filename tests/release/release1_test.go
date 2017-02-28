@@ -81,13 +81,13 @@ func TestRelease1(t *testing.T) {
 		siblings(A, B) :- parent(C, A) parent(C, B);
 	]`)
 
-	ds2db := internalGrammarParser.CreateRules(`[
-		married_to(A, B) :- marriages(A, B, _);
-		name(A, N) :- person(A, N, _, _);
-		parent(P, C) :- parent(P, C);
-		child(C, P) :- parent(P, C);
-		gender(A, male) :- person(A, _, 'M', _);
-		gender(A, female) :- person(A, _, 'F', _);
+	ds2db := internalGrammarParser.CreateDbMappings(`[
+		married_to(A, B) ->> marriages(A, B, _);
+		name(A, N) ->> person(A, N, _, _);
+		parent(P, C) ->> parent(P, C);
+		child(C, P) ->> parent(P, C);
+		gender(A, male) ->> person(A, _, 'M', _);
+		gender(A, female)->> person(A, _, 'F', _);
 	]`)
 
 	dbFacts := internalGrammarParser.CreateRelationSet(`[
@@ -109,9 +109,9 @@ func TestRelease1(t *testing.T) {
 		focus(_)
 	]`)
 
-	ds2system := internalGrammarParser.CreateRules(`[
-		act(question, X) :- act(question, X);
-		focus(A) :- focus(A);
+	ds2system := internalGrammarParser.CreateDbMappings(`[
+		act(question, X) ->> act(question, X);
+		focus(A) ->> focus(A);
 	]`)
 
 	ds2generic := internalGrammarParser.CreateTransformations(`[
@@ -222,6 +222,7 @@ answerer.AddFactBase(mySqlBase)
 
 		tokens := tokenizer.Process(test.question)
 		genericSense, _, _ := parser.Parse(tokens)
+
 		domainSpecificSense := transformer.Extract(generic2ds, genericSense)
 common.LoggerActive=false
 		dsAnswer := answerer.Answer(domainSpecificSense)
@@ -231,7 +232,7 @@ common.LoggerActive=false
 		answer := surfacer.Create(answerWords)
 
 		fmt.Print()
-		//fmt.Println(genericSense)
+//		fmt.Println(genericSense)
 		//fmt.Println(domainSpecificSense)
 		//fmt.Println(dsAnswer)
 		//fmt.Println(genericAnswer)

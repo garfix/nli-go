@@ -18,6 +18,7 @@ const (
 	t_regExp
 	t_number
 	t_comma
+	t_one_to_many_mapping
 	t_rewrite
 	t_transform
 	t_implication
@@ -56,6 +57,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_regExp, "/(?:\\\\/|\\\\\\\\|[^/])*/"},
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
+		{t_one_to_many_mapping, "->>"},
 		{t_rewrite, "->"},
 		{t_transform, "=>"},
 		{t_implication, ":-"},

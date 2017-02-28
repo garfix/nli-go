@@ -28,12 +28,12 @@ func TestFactBase(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	]`)
 
-	rules := parser.CreateRules(`[
-		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
-		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
+	ds2db := parser.CreateDbMappings(`[
+		write(PersonName, BookName) ->> book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, rules)
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db)
 
 	tests := []struct {
 		input string

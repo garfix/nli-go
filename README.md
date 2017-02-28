@@ -30,7 +30,7 @@ Processing a request consists of these phases:
         * In memory fact bases are used to look up simple facts about a domain
         * Database fact bases are wrappers around a database (for now: MySql) to read simple records
     * Preparation: find bindings needed to answer the question
-    * Generation: create domain specific relations that hold the sense of the answer
+    * Answer: create domain specific relations that hold the sense of the answer
 * Transformation: from domain specific relations to generic relations
 * Generation: create an array of words from the generic relations
 * Surface realization: concatenate the words to raw text
@@ -41,7 +41,9 @@ Note that there are three types of representation that are expressed by relation
 * Domain Specific: This is the interpretive step. This is the level of reasoning of a domain. Domain specific rules can be used with multiple databases.
 * Database: Database relations are optimized for storage.
 
-I will describe the components that make this possible.
+Generic maps n:m to domain specific. Domain specific maps 1:n to database.
+
+I will describe the components that make all of this possible.
 
 ### Tokenizer
 
@@ -127,4 +129,105 @@ The first transformation, from generic to domain specific mainly performs these 
 
 ### Answerer
 
-The answerer turns a question (its domain specific representation) into an answer (also at a domain specific level).
+The answerer turns a question (its domain specific representation) into an answer (also at a domain specific level). To do this, it goes through the following steps:
+
+#### Find a solution
+
+Each question requires a specific type of answer. To answer a question, a solution must be found. A solution looks like this
+
+    condition: act(question, howMany) child(A, B) focus(A),
+    preparation: gender(B, G) numberOf(N, A),
+    answer: gender(B, G) count(C, N) have_child(B, C);
+
+The first solution whose condition matches the question will be used.
+
+#### Execute the question
+
+Now the question is "executed" as if it were a program. The result of this execution are variable bindings, like this:
+
+    [
+        { E1: 1, E2: 4 },
+        { E1: 1, E2: 5 },
+    ]
+
+This result has two bindings. The first binds E1 to 1 and E2 to 4. In case you are wondering what 1 and 4 are, they are primary keys from relations in the database. More general, they are entity identifiers of some sort.
+
+To evaluate a question, three sources of information may be inspected: in-memory fact bases, rule bases, and databases.
+
+##### In-memory fact base
+
+An in-memory fact base looks like this
+
+    [
+		marriages(1, 4, '1815')
+		marriages(6, 8, '1889')
+		parent(2, 1)
+		parent(6, 9)
+		person(1, 'Lord Byron', 'M', '1788')
+		person(2, 'Lady Lovelace', 'F', '1815')
+	]
+
+It's a simple relational database. It can be used to test things, and to store additional information not present in the actual database.
+
+##### Rule base
+
+A rule base holds rules like this:
+
+    siblings(A, B) :- parent(C, A) parent(C, B);
+
+It looks like Prolog, and that's because it behaves like it. Whenever a relation is executed that matches the head of such a rule, the engine enters the rule and executes the tail relations as sub-goals.
+
+Rule bases can be used to make inferences on the information of the database.
+
+##### Databases
+
+To use a database, you must tell the engine how a relation maps to one or more relations in the database. Here's an example
+
+    married_to(A, B) ->> marriages(A, B, _);
+    name(A, N) ->> person(A, N, _, _);
+    parent(P, C) ->> parent(P, C);
+    child(C, P) ->> parent(P, C);
+    gender(A, male) ->> person(A, _, 'M', _);
+    gender(A, female) ->> person(A, _, 'F', _);
+
+In this example there's just a single relation at the right (database) side of the ->>, but there could be more. It's a 1:n mapping.
+
+#### Preparation
+
+After the question is executed, we have a set of bindings. These bindings are then bound to a sequence of relations called the preparation.
+
+The preparation is meant to collect some more information needed to create the answer.
+
+    preparation: gender(B, G) numberOf(N, A),
+
+In this example, the engine executes 'gender' because the gender is needed in the answer ('He ...'). numberOf() is an aggregate function used to collect the number of children for the answer. This function is performed on the binding set. The different occurrences of A are counted and stored in variable N of all bindings.
+
+#### Answer
+
+The resulting bindings are then bound to the relations of the answer part of the solution, to create the domain specific sense of the answer.
+
+### Transformer (2)
+
+The transformer is also used to transform the domain specific relations back to a set of generic relations.
+
+### Generator
+
+The generator generates a sequence of words based on the generic relations, using a generation grammar and generation lexicon. These are different from the ones used for parsing, because there are some differences between parsing and generating sentences.
+
+Here's part of the generation grammar
+
+    rule: s(P) -> np(E) vp(P),                                                  condition: subject(P, E);
+    rule: s(C) -> np(P1) comma(C) s(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _);
+    rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2);
+
+and part of the generation lexicon
+
+    form: 'married',	pos: verb,		    condition: isa(E, marry);
+    form: 'children',	pos: noun,		    condition: isa(E, child);
+    form: 'has',	    pos: verb,		    condition: isa(E, have);
+
+Generation starts from an s() clause. The first rule that matches condition is used. Next, the consequent of the rule are used to generate the rest, all the way down, until words in the lexicon can be matched that have the required part of speech (pos) and condition.
+
+### Surface Representation
+
+Finally the words are concatenated by spaces, except for comma's and periods. And the first letter is capitalized.

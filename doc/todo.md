@@ -1,23 +1,3 @@
-# TODO
-
-## Releases
-
-### 1: simple full-circle nli
-
-* language: english
-* question types: yes/no, who
-- solutions
-* second order predicates, aggregations
-* proper nouns
-* real database access (MySQL)
-* a few simple questions
-* simple natural language responses
-* working example
-
-### 2: omschrijving
-
-* grouped relations in matcher and solver: (), and, or, not
-
 # Known issues
 
 ## Syntax
@@ -27,7 +7,6 @@
     join('', firstName, lastName: name)
     join('', firstName, lastName -> name)
     name = join('', firstName, lastName)
-- De syntax voor 'domain specific 2 database conversion' is dezelfde als inference, dat klopt niet :- should be -> (?) Can this not be a transformation?
 - disable the use of underscores in predicates? don't want to encourage both snake and camelcasing
 - no: disable capitals! underscores are much better readable!
 - should you be allowed to mix predicates of several sets? Is this confusing or a necessity to keep things manageable?

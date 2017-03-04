@@ -115,7 +115,7 @@ func TestBlocksWorld(t *testing.T) {
 		domainSpecificAnswerSense := problemSolver.Solve(questionSense)
 
 		if (len(domainSpecificAnswerSense) == 0) {
-			t.Errorf("Blocks World: expected %s, got %s", test.want, result)
+			t.Errorf("Blocks World: expected %s, got %v", test.want, domainSpecificAnswerSense)
 			continue
 		}
 

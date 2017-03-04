@@ -1,6 +1,11 @@
-# Releases
+## Coming Releases
 
-## 2: omschrijving (?)
+## 2: Scope
+
+* handle scoped questions
+* examples from relationships and blocks
+
+## 3: omschrijving (?)
 
 * grouped relations in matcher and solver: (), and, or, not
 * aggregations, handle literature cases
@@ -13,6 +18,7 @@
 * name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
 * married(A, B) :- married(B, A)
 
+## ARCHIVE
 
 ## 1: simple full-circle nli (2017-02-28)
 

@@ -13,7 +13,7 @@ import (
 	"fmt"
 )
 
-func TestRelease1(t *testing.T) {
+func TestRelationships(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
@@ -183,7 +183,7 @@ func TestRelease1(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher()
 	matcher.AddFunctionBase(systemFunctionBase)
 	transformer := mentalese.NewRelationTransformer(matcher)
-	//factBase1 :=
+	factBase1 :=
 		knowledge.NewInMemoryFactBase(dbFacts, ds2db)
 	mySqlBase := knowledge.NewMySqlFactBase("localhost", "root", "", "my_nligo", ds2db)
 	mySqlBase.AddTableDescription("marriages", []string{"person1_id", "person2_id", "year"})
@@ -195,8 +195,8 @@ func TestRelease1(t *testing.T) {
 	systemPredicateBase := knowledge.NewSystemPredicateBase()
 	answerer := central.NewAnswerer(matcher)
 	answerer.AddSolutions(dsSolutions)
-	//answerer.AddFactBase(factBase1)
-answerer.AddFactBase(mySqlBase)
+	answerer.AddFactBase(factBase1)
+//answerer.AddFactBase(mySqlBase)
 	answerer.AddFactBase(factBase2)
 	answerer.AddRuleBase(ruleBase1)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
@@ -216,6 +216,7 @@ answerer.AddFactBase(mySqlBase)
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
+		{"Does every parent have 4 children?", "He has 4 children"},
 	}
 
 	for _, test := range tests {

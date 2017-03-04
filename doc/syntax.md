@@ -69,7 +69,7 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 ## domain specific 2 database conversion
 
 [
-    name(A, N) :- person(A, N, _, _);
+    name(A, N) ->> person(A, N, _, _) something(A);
 ]
 
 ## Solutions

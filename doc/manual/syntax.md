@@ -45,7 +45,7 @@ Note that the most important entity (the governor, is that what it's called?) is
 Lexicon definitions may use either a string constant or an expression for the form and use these variables in the sense:
 
 E            Will be replaced by the entity variable of current node (ex. E1)
-Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions.
+Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions. Form is a string, except when part-of-speech is 'number', then it is a number.
 
 ## Transformation rules
 

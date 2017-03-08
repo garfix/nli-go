@@ -20,6 +20,10 @@
 - The aggregate base has currently more power than it needs. It can all bindings completely.
 - Add min, max
 
+## Relations
+
+Find a way to ensure completeness of information about all relations used in a system. An interpretation should not even be attempted if not all conversions have a chance to succeed.
+
 ## Solutions
 
 In this solution:

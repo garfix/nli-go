@@ -19,10 +19,11 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 	common.LogTree("SystemPredicateBase Bind", goal, bindings)
 
 	newBindings := []mentalese.Binding{}
-	ok := true
+	found := true
 	aggregate := mentalese.Term{}
 
-	resultVariable := goal.Arguments[0].TermValue
+	resultArgument := goal.Arguments[0]
+	resultVariable := resultArgument.TermValue
 
 	if goal.Predicate == "numberOf" {
 
@@ -43,31 +44,42 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		aggregate = mentalese.Term{ TermType:mentalese.Term_predicateAtom, TermValue: val }
 
 	} else {
-		ok = false
+		found = false
 	}
 
-	if ok {
+	if found {
 		newBindings = []mentalese.Binding{}
 
-		if len(bindings) > 0 {
+		// numberOf(4, E1)
+		if resultArgument.IsNumber() {
 
-			for _, binding := range bindings {
-				newBinding := binding.Copy()
-				newBinding[resultVariable] = aggregate
-				newBindings = append(newBindings, newBinding)
+			if resultArgument.TermValue == aggregate.TermValue {
+				newBindings = bindings
 			}
+
+		// numberOf(N, E1)
 		} else {
 
-			newBinding := mentalese.Binding{}
-			newBinding[resultVariable] = aggregate
-			newBindings = append(newBindings, newBinding)
+			if len(bindings) > 0 {
 
+				for _, binding := range bindings {
+					newBinding := binding.Copy()
+					newBinding[resultVariable] = aggregate
+					newBindings = append(newBindings, newBinding)
+				}
+			} else {
+
+				newBinding := mentalese.Binding{}
+				newBinding[resultVariable] = aggregate
+				newBindings = append(newBindings, newBinding)
+
+			}
 		}
 	}
 
-	common.LogTree("SystemPredicateBase Bind", newBindings, ok)
+	common.LogTree("SystemPredicateBase Bind", newBindings, found)
 
-	return newBindings, ok
+	return newBindings, found
 }
 
 func (base *SystemPredicateBase) getDifferentValues(bindings []mentalese.Binding, subjectVariable string) []mentalese.Term {

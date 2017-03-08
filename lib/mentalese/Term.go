@@ -18,6 +18,10 @@ func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
 }
 
+func (term Term) IsNumber() bool {
+	return term.TermType == Term_number
+}
+
 func (term Term) IsRegExp() bool {
 	return term.TermType == Term_regExp
 }

@@ -1,3 +1,41 @@
+## 2017-03-09
+
+Working out my example sentence
+
+    Does every parent have 2 children?
+
+    rule: sInterrogative(S1) -> auxVerb(A) np(E1) vp(S1) questionMark(),       sense: question(S1, yesNoQuestion) subject(S1, E1);
+
+    sInterrogative(S1)
+        auxVerb(A) Does
+        np(E1) every parent : scope( [ D1-sense ], E1, [ nbar-sense ], [ ] + object(S1, E1) )
+            det(D1) every
+            nbar(E1)
+                noun(E1) parent
+        vp(S1) have 2 children
+            v(S1) have
+            np(E2) : scope( [ D1-sense ], E1, [ nbar-sense ], [ ] + object(S1, E1) )
+                det(D2) 2
+                nbar(E2) children
+        questionMark()
+
+---
+
+I tried to read "Representation and Inference" _again_, this time about Cooper and Keller storage. And I didn't understand.
+
+But maybe I did find a way to extract the quantifier scoping data from the sense representation of a sentence.
+
+Note that the 'determiner(E1, D1)' relation is central here. It connects the quantifier with the scope variable. And the range and scope can be deduced:
+
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(E1, D1);
+
+* quantifier: find all relations with D1 as an argument, except for 'determiner(E1, D1)', and all relations linked to it.
+    These are all relations syntactically below the determiner node.
+* variable: E1
+* range: all relations 'isa(E1, X)' and 'specification(E1, X)', and all relations linked to it (except again for 'determiner(E1, D1)' and beyond)
+    These are all relations syntactically below the nbar node.
+* scope: all relations having E1 as an argument, except for the range relations
+
 ## 2017-03-08
 
 The idea of a domain specific representation I got from TEAM. TEAM does not fully rewrite the generic representation, however. It just rewrites some domain specific parts. It calls this 'coercion' and it happens at several points in the process. Important is that the quantifier scoping is not influenced by these coercions.
@@ -21,6 +59,30 @@ The 'range' determines the possible values of x. That's why some range is requir
 ---
 
 It suddenly (finally) dawned on me that quantifier scoping NEEDS to be done by the parser, just because scoping information is only available on the syntactic level. It is possible that idioms and domain specific expressions change the scopes, but this is quite exceptional, I think, and it maybe hard but not impossible to handle. Having the parser handle quantifier scoping automatically makes things much easier for the user.
+
+I am now attempting to make this work.
+
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(E1, D1);
+    rule: clause(S1) -> np(E1) vp(S1),                                         sense: object(S1, E1);
+
+The quantification is not formed in the np-rule, as I expected. It is formed in the clause-rule, where all ingredients are available.
+
+    rule: clause(S1) -> np(E1) vp(S1),                                         sense: object(S1, E1)                                scope: <E1, E1-determiner, np-sense, vp-sense>;
+
+    quantifier: the determiner of E1 (find a determiner(E1, D1) relation)
+    variable: E1
+    range: the sense of np(E1)
+    scope: the sense of vp(S1)
+
+This all yields a sense like this:
+
+    scope( [ quantifier-sense ], E1, [ np-sense ], [ vp-sense ] )
+
+The sense of this clause is added to the vp-sense. In the grammar:
+
+    rule: clause(S1) -> np(E1) vp(S1),                                         sense: scope( [ quantifier-sense ], E1, [ np-sense ], [ vp-sense ] object(S1, E1) );
+
+Note: quantifiers are not just: ALL, SOME, NONE, but also, BETWEEN THREE AND FIVE, therefore quantifier sense is a compound relation set.
 
 ## 2017-03-07
 

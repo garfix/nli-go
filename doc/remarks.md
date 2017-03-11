@@ -1,3 +1,134 @@
+## 2017-03-11
+
+The problem now is that the generic -> to domain specific conversion conflicts with the quantifier scoping. Which one goes first?
+
+If quantifier scoping goes first I may loose transformation opportunities because the left-hand side relations are divided over different scopes.
+
+If the domain specific conversion goes first, I may loose the "range". But since this is the best option and it is not clear to me, I will now try to show how it works out.
+
+If I apply the conversion
+
+    isa(Q1, have) subject(Q1, S1) object(Q1, O1) isa(O1, child) => have_child(S1, O1)
+
+the range relation isa(O1, child) is lost. It that bad? Can't we do without a range? In theory, yes. The range, as I understand it, mainly serves to limit the possible values of the variable to an acceptable level. This is done for efficiency purposes. Let's see what this leads to
+
+No range, just scope, with no conversion
+
+    isa(Q1, have)
+    quant(D1, S1, [ isa(D1, every) ], [ isa(S1, parent) subject(Q1, S1) ])
+    quant(D2, O1, [ isa(D2, 2) ], [ isa(O1, child) object(Q1, O1) ])
+
+No range, just scope, with conversion
+
+    have_child(S1, O1) quantification(D1, S1) isa(D1, every) quantification(D2, S1) isa(D2, 2)
+
+    quant(D1, S1, [ isa(D1, every) ], [ have_child(S1, O1) ])
+    quant(D2, O1, [ isa(D2, 2) ], [])
+
+Since O1 is unbound in the first quant, this leads to
+
+    quant(D2, O1, [ isa(D2, 2) ], [
+        quant(D1, S1, [ isa(D1, every) ], [ have_child(S1, O1) ])
+    ])
+
+I thought about this more. A range is required because it provides possible values for a variable.
+
+---
+
+A plan for what I need to do:
+
+* change 'determiner()' to 'dp()' (syntactic rewrite)
+* change 'determiner(E1, D1)' to 'determiner(E1, child-sense[E1], D1, child-sense[D1])'
+* create a quantifier scoper that turns a relation set into a scoped relation set
+* extend the answerer to make it answer scoped relation questions
+
+---
+
+Thinking about the problematic 'determiner(E1, child-sense[E1], D1, child-sense[D1])' it suddenly occurred to me that I could use an extra variable to separate the scope from the range:
+
+rule: np(S) -> determiner(Q) nbar(R),                                     sense: quantification(Q, R, S);
+
+This way, all relations with R form the range, all relations with Q form the quantifier, and all relations with S form the scope!
+
+I like this solution (if it works?) because it allow me to keep the simple relation graph in tact, without resorting to nesting.
+
+What would this do to the example sentence?
+
+    isa(Q1, have)
+    subject(Q1, E1)
+    object(Q1, E2)
+    quantification(D1, R1, E1)
+    quantification(D2, R2, E2)
+    isa(R1, parent)
+    isa(R2, child)
+    isa(D1, every)
+    isa(D2, 2)
+
+Let's presume a generic -> ds conversion before scoping:
+
+    isa(Q1, have) subject(Q1, E1) object(Q1, E2) quantification(_, R1, E1) isa(R1, parent) quantification(_, R2, E2) isa(R2, child) -> have_child(R1, R2) ... etc
+
+(omg! too long!)
+
+    have_child(E1, E2)
+    quantification(D1, R1, E1)
+    quantification(D2, R2, E2)
+    isa(R1, parent)
+    isa(R2, child)
+    isa(D1, every)
+    isa(D2, 2)
+
+When solving the question, quantifier scoping becomes active. 'every' takes preference and we find:
+
+    scope(D1, R1, E1):
+        execute: range -> scope -> quantifier
+            range: foreach relation with R1: isa(R1, parent): R1 = 1, 2, 3, ...
+            scope: all relations with E1: -
+            quantification(D2, R2, E2) is placed in the scope of E1
+                execute: range -> scope -> quantifier
+                    range: R2 = 8, 9, 10, ...
+                    scope: have_child(E1, E2)
+                    quantifier: isa(D2, 2): succeeds for every R1 and R2 (or E1 and E2 ???)
+            quantifier: isa(D1, every): succeeds for every R1
+
+I really don't like this idea that the same entity now has two variables. This is asking for trouble. On the other hand, ... it may be more correct to do it this way.
+
+Anyway, it is also possible to split the range from the scope from the fact that the range consists only of isa's and specification's.
+
+## 2017-03-10
+
+was
+
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(E1, D1);
+
+will be
+
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: quantification(D1, E1, <D1>, <E1>);
+
+Which means:
+
+E1, which is a <E1> (the range) is quantified by <D1> (the sense of D1).
+
+Interpreting "Has every parent 2 children?" yields:
+
+    isa(Q1, have)
+    subject(Q1, S1)
+    object(Q1, O1)
+    quantification(D1, S1, [ isa(D1, every) ], [ isa(S1, parent) ])
+    quantification(D2, O1, [ isa(D2, 2) ], [ isa(O1, child) ])
+
+This is heavily influenced by CLE, page 151.
+
+The scope of S1 is formed by all relations with S1; likewise for O1.
+
+In the quantifier scoping phase the scopes are created from the quantifications. Lets call the scopings 'quants' after CLE:
+
+    isa(Q1, have)
+    quant(D1, S1, [ isa(D1, every) ], [ isa(S1, parent) ], [ subject(Q1, S1) ])
+    quant(D2, O1, [ isa(D2, 2) ], [ isa(O1, child) ], [ object(Q1, O1) ])
+
+From what I've read, it appears that one and only scope is nested in another scope. These will need to be nested, but there are solutions for that.
+
 ## 2017-03-09
 
 Working out my example sentence

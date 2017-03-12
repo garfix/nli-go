@@ -1,3 +1,72 @@
+## 2017-03-12
+
+I reviewed everything I wrote, and I reread some of the literature. And this is what I came up with, in the form of an example:
+
+> Does every parent have 2 children?
+
+1) raw parse
+
+    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(D1, <1>, E1, <2>);
+
+Where <2> means: move the relation set sense of the second consequent to this argument. The result of the parse is:
+
+    isa(Q1, have)
+    subject(Q1, S1)
+    object(Q1, O1)
+    determiner(D1, [ isa(D1, every) ], S1, [ isa(S1, parent) ])
+    determiner(D2, [ isa(D2, 2) ], O1, [ isa(O1, child) ])
+
+Then I'll introduce a generic step that converts to clumsy verb predicates to easier predicates. All occurrences of isa(Q1, PRED) subject() object() are turned into PRED(). The result:
+
+    have(S1, O1)
+    determiner(D1, [ isa(D1, every) ], S1, [ isa(S1, parent) ])
+    determiner(D2, [ isa(D2, 2) ], O1, [ isa(O1, child) ])
+
+And I'll introduce a step that helps remove vagueness ("have" is vague)
+
+    [
+        condition: isa(O1 child),
+        old: have(S1, O1),
+        new: have_child(S1, O1);
+    ]
+
+The step to remove vagueness is domain specific. I need to take this into account.
+
+This allows you to replace single relations.
+
+    have_child(S1, O1)
+    determiner(D1, [ isa(D1, every) ], S1, [ isa(S1, parent) ])
+    determiner(D2, [ isa(D2, 2) ], O1, [ isa(O1, child) ])
+
+
+Then follows the old generic -> domain specific transformation, which we don't need here. Quantifier scoping gives:
+
+    quant(D1, [ isa(D1, every) ], S1, [ isa(S1, parent) ], [
+        quant(D2, [ isa(D2, 2) ], O1, [ isa(O1, child) ], [
+            have_child(S1, O1)
+        ])
+    ])
+
+Each quant is executed as follows:
+
+* Range: Find all values for variable: S1
+* Scope: Execute scope with S1 bound to one of its values (recursive process containing other quants)
+* Quantification: execute the determiner. quant returns all bound variable sets on success, and clears them on failure
+
+Question: how do I know that quants are always nested 1 by 1? It's not. Take for example: Roses are red and violets are blue. The scopes are not nested.
+
+What does the quantifier scoping algorithm look like?
+
+* Turn all determiners into quants
+
+    have_child(S1, O1)
+    quant(D1, [ isa(D1, every) ], S1, [ isa(S1, parent) ], [])
+    quant(D2, [ isa(D2, 2) ], O1, [ isa(O1, child) ], [])
+
+* Start binding all unbound relations (have_child). have_child has 2 variables: S1 and O1. Now look for quants that match and apply preferences.
+
+* From CLE I can't really make out what happens next, I will have to try.
+
 ## 2017-03-11
 
 The problem now is that the generic -> to domain specific conversion conflicts with the quantifier scoping. Which one goes first?

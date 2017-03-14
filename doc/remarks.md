@@ -1,3 +1,55 @@
+## 2017-03-14
+
+Reading bits of Quantifiers in Language and Logic on Amazon:
+
+Some Quantifier Phrases
+
+    a few
+    a little
+    about five
+    at least one
+    at most six
+    exactly three
+    more than two
+    fewer than four
+    no more than five
+    no fewer than five
+    between six and twelve
+    half of the
+    at least a third of the
+    at most two-thirds of the
+    more than half of the
+    Less than three-fifths of the
+
+I thought of:
+
+    two or three
+
+Which reminds me to create conversions for the count-words (twelve => 12)
+
+## 2017-03-13
+
+Michael A Covington explains, in Natural Language Processing for Prolog Programmers, plainly what Quantifier Raising means:
+
+some(X, dog(X), all(Y, cat(Y), chased(X, Y)))
+=>
+all(Y, cat(Y), some(X, dog(X), chased(X, Y)))
+
+Q1(V1, R1, Q2(V2, R2, S2))
+=>
+Q2(V2, R2, Q1(V1, R1, S2))
+
+So, is this a possible implementation for QS:
+
+Collect all determiners.
+
+* Go through all of their permutations.
+* For each permutation of determiners:
+    * Nest the determiners
+    * Check their validity and calculate the score of this permutation.
+* Pick the permutation with the highest score.
+* Fill in the other relations at the outermost position where they still are scoped.
+
 ## 2017-03-12
 
 I reviewed everything I wrote, and I reread some of the literature. And this is what I came up with, in the form of an example:

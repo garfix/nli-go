@@ -1,3 +1,24 @@
+## 2017-03-15
+
+I have noticed one time too many that the "preferred reading" is simply the one where quantifiers decrease in scope from left to right. So I will now look for counter examples. And I need obvious examples, one you don't need to think or doubt about. If I can't find them, this whole exercise of creating laws and preferences for scoping is just too academic, and I will apply scoping in order of occurrence. Also, because if the order of scoping just changes after you had to think about it, in the end, no generic algorithm suffices, and hand coded quantifier rules will be needed.
+
+> John visited every house on a street. (Quantifier Scoping in the SRI Core Language Engine)
+
+ * EXISTS street(s) ALL house(h) [ in(h, s) visit(john, h) ]
+ * Yes here the scope is inverted from the left-to-right one. But I think it is far-fetched. In normal use one would know the street. John visited every house on Baker Street.
+
+I have found such a sentence:
+
+> Name the mother of each child.
+
+In this case the sense of applying wider -> narrower scope from left to right would be something like
+
+    EXISTS m mother(m)
+        ALL c child(c)
+            child_of(c, m) name(q, m)
+
+Which would ask the system to name the mother who has all children as a child. While 'every' has clearly wider scope, and this is a typical outcome of the quantifier scoping algorithm. So this is a good example to work with.
+
 ## 2017-03-14
 
 Reading bits of Quantifiers in Language and Logic on Amazon:

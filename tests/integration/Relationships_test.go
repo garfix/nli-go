@@ -27,8 +27,10 @@ func TestRelationships(t *testing.T) {
 		form: 'many',       pos: adjective,     sense: isa(E, many);
 		form: 'which',      pos: whWord,        sense: isa(E, which);
 		form: 'married',    pos: verb, 	        sense: isa(E, marry);
+		form: 'does',		pos: auxVerb,       sense: isa(E, do);
 		form: 'did',		pos: auxVerb,       sense: isa(E, do);
 		form: 'has',		pos: auxVerb,       sense: isa(E, have);
+		form: 'have',		pos: verb,          sense: isa(E, have);
 		form: 'marry',		pos: verb,		    sense: isa(E, marry);
 		form: /^[A-Z]/,	    pos: firstName,     sense: name(E, Form, firstName);
 		form: 'de',		    pos: insertion,     sense: name(E, 'de', insertion);
@@ -39,6 +41,10 @@ func TestRelationships(t *testing.T) {
 		form: 'and',		pos: conjunction;
 		form: 'siblings',	pos: noun,		    sense: isa(E, sibling);
 		form: 'children',	pos: noun,		    sense: isa(E, child);
+		form: 'parent',	    pos: noun,		    sense: isa(E, parent);
+		form: 'mother',	    pos: noun,		    sense: isa(E, mother);
+		form: 'every',	    pos: determiner,    sense: isa(E, every);
+		form: /^[0-9]+/,	pos: number,        sense: number(E, Form);
 		form: '?',          pos: questionMark;
 	]`)
 
@@ -46,6 +52,10 @@ func TestRelationships(t *testing.T) {
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
+		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
+		isa(E, mother) => gender(E, female);
+		determiner(E, D) number(D, N) => numberOf(N, E);
+		determiner(E, D) isa(D, every) => every(E);
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
@@ -75,6 +85,10 @@ func TestRelationships(t *testing.T) {
 		condition: act(question, howMany) child(A, B) focus(A),
 		preparation: gender(B, G) numberOf(N, A),
 		answer: gender(B, G) count(C, N) have_child(B, C);
+
+		condition: act(question, yesNo) child(A, B) every(B),
+		preparation: exists(G, B),
+		answer: result(G);
 	]`)
 
 	dsInferenceRules := internalGrammarParser.CreateRules(`[
@@ -96,22 +110,32 @@ func TestRelationships(t *testing.T) {
 		parent(4, 3)
 		parent(4, 5)
 		parent(4, 6)
+		parent(1, 7)
+		parent(1, 8)
+		parent(1, 9)
+		parent(1, 10)
 		person(1, 'Jacqueline de Boer', 'F', '1964')
 		person(2, 'Mark van Dongen', 'M', '1967')
 		person(3, 'Suzanne van Dongen', 'F', '1967')
 		person(4, 'John van Dongen', 'M', '1938')
 		person(5, 'Dirk van Dongen', 'M', '1972')
 		person(6, 'Durkje van Dongen', 'M', '1982')
+		person(7, 'Huub de Boer', 'M', '1998')
+		person(8, 'Babs de Boer', 'F', '1999')
+		person(7, 'Johanneke de Boer', 'M', '1998')
+		person(8, 'Baukje de Boer', 'F', '1999')
 	]`)
 
 	systemFacts := internalGrammarParser.CreateRelationSet(`[
 		act(question, _)
 		focus(_)
+		every(_)
 	]`)
 
 	ds2system := internalGrammarParser.CreateDbMappings(`[
 		act(question, X) ->> act(question, X);
 		focus(A) ->> focus(A);
+		every(A) ->> every(A);
 	]`)
 
 	ds2generic := internalGrammarParser.CreateTransformations(`[
@@ -216,7 +240,8 @@ func TestRelationships(t *testing.T) {
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
-		{"Does every parent have 4 children?", "He has 4 children"},
+//{"Does every parent have 4 children?", "Yes"},
+//{"Does every mother have 2 children?", "Yes"},
 	}
 
 	for _, test := range tests {
@@ -233,7 +258,7 @@ common.LoggerActive=false
 		answer := surfacer.Create(answerWords)
 
 		fmt.Print()
-//		fmt.Println(genericSense)
+		//fmt.Println(genericSense)
 		//fmt.Println(domainSpecificSense)
 		//fmt.Println(dsAnswer)
 		//fmt.Println(genericAnswer)

@@ -1,6 +1,12 @@
 [
-    rule: determiner(D1) -> article(D1);
-    rule: determiner(D1) -> number(D1);
+    rule: dp(D1) -> determiner(D1);
+    rule: dp(D1) -> article(D1);
+    rule: dp(D1) -> qp(D1);
+
+    rule: qp(Q1) -> quantifier(Q1);
+    rule: qp(D1) -> number(D1);
+    rule: qp(Q1) -> qp(Q2) conjunction(Q1) qp(Q3),                             sense: conjunction(Q1, Q2, Q3);
+    rule: qp(Q1) -> adjective(A1) subConjunction() number(N1),                 sense: relation(Q1, A1, N1);
 
     rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3);
 
@@ -20,7 +26,7 @@
     rule: properNoun(N1) -> firstName(N1) insertion(N1) lastName(N1);
 
     rule: np(E1) -> nbar(E1);
-    rule: np(E1) -> determiner(D1) nbar(E1),                                   sense: determiner(E1, D1);
+    rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1);
     rule: np(E1) -> poss(E2) nbar(E1),                                         sense: possession(E1, E2);
     rule: np(E1) -> pronoun(E1);
     rule: np(E1) -> properNoun(E1);

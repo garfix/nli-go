@@ -3,6 +3,25 @@
     form: 'an',                 pos: article,               sense: isa(E, a);
     form: 'the',                pos: article,               sense: isa(E, the);
 
+    form 'this',                pos: determiner,            sense: isa(E, this);
+    form 'that',                pos: determiner,            sense: isa(E, that);
+
+    form: 'no',                 pos: quantifier,            sense: isa(E, no);
+    form: 'few',                pos: quantifier,            sense: isa(E, few);
+    form: 'little',             pos: quantifier,            sense: isa(E, little);
+    form: 'some',               pos: quantifier,            sense: isa(E, some);
+    form: 'any',                pos: quantifier,            sense: isa(E, some);
+    form: 'several',            pos: quantifier,            sense: isa(E, several);
+    form: 'enough',             pos: quantifier,            sense: isa(E, enough);
+    form: 'both',               pos: quantifier,            sense: isa(E, both);
+    form: 'many',               pos: quantifier,            sense: isa(E, many);
+    form: 'much',               pos: quantifier,            sense: isa(E, much);
+    form: 'more',               pos: quantifier,            sense: isa(E, more);
+    form: 'most',               pos: quantifier,            sense: isa(E, most);
+    form: 'each',               pos: quantifier,            sense: isa(E, all);
+    form: 'every',              pos: quantifier,            sense: isa(E, all);
+    form: 'all',                pos: quantifier,            sense: isa(E, all);
+
     form: 'very',               pos: degree,                sense: isa(E, very);
 
     form: 'quickly',            pos: adverb,                sense: isa(E, quick);
@@ -17,6 +36,8 @@
 
     form: 'and',                pos: conjunction,           sense: isa(E, and);
     form: 'or',                 pos: conjunction,           sense: isa(E, or);
+
+    form 'than',                pos: subConjunction,        sense: isa(E, than);
 
     form: 'person',             pos: noun,                  sense: isa(E, person);
 

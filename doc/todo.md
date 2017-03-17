@@ -1,4 +1,18 @@
-# Known issues
+# Todo
+
+## This release
+
+todo
+
+* ok: change 'determiner()' to 'dp()' (syntactic rewrite)
+* change 'determiner(E1, D1)' to 'determiner(E1, <1>, D1, <2>)'
+* introduce relation set as an argument type
+* while parsing <X>, move the child relations into the <X> argument
+* convert number words into numbers
+* introduce a generic step that converts to clumsy verb predicates to easier predicates. All occurrences of isa(Q1, PRED) subject() object() are turned into PRED().
+* introduce a step that helps remove vagueness ("have" is vague)
+* create a quantifier scoper that turns a relation set into a scoped relation set
+* extend the answerer to make it answer scoped relation questions
 
 ## Syntax
 

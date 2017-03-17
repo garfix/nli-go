@@ -3,6 +3,8 @@
 ## 2: Scope
 
 * handle scoped questions
+    * One sentence with ALL and 2 as quantifiers
+    * One sentence where the right quantifer outscopes the left
 * examples from relationships and blocks
 
 ## 3: omschrijving (?)

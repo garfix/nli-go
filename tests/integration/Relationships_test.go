@@ -60,7 +60,7 @@ func TestRelationships(t *testing.T) {
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
 		question(S, whQuestion) subject(S, E) quantification(E, [], D, []) isa(D, which) => act(question, who);
-		question(S, whQuestion) subject(S, E) quantification(E, [], D1, []) isa(D1, many) specifier(D1, W1) isa(W1, how) => act(question, howMany);
+		question(S, whQuestion) subject(S, E) quantification(E, [], D1, []) isa(D1, many) specification(D1, W1) isa(W1, how) => act(question, howMany);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)

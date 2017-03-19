@@ -54,13 +54,13 @@ func TestRelationships(t *testing.T) {
 		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
 		isa(E, mother) => gender(E, female);
-		determiner(E, D) number(D, N) => numberOf(N, E);
-		determiner(E, D) isa(D, every) => every(E);
+		determiner(E, [], D, []) number(D, N) => numberOf(N, E);
+		determiner(E, [], D, []) isa(D, every) => every(E);
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
-		question(S, whQuestion) subject(S, E) determiner(E, D) isa(D, which) => act(question, who);
-		question(S, whQuestion) subject(S, E) determiner(E, D1) isa(D1, many) specifier(D1, W1) isa(W1, how) => act(question, howMany);
+		question(S, whQuestion) subject(S, E) determiner(E, [], D, []) isa(D, which) => act(question, who);
+		question(S, whQuestion) subject(S, E) determiner(E, [], D1, []) isa(D1, many) specifier(D1, W1) isa(W1, how) => act(question, howMany);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)
@@ -145,7 +145,7 @@ func TestRelationships(t *testing.T) {
 		name(A, N) => name(A, N);
 		and(R, A, B) => conjunction(R, A, B) isa(R, and);
 		gender(A, male) => isa(A, male);
-		count(A, N) => determiner(A, D) isa(D, N);
+		count(A, N) => determiner(A, [], D, []) isa(D, N);
 		gender(A, female) => isa(A, female);
 		result(true) => declaration(S) modifier(S, M) isa(M, yes);
 		result(false) => declaration(S) modifier(S, M) isa(M, no);
@@ -160,7 +160,7 @@ func TestRelationships(t *testing.T) {
         rule: np(F) -> proper_noun(F),                                              condition: name(F, Name);
         rule: np(G) -> pronoun(G),                                                  condition: isa(G, female);
         rule: np(G) -> pronoun(G),                                                  condition: isa(G, male);
-        rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: determiner(E1, D1);
+        rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: determiner(E1, [], D1, []);
         rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1);
         rule: nbar(E1) -> noun(E1);
 	]`)

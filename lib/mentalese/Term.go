@@ -5,6 +5,7 @@ import "fmt"
 type Term struct {
 	TermType  int
 	TermValue string
+	TermValueRelationSet RelationSet
 }
 
 const Term_variable = 1
@@ -13,6 +14,7 @@ const Term_stringConstant = 3
 const Term_number = 4
 const Term_anonymousVariable = 5
 const Term_regExp = 6
+const Term_relationSet = 7
 
 func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
@@ -30,8 +32,19 @@ func (term Term) IsAnonymousVariable() bool {
 	return term.TermType == Term_anonymousVariable
 }
 
+func (term Term) IsRelationSet() bool {
+	return term.TermType == Term_relationSet
+}
+
 func (term Term) Equals(otherTerm Term) bool {
-	return term.TermType == otherTerm.TermType && term.TermValue == otherTerm.TermValue
+	if term.TermType != otherTerm.TermType {
+		return false
+	}
+	if term.TermType == Term_relationSet {
+		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
+	} else {
+		return term.TermValue == otherTerm.TermValue
+	}
 }
 
 func (term Term) AsKey() string {
@@ -55,6 +68,8 @@ func (term Term) String() string {
 		s = term.TermValue
 	case Term_anonymousVariable:
 		s = "_"
+	case Term_relationSet:
+		s = term.TermValueRelationSet.String()
 	default:
 		s = "<unknown>"
 	}

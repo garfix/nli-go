@@ -10,7 +10,7 @@ func (relation Relation) Equals(otherRelation Relation) bool {
 	equals := relation.Predicate == otherRelation.Predicate
 
 	for i, argument := range relation.Arguments {
-		equals = equals && argument	== otherRelation.Arguments[i]
+		equals = equals && argument.Equals(otherRelation.Arguments[i])
 	}
 
 	return equals
@@ -33,12 +33,7 @@ func (relation Relation) String() string {
 
 	for _, Argument := range relation.Arguments {
 
-		term := Argument.TermValue
-		if Argument.TermType == Term_stringConstant {
-			term = "'" + term + "'"
-		}
-
-		args += sep + term
+		args += sep + Argument.String()
 		sep = ", "
 	}
 

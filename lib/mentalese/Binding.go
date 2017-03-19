@@ -153,7 +153,7 @@ func (b Binding) Equals(c Binding) bool {
 	}
 
 	for key, value := range b {
-		if c[key] != value {
+		if !c[key].Equals(value) {
 			return false
 		}
 	}

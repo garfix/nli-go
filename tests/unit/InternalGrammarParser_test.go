@@ -6,9 +6,22 @@ import (
 	"nli-go/lib/importer"
 )
 
-func TestGrammar(test *testing.T) {
+func TestInternalGrammarParser(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
+
+	tests := []string {
+		"determiner(E, [], D, [])",
+	}
+
+	for _, test := range tests {
+		result := parser.CreateRelation(test)
+		if result.String() != test {
+			t.Errorf("got %s, want %s", result.String(), test)
+		}
+	}
+
+	// =====================================================
 
 	grammar := parser.CreateGrammar("[" +
 		"rule: s(P) -> np(E) vp(P),         sense: subject(P, E);" +
@@ -16,23 +29,23 @@ func TestGrammar(test *testing.T) {
 
 	rules := grammar.FindRules("s")
 	if len(rules) == 0 {
-		test.Error("No rules found")
+		t.Error("No rules found")
 	}
 
 	if rules[0].SyntacticCategories[0] != "s" {
-		test.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[0]))
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[0]))
 	}
 	if rules[0].SyntacticCategories[1] != "np" {
-		test.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[1]))
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[1]))
 	}
 	if rules[0].EntityVariables[0] != "P" {
-		test.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[0]))
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[0]))
 	}
 	if rules[0].EntityVariables[1] != "E" {
-		test.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[1]))
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[1]))
 	}
 	if len(rules[0].Sense) != 1 {
-		test.Error(fmt.Printf("Error in number of sense relations: %s", len(rules[0].Sense)))
+		t.Error(fmt.Printf("Error in number of sense relations: %s", len(rules[0].Sense)))
 	}
 
 	grammar = parser.CreateGrammar("[" +
@@ -42,11 +55,11 @@ func TestGrammar(test *testing.T) {
 
 	rules = grammar.FindRules("s")
 	if len(rules) != 1 {
-		test.Error("No rules found")
+		t.Error("No rules found")
 	}
 	rules = grammar.FindRules("np")
 	if len(rules) != 1 {
-		test.Error("No rules found")
+		t.Error("No rules found")
 	}
 
 	grammar = parser.CreateGrammar("[]")

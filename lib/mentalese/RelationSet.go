@@ -17,6 +17,21 @@ func (set RelationSet) IsEmpty() bool {
 	return len(set) == 0
 }
 
+func (set RelationSet) Equals(newSet RelationSet) bool {
+
+	if len(set) != len(newSet) {
+		return false
+	}
+
+	for i, newRelation := range newSet {
+		if !newRelation.Equals(set[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (set RelationSet) Merge(newSet RelationSet) RelationSet {
 
 	mergedSet := set.Copy()

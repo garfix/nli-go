@@ -575,7 +575,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 
 				for _, patternRelation := range tailRelations {
 					if len(patternRelation.Arguments) == 0 {
-						patternRelation.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
+						patternRelation.Arguments = []mentalese.Term{{mentalese.Term_variable, "_", mentalese.RelationSet{}}}
 					} else if len(patternRelation.Arguments) != 1 {
 						ok = false
 					} else if !patternRelation.Arguments[0].IsVariable() {
@@ -611,7 +611,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, 
 
 				for _, consequent := range consequents {
 					if len(consequent.Arguments) == 0 {
-						consequent.Arguments = []mentalese.Term{{mentalese.Term_variable, "_"}}
+						consequent.Arguments = []mentalese.Term{{mentalese.Term_variable, "_", mentalese.RelationSet{}}}
 					} else if len(consequent.Arguments) != 1 {
 						ok = false
 					} else if !consequent.Arguments[0].IsVariable() {
@@ -791,10 +791,17 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 						term.TermType = mentalese.Term_anonymousVariable
 						term.TermValue = tokenValue
 					} else {
-						tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+						relationSet := mentalese.RelationSet{}
+						relationSet, startIndex, ok = parser.parseRelationSet(tokens, startIndex)
 						if ok {
-							term.TermType = mentalese.Term_regExp
-							term.TermValue = tokenValue
+							term.TermType = mentalese.Term_relationSet
+							term.TermValueRelationSet = relationSet
+						} else {
+							tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+							if ok {
+								term.TermType = mentalese.Term_regExp
+								term.TermValue = tokenValue
+							}
 						}
 					}
 				}

@@ -70,7 +70,7 @@
 
     rule: sbar(S1) -> complementizer(C) clause(S1),                            sense: complement(S1, C);
 
-    rule: clause(S1) -> np(E1) vp(S1),                                         sense: object(S1, E1);
+    rule: clause(S1) -> np(E1) vp(S1),                                         sense: subject(S1, E1);
     rule: clause(S1) -> np(E1) modal(M) vp(S1),                                sense: subject(S1, E1) modality(S1, M);
     rule: clause(S1) -> advp(A) clause(S1);
     rule: clause(S1) -> pp(P) clause(S1);

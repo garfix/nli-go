@@ -7,6 +7,8 @@
     * One sentence where the right quantifer outscopes the left
 * examples from relationships and blocks
 
+* new: parse tree as new step
+
 ## 3: omschrijving (?)
 
 * grouped relations in matcher and solver: (), and, or, not

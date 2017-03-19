@@ -45,6 +45,16 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 	return true
 }
 
+func (rule GrammarRule) GetConsequentIndexByVariable(variable string) (int, bool) {
+	for i, entityVariable := range rule.EntityVariables[1:] {
+		if entityVariable == variable {
+			return i, true
+		}
+	}
+
+	return 0, false
+}
+
 func (rule GrammarRule) String() string {
 
 	s := ""

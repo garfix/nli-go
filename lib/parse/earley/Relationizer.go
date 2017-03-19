@@ -7,6 +7,7 @@ import (
 )
 
 // The relationizer turns a parse tree into a relation set
+// It also subsumes the range and quantifier relation sets inside its quantification relation
 type Relationizer struct {
 	lexicon         *parse.Lexicon
 	senseBuilder    parse.SenseBuilder
@@ -30,31 +31,87 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 
 	common.LogTree("extractSenseFromNode", node, antecedentVariable)
 
-	relations := mentalese.RelationSet{}
+	relationSet := mentalese.RelationSet{}
 
 	if node.IsLeafNode() {
 
 		// leaf state rule: category -> word
 		lexItem, _ := relationizer.lexicon.GetLexItem(node.form, node.category)
 		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
-		relations = append(relations, lexItemRelations...)
+		relationSet = append(relationSet, lexItemRelations...)
 
 	} else {
 
 		variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariable, node.rule.EntityVariables)
 		parentRelations := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
-		relations = append(relations, parentRelations...)
+		relationSet = append(relationSet, parentRelations...)
 
 		// create relations for each of the children
+		childSets := []mentalese.RelationSet{}
 		for i, childNode := range node.constituents {
 
 			consequentVariable := variableMap[node.rule.EntityVariables[i + 1]]
 			childRelations := relationizer.extractSenseFromNode(childNode, consequentVariable)
-			relations = append(relations, childRelations...)
+			childSets = append(childSets, childRelations)
+		}
+
+		relationSet = relationizer.processChildRelations(relationSet, childSets, node.rule)
+	}
+
+	common.LogTree("extractSenseFromNode", relationSet)
+
+	return relationSet
+}
+
+// Adds all childSets to parentSet
+// Special case: if parentSet contains relation set placeholders [], like `quantification(X, [], Y, [])`, then these placeholders
+// will be filled with the child set of the preceding variable
+func (relationizer Relationizer) processChildRelations(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule parse.GrammarRule) mentalese.RelationSet {
+
+	newSet := mentalese.RelationSet{}
+	extractedSetIndexes := map[int]bool{}
+
+	for _, parentRelation := range parentSet {
+
+		// special case
+		if parentRelation.Predicate == "quantification!!" {
+
+			qRelation := mentalese.Relation{}
+			qRelation.Predicate = parentRelation.Predicate
+			lastVariable := ""
+
+			for _, argument := range parentRelation.Arguments {
+				if argument.IsVariable() {
+					lastVariable = argument.TermValue
+					qRelation.Arguments = append(qRelation.Arguments, argument);
+				} else if argument.IsRelationSet() {
+					index, found := rule.GetConsequentIndexByVariable(lastVariable)
+					if found {
+						extractedSetIndexes[index] = true
+						childSet := childSets[index]
+						relationSetArgument := mentalese.Term{ TermType: mentalese.Term_relationSet, TermValueRelationSet: childSet }
+						qRelation.Arguments = append(qRelation.Arguments, relationSetArgument);
+					} else {
+						panic("Relation set placeholder should be preceded by a variable from the rule")
+					}
+				}
+			}
+
+			newSet = append(newSet, qRelation)
+
+		} else {
+			newSet = append(newSet, parentRelation)
 		}
 	}
 
-	common.LogTree("extractSenseFromNode", relations)
+	for i, childSet := range childSets {
 
-	return relations
+		// skip the child sets that were used in quantifications
+		_, found := extractedSetIndexes[i]
+		if !found {
+			newSet = append(newSet, childSet...)
+		}
+	}
+
+	return newSet
 }

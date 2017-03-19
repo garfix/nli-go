@@ -17,7 +17,7 @@ In the general relational representation I have these senses:
  * object(P, O)                 Idem for object.
  * indirectObject(P, I)         Idem for indirect object.
  * prepositionalObject(P, PO)   Like object, but linked via a preposition. "to the teacher"
- * determiner(O, D)             Singles out which discourse entities are involved.
+ * quantifier(O, [], D, [])     Creates a non-scoped quantifier. O is the quantified variable. The first [] will hold the _range_, the second [] will hold the _quantifier_.
  * possession(E1, E2)           Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
  * modality(P, M)               Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
  * relation(R, P, E)            Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)

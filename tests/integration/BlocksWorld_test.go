@@ -41,6 +41,7 @@ func TestBlocksWorld(t *testing.T) {
 	]`)
 
 	parser := earley.NewParser(grammar, lexicon)
+	relationizer := earley.NewRelationizer(lexicon)
 
 	genericSense2domainSpecificSense := internalGrammarParser.CreateTransformations(`[
 		predication(P, support) subject(P, A) object(P, B) => support(A, B);
@@ -107,7 +108,8 @@ func TestBlocksWorld(t *testing.T) {
 		rawInput := test.input
 		tokenizer := parse.NewTokenizer()
 		wordArray := tokenizer.Process(rawInput)
-		genericSense,_, _ := parser.Parse(wordArray)
+		parseTree, _ := parser.Parse(wordArray)
+		genericSense := relationizer.Relationize(parseTree)
 		dsSense := transformer.Extract(genericSense2domainSpecificSense, genericSense)
 
 		questionSense := transformer.Extract(question2answer, dsSense)

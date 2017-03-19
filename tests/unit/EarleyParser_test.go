@@ -35,10 +35,12 @@ func TestEarleyParser(test *testing.T) {
 	tokenizer := parse.NewTokenizer()
 
 	parser := earley.NewParser(grammar, lexicon)
+	relationizer := earley.NewRelationizer(lexicon)
 
 	wordArray := tokenizer.Process(rawInput)
 
-	relations, tree, _ := parser.Parse(wordArray)
+	tree, _ := parser.Parse(wordArray)
+	relations := relationizer.Relationize(tree)
 
 	if relations.String() != "[subject(S1, E1) determiner(E1, D1) isa(D1, the) isa(E1, girl) predication(S1, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))

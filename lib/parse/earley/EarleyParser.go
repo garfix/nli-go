@@ -24,24 +24,21 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
 
 // Parses words using parser.grammar and parser.lexicon
 // Returns a sense, a parse tree, and a success flag
-func (parser *parser) Parse(words []string) (mentalese.RelationSet, ParseTreeNode, bool) {
+func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
 
 	common.LogTree("Parse", words);
 
 	rootNode := ParseTreeNode{}
-	sense := mentalese.RelationSet{}
 
 	chart, ok := parser.buildChart(words)
 
 	if ok {
-
 		rootNode = parser.extractFirstTree(chart)
-		sense = parser.extractFirstSense(chart)
 	}
 
-	common.LogTree("Parse", sense, rootNode, ok);
+	common.LogTree("Parse", rootNode, ok);
 
-	return sense, rootNode, ok
+	return rootNode, ok
 }
 
 // The body of Earley's algorithm
@@ -264,7 +261,7 @@ func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
 func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
 
 	rule := state.rule
-	branch := ParseTreeNode{ category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "" }
+	branch := ParseTreeNode{ category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule }
 
 	if state.isLeafState() {
 
@@ -280,51 +277,4 @@ func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) Par
 	}
 
 	return branch
-}
-
-func (parser *parser) extractFirstSense(chart *chart) mentalese.RelationSet {
-
-	rootStateId := chart.sentenceStates[0].childStateIds[0]
-	return parser.extractSenseFromState(chart, chart.indexedStates[rootStateId], chart.senseBuilder.GetNewVariable("Sentence"))
-}
-
-// Returns the sense of a state and its children
-// state contains a rule with NP -> Det NBar
-// antecedentVariable contains the actual variable used for the antecedent (for example: E1)
-func (parser *parser) extractSenseFromState(chart *chart, state chartState, antecedentVariable string) mentalese.RelationSet {
-
-	common.LogTree("extractSenseFromState", state, antecedentVariable)
-
-	relations := mentalese.RelationSet{}
-	rule := state.rule
-
-	if state.isLeafState() {
-
-		// leaf state rule: category -> word
-		lexItem, _ := parser.lexicon.GetLexItem(state.rule.GetConsequent(0), state.rule.GetAntecedent())
-		lexItemRelations := chart.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
-		relations = append(relations, lexItemRelations...)
-
-	} else {
-
-		variableMap := chart.senseBuilder.CreateVariableMap(antecedentVariable, state.rule.EntityVariables)
-		parentRelations := chart.senseBuilder.CreateGrammarRuleRelations(state.rule.Sense, variableMap)
-		relations = append(relations, parentRelations...)
-
-		// parse each of the children
-		for i := range rule.GetConsequents() {
-
-			childStateId := state.childStateIds[i]
-			childState := chart.indexedStates[childStateId]
-
-			consequentVariable := variableMap[rule.EntityVariables[i + 1]]
-			childRelations := parser.extractSenseFromState(chart, childState, consequentVariable)
-			relations = append(relations, childRelations...)
-
-		}
-	}
-
-	common.LogTree("extractSenseFromState", relations)
-
-	return relations
 }

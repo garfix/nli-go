@@ -203,6 +203,7 @@ func TestRelationships(t *testing.T) {
 
 	tokenizer := parse.NewTokenizer()
 	parser := earley.NewParser(grammar, lexicon)
+	relationizer := earley.NewRelationizer(lexicon)
 	systemFunctionBase := knowledge.NewSystemFunctionBase()
 	matcher := mentalese.NewRelationMatcher()
 	matcher.AddFunctionBase(systemFunctionBase)
@@ -247,7 +248,8 @@ func TestRelationships(t *testing.T) {
 	for _, test := range tests {
 
 		tokens := tokenizer.Process(test.question)
-		genericSense, _, _ := parser.Parse(tokens)
+		parseTree, _ := parser.Parse(tokens)
+		genericSense := relationizer.Relationize(parseTree)
 
 		domainSpecificSense := transformer.Extract(generic2ds, genericSense)
 common.LoggerActive=false

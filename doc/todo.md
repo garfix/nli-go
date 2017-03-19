@@ -29,6 +29,10 @@ todo
 - find a solution for multiple (2, 3) insertions
 - check if transformations are complete: non-mapping predicates may not be ignored, but should give an error
 
+## Developing
+
+* Introduce a "show intermediate representations" mode that shows all temp results
+
 ## Aggregations
 
 - The aggregate base has currently more power than it needs. It can all bindings completely.

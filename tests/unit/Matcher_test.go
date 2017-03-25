@@ -24,6 +24,10 @@ func TestMatchTwoRelations(t *testing.T) {
 		{"parent(X, Y)", "parent(A, B)", "{}", "{X:A, Y:B}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Luke'}", "{X: 'Luke', Y: 'George'}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Vincent'}", "{X: 'Vincent'}", false},
+		{"quantification(X, [], Y, [ isa(Y, every) ])", "quantification(A, [], B, [ isa(B, every) ])", "{}", "{X: A, Y: B}", true},
+		{"quantification(X, _, Y, [ isa(Y, every) ])", "quantification(A, [], B, [ isa(B, P) specification(B, S) isa(S, very)])", "{}", "{X: A, Y: B}", true},
+		{"quantification(X, [], Y, Y1)", "quantification(A, E, B, [ isa(Y, every) ])", "{}", "{X: A, Y: B, Y1: [isa(Y, every)]}", true},
+		{"quantification(X, _, Y, [ isa(Y, Q) ])", "quantification(A, [], B, [ isa(B, every) specification(B, S) isa(S, very)])", "{}", "{X: A, Q: every, Y: B}", true},
 	}
 
 	for _, test := range tests {

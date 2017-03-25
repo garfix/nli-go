@@ -7,7 +7,7 @@ func (set RelationSet) Copy() RelationSet {
 	copiedSet := RelationSet{}
 
 	for _, relation := range set {
-		copiedSet = append(copiedSet, relation)
+		copiedSet = append(copiedSet, relation.Copy())
 	}
 
 	return copiedSet

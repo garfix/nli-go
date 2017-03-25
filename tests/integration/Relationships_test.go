@@ -49,7 +49,10 @@ func TestRelationships(t *testing.T) {
 	]`)
 
 	generic2ds := internalGrammarParser.CreateTransformations(`[
+
+		isa(A1, do) isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
@@ -59,8 +62,10 @@ func TestRelationships(t *testing.T) {
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
-		question(S, whQuestion) subject(S, E) quantification(E, [], D, []) isa(D, which) => act(question, who);
-		question(S, whQuestion) subject(S, E) quantification(E, [], D1, []) isa(D1, many) specification(D1, W1) isa(W1, how) => act(question, howMany);
+
+		isa(P, have) subject(P, S) object(P, O) quantification(S, [ isa(S, child) ], D, D1) => child(S, O);
+
+		question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, many)]) specification(D1, W1) isa(W1, how) => act(question, howMany);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)
@@ -78,13 +83,13 @@ func TestRelationships(t *testing.T) {
 		preparation: exists(G, A),
 		answer: result(G);
 
-		condition: act(question, who) child(A, B) focus(A),
-		preparation: name(A, N),
-		answer: name(A, N) make_and(A, R);
-
 		condition: act(question, howMany) child(A, B) focus(A),
 		preparation: gender(B, G) numberOf(N, A),
 		answer: gender(B, G) count(C, N) have_child(B, C);
+
+		condition: child(A, B) focus(A),
+		preparation: name(A, N),
+		answer: name(A, N) make_and(A, R);
 
 		condition: act(question, yesNo) child(A, B) every(B),
 		preparation: exists(G, B),
@@ -234,12 +239,12 @@ func TestRelationships(t *testing.T) {
 		question string
 		answer   string
 	} {
-		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
-		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
-		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
+		//{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
+		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		//{"Did Jacqueline de Boer marry Gerard van As?", "No"},
+		//{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+		//{"Are Mark van Dongen and John van Dongen siblings?", "No"},
+		//{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
 //{"Does every parent have 4 children?", "Yes"},
 //{"Does every mother have 2 children?", "Yes"},
@@ -247,23 +252,25 @@ func TestRelationships(t *testing.T) {
 
 	for _, test := range tests {
 
+
 		tokens := tokenizer.Process(test.question)
 		parseTree, _ := parser.Parse(tokens)
 		genericSense := relationizer.Relationize(parseTree)
+		domainSpecificSense := transformer.Replace(generic2ds, genericSense)
 
-		domainSpecificSense := transformer.Extract(generic2ds, genericSense)
-common.LoggerActive=false
+		common.LoggerActive=true
 		dsAnswer := answerer.Answer(domainSpecificSense)
-common.LoggerActive=false
-		genericAnswer := transformer.Extract(ds2generic, dsAnswer)
+		common.LoggerActive=false
+		genericAnswer := transformer.Replace(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
 
-		fmt.Print()
-		//fmt.Println(genericSense)
-		//fmt.Println(domainSpecificSense)
-		//fmt.Println(dsAnswer)
-		//fmt.Println(genericAnswer)
+		fmt.Println()
+		fmt.Println()
+		fmt.Println(genericSense)
+		fmt.Println(domainSpecificSense)
+		fmt.Println(dsAnswer)
+		fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

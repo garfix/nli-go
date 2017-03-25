@@ -1,6 +1,5 @@
 package mentalese
 
-
 // Extends the binding with new variable bindings for the variables of subjectArgument
 func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
 
@@ -34,6 +33,26 @@ func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument T
 			newBinding[subjectArgument.String()] = patternArgument
 			return newBinding, true
 		}
+
+	} else if subjectArgument.IsRelationSet() {
+
+		newBinding := binding.Copy()
+
+		if patternArgument.IsVariable() {
+			// [ isa(E, very) ], V
+			success = true
+
+		} else if patternArgument.IsRelationSet() {
+
+			subSetBindingins, _, ok := matcher.MatchSequenceToSet(subjectArgument.TermValueRelationSet, patternArgument.TermValueRelationSet, newBinding)
+
+			if ok {
+				newBinding = subSetBindingins[0]
+				success = true
+			}
+		}
+
+		return newBinding, success
 
 	} else {
 

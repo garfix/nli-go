@@ -28,4 +28,11 @@ func TestRelationizer(t *testing.T) {
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
+
+	result = relationizer.Relationize(parseTree)
+
+	want = "[declaration(S2) subject(S2, E2) quantification(E2, [isa(E2, book)], D2, [isa(D2, the)]) isa(S2, fall)]"
+	if result.String() != want {
+		t.Errorf("got %s, want %s", result.String(), want)
+	}
 }

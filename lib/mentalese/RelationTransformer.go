@@ -56,7 +56,7 @@ func (transformer *RelationTransformer) Append(transformations []RelationTransfo
 // Returns the indexes of the matched relations, and the replacements that were created, each in a single set
 func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet){
 
-	common.LogTree("matchAllTransformations", haystackSet)
+	common.LogTree("matchAllTransformations", transformations)
 
 	matchedIndexes := []int{}
 	replacements := RelationSet{}
@@ -93,9 +93,13 @@ func (transformer *RelationTransformer) createReplacements(relations RelationSet
 
 		for _, argument := range relation.Arguments {
 
-			arg := argument
+			arg := argument.Copy()
 
-			if argument.IsVariable() {
+			if argument.IsRelationSet() {
+
+				arg.TermValueRelationSet = transformer.createReplacements(argument.TermValueRelationSet, bindings)
+
+			} else if argument.IsVariable() {
 				value, found := bindings[argument.String()]
 				if found {
 					arg = value

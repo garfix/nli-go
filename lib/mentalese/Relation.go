@@ -22,7 +22,7 @@ func (relation Relation) Copy() Relation {
 	newRelation.Predicate = relation.Predicate
 	newRelation.Arguments = []Term{}
 	for _, argument := range relation.Arguments {
-		newRelation.Arguments = append(newRelation.Arguments, argument)
+		newRelation.Arguments = append(newRelation.Arguments, argument.Copy())
 	}
 	return newRelation
 }

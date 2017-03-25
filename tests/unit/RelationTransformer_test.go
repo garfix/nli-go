@@ -24,10 +24,10 @@ func TestRelationTransformer(t *testing.T) {
 
 	tests := []struct {
 		transformations string
-		wantExtracted string
-		wantReplaced string
-		wantAppended string
-	} {
+		wantExtracted   string
+		wantReplaced    string
+		wantAppended    string
+	}{
 		{
 			`[
 				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => task(A, B) subject(Y);
@@ -62,5 +62,27 @@ func TestRelationTransformer(t *testing.T) {
 		if extractedResult.String() != wantExtracted.String() || replacedResult.String() != wantReplaced.String() || appendedResult.String() != wantAppended.String() {
 			t.Errorf("RelationTransformer: got\n%v\n%v\n%v,\nwant\n%v\n%v\n%v", extractedResult, replacedResult, appendedResult, wantExtracted, wantReplaced, wantAppended)
 		}
+	}
+}
+
+func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
+
+	parser := importer.NewInternalGrammarParser()
+	matcher := mentalese.NewRelationMatcher()
+	transformer := mentalese.NewRelationTransformer(matcher)
+
+	relationSet := parser.CreateRelationSet(`[
+		quantification(E1, [ isa(E1, ball) ], D1, [ isa(D1, every) ])
+	]`)
+
+	transformations := parser.CreateTransformations(`[
+		quantification(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ]) => quantification(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ]) ok(E2, D2);
+	]`)
+
+	replacedResult := transformer.Replace(transformations, relationSet)
+	wantReplaced := "[quantification(E1, [isa(E1, ball)], D1, [isa(D1, every)]) ok(E1, D1)]"
+
+	if replacedResult.String() != wantReplaced {
+		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", replacedResult, wantReplaced)
 	}
 }

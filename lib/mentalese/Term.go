@@ -51,6 +51,16 @@ func (term Term) AsKey() string {
 	return fmt.Sprintf("%d/%s", term.TermType, term.TermValue)
 }
 
+func (term Term) Copy() Term {
+	newTerm := Term{}
+	newTerm.TermType = term.TermType
+	newTerm.TermValue = term.TermValue
+	if term.IsRelationSet() {
+		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
+	}
+	return newTerm
+}
+
 func (term Term) String() string {
 
 	s := ""

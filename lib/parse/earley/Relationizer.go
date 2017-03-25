@@ -115,14 +115,16 @@ func (relationizer Relationizer) doQuantification(actualRelation mentalese.Relat
 	formalRelation := rule.Sense[childIndex]
 	lastVariable := ""
 
-	for i, argument := range formalRelation.Arguments {
-		if argument.IsVariable() {
-			lastVariable = argument.TermValue
-		} else if argument.IsRelationSet() {
+	for i, formalArgument := range formalRelation.Arguments {
+		if formalArgument.IsVariable() {
+			lastVariable = formalArgument.TermValue
+		} else if formalArgument.IsRelationSet() {
 			index, found := rule.GetConsequentIndexByVariable(lastVariable)
 			if found {
+				actualArgument := actualRelation.Arguments[i]
 				extractedSetIndexes[index] = true
-				relationSetArgument := mentalese.Term{ TermType: mentalese.Term_relationSet, TermValueRelationSet: childSets[index] }
+				subSet := append(actualArgument.TermValueRelationSet, childSets[index]...)
+				relationSetArgument := mentalese.Term{ TermType: mentalese.Term_relationSet, TermValueRelationSet: subSet }
 				actualRelation.Arguments[i] = relationSetArgument;
 			} else {
 				panic(fmt.Sprintf("Relation set placeholder should be preceded by a variable from the rule  %v %s", rule, lastVariable))

@@ -65,7 +65,7 @@ func TestRelationships(t *testing.T) {
 
 		isa(P, have) subject(P, S) object(P, O) quantification(S, [ isa(S, child) ], D, D1) => child(S, O);
 
-		question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, many)]) specification(D1, W1) isa(W1, how) => act(question, howMany);
+		question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, many) specification(D1, W1)]) isa(W1, how) => act(question, howMany);
 		question(S, yesNoQuestion) => act(question, yesNo);
 		focus(E1) => focus(E1);
 	]`)
@@ -239,12 +239,12 @@ func TestRelationships(t *testing.T) {
 		question string
 		answer   string
 	} {
-		//{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		//{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		//{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
-		//{"Are Mark van Dongen and John van Dongen siblings?", "No"},
-		//{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
+		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
+		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
+		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
+		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
 //{"Does every parent have 4 children?", "Yes"},
 //{"Does every mother have 2 children?", "Yes"},
@@ -258,7 +258,7 @@ func TestRelationships(t *testing.T) {
 		genericSense := relationizer.Relationize(parseTree)
 		domainSpecificSense := transformer.Replace(generic2ds, genericSense)
 
-		common.LoggerActive=true
+		common.LoggerActive=false
 		dsAnswer := answerer.Answer(domainSpecificSense)
 		common.LoggerActive=false
 		genericAnswer := transformer.Replace(ds2generic, dsAnswer)
@@ -266,11 +266,11 @@ func TestRelationships(t *testing.T) {
 		answer := surfacer.Create(answerWords)
 
 		fmt.Println()
-		fmt.Println()
-		fmt.Println(genericSense)
-		fmt.Println(domainSpecificSense)
-		fmt.Println(dsAnswer)
-		fmt.Println(genericAnswer)
+		//fmt.Println()
+		//fmt.Println(genericSense)
+		//fmt.Println(domainSpecificSense)
+		//fmt.Println(dsAnswer)
+		//fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

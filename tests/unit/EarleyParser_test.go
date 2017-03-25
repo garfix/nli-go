@@ -42,7 +42,7 @@ func TestEarleyParser(test *testing.T) {
 	tree, _ := parser.Parse(wordArray)
 	relations := relationizer.Relationize(tree)
 
-	if relations.String() != "[subject(S1, E1) determiner(E1, D1) isa(D1, the) isa(E1, girl) predication(S1, sing)]" {
+	if relations.String() != "[subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, girl) predication(S5, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))
 	}
 	if tree.String() != "[s [np [det the] [nbar [adj small] [nbar [adj shy] [nbar [noun girl]]]]] [vp [verb sings]]]" {

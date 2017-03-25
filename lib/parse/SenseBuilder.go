@@ -20,7 +20,7 @@ func (builder SenseBuilder) GetNewVariable(formalVariable string) string {
 
 	_, present := builder.varIndexCounter[initial]
 	if !present {
-		builder.varIndexCounter[initial] = 1
+		builder.varIndexCounter[initial] = 5
 	} else {
 		builder.varIndexCounter[initial]++
 	}

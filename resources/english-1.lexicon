@@ -52,6 +52,8 @@
 
     form: 'right',              pos: pSpec,                 sense: isa(E, right);
 
+    form: 'is',                 pos: auxVerb,               sense: isa(E, be);
+    form: 'was',                pos: auxVerb,               sense: isa(E, be);
 	form: 'are',		        pos: auxVerb,		        sense: isa(E, be);
     form: 'does',		        pos: auxVerb,               sense: isa(E, do);
     form: 'did',		        pos: auxVerb,               sense: isa(E, do);
@@ -69,16 +71,14 @@
     form: 'must',               pos: modal,                 sense: isa(E, must);
     form: 'will',               pos: modal,                 sense: isa(E, will);
 
-    form: 'is',                 pos: auxVerb,               sense: isa(E, be);
-    form: 'was',                pos: auxVerb,               sense: isa(E, be);
-
     form: 'who',                pos: whWord,                sense: isa(E, who);
     form: 'how',                pos: whWord,                sense: isa(E, how);
 	form: 'which',              pos: whWord,                sense: isa(E, which);
 
-    form: /^[A-Z]/,	            pos: firstName,             sense: name(E, Form, firstName);
     form: 'de',		            pos: insertion,             sense: name(E, 'de', insertion);
     form: 'van',		        pos: insertion,             sense: name(E, 'van', insertion);
+
+    form: /^[A-Z]/,	            pos: firstName,             sense: name(E, Form, firstName);
     form: /^[A-Z]/,	            pos: lastName,              sense: name(E, Form, lastName);
     form: /^[A-Z]/,	            pos: fullName,              sense: name(E, Form, fullName);
 
@@ -87,5 +87,4 @@
     form: '?',                  pos: questionMark;
     form: '.',                  pos: period;
     form: '!',                  pos: exc;
-
 ]

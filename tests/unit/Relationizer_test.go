@@ -4,14 +4,13 @@ import (
 "testing"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/importer"
-	"nli-go/lib/common"
 )
 
 func TestRelationizer(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../../resources/english-1.grammar")
+	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/english-1.grammar"))
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		form: 'the',        pos: determiner,        sense: isa(E, the);
 		form: 'book',       pos: noun,              sense: isa(E, book);

@@ -3,8 +3,8 @@
     form: 'an',                 pos: article,               sense: isa(E, a);
     form: 'the',                pos: article,               sense: isa(E, the);
 
-    form 'this',                pos: determiner,            sense: isa(E, this);
-    form 'that',                pos: determiner,            sense: isa(E, that);
+    form: 'this',               pos: determiner,            sense: isa(E, this);
+    form: 'that',               pos: determiner,            sense: isa(E, that);
 
     form: 'no',                 pos: quantifier,            sense: isa(E, no);
     form: 'few',                pos: quantifier,            sense: isa(E, few);
@@ -37,31 +37,55 @@
     form: 'and',                pos: conjunction,           sense: isa(E, and);
     form: 'or',                 pos: conjunction,           sense: isa(E, or);
 
-    form 'than',                pos: subConjunction,        sense: isa(E, than);
+    form: 'than',               pos: subConjunction,        sense: isa(E, than);
 
     form: 'person',             pos: noun,                  sense: isa(E, person);
+    form: 'siblings',	        pos: noun,		            sense: isa(E, sibling);
+    form: 'children',	        pos: noun,		            sense: isa(E, child);
+    form: 'parent',	            pos: noun,		            sense: isa(E, parent);
+    form: 'mother',	            pos: noun,		            sense: isa(E, mother);
 
-    form '\'s',                 pos: possessiveMarker;
+    form: '\'s',                pos: possessiveMarker;
 
-    form 'on',                  pos: preposition,           sense: isa(E, on);
-    form 'at',                  pos: preposition,           sense: isa(E, at);
+    form: 'on',                 pos: preposition,           sense: isa(E, on);
+    form: 'at',                 pos: preposition,           sense: isa(E, at);
 
-    form 'right',               pos: pSpec,                 sense: isa(E, right);
+    form: 'right',              pos: pSpec,                 sense: isa(E, right);
 
-    form 'have',                pos: verb,                  sense: isa(E, have);
-    form 'is',                  pos: verb,                  sense: isa(E, be);
-    form 'are',                 pos: verb,                  sense: isa(E, be);
+	form: 'are',		        pos: auxVerb,		        sense: isa(E, be);
+    form: 'does',		        pos: auxVerb,               sense: isa(E, do);
+    form: 'did',		        pos: auxVerb,               sense: isa(E, do);
+    form: 'has',		        pos: auxVerb,               sense: isa(E, have);
 
-    form 'at',                  pos: particle,              sense: isa(E, are);
+    form: 'have',               pos: verb,                  sense: isa(E, have);
+    form: 'is',                 pos: verb,                  sense: isa(E, be);
+    form: 'are',                pos: verb,                  sense: isa(E, be);
+    form: 'married',            pos: verb, 	                sense: isa(E, marry);
+    form: 'marry',		        pos: verb,		            sense: isa(E, marry);
 
-    form 'can',                 pos: modal,                 sense: isa(E, can);
-    form 'must',                pos: modal,                 sense: isa(E, must);
-    form 'will',                pos: modal,                 sense: isa(E, will);
+    form: 'at',                 pos: particle,              sense: isa(E, are);
 
-    form 'is'                   pos: auxVerb,               sense: isa(E, be);
-    form 'was'                  pos: auxVerb,               sense: isa(E, be);
+    form: 'can',                pos: modal,                 sense: isa(E, can);
+    form: 'must',               pos: modal,                 sense: isa(E, must);
+    form: 'will',               pos: modal,                 sense: isa(E, will);
 
-    form '?'                    pos: questionMark;
-    form '.'                    pos: period;
-    form '!'                    pos: exc;
+    form: 'is',                 pos: auxVerb,               sense: isa(E, be);
+    form: 'was',                pos: auxVerb,               sense: isa(E, be);
+
+    form: 'who',                pos: whWord,                sense: isa(E, who);
+    form: 'how',                pos: whWord,                sense: isa(E, how);
+	form: 'which',              pos: whWord,                sense: isa(E, which);
+
+    form: /^[A-Z]/,	            pos: firstName,             sense: name(E, Form, firstName);
+    form: 'de',		            pos: insertion,             sense: name(E, 'de', insertion);
+    form: 'van',		        pos: insertion,             sense: name(E, 'van', insertion);
+    form: /^[A-Z]/,	            pos: lastName,              sense: name(E, Form, lastName);
+    form: /^[A-Z]/,	            pos: fullName,              sense: name(E, Form, fullName);
+
+	form: /^[0-9]+/,	        pos: number,                sense: number(E, Form);
+
+    form: '?',                  pos: questionMark;
+    form: '.',                  pos: period;
+    form: '!',                  pos: exc;
+
 ]

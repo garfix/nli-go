@@ -7,7 +7,7 @@ todo
 * ok: change 'determiner()' to 'dp()' (syntactic rewrite)
 * ok: introduce relation set as an argument type
 * ok: change 'determiner(E1, D1)' to 'quantification(E1, [], D1, [])'
-* introduce a new step that subsumes determiner's relations
+* ok: introduce a new step that subsumes determiner's relations
 * introduce a generic step that converts to clumsy verb predicates to easier predicates. All occurrences of isa(Q1, PRED) subject() object() are turned into PRED().
 * introduce a step that helps remove vagueness ("have" is vague)
 * create a quantifier scoper that turns a relation set into a scoped relation set

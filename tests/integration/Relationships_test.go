@@ -19,41 +19,15 @@ func TestRelationships(t *testing.T) {
 
 	// Data
 
-	grammar := internalGrammarParser.LoadGrammar(common.GetCurrentDir() + "/../../resources/english-1.grammar")
-
-	lexicon := internalGrammarParser.CreateLexicon(`[
-		form: 'who',        pos: whWord,        sense: isa(E, who);
-		form: 'how',        pos: whWord,        sense: isa(E, how);
-		form: 'many',       pos: adjective,     sense: isa(E, many);
-		form: 'which',      pos: whWord,        sense: isa(E, which);
-		form: 'married',    pos: verb, 	        sense: isa(E, marry);
-		form: 'does',		pos: auxVerb,       sense: isa(E, do);
-		form: 'did',		pos: auxVerb,       sense: isa(E, do);
-		form: 'has',		pos: auxVerb,       sense: isa(E, have);
-		form: 'have',		pos: verb,          sense: isa(E, have);
-		form: 'marry',		pos: verb,		    sense: isa(E, marry);
-		form: /^[A-Z]/,	    pos: firstName,     sense: name(E, Form, firstName);
-		form: 'de',		    pos: insertion,     sense: name(E, 'de', insertion);
-		form: 'van',		pos: insertion,     sense: name(E, 'van', insertion);
-		form: /^[A-Z]/,	    pos: lastName,      sense: name(E, Form, lastName);
-		form: /^[A-Z]/,	    pos: fullName,      sense: name(E, Form, fullName);
-		form: 'are',		pos: auxVerb,		sense: isa(E, be);
-		form: 'and',		pos: conjunction;
-		form: 'siblings',	pos: noun,		    sense: isa(E, sibling);
-		form: 'children',	pos: noun,		    sense: isa(E, child);
-		form: 'parent',	    pos: noun,		    sense: isa(E, parent);
-		form: 'mother',	    pos: noun,		    sense: isa(E, mother);
-		form: 'every',	    pos: determiner,    sense: isa(E, every);
-		form: /^[0-9]+/,	pos: number,        sense: number(E, Form);
-		form: '?',          pos: questionMark;
-	]`)
+	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/english-1.grammar"))
+	lexicon := internalGrammarParser.CreateLexicon(internalGrammarParser.LoadText("../../resources/english-1.lexicon"))
 
 	generic2ds := internalGrammarParser.CreateTransformations(`[
 
 		isa(A1, do) isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
-		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling) => siblings(A1, A2);
+		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
 		isa(E, mother) => gender(E, female);

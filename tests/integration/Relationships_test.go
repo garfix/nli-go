@@ -28,18 +28,16 @@ func TestRelationships(t *testing.T) {
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
+
+		isa(P1, have) subject(P1, S) object(P1, O) quantification(S, [ isa(S, child) ], D, D1) => child(S, O);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
 		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
-
-		isa(E, mother) => gender(E, female);
 
 		quantification(E, [], D, []) number(D, N) => numberOf(N, E);
 		quantification(E, [], D, []) isa(D, every) => every(E);
 
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
-
-		isa(P, have) subject(P, S) object(P, O) quantification(S, [ isa(S, child) ], D, D1) => child(S, O);
 
         question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, which)]) => act(question, which);
 		question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);

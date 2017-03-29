@@ -79,7 +79,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	for i, parentRelation := range parentSet {
 
 		// special case
-		if parentRelation.Predicate == "quantification" {
+		if parentRelation.Predicate == mentalese.Predicate_Quantification {
 
 			compoundRelation, extractedSetIndexes = relationizer.doQuantification(parentRelation, i, childSets, rule, extractedSetIndexes)
 			newSet = append(newSet, compoundRelation)

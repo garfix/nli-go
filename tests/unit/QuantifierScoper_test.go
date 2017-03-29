@@ -16,6 +16,10 @@ func TestQuantifierScoper(t *testing.T) {
             "[have_child(S1, O1) quantification(S1, [ isa(S1, parent) ], D1, [ isa(D1, every) ]) quantification(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ])]",
             "[quant(S1, [isa(S1, parent)], D1, [isa(D1, every)], [quant(O1, [isa(O1, child)], D2, [isa(D2, 2)], [have_child(S1, O1)])])]",
         },
+        {
+            "[quantification(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ]) quantification(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ]) have_child(S1, O1)]",
+            "[quant(S1, [isa(S1, parent)], D1, [isa(D1, all)], [quant(O1, [isa(O1, child)], D2, [isa(D2, 2)], [have_child(S1, O1)])])]",
+        },
     }
 
     internalGrammarParser := importer.NewInternalGrammarParser()

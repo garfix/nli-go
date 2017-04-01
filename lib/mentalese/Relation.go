@@ -12,6 +12,7 @@ const Quantification_RangeVariableIndex = 0
 const Quantification_RangeIndex = 1
 const Quantification_QuantifierVariableIndex = 2
 const Quantification_QuantifierIndex = 3
+const Quantification_ScopeIndex = 4
 
 func (relation Relation) Equals(otherRelation Relation) bool {
 

@@ -160,3 +160,32 @@ func (b Binding) Equals(c Binding) bool {
 
 	return true
 }
+
+// Removes a copy of bindings that contains each binding only once
+func UniqueBindings(bindings []Binding) []Binding {
+	uniqueBindings := []Binding{}
+    for _, binding := range bindings {
+        found := false
+        for _, uniqueBinding := range uniqueBindings {
+            if uniqueBinding.Equals(binding) {
+                found = true
+                break
+            }
+        }
+        if !found {
+            uniqueBindings = append(uniqueBindings, binding)
+        }
+    }
+    return uniqueBindings
+}
+
+func CountUniqueValues(variable string, bindings []Binding) int {
+    uniqueBindings := map[string]bool{}
+    for _, binding := range bindings {
+        value, found := binding[variable]
+        if found {
+            uniqueBindings[value.TermValue] = true
+        }
+    }
+    return len(uniqueBindings)
+}

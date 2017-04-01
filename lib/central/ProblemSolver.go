@@ -133,6 +133,11 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(goalRelation, binding, ruleBase)...)
 	}
 
+	// scoped quantification
+    if goalRelation.Predicate == mentalese.Predicate_Quant {
+        newBindings = append(newBindings, solver.SolveQuant(goalRelation, binding)...)
+    }
+
 	common.LogTree("SolveSingleRelationSingleBinding", newBindings)
 
 	return newBindings

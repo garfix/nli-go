@@ -41,17 +41,23 @@ func TestQuantSolver(t *testing.T) {
         binding string
         result string
     } {
-        //{
-        //    // does every parent have 2 children?
-        //    "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
-        //    "{}",
-        //    "{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
-        //},
+        {
+            // does every parent have 2 children?
+            "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+            "{}",
+            "{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
+        },
         {
             // does every parent have 3 children?
             "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ], [ have_child(S1, O1) ]) ])",
             "{}",
             "",
+        },
+        {
+            // keep extra bindings?
+            "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+            "{X: 3}",
+            "{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
         },
     }
 

@@ -11,7 +11,9 @@ todo
 * nok: introduce a generic step that converts to clumsy verb predicates to easier predicates. All occurrences of isa(Q1, PRED) subject() object() are turned into PRED().
 * nok: introduce a step that helps remove vagueness ("have" is vague)
 * ok: create a quantifier scoper that turns a relation set into a scoped relation set
-* extend the answerer to make it answer scoped relation questions
+* ok: extend the answerer to make it answer scoped relation questions
+* apply quantifier scoper to integration tests
+* extend README
 * convert number words into numbers
 
 ## Syntax
@@ -41,6 +43,16 @@ todo
 ## Relations
 
 Find a way to ensure completeness of information about all relations used in a system. An interpretation should not even be attempted if not all conversions have a chance to succeed.
+
+# Multiple languages
+
+- Introduce a second language
+- Constants like "all", are they universal, or english?
+
+# Quantifier Scoping
+
+- Make "more than" "less than" work
+- A range itself can contain quantified nouns (the oldest child in every family). The algorithm is not up to it. (See CLE)
 
 ## Solutions
 

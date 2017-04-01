@@ -1,3 +1,7 @@
+## 2017-04-01
+
+First quantifier scoping tests passing!
+
 ## 2017-03-15
 
 I have noticed one time too many that the "preferred reading" is simply the one where quantifiers decrease in scope from left to right. So I will now look for counter examples. And I need obvious examples, one you don't need to think or doubt about. If I can't find them, this whole exercise of creating laws and preferences for scoping is just too academic, and I will apply scoping in order of occurrence. Also, because if the order of scoping just changes after you had to think about it, in the end, no generic algorithm suffices, and hand coded quantifier rules will be needed.

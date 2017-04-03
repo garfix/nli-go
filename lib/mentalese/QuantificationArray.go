@@ -36,6 +36,8 @@ func (s QuantificationArray) Less(i, j int) bool {
         less = i < j
     } else if firstQuantifierSimple == "all" {
         less = true
+    } else if secondQuantifierSimple == "all" {
+        less = false
     } else if false { // interrogative determiner
         less = true
     } else {

@@ -54,6 +54,8 @@ func (solver ProblemSolver) validate(quantifierSet mentalese.RelationSet, rangeV
     rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
     scopeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, scopeBindings)
 
+    ok = scopeCount >= 1
+
     if len(quantifierSet) == 1 {
         quantifier := quantifierSet[0]
         simpleQuantifier := quantifier.Arguments[1]
@@ -68,7 +70,6 @@ func (solver ProblemSolver) validate(quantifierSet mentalese.RelationSet, rangeV
             if simpleQuantifier.TermValue == "all" {
                 ok = scopeCount == rangeCount
             }
-
         }
     }
 

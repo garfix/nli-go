@@ -123,19 +123,19 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 
 	newBindings := []mentalese.Binding{}
 
-	// go through all fact bases
-	for _, factBase := range solver.factBases {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(goalRelation, binding, factBase)...)
-	}
-
-	// go through all rule bases
-	for _, ruleBase := range solver.ruleBases {
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(goalRelation, binding, ruleBase)...)
-	}
-
 	// scoped quantification
     if goalRelation.Predicate == mentalese.Predicate_Quant {
         newBindings = append(newBindings, solver.SolveQuant(goalRelation, binding)...)
+    } else {
+        // go through all fact bases
+        for _, factBase := range solver.factBases {
+            newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(goalRelation, binding, factBase)...)
+        }
+
+        // go through all rule bases
+        for _, ruleBase := range solver.ruleBases {
+            newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(goalRelation, binding, ruleBase)...)
+        }
     }
 
 	common.LogTree("SolveSingleRelationSingleBinding", newBindings)
@@ -192,7 +192,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	for _, val := range binding {
 		if val.TermType == mentalese.Term_variable {
-			panic("Variable bound to variable");
+			panic("Variable bound to variable")
 		}
 	}
 

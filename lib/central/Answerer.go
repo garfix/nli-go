@@ -89,7 +89,9 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 
 	for _, aSolution := range answerer.solutions  {
 
-		bindings, _, found = answerer.matcher.MatchSequenceToSet(aSolution.Condition, goal, mentalese.Binding{})
+		unscopedGoal := answerer.Unscope(goal)
+
+		bindings, _, found = answerer.matcher.MatchSequenceToSet(aSolution.Condition, unscopedGoal, mentalese.Binding{})
 		if found {
 			solution = aSolution
 			break
@@ -99,4 +101,32 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 	common.LogTree("findSolution", solution, bindings, found)
 
 	return solution, bindings, found
+}
+
+func (Answerer Answerer) Unscope(relations mentalese.RelationSet) mentalese.RelationSet {
+
+    unscoped := mentalese.RelationSet{}
+
+    for _, relation := range relations {
+
+        copy := relation.Copy()
+
+        if relation.Predicate == mentalese.Predicate_Quant {
+            // unscope the relation sets
+            for i, argument := range relation.Arguments {
+                if argument.IsRelationSet() {
+
+                    scopedSet := copy.Arguments[i].TermValueRelationSet
+                    copy.Arguments[i].TermValueRelationSet = mentalese.RelationSet{}
+
+                    // recurse into the scope
+                    unscoped = append(unscoped, Answerer.Unscope(scopedSet)...)
+                }
+            }
+        }
+
+        unscoped = append(unscoped, copy)
+    }
+
+    return unscoped
 }

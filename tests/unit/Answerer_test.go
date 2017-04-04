@@ -84,3 +84,31 @@ func TestAnswerer(t *testing.T) {
 		}
 	}
 }
+
+func TestUnscope(t *testing.T) {
+
+    parser := importer.NewInternalGrammarParser()
+    matcher := mentalese.NewRelationMatcher()
+    answerer := central.NewAnswerer(matcher)
+
+    tests := []struct {
+        input string
+        wantRelationSet string
+    } {
+        // use all arguments
+        {"[abc(A, 1) quant(A, [isa(A, 1)], B, [isa(B, 2)], [make(A, B)])]", "[abc(A, 1) isa(A, 1) isa(B, 2) make(A, B) quant(A, [], B, [], [])]"},
+        // recurse
+        {"[quant(A, [ quant(A, [ isa(A, 1) ], B, [], []) ], B, [], [])]", "[isa(A, 1) quant(A, [], B, [], []) quant(A, [], B, [], [])]"},
+    }
+
+    for _, test := range tests {
+
+        input := parser.CreateRelationSet(test.input)
+
+        resultRelationSet := answerer.Unscope(input)
+
+        if resultRelationSet.String() != test.wantRelationSet {
+            t.Errorf("Answerer: got %v, want %s", resultRelationSet, test.wantRelationSet)
+        }
+    }
+}

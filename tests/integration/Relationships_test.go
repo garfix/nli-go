@@ -22,19 +22,16 @@ func TestRelationships(t *testing.T) {
 	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/english-1.grammar"))
 	lexicon := internalGrammarParser.CreateLexicon(internalGrammarParser.LoadText("../../resources/english-1.lexicon"))
 
-	generic2ds := internalGrammarParser.CreateTransformations(`[
-
+    clearUp := internalGrammarParser.CreateTransformations(`[
 		isa(A1, do) isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
+		isa(P1, have) subject(P1, S) object(P1, O) quantification(S, [ isa(S, child) ], D, D1) => have_child(O, S) quantification(S, [ isa(S, child) ], D, D1);
+		isa(P1, have) subject(P1, S) object(P1, O) quantification(O, [ isa(O, child) ], D, D1) => have_child(S, O) quantification(O, [ isa(O, child) ], D, D1);
+		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => have_child(O, S);
+		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => have_child(S, O);
+
 		isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
-
-		isa(P1, have) subject(P1, S) object(P1, O) quantification(S, [ isa(S, child) ], D, D1) => child(S, O);
-		isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => child(S, O);
-		isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => child(O, S);
-
-		quantification(E, [], D, []) number(D, N) => numberOf(N, E);
-		quantification(E, [], D, []) isa(D, every) => every(E);
 
 		name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
 		name(A, N, fullName) => name(A, N);
@@ -45,6 +42,10 @@ func TestRelationships(t *testing.T) {
 		question(S, yesNoQuestion) => act(question, yesNo);
 
 		focus(E1) => focus(E1);
+    ]`)
+
+	generic2ds := internalGrammarParser.CreateTransformations(`[
+
 	]`)
 
 	dsSolutions := internalGrammarParser.CreateSolutions(`[
@@ -60,15 +61,19 @@ func TestRelationships(t *testing.T) {
 		preparation: exists(G, A),
 		answer: result(G);
 
-		condition: act(question, howMany) child(A, B) focus(A),
+		condition: act(question, howMany) have_child(B, A) focus(A),
 		preparation: gender(B, G) numberOf(N, A),
-		answer: gender(B, G) count(C, N) have_child(B, C);
+		answer: gender(B, G) count(C, N) have_child(C, B);
 
-		condition: act(question, which) child(A, B) focus(A),
+		condition: act(question, which) have_child(B, A) focus(A),
 		preparation: name(A, N),
 		answer: name(A, N) make_and(A, R);
 
-		condition: act(question, yesNo) child(A, B) every(B),
+		condition: act(question, yesNo) have_child(B, A) every(B),
+		preparation: exists(G, B),
+		answer: result(G);
+
+		condition: act(question, yesNo) have_child(B, A),
 		preparation: exists(G, B),
 		answer: result(G);
 	]`)
@@ -81,9 +86,11 @@ func TestRelationships(t *testing.T) {
 		married_to(A, B) ->> marriages(A, B, _);
 		name(A, N) ->> person(A, N, _, _);
 		parent(P, C) ->> parent(P, C);
-		child(C, P) ->> parent(P, C);
+		have_child(P, C) ->> parent(P, C);
 		gender(A, male) ->> person(A, _, 'M', _);
 		gender(A, female)->> person(A, _, 'F', _);
+		isa(P, parent) ->> parent(P, _);
+		isa(C, child) ->> parent(_, C);
 	]`)
 
 	dbFacts := internalGrammarParser.CreateRelationSet(`[
@@ -112,18 +119,20 @@ func TestRelationships(t *testing.T) {
 		act(question, _)
 		focus(_)
 		every(_)
+		isa(_, do)
 	]`)
 
 	ds2system := internalGrammarParser.CreateDbMappings(`[
 		act(question, X) ->> act(question, X);
 		focus(A) ->> focus(A);
 		every(A) ->> every(A);
+		isa(_, B) ->> isa(_, B);
 	]`)
 
 	ds2generic := internalGrammarParser.CreateTransformations(`[
 		married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
 		siblings(A1, A2) => isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
-		have_child(A, B) => declaration(P1) isa(P1, have) subject(P1, A) object(P1, B) isa(B, child);
+		have_child(B, A) => declaration(P1) isa(P1, have) subject(P1, A) object(P1, B) isa(B, child);
 		name(A, N) => name(A, N);
 		and(R, A, B) => conjunction(R, A, B) isa(R, and);
 		gender(A, male) => isa(A, male);
@@ -185,6 +194,7 @@ func TestRelationships(t *testing.T) {
 
 	tokenizer := parse.NewTokenizer()
 	parser := earley.NewParser(grammar, lexicon)
+    quantifierScoper := mentalese.NewQuantifierScoper()
 	relationizer := earley.NewRelationizer(lexicon)
 	systemFunctionBase := knowledge.NewSystemFunctionBase()
 	matcher := mentalese.NewRelationMatcher()
@@ -223,8 +233,8 @@ func TestRelationships(t *testing.T) {
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
-//{"Does every parent have 4 children?", "Yes"},
-//{"Does every mother have 2 children?", "Yes"},
+        {"Does every parent have 4 children?", "Yes"},
+        {"Does every parent have 3 children?", "No"},
 	}
 
 	for _, test := range tests {
@@ -232,18 +242,20 @@ func TestRelationships(t *testing.T) {
 
 		tokens := tokenizer.Process(test.question)
 		parseTree, _ := parser.Parse(tokens)
-		genericSense := relationizer.Relationize(parseTree)
+		rawRelations := relationizer.Relationize(parseTree)
+        genericRelations := transformer.Replace(clearUp, rawRelations)
+        genericSense := quantifierScoper.Scope(genericRelations)
+        common.LoggerActive=false
 		domainSpecificSense := transformer.Replace(generic2ds, genericSense)
-
-		common.LoggerActive=false
+        common.LoggerActive=false
 		dsAnswer := answerer.Answer(domainSpecificSense)
-		common.LoggerActive=false
 		genericAnswer := transformer.Replace(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
 
 		fmt.Println()
-		//fmt.Println()
+		//fmt.Println(rawRelations)
+        //fmt.Println(genericRelations)
 		//fmt.Println(genericSense)
 		//fmt.Println(domainSpecificSense)
 		//fmt.Println(dsAnswer)

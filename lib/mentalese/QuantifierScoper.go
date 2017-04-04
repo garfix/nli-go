@@ -36,7 +36,7 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
     scopedRelations := scoper.scopeQuantifications(quantifications)
 
     // fill in the other relations at the outermost position where they still are scoped.
-    scoper.addNonQuantifications(&scopedRelations, nonQuantifications)
+    scoper.addNonQuantifications(&scopedRelations, len(quantifications), nonQuantifications)
 
     return scopedRelations
 }
@@ -79,21 +79,21 @@ func (scoper QuantifierScoper) scopeQuantifications(quantifications Quantificati
     return scope
 }
 
-func (scoper QuantifierScoper) addNonQuantifications(scopedRelations *RelationSet, nonQuantifications RelationSet) {
+func (scoper QuantifierScoper) addNonQuantifications(scopedRelations *RelationSet, depth int, nonQuantifications RelationSet) {
 
     for _, nonQuantification := range nonQuantifications {
 
         scope := scopedRelations
         nonQuantificationScope := scope
 
-        for len(*scope) > 0 {
+        for d := 0; d < depth; d++ {
 
-            quant := (*scope)[0]
-            quantificationVariable := quant.Arguments[0]
+            scopedRelation := (*scope)[0]
+            rangeVariable := scopedRelation.Arguments[Quantification_RangeVariableIndex]
 
-            scope = &quant.Arguments[4].TermValueRelationSet
+            scope = &scopedRelation.Arguments[Quantification_ScopeIndex].TermValueRelationSet
 
-            if scoper.variableMatches(nonQuantification, quantificationVariable) {
+            if scoper.variableMatches(nonQuantification, rangeVariable) {
                 nonQuantificationScope = scope
             }
         }

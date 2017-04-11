@@ -21,8 +21,10 @@ Every part of the system is configurable.
 Processing a request consists of these phases:
 
 * Tokenization: from raw text to a string of tokens
-* Parsing: from tokens to generic relations
+* Parsing: from tokens to parse tree with attached generic relations
+* Relationizer: combine the relations to a single set with unified variables
 * Transformation: from generic relations to domain specific relations
+* Quantifier Scoping
 * Answering:
     * Conditions: match the domain specific relations to the conditions of a solution
     * Evaluation: find answer bindings by evaluating the domain specific relations
@@ -59,7 +61,7 @@ is split into
 
 ### Parser
 
-The parser is an Earley parser that turns an sequence of tokens into a set of relations. It also produces a parse tree, but that's just because it can. The parse tree is not used further down the pipeline.
+The parser is an Earley parser that turns an sequence of tokens into a parse tree with relation attachments.
 
 Earley parsers are efficient and allow for left-recursive grammars, which is really very comfortable.
 
@@ -103,6 +105,29 @@ The following relations are created
 
 > subject(S1, E1) modality(S1, M)
 
+The example sentence yields the following parse tree:
+
+    [s 
+        [sInterrogative 
+            [whWord How] 
+            [quantifier many] 
+            [nbar 
+                [noun children]
+            ] 
+            [auxVerb has] 
+            [np 
+                [properNoun 
+                    [firstName John] 
+                    [insertion van] 
+                    [lastName Dongen]
+                ]
+            ] 
+            [questionMark ?]
+        ]
+    ]
+
+### Relationizer
+
 Because subject and modality use the same variable, S1, these relations are connected. When the whole tree is parsed all relations will be connected in a relational model. I just call this a relation set.
  Here's the relation set for our sample sentence:
 
@@ -126,6 +151,36 @@ The first transformation, from generic to domain specific mainly performs these 
  * Removing explicit event information, if needed
 
  The second transformation is from domain specific to generic.
+
+### Quantifier Scoper
+
+The quantifier scoper creates a scope hierarchy by turning quantification() relations into quant() relations. When this query is executed, 
+the inner quant() will be bound to different variable quantifier values from its outer quant()'s.   
+
+Before:
+
+    quantification(S1, [ isa(S1, parent) ], D1, [ isa(D1, every) ])
+    quantification(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ])
+    have_child(S1, O1)
+
+After:
+
+    quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, every) ], [
+        quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [
+             have_child(S1, O1)
+         ])
+    ])
+    
+After quantifier the current example looks like this:
+     
+     [
+        quant(E5, [isa(E5, child)], A5, [specification(A5, W5) isa(A5, many)], [
+            have_child(E6, E5) focus(E5)]) 
+         name(E6, 'Lord', firstName)  name(E6, 'Byron', lastName) 
+        act(question, howMany)
+     ]
+
+Unquantified variables have an implicit existential quantifier (exists).
 
 ### Answerer
 

@@ -82,7 +82,7 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 
 				if treeComplete {
 
-					common.LogTree("createChart", true);
+					common.LogTree("createChart", true)
 
 					return chart, true
 				}
@@ -145,7 +145,7 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
 	common.LogTree("complete", completedState);
 
-	treeComplete := false;
+	treeComplete := false
 	completedAntecedent := completedState.rule.GetAntecedent()
 	for _, chartedState := range chart.states[completedState.startWordIndex] {
 
@@ -154,21 +154,21 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition - 1) != completedAntecedent) {
-			continue;
+			continue
 		}
 
 		advancedState := newChartState(rule, dotPosition + 1, chartedState.startWordIndex, completedState.endWordIndex)
 
 		// store extra information to make it easier to extract parse trees later
-		treeComplete, advancedState = parser.storeStateInfo(chart, completedState, chartedState, advancedState);
+		treeComplete, advancedState = parser.storeStateInfo(chart, completedState, chartedState, advancedState)
 		if treeComplete {
-			break;
+			break
 		}
 
 		parser.enqueue(chart, advancedState, completedState.endWordIndex)
     }
 
-	common.LogTree("complete");
+	common.LogTree("complete")
 
 	return treeComplete
 }

@@ -7,10 +7,9 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/central"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/common"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
-	"fmt"
+    "fmt"
 )
 
 func TestRelationships(t *testing.T) {
@@ -22,7 +21,7 @@ func TestRelationships(t *testing.T) {
 	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/english-1.grammar"))
 	lexicon := internalGrammarParser.CreateLexicon(internalGrammarParser.LoadText("../../resources/english-1.lexicon"))
 
-    clearUp := internalGrammarParser.CreateTransformations(`[
+    generic2ds := internalGrammarParser.CreateTransformations(`[
 		isa(A1, do) isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 		isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
@@ -43,10 +42,6 @@ func TestRelationships(t *testing.T) {
 
 		focus(E1) => focus(E1);
     ]`)
-
-	generic2ds := internalGrammarParser.CreateTransformations(`[
-
-	]`)
 
 	dsSolutions := internalGrammarParser.CreateSolutions(`[
 		condition: act(question, who) married_to(A, B) focus(A),
@@ -226,15 +221,15 @@ func TestRelationships(t *testing.T) {
 		question string
 		answer   string
 	} {
-		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
-		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
-		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
+		//{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
+		//{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+		//{"Did Jacqueline de Boer marry Gerard van As?", "No"},
+		//{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+		//{"Are Mark van Dongen and John van Dongen siblings?", "No"},
+		//{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
-        {"Does every parent have 4 children?", "Yes"},
-        {"Does every parent have 3 children?", "No"},
+        //{"Does every parent have 4 children?", "Yes"},
+        //{"Does every parent have 3 children?", "No"},
 	}
 
 	for _, test := range tests {
@@ -242,24 +237,16 @@ func TestRelationships(t *testing.T) {
 
 		tokens := tokenizer.Process(test.question)
 		parseTree, _ := parser.Parse(tokens)
+
+        fmt.Printf(parseTree.String())
+
 		rawRelations := relationizer.Relationize(parseTree)
-        genericRelations := transformer.Replace(clearUp, rawRelations)
-        genericSense := quantifierScoper.Scope(genericRelations)
-        common.LoggerActive=false
-		domainSpecificSense := transformer.Replace(generic2ds, genericSense)
-        common.LoggerActive=false
+        genericRelations := transformer.Replace(generic2ds, rawRelations)
+		domainSpecificSense := quantifierScoper.Scope(genericRelations)
 		dsAnswer := answerer.Answer(domainSpecificSense)
 		genericAnswer := transformer.Replace(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
-
-		fmt.Println()
-		//fmt.Println(rawRelations)
-        //fmt.Println(genericRelations)
-		//fmt.Println(genericSense)
-		//fmt.Println(domainSpecificSense)
-		//fmt.Println(dsAnswer)
-		//fmt.Println(genericAnswer)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

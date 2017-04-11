@@ -1,20 +1,23 @@
 # Todo
 
-## This release
+## Next release
 
-todo
+* Create a next-word autosuggest
+* Create an autosuggest app
+* Find or create a javascript autosuggest line editor and create an example web app
 
-* ok: change 'determiner()' to 'dp()' (syntactic rewrite)
-* ok: introduce relation set as an argument type
-* ok: change 'determiner(E1, D1)' to 'quantification(E1, [], D1, [])'
-* ok: introduce a new step that subsumes determiner's relations
-* nok: introduce a generic step that converts to clumsy verb predicates to easier predicates. All occurrences of isa(Q1, PRED) subject() object() are turned into PRED().
-* nok: introduce a step that helps remove vagueness ("have" is vague)
-* ok: create a quantifier scoper that turns a relation set into a scoped relation set
-* ok: extend the answerer to make it answer scoped relation questions
-* apply quantifier scoper to integration tests
-* extend README
-* convert number words into numbers
+## omschrijving (?)
+
+* grouped relations in matcher and solver: (), and, or, not
+* aggregations, handle literature cases
+* handle common questions
+* declaratives and imperatives that update the database
+* Blocks World examples
+
+
+* Names with and without insertion
+* name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
+* married(A, B) :- married(B, A)
 
 ## Syntax
 
@@ -43,6 +46,8 @@ todo
 ## Relations
 
 Find a way to ensure completeness of information about all relations used in a system. An interpretation should not even be attempted if not all conversions have a chance to succeed.
+
+* convert number words into numbers
 
 # Multiple languages
 

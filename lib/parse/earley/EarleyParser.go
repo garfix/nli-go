@@ -26,7 +26,7 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
 // Returns a sense, a parse tree, and a success flag
 func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
 
-	common.LogTree("Parse", words);
+	common.LogTree("Parse", words)
 
 	rootNode := ParseTreeNode{}
 
@@ -36,15 +36,40 @@ func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
 		rootNode = parser.extractFirstTree(chart)
 	}
 
-	common.LogTree("Parse", rootNode, ok);
+	common.LogTree("Parse", rootNode, ok)
 
 	return rootNode, ok
+}
+
+// For a given sequence of words, make suggestions for the next word
+func (parser *parser) Suggest(words []string) []string {
+
+    suggests := []string{}
+    position := len(words)
+
+    chart, ok := parser.buildChart(words)
+
+    if ok {
+
+    } else if len(chart.states) < position {
+
+    } else {
+
+        for _, state := range chart.states[position] {
+            if parser.isStateIncomplete(state) {
+                category := state.rule.SyntacticCategories[state.dotPosition]
+                suggests = append(suggests, parser.lexicon.GetWordForms(category)...)
+            }
+        }
+    }
+
+    return common.StringArrayDeduplicate(suggests)
 }
 
 // The body of Earley's algorithm
 func (parser *parser) buildChart(words []string) (*chart, bool) {
 
-	common.LogTree("createChart", words);
+	common.LogTree("createChart", words)
 
 	chart := newChart(words)
 	wordCount := len(words)
@@ -90,7 +115,7 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 		}
 	}
 
-	common.LogTree("createChart", false);
+	common.LogTree("createChart", false)
 
 	return chart, false
 }
@@ -98,7 +123,7 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
 func (parser *parser) predict(chart *chart, state chartState) {
 
-	common.LogTree("predict", state);
+	common.LogTree("predict", state)
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
@@ -110,7 +135,7 @@ func (parser *parser) predict(chart *chart, state chartState) {
 		parser.enqueue(chart, predictedState, endWordIndex)
 	}
 
-	common.LogTree("predict");
+	common.LogTree("predict")
 }
 
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
@@ -118,7 +143,7 @@ func (parser *parser) predict(chart *chart, state chartState) {
 // then a new, completed, entry is added to the chart: (cat => word)
 func (parser *parser) scan(chart *chart, state chartState) {
 
-	common.LogTree("scan", state);
+	common.LogTree("scan", state)
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
@@ -132,7 +157,7 @@ func (parser *parser) scan(chart *chart, state chartState) {
 		parser.enqueue(chart, scannedState, endWordIndex + 1)
 	}
 
-	common.LogTree("scan", endWord, lexItemFound);
+	common.LogTree("scan", endWord, lexItemFound)
 }
 
 // This function is called whenever a state is completed.
@@ -143,7 +168,7 @@ func (parser *parser) scan(chart *chart, state chartState) {
 // - now proceed all other states in the chart that are waiting for an NP at the current position
 func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
-	common.LogTree("complete", completedState);
+	common.LogTree("complete", completedState)
 
 	treeComplete := false
 	completedAntecedent := completedState.rule.GetAntecedent()
@@ -172,7 +197,6 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 
 	return treeComplete
 }
-
 
 func (parser *parser) enqueue(chart *chart, state chartState, position int) {
 

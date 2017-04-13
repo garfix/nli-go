@@ -93,3 +93,17 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 
 	return LexItem{}, false
 }
+
+func (lexicon *Lexicon) GetWordForms(partOfSpeech string) []string {
+    forms := []string{}
+
+    for form, lexItems := range lexicon.lexItems {
+        for _, lexItem := range lexItems {
+            if lexItem.PartOfSpeech == partOfSpeech {
+                forms = append(forms, form)
+            }
+        }
+    }
+
+    return forms
+}

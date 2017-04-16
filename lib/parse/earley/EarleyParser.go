@@ -4,6 +4,7 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
 	"nli-go/lib/parse"
+	"sort"
 )
 
 // An implementation of Earley's top-down chart parsing algorithm as described in
@@ -41,7 +42,7 @@ func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
 	return rootNode, ok
 }
 
-// For a given sequence of words, make suggestions for the next word
+// For a given sequence of words, make suggestions for the next word, and return these in sorted order
 func (parser *parser) Suggest(words []string) []string {
 
     suggests := []string{}
@@ -63,7 +64,9 @@ func (parser *parser) Suggest(words []string) []string {
         }
     }
 
-    return common.StringArrayDeduplicate(suggests)
+    suggests = common.StringArrayDeduplicate(suggests)
+	sort.Strings(suggests)
+	return suggests
 }
 
 // The body of Earley's algorithm

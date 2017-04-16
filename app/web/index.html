@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/tag-it.js"></script>
+
+    <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <header>Enter a sentence</header>
+    <form>
+        <input type="text" name="q" id="q">
+        <button type="submit">Enter</button>
+    </form>
+    <footer>Input component by <a href="http://aehlke.github.io/tag-it/">Tag-it!</a></footer>
+
+    <script>
+        $(function(){
+
+            function autoCompleteSource(request, response) {
+
+                $.ajax({
+                    url: 'ajax-suggest.php',
+                    data: { format: "json", query: $('#q').val() },
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (data) {
+
+                        var suggests = data.suggests;
+                        var error = data.error;
+                        var errorLines = data.errorLines;
+
+                        if (error) {
+                            alert(errorLines);
+                        } else {
+
+                            response($.map(suggests, function (item) {
+                                return {
+                                    label: item,
+                                    value: item
+                                }
+                            }));
+                        }
+                    },
+                    error: function (request, status, error) {
+                        alert(error);
+                    }
+                })
+            }
+
+            $('#q').tagit({
+                // Options
+                fieldName: "skills",
+                availableTags: ["c++", "java", "php", "javascript", "ruby", "python", "c"],
+                autocomplete: {delay: 0, minLength: 0, source: autoCompleteSource},
+                showAutocompleteOnFocus: true,
+                removeConfirmation: false,
+                caseSensitive: true,
+                allowDuplicates: true,
+                allowSpaces: false,
+                readOnly: false,
+                tagLimit: null,
+                tabIndex: null,
+                placeholderText: "Next word ..."
+            });
+        });
+    </script>
+</body>
+</html>

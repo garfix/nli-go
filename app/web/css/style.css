@@ -1,0 +1,13 @@
+.ui-menu {
+    padding: 0;
+}
+
+.tagit-autocomplete.ui-menu .ui-menu-item a {
+    padding-left: .4em;
+    line-height: 1;
+}
+
+a.ui-corner-all:hover {
+    background-color: #D8DEF1;
+}
+

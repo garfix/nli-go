@@ -15,7 +15,7 @@
         <input type="text" name="q" id="q">
         <button type="submit">Enter</button>
     </form>
-    <footer>Input component by <a href="http://aehlke.github.io/tag-it/">Tag-it!</a></footer>
+    <footer>Input component by <a href="http://aehlke.github.io/tag-it/" target="_blank">Tag-it!</a></footer>
 
     <script>
         $(function(){
@@ -52,9 +52,6 @@
             }
 
             $('#q').tagit({
-                // Options
-                fieldName: "skills",
-                availableTags: ["c++", "java", "php", "javascript", "ruby", "python", "c"],
                 autocomplete: {delay: 0, minLength: 0, source: autoCompleteSource},
                 showAutocompleteOnFocus: true,
                 removeConfirmation: false,

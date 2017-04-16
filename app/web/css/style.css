@@ -1,13 +1,53 @@
+body {
+    font-family: arial;
+}
+
 .ui-menu {
     padding: 0;
+    font-weight: bold;
+    color: #405952;
+}
+
+.tagit-autocomplete.ui-menu .ui-menu-item a {
+    border: none;
 }
 
 .tagit-autocomplete.ui-menu .ui-menu-item a {
     padding-left: .4em;
     line-height: 1;
+    color: #405952;
 }
 
 a.ui-corner-all:hover {
-    background-color: #D8DEF1;
+    background-color: #FF974F;
+    font-weight: bold;
 }
 
+ul.tagit li.tagit-choice {
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border: 1px solid #fff;
+    background-color: #FFD393;
+    font-weight: bold;
+}
+
+.tagit-autocomplete.ui-corner-all, .tagit-autocomplete .ui-corner-all {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius: 2px;
+    border-radius: 2px;
+}
+.tagit-autocomplete .ui-state-hover, .tagit-autocomplete .ui-state-focus {
+    background: #FF974F;
+    color: #405952;
+    font-weight: bold
+}
+
+ul.tagit li.tagit-choice .tagit-close .text-icon {
+    color: #ff585d;
+}
+
+.tagit-label {
+    padding-right: 5px;
+}

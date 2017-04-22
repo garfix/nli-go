@@ -1,0 +1,12 @@
+[
+    married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
+    siblings(A1, A2) => isa(P1, be) subject(P1, A) conjunction(A, A1, A2) object(P1, B) isa(B, sibling);
+    have_child(B, A) => declaration(P1) isa(P1, have) subject(P1, A) object(P1, B) isa(B, child);
+    name(A, N) => name(A, N);
+    and(R, A, B) => conjunction(R, A, B) isa(R, and);
+    gender(A, male) => isa(A, male);
+    count(A, N) => quantification(A, [], D, []) isa(D, N);
+    gender(A, female) => isa(A, female);
+    result(true) => declaration(S) modifier(S, M) isa(M, yes);
+    result(false) => declaration(S) modifier(S, M) isa(M, no);
+]

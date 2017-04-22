@@ -11,21 +11,21 @@ import (
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
 
-type parser struct {
+type Parser struct {
 	grammar         *parse.Grammar
 	lexicon         *parse.Lexicon
 }
 
-func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *parser {
-	return &parser{
+func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon) *Parser {
+	return &Parser{
 		grammar: grammar,
 		lexicon: lexicon,
 	}
 }
 
-// Parses words using parser.grammar and parser.lexicon
+// Parses words using Parser.grammar and Parser.lexicon
 // Returns a sense, a parse tree, and a success flag
-func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
+func (parser *Parser) Parse(words []string) (ParseTreeNode, bool) {
 
 	common.LogTree("Parse", words)
 
@@ -43,7 +43,7 @@ func (parser *parser) Parse(words []string) (ParseTreeNode, bool) {
 }
 
 // For a given sequence of words, make suggestions for the next word, and return these in sorted order
-func (parser *parser) Suggest(words []string) []string {
+func (parser *Parser) Suggest(words []string) []string {
 
     suggests := []string{}
     position := len(words)
@@ -70,7 +70,7 @@ func (parser *parser) Suggest(words []string) []string {
 }
 
 // The body of Earley's algorithm
-func (parser *parser) buildChart(words []string) (*chart, bool) {
+func (parser *Parser) buildChart(words []string) (*chart, bool) {
 
 	common.LogTree("createChart", words)
 
@@ -124,7 +124,7 @@ func (parser *parser) buildChart(words []string) (*chart, bool) {
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
-func (parser *parser) predict(chart *chart, state chartState) {
+func (parser *Parser) predict(chart *chart, state chartState) {
 
 	common.LogTree("predict", state)
 
@@ -144,7 +144,7 @@ func (parser *parser) predict(chart *chart, state chartState) {
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
 // of the parts of speech associated with the current word in the sentence,
 // then a new, completed, entry is added to the chart: (cat => word)
-func (parser *parser) scan(chart *chart, state chartState) {
+func (parser *Parser) scan(chart *chart, state chartState) {
 
 	common.LogTree("scan", state)
 
@@ -169,7 +169,7 @@ func (parser *parser) scan(chart *chart, state chartState) {
 // For example:
 // - this state is NP -> noun, it has been completed
 // - now proceed all other states in the chart that are waiting for an NP at the current position
-func (parser *parser) complete(chart *chart, completedState chartState) bool {
+func (parser *Parser) complete(chart *chart, completedState chartState) bool {
 
 	common.LogTree("complete", completedState)
 
@@ -201,19 +201,19 @@ func (parser *parser) complete(chart *chart, completedState chartState) bool {
 	return treeComplete
 }
 
-func (parser *parser) enqueue(chart *chart, state chartState, position int) {
+func (parser *Parser) enqueue(chart *chart, state chartState, position int) {
 
 	if !parser.isStateInChart(chart, state, position) {
 		parser.pushState(chart, state, position)
 	}
 }
 
-func (parser *parser) isStateIncomplete(state chartState) bool {
+func (parser *Parser) isStateIncomplete(state chartState) bool {
 
 	return state.dotPosition < state.rule.GetConsequentCount() + 1
 }
 
-func (parser *parser) isStateInChart(chart *chart, state chartState, position int) bool {
+func (parser *Parser) isStateInChart(chart *chart, state chartState, position int) bool {
 
 	for _, presentState := range chart.states[position] {
 
@@ -229,7 +229,7 @@ func (parser *parser) isStateInChart(chart *chart, state chartState, position in
 	return false
 }
 
-func (parser *parser) pushState(chart *chart, state chartState, position int) {
+func (parser *Parser) pushState(chart *chart, state chartState, position int) {
 
 	// index the state for later lookup
 	chart.stateIdGenerator++
@@ -239,12 +239,12 @@ func (parser *parser) pushState(chart *chart, state chartState, position int) {
 	chart.states[position] = append(chart.states[position], state)
 }
 
-func (parser *parser) getNextCat(state chartState) string {
+func (parser *Parser) getNextCat(state chartState) string {
 
 	return state.rule.GetConsequent(state.dotPosition - 1)
 }
 
-func (parser *parser) storeStateInfo(chart *chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
+func (parser *Parser) storeStateInfo(chart *chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
 
 	treeComplete := false
 
@@ -262,7 +262,7 @@ func (parser *parser) storeStateInfo(chart *chart, completedState chartState, ch
 
 				chart.sentenceStates = append(chart.sentenceStates, advancedState)
 
-				// set a flag to allow the parser to stop at the first complete parse
+				// set a flag to allow the Parser to stop at the first complete parse
 				treeComplete = true
 			}
 		}
@@ -271,7 +271,7 @@ func (parser *parser) storeStateInfo(chart *chart, completedState chartState, ch
 	return treeComplete, advancedState
 }
 
-func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
+func (parser *Parser) extractFirstTree(chart *chart) ParseTreeNode {
 
 	tree := ParseTreeNode{}
 
@@ -285,7 +285,7 @@ func (parser *parser) extractFirstTree(chart *chart) ParseTreeNode {
 	return tree
 }
 
-func (parser *parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
+func (parser *Parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
 
 	rule := state.rule
 	branch := ParseTreeNode{ category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule }

@@ -4,7 +4,6 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/generate"
-	"io/ioutil"
 	"fmt"
     "nli-go/lib/common"
 )
@@ -191,20 +190,14 @@ func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *gen
 
 func (parser *InternalGrammarParser) LoadText(path string) string {
 
-    source := ""
+    source, err := common.ReadFile(path)
 
-    if len(path) > 0 && path[1:2] != "/" {
-        path = common.GetCurrentDir() + "/" + path
-    }
-
-	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		parser.processResult(file_read, false, fmt.Sprint(err), 0)
-	} else {
-		source = string(bytes)
 	}
 	return source
 }
+
 // Parses source into a relation set
 func (parser *InternalGrammarParser) CreateRelation(source string) mentalese.Relation {
 

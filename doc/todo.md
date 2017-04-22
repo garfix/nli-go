@@ -5,6 +5,7 @@
 * Create a next-word autosuggest
 * Create an autosuggest app
 * Find or create a javascript autosuggest line editor and create an example web app
+* Build an application from a configuration file
 
 ## omschrijving (?)
 

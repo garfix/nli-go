@@ -25,3 +25,11 @@ func (grammar *Grammar) FindRules(antecedent string) []GrammarRule {
 		return []GrammarRule{}
 	}
 }
+
+func (grammar *Grammar) ImportFrom(fromGrammar *Grammar) {
+	for _, rules := range fromGrammar.rules {
+		for _, rule := range rules {
+			grammar.AddRule(rule)
+		}
+	}
+}

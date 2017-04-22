@@ -1,0 +1,13 @@
+[
+    rule: s(P) -> np(E) vp(P),                                                  condition: subject(P, E);
+    rule: s(C) -> np(P1) comma(C) s(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _);
+    rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2);
+    rule: s(P) -> adverb(M),                                                    condition: modifier(P, M);
+    rule: vp(V) -> verb(V) np(H),                                               condition: object(V, H);
+    rule: np(F) -> proper_noun(F),                                              condition: name(F, Name);
+    rule: np(G) -> pronoun(G),                                                  condition: isa(G, female);
+    rule: np(G) -> pronoun(G),                                                  condition: isa(G, male);
+    rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: quantification(E1, [], D1, []);
+    rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1);
+    rule: nbar(E1) -> noun(E1);
+]

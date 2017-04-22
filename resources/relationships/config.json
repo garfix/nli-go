@@ -1,0 +1,58 @@
+{
+  "lexicons": [
+    "../english-1.lexicon"
+  ],
+  "grammars": [
+    "../english-1.grammar"
+  ],
+  "generationlexicons": [
+    "relationships-gen.lexicon"
+  ],
+  "generationgrammars": [
+    "relationships-gen.grammar"
+  ],
+  "factbases": {
+    "relation": [
+      {
+        "facts": "relationships.relation",
+        "map": "relationships-db.map"
+      }
+    ],
+    "mysql": [
+      {
+        "enabled": false,
+        "domain": "localhost",
+        "username": "root",
+        "password": "",
+        "database": "my_nligo",
+        "tables": [
+          {
+            "name": "marriages",
+            "columns": [ { "name": "person1_id" }, { "name": "person2_id" }, { "name": "year" } ]
+          },
+          {
+            "name": "parent",
+            "columns": [ { "name": "parent_id" }, { "name": "child_id" } ]
+          },
+          {
+            "name": "person",
+            "columns": [ { "name": "person_id" }, { "name": "name" } ]
+          }
+        ],
+        "map": "relationships-db.map"
+      }
+    ]
+  },
+  "rulebases": [
+    "relationships.rule"
+  ],
+  "solutions": [
+    "relationships.solution"
+  ],
+  "generic2ds": [
+    "relationships-generic2ds.transform"
+  ],
+  "ds2generic": [
+    "relationships-ds2generic.transform"
+  ]
+}

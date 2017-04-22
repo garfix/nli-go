@@ -7,15 +7,17 @@ import (
 )
 
 type Lexicon struct {
-	lexItems map[string][]LexItem
-	regexps map[string][]LexItem
+	allItems     []LexItem
+	lexItems     map[string][]LexItem
+	regexps      map[string][]LexItem
 	senseBuilder SenseBuilder
 }
 
 func NewLexicon() *Lexicon {
 	return &Lexicon{
-		lexItems: map[string][]LexItem{},
-		regexps: map[string][]LexItem{},
+		allItems:     []LexItem{},
+		lexItems:     map[string][]LexItem{},
+		regexps:      map[string][]LexItem{},
 		senseBuilder: NewSenseBuilder(),
 	}
 }
@@ -24,6 +26,8 @@ func (lexicon *Lexicon) AddLexItem(lexItem LexItem) {
 
 	form := lexItem.Form
 	partOfSpeech := lexItem.PartOfSpeech
+
+	lexicon.allItems = append(lexicon.allItems, lexItem)
 
 	if lexItem.IsRegExp {
 
@@ -106,4 +110,10 @@ func (lexicon *Lexicon) GetWordForms(partOfSpeech string) []string {
     }
 
     return forms
+}
+
+func (lexicon *Lexicon) ImportFrom(fromLexicon *Lexicon) {
+	for _, lexItem := range fromLexicon.allItems {
+		lexicon.AddLexItem(lexItem)
+	}
 }

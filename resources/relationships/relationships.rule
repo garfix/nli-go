@@ -1,0 +1,3 @@
+[
+    siblings(A, B) :- parent(C, A) parent(C, B);
+]

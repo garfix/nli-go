@@ -6,15 +6,19 @@ import (
 )
 
 type GenerationLexicon struct {
+    allItems []GenerationLexeme
 	lexemes map[string][]GenerationLexeme
 	matcher mentalese.RelationMatcher
 }
 
 func NewGenerationLexicon() *GenerationLexicon {
-	return &GenerationLexicon{lexemes: map[string][]GenerationLexeme{}}
+	return &GenerationLexicon{lexemes: map[string][]GenerationLexeme{}, allItems: []GenerationLexeme{} }
 }
 
 func (lexicon *GenerationLexicon) AddLexItem(lexItem GenerationLexeme) {
+
+    lexicon.allItems = append(lexicon.allItems, lexItem)
+
 	pos := lexItem.PartOfSpeech
 	_, found := lexicon.lexemes[pos]
 	if !found {
@@ -63,4 +67,11 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 	common.LogTree("GetLexemeForGeneration", resultLexeme, found)
 
 	return resultLexeme, found
+}
+
+
+func (lexicon *GenerationLexicon) ImportFrom(fromLexicon *GenerationLexicon) {
+	for _, lexItem := range fromLexicon.allItems {
+		lexicon.AddLexItem(lexItem)
+	}
 }

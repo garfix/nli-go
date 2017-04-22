@@ -3,6 +3,8 @@ package common
 import (
 	"runtime"
 	"path"
+	"io/ioutil"
+	"os"
 )
 
 func IntArrayContains(haystack []int, needle int) bool {
@@ -46,8 +48,33 @@ func StringArrayDeduplicate(array []string) []string {
 
 // Returns the directory of the file calling this function
 // https://coderwall.com/p/_fmbug/go-get-path-to-current-file
-func GetCurrentDir() string {
+func Dir() string {
 
 	_, filename, _, _ := runtime.Caller(1)
 	return path.Dir(filename)
+}
+
+func ReadFile(path string) (string, error) {
+
+	source := ""
+
+	bytes, err := ioutil.ReadFile(path)
+	if err == nil {
+		source = string(bytes)
+	}
+
+	return source, err
+}
+
+// If path is an absolute path, returns path
+// Otherwise, adds path to baseDir to create an absolute path
+func AbsolutePath(baseDir string, path string) string {
+
+    absolutePath := path
+
+	if len(path) > 0 && path[0] != os.PathSeparator {
+        absolutePath = baseDir + string(os.PathSeparator) + path
+	}
+
+    return absolutePath
 }

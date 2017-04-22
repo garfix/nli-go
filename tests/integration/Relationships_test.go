@@ -9,6 +9,9 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/parse/earley"
 	"nli-go/lib/generate"
+    "nli-go/lib/global"
+    "nli-go/lib/common"
+    "fmt"
 )
 
 func TestRelationships(t *testing.T) {
@@ -214,6 +217,12 @@ func TestRelationships(t *testing.T) {
 	generator := generate.NewGenerator(generationGrammar, generationLexicon)
 	surfacer := generate.NewSurfaceRepresentation()
 
+    log := global.NewSystemLog()
+    systemFactory := global.NewSystemFactory()
+    system, _ := systemFactory.NewSystem(common.Dir() + "/../../resources/relationships/config.json", log)
+
+    fmt.Print(log.String())
+
 	// Tests
 
 	var tests = []struct {
@@ -221,12 +230,12 @@ func TestRelationships(t *testing.T) {
 		answer   string
 	} {
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
-		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		{"Did Jacqueline de Boer marry Gerard van As?", "No"},
-		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
-		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
-		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
-		{"How many children has John van Dongen?", "He has 4 children"},
+        {"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
+        {"Did Jacqueline de Boer marry Gerard van As?", "No"},
+        {"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
+        {"Are Mark van Dongen and John van Dongen siblings?", "No"},
+        {"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
+        {"How many children has John van Dongen?", "He has 4 children"},
         {"Does every parent have 4 children?", "Yes"},
         {"Does every parent have 3 children?", "No"},
 	}
@@ -242,6 +251,8 @@ func TestRelationships(t *testing.T) {
 		genericAnswer := transformer.Replace(ds2generic, dsAnswer)
 		answerWords := generator.Generate(genericAnswer)
 		answer := surfacer.Create(answerWords)
+
+		answer, _ = system.Process(test.question)
 
 		if answer != test.answer {
 			t.Errorf("release1: got %v, want %v", answer, test.answer)

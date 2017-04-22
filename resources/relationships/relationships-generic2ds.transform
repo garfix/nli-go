@@ -1,0 +1,21 @@
+[
+    isa(A1, do) isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+    isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+
+    isa(P1, have) subject(P1, S) object(P1, O) quantification(S, [ isa(S, child) ], D, D1) => have_child(O, S) quantification(S, [ isa(S, child) ], D, D1);
+    isa(P1, have) subject(P1, S) object(P1, O) quantification(O, [ isa(O, child) ], D, D1) => have_child(S, O) quantification(O, [ isa(O, child) ], D, D1);
+    isa(P1, have) subject(P1, S) object(P1, O) isa(S, child) => have_child(O, S);
+    isa(P1, have) subject(P1, S) object(P1, O) isa(O, child) => have_child(S, O);
+
+    isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
+
+    name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
+    name(A, N, fullName) => name(A, N);
+
+    question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, which)]) => act(question, which);
+    question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
+    question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, many) specification(D1, W1)]) isa(W1, how) => act(question, howMany);
+    question(S, yesNoQuestion) => act(question, yesNo);
+
+    focus(E1) => focus(E1);
+]

@@ -1,0 +1,10 @@
+[
+    married_to(A, B) ->> marriages(A, B, _);
+    name(A, N) ->> person(A, N, _, _);
+    parent(P, C) ->> parent(P, C);
+    have_child(P, C) ->> parent(P, C);
+    gender(A, male) ->> person(A, _, 'M', _);
+    gender(A, female)->> person(A, _, 'F', _);
+    isa(P, parent) ->> parent(P, _);
+    isa(C, child) ->> parent(_, C);
+]

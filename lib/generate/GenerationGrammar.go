@@ -27,3 +27,11 @@ func (grammar *GenerationGrammar) FindRules(antecedent mentalese.Relation) []Gen
 		return []GenerationGrammarRule{}
 	}
 }
+
+func (grammar *GenerationGrammar) ImportFrom(fromGrammar *GenerationGrammar) {
+	for _, rules := range fromGrammar.rules {
+		for _, rule := range rules {
+			grammar.AddRule(rule)
+		}
+	}
+}

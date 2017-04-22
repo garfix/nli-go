@@ -1,0 +1,16 @@
+create database my_nligo;
+use my_nligo;
+create table marriages ( person1_id int, person2_id int, year char(4) );
+create table parent ( parent_id int, child_id int );
+create table person ( person_id int, name varchar(255), gender char(1), birthyear char(4) );
+insert into marriages values (2, 1, '1992');
+insert into parent values (4, 2);
+insert into parent values (4, 3);
+insert into parent values (4, 5);
+insert into parent values (4, 6);
+insert into person values (1, 'Jacqueline de Boer', 'F', '1964');
+insert into person values (2, 'Mark van Dongen', 'M', '1967');
+insert into person values (3, 'Suzanne van Dongen', 'F', '1967');
+insert into person values (4, 'John van Dongen', 'M', '1938');
+insert into person values (5, 'Dirk van Dongen', 'M', '1972');
+insert into person values (6, 'Durkje van Dongen', 'M', '1982');

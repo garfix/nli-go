@@ -19,6 +19,10 @@ func (block *LogBlock) Fail() {
     block.success = false
 }
 
+func (block *LogBlock) IsOk() bool {
+    return block.success
+}
+
 func (block *LogBlock) String() string {
 
     s := block.title + "\n"

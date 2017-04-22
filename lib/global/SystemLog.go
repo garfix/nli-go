@@ -12,6 +12,16 @@ func (log *systemLog) AddBlock(block *LogBlock) {
     log.blocks = append(log.blocks, block)
 }
 
+func (log *systemLog) IsOk() bool {
+    ok := true
+
+    for _, block := range log.blocks {
+        ok = ok && block.IsOk()
+    }
+
+    return ok
+}
+
 func (log *systemLog) String() string {
 
     s := ""

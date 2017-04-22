@@ -4,6 +4,11 @@ import (
     "nli-go/lib/common"
     "nli-go/lib/importer"
     "nli-go/lib/knowledge"
+    "nli-go/lib/generate"
+    "nli-go/lib/parse/earley"
+    "nli-go/lib/mentalese"
+    "nli-go/lib/central"
+    "nli-go/lib/parse"
 )
 
 type systemBuilder struct {
@@ -23,6 +28,29 @@ func newSystemBuilder(baseDir string) systemBuilder {
 }
 
 func (builder systemBuilder) buildFromConfig(system *system, config systemConfig, logBlock *LogBlock) {
+
+    system.lexicon = parse.NewLexicon()
+    system.grammar = parse.NewGrammar()
+    system.generationLexicon = generate.NewGenerationLexicon()
+    system.generationGrammar = generate.NewGenerationGrammar()
+    system.tokenizer = parse.NewTokenizer()
+    system.parser = earley.NewParser(system.grammar, system.lexicon)
+    system.quantifierScoper = mentalese.NewQuantifierScoper()
+    system.relationizer = earley.NewRelationizer(system.lexicon)
+    system.generic2ds = []mentalese.RelationTransformation{}
+    system.ds2generic = []mentalese.RelationTransformation{}
+
+    systemFunctionBase := knowledge.NewSystemFunctionBase()
+    matcher := mentalese.NewRelationMatcher()
+    matcher.AddFunctionBase(systemFunctionBase)
+    system.transformer = mentalese.NewRelationTransformer(matcher)
+
+    systemPredicateBase := knowledge.NewSystemPredicateBase()
+    system.answerer = central.NewAnswerer(matcher)
+    system.answerer.AddMultipleBindingsBase(systemPredicateBase)
+
+    system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon)
+    system.surfacer = generate.NewSurfaceRepresentation()
 
     systemFacts := builder.parser.CreateRelationSet(`[
 		act(question, _)
@@ -97,7 +125,7 @@ func (builder systemBuilder) ImportLexiconFromPath(system *system, lexiconPath s
         return
     }
 
-    system.ImportLexicon(lexicon)
+    system.lexicon.ImportFrom(lexicon)
 }
 
 func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath string, logBlock *LogBlock) {
@@ -118,7 +146,7 @@ func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath s
         return
     }
 
-    system.ImportGrammar(grammar)
+    system.grammar.ImportFrom(grammar)
 }
 
 func (builder systemBuilder) ImportGenerationLexiconFromPath(system *system, lexiconPath string, logBlock *LogBlock) {
@@ -139,7 +167,7 @@ func (builder systemBuilder) ImportGenerationLexiconFromPath(system *system, lex
         return
     }
 
-    system.ImportGenerationLexicon(lexicon)
+    system.generationLexicon.ImportFrom(lexicon)
 }
 
 func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, grammarPath string, logBlock *LogBlock) {
@@ -160,7 +188,7 @@ func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, gra
         return
     }
 
-    system.ImportGenerationGrammar(grammar)
+    system.generationGrammar.ImportFrom(grammar)
 }
 
 func (builder systemBuilder) ImportRuleBaseFromPath(system *system, ruleBasePath string, logBlock *LogBlock) {

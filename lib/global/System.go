@@ -6,6 +6,9 @@ import (
     "nli-go/lib/mentalese"
     "nli-go/lib/parse/earley"
     "nli-go/lib/generate"
+    "nli-go/lib/common"
+    "encoding/json"
+    "path/filepath"
 )
 
 type system struct {
@@ -26,20 +29,36 @@ type system struct {
     ds2generic []mentalese.RelationTransformation
 }
 
-func (system *system) ImportLexicon(fromLexicon *parse.Lexicon) {
-    system.lexicon.ImportFrom(fromLexicon)
-}
+func NewSystem(configPath string, log *systemLog) *system {
 
-func (system *system) ImportGrammar(fromGrammar *parse.Grammar) {
-    system.grammar.ImportFrom(fromGrammar)
-}
+    system := &system{ log: log }
+    logBlock := NewLogBlock("Build system")
+    config := systemConfig{}
 
-func (system *system) ImportGenerationLexicon(fromLexicon *generate.GenerationLexicon) {
-    system.generationLexicon.ImportFrom(fromLexicon)
-}
+    configJson, err := common.ReadFile(configPath)
+    if err != nil {
+        logBlock.Fail()
+        logBlock.AddLine("Error reading JSON file " + configPath)
+        logBlock.AddLine(err.Error())
+    }
 
-func (system *system) ImportGenerationGrammar(fromGrammar *generate.GenerationGrammar) {
-    system.generationGrammar.ImportFrom(fromGrammar)
+    if logBlock.IsOk() {
+        err := json.Unmarshal([]byte(configJson), &config)
+        if err != nil {
+            logBlock.Fail()
+            logBlock.AddLine("Error parsing config file " + configPath)
+            logBlock.AddLine(err.Error())
+        }
+    }
+
+    if logBlock.IsOk() {
+        builder := newSystemBuilder(filepath.Dir(configPath))
+        builder.buildFromConfig(system, config, logBlock)
+    }
+
+    log.AddBlock(logBlock)
+
+    return system
 }
 
 func (system *system) Process(input string) (string, bool) {

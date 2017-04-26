@@ -15,10 +15,15 @@
         <input type="text" name="q" id="q">
         <button type="submit">Enter</button>
     </form>
+    <div id="error-box"></div>
     <footer>Input component by <a href="http://aehlke.github.io/tag-it/" target="_blank">Tag-it!</a></footer>
 
     <script>
         $(function(){
+
+            function showError(error) {
+                document.getElementById('error-box').innerHTML = error;
+            }
 
             function autoCompleteSource(request, response) {
 
@@ -29,12 +34,14 @@
                     type: 'GET',
                     success: function (data) {
 
+                        console.log(data)
+
                         var suggests = data.suggests;
                         var error = data.error;
                         var errorLines = data.errorLines;
 
                         if (error) {
-                            alert(errorLines);
+                            showError(errorLines)
                         } else {
 
                             response($.map(suggests, function (item) {
@@ -46,7 +53,7 @@
                         }
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        showError(error)
                     }
                 })
             }

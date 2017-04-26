@@ -32,7 +32,7 @@ func TestRelationships(t *testing.T) {
 
 	for _, test := range tests {
 
-		answer, _ := system.Process(test.question)
+		answer := system.Answer(test.question)
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

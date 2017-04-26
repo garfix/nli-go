@@ -61,7 +61,7 @@ func NewSystem(configPath string, log *systemLog) *system {
     return system
 }
 
-func (system *system) Process(input string) (string, bool) {
+func (system *system) Answer(input string) string {
 
     tokens := system.tokenizer.Process(input)
     parseTree, _ := system.parser.Parse(tokens)
@@ -73,5 +73,13 @@ func (system *system) Process(input string) (string, bool) {
     answerWords := system.generator.Generate(genericAnswer)
     answer := system.surfacer.Create(answerWords)
 
-    return answer, true
+    return answer
+}
+
+func (system *system) Suggest(input string) []string {
+
+    tokens := system.tokenizer.Process(input)
+    suggests := system.parser.Suggest(tokens)
+
+    return suggests
 }

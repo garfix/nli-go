@@ -32,3 +32,14 @@ func (log *systemLog) String() string {
 
     return s
 }
+
+func (log *systemLog) GetLogLines() []string {
+
+    s := []string{}
+
+    for _, block := range log.blocks {
+        s = append(s, block.lines...)
+    }
+
+    return s
+}

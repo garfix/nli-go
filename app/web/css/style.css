@@ -51,3 +51,8 @@ ul.tagit li.tagit-choice .tagit-close .text-icon {
 .tagit-label {
     padding-right: 5px;
 }
+
+#error-box {
+    width: 800px;
+    height: 400px;
+}

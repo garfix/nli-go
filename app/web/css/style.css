@@ -52,7 +52,27 @@ ul.tagit li.tagit-choice .tagit-close .text-icon {
     padding-right: 5px;
 }
 
-#error-box {
+header {
+    font-weight: bold;
+}
+
+form#f {
+    margin-bottom: 20px;
+}
+
+
+#answer-box {
+    border: 1px solid #888;
+    padding: 3px;
+    margin: 10px;
     width: 800px;
-    height: 400px;
+    min-height: 50px;
+}
+
+#error-box {
+    border: 1px solid #888;
+    padding: 3px;
+    margin: 10px;
+    width: 800px;
+    min-height: 50px;
 }

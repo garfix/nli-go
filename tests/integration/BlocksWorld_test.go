@@ -11,7 +11,7 @@ import (
 	"nli-go/lib/parse/earley"
 )
 
-// Mimics some of SHRDLU's functions, but in the nli-go way
+// Mimics some of SHRDLU's functions, but in the cli-go way
 
 // NOTE: tests not working!
 

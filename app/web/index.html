@@ -11,10 +11,13 @@
 </head>
 <body>
     <header>Enter a sentence</header>
-    <form>
+    <form id="f">
         <input type="text" name="q" id="q">
         <button type="submit">Enter</button>
     </form>
+    <header>Answer</header>
+    <div id="answer-box"></div>
+    <header>Error</header>
     <div id="error-box"></div>
     <footer>Input component by <a href="http://aehlke.github.io/tag-it/" target="_blank">Tag-it!</a></footer>
 
@@ -23,6 +26,10 @@
 
             function showError(error) {
                 document.getElementById('error-box').innerHTML = error;
+            }
+
+            function showAnswer(answer) {
+                document.getElementById('answer-box').innerHTML = answer;
             }
 
             function autoCompleteSource(request, response) {
@@ -34,11 +41,9 @@
                     type: 'GET',
                     success: function (data) {
 
-                        console.log(data)
-
-                        var suggests = data.suggests;
-                        var error = data.error;
-                        var errorLines = data.errorLines;
+                        var suggests = data.Value;
+                        var error = data.Error;
+                        var errorLines = data.ErrorLines;
 
                         if (error) {
                             showError(errorLines)
@@ -70,6 +75,32 @@
                 tabIndex: null,
                 placeholderText: "Next word ..."
             });
+
+            $('#f').submit(function(){
+                $.ajax({
+                    url: 'ajax-answer.php',
+                    data: { format: "json", query: $('#q').val() },
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (data) {
+
+                        var answers = data.Value;
+                        var error = data.Error;
+                        var errorLines = data.ErrorLines;
+
+                        if (error) {
+                            showError(errorLines)
+                        } else {
+                            showAnswer(answers[0])
+                        }
+                    },
+                    error: function (request, status, error) {
+                        showError(error)
+                    }
+                });
+
+                return false;
+            })
         });
     </script>
 </body>

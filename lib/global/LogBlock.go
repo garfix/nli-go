@@ -1,6 +1,6 @@
 package global
 
-// a log block is a section of a log whose contents is a distinct part of the nli process
+// a log block is a section of a log whose contents is a distinct part of the cli process
 type LogBlock struct {
     title string
     lines []string

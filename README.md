@@ -4,6 +4,21 @@ nli-go is a library, written in Go, that provides a natural language interface t
 
 For years to come, this system is not easy to use, not present for production, and not very robust either. Still, if you really need an nli, it may be worth your trouble to learn it. I think it's pretty cool.
 
+## Install the program
+
+Build this application's executable:  
+
+```
+cd ~/go/src/nli-go/app/cli
+go build nli.go
+```
+
+Move it to a place where it can be found from any location. In a Linux environment you might use:
+
+```
+sudo mv nli /usr/local/bin 
+```
+
 ## Purpose
 
 This library helps a developer to create a system that allow end-users to use plain English / French / German to interface with a database. That means that an end user can type a question like

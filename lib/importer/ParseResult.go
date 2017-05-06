@@ -1,14 +1,14 @@
 package importer
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
 
 const (
-	file_read = "file_read"
+	file_read         = "file_read"
 	service_tokenizer = "tokenizer"
-	service_parser = "parser"
+	service_parser    = "parser"
 )
 
 type ParseResult struct {
@@ -27,5 +27,5 @@ func (result ParseResult) String() string {
 	lines[line] = "* " + lines[line]
 	errorString := strings.Join(lines, "\n")
 
-	return fmt.Sprintf("%s failed in line %d:\n%s", result.Service, result.LineNumber, errorString);
+	return fmt.Sprintf("%s failed in line %d:\n%s", result.Service, result.LineNumber, errorString)
 }

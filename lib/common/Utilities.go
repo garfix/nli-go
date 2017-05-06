@@ -1,14 +1,14 @@
 package common
 
 import (
-	"runtime"
-	"path"
 	"io/ioutil"
 	"os"
+	"path"
+	"runtime"
 )
 
 func IntArrayContains(haystack []int, needle int) bool {
-	for _, value := range haystack  {
+	for _, value := range haystack {
 		if needle == value {
 			return true
 		}
@@ -70,11 +70,11 @@ func ReadFile(path string) (string, error) {
 // Otherwise, adds path to baseDir to create an absolute path
 func AbsolutePath(baseDir string, path string) string {
 
-    absolutePath := path
+	absolutePath := path
 
 	if len(path) > 0 && path[0] != os.PathSeparator {
-        absolutePath = baseDir + string(os.PathSeparator) + path
+		absolutePath = baseDir + string(os.PathSeparator) + path
 	}
 
-    return absolutePath
+	return absolutePath
 }

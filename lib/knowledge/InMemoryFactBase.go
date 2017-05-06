@@ -1,25 +1,26 @@
 package knowledge
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 type InMemoryFactBase struct {
-	facts mentalese.RelationSet
-	ds2db []mentalese.DbMapping
+	facts   mentalese.RelationSet
+	ds2db   []mentalese.DbMapping
 	matcher *mentalese.RelationMatcher
+	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping) mentalese.FactBase {
-	return InMemoryFactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher()}
+func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, log *common.SystemLog) mentalese.FactBase {
+	return InMemoryFactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
 // Note! An internal fact base would use the same predicates as the domain language;
 // This is an simulation of an external database
 func (factBase InMemoryFactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
 
-	common.LogTree("Factbase Bind", goal);
+	factBase.log.StartDebug("Factbase Bind", goal)
 
 	subgoalBindings := []mentalese.Binding{}
 
@@ -45,7 +46,7 @@ func (factBase InMemoryFactBase) Bind(goal mentalese.Relation) []mentalese.Bindi
 		}
 	}
 
-	common.LogTree("Factbase Bind", subgoalBindings);
+	factBase.log.EndDebug("Factbase Bind", subgoalBindings)
 
 	return subgoalBindings
 }

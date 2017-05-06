@@ -1,9 +1,10 @@
 package importer
 
 import (
+	"nli-go/lib/common"
+	"nli-go/lib/generate"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
-	"nli-go/lib/generate"
 )
 
 func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
@@ -19,7 +20,7 @@ func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex
 			if ok {
 				relationSet = append(relationSet, relation)
 			} else {
-				break;
+				break
 			}
 		}
 
@@ -44,7 +45,7 @@ func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startI
 		if ok {
 			transformations = append(transformations, transformation)
 		} else {
-			break;
+			break
 		}
 	}
 
@@ -84,7 +85,7 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 		if ok {
 			rules = append(rules, rule)
 		} else {
-			break;
+			break
 		}
 	}
 
@@ -107,7 +108,7 @@ func (parser *InternalGrammarParser) parseDbMappings(tokens []Token, startIndex 
 		if ok {
 			dbMappings = append(dbMappings, dbMapping)
 		} else {
-			break;
+			break
 		}
 	}
 
@@ -161,7 +162,7 @@ func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex i
 		if ok {
 			solutions = append(solutions, solution)
 		} else {
-			break;
+			break
 		}
 	}
 
@@ -193,7 +194,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 					if prepationFound {
 						ok = false
 					}
-					prepationFound = true;
+					prepationFound = true
 				case field_answer:
 					solution.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
 					if answerFound {
@@ -251,9 +252,9 @@ func (parser *InternalGrammarParser) parseLexicon(tokens []Token, startIndex int
 	return lexicon, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseGenerationLexicon(tokens []Token, startIndex int) (*generate.GenerationLexicon, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationLexicon(tokens []Token, startIndex int, log *common.SystemLog) (*generate.GenerationLexicon, int, bool) {
 
-	lexicon := generate.NewGenerationLexicon()
+	lexicon := generate.NewGenerationLexicon(log)
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -302,7 +303,7 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 					if posFound {
 						ok = false
 					}
-					posFound = true;
+					posFound = true
 				case field_sense:
 					lexItem.RelationTemplates, startIndex, ok = parser.parseRelations(tokens, startIndex)
 					if senseFound {
@@ -369,7 +370,7 @@ func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, star
 					if posFound {
 						ok = false
 					}
-					posFound = true;
+					posFound = true
 				case field_condition:
 					lexItem.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 					if conditionFound {
@@ -662,7 +663,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				// second and further arguments
 				_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
 				if !commaFound {
-					break;
+					break
 				} else {
 					argument, startIndex, ok = parser.parseTerm(tokens, startIndex)
 					if ok {
@@ -675,7 +676,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				// first argument (there may not be one, zero arguments are allowed)
 				argument, newStartIndex, argumentFound = parser.parseTerm(tokens, startIndex)
 				if !argumentFound {
-					break;
+					break
 				} else {
 					relation.Arguments = append(relation.Arguments, argument)
 					startIndex = newStartIndex
@@ -707,13 +708,13 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 			// second and further bindings
 			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
 			if !commaFound {
-				break;
+				break
 			}
 		} else {
 			// check for zero bindings
 			_, _, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
 			if ok {
-				break;
+				break
 			}
 		}
 
@@ -825,7 +826,7 @@ func (parser *InternalGrammarParser) parseSingleToken(tokens []Token, startIndex
 			parser.lastParsedResult.LineNumber = tokens[startIndex].LineNumber
 		}
 
-		ok = (token.TokenId == tokenId)
+		ok = token.TokenId == tokenId
 		if ok {
 			tokenValue = token.TokenValue
 			startIndex++

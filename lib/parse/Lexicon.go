@@ -1,9 +1,9 @@
 package parse
 
 import (
-	"strings"
-	"regexp"
 	"nli-go/lib/mentalese"
+	"regexp"
+	"strings"
 )
 
 type Lexicon struct {
@@ -73,14 +73,14 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 						termType = mentalese.Term_number
 					}
 
-					from := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: "Form" }
-					to := mentalese.Term{ TermType: termType, TermValue: word }
+					from := mentalese.Term{TermType: mentalese.Term_variable, TermValue: "Form"}
+					to := mentalese.Term{TermType: termType, TermValue: word}
 
 					sense := lexicon.senseBuilder.ReplaceTerm(regExpItem.RelationTemplates, from, to)
 
 					return LexItem{
-						Form: word,
-						PartOfSpeech: regExpItem.PartOfSpeech,
+						Form:              word,
+						PartOfSpeech:      regExpItem.PartOfSpeech,
 						RelationTemplates: sense}, true
 				}
 			}
@@ -99,17 +99,17 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 }
 
 func (lexicon *Lexicon) GetWordForms(partOfSpeech string) []string {
-    forms := []string{}
+	forms := []string{}
 
-    for form, lexItems := range lexicon.lexItems {
-        for _, lexItem := range lexItems {
-            if lexItem.PartOfSpeech == partOfSpeech {
-                forms = append(forms, form)
-            }
-        }
-    }
+	for form, lexItems := range lexicon.lexItems {
+		for _, lexItem := range lexItems {
+			if lexItem.PartOfSpeech == partOfSpeech {
+				forms = append(forms, form)
+			}
+		}
+	}
 
-    return forms
+	return forms
 }
 
 func (lexicon *Lexicon) ImportFrom(fromLexicon *Lexicon) {

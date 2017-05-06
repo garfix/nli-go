@@ -1,23 +1,24 @@
 package knowledge
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 type RuleBase struct {
 	rules []mentalese.Rule
+	log   *common.SystemLog
 }
 
-func NewRuleBase(rules []mentalese.Rule) RuleBase {
-	return RuleBase{rules: rules}
+func NewRuleBase(rules []mentalese.Rule, log *common.SystemLog) RuleBase {
+	return RuleBase{rules: rules, log: log}
 }
 
 func (ruleBase *RuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
 
-	common.LogTree("RuleBase Bind", goal);
+	ruleBase.log.StartDebug("RuleBase Bind", goal)
 
-	matcher := mentalese.NewRelationMatcher()
+	matcher := mentalese.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
 	subgoalBindings := []mentalese.Binding{}
 
@@ -31,7 +32,7 @@ func (ruleBase *RuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet
 		}
 	}
 
-	common.LogTree("RuleBase Bind", subgoalRelationSets, subgoalBindings);
+	ruleBase.log.EndDebug("RuleBase Bind", subgoalRelationSets, subgoalBindings)
 
 	return subgoalRelationSets, subgoalBindings
 }

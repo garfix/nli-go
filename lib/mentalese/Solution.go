@@ -1,7 +1,7 @@
 package mentalese
 
 type Solution struct {
-	Condition RelationSet
+	Condition   RelationSet
 	Preparation RelationSet
-	Answer   RelationSet
+	Answer      RelationSet
 }

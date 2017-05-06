@@ -1,9 +1,10 @@
 package tests
 
 import (
-"testing"
-	"nli-go/lib/parse/earley"
+	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/parse/earley"
+	"testing"
 )
 
 func TestRelationizer(t *testing.T) {
@@ -17,10 +18,11 @@ func TestRelationizer(t *testing.T) {
 		form: 'falls',      pos: verb,              sense: isa(E, fall);
 		form: '.',          pos: period;
 	]`)
-	parser := earley.NewParser(grammar, lexicon)
-	relationizer := earley.NewRelationizer(lexicon)
+	log := common.NewSystemLog(false)
+	parser := earley.NewParser(grammar, lexicon, log)
+	relationizer := earley.NewRelationizer(lexicon, log)
 
-	parseTree, _ := parser.Parse([]string{"the", "book", "falls", "."})
+	parseTree := parser.Parse([]string{"the", "book", "falls", "."})
 	result := relationizer.Relationize(parseTree)
 
 	want := "[declaration(S5) subject(S5, E5) quantification(E5, [isa(E5, book)], D5, [isa(D5, the)]) isa(S5, fall)]"

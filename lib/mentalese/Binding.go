@@ -71,7 +71,7 @@ func (b Binding) Bind(c Binding) Binding {
 
 		if bVal.IsVariable() {
 			for cKey, cVal := range c {
-				if  bVal.TermValue == cKey {
+				if bVal.TermValue == cKey {
 					result[bKey] = cVal
 				}
 			}
@@ -106,13 +106,12 @@ func (b Binding) Swap() Binding {
 
 	for key, value := range b {
 		if value.TermType == Term_variable {
-			result[value.TermValue] = Term{ TermType: Term_variable, TermValue: key }
+			result[value.TermValue] = Term{TermType: Term_variable, TermValue: key}
 		}
 	}
 
 	return result
 }
-
 
 // Returns a new binding with just key, if exists
 func (b Binding) Extract(key string) Binding {
@@ -164,28 +163,28 @@ func (b Binding) Equals(c Binding) bool {
 // Removes a copy of bindings that contains each binding only once
 func UniqueBindings(bindings []Binding) []Binding {
 	uniqueBindings := []Binding{}
-    for _, binding := range bindings {
-        found := false
-        for _, uniqueBinding := range uniqueBindings {
-            if uniqueBinding.Equals(binding) {
-                found = true
-                break
-            }
-        }
-        if !found {
-            uniqueBindings = append(uniqueBindings, binding)
-        }
-    }
-    return uniqueBindings
+	for _, binding := range bindings {
+		found := false
+		for _, uniqueBinding := range uniqueBindings {
+			if uniqueBinding.Equals(binding) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			uniqueBindings = append(uniqueBindings, binding)
+		}
+	}
+	return uniqueBindings
 }
 
 func CountUniqueValues(variable string, bindings []Binding) int {
-    uniqueBindings := map[string]bool{}
-    for _, binding := range bindings {
-        value, found := binding[variable]
-        if found {
-            uniqueBindings[value.TermValue] = true
-        }
-    }
-    return len(uniqueBindings)
+	uniqueBindings := map[string]bool{}
+	for _, binding := range bindings {
+		value, found := binding[variable]
+		if found {
+			uniqueBindings[value.TermValue] = true
+		}
+	}
+	return len(uniqueBindings)
 }

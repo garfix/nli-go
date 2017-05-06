@@ -1,22 +1,23 @@
 package knowledge
 
 import (
+	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
-	"nli-go/lib/common"
 )
 
 type SystemPredicateBase struct {
 	rules []mentalese.Rule
+	log   *common.SystemLog
 }
 
-func NewSystemPredicateBase() *SystemPredicateBase {
-	return &SystemPredicateBase{}
+func NewSystemPredicateBase(log *common.SystemLog) *SystemPredicateBase {
+	return &SystemPredicateBase{log: log}
 }
 
 func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
 
-	common.LogTree("SystemPredicateBase Bind", goal, bindings)
+	base.log.StartDebug("SystemPredicateBase Bind", goal, bindings)
 
 	newBindings := []mentalese.Binding{}
 	found := true
@@ -30,7 +31,7 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		subjectVariable := goal.Arguments[1].TermValue
 
 		differentValues := base.getDifferentValues(bindings, subjectVariable)
-		aggregate = mentalese.Term{ TermType:mentalese.Term_number, TermValue: strconv.Itoa(len(differentValues)) }
+		aggregate = mentalese.Term{TermType: mentalese.Term_number, TermValue: strconv.Itoa(len(differentValues))}
 
 	} else if goal.Predicate == "exists" {
 
@@ -41,7 +42,7 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		if len(differentValues) > 0 {
 			val = "true"
 		}
-		aggregate = mentalese.Term{ TermType:mentalese.Term_predicateAtom, TermValue: val }
+		aggregate = mentalese.Term{TermType: mentalese.Term_predicateAtom, TermValue: val}
 
 	} else {
 		found = false
@@ -57,7 +58,7 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 				newBindings = bindings
 			}
 
-		// numberOf(N, E1)
+			// numberOf(N, E1)
 		} else {
 
 			if len(bindings) > 0 {
@@ -77,7 +78,7 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		}
 	}
 
-	common.LogTree("SystemPredicateBase Bind", newBindings, found)
+	base.log.EndDebug("SystemPredicateBase Bind", newBindings, found)
 
 	return newBindings, found
 }

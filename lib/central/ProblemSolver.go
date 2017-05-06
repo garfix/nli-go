@@ -1,24 +1,26 @@
 package central
 
 import (
-	"nli-go/lib/mentalese"
-	"nli-go/lib/knowledge"
 	"nli-go/lib/common"
+	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
 )
 
 type ProblemSolver struct {
-	factBases []mentalese.FactBase
-	ruleBases []knowledge.RuleBase
+	factBases             []mentalese.FactBase
+	ruleBases             []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
-	matcher *mentalese.RelationMatcher
+	matcher               *mentalese.RelationMatcher
+	log                   *common.SystemLog
 }
 
-func NewProblemSolver(matcher *mentalese.RelationMatcher) *ProblemSolver {
+func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
-		factBases: []mentalese.FactBase{},
-		ruleBases: []knowledge.RuleBase{},
+		factBases:             []mentalese.FactBase{},
+		ruleBases:             []knowledge.RuleBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
-		matcher: matcher,
+		matcher:               matcher,
+		log:                   log,
 	}
 }
 
@@ -41,11 +43,11 @@ func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBi
 // ]
 func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.RelationSet {
 
-	common.LogTree("Solve")
+	solver.log.StartDebug("Solve")
 	bindings := solver.SolveRelationSet(goals, []mentalese.Binding{})
 	solutions := solver.matcher.BindRelationSetMultipleBindings(goals, bindings)
 
-	common.LogTree("Solve", solutions)
+	solver.log.EndDebug("Solve", solutions)
 	return solutions
 }
 
@@ -57,7 +59,7 @@ func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.Relati
 // ]
 func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings []mentalese.Binding) []mentalese.Binding {
 
-	common.LogTree("SolveRelationSet", set, bindings)
+	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
 	for _, relation := range set {
 		bindings = solver.SolveSingleRelationMultipleBindings(relation, bindings)
@@ -67,7 +69,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 		}
 	}
 
-	common.LogTree("SolveRelationSet", bindings)
+	solver.log.EndDebug("SolveRelationSet", bindings)
 
 	return bindings
 }
@@ -83,12 +85,12 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 // }
 func (solver ProblemSolver) SolveSingleRelationMultipleBindings(goalRelation mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
 
-	common.LogTree("SolveSingleRelationMultipleBindings", goalRelation, bindings)
+	solver.log.StartDebug("SolveSingleRelationMultipleBindings", goalRelation, bindings)
 
 	newBindings := []mentalese.Binding{}
 	multiFound := false
 
-	for _ , multipleBindingsBase := range solver.multipleBindingsBases {
+	for _, multipleBindingsBase := range solver.multipleBindingsBases {
 		newBindings, multiFound = multipleBindingsBase.Bind(goalRelation, bindings)
 		if multiFound {
 			break
@@ -106,7 +108,7 @@ func (solver ProblemSolver) SolveSingleRelationMultipleBindings(goalRelation men
 		}
 	}
 
-	common.LogTree("SolveSingleRelationMultipleBindings", newBindings)
+	solver.log.EndDebug("SolveSingleRelationMultipleBindings", newBindings)
 
 	return newBindings
 }
@@ -119,26 +121,26 @@ func (solver ProblemSolver) SolveSingleRelationMultipleBindings(goalRelation men
 // }
 func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
 
-	common.LogTree("SolveSingleRelationSingleBinding", goalRelation, binding)
+	solver.log.StartDebug("SolveSingleRelationSingleBinding", goalRelation, binding)
 
 	newBindings := []mentalese.Binding{}
 
 	// scoped quantification
-    if goalRelation.Predicate == mentalese.Predicate_Quant {
-        newBindings = append(newBindings, solver.SolveQuant(goalRelation, binding)...)
-    } else {
-        // go through all fact bases
-        for _, factBase := range solver.factBases {
-            newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(goalRelation, binding, factBase)...)
-        }
+	if goalRelation.Predicate == mentalese.Predicate_Quant {
+		newBindings = append(newBindings, solver.SolveQuant(goalRelation, binding)...)
+	} else {
+		// go through all fact bases
+		for _, factBase := range solver.factBases {
+			newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(goalRelation, binding, factBase)...)
+		}
 
-        // go through all rule bases
-        for _, ruleBase := range solver.ruleBases {
-            newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(goalRelation, binding, ruleBase)...)
-        }
-    }
+		// go through all rule bases
+		for _, ruleBase := range solver.ruleBases {
+			newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(goalRelation, binding, ruleBase)...)
+		}
+	}
 
-	common.LogTree("SolveSingleRelationSingleBinding", newBindings)
+	solver.log.EndDebug("SolveSingleRelationSingleBinding", newBindings)
 
 	return newBindings
 }
@@ -151,7 +153,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 // }
 func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalRelation mentalese.Relation, binding mentalese.Binding, factBase mentalese.FactBase) []mentalese.Binding {
 
-	common.LogTree("SolveSingleRelationSingleBindingSingleFactBase", goalRelation, binding)
+	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleFactBase", goalRelation, binding)
 
 	//for key, val := range binding {
 	//	if val.TermType == mentalese.Term_variable {
@@ -175,7 +177,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalR
 		newBindings = append(newBindings, combinedBinding)
 	}
 
-	common.LogTree("SolveSingleRelationSingleBindingSingleFactBase", newBindings)
+	solver.log.EndDebug("SolveSingleRelationSingleBindingSingleFactBase", newBindings)
 
 	return newBindings
 }
@@ -188,7 +190,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalR
 // }
 func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase knowledge.RuleBase) []mentalese.Binding {
 
-	common.LogTree("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
+	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 
 	for _, val := range binding {
 		if val.TermType == mentalese.Term_variable {
@@ -226,7 +228,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		}
 	}
 
-	common.LogTree("SolveSingleRelationSingleBindingSingleRuleBase", goalBindings)
+	solver.log.EndDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalBindings)
 
 	return goalBindings
 }
@@ -239,7 +241,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 // }
 func (solver ProblemSolver) SolveMultipleRelationsSingleBinding(goals []mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
 
-	common.LogTree("SolveMultipleRelationsSingleBinding", goals, binding)
+	solver.log.StartDebug("SolveMultipleRelationsSingleBinding", goals, binding)
 
 	bindings := []mentalese.Binding{binding}
 
@@ -247,7 +249,7 @@ func (solver ProblemSolver) SolveMultipleRelationsSingleBinding(goals []mentales
 		bindings = solver.SolveSingleRelationMultipleBindings(goal, bindings)
 	}
 
-	common.LogTree("SolveMultipleRelationsSingleBinding", bindings)
+	solver.log.EndDebug("SolveMultipleRelationsSingleBinding", bindings)
 
 	return bindings
 }

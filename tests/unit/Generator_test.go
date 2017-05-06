@@ -1,15 +1,17 @@
 package tests
 
 import (
-	"testing"
+	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"strings"
+	"testing"
 )
 
 func TestGenerator(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
 
 	grammar := internalGrammarParser.CreateGenerationGrammar(`[
         rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E);
@@ -22,13 +24,13 @@ func TestGenerator(t *testing.T) {
 		form: 'kissed',     pos: verb,		    condition: predication(E, kiss);
 		form: 'married',	pos: verb,		    condition: predication(E, marry);
 		form: '*unused*',	pos: proper_noun,	condition: name(E, Name);
-	]`)
-	generator := generate.NewGenerator(grammar, lexicon)
+	]`, log)
+	generator := generate.NewGenerator(grammar, lexicon, log)
 
 	tests := []struct {
 		input string
-		want string
-	} {
+		want  string
+	}{
 		{"[predication(P1, marry) subject(P1, E1) object(P1, E2) name(E1, 'John') name(E2, 'Mary') grammatical_subject(E1)]", "John married Mary"},
 	}
 

@@ -7,26 +7,27 @@ import "nli-go/lib/mentalese"
 import "database/sql"
 import (
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 	"nli-go/lib/common"
 	"strings"
-	"log"
 )
 
-type MySqlFactBase struct{
-	db *sql.DB
-	tableDescriptions map[string] []string
-	ds2db []mentalese.DbMapping
-	matcher *mentalese.RelationMatcher
+type MySqlFactBase struct {
+	db                *sql.DB
+	tableDescriptions map[string][]string
+	ds2db             []mentalese.DbMapping
+	matcher           *mentalese.RelationMatcher
+	log               *common.SystemLog
 }
 
-func NewMySqlFactBase(domain string, username string, password string, database string, ds2db []mentalese.DbMapping) *MySqlFactBase {
+func NewMySqlFactBase(domain string, username string, password string, database string, ds2db []mentalese.DbMapping, log *common.SystemLog) *MySqlFactBase {
 
-	db, err := sql.Open("mysql", username + ":" + password + "@/" + database)
+	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	return &MySqlFactBase{ db: db, tableDescriptions: map[string] []string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher() }
+	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
 func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []string) {
@@ -36,7 +37,7 @@ func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []st
 // todo: remove code duplication
 func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
 
-	common.LogTree("MySqlFactBase.Bind", goal)
+	factBase.log.StartDebug("MySqlFactBase.Bind", goal)
 
 	bindings := []mentalese.Binding{}
 
@@ -62,7 +63,7 @@ func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding 
 		}
 	}
 
-	common.LogTree("MySqlFactBase.Bind", bindings)
+	factBase.log.EndDebug("MySqlFactBase.Bind", bindings)
 
 	return bindings
 }
@@ -72,7 +73,7 @@ func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding 
 // return: [ { C: 1, A: 5 } ]
 func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.RelationSet) ([]mentalese.Binding, bool) {
 
-	common.LogTree("MatchSequenceToDatabase", sequence)
+	factBase.log.StartDebug("MatchSequenceToDatabase", sequence)
 
 	// bindings using database level variables
 	sequenceBindings := []mentalese.Binding{}
@@ -111,7 +112,7 @@ func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.Relatio
 		}
 	}
 
-	common.LogTree("MatchSequenceToDatabase", sequenceBindings, match)
+	factBase.log.EndDebug("MatchSequenceToDatabase", sequenceBindings, match)
 
 	return sequenceBindings, match
 }
@@ -120,7 +121,7 @@ func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.Relatio
 // Returns a set of bindings
 func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
-	common.LogTree("matchRelationToDatabase", needleRelation)
+	factBase.log.StartDebug("matchRelationToDatabase", needleRelation)
 
 	dbBindings := []mentalese.Binding{}
 
@@ -141,7 +142,6 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 	columnClause := strings.Join(columns, ", ")
 
 	query := "SELECT " + columnClause + " FROM " + table + " WHERE TRUE" + whereClause
-//	fmt.Printf("        %s, %v\n", query, values)
 
 	rows, err := factBase.db.Query(query, values...)
 	if err != nil {
@@ -172,14 +172,14 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 		for i, argument := range needleRelation.Arguments {
 			if argument.IsVariable() {
 				variable := argument.TermValue
-				binding[variable] = mentalese.Term{ TermType: mentalese.Term_stringConstant, TermValue: resultValues[i] }
+				binding[variable] = mentalese.Term{TermType: mentalese.Term_stringConstant, TermValue: resultValues[i]}
 			}
 		}
 
 		dbBindings = append(dbBindings, binding)
 	}
 
-	common.LogTree("matchRelationToDatabase", dbBindings)
+	factBase.log.EndDebug("matchRelationToDatabase", dbBindings)
 
 	return dbBindings
 }

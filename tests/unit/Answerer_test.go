@@ -1,17 +1,19 @@
 package tests
 
 import (
-	"testing"
-	"nli-go/lib/importer"
-	"nli-go/lib/knowledge"
 	"fmt"
 	"nli-go/lib/central"
+	"nli-go/lib/common"
+	"nli-go/lib/importer"
+	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
+	"testing"
 )
 
 func TestAnswerer(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
 
 	facts := parser.CreateRelationSet(`[
 		book(1, 'The red book', 5)
@@ -50,19 +52,19 @@ func TestAnswerer(t *testing.T) {
 		answer: publishAuthor(A, C);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db)
-	systemPredicateBase := knowledge.NewSystemPredicateBase()
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, log)
+	systemPredicateBase := knowledge.NewSystemPredicateBase(log)
 
-	matcher := mentalese.NewRelationMatcher()
-	answerer := central.NewAnswerer(matcher)
+	matcher := mentalese.NewRelationMatcher(log)
+	answerer := central.NewAnswerer(matcher, log)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	answerer.AddFactBase(factBase)
 	answerer.AddSolutions(solutions)
 
 	tests := []struct {
-		input string
+		input           string
 		wantRelationSet string
-	} {
+	}{
 		// simple
 		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
 		// preparation
@@ -87,28 +89,30 @@ func TestAnswerer(t *testing.T) {
 
 func TestUnscope(t *testing.T) {
 
-    parser := importer.NewInternalGrammarParser()
-    matcher := mentalese.NewRelationMatcher()
-    answerer := central.NewAnswerer(matcher)
+	parser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
 
-    tests := []struct {
-        input string
-        wantRelationSet string
-    } {
-        // use all arguments
-        {"[abc(A, 1) quant(A, [isa(A, 1)], B, [isa(B, 2)], [make(A, B)])]", "[abc(A, 1) isa(A, 1) isa(B, 2) make(A, B) quant(A, [], B, [], [])]"},
-        // recurse
-        {"[quant(A, [ quant(A, [ isa(A, 1) ], B, [], []) ], B, [], [])]", "[isa(A, 1) quant(A, [], B, [], []) quant(A, [], B, [], [])]"},
-    }
+	matcher := mentalese.NewRelationMatcher(log)
+	answerer := central.NewAnswerer(matcher, log)
 
-    for _, test := range tests {
+	tests := []struct {
+		input           string
+		wantRelationSet string
+	}{
+		// use all arguments
+		{"[abc(A, 1) quant(A, [isa(A, 1)], B, [isa(B, 2)], [make(A, B)])]", "[abc(A, 1) isa(A, 1) isa(B, 2) make(A, B) quant(A, [], B, [], [])]"},
+		// recurse
+		{"[quant(A, [ quant(A, [ isa(A, 1) ], B, [], []) ], B, [], [])]", "[isa(A, 1) quant(A, [], B, [], []) quant(A, [], B, [], [])]"},
+	}
 
-        input := parser.CreateRelationSet(test.input)
+	for _, test := range tests {
 
-        resultRelationSet := answerer.Unscope(input)
+		input := parser.CreateRelationSet(test.input)
 
-        if resultRelationSet.String() != test.wantRelationSet {
-            t.Errorf("Answerer: got %v, want %s", resultRelationSet, test.wantRelationSet)
-        }
-    }
+		resultRelationSet := answerer.Unscope(input)
+
+		if resultRelationSet.String() != test.wantRelationSet {
+			t.Errorf("Answerer: got %v, want %s", resultRelationSet, test.wantRelationSet)
+		}
+	}
 }

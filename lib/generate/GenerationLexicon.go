@@ -1,23 +1,29 @@
 package generate
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 type GenerationLexicon struct {
-    allItems []GenerationLexeme
-	lexemes map[string][]GenerationLexeme
-	matcher mentalese.RelationMatcher
+	allItems []GenerationLexeme
+	lexemes  map[string][]GenerationLexeme
+	matcher  *mentalese.RelationMatcher
+	log      *common.SystemLog
 }
 
-func NewGenerationLexicon() *GenerationLexicon {
-	return &GenerationLexicon{lexemes: map[string][]GenerationLexeme{}, allItems: []GenerationLexeme{} }
+func NewGenerationLexicon(log *common.SystemLog) *GenerationLexicon {
+	return &GenerationLexicon{
+		allItems: []GenerationLexeme{},
+		lexemes:  map[string][]GenerationLexeme{},
+		matcher:  mentalese.NewRelationMatcher(log),
+		log:      log,
+	}
 }
 
 func (lexicon *GenerationLexicon) AddLexItem(lexItem GenerationLexeme) {
 
-    lexicon.allItems = append(lexicon.allItems, lexItem)
+	lexicon.allItems = append(lexicon.allItems, lexItem)
 
 	pos := lexItem.PartOfSpeech
 	_, found := lexicon.lexemes[pos]
@@ -33,13 +39,12 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 
 	resultLexeme := GenerationLexeme{}
 
-	common.LogTree("GetLexemeForGeneration", consequent)
+	lexicon.log.StartDebug("GetLexemeForGeneration", consequent)
 
 	if consequent.Predicate == "number" {
 		resultLexeme.Form = consequent.Arguments[0].TermValue
 		return resultLexeme, true
 	}
-
 
 	partOfSpeech := consequent.Predicate
 
@@ -64,11 +69,10 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 		}
 	}
 
-	common.LogTree("GetLexemeForGeneration", resultLexeme, found)
+	lexicon.log.EndDebug("GetLexemeForGeneration", resultLexeme, found)
 
 	return resultLexeme, found
 }
-
 
 func (lexicon *GenerationLexicon) ImportFrom(fromLexicon *GenerationLexicon) {
 	for _, lexItem := range fromLexicon.allItems {

@@ -1,24 +1,25 @@
 package generate
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 type Generator struct {
 	Grammar *GenerationGrammar
 	Lexicon *GenerationLexicon
-	matcher mentalese.RelationMatcher
+	matcher *mentalese.RelationMatcher
+	log     *common.SystemLog
 }
 
-func NewGenerator(Grammar *GenerationGrammar, Lexicon *GenerationLexicon) *Generator {
-	return &Generator{Grammar:Grammar, Lexicon:Lexicon, matcher:mentalese.RelationMatcher{}}
+func NewGenerator(Grammar *GenerationGrammar, Lexicon *GenerationLexicon, log *common.SystemLog) *Generator {
+	return &Generator{Grammar: Grammar, Lexicon: Lexicon, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
 // Creates an array of words that forms the surface representation of a mentalese sense
 func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []string {
 
-	rootAntecedent := mentalese.Relation{Predicate:"s", Arguments:[]mentalese.Term{{mentalese.Term_variable, "S1", mentalese.RelationSet{}}}}
+	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.Term_variable, "S1", mentalese.RelationSet{}}}}
 
 	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, sentenceSense)
 }
@@ -30,7 +31,7 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecede
 
 	words := []string{}
 
-	common.LogTree("GenerateNode", antecedent, antecedentBinding)
+	generator.log.StartDebug("GenerateNode", antecedent, antecedentBinding)
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
@@ -45,7 +46,7 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecede
 		}
 	}
 
-	common.LogTree("GenerateNode", words)
+	generator.log.EndDebug("GenerateNode", words)
 
 	return words
 }
@@ -59,7 +60,7 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 	resultRule := GenerationGrammarRule{}
 	conditionBinding := mentalese.Binding{}
 
-	common.LogTree("findMatchingRule", antecedent, antecedentBinding)
+	generator.log.StartDebug("findMatchingRule", antecedent, antecedentBinding)
 
 	rules := generator.Grammar.FindRules(antecedent)
 
@@ -94,7 +95,7 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 		}
 	}
 
-	common.LogTree("findMatchingRule", resultRule, conditionBinding, found)
+	generator.log.EndDebug("findMatchingRule", resultRule, conditionBinding, found)
 
 	return resultRule, conditionBinding, found
 }
@@ -106,7 +107,7 @@ func (generator *Generator) generateSingleConsequent(consequent mentalese.Relati
 	words := []string{}
 	found := false
 
-	common.LogTree("generateSingleConsequent", consequent, consequentBinding)
+	generator.log.StartDebug("generateSingleConsequent", consequent, consequentBinding)
 
 	boundConsequent := generator.matcher.BindSingleRelationSingleBinding(consequent, consequentBinding)
 
@@ -117,7 +118,7 @@ func (generator *Generator) generateSingleConsequent(consequent mentalese.Relati
 		words = generator.GenerateNode(consequent, consequentBinding, sentenceSense)
 	}
 
-	common.LogTree("generateSingleConsequent", words)
+	generator.log.EndDebug("generateSingleConsequent", words)
 
 	return words
 }

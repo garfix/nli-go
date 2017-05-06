@@ -1,14 +1,16 @@
 package tests
 
 import (
+	"nli-go/lib/common"
+	"nli-go/lib/parse"
 	"strings"
 	"testing"
-	"nli-go/lib/parse"
 )
 
 func TestTokenizer(test *testing.T) {
 
-	tokenizer := parse.NewTokenizer()
+	log := common.NewSystemLog(false)
+	tokenizer := parse.NewTokenizer(log)
 	wordArray := tokenizer.Process("How old is Byron?")
 
 	wordString := strings.Join(wordArray, "/")

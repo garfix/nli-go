@@ -99,7 +99,7 @@ func (matcher *RelationMatcher) BindRelationSetSingleBinding(relations RelationS
 
 	boundRelations := RelationSet{}
 
-	for _, relation:= range relations {
+	for _, relation := range relations {
 		boundRelations = append(boundRelations, matcher.BindSingleRelationSingleBinding(relation, binding))
 	}
 

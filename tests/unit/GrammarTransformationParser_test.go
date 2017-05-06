@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"testing"
 	"fmt"
 	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
+	"testing"
 )
 
 func TestGrammarTransformationParser(test *testing.T) {

@@ -3,8 +3,8 @@ package mentalese
 import "fmt"
 
 type Term struct {
-	TermType  int
-	TermValue string
+	TermType             int
+	TermValue            string
 	TermValueRelationSet RelationSet
 }
 

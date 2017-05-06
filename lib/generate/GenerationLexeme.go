@@ -8,4 +8,3 @@ type GenerationLexeme struct {
 	PartOfSpeech string
 	Condition    mentalese.RelationSet
 }
-

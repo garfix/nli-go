@@ -1,28 +1,30 @@
 package central
 
 import (
+	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/common"
 )
 
 type Answerer struct {
 	solutions []mentalese.Solution
-	matcher *mentalese.RelationMatcher
-	solver *ProblemSolver
-	builder *RelationSetBuilder
+	matcher   *mentalese.RelationMatcher
+	solver    *ProblemSolver
+	builder   *RelationSetBuilder
+	log       *common.SystemLog
 }
 
-func NewAnswerer(matcher *mentalese.RelationMatcher) *Answerer {
+func NewAnswerer(matcher *mentalese.RelationMatcher, log *common.SystemLog) *Answerer {
 
 	builder := NewRelationSetBuilder()
 	builder.addGenerator(NewSystemGenerator())
 
 	return &Answerer{
 		solutions: []mentalese.Solution{},
-		matcher: matcher,
-		solver: NewProblemSolver(matcher),
-		builder: builder,
+		matcher:   matcher,
+		solver:    NewProblemSolver(matcher, log),
+		builder:   builder,
+		log:       log,
 	}
 }
 
@@ -46,7 +48,7 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 // return e.g. [ child(S, O) gender(S, female) numberOf(N, O) ]
 func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSet {
 
-	common.LogTree("Answer")
+	answerer.log.StartDebug("Answer")
 
 	answer := mentalese.RelationSet{}
 
@@ -74,20 +76,20 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		answer = answerer.builder.Build(solution.Answer, solutionBindings)
 	}
 
-	common.LogTree("Answer", answer)
+	answerer.log.EndDebug("Answer", answer)
 	return answer
 }
 
 // Returns the solution whose condition matches the goal
 func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Solution, []mentalese.Binding, bool) {
 
-	common.LogTree("findSolution", goal)
+	answerer.log.StartDebug("findSolution", goal)
 
 	solution := mentalese.Solution{}
 	bindings := []mentalese.Binding{}
 	found := false
 
-	for _, aSolution := range answerer.solutions  {
+	for _, aSolution := range answerer.solutions {
 
 		unscopedGoal := answerer.Unscope(goal)
 
@@ -98,35 +100,35 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 		}
 	}
 
-	common.LogTree("findSolution", solution, bindings, found)
+	answerer.log.EndDebug("findSolution", solution, bindings, found)
 
 	return solution, bindings, found
 }
 
 func (Answerer Answerer) Unscope(relations mentalese.RelationSet) mentalese.RelationSet {
 
-    unscoped := mentalese.RelationSet{}
+	unscoped := mentalese.RelationSet{}
 
-    for _, relation := range relations {
+	for _, relation := range relations {
 
-        copy := relation.Copy()
+		copy := relation.Copy()
 
-        if relation.Predicate == mentalese.Predicate_Quant {
-            // unscope the relation sets
-            for i, argument := range relation.Arguments {
-                if argument.IsRelationSet() {
+		if relation.Predicate == mentalese.Predicate_Quant {
+			// unscope the relation sets
+			for i, argument := range relation.Arguments {
+				if argument.IsRelationSet() {
 
-                    scopedSet := copy.Arguments[i].TermValueRelationSet
-                    copy.Arguments[i].TermValueRelationSet = mentalese.RelationSet{}
+					scopedSet := copy.Arguments[i].TermValueRelationSet
+					copy.Arguments[i].TermValueRelationSet = mentalese.RelationSet{}
 
-                    // recurse into the scope
-                    unscoped = append(unscoped, Answerer.Unscope(scopedSet)...)
-                }
-            }
-        }
+					// recurse into the scope
+					unscoped = append(unscoped, Answerer.Unscope(scopedSet)...)
+				}
+			}
+		}
 
-        unscoped = append(unscoped, copy)
-    }
+		unscoped = append(unscoped, copy)
+	}
 
-    return unscoped
+	return unscoped
 }

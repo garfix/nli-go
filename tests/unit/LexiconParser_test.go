@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"testing"
 	"nli-go/lib/importer"
+	"testing"
 )
 
 func TestLexiconParser(test *testing.T) {

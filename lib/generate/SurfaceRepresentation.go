@@ -1,15 +1,17 @@
 package generate
 
 import (
-	"strings"
 	"fmt"
+	"nli-go/lib/common"
+	"strings"
 )
 
 type SurfaceRepresentation struct {
+	log *common.SystemLog
 }
 
-func NewSurfaceRepresentation() *SurfaceRepresentation {
-	return &SurfaceRepresentation{}
+func NewSurfaceRepresentation(log *common.SystemLog) *SurfaceRepresentation {
+	return &SurfaceRepresentation{log: log}
 }
 
 func (r *SurfaceRepresentation) Create(tokens []string) string {

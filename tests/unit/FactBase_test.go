@@ -1,15 +1,17 @@
 package tests
 
 import (
-	"testing"
+	"fmt"
+	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"fmt"
+	"testing"
 )
 
 func TestFactBase(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
 
 	facts := parser.CreateRelationSet(`[
 		book(1, 'The red book', 5)
@@ -33,13 +35,13 @@ func TestFactBase(t *testing.T) {
 		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db)
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, log)
 
 	tests := []struct {
-		input string
+		input         string
 		wantRelations string
-		wantBindings string
-	} {
+		wantBindings  string
+	}{
 		{"write('Sally Klein', B)", "", "[{B:'The red book'} {B:'The green book'}]"},
 		{"publish(X, Y)", "", "[{X:'Orbital', Y:'The red book'} {X:'Bookworm inc', Y:'The green book'} {X:'Bookworm inc', Y:'The blue book'}]"},
 		{"write('Keith Partridge', 'The red book')", "", "[{}]"},

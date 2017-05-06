@@ -6,7 +6,6 @@ import (
 )
 
 type SystemGenerator struct {
-
 }
 
 func NewSystemGenerator() *SystemGenerator {
@@ -35,14 +34,14 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings []menta
 	entityVar := template.Arguments[0].TermValue
 	rootVar := template.Arguments[1].TermValue
 
-	parentValue := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: rootVar}
+	parentValue := mentalese.Term{TermType: mentalese.Term_variable, TermValue: rootVar}
 
-	for i := 0; i < len(bindings) - 2; i++ {
+	for i := 0; i < len(bindings)-2; i++ {
 
 		binding := bindings[i]
-		rightValue := mentalese.Term{ TermType: mentalese.Term_variable, TermValue: rootVar + strconv.Itoa(i + 1)}
+		rightValue := mentalese.Term{TermType: mentalese.Term_variable, TermValue: rootVar + strconv.Itoa(i+1)}
 
-		relation := mentalese.Relation{ Predicate: "and", Arguments: []mentalese.Term{
+		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
 			parentValue,
 			binding[entityVar],
 			rightValue,
@@ -54,10 +53,10 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings []menta
 
 	if len(bindings) > 1 {
 
-		beforeLastBinding := bindings[len(bindings) - 2]
-		lastBinding := bindings[len(bindings) - 1]
+		beforeLastBinding := bindings[len(bindings)-2]
+		lastBinding := bindings[len(bindings)-1]
 
-		relation := mentalese.Relation{ Predicate: "and", Arguments: []mentalese.Term{
+		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
 			parentValue,
 			beforeLastBinding[entityVar],
 			lastBinding[entityVar],

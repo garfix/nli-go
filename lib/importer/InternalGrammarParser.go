@@ -1,32 +1,32 @@
 package importer
 
 import (
+	"fmt"
+	"nli-go/lib/common"
+	"nli-go/lib/generate"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
-	"nli-go/lib/generate"
-	"fmt"
-    "nli-go/lib/common"
 )
 
 const (
-	field_form = "form"
-	field_pos = "pos"
-	field_sense = "sense"
-	field_condition = "condition"
-	field_rule = "rule"
+	field_form        = "form"
+	field_pos         = "pos"
+	field_sense       = "sense"
+	field_condition   = "condition"
+	field_rule        = "rule"
 	field_preparation = "preparation"
-	field_answer = "answer"
+	field_answer      = "answer"
 )
 
 type InternalGrammarParser struct {
-	tokenizer      *GrammarTokenizer
+	tokenizer        *GrammarTokenizer
 	lastParsedResult ParseResult
 	panicOnParseFail bool
 }
 
 func NewInternalGrammarParser() *InternalGrammarParser {
 	return &InternalGrammarParser{
-		tokenizer: new(GrammarTokenizer),
+		tokenizer:        new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
 		panicOnParseFail: true,
 	}
@@ -37,7 +37,7 @@ func (parser *InternalGrammarParser) SetPanicOnParseFail(doPanic bool) {
 	parser.panicOnParseFail = doPanic
 }
 
-func (parser *InternalGrammarParser) GetLastParseResult() (ParseResult) {
+func (parser *InternalGrammarParser) GetLastParseResult() ParseResult {
 	return parser.lastParsedResult
 }
 
@@ -63,9 +63,9 @@ func (parser *InternalGrammarParser) CreateLexicon(source string) *parse.Lexicon
 }
 
 // Parses source into a lexicon
-func (parser *InternalGrammarParser) CreateGenerationLexicon(source string) *generate.GenerationLexicon {
+func (parser *InternalGrammarParser) CreateGenerationLexicon(source string, log *common.SystemLog) *generate.GenerationLexicon {
 
-	lexicon := generate.NewGenerationLexicon()
+	lexicon := generate.NewGenerationLexicon(log)
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
@@ -77,7 +77,7 @@ func (parser *InternalGrammarParser) CreateGenerationLexicon(source string) *gen
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	lexicon, _, parseOk := parser.parseGenerationLexicon(tokens, 0)
+	lexicon, _, parseOk := parser.parseGenerationLexicon(tokens, 0, log)
 	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
 	return lexicon
@@ -190,7 +190,7 @@ func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *gen
 
 func (parser *InternalGrammarParser) LoadText(path string) string {
 
-    source, err := common.ReadFile(path)
+	source, err := common.ReadFile(path)
 
 	if err != nil {
 		parser.processResult(file_read, false, fmt.Sprint(err), 0)

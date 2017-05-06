@@ -8,10 +8,8 @@ func TestA(t *testing.T) {
 
 	tests := []struct {
 		input string
-		want string
-	} {
-
-	}
+		want  string
+	}{}
 
 	for _, test := range tests {
 		result := test.input

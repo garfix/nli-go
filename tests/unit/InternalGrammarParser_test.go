@@ -1,16 +1,16 @@
 package tests
 
 import (
-	"testing"
 	"fmt"
 	"nli-go/lib/importer"
+	"testing"
 )
 
 func TestInternalGrammarParser(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 
-	tests := []string {
+	tests := []string{
 		"determiner(E, [], D, [])",
 	}
 
@@ -25,7 +25,7 @@ func TestInternalGrammarParser(t *testing.T) {
 
 	grammar := parser.CreateGrammar("[" +
 		"rule: s(P) -> np(E) vp(P),         sense: subject(P, E);" +
-	"]")
+		"]")
 
 	rules := grammar.FindRules("s")
 	if len(rules) == 0 {

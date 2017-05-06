@@ -1,19 +1,20 @@
 package tests
 
 import (
-	"testing"
+	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
+	"testing"
 )
 
 func TestBinder(t *testing.T) {
 	var tests = []struct {
-		subject string
-		object string
-		binding string
+		subject     string
+		object      string
+		binding     string
 		wantBinding string
-		wantOk bool
-	} {
+		wantOk      bool
+	}{
 		{"A", "13", "{}", "{A:13}", true},
 		{"A", "B", "{}", "{A:B}", true},
 		{"'John'", "'John'", "{}", "{}", true},
@@ -26,7 +27,8 @@ func TestBinder(t *testing.T) {
 	}
 
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher()
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
 
 	for _, test := range tests {
 

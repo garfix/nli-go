@@ -1,85 +1,158 @@
 package global
 
 import (
-    "nli-go/lib/parse"
-    "nli-go/lib/central"
-    "nli-go/lib/mentalese"
-    "nli-go/lib/parse/earley"
-    "nli-go/lib/generate"
-    "nli-go/lib/common"
-    "encoding/json"
-    "path/filepath"
+	"encoding/json"
+	"fmt"
+	"nli-go/lib/central"
+	"nli-go/lib/common"
+	"nli-go/lib/generate"
+	"nli-go/lib/mentalese"
+	"nli-go/lib/parse"
+	"nli-go/lib/parse/earley"
+	"path/filepath"
 )
 
 type system struct {
-    log *systemLog
-    lexicon *parse.Lexicon
-    grammar *parse.Grammar
-    generationLexicon *generate.GenerationLexicon
-    generationGrammar *generate.GenerationGrammar
-    tokenizer *parse.Tokenizer
-    parser *earley.Parser
-    quantifierScoper mentalese.QuantifierScoper
-    relationizer earley.Relationizer
-    transformer *mentalese.RelationTransformer
-    answerer *central.Answerer
-    generator *generate.Generator
-    surfacer *generate.SurfaceRepresentation
-    generic2ds []mentalese.RelationTransformation
-    ds2generic []mentalese.RelationTransformation
+	log               *common.SystemLog
+	lexicon           *parse.Lexicon
+	grammar           *parse.Grammar
+	generationLexicon *generate.GenerationLexicon
+	generationGrammar *generate.GenerationGrammar
+	tokenizer         *parse.Tokenizer
+	parser            *earley.Parser
+	quantifierScoper  mentalese.QuantifierScoper
+	relationizer      earley.Relationizer
+	transformer       *mentalese.RelationTransformer
+	answerer          *central.Answerer
+	generator         *generate.Generator
+	surfacer          *generate.SurfaceRepresentation
+	generic2ds        []mentalese.RelationTransformation
+	ds2generic        []mentalese.RelationTransformation
 }
 
-func NewSystem(configPath string, log *systemLog) *system {
+func NewSystem(configPath string, log *common.SystemLog) *system {
 
-    system := &system{ log: log }
-    logBlock := NewLogBlock("Build system")
-    config := systemConfig{}
+	system := &system{log: log}
+	config := systemConfig{}
 
-    configJson, err := common.ReadFile(configPath)
-    if err != nil {
-        logBlock.Fail()
-        logBlock.AddLine("Error reading JSON file " + configPath)
-        logBlock.AddLine(err.Error())
-    }
+	configJson, err := common.ReadFile(configPath)
+	if err != nil {
+		log.Fail("Error reading JSON file " + configPath + " (" + err.Error() + ")")
+	}
 
-    if logBlock.IsOk() {
-        err := json.Unmarshal([]byte(configJson), &config)
-        if err != nil {
-            logBlock.Fail()
-            logBlock.AddLine("Error parsing config file " + configPath)
-            logBlock.AddLine(err.Error())
-        }
-    }
+	if log.IsOk() {
+		err := json.Unmarshal([]byte(configJson), &config)
+		if err != nil {
+			log.Fail("Error parsing JSON file " + configPath + " (" + err.Error() + ")")
+		}
+	}
 
-    if logBlock.IsOk() {
-        builder := newSystemBuilder(filepath.Dir(configPath))
-        builder.buildFromConfig(system, config, logBlock)
-    }
+	if log.IsOk() {
+		builder := newSystemBuilder(filepath.Dir(configPath), log)
+		builder.buildFromConfig(system, config)
+	}
 
-    log.AddBlock(logBlock)
-
-    return system
+	return system
 }
 
 func (system *system) Answer(input string) string {
 
-    tokens := system.tokenizer.Process(input)
-    parseTree, _ := system.parser.Parse(tokens)
-    rawRelations := system.relationizer.Relationize(parseTree)
-    genericRelations := system.transformer.Replace(system.generic2ds, rawRelations)
-    domainSpecificSense := system.quantifierScoper.Scope(genericRelations)
-    dsAnswer := system.answerer.Answer(domainSpecificSense)
-    genericAnswer := system.transformer.Replace(system.ds2generic, dsAnswer)
-    answerWords := system.generator.Generate(genericAnswer)
-    answer := system.surfacer.Create(answerWords)
+	system.log.Clear()
 
-    return answer
+	tokens := system.tokenizer.Process(input)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
+	} else {
+		return ""
+	}
+
+	parseTree := system.parser.Parse(tokens)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Parser", parseTree.String())
+	} else {
+		return ""
+	}
+
+	genericRelations := system.relationizer.Relationize(parseTree)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Relationizer", genericRelations.String())
+	} else {
+		return ""
+	}
+
+	dsRelations := system.transformer.Replace(system.generic2ds, genericRelations)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Generic 2 DS", dsRelations.String())
+	} else {
+		return ""
+	}
+
+	scopedDomainSpecificRelations := system.quantifierScoper.Scope(dsRelations)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Scoped", scopedDomainSpecificRelations.String())
+	} else {
+		return ""
+	}
+
+	dsAnswer := system.answerer.Answer(scopedDomainSpecificRelations)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("DS Answer", dsAnswer.String())
+	} else {
+		return ""
+	}
+
+	genericAnswer := system.transformer.Replace(system.ds2generic, dsAnswer)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Genric Answer", genericAnswer.String())
+	} else {
+		return ""
+	}
+
+	answerWords := system.generator.Generate(genericAnswer)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
+	} else {
+		return ""
+	}
+
+	answer := system.surfacer.Create(answerWords)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
+	} else {
+		return ""
+	}
+
+	return answer
 }
 
 func (system *system) Suggest(input string) []string {
 
-    tokens := system.tokenizer.Process(input)
-    suggests := system.parser.Suggest(tokens)
+	system.log.Clear()
 
-    return suggests
+	tokens := system.tokenizer.Process(input)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
+	} else {
+		return []string{}
+	}
+
+	suggests := system.parser.Suggest(tokens)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", suggests))
+	} else {
+		return []string{}
+	}
+
+	return suggests
 }

@@ -1,23 +1,25 @@
 package earley
 
 import (
-	"nli-go/lib/parse"
-	"nli-go/lib/mentalese"
-	"nli-go/lib/common"
 	"fmt"
+	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
+	"nli-go/lib/parse"
 )
 
 // The relationizer turns a parse tree into a relation set
 // It also subsumes the range and quantifier relation sets inside its quantification relation
 type Relationizer struct {
-	lexicon         *parse.Lexicon
-	senseBuilder    parse.SenseBuilder
+	lexicon      *parse.Lexicon
+	senseBuilder parse.SenseBuilder
+	log          *common.SystemLog
 }
 
-func NewRelationizer(lexicon *parse.Lexicon) Relationizer {
+func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) Relationizer {
 	return Relationizer{
-		lexicon: lexicon,
+		lexicon:      lexicon,
 		senseBuilder: parse.NewSenseBuilder(),
+		log:          log,
 	}
 }
 
@@ -30,8 +32,7 @@ func (relationizer Relationizer) Relationize(rootNode ParseTreeNode) mentalese.R
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
 func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antecedentVariable string) mentalese.RelationSet {
 
-	common.LogTree("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
-	common.LogTree("")
+	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
 
 	relationSet := mentalese.RelationSet{}
 
@@ -50,7 +51,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 		boundChildSets := []mentalese.RelationSet{}
 		for i, childNode := range node.constituents {
 
-			consequentVariable := variableMap[node.rule.EntityVariables[i + 1]]
+			consequentVariable := variableMap[node.rule.EntityVariables[i+1]]
 			childRelations := relationizer.extractSenseFromNode(childNode, consequentVariable)
 			boundChildSets = append(boundChildSets, childRelations)
 		}
@@ -59,8 +60,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 		relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 	}
 
-	common.LogTree("")
-	common.LogTree("extractSenseFromNode", relationSet)
+	relationizer.log.EndDebug("extractSenseFromNode", relationSet)
 
 	return relationSet
 }
@@ -70,7 +70,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 // will be filled with the child set of the preceding variable
 func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule parse.GrammarRule) mentalese.RelationSet {
 
-	common.LogTree("processChildRelations", parentSet, childSets, rule)
+	relationizer.log.StartDebug("processChildRelations", parentSet, childSets, rule)
 
 	newSet := mentalese.RelationSet{}
 	extractedSetIndexes := map[int]bool{}
@@ -98,7 +98,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 		}
 	}
 
-	common.LogTree("processChildRelations", newSet)
+	relationizer.log.EndDebug("processChildRelations", newSet)
 
 	return newSet
 }
@@ -110,7 +110,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 // rule = np(E1) -> dp(D1) nbar(E1);
 func (relationizer Relationizer) doQuantification(actualRelation mentalese.Relation, childIndex int, childSets []mentalese.RelationSet, rule parse.GrammarRule, extractedSetIndexes map[int]bool) (mentalese.Relation, map[int]bool) {
 
-	common.LogTree("doQuantification", actualRelation, childSets, rule)
+	relationizer.log.StartDebug("doQuantification", actualRelation, childSets, rule)
 
 	formalRelation := rule.Sense[childIndex]
 	lastVariable := ""
@@ -124,15 +124,15 @@ func (relationizer Relationizer) doQuantification(actualRelation mentalese.Relat
 				actualArgument := actualRelation.Arguments[i]
 				extractedSetIndexes[index] = true
 				subSet := append(actualArgument.TermValueRelationSet, childSets[index]...)
-				relationSetArgument := mentalese.Term{ TermType: mentalese.Term_relationSet, TermValueRelationSet: subSet }
-				actualRelation.Arguments[i] = relationSetArgument;
+				relationSetArgument := mentalese.Term{TermType: mentalese.Term_relationSet, TermValueRelationSet: subSet}
+				actualRelation.Arguments[i] = relationSetArgument
 			} else {
 				panic(fmt.Sprintf("Relation set placeholder should be preceded by a variable from the rule  %v %s", rule, lastVariable))
 			}
 		}
 	}
 
-	common.LogTree("doQuantification", actualRelation, extractedSetIndexes)
+	relationizer.log.EndDebug("doQuantification", actualRelation, extractedSetIndexes)
 
 	return actualRelation, extractedSetIndexes
 }

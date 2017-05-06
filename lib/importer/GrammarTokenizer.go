@@ -36,7 +36,6 @@ const (
 )
 
 type GrammarTokenizer struct {
-
 }
 
 func NewGrammarTokenizer() *GrammarTokenizer {
@@ -47,9 +46,10 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 
 	// 2x \ = 1x escape for Go; 4x \ = 1x escape for Regexp engine
 
-	tokenExpressions := []struct{
-		id int
-		pattern string} {
+	tokenExpressions := []struct {
+		id      int
+		pattern string
+	}{
 		{t_predicate, "[a-z][a-zA-Z0-9_]*"},
 		{t_variable, "[A-Z][A-Za-z0-9_]*"},
 		{t_anonymousVariable, "_"},
@@ -91,7 +91,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		tokenId := 0
 		tokenValue := ""
 
-		for i := 1; i < len(tokenValues); i++  {
+		for i := 1; i < len(tokenValues); i++ {
 			// http://stackoverflow.com/a/18595217
 			if len(tokenValues[i]) != 0 {
 				tokenId = i
@@ -101,18 +101,18 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 
 		if tokenId == _newline {
 			lineNumber++
-			continue;
+			continue
 		} else if tokenId == t_stringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
-			tokenValue = tokenValue[1:len(tokenValue)-1]
+			tokenValue = tokenValue[1 : len(tokenValue)-1]
 		} else if tokenId == t_regExp {
 			tokenValue = strings.Replace(tokenValue, "\\/", "/", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
-			tokenValue = tokenValue[1:len(tokenValue)-1]
+			tokenValue = tokenValue[1 : len(tokenValue)-1]
 		} else if tokenId == _other || tokenId == 0 {
 			success = false
-			break;
+			break
 		}
 
 		tokens = append(tokens, Token{tokenId, lineNumber, tokenValue})

@@ -1,9 +1,8 @@
 package central
 
 import (
-    "nli-go/lib/mentalese"
-    "nli-go/lib/common"
-    "strconv"
+	"nli-go/lib/mentalese"
+	"strconv"
 )
 
 // This part of the problem solver produces a set of bindings given a quant and a binding
@@ -16,64 +15,64 @@ import (
 //     ])
 func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
 
-    common.LogTree("SolveQuant", quant, binding)
+	solver.log.StartDebug("SolveQuant", quant, binding)
 
-    rangeVariable := quant.Arguments[mentalese.Quantification_RangeVariableIndex]
-    rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
-//    quantifierVariable := quant.Arguments[mentalese.Quantification_QuantifierVariableIndex]
-    quantifierSet := quant.Arguments[mentalese.Quantification_QuantifierIndex].TermValueRelationSet
-    scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
+	rangeVariable := quant.Arguments[mentalese.Quantification_RangeVariableIndex]
+	rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
+	//    quantifierVariable := quant.Arguments[mentalese.Quantification_QuantifierVariableIndex]
+	quantifierSet := quant.Arguments[mentalese.Quantification_QuantifierIndex].TermValueRelationSet
+	scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
 
-    // bind the range to variable bindings
-    rangeBindings := solver.SolveMultipleRelationsSingleBinding(rangeSet, mentalese.Binding{})
+	// bind the range to variable bindings
+	rangeBindings := solver.SolveMultipleRelationsSingleBinding(rangeSet, mentalese.Binding{})
 
-    // evaluate the scope for each of the variable bindings
-    scopeBindings := []mentalese.Binding{}
-    for _, rangeBinding := range rangeBindings {
-        scopeBinding := binding.Merge(rangeBinding)
-        scopeBindings = append(scopeBindings, solver.SolveMultipleRelationsSingleBinding(scopeSet, scopeBinding)...)
-    }
+	// evaluate the scope for each of the variable bindings
+	scopeBindings := []mentalese.Binding{}
+	for _, rangeBinding := range rangeBindings {
+		scopeBinding := binding.Merge(rangeBinding)
+		scopeBindings = append(scopeBindings, solver.SolveMultipleRelationsSingleBinding(scopeSet, scopeBinding)...)
+	}
 
-    // validate with the quantifier
-    quantBindings := scopeBindings
-    if !solver.validate(quantifierSet, rangeVariable, rangeBindings, scopeBindings) {
-        quantBindings = []mentalese.Binding{}
-    }
+	// validate with the quantifier
+	quantBindings := scopeBindings
+	if !solver.validate(quantifierSet, rangeVariable, rangeBindings, scopeBindings) {
+		quantBindings = []mentalese.Binding{}
+	}
 
-    common.LogTree("SolveQuant", quantBindings)
+	solver.log.EndDebug("SolveQuant", quantBindings)
 
-    return quantBindings
+	return quantBindings
 }
 
 // Checks whether the quantity of scope with respect to range is according to the quantifier
 func (solver ProblemSolver) validate(quantifierSet mentalese.RelationSet, rangeVariable mentalese.Term, rangeBindings []mentalese.Binding, scopeBindings []mentalese.Binding) bool {
 
-    common.LogTree("validate", quantifierSet, rangeVariable, rangeBindings, scopeBindings)
+	solver.log.StartDebug("validate", quantifierSet, rangeVariable, rangeBindings, scopeBindings)
 
-    ok := false
-    rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
-    scopeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, scopeBindings)
+	ok := false
+	rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
+	scopeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, scopeBindings)
 
-    ok = scopeCount >= 1
+	ok = scopeCount >= 1
 
-    if len(quantifierSet) == 1 {
-        quantifier := quantifierSet[0]
-        simpleQuantifier := quantifier.Arguments[1]
+	if len(quantifierSet) == 1 {
+		quantifier := quantifierSet[0]
+		simpleQuantifier := quantifier.Arguments[1]
 
-        if simpleQuantifier.TermType == mentalese.Term_number {
+		if simpleQuantifier.TermType == mentalese.Term_number {
 
-            quantity, _ := strconv.Atoi(simpleQuantifier.TermValue)
-            ok = quantity == scopeCount
+			quantity, _ := strconv.Atoi(simpleQuantifier.TermValue)
+			ok = quantity == scopeCount
 
-        } else if simpleQuantifier.TermType == mentalese.Term_predicateAtom {
+		} else if simpleQuantifier.TermType == mentalese.Term_predicateAtom {
 
-            if simpleQuantifier.TermValue == "all" {
-                ok = scopeCount == rangeCount
-            }
-        }
-    }
+			if simpleQuantifier.TermValue == "all" {
+				ok = scopeCount == rangeCount
+			}
+		}
+	}
 
-    common.LogTree("validate", ok)
+	solver.log.EndDebug("validate", ok)
 
-    return ok
+	return ok
 }

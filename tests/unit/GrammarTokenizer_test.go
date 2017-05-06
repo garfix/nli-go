@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"testing"
 	"fmt"
 	"nli-go/lib/importer"
+	"testing"
 )
 
 func TestGrammarTokenizer(test *testing.T) {

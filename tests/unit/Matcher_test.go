@@ -1,22 +1,24 @@
 package tests
 
 import (
-	"testing"
-	"nli-go/lib/mentalese"
+	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
+	"testing"
 )
 
 func TestMatchTwoRelations(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher()
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
 	tests := []struct {
-		needle string
-		haystack string
-		binding string
+		needle      string
+		haystack    string
+		binding     string
 		wantBinding string
-		wantMatch bool
-	} {
+		wantMatch   bool
+	}{
 		{"parent(X, Y)", "parent('Luke', 'George')", "{}", "{X: 'Luke', Y: 'George'}", true},
 		{"parent('Luke', 'George')", "parent(X, Y)", "{}", "{}", true},
 		{"parent('Luke', Y)", "parent('Luke', 'George')", "{}", "{Y: 'George'}", true},
@@ -49,7 +51,8 @@ func TestMatchTwoRelations(t *testing.T) {
 func TestMatchRelationToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher()
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet("[gender('Luke', male) gender('George', male) parent('Luke', 'George') parent('Carry', 'Steven') gender('Carry', female)]")
 
 	var tests = []struct {
@@ -58,7 +61,7 @@ func TestMatchRelationToSet(t *testing.T) {
 		binding      string
 		wantBindings string
 		wantIndexes  []int
-	} {
+	}{
 		{"parent(X, Y)", haystack, "{}", "[{X:'Luke', Y:'George'} {X:'Carry', Y:'Steven'}]", []int{2, 3}},
 		{"parent(X, 'Henry')", haystack, "{}", "[]", []int{}},
 		{"parent(X, 'Steven')", haystack, "{}", "[{X:'Carry'}]", []int{3}},
@@ -76,12 +79,12 @@ func TestMatchRelationToSet(t *testing.T) {
 
 		resultBindings, resultIndexes := matcher.MatchRelationToSet(needle, haystack, binding)
 
-		bindingsOk := (len(wantBindings) == len(resultBindings))
+		bindingsOk := len(wantBindings) == len(resultBindings)
 		for i, resultBinding := range resultBindings {
 			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings[i])
 		}
 
-		indexesOk := (len(wantIndexes) == len(resultIndexes))
+		indexesOk := len(wantIndexes) == len(resultIndexes)
 		for i, resultIndex := range resultIndexes {
 			indexesOk = indexesOk && resultIndex == wantIndexes[i]
 		}
@@ -95,7 +98,8 @@ func TestMatchRelationToSet(t *testing.T) {
 func TestMatchSequenceToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher()
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`[
 		gender('Luke', male)
 		gender('George', male)
@@ -113,13 +117,13 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantBindings string
 		wantIndexes  []int
 		wantMatch    bool
-	} {
+	}{
 		{"[parent(X, Y) gender(X, male)]", haystack, "{}", "[{Y:'George', X:'Luke'}]", []int{3, 0}, true},
 		{"[parent(X, Y) gender(Y, female)]", haystack, "{X: 'Carry'}", "[{X: 'Carry', Y:'Jeanne'}]", []int{5, 2}, true},
 		{"[parent(X, Y) gender(Y, female)]", haystack, "{X: 'Quincy'}", "[]", []int{}, false},
-		{"[parent(X, Y) gender(X, female)]", haystack, "{}", "[{X:'Carry', Y:'Steven'} {X:'Carry', Y:'Jeanne'}]", []int{4,6,5}, true},
-		{"[parent('Carry', Y) gender(Y, M)]", haystack, "{Q: 3}", "[{Q: 3, Y:'Jeanne', M: female}]", []int{5,2}, true},
-		{"[gender(Y, M) parent(X, Y) gender(X, M)]", haystack, "{}", "[{X:'Luke', Y:'George', M:male} {X:'Carry', Y:'Jeanne', M:female}]", []int{1,3,0,2,5,6}, true},
+		{"[parent(X, Y) gender(X, female)]", haystack, "{}", "[{X:'Carry', Y:'Steven'} {X:'Carry', Y:'Jeanne'}]", []int{4, 6, 5}, true},
+		{"[parent('Carry', Y) gender(Y, M)]", haystack, "{Q: 3}", "[{Q: 3, Y:'Jeanne', M: female}]", []int{5, 2}, true},
+		{"[gender(Y, M) parent(X, Y) gender(X, M)]", haystack, "{}", "[{X:'Luke', Y:'George', M:male} {X:'Carry', Y:'Jeanne', M:female}]", []int{1, 3, 0, 2, 5, 6}, true},
 	}
 
 	for _, test := range tests {
@@ -131,12 +135,12 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantMatch := test.wantMatch
 		resultBindings, resultIndexes, resultMatch := matcher.MatchSequenceToSet(needle, haystack, binding)
 
-		bindingsOk := (len(wantBindings) == len(resultBindings))
+		bindingsOk := len(wantBindings) == len(resultBindings)
 		for i, resultBinding := range resultBindings {
 			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings[i])
 		}
 
-		indexesOk := (len(wantIndexes) == len(resultIndexes))
+		indexesOk := len(wantIndexes) == len(resultIndexes)
 		for i, resultIndex := range resultIndexes {
 			indexesOk = indexesOk && resultIndex == wantIndexes[i]
 		}

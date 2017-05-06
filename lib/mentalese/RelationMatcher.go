@@ -15,10 +15,11 @@ import (
 
 type RelationMatcher struct {
 	functionBases []FunctionBase
+	log           *common.SystemLog
 }
 
-func NewRelationMatcher() *RelationMatcher {
-	return &RelationMatcher{}
+func NewRelationMatcher(log *common.SystemLog) *RelationMatcher {
+	return &RelationMatcher{log: log}
 }
 
 func (matcher *RelationMatcher) AddFunctionBase(functionBase FunctionBase) {
@@ -32,9 +33,9 @@ type solutionNode struct {
 
 // Matches a relation sequence to a set
 // Returns multiple bindings
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, bool){
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, bool) {
 
-	common.LogTree("MatchSequenceToSet", needleSequence, haystackSet, binding)
+	matcher.log.StartDebug("MatchSequenceToSet", needleSequence, haystackSet, binding)
 
 	newBindings := []Binding{}
 	matchedIndexes := []int{}
@@ -50,7 +51,6 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 		for _, node := range nodes {
 
-
 			// functions like join(N, ' ', F, I, L)
 
 			for _, functionBase := range matcher.functionBases {
@@ -62,8 +62,6 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 					newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 				}
 			}
-
-
 
 			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.binding)
 			for i, someBinding := range someBindings {
@@ -84,7 +82,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
 	match = len(needleSequence) == 0 || len(matchedIndexes) > 0
 
-	common.LogTree("MatchSequenceToSet", newBindings, matchedIndexes, match)
+	matcher.log.EndDebug("MatchSequenceToSet", newBindings, matchedIndexes, match)
 
 	return newBindings, matchedIndexes, match
 }
@@ -93,7 +91,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 // Returns multiple bindings
 func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) ([]Binding, []int) {
 
-	common.LogTree("matchRelationToSet", needleRelation, haystackSet, binding)
+	matcher.log.StartDebug("matchRelationToSet", needleRelation, haystackSet, binding)
 
 	newBindings := []Binding{}
 	indexes := []int{}
@@ -108,7 +106,7 @@ func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, hays
 		}
 	}
 
-	common.LogTree("matchRelationToSet", newBindings, indexes)
+	matcher.log.EndDebug("matchRelationToSet", newBindings, indexes)
 
 	return newBindings, indexes
 }
@@ -119,7 +117,7 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 	newBinding := binding.Copy()
 	match := true
 
-	common.LogTree("MatchTwoRelations", needleRelation, haystackRelation, binding)
+	matcher.log.StartDebug("MatchTwoRelations", needleRelation, haystackRelation, binding)
 
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
@@ -131,12 +129,12 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 			newBinding, match = matcher.BindTerm(subjectArgument, haystackRelation.Arguments[i], newBinding)
 
 			if !match {
-				break;
+				break
 			}
 		}
 	}
 
-	common.LogTree("MatchTwoRelations", newBinding, match)
+	matcher.log.EndDebug("MatchTwoRelations", newBinding, match)
 
 	return newBinding, match
 }

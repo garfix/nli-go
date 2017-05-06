@@ -10,19 +10,19 @@ type chartState struct {
 	startWordIndex int
 	endWordIndex   int
 
-	childStateIds  []int
-	id             int
+	childStateIds []int
+	id            int
 }
 
 func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
 	return chartState{
-		rule: rule,
-		dotPosition: dotPosition,
+		rule:           rule,
+		dotPosition:    dotPosition,
 		startWordIndex: startWordIndex,
-		endWordIndex: endWordIndex,
+		endWordIndex:   endWordIndex,
 
 		childStateIds: []int{},
-		id: 0,
+		id:            0,
 	}
 }
 

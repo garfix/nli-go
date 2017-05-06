@@ -63,5 +63,5 @@ func (set RelationSet) String() string {
 		sep = " "
 	}
 
-	return "[" + s + "]";
+	return "[" + s + "]"
 }

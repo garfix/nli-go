@@ -1,19 +1,20 @@
 package tests
 
 import (
-    "testing"
-    "nli-go/lib/importer"
-    "nli-go/lib/mentalese"
-    "nli-go/lib/central"
-    "nli-go/lib/knowledge"
-    "nli-go/lib/common"
+	"nli-go/lib/central"
+	"nli-go/lib/common"
+	"nli-go/lib/importer"
+	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
+	"testing"
 )
 
 func TestQuantSolver(t *testing.T) {
 
-    internalGrammarParser := importer.NewInternalGrammarParser()
+	internalGrammarParser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
 
-    dbFacts := internalGrammarParser.CreateRelationSet(`[
+	dbFacts := internalGrammarParser.CreateRelationSet(`[
 		person(1, 'Jacqueline de Boer', 'F', '1964')
 		person(2, 'Mark van Dongen', 'M', '1967')
 		person(3, 'Suzanne van Dongen', 'F', '1967')
@@ -30,61 +31,56 @@ func TestQuantSolver(t *testing.T) {
 		have_child(1, 8)
 	]`)
 
-    ds2db := internalGrammarParser.CreateDbMappings(`[
+	ds2db := internalGrammarParser.CreateDbMappings(`[
 		have_child(A, B) ->> have_child(A, B);
 		isa(A, parent) ->> have_child(A, _);
 		isa(A, child) ->> have_child(_, A);
 	]`)
 
-    tests := []struct {
-        quant string
-        binding string
-        result string
-    } {
-        {
-            // does every parent have 2 children?
-            "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
-            "{}",
-            "{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
-        },
-        {
-            // does every parent have 3 children?
-            "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ], [ have_child(S1, O1) ]) ])",
-            "{}",
-            "",
-        },
-        {
-            // keep extra bindings?
-            "quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
-            "{X: 3}",
-            "{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
-        },
-    }
+	tests := []struct {
+		quant   string
+		binding string
+		result  string
+	}{
+		{
+			// does every parent have 2 children?
+			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+			"{}",
+			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
+		},
+		{
+			// does every parent have 3 children?
+			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ], [ have_child(S1, O1) ]) ])",
+			"{}",
+			"",
+		},
+		{
+			// keep extra bindings?
+			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+			"{X: 3}",
+			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
+		},
+	}
 
-    factBase1 := knowledge.NewInMemoryFactBase(dbFacts, ds2db)
-    solver := central.NewProblemSolver(mentalese.NewRelationMatcher())
-    solver.AddFactBase(factBase1)
+	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, ds2db, log)
+	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
+	solver.AddFactBase(factBase1)
 
-    for _, test := range tests {
+	for _, test := range tests {
 
-        quant := internalGrammarParser.CreateRelation(test.quant)
-        binding := internalGrammarParser.CreateBinding(test.binding)
+		quant := internalGrammarParser.CreateRelation(test.quant)
+		binding := internalGrammarParser.CreateBinding(test.binding)
 
-common.LoggerActive=false
-        result := solver.SolveQuant(quant, binding)
-common.LoggerActive=false
+		result := solver.SolveQuant(quant, binding)
+		result = mentalese.UniqueBindings(result)
 
-        result = mentalese.UniqueBindings(result)
+		resultString := ""
+		for _, result := range result {
+			resultString += result.String()
+		}
 
-        resultString := ""
-        for _, result := range result {
-            resultString += result.String()
-        }
-
-        if resultString != test.result {
-            t.Errorf("got %s, want %s", resultString, test.result)
-        }
-    }
+		if resultString != test.result {
+			t.Errorf("got %s, want %s", resultString, test.result)
+		}
+	}
 }
-
-

@@ -5,13 +5,15 @@ import (
 )
 
 type RelationTransformer struct {
-	matcher         *RelationMatcher
+	matcher *RelationMatcher
+	log     *common.SystemLog
 }
 
 // using transformations
-func NewRelationTransformer(matcher *RelationMatcher) *RelationTransformer {
+func NewRelationTransformer(matcher *RelationMatcher, log *common.SystemLog) *RelationTransformer {
 	return &RelationTransformer{
 		matcher: matcher,
+		log:     log,
 	}
 }
 
@@ -21,7 +23,7 @@ func (transformer *RelationTransformer) Replace(transformations []RelationTransf
 	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, relationSet)
 	newRelations := RelationSet{}
 
-	for i, oldRelation := range relationSet  {
+	for i, oldRelation := range relationSet {
 		if !common.IntArrayContains(matchedIndexes, i) {
 			newRelations = append(newRelations, oldRelation)
 		}
@@ -33,7 +35,7 @@ func (transformer *RelationTransformer) Replace(transformations []RelationTransf
 }
 
 // Try to match all transformations to relationSet, and return the replacements that resulted from the transformations
-func (transformer *RelationTransformer) Extract(transformations []RelationTransformation, relationSet RelationSet) (RelationSet) {
+func (transformer *RelationTransformer) Extract(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
 	_, replacements := transformer.matchAllTransformations(transformations, relationSet)
 
@@ -54,9 +56,9 @@ func (transformer *RelationTransformer) Append(transformations []RelationTransfo
 
 // Attempts all transformations on all relations
 // Returns the indexes of the matched relations, and the replacements that were created, each in a single set
-func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet){
+func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet) {
 
-	common.LogTree("matchAllTransformations", transformations)
+	transformer.log.StartDebug("matchAllTransformations", transformations)
 
 	matchedIndexes := []int{}
 	replacements := RelationSet{}
@@ -75,7 +77,7 @@ func (transformer *RelationTransformer) matchAllTransformations(transformations 
 
 	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
 
-	common.LogTree("matchAllTransformations", matchedIndexes, replacements)
+	transformer.log.EndDebug("matchAllTransformations", matchedIndexes, replacements)
 
 	return matchedIndexes, replacements
 }
@@ -84,7 +86,7 @@ func (transformer *RelationTransformer) createReplacements(relations RelationSet
 
 	replacements := RelationSet{}
 
-	common.LogTree("createReplacements", relations, bindings)
+	transformer.log.StartDebug("createReplacements", relations, bindings)
 
 	for _, relation := range relations {
 
@@ -114,7 +116,7 @@ func (transformer *RelationTransformer) createReplacements(relations RelationSet
 		replacements = append(replacements, newRelation)
 	}
 
-	common.LogTree("createReplacements", replacements)
+	transformer.log.EndDebug("createReplacements", replacements)
 
 	return replacements
 }

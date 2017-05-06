@@ -4,7 +4,7 @@ import "nli-go/lib/mentalese"
 
 type RelationSetBuilder struct {
 	generators []RelationGenerator
-	matcher *mentalese.RelationMatcher
+	matcher    *mentalese.RelationMatcher
 }
 
 func NewRelationSetBuilder() *RelationSetBuilder {

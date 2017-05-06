@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"testing"
@@ -41,9 +40,4 @@ func TestRelationships(t *testing.T) {
 			t.Error(log.String())
 		}
 	}
-
-	for _, p := range log.GetProductions() {
-		fmt.Println(p)
-	}
-
 }

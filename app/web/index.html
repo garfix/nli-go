@@ -42,10 +42,10 @@
                     success: function (data) {
 
                         var suggests = data.Value;
-                        var error = data.Error;
+                        var success = data.Success;
                         var errorLines = data.ErrorLines;
 
-                        if (error) {
+                        if (!success) {
                             showError(errorLines)
                         } else {
 
@@ -85,10 +85,10 @@
                     success: function (data) {
 
                         var answers = data.Value;
-                        var error = data.Error;
+                        var success = data.Success;
                         var errorLines = data.ErrorLines;
 
-                        if (error) {
+                        if (!success) {
                             showError(errorLines)
                         } else {
                             showAnswer(answers[0])

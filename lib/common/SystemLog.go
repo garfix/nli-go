@@ -92,6 +92,10 @@ func (log *SystemLog) String() string {
 
 		s += "ERROR: " + log.error + "\n\n"
 
+		for _, production := range log.GetProductions() {
+			s += fmt.Sprintln(production)
+		}
+
 		for _, debugLine := range log.debugLines {
 			s += debugLine + "\n"
 		}

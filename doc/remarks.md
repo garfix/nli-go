@@ -1,3 +1,7 @@
+## 2017-05-06
+
+Added a cli command "nli" with two sub commands "answer" and "suggest" that produce JSON. Created a simple demo web app.
+
 ## 2017-04-01
 
 First quantifier scoping tests passing!

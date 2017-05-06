@@ -1,3 +1,10 @@
+## 1.2: Command-line app "nli"
+
+* An executable application with "answer" and "suggest subcommands"
+* Use an existing javascript autosuggest line editor (Tag-it!) and create an example web app
+* Build an example application from a configuration file
+* Rebuild of log as a proper dependency and with productions
+
 ## 1.1: Quantifier Scoping
 
 * handle scoped questions

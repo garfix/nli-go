@@ -9,7 +9,7 @@ import (
 )
 
 type Result struct {
-	Error      bool
+	Success    bool
 	ErrorLines []string
 	Value      []string
 }
@@ -60,13 +60,13 @@ func main() {
 	}
 
 	result := Result{
-		Error:      !log.IsOk(),
+		Success:    log.IsOk(),
 		ErrorLines: errorLines,
 		Value:      value,
 	}
 
 	jsonString, _ := json.Marshal(result)
-	fmt.Printf(string(jsonString))
+	fmt.Printf(string(jsonString) + "\n")
 
 	if !log.IsOk() {
 		os.Exit(1)

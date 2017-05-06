@@ -38,14 +38,13 @@ func main() {
 		path = common.Dir() + string(os.PathSeparator) + configPath
 	}
 
-	log := global.NewSystemLog()
+	log := common.NewSystemLog(false)
 	system := global.NewSystem(path, log)
 
-	ok := log.IsOk()
 	value := []string{}
 	errorLines := []string{}
 
-	if ok {
+	if log.IsOk() {
 		switch command {
 		case "answer":
 			value = []string{system.Answer(sentence)}
@@ -53,16 +52,15 @@ func main() {
 			value = system.Suggest(sentence)
 		default:
 			errorLines = []string{fmt.Sprintf("%s is not valid command.\n", os.Args[1])}
-			ok = false
 		}
 	}
 
 	if !log.IsOk() {
-		errorLines = append(errorLines, log.GetLogLines()...)
+		errorLines = append(errorLines, log.GetDebugLines()...)
 	}
 
 	result := Result{
-		Error:      !ok,
+		Error:      !log.IsOk(),
 		ErrorLines: errorLines,
 		Value:      value,
 	}
@@ -70,7 +68,7 @@ func main() {
 	jsonString, _ := json.Marshal(result)
 	fmt.Printf(string(jsonString))
 
-	if !ok {
+	if !log.IsOk() {
 		os.Exit(1)
 	}
 }

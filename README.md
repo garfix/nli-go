@@ -47,6 +47,8 @@ Or use it to suggest the next words the user can type.
 ./nli suggest fox/config.json "Did the quick"
 ``` 
 
+The config file is described [here](doc/manual/config.md).
+
 ## Example web page
 
 An example web page in PHP is included to show how you may use this library. It's in app/web:

@@ -1,0 +1,6 @@
+[
+    act(question, _)
+    focus(_)
+    every(_)
+    isa(_, do)
+]

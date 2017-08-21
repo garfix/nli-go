@@ -29,6 +29,18 @@ func (log *SystemLog) Clear() {
 	log.ok = true
 }
 
+func (log *SystemLog) EnableDebug() {
+	log.debugOn = true
+}
+
+func (log *SystemLog) DisableDebug() {
+	log.debugOn = true
+}
+
+func (log *SystemLog) ToggleDebug() {
+	log.debugOn = !log.debugOn
+}
+
 func (log *SystemLog) AddProduction(name string, production string) {
 	log.productions = append(log.productions, name+": "+production)
 }
@@ -89,16 +101,15 @@ func (log *SystemLog) String() string {
 	s := ""
 
 	if !log.IsOk() {
-
 		s += "ERROR: " + log.error + "\n\n"
+	}
 
-		for _, production := range log.GetProductions() {
-			s += fmt.Sprintln(production)
-		}
+	for _, production := range log.GetProductions() {
+		s += fmt.Sprintln(production)
+	}
 
-		for _, debugLine := range log.debugLines {
-			s += debugLine + "\n"
-		}
+	for _, debugLine := range log.debugLines {
+		s += debugLine + "\n"
 	}
 
 	return s

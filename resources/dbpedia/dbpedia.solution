@@ -1,0 +1,5 @@
+[
+    condition: who_question(A) married_to(A, B),
+    preparation: gender(B, G) name(A, N),
+    answer: married_to(A, B) gender(B, G) name(A, N);
+]

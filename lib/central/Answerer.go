@@ -56,8 +56,12 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 	solution, conditionBindings, found := answerer.findSolution(goal)
 	if found {
 
+answerer.log.ToggleDebug();
+
 		// resultBindings: map goal variables to answers
 		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
+
+answerer.log.ToggleDebug();
 
 		// solutionBindings: map condition variables to results
 		solutionBindings := []mentalese.Binding{}
@@ -74,6 +78,15 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 
 		// create answer relation sets by binding 'answer' to solutionBindings
 		answer = answerer.builder.Build(solution.Answer, solutionBindings)
+
+		if len(answer) == 0 {
+			answerer.log.Fail("Answerer could not find any answers.")
+		}
+
+	} else {
+
+		answerer.log.Fail("Answerer could not find a solution.")
+
 	}
 
 	answerer.log.EndDebug("Answer", answer)

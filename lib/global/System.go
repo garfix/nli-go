@@ -10,6 +10,7 @@ import (
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
 	"path/filepath"
+	"os"
 )
 
 type system struct {
@@ -33,6 +34,18 @@ type system struct {
 func NewSystem(configPath string, log *common.SystemLog) *system {
 
 	system := &system{log: log}
+	config := system.ReadConfig(configPath, log)
+
+	if log.IsOk() {
+		builder := newSystemBuilder(filepath.Dir(configPath), log)
+		builder.buildFromConfig(system, config)
+	}
+
+	return system
+}
+
+func (system *system) ReadConfig(configPath string, log *common.SystemLog) (systemConfig) {
+
 	config := systemConfig{}
 
 	configJson, err := common.ReadFile(configPath)
@@ -47,17 +60,21 @@ func NewSystem(configPath string, log *common.SystemLog) *system {
 		}
 	}
 
-	if log.IsOk() {
-		builder := newSystemBuilder(filepath.Dir(configPath), log)
-		builder.buildFromConfig(system, config)
+	if config.ParentConfig != "" {
+		parentConfigPath := config.ParentConfig
+		if len(parentConfigPath) > 0 && parentConfigPath[0] != os.PathSeparator {
+			parentConfigPath = filepath.Dir(configPath) + string(os.PathSeparator) + parentConfigPath
+		}
+		parentConfig := system.ReadConfig(parentConfigPath, log)
+
+		config = parentConfig.Merge(config)
+		config.ParentConfig = ""
 	}
 
-	return system
+	return config
 }
 
 func (system *system) Answer(input string) string {
-
-	system.log.Clear()
 
 	tokens := system.tokenizer.Process(input)
 
@@ -110,7 +127,7 @@ func (system *system) Answer(input string) string {
 	genericAnswer := system.transformer.Replace(system.ds2generic, dsAnswer)
 
 	if system.log.IsOk() {
-		system.log.AddProduction("Genric Answer", genericAnswer.String())
+		system.log.AddProduction("Generic Answer", genericAnswer.String())
 	} else {
 		return ""
 	}

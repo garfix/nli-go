@@ -1,0 +1,11 @@
+[
+    form: 'married',            pos: verb, 	                sense: isa(E, marry) tense(E, past);
+
+    form: 'who',                pos: whWord,                sense: isa(E, who);
+
+    form: /^[A-Z]/,	            pos: firstName,             sense: name(E, Form, firstName);
+    form: /^[A-Z]/,	            pos: lastName,              sense: name(E, Form, lastName);
+    form: /^[A-Z]/,	            pos: fullName,              sense: name(E, Form, fullName);
+
+    form: '?',                  pos: questionMark;
+]

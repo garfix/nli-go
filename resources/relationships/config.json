@@ -1,9 +1,9 @@
 {
   "lexicons": [
-    "../english-1.lexicon"
+    "../common/english-1.lexicon"
   ],
   "grammars": [
-    "../english-1.grammar"
+    "../common/english-1.grammar"
   ],
   "generationlexicons": [
     "relationships-gen.lexicon"
@@ -13,6 +13,10 @@
   ],
   "factbases": {
     "relation": [
+      {
+        "facts": "core.relation",
+        "map": "core-db.map"
+      },
       {
         "facts": "relationships.relation",
         "map": "relationships-db.map"

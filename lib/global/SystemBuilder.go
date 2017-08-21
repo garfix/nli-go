@@ -54,22 +54,6 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
-	systemFacts := builder.parser.CreateRelationSet(`[
-		act(question, _)
-		focus(_)
-		every(_)
-		isa(_, do)
-	]`)
-
-	ds2system := builder.parser.CreateDbMappings(`[
-		act(question, X) ->> act(question, X);
-		focus(A) ->> focus(A);
-		every(A) ->> every(A);
-		isa(_, B) ->> isa(_, B);
-	]`)
-
-	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(systemFacts, ds2system, builder.log))
-
 	for _, lexiconPath := range config.Lexicons {
 		path := common.AbsolutePath(builder.baseDir, lexiconPath)
 		builder.ImportLexiconFromPath(system, path)

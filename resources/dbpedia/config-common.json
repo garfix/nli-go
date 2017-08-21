@@ -1,0 +1,26 @@
+{
+  "lexicons": [
+    "english-fragment.lexicon"
+  ],
+  "grammars": [
+    "english-fragment.grammar"
+  ],
+  "generationlexicons": [
+    "dbpedia-gen.lexicon"
+  ],
+  "generationgrammars": [
+    "dbpedia-gen.grammar"
+  ],
+  "rulebases": [
+    "dbpedia.rule"
+  ],
+  "solutions": [
+    "dbpedia.solution"
+  ],
+  "generic2ds": [
+    "dbpedia-generic2ds.transform"
+  ],
+  "ds2generic": [
+    "dbpedia-ds2generic.transform"
+  ]
+}

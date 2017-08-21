@@ -1,0 +1,13 @@
+{
+  "parentconfig": "config-common.json",
+  "factbases": {
+    "sparql": [
+      {
+        "enabled": false,
+        "base_url": "http://dbpedia.org/sparql",
+        "default-graph-uri": "http://dbpedia.org",
+        "map": "relationships-db.map"
+      }
+    ]
+  }
+}

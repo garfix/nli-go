@@ -1,0 +1,10 @@
+[
+    isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+
+    name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
+    name(A, N, fullName) => name(A, N);
+
+    question(S, whQuestion) subject(S, E) isa(E, who) => who_question(E);
+
+    tense(P1, T) => ;
+]

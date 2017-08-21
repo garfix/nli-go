@@ -1,0 +1,11 @@
+{
+  "parentconfig": "config-common.json",
+  "factbases": {
+    "relation": [
+      {
+        "facts": "dbpedia.relation",
+        "map": "dbpedia-db.map"
+      }
+    ]
+  }
+}

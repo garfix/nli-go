@@ -34,38 +34,19 @@ func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []st
 	factBase.tableDescriptions[tableName] = columns
 }
 
-// todo: remove code duplication
-func (factBase MySqlFactBase) Bind(goal mentalese.Relation) []mentalese.Binding {
+func (factBase MySqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
 
 	factBase.log.StartDebug("MySqlFactBase.Bind", goal)
 
-	bindings := []mentalese.Binding{}
+	internalBindings, match := factBase.MatchSequenceToDatabase(goal)
 
-	for _, ds2db := range factBase.ds2db {
+	factBase.log.EndDebug("MySqlFactBase.Bind", internalBindings, match)
 
-		// gender(14, G), gender(A, male) => externalBinding: G = male
-		externalBinding, match := factBase.matcher.MatchTwoRelations(goal, ds2db.DsSource, mentalese.Binding{})
-		if match {
+	return internalBindings, match
+}
 
-			// gender(14, G), gender(A, male) => internalBinding: A = 14
-			internalBinding, _ := factBase.matcher.MatchTwoRelations(ds2db.DsSource, goal, mentalese.Binding{})
-
-			// create a version of the conditions with bound variables
-			boundConditions := factBase.matcher.BindRelationSetSingleBinding(ds2db.DbTarget, internalBinding)
-			// match this bound version to the database
-			internalBindings, match := factBase.MatchSequenceToDatabase(boundConditions)
-
-			if match {
-				for _, binding := range internalBindings {
-					bindings = append(bindings, externalBinding.Intersection(binding))
-				}
-			}
-		}
-	}
-
-	factBase.log.EndDebug("MySqlFactBase.Bind", bindings)
-
-	return bindings
+func (factBase MySqlFactBase) GetMappings() []mentalese.DbMapping {
+	return factBase.ds2db
 }
 
 // Matches a sequence of relations to the relations of the MySql database

@@ -80,6 +80,9 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	for _, factBase := range config.Factbases.Mysql {
 		builder.ImportMySqlDatabase(system, factBase)
 	}
+	for _, factBase := range config.Factbases.Sparql {
+		builder.ImportSparqlDatabase(system, factBase)
+	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
 	}
@@ -246,6 +249,27 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 	if factBase.Enabled {
 		system.answerer.AddFactBase(database)
 	}
+}
+
+func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparqlFactBase) {
+
+	path := common.AbsolutePath(builder.baseDir, factBase.Map)
+	mapString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.Fail("Error reading map file " + path + " (" + err.Error() + ")")
+		return
+	}
+
+	dbMap := builder.parser.CreateDbMappings(mapString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.Fail("Error parsing map file " + path + " (" + lastResult.String() + ")")
+		return
+	}
+
+	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, builder.log)
+
+	system.answerer.AddFactBase(database)
 }
 
 func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solutionBasePath string) {

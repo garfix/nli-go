@@ -24,9 +24,16 @@ type mysqlFactBase struct {
 	Enabled  bool
 }
 
+type sparqlFactBase struct {
+	Baseurl   string
+	Defaultgraphuri string
+	Map      string
+}
+
 type factBases struct {
 	Relation []relationSetFactBase
 	Mysql    []mysqlFactBase
+	Sparql   []sparqlFactBase
 }
 
 type systemConfig struct {
@@ -51,6 +58,7 @@ func (firstConfig systemConfig) Merge(secondConfig systemConfig) systemConfig {
 		Factbases: factBases {
 			Relation: append(firstConfig.Factbases.Relation, secondConfig.Factbases.Relation...),
 			Mysql: append(firstConfig.Factbases.Mysql, secondConfig.Factbases.Mysql...),
+			Sparql: append(firstConfig.Factbases.Sparql, secondConfig.Factbases.Sparql...),
 		},
 		Solutions: append(firstConfig.Solutions, secondConfig.Solutions...),
 		Generationlexicons: append(firstConfig.Generationlexicons, secondConfig.Generationlexicons...),

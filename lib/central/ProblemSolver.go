@@ -169,7 +169,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalR
 	// sourceBindings e.g. {
 	//    { X='Jack' },
 	// }
-	sourceBindings := factBase.Bind(boundRelation)
+	sourceBindings := solver.FindFacts(factBase, boundRelation)
 
 	for _, sourceBinding := range sourceBindings {
 
@@ -180,6 +180,40 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalR
 	solver.log.EndDebug("SolveSingleRelationSingleBindingSingleFactBase", newBindings)
 
 	return newBindings
+}
+
+func (solver ProblemSolver) FindFacts(factBase mentalese.FactBase, goal mentalese.Relation) []mentalese.Binding {
+
+	solver.log.StartDebug("FindFacts", goal)
+
+	subgoalBindings := []mentalese.Binding{}
+
+	for _, ds2db := range factBase.GetMappings() {
+
+		// gender(14, G), gender(A, male) => externalBinding: G = male
+		externalBinding, match := solver.matcher.MatchTwoRelations(goal, ds2db.DsSource, mentalese.Binding{})
+		if match {
+
+			// gender(14, G), gender(A, male) => internalBinding: A = 14
+			internalBinding, _ := solver.matcher.MatchTwoRelations(ds2db.DsSource, goal, mentalese.Binding{})
+
+			// create a version of the conditions with bound variables
+			boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.DbTarget, internalBinding)
+
+			// match this bound version to the database
+			internalBindings, match := factBase.Bind(boundConditions)
+
+			if match {
+				for _, binding := range internalBindings {
+					subgoalBindings = append(subgoalBindings, externalBinding.Intersection(binding))
+				}
+			}
+		}
+	}
+
+	solver.log.EndDebug("FindFacts", subgoalBindings)
+
+	return subgoalBindings
 }
 
 // goalRelation e.g. father('jack', Z)

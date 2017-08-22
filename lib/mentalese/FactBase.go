@@ -1,5 +1,6 @@
 package mentalese
 
 type FactBase interface {
-	Bind(goal Relation) []Binding
+	Bind(goal []Relation) ([]Binding, bool)
+	GetMappings() []DbMapping
 }

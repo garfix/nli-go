@@ -3,10 +3,9 @@
   "factbases": {
     "sparql": [
       {
-        "enabled": false,
-        "base_url": "http://dbpedia.org/sparql",
-        "default-graph-uri": "http://dbpedia.org",
-        "map": "relationships-db.map"
+        "baseurl": "http://dbpedia.org/sparql",
+        "defaultgraphuri": "http://dbpedia.org",
+        "map": "dbpedia-db.map"
       }
     ]
   }

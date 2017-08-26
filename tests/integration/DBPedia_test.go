@@ -12,7 +12,7 @@ func TestDBPedia(t *testing.T) {
 	system := global.NewSystem(common.Dir()+"/../../resources/dbpedia/config-online.json", log)
 
 	if !log.IsOk() {
-		t.Errorf(log.GetError())
+		t.Errorf(log.String())
 		return
 	}
 

@@ -1,2 +1,3 @@
 [
+    married_to(A, B) ->> spouse(A, B);
 ]

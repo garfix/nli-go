@@ -12,7 +12,7 @@ func TestRelationships(t *testing.T) {
 	system := global.NewSystem(common.Dir()+"/../../resources/relationships/config.json", log)
 
 	if !log.IsOk() {
-		t.Errorf(log.GetError())
+		t.Errorf(log.String())
 		return
 	}
 

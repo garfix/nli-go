@@ -80,12 +80,12 @@ answerer.log.ToggleDebug();
 		answer = answerer.builder.Build(solution.Answer, solutionBindings)
 
 		if len(answer) == 0 {
-			answerer.log.Fail("Answerer could not find any answers.")
+			answerer.log.AddError("Answerer could not find any answers.")
 		}
 
 	} else {
 
-		answerer.log.Fail("Answerer could not find a solution.")
+		answerer.log.AddError("Answerer could not find a solution.")
 
 	}
 

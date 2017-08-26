@@ -44,11 +44,11 @@ func (parser *Parser) Parse(words []string) ParseTreeNode {
 		lastParsedWordIndex, nextWord := parser.findLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
-			parser.log.Fail("Incomplete. Could not parse word: " + nextWord)
+			parser.log.AddError("Incomplete. Could not parse word: " + nextWord)
 		} else if len(words) == 0 {
-			parser.log.Fail("No sentence given.")
+			parser.log.AddError("No sentence given.")
 		} else if lastParsedWordIndex == len(words)-1 {
-			parser.log.Fail("All words are parsed but some word or token is missing to make the sentence complete.")
+			parser.log.AddError("All words are parsed but some word or token is missing to make the sentence complete.")
 		}
 	}
 

@@ -7,7 +7,6 @@ import "nli-go/lib/mentalese"
 import "database/sql"
 import (
 	_ "github.com/go-sql-driver/mysql"
-	"log"
 	"nli-go/lib/common"
 	"strings"
 )
@@ -24,7 +23,7 @@ func NewMySqlFactBase(domain string, username string, password string, database 
 
 	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
-		panic(err.Error())
+		log.AddError("Error opening MySQL: " + err.Error())
 	}
 
 	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
@@ -126,7 +125,7 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 
 	rows, err := factBase.db.Query(query, values...)
 	if err != nil {
-		panic(err.Error())
+		factBase.log.AddError("Error on querying MySQL: " + err.Error())
 	}
 
 	defer rows.Close()
@@ -146,18 +145,22 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 		}
 
 		// query all rows
-		if err := rows.Scan(resultValueRefs...); err != nil {
-			log.Fatal(err)
-		}
+		err := rows.Scan(resultValueRefs...)
+		if err != nil {
 
-		for i, argument := range needleRelation.Arguments {
-			if argument.IsVariable() {
-				variable := argument.TermValue
-				binding[variable] = mentalese.Term{TermType: mentalese.Term_stringConstant, TermValue: resultValues[i]}
+			factBase.log.AddError("Error on querying MySQL: " + err.Error())
+
+		} else {
+
+			for i, argument := range needleRelation.Arguments {
+				if argument.IsVariable() {
+					variable := argument.TermValue
+					binding[variable] = mentalese.Term{TermType: mentalese.Term_stringConstant, TermValue: resultValues[i]}
+				}
 			}
-		}
 
-		dbBindings = append(dbBindings, binding)
+			dbBindings = append(dbBindings, binding)
+		}
 	}
 
 	factBase.log.EndDebug("matchRelationToDatabase", dbBindings)

@@ -50,13 +50,13 @@ func (system *system) ReadConfig(configPath string, log *common.SystemLog) (syst
 
 	configJson, err := common.ReadFile(configPath)
 	if err != nil {
-		log.Fail("Error reading JSON file " + configPath + " (" + err.Error() + ")")
+		log.AddError("Error reading JSON file " + configPath + " (" + err.Error() + ")")
 	}
 
 	if log.IsOk() {
 		err := json.Unmarshal([]byte(configJson), &config)
 		if err != nil {
-			log.Fail("Error parsing JSON file " + configPath + " (" + err.Error() + ")")
+			log.AddError("Error parsing JSON file " + configPath + " (" + err.Error() + ")")
 		}
 	}
 

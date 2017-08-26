@@ -3,9 +3,10 @@
   "factbases": {
     "sparql": [
       {
-        "baseurl": "http://dbpedia.org/sparql",
+        "baseurl": "https://dbpedia.org/sparql",
         "defaultgraphuri": "http://dbpedia.org",
-        "map": "dbpedia-db.map"
+        "map": "dbpedia-db.map",
+        "names": "dbpedia-db-names.json"
       }
     ]
   }

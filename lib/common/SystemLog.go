@@ -10,7 +10,7 @@ type SystemLog struct {
 	productions []string
 	debugLines  []string
 	debugDepth  int
-	error       string
+	errors      []string
 	ok          bool
 }
 
@@ -25,7 +25,7 @@ func (log *SystemLog) Clear() {
 	log.productions = []string{}
 	log.debugLines = []string{}
 	log.debugDepth = 0
-	log.error = ""
+	log.errors = []string{}
 	log.ok = true
 }
 
@@ -45,9 +45,9 @@ func (log *SystemLog) AddProduction(name string, production string) {
 	log.productions = append(log.productions, name+": "+production)
 }
 
-func (log *SystemLog) Fail(error string) {
+func (log *SystemLog) AddError(error string) {
 	log.ok = false
-	log.error = error
+	log.errors = append(log.errors, error)
 }
 
 func (log *SystemLog) IsOk() bool {
@@ -93,15 +93,19 @@ func (log *SystemLog) GetProductions() []string {
 	return log.productions
 }
 
-func (log *SystemLog) GetError() string {
-	return log.error
+func (log *SystemLog) GetError() []string {
+	return log.errors
 }
 
 func (log *SystemLog) String() string {
 	s := ""
 
 	if !log.IsOk() {
-		s += "ERROR: " + log.error + "\n\n"
+		s += "\n"
+		for _, error := range log.errors {
+			s += "ERROR: " + error + "\n"
+		}
+		s += "\n"
 	}
 
 	for _, production := range log.GetProductions() {

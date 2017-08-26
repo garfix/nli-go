@@ -9,6 +9,7 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
+	"encoding/json"
 )
 
 type systemBuilder struct {
@@ -100,14 +101,14 @@ func (builder systemBuilder) ImportLexiconFromPath(system *system, lexiconPath s
 
 	lexiconString, err := common.ReadFile(lexiconPath)
 	if err != nil {
-		builder.log.Fail(err.Error())
+		builder.log.AddError(err.Error())
 		return
 	}
 
 	lexicon := builder.parser.CreateLexicon(lexiconString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -118,14 +119,14 @@ func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath s
 
 	grammarString, err := common.ReadFile(grammarPath)
 	if err != nil {
-		builder.log.Fail(err.Error())
+		builder.log.AddError(err.Error())
 		return
 	}
 
 	grammar := builder.parser.CreateGrammar(grammarString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -136,14 +137,14 @@ func (builder systemBuilder) ImportGenerationLexiconFromPath(system *system, lex
 
 	lexiconString, err := common.ReadFile(lexiconPath)
 	if err != nil {
-		builder.log.Fail(err.Error())
+		builder.log.AddError(err.Error())
 		return
 	}
 
 	lexicon := builder.parser.CreateGenerationLexicon(lexiconString, builder.log)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -154,14 +155,14 @@ func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, gra
 
 	grammarString, err := common.ReadFile(grammarPath)
 	if err != nil {
-		builder.log.Fail(err.Error())
+		builder.log.AddError(err.Error())
 		return
 	}
 
 	grammar := builder.parser.CreateGenerationGrammar(grammarString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -173,14 +174,14 @@ func (builder systemBuilder) ImportRuleBaseFromPath(system *system, ruleBasePath
 	path := common.AbsolutePath(builder.baseDir, ruleBasePath)
 	ruleBaseString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading rules " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading rules " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	rules := builder.parser.CreateRules(ruleBaseString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing rules file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing rules file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -192,28 +193,28 @@ func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase 
 	path := common.AbsolutePath(builder.baseDir, factBase.Facts)
 	factString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading facts " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading facts " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	facts := builder.parser.CreateRelationSet(factString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing facts file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing facts file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
 	path = common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading map file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading map file " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	dbMap := builder.parser.CreateDbMappings(mapString)
 	lastResult = builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing map file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -225,14 +226,14 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 	path := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading map file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading map file " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	dbMap := builder.parser.CreateDbMappings(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing map file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -253,23 +254,48 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 
 func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparqlFactBase) {
 
-	path := common.AbsolutePath(builder.baseDir, factBase.Map)
-	mapString, err := common.ReadFile(path)
+	mapPath := common.AbsolutePath(builder.baseDir, factBase.Map)
+	mapString, err := common.ReadFile(mapPath)
 	if err != nil {
-		builder.log.Fail("Error reading map file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading map file " + mapPath + " (" + err.Error() + ")")
 		return
 	}
 
 	dbMap := builder.parser.CreateDbMappings(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing map file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing map file " + mapPath + " (" + lastResult.String() + ")")
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, builder.log)
+	names, ok := builder.CreateConfigMap(factBase.Names)
+	if !ok {
+		return
+	}
+
+	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, names, builder.log)
 
 	system.answerer.AddFactBase(database)
+}
+
+func (builder systemBuilder) CreateConfigMap(path string) (mentalese.ConfigMap, bool) {
+
+	configMap := mentalese.ConfigMap{}
+	absolutePath := common.AbsolutePath(builder.baseDir, path)
+
+	content, err := common.ReadFile(absolutePath)
+	if err != nil {
+		builder.log.AddError("Error reading config map file " + absolutePath + " (" + err.Error() + ")")
+		return configMap, false
+	}
+
+	err = json.Unmarshal([]byte(content), &configMap)
+	if err != nil {
+		builder.log.AddError("Error parsing config map file " + absolutePath + " (" + err.Error() + ")")
+		return configMap, false
+	}
+
+	return configMap, true
 }
 
 func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solutionBasePath string) {
@@ -277,14 +303,14 @@ func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solution
 	path := common.AbsolutePath(builder.baseDir, solutionBasePath)
 	solutionString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading solutions file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading solutions file " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	solutions := builder.parser.CreateSolutions(solutionString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing solutions file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing solutions file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -296,14 +322,14 @@ func (builder systemBuilder) ImportGeneric2DsTransformations(system *system, tra
 	path := common.AbsolutePath(builder.baseDir, transformationsPath)
 	transformationstring, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading transformations file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading transformations file " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	transformations := builder.parser.CreateTransformations(transformationstring)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -317,14 +343,14 @@ func (builder systemBuilder) ImportDs2GenericTransformations(system *system, tra
 	path := common.AbsolutePath(builder.baseDir, transformationsPath)
 	transformationstring, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.Fail("Error reading transformations file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading transformations file " + path + " (" + err.Error() + ")")
 		return
 	}
 
 	transformations := builder.parser.CreateTransformations(transformationstring)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.Fail("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 

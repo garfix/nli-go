@@ -28,6 +28,7 @@ type sparqlFactBase struct {
 	Baseurl   string
 	Defaultgraphuri string
 	Map      string
+	Names    string
 }
 
 type factBases struct {

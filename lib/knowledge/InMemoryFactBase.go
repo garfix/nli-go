@@ -8,12 +8,21 @@ import (
 type InMemoryFactBase struct {
 	facts   mentalese.RelationSet
 	ds2db   []mentalese.DbMapping
+	stats	mentalese.DbStats
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, log *common.SystemLog) mentalese.FactBase {
-	return InMemoryFactBase{facts: facts, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
+func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, stats mentalese.DbStats, log *common.SystemLog) mentalese.FactBase {
+	return InMemoryFactBase{facts: facts, ds2db: ds2db, stats: stats, matcher: mentalese.NewRelationMatcher(log), log: log}
+}
+
+func (factBase InMemoryFactBase) GetMappings() []mentalese.DbMapping {
+	return factBase.ds2db
+}
+
+func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {
+	return factBase.stats
 }
 
 // Note! An internal fact base would use the same predicates as the domain language;
@@ -27,8 +36,4 @@ func (factBase InMemoryFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bi
 	factBase.log.EndDebug("Factbase Bind", internalBindings, match)
 
 	return internalBindings, match
-}
-
-func (factBase InMemoryFactBase) GetMappings() []mentalese.DbMapping {
-	return factBase.ds2db
 }

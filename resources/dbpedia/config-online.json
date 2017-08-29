@@ -6,7 +6,8 @@
         "baseurl": "https://dbpedia.org/sparql",
         "defaultgraphuri": "http://dbpedia.org",
         "map": "dbpedia-db.map",
-        "names": "dbpedia-db-names.json"
+        "names": "dbpedia-db-names.json",
+        "stats": "dbpedia-db-stats.json"
       }
     ]
   }

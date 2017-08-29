@@ -29,6 +29,15 @@ func NewMySqlFactBase(domain string, username string, password string, database 
 	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
+func (factBase MySqlFactBase) GetMappings() []mentalese.DbMapping {
+	return factBase.ds2db
+}
+
+func (factBase MySqlFactBase) GetStatistics() mentalese.DbStats {
+	// TODO
+	return mentalese.DbStats{}
+}
+
 func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []string) {
 	factBase.tableDescriptions[tableName] = columns
 }
@@ -42,10 +51,6 @@ func (factBase MySqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bindi
 	factBase.log.EndDebug("MySqlFactBase.Bind", internalBindings, match)
 
 	return internalBindings, match
-}
-
-func (factBase MySqlFactBase) GetMappings() []mentalese.DbMapping {
-	return factBase.ds2db
 }
 
 // Matches a sequence of relations to the relations of the MySql database

@@ -62,7 +62,8 @@ func TestQuantSolver(t *testing.T) {
 		},
 	}
 
-	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, ds2db, log)
+	stats := mentalese.DbStats{}
+	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, ds2db, stats, log)
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 

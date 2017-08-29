@@ -16,13 +16,14 @@ type SparqlFactBase struct {
 	defaultGraphUri   string
 	ds2db             []mentalese.DbMapping
 	names 			  mentalese.ConfigMap
+	stats			  mentalese.DbStats
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewSparqlFactBase(baseUrl string, defaultGraphUri string, ds2db []mentalese.DbMapping, names mentalese.ConfigMap, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(baseUrl string, defaultGraphUri string, ds2db []mentalese.DbMapping, names mentalese.ConfigMap, stats mentalese.DbStats, log *common.SystemLog) *SparqlFactBase {
 
-	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, matcher: mentalese.NewRelationMatcher(log), log: log}
+	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, stats: stats, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
 func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
@@ -40,6 +41,9 @@ func (factBase SparqlFactBase) GetMappings() []mentalese.DbMapping {
 	return factBase.ds2db
 }
 
+func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
+	return factBase.stats
+}
 
 // Matches a sequence of relations to the relations of the MySql database
 // sequence: [ marriages(A, C) person(A, 'John', _, _) ]
@@ -117,6 +121,11 @@ limit := 5
 		variables = append(variables, var1)
 	} else {
 		var1 = relation.Arguments[0].String()
+		if relation.Arguments[0].TermType == mentalese.Term_stringConstant {
+			var1 += "@en"
+		} else if relation.Arguments[0].TermType == mentalese.Term_id {
+			var1 = "<" + var1 + ">"
+		}
 	}
 
 	if relation.Arguments[1].TermType == mentalese.Term_anonymousVariable || relation.Arguments[1].TermType == mentalese.Term_variable {
@@ -124,6 +133,11 @@ limit := 5
 		variables = append(variables, var2)
 	} else {
 		var2 = relation.Arguments[1].String()
+		if relation.Arguments[1].TermType == mentalese.Term_stringConstant {
+			var2 += "@en"
+		} else if relation.Arguments[1].TermType == mentalese.Term_id {
+			var2 = "<" + var2 + ">"
+		}
 	}
 
 	if len(variables) == 0 {
@@ -136,7 +150,7 @@ limit := 5
 		return bindings
 	}
 
-	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} LIMIT " + strconv.Itoa(limit)
+	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(limit)
 
 	resp, err := http.PostForm(factBase.baseUrl,
 		url.Values{
@@ -170,11 +184,22 @@ limit := 5
 		binding := mentalese.Binding{}
 
 		if relation.Arguments[0].IsVariable() {
-			binding[relation.Arguments[0].TermValue] = mentalese.Term{ TermType: mentalese.Term_stringConstant, TermValue: resultBinding.Variable1.Value }
+
+			termType := mentalese.Term_stringConstant
+			if resultBinding.Variable1.Type == "uri" {
+				termType = mentalese.Term_id
+			}
+			binding[relation.Arguments[0].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable1.Value }
 		}
 
 		if relation.Arguments[1].IsVariable() {
-			binding[relation.Arguments[1].TermValue] = mentalese.Term{ TermType: mentalese.Term_stringConstant, TermValue: resultBinding.Variable2.Value }
+
+			termType := mentalese.Term_stringConstant
+			if resultBinding.Variable2.Type == "uri" {
+				termType = mentalese.Term_id
+			}
+
+			binding[relation.Arguments[1].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable2.Value }
 		}
 
 		bindings = append(bindings, binding)

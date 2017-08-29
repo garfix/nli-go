@@ -11,6 +11,7 @@ type ProblemSolver struct {
 	ruleBases             []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
 	matcher               *mentalese.RelationMatcher
+	optimizer			  Optimizer
 	log                   *common.SystemLog
 }
 
@@ -20,6 +21,7 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 		ruleBases:             []knowledge.RuleBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
 		matcher:               matcher,
+		optimizer: 			   Optimizer{},
 		log:                   log,
 	}
 }
@@ -61,7 +63,10 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
-	for _, relation := range set {
+	// sort the relations to reduce the number of tuples retrieved from the fact bases
+	sortedRelations := solver.optimizer.Optimize(set, solver.factBases)
+
+	for _, relation := range sortedRelations {
 		bindings = solver.SolveSingleRelationMultipleBindings(relation, bindings)
 
 		if len(bindings) == 0 {

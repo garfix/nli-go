@@ -11,6 +11,14 @@
   "generationgrammars": [
     "dbpedia-gen.grammar"
   ],
+  "factbases": {
+    "relation": [
+      {
+        "facts": "core.relation",
+        "map": "core-db.map"
+      }
+    ]
+  },
   "rulebases": [
     "dbpedia.rule"
   ],

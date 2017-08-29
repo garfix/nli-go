@@ -1,3 +1,5 @@
 {
-  "spouse": "http://dbpedia.org/ontology/spouse"
+  "spouse": "http://dbpedia.org/ontology/spouse",
+  "name": "http://xmlns.com/foaf/0.1/name",
+  "gender": "http://xmlns.com/foaf/0.1/gender"
 }

@@ -37,7 +37,8 @@ func TestSolver(t *testing.T) {
 		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, log)
+	stats := mentalese.DbStats{}
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, stats, log)
 
 	matcher := mentalese.NewRelationMatcher(log)
 	solver := central.NewProblemSolver(matcher, log)
@@ -103,7 +104,7 @@ func TestSolver(t *testing.T) {
 		link(A, B) ->> link(A, B);
 	]`)
 
-	factBase2 := knowledge.NewInMemoryFactBase(facts2, ds2db2, log)
+	factBase2 := knowledge.NewInMemoryFactBase(facts2, ds2db2, stats, log)
 	ruleBase2 := knowledge.NewRuleBase(rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, log)

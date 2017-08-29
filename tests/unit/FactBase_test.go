@@ -6,6 +6,8 @@ import (
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
 	"testing"
+	"nli-go/lib/mentalese"
+	"nli-go/lib/central"
 )
 
 func TestFactBase(t *testing.T) {
@@ -35,7 +37,11 @@ func TestFactBase(t *testing.T) {
 		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, log)
+	stats := mentalese.DbStats{}
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, stats, log)
+
+	matcher := mentalese.NewRelationMatcher(log)
+	solver := central.NewProblemSolver(matcher, log)
 
 	tests := []struct {
 		input         string
@@ -51,7 +57,7 @@ func TestFactBase(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 
-		resultBindings := factBase.Bind(input)
+		resultBindings := solver.FindFacts(factBase, input)
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
 			t.Errorf("FactBase,Bind(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)

@@ -1,3 +1,6 @@
 [
     married_to(A, B) ->> spouse(A, B);
+    name(A, B) ->> name(A, B);
+    gender(A, male) ->> gender(A, 'male');
+    gender(A, female) ->> gender(A, 'female');
 ]

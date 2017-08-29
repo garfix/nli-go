@@ -218,7 +218,8 @@ func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase 
 		return
 	}
 
-	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(facts, dbMap, builder.log))
+	stats := mentalese.DbStats{}
+	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(facts, dbMap, stats, builder.log))
 }
 
 func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlFactBase) {
@@ -273,7 +274,9 @@ func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparq
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, names, builder.log)
+	stats, ok := builder.CreateDbStats(factBase.Stats)
+
+	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, names, stats, builder.log)
 
 	system.answerer.AddFactBase(database)
 }
@@ -296,6 +299,26 @@ func (builder systemBuilder) CreateConfigMap(path string) (mentalese.ConfigMap, 
 	}
 
 	return configMap, true
+}
+
+func (builder systemBuilder) CreateDbStats(path string) (mentalese.DbStats, bool) {
+
+	stats := mentalese.DbStats{}
+	absolutePath := common.AbsolutePath(builder.baseDir, path)
+
+	content, err := common.ReadFile(absolutePath)
+	if err != nil {
+		builder.log.AddError("Error reading db stats file " + absolutePath + " (" + err.Error() + ")")
+		return stats, false
+	}
+
+	err = json.Unmarshal([]byte(content), &stats)
+	if err != nil {
+		builder.log.AddError("Error parsing db stats file " + absolutePath + " (" + err.Error() + ")")
+		return stats, false
+	}
+
+	return stats, true
 }
 
 func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solutionBasePath string) {

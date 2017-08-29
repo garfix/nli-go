@@ -52,7 +52,8 @@ func TestAnswerer(t *testing.T) {
 		answer: publishAuthor(A, C);
 	]`)
 
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, log)
+	stats := mentalese.DbStats{}
+	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, stats, log)
 	systemPredicateBase := knowledge.NewSystemPredicateBase(log)
 
 	matcher := mentalese.NewRelationMatcher(log)

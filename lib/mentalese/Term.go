@@ -15,6 +15,7 @@ const Term_number = 4
 const Term_anonymousVariable = 5
 const Term_regExp = 6
 const Term_relationSet = 7
+const Term_id = 8
 
 func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
@@ -80,6 +81,8 @@ func (term Term) String() string {
 		s = "_"
 	case Term_relationSet:
 		s = term.TermValueRelationSet.String()
+	case Term_id:
+		s = term.TermValue
 	default:
 		s = "<unknown>"
 	}

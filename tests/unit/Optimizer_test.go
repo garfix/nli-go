@@ -44,7 +44,7 @@ func TestOptimizer(t *testing.T) {
 	factBase1 := knowledge.NewInMemoryFactBase(facts1, ds2db1, stats1, log)
 	factBase2 := knowledge.NewInMemoryFactBase(facts2, ds2db2, stats2, log)
 
-	factBases := []mentalese.FactBase{factBase1, factBase2}
+	factBases := []knowledge.FactBase{factBase1, factBase2}
 
 	optimizer := central.Optimizer{}
 

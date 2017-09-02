@@ -13,12 +13,23 @@ type InMemoryFactBase struct {
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, stats mentalese.DbStats, log *common.SystemLog) mentalese.FactBase {
+func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, stats mentalese.DbStats, log *common.SystemLog) FactBase {
 	return InMemoryFactBase{facts: facts, ds2db: ds2db, stats: stats, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
 func (factBase InMemoryFactBase) GetMappings() []mentalese.DbMapping {
 	return factBase.ds2db
+}
+
+func (factBase InMemoryFactBase) Knows(relation mentalese.Relation) bool {
+	found := false
+	for _, mapping := range factBase.ds2db {
+		if mapping.DsSource.Predicate == relation.Predicate {
+			found = true
+			break
+		}
+	}
+	return found
 }
 
 func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {

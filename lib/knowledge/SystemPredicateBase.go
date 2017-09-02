@@ -15,6 +15,20 @@ func NewSystemPredicateBase(log *common.SystemLog) *SystemPredicateBase {
 	return &SystemPredicateBase{log: log}
 }
 
+func (ruleBase *SystemPredicateBase) Knows(relation mentalese.Relation) bool {
+
+	predicates := []string{"numberOf", "exists"}
+
+	found := false
+	for _, predicate := range predicates{
+		if predicate == relation.Predicate {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
 func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
 
 	base.log.StartDebug("SystemPredicateBase Bind", goal, bindings)

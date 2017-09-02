@@ -7,7 +7,8 @@ import (
 )
 
 type ProblemSolver struct {
-	factBases             []mentalese.FactBase
+	allKnowledgeBases     []knowledge.KnowledgeBase
+	factBases             []knowledge.FactBase
 	ruleBases             []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
 	matcher               *mentalese.RelationMatcher
@@ -17,7 +18,7 @@ type ProblemSolver struct {
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
-		factBases:             []mentalese.FactBase{},
+		factBases:             []knowledge.FactBase{},
 		ruleBases:             []knowledge.RuleBase{},
 		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
 		matcher:               matcher,
@@ -26,16 +27,62 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 	}
 }
 
-func (solver *ProblemSolver) AddFactBase(factBase mentalese.FactBase) {
+func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
 	solver.factBases = append(solver.factBases, factBase)
+	solver.allKnowledgeBases = append(solver.allKnowledgeBases, factBase)
 }
 
 func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, ruleBase)
+	solver.allKnowledgeBases = append(solver.allKnowledgeBases, ruleBase)
 }
 
 func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
 	solver.multipleBindingsBases = append(solver.multipleBindingsBases, source)
+	solver.allKnowledgeBases = append(solver.allKnowledgeBases, source)
+}
+
+// Checks if all relations in set are handled by some knowledge store
+func (solver *ProblemSolver) CheckMappings(set mentalese.RelationSet) (bool, mentalese.Relation) {
+
+	relation := mentalese.Relation{}
+
+	for _, relation = range set {
+
+		found := false
+
+		if relation.Predicate == mentalese.Predicate_Quant {
+
+			quant := relation
+			rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
+			scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
+
+			found, unfoundSubRelation := solver.CheckMappings(rangeSet)
+			if !found {
+				return false, unfoundSubRelation
+			}
+
+			found, unfoundSubRelation = solver.CheckMappings(scopeSet)
+			if !found {
+				return false, unfoundSubRelation
+			}
+
+			continue
+		}
+
+		for _, kb := range solver.allKnowledgeBases {
+			if kb.Knows(relation) {
+				found = true
+			}
+		}
+
+		if !found {
+			return false, relation
+		}
+
+	}
+
+	return true, relation
 }
 
 // goals e.g. [ father(X, Y) father(Y, Z) ]
@@ -44,6 +91,8 @@ func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBi
 //  [ father('bob', 'jonathan') father('jonathan', 'bill') ]
 // ]
 func (solver ProblemSolver) Solve(goals []mentalese.Relation) []mentalese.RelationSet {
+
+// NOTE: this function is only used by a test
 
 	solver.log.StartDebug("Solve")
 	bindings := solver.SolveRelationSet(goals, []mentalese.Binding{})
@@ -156,7 +205,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(goalRelation mental
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalRelation mentalese.Relation, binding mentalese.Binding, factBase mentalese.FactBase) []mentalese.Binding {
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalRelation mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleFactBase", goalRelation, binding)
 
@@ -187,7 +236,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(goalR
 	return newBindings
 }
 
-func (solver ProblemSolver) FindFacts(factBase mentalese.FactBase, goal mentalese.Relation) []mentalese.Binding {
+func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentalese.Relation) []mentalese.Binding {
 
 	solver.log.StartDebug("FindFacts", goal)
 

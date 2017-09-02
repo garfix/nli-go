@@ -3,6 +3,7 @@ package central
 import (
 	"nli-go/lib/mentalese"
 	"sort"
+	"nli-go/lib/knowledge"
 )
 
 const worst_cost = 100000000.0
@@ -14,7 +15,7 @@ type Optimizer struct {
 
 }
 
-func (optimizer Optimizer) Optimize(set mentalese.RelationSet, factBases []mentalese.FactBase) mentalese.RelationSet {
+func (optimizer Optimizer) Optimize(set mentalese.RelationSet, factBases []knowledge.FactBase) mentalese.RelationSet {
 
 	costs := []RelationCost{}
 

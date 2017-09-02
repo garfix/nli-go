@@ -28,7 +28,7 @@ func NewAnswerer(matcher *mentalese.RelationMatcher, log *common.SystemLog) *Ans
 	}
 }
 
-func (answerer *Answerer) AddFactBase(source mentalese.FactBase) {
+func (answerer *Answerer) AddFactBase(source knowledge.FactBase) {
 	answerer.solver.AddFactBase(source)
 }
 
@@ -56,27 +56,35 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 	solution, conditionBindings, found := answerer.findSolution(goal)
 	if found {
 
-		// resultBindings: map goal variables to answers
-		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
+		mapCheckOk, failedRelation := answerer.solver.CheckMappings(goal)
+		if !mapCheckOk {
 
-		// solutionBindings: map condition variables to results
-		solutionBindings := []mentalese.Binding{}
-		for _, conditionBinding := range conditionBindings {
-			for _, resultBinding := range resultBindings {
-				solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
+			answerer.log.AddError("Relation unknown to any knowledge base: " + failedRelation.String())
+
+		} else {
+
+			// resultBindings: map goal variables to answers
+			resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
+
+			// solutionBindings: map condition variables to results
+			solutionBindings := []mentalese.Binding{}
+			for _, conditionBinding := range conditionBindings {
+				for _, resultBinding := range resultBindings {
+					solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
+				}
 			}
-		}
 
-		// extend solution bindings by executing the preparation
-		if !solution.Preparation.IsEmpty() {
-			solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
-		}
+			// extend solution bindings by executing the preparation
+			if !solution.Preparation.IsEmpty() {
+				solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+			}
 
-		// create answer relation sets by binding 'answer' to solutionBindings
-		answer = answerer.builder.Build(solution.Answer, solutionBindings)
+			// create answer relation sets by binding 'answer' to solutionBindings
+			answer = answerer.builder.Build(solution.Answer, solutionBindings)
 
-		if len(answer) == 0 {
-			answerer.log.AddError("Answerer could not find any answers.")
+			if len(answer) == 0 {
+				answerer.log.AddError("Answerer could not find any answers.")
+			}
 		}
 
 	} else {

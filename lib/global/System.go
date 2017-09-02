@@ -116,7 +116,7 @@ func (system *system) Answer(input string) string {
 		return ""
 	}
 
-system.log.ToggleDebug();
+//system.log.ToggleDebug();
 
 	dsAnswer := system.answerer.Answer(scopedDomainSpecificRelations)
 

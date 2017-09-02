@@ -41,6 +41,17 @@ func (factBase SparqlFactBase) GetMappings() []mentalese.DbMapping {
 	return factBase.ds2db
 }
 
+func (factBase SparqlFactBase) Knows(relation mentalese.Relation) bool {
+	found := false
+	for _, mapping := range factBase.ds2db {
+		if mapping.DsSource.Predicate == relation.Predicate {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
 func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }

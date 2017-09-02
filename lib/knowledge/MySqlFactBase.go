@@ -29,6 +29,17 @@ func NewMySqlFactBase(domain string, username string, password string, database 
 	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
 }
 
+func (factBase MySqlFactBase) Knows(relation mentalese.Relation) bool {
+	found := false
+	for _, mapping := range factBase.ds2db {
+		if mapping.DsSource.Predicate == relation.Predicate {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
 func (factBase MySqlFactBase) GetMappings() []mentalese.DbMapping {
 	return factBase.ds2db
 }

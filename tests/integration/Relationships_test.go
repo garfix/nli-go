@@ -33,9 +33,9 @@ func TestRelationships(t *testing.T) {
 
 	for _, test := range tests {
 
-		answer := system.Answer(test.question)
-
 		log.Clear()
+
+		answer := system.Answer(test.question)
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

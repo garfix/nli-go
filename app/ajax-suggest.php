@@ -7,8 +7,8 @@ $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : "";
 $tokens = explode(',', $query);
 $sentence = implode(' ', $tokens);
 
-$command = __DIR__ . '/../cli/nli suggest';
-$configPath = __DIR__ . '/../../resources/relationships/config.json';
+$command = __DIR__ . '/nli suggest';
+$configPath = __DIR__ . '/../resources/dbpedia/config-online.json';
 $fullCommand = sprintf('%s %s "%s"', $command, $configPath, $sentence);
 
 $process = exec($fullCommand, $output);

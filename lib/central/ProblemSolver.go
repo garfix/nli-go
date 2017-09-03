@@ -67,6 +67,7 @@ func (solver *ProblemSolver) CheckMappings(set mentalese.RelationSet) (bool, men
 				return false, unfoundSubRelation
 			}
 
+			// the 'quant' relation itself needs no mapping
 			continue
 		}
 

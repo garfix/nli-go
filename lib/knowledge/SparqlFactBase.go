@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const max_sparql_results = 100
+
 type SparqlFactBase struct {
 	baseUrl           string
 	defaultGraphUri   string
@@ -30,44 +32,11 @@ func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bind
 
 	factBase.log.StartDebug("SparqlFactBase Bind", goal)
 
-	bindings, match := factBase.MatchSequenceToDatabase(goal)
-
-	factBase.log.EndDebug("SparqlFactBase Bind", bindings)
-
-	return bindings, match
-}
-
-func (factBase SparqlFactBase) GetMappings() []mentalese.DbMapping {
-	return factBase.ds2db
-}
-
-func (factBase SparqlFactBase) Knows(relation mentalese.Relation) bool {
-	found := false
-	for _, mapping := range factBase.ds2db {
-		if mapping.DsSource.Predicate == relation.Predicate {
-			found = true
-			break
-		}
-	}
-	return found
-}
-
-func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
-	return factBase.stats
-}
-
-// Matches a sequence of relations to the relations of the MySql database
-// sequence: [ marriages(A, C) person(A, 'John', _, _) ]
-// return: [ { C: 1, A: 5 } ]
-func (factBase SparqlFactBase) MatchSequenceToDatabase(sequence mentalese.RelationSet) ([]mentalese.Binding, bool) {
-
-	factBase.log.StartDebug("MatchSequenceToDatabase", sequence)
-
 	// bindings using database level variables
 	sequenceBindings := []mentalese.Binding{}
 	match := true
 
-	for _, relation := range sequence {
+	for _, relation := range goal {
 
 		relationBindings := []mentalese.Binding{}
 
@@ -100,11 +69,29 @@ func (factBase SparqlFactBase) MatchSequenceToDatabase(sequence mentalese.Relati
 		}
 	}
 
-	factBase.log.EndDebug("MatchSequenceToDatabase", sequenceBindings, match)
+	factBase.log.EndDebug("SparqlFactBase Bind", sequenceBindings)
 
 	return sequenceBindings, match
 }
 
+func (factBase SparqlFactBase) GetMappings() []mentalese.DbMapping {
+	return factBase.ds2db
+}
+
+func (factBase SparqlFactBase) Knows(relation mentalese.Relation) bool {
+	found := false
+	for _, mapping := range factBase.ds2db {
+		if mapping.DsSource.Predicate == relation.Predicate {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
+func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
+	return factBase.stats
+}
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
@@ -118,10 +105,6 @@ func (factBase SparqlFactBase) matchRelationToDatabase(relation mentalese.Relati
 		factBase.log.AddError("Relation does not have exactly two arguments: " + relation.String())
 		return bindings
 	}
-
-
-limit := 5
-
 
 	var1 := ""
 	var2 := ""
@@ -161,7 +144,7 @@ limit := 5
 		return bindings
 	}
 
-	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(limit)
+	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(max_sparql_results)
 
 	resp, err := http.PostForm(factBase.baseUrl,
 		url.Values{

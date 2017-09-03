@@ -1,2 +1,6 @@
 [
+    married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
+    name(A, N) => name(A, N);
+    gender(A, male) => isa(A, male);
+    gender(A, female) => isa(A, female);
 ]

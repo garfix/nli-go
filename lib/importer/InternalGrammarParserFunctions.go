@@ -171,10 +171,9 @@ func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex i
 	return solutions, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex int) (mentalese.Solution, int, bool) {
+func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, parseCustomValue func(tokens []Token, startIndex int, key string) (int, bool, bool)) (int, bool) {
 
-	solution := mentalese.Solution{}
-	ok, done, conditionFound, prepationFound, answerFound := true, false, false, false, false
+	ok, done := true, false
 
 	for ok && !done {
 		field := ""
@@ -182,28 +181,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 		if ok {
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
 			if ok {
-				switch field {
-				case field_condition:
-					solution.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
-					if conditionFound {
-						ok = false
-					}
-					conditionFound = true
-				case field_preparation:
-					solution.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
-					if prepationFound {
-						ok = false
-					}
-					prepationFound = true
-				case field_answer:
-					solution.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
-					if answerFound {
-						ok = false
-					}
-					answerFound = true
-				default:
-					ok = false
-				}
+				startIndex, ok, done = parseCustomValue(tokens, startIndex, field)
 				if ok {
 					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
 					if separatorFound {
@@ -224,9 +202,45 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 	}
 
 	// required fields
-	if !conditionFound || !answerFound {
+	if !done {
 		ok = false
 	}
+
+	return startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex int) (mentalese.Solution, int, bool) {
+
+	solution := mentalese.Solution{}
+	ok, conditionFound, preparationFound, answerFound := true, false, false, false
+
+	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
+		switch key {
+		case field_condition:
+			solution.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			if conditionFound {
+				ok = false
+			}
+		case field_preparation:
+			solution.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			if preparationFound {
+				ok = false
+			}
+			preparationFound = true
+		case field_answer:
+			solution.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			if answerFound {
+				ok = false
+			}
+			answerFound = true
+		default:
+			ok = false
+		}
+
+		return startIndex, ok, conditionFound && answerFound
+	}
+
+	startIndex, ok = parser.parseMap(tokens, startIndex, callback)
 
 	return solution, startIndex, ok
 }

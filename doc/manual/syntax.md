@@ -37,9 +37,9 @@ Note that the most important entity (the governor, is that what it's called?) is
 ## Lexicon
  
 [
-    form: 'book',           pos: noun,              sense: isa(E, book);
-    form: 'read',           pos: verb,              sense: isa(E, read);
-    form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, firstName);
+    { form: 'book',           pos: noun,              sense: isa(E, book) }
+    { form: 'read',           pos: verb,              sense: isa(E, read) }
+    { form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, firstName) }
 ]
 
 Lexicon definitions may use either a string constant or an expression for the form and use these variables in the sense:
@@ -57,7 +57,7 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 ## Grammar
 
 [
-    rule: s(P) -> np(E) vp(P),     sense: subject(P, E);
+    { rule: s(P) -> np(E) vp(P),     sense: subject(P, E) }
 ]
 
 ## Inference
@@ -75,13 +75,15 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 ## Solutions
 
 [
-    condition: relationSet,
-    preparation: relationSet,
-    answer: relationSet;
-
-    condition: relationSet,
-    preparation: relationSet,
-    answer: relationSet;
+    {
+        condition: relationSet,
+        preparation: relationSet,
+        answer: relationSet
+    } {
+        condition: relationSet,
+        preparation: relationSet,
+        answer: relationSet
+    }
 ]
 
 ## Binding

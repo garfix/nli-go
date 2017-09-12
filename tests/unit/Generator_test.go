@@ -14,16 +14,16 @@ func TestGenerator(t *testing.T) {
 	log := common.NewSystemLog(false)
 
 	grammar := internalGrammarParser.CreateGenerationGrammar(`[
-        rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E);
-        rule: np(E) -> proper_noun(E),          condition: name(E, Name);
-        rule: np(E) -> det(E) noun(E);
-        rule: vp(V) -> verb(V) np(E),           condition: object(V, E);
+        { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }
+        { rule: np(E) -> proper_noun(E),          condition: name(E, Name) }
+        { rule: np(E) -> det(E) noun(E) }
+        { rule: vp(V) -> verb(V) np(E),           condition: object(V, E) }
 	]`)
 	lexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		form: 'book',       pos: noun,          condition: instance_of(E, book);
-		form: 'kissed',     pos: verb,		    condition: predication(E, kiss);
-		form: 'married',	pos: verb,		    condition: predication(E, marry);
-		form: '*unused*',	pos: proper_noun,	condition: name(E, Name);
+		{ form: 'book',       pos: noun,          condition: instance_of(E, book) }
+		{ form: 'kissed',     pos: verb,		    condition: predication(E, kiss) }
+		{ form: 'married',	pos: verb,		    condition: predication(E, marry) }
+		{ form: '*unused*',	pos: proper_noun,	condition: name(E, Name) }
 	]`, log)
 	generator := generate.NewGenerator(grammar, lexicon, log)
 

@@ -1,20 +1,20 @@
 [
-    rule: properNoun(N1) -> fullName(N1);
-    rule: properNoun(N1) -> firstName(N1) lastName(N1);
-    rule: properNoun(N1) -> firstName(N1) insertion(N1) lastName(N1);
-    rule: properNoun(N1) -> firstName(N1) secondName(N1) lastName(N1);
+    { rule: properNoun(N1) -> fullName(N1) }
+    { rule: properNoun(N1) -> firstName(N1) lastName(N1) }
+    { rule: properNoun(N1) -> firstName(N1) insertion(N1) lastName(N1) }
+    { rule: properNoun(N1) -> firstName(N1) secondName(N1) lastName(N1) }
 
-    rule: vgp(V1) -> verb(V1);
+    { rule: vgp(V1) -> verb(V1) }
 
-    rule: vbar(V1) -> vgp(V1);
+    { rule: vbar(V1) -> vgp(V1) }
 
-    rule: vp(V1) -> vbar(V1);
+    { rule: vp(V1) -> vbar(V1) }
 
-    rule: np(E1) -> properNoun(E1);
+    { rule: np(E1) -> properNoun(E1) }
 
-    rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2),                   sense: question(S1, whQuestion) subject(S1, E1) object(S1, E2);
+    { rule: sInterrogative(S1) -> whWord(E1) vp(S1) np(E2),                   sense: question(S1, whQuestion) subject(S1, E1) object(S1, E2) }
 
-    rule: sInterrogative(S1) -> sInterrogative(S1) questionMark();
+    { rule: sInterrogative(S1) -> sInterrogative(S1) questionMark() }
 
-    rule: s(S1) -> sInterrogative(S1);
+    { rule: s(S1) -> sInterrogative(S1) }
 ]

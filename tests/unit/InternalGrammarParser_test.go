@@ -24,7 +24,7 @@ func TestInternalGrammarParser(t *testing.T) {
 	// =====================================================
 
 	grammar := parser.CreateGrammar("[" +
-		"rule: s(P) -> np(E) vp(P),         sense: subject(P, E);" +
+		"{ rule: s(P) -> np(E) vp(P),         sense: subject(P, E) }" +
 		"]")
 
 	rules := grammar.FindRules("s")
@@ -49,8 +49,8 @@ func TestInternalGrammarParser(t *testing.T) {
 	}
 
 	grammar = parser.CreateGrammar("[" +
-		"rule: s(P) -> np(E) vp(P),    sense: subject(P, E);" +
-		"rule: np(P) -> nbar(E);" +
+		"{ rule: s(P) -> np(E) vp(P),    sense: subject(P, E) }" +
+		"{ rule: np(P) -> nbar(E) }" +
 		"]")
 
 	rules = grammar.FindRules("s")

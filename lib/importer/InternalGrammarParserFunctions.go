@@ -175,6 +175,8 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 
 	ok, done, allRequiredItemsFound := true, false, false
 
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+
 	for ok && !done {
 		field := ""
 		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
@@ -186,18 +188,24 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
 					if separatorFound {
 						startIndex = newStartIndex
+					//} else {
+					//	_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
+					//	if separatorFound {
+					//		startIndex = newStartIndex
+					//		done = true
+					//	} else {
+					//		ok = false
+					//	}
 					} else {
-						_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
-						if separatorFound {
-							startIndex = newStartIndex
-							done = true
-						} else {
-							ok = false
-						}
+						done = true
 					}
 				}
 			}
 		}
+	}
+
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
 	}
 
 	// required fields

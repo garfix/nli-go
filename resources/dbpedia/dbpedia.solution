@@ -1,10 +1,12 @@
 [
-    condition: who_question(A) married_to(A, B),
-    no_results: {
-        answer: dont_know();
-    },
-    some_results: {
-        preparation: gender(B, G) name(A, N),
-        answer: married_to(A, B) gender(B, G) name(A, N);
-    },
+    {
+        condition: who_question(A) married_to(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(B, G) name(A, N),
+            answer: married_to(A, B) gender(B, G) name(A, N)
+        }
+    }
 ]

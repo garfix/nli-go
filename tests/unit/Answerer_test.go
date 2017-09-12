@@ -38,18 +38,20 @@ func TestAnswerer(t *testing.T) {
 	]`)
 
 	solutions := parser.CreateSolutions(`[
-		condition: write(PersonName, BookName) publish(PubName, BookName),
-		answer: book(BookName);
-
-		condition: write(Person, Book) numberOf(N, Book),
-		answer: focus(N);
-
-		condition: write(X, Y),
-		answer: write(X, Y);
-
-		condition: publish(A, B),
-		preparation: write(C, B),
-		answer: publishAuthor(A, C);
+		{
+			condition: write(PersonName, BookName) publish(PubName, BookName),
+			answer: book(BookName)
+		} {
+			condition: write(Person, Book) numberOf(N, Book),
+			answer: focus(N)
+		} {
+			condition: write(X, Y),
+			answer: write(X, Y)
+		} {
+			condition: publish(A, B),
+			preparation: write(C, B),
+			answer: publishAuthor(A, C)
+		}
 	]`)
 
 	stats := mentalese.DbStats{}

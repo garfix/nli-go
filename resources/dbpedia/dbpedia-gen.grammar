@@ -1,9 +1,9 @@
 [
-    rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E);
+    { rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E) }
 
-    rule: vp(V) -> verb(V) np(E),                                               condition: object(V, E);
+    { rule: vp(V) -> verb(V) np(E),                                               condition: object(V, E) }
 
-    rule: np(E) -> proper_noun(E),                                              condition: name(E, Name);
-    rule: np(E) -> pronoun(E),                                                  condition: isa(E, female);
-    rule: np(E) -> pronoun(E),                                                  condition: isa(E, male);
+    { rule: np(E) -> proper_noun(E),                                              condition: name(E, Name) }
+    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, female) }
+    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, male) }
 ]

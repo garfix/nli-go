@@ -11,7 +11,7 @@ func TestLexiconParser(test *testing.T) {
 	ok := true
 
 	lexicon := parser.CreateLexicon(`[
-		form: 'boek', pos: noun;
+		{ form: 'boek', pos: noun }
 	]`)
 
 	_, ok = lexicon.GetLexItem("boek", "noun")
@@ -20,8 +20,8 @@ func TestLexiconParser(test *testing.T) {
 	}
 
 	lexicon = parser.CreateLexicon(`[
-		form: 'boek',   pos: noun;
-		form: 'lees',   pos: verb;
+		{ form: 'boek',   pos: noun }
+		{ form: 'lees',   pos: verb }
 	]`)
 
 	_, ok = lexicon.GetLexItem("boek", "noun")

@@ -13,10 +13,10 @@ func TestRelationizer(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/common/english-1.grammar"))
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		form: 'the',        pos: determiner,        sense: isa(E, the);
-		form: 'book',       pos: noun,              sense: isa(E, book);
-		form: 'falls',      pos: verb,              sense: isa(E, fall);
-		form: '.',          pos: period;
+		{ form: 'the',        pos: determiner,        sense: isa(E, the) }
+		{ form: 'book',       pos: noun,              sense: isa(E, book) }
+		{ form: 'falls',      pos: verb,              sense: isa(E, fall) }
+		{ form: '.',          pos: period }
 	]`)
 	log := common.NewSystemLog(false)
 	parser := earley.NewParser(grammar, lexicon, log)

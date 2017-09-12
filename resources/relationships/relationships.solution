@@ -1,29 +1,31 @@
 [
-    condition: act(question, who) married_to(A, B) focus(A),
-    preparation: gender(B, G) name(A, N),
-    answer: focus(A) married_to(A, B) gender(B, G) name(A, N);
-
-    condition: act(question, yesNo) married_to(A, B),
-    preparation: exists(G, A),
-    answer: result(G);
-
-    condition: act(question, yesNo) siblings(A, B),
-    preparation: exists(G, A),
-    answer: result(G);
-
-    condition: act(question, howMany) have_child(B, A) focus(A),
-    preparation: gender(B, G) numberOf(N, A),
-    answer: gender(B, G) count(C, N) have_child(C, B);
-
-    condition: act(question, which) have_child(B, A) focus(A),
-    preparation: name(A, N),
-    answer: name(A, N) make_and(A, R);
-
-    condition: act(question, yesNo) have_child(B, A) every(B),
-    preparation: exists(G, B),
-    answer: result(G);
-
-    condition: act(question, yesNo) have_child(B, A),
-    preparation: exists(G, B),
-    answer: result(G);
+    {
+        condition: act(question, who) married_to(A, B) focus(A),
+        preparation: gender(B, G) name(A, N),
+        answer: focus(A) married_to(A, B) gender(B, G) name(A, N)
+    } {
+        condition: act(question, yesNo) married_to(A, B),
+        preparation: exists(G, A),
+        answer: result(G)
+    } {
+        condition: act(question, yesNo) siblings(A, B),
+        preparation: exists(G, A),
+        answer: result(G)
+    } {
+        condition: act(question, howMany) have_child(B, A) focus(A),
+        preparation: gender(B, G) numberOf(N, A),
+        answer: gender(B, G) count(C, N) have_child(C, B)
+    } {
+        condition: act(question, which) have_child(B, A) focus(A),
+        preparation: name(A, N),
+        answer: name(A, N) make_and(A, R)
+    } {
+        condition: act(question, yesNo) have_child(B, A) every(B),
+        preparation: exists(G, B),
+        answer: result(G)
+    } {
+        condition: act(question, yesNo) have_child(B, A),
+        preparation: exists(G, B),
+        answer: result(G)
+    }
 ]

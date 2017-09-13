@@ -77,12 +77,22 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 [
     {
         condition: relationSet,
-        preparation: relationSet,
-        answer: relationSet
+        no_results: {
+            answer: relationSet
+        },
+        some_results: {
+            preparation: relationSet,
+            answer: relationSet
+        }
     } {
         condition: relationSet,
-        preparation: relationSet,
-        answer: relationSet
+        no_results: {
+            answer: relationSet
+        },
+        some_results: {
+            preparation: relationSet,
+            answer: relationSet
+        }
     }
 ]
 

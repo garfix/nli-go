@@ -86,6 +86,17 @@ A relative path in a config files has that config file as its base.
      ]
    }
 
+### sparql
+
+    "sparql": [
+      {
+        "baseurl": "https://dbpedia.org/sparql",
+        "defaultgraphuri": "http://dbpedia.org",
+        "map": "dbpedia-db.map",
+        "names": "dbpedia-db-names.json",
+        "stats": "dbpedia-db-stats.json"
+      }
+
 ### rulebases
  
  An array of paths to rule base specifications.

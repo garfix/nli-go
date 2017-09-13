@@ -1,3 +1,11 @@
+## 2017-09-13
+
+I have been writing some blogs about this on http://patrick-van-bergen.blogspot.nl/
+
+I wrestled with the fact that the database could return no results. In which case the 'preparation' should not be applied, because it would have to many unbound variables.
+This is very heavy on the database. I settled on a solution where a made the distinction between 'no-results' and 'some_results'. At least this will make the implementer
+think about the issue.
+
 ## 2017-05-06
 
 Added a cli command "nli" with two sub commands "answer" and "suggest" that produce JSON. Created a simple demo web app.

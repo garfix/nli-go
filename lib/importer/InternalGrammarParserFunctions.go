@@ -188,14 +188,6 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
 					if separatorFound {
 						startIndex = newStartIndex
-					//} else {
-					//	_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_semicolon)
-					//	if separatorFound {
-					//		startIndex = newStartIndex
-					//		done = true
-					//	} else {
-					//		ok = false
-					//	}
 					} else {
 						done = true
 					}
@@ -208,7 +200,6 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
 	}
 
-	// required fields
 	if !allRequiredItemsFound {
 		ok = false
 	}
@@ -219,7 +210,7 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex int) (mentalese.Solution, int, bool) {
 
 	solution := mentalese.Solution{}
-	conditionFound, preparationFound, answerFound := false, false, false
+	conditionFound, someResultsFound, noResultsFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -228,32 +219,56 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 		switch key {
 		case field_condition:
 			solution.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			if conditionFound {
-				ok = false
-			}
+			ok = ok && !conditionFound
 			conditionFound = true
-		case field_preparation:
-			solution.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			if preparationFound {
-				ok = false
-			}
-			preparationFound = true
-		case field_answer:
-			solution.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			if answerFound {
-				ok = false
-			}
-			answerFound = true
+		case field_some_results:
+			solution.SomeResults, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
+			ok = ok && !someResultsFound
+			someResultsFound = true
+		case field_no_results :
+			solution.NoResults, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
+			ok = ok && !noResultsFound
+			noResultsFound = true
 		default:
 			ok = false
 		}
 
-		return startIndex, ok, conditionFound && answerFound
+		return startIndex, ok, conditionFound && someResultsFound && noResultsFound
 	}
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
 
 	return solution, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startIndex int) (mentalese.ResultHandler, int, bool) {
+
+	resultHandler := mentalese.ResultHandler{}
+	preparationFound, answerFound := false, false
+
+	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
+
+		ok := true
+
+		switch key {
+		case field_preparation:
+			resultHandler.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			ok = ok && !preparationFound
+			preparationFound = true
+		case field_answer:
+			resultHandler.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			ok = ok && !answerFound
+			answerFound = true
+		default:
+			ok = false
+		}
+
+		return startIndex, ok, answerFound
+	}
+
+	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
+
+	return resultHandler, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseLexicon(tokens []Token, startIndex int) (*parse.Lexicon, int, bool) {
@@ -323,15 +338,11 @@ func (parser *InternalGrammarParser) parseLexItem(tokens []Token, startIndex int
 			}
 		case field_pos:
 			lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
-			if posFound {
-				ok = false
-			}
+			ok = ok && !posFound
 			posFound = true
 		case field_sense:
 			lexItem.RelationTemplates, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			if senseFound {
-				ok = false
-			}
+			ok = ok && !senseFound
 			senseFound = true
 		default:
 			ok = false
@@ -370,15 +381,11 @@ func (parser *InternalGrammarParser) parseGenerationLexItem(tokens []Token, star
 			}
 		case field_pos:
 			lexItem.PartOfSpeech, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
-			if posFound {
-				ok = false
-			}
+			ok = ok && !posFound
 			posFound = true
 		case field_condition:
 			lexItem.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			if conditionFound {
-				ok = false
-			}
+			ok = ok && !conditionFound
 			conditionFound = true
 		default:
 			ok = false
@@ -447,15 +454,11 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 		switch key {
 			case field_rule:
 				rule.SyntacticCategories, rule.EntityVariables, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
-				if ruleFound {
-					ok = false
-				}
+				ok = ok && !ruleFound
 				ruleFound = true
 			case field_sense:
 				rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
-				if senseFound {
-					ok = false
-				}
+				ok = ok && !senseFound
 				senseFound = true
 			default:
 				ok = false
@@ -481,15 +484,11 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 		switch key {
 			case field_rule:
 				rule.Antecedent, rule.Consequents, startIndex, ok = parser.parseSyntacticRewriteRule2(tokens, startIndex)
-				if ruleFound {
-					ok = false
-				}
+				ok = ok && !ruleFound
 				ruleFound = true
 			case field_condition:
 				rule.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
-				if conditionFound {
-					ok = false
-				}
+				ok = ok && !conditionFound
 				conditionFound = true
 			default:
 				ok = false

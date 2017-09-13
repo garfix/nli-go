@@ -40,17 +40,37 @@ func TestAnswerer(t *testing.T) {
 	solutions := parser.CreateSolutions(`[
 		{
 			condition: write(PersonName, BookName) publish(PubName, BookName),
-			answer: book(BookName)
+			no_results: {
+				answer: none()
+			},
+			some_results: {
+				answer: book(BookName)
+			}
 		} {
 			condition: write(Person, Book) numberOf(N, Book),
-			answer: focus(N)
+			no_results: {
+				answer: none()
+			},
+			some_results: {
+				answer: focus(N)
+			}
 		} {
 			condition: write(X, Y),
-			answer: write(X, Y)
+			no_results: {
+				answer: none()
+			},
+			some_results: {
+				answer: write(X, Y)
+			}
 		} {
 			condition: publish(A, B),
-			preparation: write(C, B),
-			answer: publishAuthor(A, C)
+			no_results: {
+				answer: none()
+			},
+			some_results: {
+				preparation: write(C, B),
+				answer: publishAuthor(A, C)
+			}
 		}
 	]`)
 

@@ -52,19 +52,29 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 
 	answer := mentalese.RelationSet{}
 
-	// conditionBindings: map condition variables to goal variables
-	solution, conditionBindings, found := answerer.findSolution(goal)
-	if found {
+	mapCheckOk, failedRelation := answerer.solver.CheckMappings(goal)
+	if !mapCheckOk {
 
-		mapCheckOk, failedRelation := answerer.solver.CheckMappings(goal)
-		if !mapCheckOk {
+		answerer.log.AddError("Relation unknown to any knowledge base: " + failedRelation.String())
 
-			answerer.log.AddError("Relation unknown to any knowledge base: " + failedRelation.String())
+	} else {
+
+		// conditionBindings: map condition variables to goal variables
+		solution, conditionBindings, found := answerer.findSolution(goal)
+		if !found {
+
+			answerer.log.AddError("Answerer could not find a solution.")
 
 		} else {
 
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
+
+			// choose a handler based on whether there were results
+			resultHandler := solution.NoResults
+			if len(resultBindings) > 0 {
+				resultHandler = solution.SomeResults
+			}
 
 			// solutionBindings: map condition variables to results
 			solutionBindings := []mentalese.Binding{}
@@ -75,22 +85,13 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 			}
 
 			// extend solution bindings by executing the preparation
-			if !solution.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(solution.Preparation, solutionBindings)
+			if !resultHandler.Preparation.IsEmpty() {
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, solutionBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings
-			answer = answerer.builder.Build(solution.Answer, solutionBindings)
-
-			if len(answer) == 0 {
-				answerer.log.AddError("Answerer could not find any answers.")
-			}
+			answer = answerer.builder.Build(resultHandler.Answer, solutionBindings)
 		}
-
-	} else {
-
-		answerer.log.AddError("Answerer could not find a solution.")
-
 	}
 
 	answerer.log.EndDebug("Answer", answer)

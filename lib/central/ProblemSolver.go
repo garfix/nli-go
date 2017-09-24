@@ -11,6 +11,7 @@ type ProblemSolver struct {
 	factBases             []knowledge.FactBase
 	ruleBases             []knowledge.RuleBase
 	multipleBindingsBases []knowledge.MultipleBindingsBase
+	nestedStructureBase   []knowledge.NestedStructureBase
 	matcher               *mentalese.RelationMatcher
 	optimizer			  Optimizer
 	log                   *common.SystemLog
@@ -40,6 +41,11 @@ func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
 	solver.multipleBindingsBases = append(solver.multipleBindingsBases, source)
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, source)
+}
+
+func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructureBase) {
+	solver.nestedStructureBase = append(solver.nestedStructureBase, base)
+	solver.allKnowledgeBases = append(solver.allKnowledgeBases, base)
 }
 
 // set e.g. [ father(X, Y) father(Y, Z) ]
@@ -79,6 +85,8 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, bindings []mentalese.Binding) []mentalese.Binding {
 
+	solver.log.StartDebug("solveSingleRelationGroupMultipleBindings", relationGroup, bindings)
+
 	newBindings := []mentalese.Binding{}
 
 	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
@@ -86,9 +94,15 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 
 	if isMultipleBindingsBase {
 
-		multipleBindingsBase.Bind(relationGroup.Relations[0], bindings)
+		mbBindings, ok := multipleBindingsBase.Bind(relationGroup.Relations[0], bindings)
+
+		if ok {
+			newBindings = append(newBindings, mbBindings...)
+		}
 
 	} else {
+
+// TODO kan ook door met 1 lege binding te beginnen?
 
 		if len(bindings) == 0 {
 			groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, mentalese.Binding{})
@@ -102,6 +116,8 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 
 	}
 
+	solver.log.EndDebug("solveSingleRelationGroupMultipleBindings", newBindings)
+
 	return newBindings
 }
 
@@ -112,15 +128,15 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
 	factBase, isFactBase := knowledgeBase.(knowledge.FactBase)
 	ruleBase, isRuleBase := knowledgeBase.(knowledge.RuleBase)
+	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
 
 	boundRelations := solver.matcher.BindRelationSetSingleBinding(relationGroup.Relations, binding)
 
 	newBindings := []mentalese.Binding{}
 
-	// scoped quantification
-	if boundRelations[0].Predicate == mentalese.Predicate_Quant {
+	if isNestedStructureBase {
 
-		newBindings = append(newBindings, solver.SolveQuant(boundRelations[0], binding)...)
+		newBindings = solver.SolveChildStructures(boundRelations[0], binding)
 
 	} else if isFactBase {
 
@@ -142,6 +158,24 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	return newBindings
 }
+
+
+func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
+
+	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
+
+	newBindings := []mentalese.Binding{}
+
+	if goal.Predicate == mentalese.Predicate_Quant {
+
+		newBindings = solver.SolveQuant(goal, binding)
+	}
+
+	solver.log.EndDebug("NestedStructureBase BindChildStructures", newBindings)
+
+	return newBindings
+}
+
 
 func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentalese.RelationSet) []mentalese.Binding {
 

@@ -73,6 +73,8 @@ If there are no children, or if the DB mapping is not defined, preparation is st
 
 Check out the optimizer. It can probably be improved beyond the level of using table sizes to calculate cost.
 
+write(A, B) numberOf(B, N) => numberOf() should come later based on a dependency. This is not worked out at all.
+
 ## Domains
 
 The domain tests are not a goal in themselves, but only help to make up test cases.

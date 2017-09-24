@@ -20,7 +20,7 @@ func TestDBPedia(t *testing.T) {
 		question string
 		answer   string
 	}{
-		//{"Who married Lord Byron?", "Anne Isabella Milbanke married him"},
+		{"Who married Lord Byron?", "Anne Isabella Milbanke married him"},
 		{"Who married Anne Isabella Milbanke?", "George Gordon Byron married her"},
 	}
 

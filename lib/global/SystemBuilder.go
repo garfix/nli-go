@@ -52,6 +52,9 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	system.answerer = central.NewAnswerer(matcher, builder.log)
 	system.answerer.AddMultipleBindingsBase(systemPredicateBase)
 
+	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
+	system.answerer.AddNestedStructureBase(nestedStructureBase)
+
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 

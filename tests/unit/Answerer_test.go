@@ -76,7 +76,11 @@ func TestAnswerer(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	stats := mentalese.DbStats{}
+	stats := mentalese.DbStats{
+		"book": {Size: 100, DistinctValues: []int{100, 100}},
+		"author": {Size: 100, DistinctValues: []int{100, 200}},
+		"person": {Size: 100, DistinctValues: []int{100, 100}},
+	}
 	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
 	systemPredicateBase := knowledge.NewSystemPredicateBase(log)
 
@@ -95,7 +99,7 @@ func TestAnswerer(t *testing.T) {
 		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
 		//// return each relation only once
 		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
-		//// numberOf
+		// numberOf
 		{"[write('Sally Klein', Book) numberOf(N, Book)]", "[focus(2)]"},
 	}
 

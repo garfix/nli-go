@@ -23,44 +23,14 @@ func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, 0.0})
+// TODO calculate real cost
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, worst_cost})
 				break
 			}
 		}
 	}
 
 	return matchingGroups
-}
-
-func (ruleBase *SystemPredicateBase) GetKnownRelations(set mentalese.RelationSet) mentalese.RelationSet {
-
-	knownRelations := mentalese.RelationSet{}
-	predicates := []string{"numberOf", "exists"}
-
-	for _, setRelation := range set {
-		for _, predicate:= range predicates {
-			if predicate == setRelation.Predicate {
-				knownRelations = append(knownRelations, setRelation)
-				break
-			}
-		}
-	}
-
-	return knownRelations
-}
-
-func (ruleBase *SystemPredicateBase) Knows(relation mentalese.Relation) bool {
-
-	predicates := []string{"numberOf", "exists"}
-
-	found := false
-	for _, predicate := range predicates{
-		if predicate == relation.Predicate {
-			found = true
-			break
-		}
-	}
-	return found
 }
 
 func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {

@@ -7,7 +7,6 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"testing"
-	"fmt"
 )
 
 func TestQuantSolver(t *testing.T) {
@@ -70,16 +69,15 @@ func TestQuantSolver(t *testing.T) {
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 
+	nestedStructureBase := knowledge.NewNestedStructureBase(log)
+	solver.AddNestedStructureBase(nestedStructureBase)
+
 	for _, test := range tests {
 
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-log.ToggleDebug()
 		result := solver.SolveQuant(quant, binding)
-log.ToggleDebug()
-fmt.Println(log.String())
-break
 		result = mentalese.UniqueBindings(result)
 
 		resultString := ""

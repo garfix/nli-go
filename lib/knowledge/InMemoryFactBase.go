@@ -21,37 +21,6 @@ func (factBase InMemoryFactBase) GetMappings() []mentalese.RelationTransformatio
 	return factBase.ds2db
 }
 
-//func (factBase InMemoryFactBase) GetKnownRelations(set mentalese.RelationSet) mentalese.RelationSet {
-//
-//	knownRelations := mentalese.RelationSet{}
-//
-//	for _, mapping := range factBase.ds2db {
-//
-//		mappingMatched := true
-//		for _, patternRelation := range mapping.Pattern {
-//
-//			relationMatched := false
-//			for _, setRelation := range set {
-//				if setRelation.Predicate == patternRelation.Predicate {
-//					relationMatched = true
-//					break
-//				}
-//			}
-//
-//			if !relationMatched {
-//				mappingMatched = false
-//				break
-//			}
-//		}
-//
-//		if mappingMatched {
-//			knownRelations = append(knownRelations, mapping.Pattern...)
-//		}
-//	}
-//
-//	return knownRelations
-//}
-
 func (factBase InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }

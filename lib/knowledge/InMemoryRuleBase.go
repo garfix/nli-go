@@ -22,7 +22,8 @@ func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, kn
 	for _, rule := range ruleBase.rules {
 		for _, setRelation := range set {
 			if rule.Goal.Predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, 0.0})
+// TDOD calculate real costs
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, worst_cost})
 				break
 			}
 		}

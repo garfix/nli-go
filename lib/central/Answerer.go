@@ -40,6 +40,10 @@ func (answerer *Answerer) AddMultipleBindingsBase(source knowledge.MultipleBindi
 	answerer.solver.AddMultipleBindingsBase(source)
 }
 
+func (answerer *Answerer) AddNestedStructureBase(base knowledge.NestedStructureBase) {
+	answerer.solver.AddNestedStructureBase(base)
+}
+
 func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	answerer.solutions = append(answerer.solutions, solutions...)
 }

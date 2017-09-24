@@ -1,3 +1,9 @@
+## 2017-09-19
+
+I have to change the ds2db mapping from 1-n to n-m. Which is quite a task! It introduced relation groups, that group a set of relations into relation groups. Each group server directly as input to a knowledge base.
+
+It is theoretically possible that a set of relations could produce multiple sets of relation groups. I choose to ignore this possibility and select only the first row of relation groups. This is because I could not see how multiple sets of relation groups (which are in fact multiple queries) could work together with multiple bindings (aggregate) functions (i.e. number_of). Since they would need to work on the combined set of bindings of all sets. Which seems impossible, especially since other relations can (and will) depend on the outcome of the multiple bindings function.
+
 ## 2017-09-13
 
 I have been writing some blogs about this on http://patrick-van-bergen.blogspot.nl/

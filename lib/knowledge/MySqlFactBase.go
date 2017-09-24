@@ -14,33 +14,26 @@ import (
 type MySqlFactBase struct {
 	db                *sql.DB
 	tableDescriptions map[string][]string
-	ds2db             []mentalese.DbMapping
+	ds2db             []mentalese.RelationTransformation
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewMySqlFactBase(domain string, username string, password string, database string, ds2db []mentalese.DbMapping, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, log *common.SystemLog) *MySqlFactBase {
 
 	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
 		log.AddError("Error opening MySQL: " + err.Error())
 	}
 
-	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: mentalese.NewRelationMatcher(log), log: log}
+	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, matcher: matcher, log: log}
 }
 
-func (factBase MySqlFactBase) Knows(relation mentalese.Relation) bool {
-	found := false
-	for _, mapping := range factBase.ds2db {
-		if mapping.DsSource.Predicate == relation.Predicate {
-			found = true
-			break
-		}
-	}
-	return found
+func (factBase MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
-func (factBase MySqlFactBase) GetMappings() []mentalese.DbMapping {
+func (factBase MySqlFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 

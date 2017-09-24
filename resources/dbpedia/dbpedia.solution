@@ -5,7 +5,7 @@
             answer: dont_know()
         },
         some_results: {
-            preparation: gender(B, G) name(A, N),
+            preparation: gender(B, G) name(A, N, fullName),
             answer: married_to(A, B) gender(B, G) name(A, N)
         }
     }

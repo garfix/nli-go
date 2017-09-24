@@ -69,6 +69,10 @@ In this solution:
 
 If there are no children, or if the DB mapping is not defined, preparation is still executed (and needs to be so, for 'exists' clauses), and yields ALL names
 
+## Optimizer
+
+Check out the optimizer. It can probably be improved beyond the level of using table sizes to calculate cost.
+
 ## Domains
 
 The domain tests are not a goal in themselves, but only help to make up test cases.

@@ -7,7 +7,7 @@ import (
 // This class matches relations to other relations and reports their bindings
 // These concepts are used:
 //
-// sequence: a set of relations that is matched as a whole and shares a single binding
+// sequence: a set of relations that is matched as a whole and shares a single Binding
 // set: a set of unordered relations
 //
 // needle: the active subject, whose variables are to be bound
@@ -27,15 +27,21 @@ func (matcher *RelationMatcher) AddFunctionBase(functionBase FunctionBase) {
 }
 
 type solutionNode struct {
-	binding Binding
-	indexes []int
+	Binding Binding
+	Indexes []int
+}
+
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, bool) {
+
+	bindings, _, _, match := matcher.MatchSequenceToSetWithIndexes(needleSequence, haystackSet, binding)
+	return bindings, match
 }
 
 // Matches a relation sequence to a set
-// Returns multiple bindings
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, bool) {
+// Returns multiple bindings for variables in needleSequence
+func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, []solutionNode, bool) {
 
-	matcher.log.StartDebug("MatchSequenceToSet", needleSequence, haystackSet, binding)
+	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
 	newBindings := []Binding{}
 	matchedIndexes := []int{}
@@ -54,19 +60,20 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 			// functions like join(N, ' ', F, I, L)
 
 			for _, functionBase := range matcher.functionBases {
-				functionBinding := node.binding.Copy()
+				functionBinding := node.Binding.Copy()
 				returnValue, ok := functionBase.Execute(needleRelation, functionBinding)
 				if ok {
 					functionBinding[needleRelation.Arguments[0].TermValue] = returnValue
-					newIndexes := append(node.indexes, 0)
+//					newIndexes := append(node.Indexes, 0)
+newIndexes := node.Indexes
 					newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 				}
 			}
 
-			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.binding)
+			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.Binding)
 			for i, someBinding := range someBindings {
 				someIndex := someIndexes[i]
-				newIndexes := append(node.indexes, someIndex)
+				newIndexes := append(node.Indexes, someIndex)
 				newNodes = append(newNodes, solutionNode{someBinding, newIndexes})
 			}
 		}
@@ -75,16 +82,16 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 	}
 
 	for _, node := range nodes {
-		newBindings = append(newBindings, node.binding)
-		matchedIndexes = append(matchedIndexes, node.indexes...)
+		newBindings = append(newBindings, node.Binding)
+		matchedIndexes = append(matchedIndexes, node.Indexes...)
 	}
 
 	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
 	match = len(needleSequence) == 0 || len(matchedIndexes) > 0
 
-	matcher.log.EndDebug("MatchSequenceToSet", newBindings, matchedIndexes, match)
+	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, matchedIndexes, match)
 
-	return newBindings, matchedIndexes, match
+	return newBindings, matchedIndexes, nodes, match
 }
 
 // Matches a single relation to a relation set
@@ -111,7 +118,7 @@ func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, hays
 	return newBindings, indexes
 }
 
-// Matches needleRelation to haystackRelation, using binding
+// Matches needleRelation to haystackRelation, using Binding
 func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, haystackRelation Relation, binding Binding) (Binding, bool) {
 
 	newBinding := binding.Copy()

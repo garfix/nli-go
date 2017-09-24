@@ -1,7 +1,19 @@
 [
-    married_to(A, B) ->> spouse(A, B);
-    name(A, B) ->> birth_name(A, B);
-    name(A, B) ->> name(A, B);
-    gender(A, male) ->> gender(A, 'male');
-    gender(A, female) ->> gender(A, 'female');
+
+
+married_to(A, B) => spouse(A, B);
+married_to(A, B) => spouse(B, A);
+
+
+
+    name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => birth_name(A, N);
+    name(A, F, firstName) name(A, S, secondName) name(A, L, lastName) join(N, ' ', F, S, L) => birth_name(A, N);
+    name(A, N, fullName) => birth_name(A, N);
+
+    name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
+    name(A, F, firstName) name(A, S, secondName) name(A, L, lastName) join(N, ' ', F, S, L) => name(A, N);
+    name(A, N, fullName) => name(A, N);
+
+    gender(A, male) => gender(A, 'male');
+    gender(A, female) => gender(A, 'female');
 ]

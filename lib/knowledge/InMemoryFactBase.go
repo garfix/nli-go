@@ -7,29 +7,53 @@ import (
 
 type InMemoryFactBase struct {
 	facts   mentalese.RelationSet
-	ds2db   []mentalese.DbMapping
+	ds2db   []mentalese.RelationTransformation
 	stats	mentalese.DbStats
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(facts mentalese.RelationSet, ds2db []mentalese.DbMapping, stats mentalese.DbStats, log *common.SystemLog) FactBase {
-	return InMemoryFactBase{facts: facts, ds2db: ds2db, stats: stats, matcher: mentalese.NewRelationMatcher(log), log: log}
+func NewInMemoryFactBase(facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) FactBase {
+	return InMemoryFactBase{facts: facts, ds2db: ds2db, stats: stats, matcher: matcher, log: log}
 }
 
-func (factBase InMemoryFactBase) GetMappings() []mentalese.DbMapping {
+func (factBase InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 
-func (factBase InMemoryFactBase) Knows(relation mentalese.Relation) bool {
-	found := false
-	for _, mapping := range factBase.ds2db {
-		if mapping.DsSource.Predicate == relation.Predicate {
-			found = true
-			break
-		}
-	}
-	return found
+//func (factBase InMemoryFactBase) GetKnownRelations(set mentalese.RelationSet) mentalese.RelationSet {
+//
+//	knownRelations := mentalese.RelationSet{}
+//
+//	for _, mapping := range factBase.ds2db {
+//
+//		mappingMatched := true
+//		for _, patternRelation := range mapping.Pattern {
+//
+//			relationMatched := false
+//			for _, setRelation := range set {
+//				if setRelation.Predicate == patternRelation.Predicate {
+//					relationMatched = true
+//					break
+//				}
+//			}
+//
+//			if !relationMatched {
+//				mappingMatched = false
+//				break
+//			}
+//		}
+//
+//		if mappingMatched {
+//			knownRelations = append(knownRelations, mapping.Pattern...)
+//		}
+//	}
+//
+//	return knownRelations
+//}
+
+func (factBase InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
 func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {
@@ -42,7 +66,7 @@ func (factBase InMemoryFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bi
 
 	factBase.log.StartDebug("Factbase Bind", goal)
 
-	internalBindings, _, match := factBase.matcher.MatchSequenceToSet(goal, factBase.facts, mentalese.Binding{})
+	internalBindings, match := factBase.matcher.MatchSequenceToSet(goal, factBase.facts, mentalese.Binding{})
 
 	factBase.log.EndDebug("Factbase Bind", internalBindings, match)
 

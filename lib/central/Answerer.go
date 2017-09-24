@@ -52,46 +52,38 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 
 	answer := mentalese.RelationSet{}
 
-	mapCheckOk, failedRelation := answerer.solver.CheckMappings(goal)
-	if !mapCheckOk {
+	// conditionBindings: map condition variables to goal variables
+	solution, conditionBindings, found := answerer.findSolution(goal)
+	if !found {
 
-		answerer.log.AddError("Relation unknown to any knowledge base: " + failedRelation.String())
+		answerer.log.AddError("Answerer could not find a solution.")
 
 	} else {
 
-		// conditionBindings: map condition variables to goal variables
-		solution, conditionBindings, found := answerer.findSolution(goal)
-		if !found {
+		// resultBindings: map goal variables to answers
+		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
 
-			answerer.log.AddError("Answerer could not find a solution.")
-
-		} else {
-
-			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
-
-			// choose a handler based on whether there were results
-			resultHandler := solution.NoResults
-			if len(resultBindings) > 0 {
-				resultHandler = solution.SomeResults
-			}
-
-			// solutionBindings: map condition variables to results
-			solutionBindings := []mentalese.Binding{}
-			for _, conditionBinding := range conditionBindings {
-				for _, resultBinding := range resultBindings {
-					solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
-				}
-			}
-
-			// extend solution bindings by executing the preparation
-			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, solutionBindings)
-			}
-
-			// create answer relation sets by binding 'answer' to solutionBindings
-			answer = answerer.builder.Build(resultHandler.Answer, solutionBindings)
+		// choose a handler based on whether there were results
+		resultHandler := solution.NoResults
+		if len(resultBindings) > 0 {
+			resultHandler = solution.SomeResults
 		}
+
+		// solutionBindings: map condition variables to results
+		solutionBindings := []mentalese.Binding{}
+		for _, conditionBinding := range conditionBindings {
+			for _, resultBinding := range resultBindings {
+				solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
+			}
+		}
+
+		// extend solution bindings by executing the preparation
+		if !resultHandler.Preparation.IsEmpty() {
+			solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, solutionBindings)
+		}
+
+		// create answer relation sets by binding 'answer' to solutionBindings
+		answer = answerer.builder.Build(resultHandler.Answer, solutionBindings)
 	}
 
 	answerer.log.EndDebug("Answer", answer)
@@ -111,7 +103,7 @@ func (answerer Answerer) findSolution(goal mentalese.RelationSet) (mentalese.Sol
 
 		unscopedGoal := answerer.Unscope(goal)
 
-		bindings, _, found = answerer.matcher.MatchSequenceToSet(aSolution.Condition, unscopedGoal, mentalese.Binding{})
+		bindings, found = answerer.matcher.MatchSequenceToSet(aSolution.Condition, unscopedGoal, mentalese.Binding{})
 		if found {
 			solution = aSolution
 			break

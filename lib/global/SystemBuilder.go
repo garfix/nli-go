@@ -76,13 +76,13 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 		builder.ImportRuleBaseFromPath(system, path)
 	}
 	for _, factBase := range config.Factbases.Relation {
-		builder.ImportRelationSetFactBase(system, factBase)
+		builder.ImportRelationSetFactBase(system, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Mysql {
-		builder.ImportMySqlDatabase(system, factBase)
+		builder.ImportMySqlDatabase(system, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Sparql {
-		builder.ImportSparqlDatabase(system, factBase)
+		builder.ImportSparqlDatabase(system, factBase, matcher)
 	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
@@ -188,7 +188,7 @@ func (builder systemBuilder) ImportRuleBaseFromPath(system *system, ruleBasePath
 	system.answerer.AddRuleBase(knowledge.NewRuleBase(rules, builder.log))
 }
 
-func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase relationSetFactBase) {
+func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Facts)
 	factString, err := common.ReadFile(path)
@@ -211,7 +211,7 @@ func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase 
 		return
 	}
 
-	dbMap := builder.parser.CreateDbMappings(mapString)
+	dbMap := builder.parser.CreateTransformations(mapString)
 	lastResult = builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
@@ -219,10 +219,10 @@ func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase 
 	}
 
 	stats := mentalese.DbStats{}
-	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(facts, dbMap, stats, builder.log))
+	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(facts, matcher, dbMap, stats, builder.log))
 }
 
-func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlFactBase) {
+func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(path)
@@ -231,14 +231,14 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 		return
 	}
 
-	dbMap := builder.parser.CreateDbMappings(mapString)
+	dbMap := builder.parser.CreateTransformations(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
-	database := knowledge.NewMySqlFactBase(factBase.Domain, factBase.Username, factBase.Password, factBase.Database, dbMap, builder.log)
+	database := knowledge.NewMySqlFactBase(factBase.Domain, factBase.Username, factBase.Password, factBase.Database, matcher, dbMap, builder.log)
 
 	for _, table := range factBase.Tables {
 		columns := []string{}
@@ -253,7 +253,7 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 	}
 }
 
-func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparqlFactBase) {
+func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	mapPath := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(mapPath)
@@ -262,7 +262,7 @@ func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparq
 		return
 	}
 
-	dbMap := builder.parser.CreateDbMappings(mapString)
+	dbMap := builder.parser.CreateTransformations(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing map file " + mapPath + " (" + lastResult.String() + ")")
@@ -276,7 +276,7 @@ func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparq
 
 	stats, ok := builder.CreateDbStats(factBase.Stats)
 
-	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, dbMap, names, stats, builder.log)
+	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, builder.log)
 
 	system.answerer.AddFactBase(database)
 }

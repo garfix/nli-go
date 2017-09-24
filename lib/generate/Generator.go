@@ -84,7 +84,7 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 		} else {
 
 			// match the condition
-			matchBindings, _, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, conditionBinding)
+			matchBindings, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, conditionBinding)
 
 			if match {
 				conditionBinding = matchBindings[0]

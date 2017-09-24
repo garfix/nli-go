@@ -1,3 +1,22 @@
+## 1.3: Simple DB-pedia queries
+
+
+    name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => birth_name(A, N);
+    name(A, F, firstName) name(A, S, secondName) name(A, L, lastName) join(N, ' ', F, S, L) => birth_name(A, N);
+    name(A, N, fullName) => birth_name(A, N);
+
+    name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
+    name(A, F, firstName) name(A, S, secondName) name(A, L, lastName) join(N, ' ', F, S, L) => name(A, N);
+    name(A, N, fullName) => name(A, N);
+
+    beter,
+    - want de db bepaalt, alleen, want het formaat is waarop de naam wordt opgeslagen, het is geen DS ding
+    maar
+    - kb handles relation moet worden aangepast => ok
+    - kb handles 1 SINGLE RELATION moet worden aangepast => ...
+    - lost het probleem niet op: name() name() 2 namen
+
+
 ## 1.2: Command-line app "nli"
 
 * An executable application with "answer" and "suggest subcommands"

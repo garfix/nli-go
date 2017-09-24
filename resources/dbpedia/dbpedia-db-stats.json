@@ -1,6 +1,6 @@
 {
-  "married_to": {"size": 40000, "distinctValues": [35000, 35000] },
-  "name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
+  "spouse": {"size": 40000, "distinctValues": [35000, 35000] },
   "birth_name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
+  "name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
   "gender": {"size": 14000000, "distinctValues": [14000000, 11] }
 }

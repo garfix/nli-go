@@ -15,15 +15,20 @@ func NewRuleBase(rules []mentalese.Rule, log *common.SystemLog) RuleBase {
 	return InMemoryRuleBase{rules: rules, log: log}
 }
 
-func (ruleBase InMemoryRuleBase) Knows(relation mentalese.Relation) bool {
-	found := false
+func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+
+	matchingGroups := RelationGroups{}
+
 	for _, rule := range ruleBase.rules {
-		if rule.Goal.Predicate == relation.Predicate {
-			found = true
-			break
+		for _, setRelation := range set {
+			if rule.Goal.Predicate == setRelation.Predicate {
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, 0.0})
+				break
+			}
 		}
 	}
-	return found
+
+	return matchingGroups
 }
 
 func (ruleBase InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {

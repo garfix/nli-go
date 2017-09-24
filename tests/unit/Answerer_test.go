@@ -32,9 +32,9 @@ func TestAnswerer(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	]`)
 
-	ds2db := parser.CreateDbMappings(`[
-		write(PersonName, BookName) ->> book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
-		publish(PubName, BookName) ->> book(BookId, BookName, PubId) publisher(PubId, PubName);
+	ds2db := parser.CreateTransformations(`[
+		write(PersonName, BookName) => book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) => book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
 	solutions := parser.CreateSolutions(`[
@@ -74,11 +74,12 @@ func TestAnswerer(t *testing.T) {
 		}
 	]`)
 
+	matcher := mentalese.NewRelationMatcher(log)
+
 	stats := mentalese.DbStats{}
-	factBase := knowledge.NewInMemoryFactBase(facts, ds2db, stats, log)
+	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
 	systemPredicateBase := knowledge.NewSystemPredicateBase(log)
 
-	matcher := mentalese.NewRelationMatcher(log)
 	answerer := central.NewAnswerer(matcher, log)
 	answerer.AddMultipleBindingsBase(systemPredicateBase)
 	answerer.AddFactBase(factBase)

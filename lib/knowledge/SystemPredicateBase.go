@@ -15,6 +15,40 @@ func NewSystemPredicateBase(log *common.SystemLog) *SystemPredicateBase {
 	return &SystemPredicateBase{log: log}
 }
 
+func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+
+	matchingGroups := RelationGroups{}
+	predicates := []string{"numberOf", "exists"}
+
+	for _, setRelation := range set {
+		for _, predicate:= range predicates {
+			if predicate == setRelation.Predicate {
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, 0.0})
+				break
+			}
+		}
+	}
+
+	return matchingGroups
+}
+
+func (ruleBase *SystemPredicateBase) GetKnownRelations(set mentalese.RelationSet) mentalese.RelationSet {
+
+	knownRelations := mentalese.RelationSet{}
+	predicates := []string{"numberOf", "exists"}
+
+	for _, setRelation := range set {
+		for _, predicate:= range predicates {
+			if predicate == setRelation.Predicate {
+				knownRelations = append(knownRelations, setRelation)
+				break
+			}
+		}
+	}
+
+	return knownRelations
+}
+
 func (ruleBase *SystemPredicateBase) Knows(relation mentalese.Relation) bool {
 
 	predicates := []string{"numberOf", "exists"}

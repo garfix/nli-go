@@ -24,13 +24,15 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
 
 	// bind the range to variable bindings
-	rangeBindings := solver.SolveMultipleRelationsSingleBinding(rangeSet, mentalese.Binding{})
+//	rangeBindings := solver.SolveMultipleRelationsSingleBinding(rangeSet, mentalese.Binding{})
+	rangeBindings := solver.SolveRelationSet(rangeSet, []mentalese.Binding{{}})
 
 	// evaluate the scope for each of the variable bindings
 	scopeBindings := []mentalese.Binding{}
 	for _, rangeBinding := range rangeBindings {
 		scopeBinding := binding.Merge(rangeBinding)
-		scopeBindings = append(scopeBindings, solver.SolveMultipleRelationsSingleBinding(scopeSet, scopeBinding)...)
+//		scopeBindings = append(scopeBindings, solver.SolveMultipleRelationsSingleBinding(scopeSet, scopeBinding)...)
+		scopeBindings = append(scopeBindings, solver.SolveRelationSet(scopeSet, []mentalese.Binding{scopeBinding})...)
 	}
 
 	// validate with the quantifier

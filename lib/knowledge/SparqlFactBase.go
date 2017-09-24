@@ -16,16 +16,16 @@ const max_sparql_results = 100
 type SparqlFactBase struct {
 	baseUrl           string
 	defaultGraphUri   string
-	ds2db             []mentalese.DbMapping
+	ds2db             []mentalese.RelationTransformation
 	names 			  mentalese.ConfigMap
 	stats			  mentalese.DbStats
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewSparqlFactBase(baseUrl string, defaultGraphUri string, ds2db []mentalese.DbMapping, names mentalese.ConfigMap, stats mentalese.DbStats, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, log *common.SystemLog) *SparqlFactBase {
 
-	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, stats: stats, matcher: mentalese.NewRelationMatcher(log), log: log}
+	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, stats: stats, matcher: matcher, log: log}
 }
 
 func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
@@ -74,19 +74,12 @@ func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bind
 	return sequenceBindings, match
 }
 
-func (factBase SparqlFactBase) GetMappings() []mentalese.DbMapping {
+func (factBase SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 
-func (factBase SparqlFactBase) Knows(relation mentalese.Relation) bool {
-	found := false
-	for _, mapping := range factBase.ds2db {
-		if mapping.DsSource.Predicate == relation.Predicate {
-			found = true
-			break
-		}
-	}
-	return found
+func (factBase SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
 func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {

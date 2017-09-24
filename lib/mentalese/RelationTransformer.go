@@ -55,7 +55,7 @@ func (transformer *RelationTransformer) Append(transformations []RelationTransfo
 }
 
 // Attempts all transformations on all relations
-// Returns the indexes of the matched relations, and the replacements that were created, each in a single set
+// Returns the Indexes of the matched relations, and the replacements that were created, each in a single set
 func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet) {
 
 	transformer.log.StartDebug("matchAllTransformations", transformations)
@@ -66,7 +66,7 @@ func (transformer *RelationTransformer) matchAllTransformations(transformations 
 	for _, transformation := range transformations {
 
 		// each transformation application is completely independent from the others
-		bindings, newIndexes, match := transformer.matcher.MatchSequenceToSet(transformation.Pattern, haystackSet, Binding{})
+		bindings, newIndexes, _, match := transformer.matcher.MatchSequenceToSetWithIndexes(transformation.Pattern, haystackSet, Binding{})
 		if match {
 			matchedIndexes = append(matchedIndexes, newIndexes...)
 			for _, binding := range bindings {

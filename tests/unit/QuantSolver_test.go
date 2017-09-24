@@ -7,6 +7,7 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"testing"
+	"fmt"
 )
 
 func TestQuantSolver(t *testing.T) {
@@ -31,10 +32,10 @@ func TestQuantSolver(t *testing.T) {
 		have_child(1, 8)
 	]`)
 
-	ds2db := internalGrammarParser.CreateDbMappings(`[
-		have_child(A, B) ->> have_child(A, B);
-		isa(A, parent) ->> have_child(A, _);
-		isa(A, child) ->> have_child(_, A);
+	ds2db := internalGrammarParser.CreateTransformations(`[
+		have_child(A, B) => have_child(A, B);
+		isa(A, parent) => have_child(A, _);
+		isa(A, child) => have_child(_, A);
 	]`)
 
 	tests := []struct {
@@ -62,8 +63,10 @@ func TestQuantSolver(t *testing.T) {
 		},
 	}
 
+	matcher := mentalese.NewRelationMatcher(log)
+
 	stats := mentalese.DbStats{}
-	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, ds2db, stats, log)
+	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, matcher, ds2db, stats, log)
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 
@@ -72,7 +75,11 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
+log.ToggleDebug()
 		result := solver.SolveQuant(quant, binding)
+log.ToggleDebug()
+fmt.Println(log.String())
+break
 		result = mentalese.UniqueBindings(result)
 
 		resultString := ""

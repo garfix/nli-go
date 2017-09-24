@@ -55,7 +55,7 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 
 		for _, lexeme := range lexemes {
 
-			bindings, _, match := lexicon.matcher.MatchSequenceToSet(lexeme.Condition, sentenseSense, binding)
+			bindings, match := lexicon.matcher.MatchSequenceToSet(lexeme.Condition, sentenseSense, binding)
 
 			if match {
 				resultLexeme = lexeme

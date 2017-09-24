@@ -4,7 +4,7 @@ import "sort"
 
 type Binding map[string]Term
 
-// Returns a new binding that is a copy of b, merged with b2
+// Returns a new Binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 
 	result := Binding{}
@@ -20,7 +20,7 @@ func (b Binding) Merge(b2 Binding) Binding {
 	return result
 }
 
-// Returns a new binding that contains just the keys of b, and whose values may be overwritten by those of b2
+// Returns a new Binding that contains just the keys of b, and whose values may be overwritten by those of b2
 func (b Binding) Intersection(b2 Binding) Binding {
 
 	result := Binding{}
@@ -113,7 +113,7 @@ func (b Binding) Swap() Binding {
 	return result
 }
 
-// Returns a new binding with just key, if exists
+// Returns a new Binding with just key, if exists
 func (b Binding) Extract(key string) Binding {
 	newBinding := Binding{}
 
@@ -160,7 +160,7 @@ func (b Binding) Equals(c Binding) bool {
 	return true
 }
 
-// Removes a copy of bindings that contains each binding only once
+// Removes a copy of bindings that contains each Binding only once
 func UniqueBindings(bindings []Binding) []Binding {
 	uniqueBindings := []Binding{}
 	for _, binding := range bindings {

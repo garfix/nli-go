@@ -185,25 +185,28 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 
 	for _, ds2db := range factBase.GetMappings() {
 
-		// gender(14, G), gender(A, male) => externalBinding: G = male
-		externalBindings, match := solver.matcher.MatchSequenceToSet(goal, ds2db.Pattern, mentalese.Binding{})
-		if match {
+		// gender(14, G), gender(A, male) => internalBinding: A = 14
+		internalBindingsX, match1 := solver.matcher.MatchSequenceToSet(ds2db.Pattern, goal, mentalese.Binding{})
+		if match1 {
 
-			externalBinding := externalBindings[0]
-
-			// gender(14, G), gender(A, male) => internalBinding: A = 14
-			internalBindingsX, _ := solver.matcher.MatchSequenceToSet(ds2db.Pattern, goal, mentalese.Binding{})
 			internalBinding := internalBindingsX[0]
 
-			// create a version of the conditions with bound variables
-			boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.Replacement, internalBinding)
+			// gender(14, G), gender(A, male) => externalBinding: G = male
+			externalBindings, match2 := solver.matcher.MatchSequenceToSet(goal, ds2db.Pattern, mentalese.Binding{})
+			if match2 {
 
-			// match this bound version to the database
-			internalBindings, match := factBase.Bind(boundConditions)
+				externalBinding := externalBindings[0]
 
-			if match {
-				for _, binding := range internalBindings {
-					subgoalBindings = append(subgoalBindings, externalBinding.Intersection(binding))
+				// create a version of the conditions with bound variables
+				boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.Replacement, internalBinding)
+
+				// match1 this bound version to the database
+				internalBindings, match3 := factBase.Bind(boundConditions)
+
+				if match3 {
+					for _, binding := range internalBindings {
+						subgoalBindings = append(subgoalBindings, externalBinding.Intersection(binding))
+					}
 				}
 			}
 		}

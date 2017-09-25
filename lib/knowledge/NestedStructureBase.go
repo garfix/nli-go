@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/common"
 )
 
+// nested query structures (quant, or)
 type NestedStructureBase struct {
 	KnowledgeBase
 	log     *common.SystemLog

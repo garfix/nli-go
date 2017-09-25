@@ -1,10 +1,6 @@
 [
-
-
-married_to(A, B) => spouse(A, B);
-married_to(A, B) => spouse(B, A);
-
-
+    married_to(A, B) => spouse(A, B);
+    married_to(A, B) => spouse(B, A);
 
     name(A, F, firstName) name(A, L, lastName) join(N, ' ', F, L) => birth_name(A, N);
     name(A, F, firstName) name(A, S, secondName) name(A, L, lastName) join(N, ' ', F, S, L) => birth_name(A, N);

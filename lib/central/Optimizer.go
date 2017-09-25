@@ -32,8 +32,6 @@ func (optimizer Optimizer) CreateRelationGroups(set mentalese.RelationSet, knowl
 		remainingRelations = set.RemoveRelations(groups.GetCombinedRelations())
 	}
 
-// TODO: quant / HIERARCHISCHE CONSTRUCTIES (OR)
-
 	// sort by cost
 	sort.Sort(knowledge.RelationGroups(groups))
 

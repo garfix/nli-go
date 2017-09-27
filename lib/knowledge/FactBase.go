@@ -11,9 +11,9 @@ type FactBase interface {
 
 const worst_cost = 100000000.0
 
-func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, knowledgeBaseIndex int) RelationGroups {
+func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, knowledgeBaseIndex int) []RelationGroup {
 
-	matchingGroups := RelationGroups{}
+	matchingGroups := []RelationGroup{}
 
 	for _, mapping := range factBase.GetMappings() {
 

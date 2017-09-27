@@ -19,7 +19,8 @@
       },
       {
         "facts": "relationships.relation",
-        "map": "relationships-db.map"
+        "map": "relationships-db.map",
+        "stats": "relationships-db-stats.json"
       }
     ],
     "mysql": [

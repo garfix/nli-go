@@ -58,10 +58,15 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
-	newBindings := bindings
+	newBindings := []mentalese.Binding{}
+
+	// remove duplicates
+	set = set.RemoveDuplicates()
 
 	// sort the relations to reduce the number of tuples retrieved from the fact bases
-	relationGroups, remainingRelations, ok := solver.optimizer.CreateRelationGroups(set, solver.allKnowledgeBases)
+	solutionRoutes, remainingRelations, ok := solver.optimizer.CreateSolutionRoutes(set, solver.allKnowledgeBases)
+
+	solver.log.AddProduction("Solution Routes", solutionRoutes.String())
 
 	if !ok {
 
@@ -69,16 +74,28 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	} else {
 
-		for _, relationGroup := range relationGroups {
-			newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, newBindings)
-
-			if len(newBindings) == 0 {
-				break
-			}
+		for _, solutionRoute := range solutionRoutes {
+			newBindings = append(newBindings, solver.solveSingleSolutionRouteMultipleBindings(solutionRoute, bindings)...)
 		}
+
 	}
 
 	solver.log.EndDebug("SolveRelationSet", newBindings)
+
+	return newBindings
+}
+
+func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, bindings []mentalese.Binding) []mentalese.Binding {
+
+	newBindings := bindings
+
+	for _, relationGroup := range solutionRoute {
+		newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, newBindings)
+
+		if len(newBindings) == 0 {
+			break
+		}
+	}
 
 	return newBindings
 }
@@ -136,7 +153,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	if isNestedStructureBase {
 
-		newBindings = solver.SolveChildStructures(boundRelations[0], binding)
+		newBindings = solver.SolveChildStructures(relationGroup.Relations[0], binding)
 
 	} else if isFactBase {
 

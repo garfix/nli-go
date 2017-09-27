@@ -15,9 +15,9 @@ func NewNestedStructureBase(log *common.SystemLog) NestedStructureBase {
 	return NestedStructureBase{log: log}
 }
 
-func (base  NestedStructureBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+func (base  NestedStructureBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
-	matchingGroups := RelationGroups{}
+	matchingGroups := []RelationGroup{}
 	predicates := []string{mentalese.Predicate_Quant}
 
 	for _, setRelation := range set {

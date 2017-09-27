@@ -15,9 +15,9 @@ func NewRuleBase(rules []mentalese.Rule, log *common.SystemLog) RuleBase {
 	return InMemoryRuleBase{rules: rules, log: log}
 }
 
-func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
-	matchingGroups := RelationGroups{}
+	matchingGroups := []RelationGroup{}
 
 	for _, rule := range ruleBase.rules {
 		for _, setRelation := range set {

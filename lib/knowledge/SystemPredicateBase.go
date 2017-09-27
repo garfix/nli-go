@@ -15,9 +15,9 @@ func NewSystemPredicateBase(log *common.SystemLog) *SystemPredicateBase {
 	return &SystemPredicateBase{log: log}
 }
 
-func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
-	matchingGroups := RelationGroups{}
+	matchingGroups := []RelationGroup{}
 	predicates := []string{"numberOf", "exists"}
 
 	for _, setRelation := range set {

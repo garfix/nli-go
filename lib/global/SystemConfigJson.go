@@ -1,8 +1,9 @@
 package global
 
 type relationSetFactBase struct {
-	Facts string
-	Map   string
+	Facts    string
+	Map      string
+	Stats	 string
 }
 
 type mysqlColumn struct {
@@ -20,6 +21,7 @@ type mysqlFactBase struct {
 	Password string
 	Database string
 	Map      string
+	Stats	 string
 	Tables   []mysqlTable
 	Enabled  bool
 }

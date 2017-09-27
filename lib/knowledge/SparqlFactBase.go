@@ -78,7 +78,7 @@ func (factBase SparqlFactBase) GetMappings() []mentalese.RelationTransformation 
 	return factBase.ds2db
 }
 
-func (factBase SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) RelationGroups {
+func (factBase SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 

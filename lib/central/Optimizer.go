@@ -2,8 +2,10 @@ package central
 
 import (
 	"nli-go/lib/mentalese"
-	"sort"
+//	"sort"
 	"nli-go/lib/knowledge"
+//	"fmt"
+	"sort"
 )
 
 // The optimizer reorders the relations in a set to minimize the number of tuples retrieved from the fact bases
@@ -22,44 +24,107 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
 
-func (optimizer Optimizer) CreateRelationGroups(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) (knowledge.RelationGroups, mentalese.RelationSet, bool) {
+func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
-	groups := optimizer.findGroups(set, knowledgeBases)
+	routes := knowledge.SolutionRoutes{}
 
-	// find the relation for which no relation group could be found
+	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases)
+
 	remainingRelations := mentalese.RelationSet{}
-	if groups.GetTotalRelationCount() != len(set) {
-		remainingRelations = set.RemoveRelations(groups.GetCombinedRelations())
+
+	longestRoute := knowledge.SolutionRoute{}
+	longestRouteRelationCount := 0
+	for _, route := range allRoutes {
+
+		relationCount := route.GetTotalRelationCount()
+
+		// find the relation for which no relation group could be found
+		if relationCount > longestRouteRelationCount {
+			longestRoute = route
+			longestRouteRelationCount = longestRoute.GetTotalRelationCount()
+		}
+
+		// collect and deduplicate full routes
+		if relationCount == len(set) {
+
+			// sort relation groups by cost
+			sort.Sort(knowledge.SolutionRoute(route))
+
+			found := optimizer.isPresent(route, routes)
+			if !found {
+				routes = append(routes, route)
+			}
+		}
 	}
 
-	// sort by cost
-	sort.Sort(knowledge.RelationGroups(groups))
+	if longestRouteRelationCount < len(set) {
+		remainingRelations = set.RemoveRelations(longestRoute.GetCombinedRelations())
+	}
 
 	ok := len(remainingRelations) == 0
 
-	return groups, remainingRelations, ok
+	return routes, remainingRelations, ok
 }
 
-func (optimizer Optimizer) findGroups(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.RelationGroups {
+func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []knowledge.SolutionRoute) bool {
 
-	groups := knowledge.RelationGroups{}
+	for _, aRoute := range routes {
+		if route.Equals(aRoute) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.SolutionRoutes {
+
+	routes := knowledge.SolutionRoutes{}
+
+	if len(set) == 0 {
+		return routes
+	}
 
 	for i, factBase := range knowledgeBases {
 		for _, factBaseGroup := range factBase.GetMatchingGroups(set, i) {
 
 			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
-			restGroups := optimizer.findGroups(restOfSet, knowledgeBases)
 
-			groups = knowledge.RelationGroups{factBaseGroup}
-			groups = append(groups, restGroups...)
+			route := baseRoute
+			route = append(baseRoute, factBaseGroup)
+			routes = append(routes, route)
 
-			if groups.GetTotalRelationCount() == len(set) {
-				goto end
+			restRoutes := optimizer.findSolutionRoutes(route, restOfSet, knowledgeBases)
+			for _, restRoute := range restRoutes {
+				routes = append(routes, restRoute)
 			}
 		}
 	}
 
-	end:
-
-	return groups
+	return routes
 }
+
+//
+//func (optimizer Optimizer) findSolutionRoutes1(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.RelationGroups {
+//
+//	groups := knowledge.RelationGroups{}
+//
+//	for i, factBase := range knowledgeBases {
+//		for _, factBaseGroup := range factBase.GetMatchingGroups(set, i) {
+//
+//			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
+//			restGroups := optimizer.findSolutionRoutes(restOfSet, knowledgeBases)
+//
+//			groups = knowledge.RelationGroups{factBaseGroup}
+//			groups = append(groups, restGroups...)
+//
+//			if groups.GetTotalRelationCount() == len(set) {
+//				goto end
+//			}
+//		}
+//	}
+//
+//	end:
+//
+//	return groups
+//}

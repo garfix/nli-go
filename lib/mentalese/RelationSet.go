@@ -65,6 +65,19 @@ func (set RelationSet) Contains(needle Relation) bool {
 	return false
 }
 
+func (set RelationSet) RemoveDuplicates() RelationSet {
+
+	resultSet := RelationSet{}
+
+	for _, relation := range set {
+		if !resultSet.Contains(relation) {
+			resultSet = append(resultSet, relation)
+		}
+	}
+
+	return resultSet
+}
+
 func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 
 	resultSet := RelationSet{}

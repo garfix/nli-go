@@ -1,6 +1,9 @@
 package knowledge
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+	"strconv"
+)
 
 // A relation group is a small set of relations that, together, form the input to a single knowledge base
 // The knowledge base index refers to the array allKnowledgeBases in ProblemSolver.
@@ -13,38 +16,17 @@ type RelationGroup struct {
 	Cost float64
 }
 
-type RelationGroups []RelationGroup
 
-func (s RelationGroups) Len() int {
-	return len(s)
+func (s RelationGroup) String() string {
+
+	str := s.Relations.String() + "@" + strconv.Itoa(s.KnowledgeBaseIndex)
+
+	return str
 }
 
-func (s RelationGroups) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
 
-func (s RelationGroups) Less(i, j int) bool {
-	return s[i].Cost < s[j].Cost
-}
-
-func (s RelationGroups) GetCombinedRelations() mentalese.RelationSet {
-
-	relations := mentalese.RelationSet{}
-
-	for _, group := range s {
-		relations = append(relations, group.Relations...)
-	}
-
-	return relations
-}
-
-func (s RelationGroups) GetTotalRelationCount() int {
-
-	count := 0
-
-	for _, group := range s {
-		count += len(group.Relations)
-	}
-
-	return count
+func (s RelationGroup) Equals(t RelationGroup) bool {
+	return s.Cost == t.Cost &&
+		s.KnowledgeBaseIndex == t.KnowledgeBaseIndex &&
+		s.Relations.Equals(t.Relations)
 }

@@ -1,0 +1,5 @@
+{
+  "marriages": {"size": 40000, "distinctValues": [35000, 35000] },
+  "person": {"size": 4100000, "distinctValues": [3500000, 3400000] },
+  "parent": {"size": 4100000, "distinctValues": [3500000, 3400000] }
+}

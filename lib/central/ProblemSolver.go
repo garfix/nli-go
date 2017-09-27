@@ -60,7 +60,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	newBindings := []mentalese.Binding{}
 
-	// remove duplicates
+	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them
 	set = set.RemoveDuplicates()
 
 	// sort the relations to reduce the number of tuples retrieved from the fact bases

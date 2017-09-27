@@ -28,7 +28,23 @@ func (s SolutionRoute) Swap(i, j int) {
 }
 
 func (s SolutionRoute) Less(i, j int) bool {
-	return s[i].Cost < s[j].Cost
+	if s[i].Cost < s[j].Cost {
+		return true
+	} else if s[i].Cost > s[j].Cost {
+		return false
+	} else {
+
+		if s[i].KnowledgeBaseIndex < s[j].KnowledgeBaseIndex {
+			return true
+		} else if s[i].KnowledgeBaseIndex > s[j].KnowledgeBaseIndex {
+			return false
+		} else {
+
+			return s[i].Relations.String() < s[j].Relations.String()
+
+		}
+
+	}
 }
 
 func (s SolutionRoute) GetCombinedRelations() mentalese.RelationSet {

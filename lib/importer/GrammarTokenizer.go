@@ -49,8 +49,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		id      int
 		pattern string
 	}{
-		{t_predicate, "[a-z][a-zA-Z0-9_]*"},
-		{t_variable, "[A-Z][A-Za-z0-9_]*"},
+		{t_predicate, "[a-z][a-z0-9_]*"},
+		{t_variable, "[A-Z][a-z0-9_]*"},
 		{t_anonymousVariable, "_"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
 		{t_regExp, "/(?:\\\\/|\\\\\\\\|[^/])*/"},

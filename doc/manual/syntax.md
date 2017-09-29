@@ -1,6 +1,6 @@
 For the semantic language holds:
  
- * variables start with a capital, followed by zero or more upper, lower or underscore characters: A, Verb, Entity1, noun_entity
+ * variables start with a capital, followed by zero or more lowercase or underscore characters: A, Verb, Entity1, Noun_entity
  * predicates start with a lower case character, followed by zero or more upper, lower or underscore characters
  * atoms, like predicates
  * string constants: use single quotes: 'De Nachtwacht'
@@ -15,8 +15,8 @@ In the general relational representation I have these senses:
  * question(Q)                  Based on a verb, this sentence forms a question.
  * subject(P, S)                The semantic subject of a sentence (may differ from the syntactic subject)
  * object(P, O)                 Idem for object.
- * indirectObject(P, I)         Idem for indirect object.
- * prepositionalObject(P, PO)   Like object, but linked via a preposition. "to the teacher"
+ * indirect_object(P, I)         Idem for indirect object.
+ * prepositional_object(P, PO)   Like object, but linked via a preposition. "to the teacher"
  * quantification(O, [], D, []) Creates a non-scoped quantifier. O is the quantified variable. The first [] will hold the _range_, the second [] will hold the _quantifier_.
  * possession(E1, E2)           Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
  * modality(P, M)               Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
@@ -39,7 +39,7 @@ Note that the most important entity (the governor, is that what it's called?) is
 [
     { form: 'book',           pos: noun,              sense: isa(E, book) }
     { form: 'read',           pos: verb,              sense: isa(E, read) }
-    { form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, firstName) }
+    { form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, first_name) }
 ]
 
 Lexicon definitions may use either a string constant or an expression for the form and use these variables in the sense:
@@ -64,12 +64,6 @@ Form         Will be replaced by the word-form in the sentence. Only to be used 
 
 [
     father(A, B) :- parent(A, B) male(A);
-]
-
-## domain specific 2 database conversion
-
-[
-    name(A, N) ->> person(A, N, _, _) something(A);
 ]
 
 ## Solutions

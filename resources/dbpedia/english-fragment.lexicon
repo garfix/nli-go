@@ -1,12 +1,12 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
 
-    { form: 'who',                  pos: whWord,                sense: isa(E, who) }
+    { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
 
-    { form: /^[A-Z]/,	            pos: firstName,             sense: name(E, Form, firstName) }
-    { form: /^[A-Z]/,	            pos: secondName,            sense: name(E, Form, secondName) }
-    { form: /^[A-Z]/,	            pos: lastName,              sense: name(E, Form, lastName) }
-    { form: /^[A-Z]/,	            pos: fullName,              sense: name(E, Form, fullName) }
+    { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, first_name) }
+    { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, second_name) }
+    { form: /^[A-Z]/,	            pos: last_name,              sense: name(E, Form, last_name) }
+    { form: /^[A-Z]/,	            pos: full_name,              sense: name(E, Form, full_name) }
 
-    { form: '?',                    pos: questionMark }
+    { form: '?',                    pos: question_mark }
 ]

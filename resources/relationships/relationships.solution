@@ -9,7 +9,7 @@
             answer: focus(A) married_to(A, B) gender(B, G) name(A, N)
         }
     } {
-        condition: act(question, yesNo) married_to(A, B),
+        condition: act(question, yes_no) married_to(A, B),
         no_results: {
             preparation: exists(G, A),
             answer: result(G)
@@ -19,7 +19,7 @@
             answer: result(G)
         }
     } {
-        condition: act(question, yesNo) siblings(A, B),
+        condition: act(question, yes_no) siblings(A, B),
         no_results: {
             preparation: exists(G, A),
             answer: result(G)
@@ -29,7 +29,7 @@
             answer: result(G)
         }
     } {
-        condition: act(question, howMany) have_child(B, A) focus(A),
+        condition: act(question, how_many) have_child(B, A) focus(A),
         no_results: {
             answer: none()
         },
@@ -47,7 +47,7 @@
             answer: name(A, N) make_and(A, R)
         }
     } {
-        condition: act(question, yesNo) have_child(B, A) every(B),
+        condition: act(question, yes_no) have_child(B, A) every(B),
         no_results: {
             answer: none()
         },
@@ -56,7 +56,7 @@
             answer: result(G)
         }
     } {
-        condition: act(question, yesNo) have_child(B, A),
+        condition: act(question, yes_no) have_child(B, A),
         no_results: {
             preparation: exists(G, B),
             answer: result(G)

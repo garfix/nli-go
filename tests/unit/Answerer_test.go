@@ -33,18 +33,18 @@ func TestAnswerer(t *testing.T) {
 	]`)
 
 	ds2db := parser.CreateTransformations(`[
-		write(PersonName, BookName) => book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
-		publish(PubName, BookName) => book(BookId, BookName, PubId) publisher(PubId, PubName);
+		write(Person_name, Book_name) => book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
+		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
 	solutions := parser.CreateSolutions(`[
 		{
-			condition: write(PersonName, BookName) publish(PubName, BookName),
+			condition: write(Person_name, Book_name) publish(Pub_name, Book_name),
 			no_results: {
 				answer: none()
 			},
 			some_results: {
-				answer: book(BookName)
+				answer: book(Book_name)
 			}
 		} {
 			condition: write(Person, Book) number_of(N, Book),
@@ -69,7 +69,7 @@ func TestAnswerer(t *testing.T) {
 			},
 			some_results: {
 				preparation: write(C, B),
-				answer: publishAuthor(A, C)
+				answer: publish_author(A, C)
 			}
 		}
 	]`)
@@ -96,9 +96,9 @@ func TestAnswerer(t *testing.T) {
 		// simple
 		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
 		// preparation
-		{"[publish('Bookworm inc', B)]", "[publishAuthor('Bookworm inc', 'Sally Klein') publishAuthor('Bookworm inc', 'Onslow Bigbrain')]"},
+		{"[publish('Bookworm inc', B)]", "[publish_author('Bookworm inc', 'Sally Klein') publish_author('Bookworm inc', 'Onslow Bigbrain')]"},
 		//// return each relation only once
-		{"[write(PersonName, B) publish('Orbital', B)]", "[book('The red book')]"},
+		{"[write(Person_name, B) publish('Orbital', B)]", "[book('The red book')]"},
 		// number_of
 		{"[write('Sally Klein', Book) number_of(N, Book)]", "[focus(2)]"},
 	}

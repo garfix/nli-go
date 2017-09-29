@@ -9,13 +9,13 @@
 
     isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 
-    name(A, F, firstName) name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, I, L) => name(A, N);
-    name(A, N, fullName) => name(A, N);
+    name(A, F, first_name) name(A, I, insertion) name(A, L, last_name) join(N, ' ', F, I, L) => name(A, N);
+    name(A, N, full_name) => name(A, N);
 
-    question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, which)]) => act(question, which);
-    question(S, whQuestion) subject(S, E) isa(E, who) => act(question, who);
-    question(S, whQuestion) subject(S, E) quantification(E, _, D1, [isa(D1, many) specification(D1, W1)]) isa(W1, how) => act(question, howMany);
-    question(S, yesNoQuestion) => act(question, yesNo);
+    question(S, wh_question) subject(S, E) quantification(E, _, D1, [isa(D1, which)]) => act(question, which);
+    question(S, wh_question) subject(S, E) isa(E, who) => act(question, who);
+    question(S, wh_question) subject(S, E) quantification(E, _, D1, [isa(D1, many) specification(D1, W1)]) isa(W1, how) => act(question, how_many);
+    question(S, yes_no_question) => act(question, yes_no);
 
     focus(E1) => focus(E1);
 ]

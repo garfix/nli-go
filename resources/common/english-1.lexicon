@@ -37,7 +37,7 @@
     { form: 'and',                pos: conjunction,           sense: isa(E, and) }
     { form: 'or',                 pos: conjunction,           sense: isa(E, or) }
 
-    { form: 'than',               pos: subConjunction,        sense: isa(E, than) }
+    { form: 'than',               pos: sub_conjunction,       sense: isa(E, than) }
 
     { form: 'person',             pos: noun,                  sense: isa(E, person) }
     { form: 'siblings',           pos: noun,                  sense: isa(E, sibling) }
@@ -45,19 +45,19 @@
     { form: 'parent',             pos: noun,                  sense: isa(E, parent) }
     { form: 'mother',             pos: noun,                  sense: isa(E, mother) }
 
-    { form: '\'s',                pos: possessiveMarker }
+    { form: '\'s',                pos: possessive_marker }
 
     { form: 'on',                 pos: preposition,           sense: isa(E, on) }
     { form: 'at',                 pos: preposition,           sense: isa(E, at) }
 
-    { form: 'right',              pos: pSpec,                 sense: isa(E, right) }
+    { form: 'right',              pos: p_spec,                sense: isa(E, right) }
 
-    { form: 'is',                 pos: auxVerb,               sense: isa(E, be) }
-    { form: 'was',                pos: auxVerb,               sense: isa(E, be) }
-    { form: 'are',                pos: auxVerb,               sense: isa(E, be) }
-    { form: 'does',               pos: auxVerb,               sense: isa(E, do) }
-    { form: 'did',                pos: auxVerb,               sense: isa(E, do) }
-    { form: 'has',                pos: auxVerb,               sense: isa(E, have) }
+    { form: 'is',                 pos: aux_verb,              sense: isa(E, be) }
+    { form: 'was',                pos: aux_verb,              sense: isa(E, be) }
+    { form: 'are',                pos: aux_verb,              sense: isa(E, be) }
+    { form: 'does',               pos: aux_verb,              sense: isa(E, do) }
+    { form: 'did',                pos: aux_verb,              sense: isa(E, do) }
+    { form: 'has',                pos: aux_verb,              sense: isa(E, have) }
 
     { form: 'have',               pos: verb,                  sense: isa(E, have) }
     { form: 'is',                 pos: verb,                  sense: isa(E, be) }
@@ -71,20 +71,20 @@
     { form: 'must',               pos: modal,                 sense: isa(E, must) }
     { form: 'will',               pos: modal,                 sense: isa(E, will) }
 
-    { form: 'who',                pos: whWord,                sense: isa(E, who) }
-    { form: 'how',                pos: whWord,                sense: isa(E, how) }
-    { form: 'which',              pos: whWord,                sense: isa(E, which) }
+    { form: 'who',                pos: wh_word,               sense: isa(E, who) }
+    { form: 'how',                pos: wh_word,               sense: isa(E, how) }
+    { form: 'which',              pos: wh_word,               sense: isa(E, which) }
 
     { form: 'de',                 pos: insertion,             sense: name(E, 'de', insertion) }
     { form: 'van',                pos: insertion,             sense: name(E, 'van', insertion) }
 
-    { form: /^[A-Z]/,             pos: firstName,             sense: name(E, Form, firstName) }
-    { form: /^[A-Z]/,             pos: lastName,              sense: name(E, Form, lastName) }
-    { form: /^[A-Z]/,             pos: fullName,              sense: name(E, Form, fullName) }
+    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, first_name) }
+    { form: /^[A-Z]/,             pos: last_name,             sense: name(E, Form, last_name) }
+    { form: /^[A-Z]/,             pos: full_name,             sense: name(E, Form, full_name) }
 
     { form: /^[0-9]+/,            pos: number,                sense: number(E, Form) }
 
-    { form: '?',                  pos: questionMark }
+    { form: '?',                  pos: question_mark }
     { form: '.',                  pos: period }
     { form: '!',                  pos: exc }
 ]

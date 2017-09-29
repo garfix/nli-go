@@ -34,8 +34,8 @@ func TestSolver(t *testing.T) {
 	]`)
 
 	ds2db := parser.CreateTransformations(`[
-		write(PersonName, BookName) => book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
-		publish(PubName, BookName) => book(BookId, BookName, PubId) publisher(PubId, PubName);
+		write(Person_name, Book_name) => book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
+		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
 	matcher := mentalese.NewRelationMatcher(log)
@@ -53,9 +53,9 @@ func TestSolver(t *testing.T) {
 		{"[write('Sally Klein', B)]", "[[write('Sally Klein', 'The red book')] [write('Sally Klein', 'The green book')]]"},
 		{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book')] [write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]]"},
 		// stop processing when a predicate fails
-		{"[missingPredicate() write('Sally Klein', B)]", "[]"},
+		{"[missing_predicate() write('Sally Klein', B)]", "[]"},
 		//// a failing predicate should remove existing bindings
-		{"[write('Sally Klein', B) missingPredicate()]", "[]"},
+		{"[write('Sally Klein', B) missing_predicate()]", "[]"},
 	}
 
 	for _, test := range tests {

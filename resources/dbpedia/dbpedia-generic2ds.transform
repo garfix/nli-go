@@ -1,7 +1,7 @@
 [
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
-    question(S, whQuestion) subject(S, E) isa(E, who) => who_question(E);
+    question(S, wh_question) subject(S, E) isa(E, who) => who_question(E);
 
     tense(P1, T) => ;
 ]

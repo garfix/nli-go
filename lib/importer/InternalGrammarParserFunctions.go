@@ -94,29 +94,6 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 	return rules, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseDbMappings(tokens []Token, startIndex int) ([]mentalese.DbMapping, int, bool) {
-
-	dbMappings := []mentalese.DbMapping{}
-	ok := true
-
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
-	for startIndex < len(tokens) {
-		dbMapping := mentalese.DbMapping{}
-		dbMapping, startIndex, ok = parser.parseDbMapping(tokens, startIndex)
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
-		if ok {
-			dbMappings = append(dbMappings, dbMapping)
-		} else {
-			break
-		}
-	}
-
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return dbMappings, startIndex, ok
-}
-
 func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
 
 	rule := mentalese.Rule{}
@@ -131,22 +108,6 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 	}
 
 	return rule, startIndex, ok
-}
-
-func (parser *InternalGrammarParser) parseDbMapping(tokens []Token, startIndex int) (mentalese.DbMapping, int, bool) {
-
-	dbMapping := mentalese.DbMapping{}
-	ok := true
-
-	dbMapping.DsSource, startIndex, ok = parser.parseRelation(tokens, startIndex)
-	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_one_to_many_mapping)
-		if ok {
-			dbMapping.DbTarget, startIndex, ok = parser.parseRelations(tokens, startIndex)
-		}
-	}
-
-	return dbMapping, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex int) ([]mentalese.Solution, int, bool) {

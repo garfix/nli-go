@@ -391,12 +391,12 @@ for example
 
 I have a problem: in my domain specific representation there's not always a range available. For example: when the query is
 
-    [child(E2, E1) numberOf(4, E2) every(E1) act(question, yesNo)]
+    [child(E2, E1) number_of(4, E2) every(E1) act(question, yesNo)]
 
 the scoped representation would be
 
     every E1 ?
-        numberOf(4, E2) ?
+        number_of(4, E2) ?
             child(E2, E1)
 
 But I'm missing ranges at the question marks. Both could be filled by something like person(X), but these are currently unavailable.
@@ -459,7 +459,7 @@ Possible sorting relations (chat-80):
 * exists : the, some
 * all ( !exists(x, !y) ) : all
 * none: ( !exists )
-* numberOf : numeric
+* number_of: numeric
 
 Isn't it just possible to automatically create a scope box for every variable that is subject to an aggregate function? Each variable needs its scope, but most variables are existentially scoped, and this is the default. If we take this path, there would be no need to create a syntactic representation for the nested relations. All of it could be handled by the answerer.
 

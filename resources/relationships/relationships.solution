@@ -34,7 +34,7 @@
             answer: none()
         },
         some_results: {
-            preparation: gender(B, G) numberOf(N, A),
+            preparation: gender(B, G) number_of(N, A),
             answer: gender(B, G) count(C, N) have_child(C, B)
         }
     } {

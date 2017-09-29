@@ -127,27 +127,6 @@ func (parser *InternalGrammarParser) CreateRules(source string) []mentalese.Rule
 	return rules
 }
 
-// Parses source into database mappings
-func (parser *InternalGrammarParser) CreateDbMappings(source string) []mentalese.DbMapping {
-
-	dbMappings := []mentalese.DbMapping{}
-
-	// tokenize
-	parser.lastParsedResult.LineNumber = 0
-	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
-	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
-	if !tokensOk {
-		return dbMappings
-	}
-
-	// parse
-	parser.lastParsedResult.LineNumber = 0
-	dbMappings, _, parseOk := parser.parseDbMappings(tokens, 0)
-	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
-
-	return dbMappings
-}
-
 // Parses source into a grammar
 func (parser *InternalGrammarParser) CreateGrammar(source string) *parse.Grammar {
 

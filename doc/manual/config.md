@@ -30,7 +30,7 @@ A relative path in a config files has that config file as its base.
  
  "factbases" is an array of databases of the following types
   
- #### relation
+#### relation
  
  An array of "relation" fact bases.
  
@@ -47,7 +47,7 @@ A relative path in a config files has that config file as its base.
        }
      ],
 
- #### mysql
+#### mysql
  
  An array of "mysql" fact bases.
   
@@ -86,7 +86,7 @@ A relative path in a config files has that config file as its base.
      ]
    }
 
-### sparql
+#### sparql
 
     "sparql": [
       {

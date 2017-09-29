@@ -48,8 +48,8 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	answerer.solutions = append(answerer.solutions, solutions...)
 }
 
-// goal e.g. [ question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(N, O) focus(Q, N) ]
-// return e.g. [ child(S, O) gender(S, female) numberOf(N, O) ]
+// goal e.g. [ question(Q) child(S, O) name(S, 'Janice', fullName) number_of(N, O) focus(Q, N) ]
+// return e.g. [ child(S, O) gender(S, female) number_of(N, O) ]
 func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSet {
 
 	answerer.log.StartDebug("Answer")

@@ -18,7 +18,7 @@ func NewSystemAggregateBase(log *common.SystemLog) *SystemAggregateBase {
 func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"numberOf", "exists"}
+	predicates := []string{"number_of", "exists"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
@@ -44,7 +44,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 	resultArgument := goal.Arguments[0]
 	resultVariable := resultArgument.TermValue
 
-	if goal.Predicate == "numberOf" {
+	if goal.Predicate == "number_of" {
 
 		subjectVariable := goal.Arguments[1].TermValue
 
@@ -69,14 +69,14 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 	if found {
 		newBindings = []mentalese.Binding{}
 
-		// numberOf(4, E1)
+		// number_of(4, E1)
 		if resultArgument.IsNumber() {
 
 			if resultArgument.TermValue == aggregate.TermValue {
 				newBindings = bindings
 			}
 
-			// numberOf(N, E1)
+			// number_of(N, E1)
 		} else {
 
 			if len(bindings) > 0 {

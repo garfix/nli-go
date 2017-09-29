@@ -15,8 +15,8 @@
 
 ## Syntax
 
-- Perhaps replace the syntax of functions like numberOf(N, X) to
-    numberOf(X: N)
+- Perhaps replace the syntax of functions like number_of(N, X) to
+    number_of(X: N)
     join('', firstName, lastName: name)
     join('', firstName, lastName -> name)
     name = join('', firstName, lastName)
@@ -73,7 +73,7 @@ If there are no children, or if the DB mapping is not defined, preparation is st
 
 Check out the optimizer. It can probably be improved beyond the level of using table sizes to calculate cost.
 
-write(A, B) numberOf(B, N) => numberOf() should come later based on a dependency. This is not worked out at all.
+write(A, B) number_of(B, N) => number_of() should come later based on a dependency. This is not worked out at all.
 
 ## Domains
 

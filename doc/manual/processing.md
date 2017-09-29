@@ -25,7 +25,7 @@ Note that there are three types of representation that are expressed by relation
 * Domain Specific: This is the interpretive step. This is the level of reasoning of a domain. Domain specific rules can be used with multiple databases.
 * Database: Database relations are optimized for storage.
 
-Generic maps n:m to domain specific. Domain specific maps 1:n to database.
+Generic maps n:m to domain specific. Domain specific maps n:m to database.
 
 I will describe the components that make all of this possible.
 
@@ -173,10 +173,21 @@ The answerer turns a question (its domain specific representation) into an answe
 Each question requires a specific type of answer. To answer a question, a solution must be found. A solution looks like this
 
     condition: act(question, howMany) child(A, B) focus(A),
-    preparation: gender(B, G) numberOf(N, A),
-    answer: gender(B, G) count(C, N) have_child(B, C);
+    no_results: {
+        answer: dont_know()
+    },
+    some_results: {
+        preparation: gender(B, G) number_of(N, A),
+        answer: gender(B, G) count(C, N) have_child(B, C);
+    }
 
 The first solution whose condition matches the question will be used.
+
+If the condition returns no results, the relation set from "no_results" will be used to phrase the result. Otherwise, the answer of "some_results" will be used.
+
+"preparation" is a relation set that will be solved by the system just to prepare answering the question. Notice that preparation may contain aggregate predicates (i.e. number_of).
+
+"answer" does not connect to any knowledge base. It just formats resulting bindings.
 
 #### Execute the question
 
@@ -220,14 +231,14 @@ Rule bases can be used to make inferences on the information of the database.
 
 To use a database, you must tell the engine how a relation maps to one or more relations in the database. Here's an example
 
-    married_to(A, B) ->> marriages(A, B, _);
-    name(A, N) ->> person(A, N, _, _);
-    parent(P, C) ->> parent(P, C);
-    child(C, P) ->> parent(P, C);
-    gender(A, male) ->> person(A, _, 'M', _);
-    gender(A, female) ->> person(A, _, 'F', _);
+    married_to(A, B) => marriages(A, B, _);
+    name(A, N) => person(A, N, _, _);
+    parent(P, C) => parent(P, C);
+    child(C, P) => parent(P, C);
+    gender(A, male) => person(A, _, 'M', _);
+    gender(A, female) => person(A, _, 'F', _);
 
-In this example there's just a single relation at the right (database) side of the ->>, but there could be more. It's a 1:n mapping.
+In this example there's just a single relation at both the left (domain) and the right (database) side of the =>, but there could be more. It's a n:m mapping.
 
 #### Preparation
 
@@ -235,9 +246,9 @@ After the question is executed, we have a set of bindings. These bindings are th
 
 The preparation is meant to collect some more information needed to create the answer.
 
-    preparation: gender(B, G) numberOf(N, A),
+    preparation: gender(B, G) number_of(N, A),
 
-In this example, the engine executes 'gender' because the gender is needed in the answer ('He ...'). numberOf() is an aggregate function used to collect the number of children for the answer. This function is performed on the binding set. The different occurrences of A are counted and stored in variable N of all bindings.
+In this example, the engine executes 'gender' because the gender is needed in the answer ('He ...'). number_of() is an aggregate function used to collect the number of children for the answer. This function is performed on the binding set. The different occurrences of A are counted and stored in variable N of all bindings.
 
 #### Answer
 

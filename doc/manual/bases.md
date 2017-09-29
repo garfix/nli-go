@@ -32,7 +32,7 @@ An aggregate base provides functions that take a set of bindings as input and pe
 
 An example of an aggregate function is
 
-    numberOf(X, N)
+    number_of(X, N)
 
 In the function Bind, two things happen:
 

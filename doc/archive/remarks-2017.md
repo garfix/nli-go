@@ -86,11 +86,11 @@ needs to be converted to a "program" and be executed. This is the essence of SHR
 
 We have to convert the "how many" clause into a second order construct
 
-    object(Q, O) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> numberOf(O, N) focus(Q, N)
+    object(Q, O) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> number_of(O, N) focus(Q, N)
 
 This forms
 
-    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) numberOf(O, N)
+    question(Q) isa(Q, have) subject(Q, S) name(S, 'Janice', fullName) object(Q, O) isa(O, child) number_of(O, N)
 
 Can we execute this? No we have to combine "have" with "child"
 
@@ -98,9 +98,9 @@ Can we execute this? No we have to combine "have" with "child"
 
 This gives us
 
-    question(Q) child(S, O) name(S, 'Janice', fullName) numberOf(O, N) focus(Q, N)
+    question(Q) child(S, O) name(S, 'Janice', fullName) number_of(O, N) focus(Q, N)
 
-Can we execute this? Yes, after child() and name() are processed, there are 3 possible value for O left. Processing numberOf() fills N with 3.
+Can we execute this? Yes, after child() and name() are processed, there are 3 possible value for O left. Processing number_of() fills N with 3.
 
 ====
 
@@ -130,7 +130,7 @@ Does that work?
  * size(B1, S1) : results for each block ID with its size
  * max(S1) : filter only the result with the highest S1
 
- Second order predicates like numberOf() and max() act on result sets.
+ Second order predicates like number_of() and max() act on result sets.
 
  ====
 
@@ -143,9 +143,9 @@ Does that work?
 
 ## 2017-02-02
 
-There are several reasons why quantifier-constructs (exists, numberOf) should not be added to the lexicon:
+There are several reasons why quantifier-constructs (exists, number_of) should not be added to the lexicon:
 
- * the word itself is not always enough to determine the quantifier ('how many': the combination of these words means 'numberOf').
+ * the word itself is not always enough to determine the quantifier ('how many': the combination of these words means 'number_of').
  * expressions can always give surface expressions another meaning than is apparent from the words. (every now and again, worth every penny)
  * some quantifiers cannot be deduced from the words alone and must be added later on ('not a lot', 'very little (people voted for Hillary)')
 
@@ -155,8 +155,8 @@ How many children had Beatrice?
 
     solution: [
         condition: act(interrogation) focus(O) child(S, O)
-        plan: numberOf(child(S, O), N)
-        answer: numberOfAnswer(N)
+        plan: number_of(child(S, O), N)
+        answer: number_of_answers(N)
     ]
 
 Was Mary a child of Charles?
@@ -182,14 +182,14 @@ We find a new aspect of the domain specific representation: it is procedural. Th
 
 New question
 
-    act(interrogation) focus(N) numberOf(hasChild(P, C), N) name(P, 'Janice')
+    act(interrogation) focus(N) number_of(hasChild(P, C), N) name(P, 'Janice')
 
 New solution
 
     solutions: [
-        condition: act(interrogation) focus(N) numberOf(hasChild(P, C), N),              // a question, about the number of children
+        condition: act(interrogation) focus(N) number_of(hasChild(P, C), N),              // a question, about the number of children
         prep: gender(P, G),                                                              // look up the gender of the parent
-        answer: gender(P, G) hasChild(P, C) numberOfAnswer(N);                           // "she, has children, number"
+        answer: gender(P, G) hasChild(P, C) number_of_answers(N);                           // "she, has children, number"
     ]
 
 All relations of the solution are posed in the domain-specific language.
@@ -216,13 +216,13 @@ generic:
 
 generic 2 domain specific:
 
-    isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> act(interrogation) focus(N) numberOf(O, isa(O, child), N)
+    isa(O, child) specification(O, S) isa(S, many) specification(S, T) isa(T, how) -> act(interrogation) focus(N) number_of(O, isa(O, child), N)
     isa(Q, have) subject(Q, S) object(Q, O) isa(O, child) -> child(S, O)
 
 By 'solution' I mean the matching of a question to an answer
 
     solution: [
-        condition: act(interrogation) focus(N) numberOf(O, isa(O, child), N) child(S, O)
+        condition: act(interrogation) focus(N) number_of(O, isa(O, child), N) child(S, O)
         answer: declaration(S1) isa(S1, have) subject(S1, S) gender(S, female) object(S1, O) isa(O, child) determiner(O, Det) numeral(Det, N)
     ]
 

@@ -264,7 +264,6 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		// subgoalBinding: from subgoal variable to goal constant
 		subgoalBinding := sourceBinding.RemoveVariables()
 
-//subgoalResultBindings := solver.SolveMultipleRelationsSingleBinding(sourceSubgoalSet, subgoalBinding)
 		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, []mentalese.Binding{subgoalBinding})
 
 		// subgoalResultBinding: from subgoal variables to constants (contains temporary variables)

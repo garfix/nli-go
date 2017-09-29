@@ -48,9 +48,9 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.transformer = mentalese.NewRelationTransformer(matcher, builder.log)
 
-	systemPredicateBase := knowledge.NewSystemPredicateBase(builder.log)
+	systemAggregateBase := knowledge.NewSystemAggregateBase(builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)
-	system.answerer.AddMultipleBindingsBase(systemPredicateBase)
+	system.answerer.AddMultipleBindingsBase(systemAggregateBase)
 
 	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
 	system.answerer.AddNestedStructureBase(nestedStructureBase)

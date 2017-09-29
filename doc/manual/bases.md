@@ -1,28 +1,34 @@
-# Bases
+# Knowledge bases
 
-There are several types of knowledge bases that can be used in the inference process.
+To solve a query (in the form of a relation set), the system uses several knowledge bases. These knowledge bases are specified in the config file.
+
+Each knowledge base provides bindings for the active variables of the query. Different knowledge bases are used at different moments in the problem solving process.
 
 ## Fact base
 
-A fact base matches an input relation to one or more relations in a database. Its main function is
+The fact base can be simply a file of relations, a MySQL database, or a SPARQL datastore.
 
-    Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding)
+It has a number of "mappings" that map the domain specific input to fact base specific output. It maps one or more relations from the input to one or more relations from the output. The bindings come from the fact base.
 
+## Function base
 
+A function base processes relations that normally take the form of a function.
+
+For example
+
+    join(Result, Sep, String1, String2, ...)
 
 ## Rule base
 
-A rule base treats an input relation as a goal, and returns sets of subgoals that need to succeed in order for the goal to succeed.
+A rule base contains "Prolog" rules that expand a consequent to a sequence of antecedents.
 
-Its main function is
+    sister(A, B) :- female(A) female(B) parent(A, C) parent(B, C)
 
-    Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding)
+A rule base treats an consequent relation as a goal, and executes its antecedents.
 
-## Multiple bindings base / Aggregate base
+## Aggregate base
 
-The main function
-
-    Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool)
+An aggregate base provides functions that take a set of bindings as input and perform function on the all the bindings of
 
 An example of an aggregate function is
 
@@ -33,4 +39,12 @@ In the function Bind, two things happen:
 * the number of different value of X in bindings is calculated
 * all bindings are extended with a value for N
 
-Bind returns false if ''goal'' is not one of the aggregate functions of the base.
+## Nested structure base
+
+A nested structure base passes control to the child relations of a relation.
+
+Currently the only nested structure is
+
+    quant()
+
+This is mainly a system base.

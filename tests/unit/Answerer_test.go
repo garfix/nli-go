@@ -82,10 +82,10 @@ func TestAnswerer(t *testing.T) {
 		"person": {Size: 100, DistinctValues: []int{100, 100}},
 	}
 	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
-	systemPredicateBase := knowledge.NewSystemPredicateBase(log)
+	systemAggregateBase := knowledge.NewSystemAggregateBase(log)
 
 	answerer := central.NewAnswerer(matcher, log)
-	answerer.AddMultipleBindingsBase(systemPredicateBase)
+	answerer.AddMultipleBindingsBase(systemAggregateBase)
 	answerer.AddFactBase(factBase)
 	answerer.AddSolutions(solutions)
 

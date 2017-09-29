@@ -6,16 +6,16 @@ import (
 	"strconv"
 )
 
-type SystemPredicateBase struct {
+type SystemAggregateBase struct {
 	rules []mentalese.Rule
 	log   *common.SystemLog
 }
 
-func NewSystemPredicateBase(log *common.SystemLog) *SystemPredicateBase {
-	return &SystemPredicateBase{log: log}
+func NewSystemAggregateBase(log *common.SystemLog) *SystemAggregateBase {
+	return &SystemAggregateBase{log: log}
 }
 
-func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{"numberOf", "exists"}
@@ -33,9 +33,9 @@ func (ruleBase *SystemPredicateBase) GetMatchingGroups(set mentalese.RelationSet
 	return matchingGroups
 }
 
-func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
+func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
 
-	base.log.StartDebug("SystemPredicateBase Bind", goal, bindings)
+	base.log.StartDebug("SystemAggregateBase Bind", goal, bindings)
 
 	newBindings := []mentalese.Binding{}
 	found := true
@@ -96,12 +96,12 @@ func (base *SystemPredicateBase) Bind(goal mentalese.Relation, bindings []mental
 		}
 	}
 
-	base.log.EndDebug("SystemPredicateBase Bind", newBindings, found)
+	base.log.EndDebug("SystemAggregateBase Bind", newBindings, found)
 
 	return newBindings, found
 }
 
-func (base *SystemPredicateBase) getDifferentValues(bindings []mentalese.Binding, subjectVariable string) []mentalese.Term {
+func (base *SystemAggregateBase) getDifferentValues(bindings []mentalese.Binding, subjectVariable string) []mentalese.Term {
 
 	differentValues := []mentalese.Term{}
 

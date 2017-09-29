@@ -2,9 +2,7 @@ package central
 
 import (
 	"nli-go/lib/mentalese"
-//	"sort"
 	"nli-go/lib/knowledge"
-//	"fmt"
 	"sort"
 )
 
@@ -23,7 +21,6 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
-
 func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
 	routes := knowledge.SolutionRoutes{}
@@ -103,28 +100,3 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 
 	return routes
 }
-
-//
-//func (optimizer Optimizer) findSolutionRoutes1(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.RelationGroups {
-//
-//	groups := knowledge.RelationGroups{}
-//
-//	for i, factBase := range knowledgeBases {
-//		for _, factBaseGroup := range factBase.GetMatchingGroups(set, i) {
-//
-//			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
-//			restGroups := optimizer.findSolutionRoutes(restOfSet, knowledgeBases)
-//
-//			groups = knowledge.RelationGroups{factBaseGroup}
-//			groups = append(groups, restGroups...)
-//
-//			if groups.GetTotalRelationCount() == len(set) {
-//				goto end
-//			}
-//		}
-//	}
-//
-//	end:
-//
-//	return groups
-//}

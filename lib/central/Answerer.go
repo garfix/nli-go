@@ -6,6 +6,9 @@ import (
 	"nli-go/lib/mentalese"
 )
 
+// The answerer takes a relation set in domain format
+// and returns a relation set in domain format
+// It uses Solution structures to determine how to act
 type Answerer struct {
 	solutions []mentalese.Solution
 	matcher   *mentalese.RelationMatcher

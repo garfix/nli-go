@@ -6,6 +6,9 @@ import (
 	"nli-go/lib/mentalese"
 )
 
+// The problem solver takes a relation set and a set of bindings
+// and returns a set of new bindings
+// It uses knowledge bases to find these bindings
 type ProblemSolver struct {
 	allKnowledgeBases     []knowledge.KnowledgeBase
 	factBases             []knowledge.FactBase

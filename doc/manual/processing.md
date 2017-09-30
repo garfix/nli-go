@@ -240,6 +240,16 @@ To use a database, you must tell the engine how a relation maps to one or more r
 
 In this example there's just a single relation at both the left (domain) and the right (database) side of the =>, but there could be more. It's a n:m mapping.
 
+The system needs to determine the order in which to present the relations to the database. To guide its optimization processes, you need to provide some table statistics, so that the system knows which tables are large and which are small.
+
+    {
+      "marriages": {"size": 40000, "distinctValues": [35000, 35000] },
+      "person": {"size": 4100000, "distinctValues": [3500000, 3400000] },
+      "parent": {"size": 4100000, "distinctValues": [3500000, 3400000] }
+    }
+
+Here, "marriages", "person", and "parent" are tables in the database. "size" is the number of rows. "distinctValues" has, per table column, the number of unique values.
+
 #### Preparation
 
 After the question is executed, we have a set of bindings. These bindings are then bound to a sequence of relations called the preparation.

@@ -48,13 +48,15 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.transformer = mentalese.NewRelationTransformer(matcher, builder.log)
 
+	solver := central.NewProblemSolver(matcher, builder.log)
+
 	systemAggregateBase := knowledge.NewSystemAggregateBase(builder.log)
-	system.answerer = central.NewAnswerer(matcher, builder.log)
-	system.answerer.AddMultipleBindingsBase(systemAggregateBase)
+	solver.AddMultipleBindingsBase(systemAggregateBase)
 
 	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
-	system.answerer.AddNestedStructureBase(nestedStructureBase)
+	solver.AddNestedStructureBase(nestedStructureBase)
 
+	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
@@ -76,16 +78,16 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	}
 	for _, ruleBasePath := range config.Rulebases {
 		path := common.AbsolutePath(builder.baseDir, ruleBasePath)
-		builder.ImportRuleBaseFromPath(system, path)
+		builder.ImportRuleBaseFromPath(solver, path)
 	}
 	for _, factBase := range config.Factbases.Relation {
-		builder.ImportRelationSetFactBase(system, factBase, matcher)
+		builder.ImportRelationSetFactBase(solver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Mysql {
-		builder.ImportMySqlDatabase(system, factBase, matcher)
+		builder.ImportMySqlDatabase(solver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Sparql {
-		builder.ImportSparqlDatabase(system, factBase, matcher)
+		builder.ImportSparqlDatabase(solver, factBase, matcher)
 	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
@@ -172,7 +174,7 @@ func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, gra
 	system.generationGrammar.ImportFrom(grammar)
 }
 
-func (builder systemBuilder) ImportRuleBaseFromPath(system *system, ruleBasePath string) {
+func (builder systemBuilder) ImportRuleBaseFromPath(solver *central.ProblemSolver, ruleBasePath string) {
 
 	path := common.AbsolutePath(builder.baseDir, ruleBasePath)
 	ruleBaseString, err := common.ReadFile(path)
@@ -188,10 +190,10 @@ func (builder systemBuilder) ImportRuleBaseFromPath(system *system, ruleBasePath
 		return
 	}
 
-	system.answerer.AddRuleBase(knowledge.NewRuleBase(rules, builder.log))
+	solver.AddRuleBase(knowledge.NewRuleBase(rules, builder.log))
 }
 
-func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSolver, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Facts)
 	factString, err := common.ReadFile(path)
@@ -223,10 +225,10 @@ func (builder systemBuilder) ImportRelationSetFactBase(system *system, factBase 
 
 	stats, _ := builder.CreateDbStats(factBase.Stats)
 
-	system.answerer.AddFactBase(knowledge.NewInMemoryFactBase(facts, matcher, dbMap, stats, builder.log))
+	solver.AddFactBase(knowledge.NewInMemoryFactBase(facts, matcher, dbMap, stats, builder.log))
 }
 
-func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportMySqlDatabase(solver *central.ProblemSolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(path)
@@ -255,11 +257,11 @@ func (builder systemBuilder) ImportMySqlDatabase(system *system, factBase mysqlF
 	}
 
 	if factBase.Enabled {
-		system.answerer.AddFactBase(database)
+		solver.AddFactBase(database)
 	}
 }
 
-func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportSparqlDatabase(solver *central.ProblemSolver, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	mapPath := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(mapPath)
@@ -284,7 +286,7 @@ func (builder systemBuilder) ImportSparqlDatabase(system *system, factBase sparq
 
 	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, builder.log)
 
-	system.answerer.AddFactBase(database)
+	solver.AddFactBase(database)
 }
 
 func (builder systemBuilder) CreateConfigMap(path string) (mentalese.ConfigMap, bool) {

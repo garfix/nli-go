@@ -2,7 +2,6 @@ package central
 
 import (
 	"nli-go/lib/common"
-	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
 
@@ -17,7 +16,7 @@ type Answerer struct {
 	log       *common.SystemLog
 }
 
-func NewAnswerer(matcher *mentalese.RelationMatcher, log *common.SystemLog) *Answerer {
+func NewAnswerer(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
 
 	builder := NewRelationSetBuilder()
 	builder.addGenerator(NewSystemGenerator())
@@ -25,26 +24,10 @@ func NewAnswerer(matcher *mentalese.RelationMatcher, log *common.SystemLog) *Ans
 	return &Answerer{
 		solutions: []mentalese.Solution{},
 		matcher:   matcher,
-		solver:    NewProblemSolver(matcher, log),
+		solver:    solver,
 		builder:   builder,
 		log:       log,
 	}
-}
-
-func (answerer *Answerer) AddFactBase(source knowledge.FactBase) {
-	answerer.solver.AddFactBase(source)
-}
-
-func (answerer *Answerer) AddRuleBase(source knowledge.RuleBase) {
-	answerer.solver.AddRuleBase(source)
-}
-
-func (answerer *Answerer) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
-	answerer.solver.AddMultipleBindingsBase(source)
-}
-
-func (answerer *Answerer) AddNestedStructureBase(base knowledge.NestedStructureBase) {
-	answerer.solver.AddNestedStructureBase(base)
 }
 
 func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
@@ -128,15 +111,15 @@ func (Answerer Answerer) Unscope(relations mentalese.RelationSet) mentalese.Rela
 
 	for _, relation := range relations {
 
-		copy := relation.Copy()
+		relationCopy := relation.Copy()
 
 		if relation.Predicate == mentalese.Predicate_Quant {
 			// unscope the relation sets
 			for i, argument := range relation.Arguments {
 				if argument.IsRelationSet() {
 
-					scopedSet := copy.Arguments[i].TermValueRelationSet
-					copy.Arguments[i].TermValueRelationSet = mentalese.RelationSet{}
+					scopedSet := relationCopy.Arguments[i].TermValueRelationSet
+					relationCopy.Arguments[i].TermValueRelationSet = mentalese.RelationSet{}
 
 					// recurse into the scope
 					unscoped = append(unscoped, Answerer.Unscope(scopedSet)...)
@@ -144,7 +127,7 @@ func (Answerer Answerer) Unscope(relations mentalese.RelationSet) mentalese.Rela
 			}
 		}
 
-		unscoped = append(unscoped, copy)
+		unscoped = append(unscoped, relationCopy)
 	}
 
 	return unscoped

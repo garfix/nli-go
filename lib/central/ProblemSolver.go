@@ -9,6 +9,11 @@ import (
 // The problem solver takes a relation set and a set of bindings
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
+//
+// Structures used:
+// RelationSet: describes the query
+// SolutionRoute: describes a single path through a series of knowledge base calls
+// RelationGroup: a single step in a solution route; it is the input for a specified knowledge base, having a calculation cost
 type ProblemSolver struct {
 	allKnowledgeBases     []knowledge.KnowledgeBase
 	factBases             []knowledge.FactBase

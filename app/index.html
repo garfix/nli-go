@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-1.5.2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-ui.1.8.12.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/tag-it.js"></script>
 
     <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
@@ -10,11 +10,36 @@
     <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <header>Enter a sentence</header>
+    <header>Query DBPedia</header>
+
+    <p>
+        This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br><br>
+        It connects you to <a href="http://wiki.dbpedia.org/about">DBPedia</a>, a Sparql database that contains data from Wikipedia.
+    </p>
+
+    <header>What's your question?</header>
+
     <form id="f">
         <input type="text" name="q" id="q">
         <button type="submit">Enter</button>
     </form>
+
+    <p>
+        It's scope is still quite limited. For example, in the inout field above, you can only ask questions of these types:
+    </p>
+    <ul>
+        <li>Who married &lt;PERSON&gt;</li>
+    </ul>
+    <p>
+        Where &lt;PERSON&gt; must be the name of a person in the database, it must consist of 2 or 3 words, each of which must start with a capital.<br>
+        For example:
+    </p>
+    <ul>
+        <li>Lord Byron</li>
+        <li>Elvis Presley</li>
+        <li>Michael Jackson</li>
+    </ul>
+
 
     <header>Answer</header>
     <div id="answer-box"></div>

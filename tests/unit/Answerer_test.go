@@ -81,12 +81,15 @@ func TestAnswerer(t *testing.T) {
 		"author": {Size: 100, DistinctValues: []int{100, 200}},
 		"person": {Size: 100, DistinctValues: []int{100, 100}},
 	}
+
 	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase(log)
 
-	answerer := central.NewAnswerer(matcher, log)
-	answerer.AddMultipleBindingsBase(systemAggregateBase)
-	answerer.AddFactBase(factBase)
+	solver := central.NewProblemSolver(matcher, log)
+	solver.AddMultipleBindingsBase(systemAggregateBase)
+	solver.AddFactBase(factBase)
+
+	answerer := central.NewAnswerer(matcher, solver, log)
 	answerer.AddSolutions(solutions)
 
 	tests := []struct {
@@ -121,7 +124,10 @@ func TestUnscope(t *testing.T) {
 	log := common.NewSystemLog(false)
 
 	matcher := mentalese.NewRelationMatcher(log)
-	answerer := central.NewAnswerer(matcher, log)
+
+	solver := central.NewProblemSolver(matcher, log)
+
+	answerer := central.NewAnswerer(matcher, solver, log)
 
 	tests := []struct {
 		input           string

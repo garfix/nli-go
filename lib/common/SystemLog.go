@@ -42,7 +42,7 @@ func (log *SystemLog) ToggleDebug() {
 }
 
 func (log *SystemLog) AddProduction(name string, production string) {
-	log.productions = append(log.productions, name+": "+production)
+	log.productions = append(log.productions, name + ": " + production)
 }
 
 func (log *SystemLog) AddError(error string) {
@@ -93,7 +93,7 @@ func (log *SystemLog) GetProductions() []string {
 	return log.productions
 }
 
-func (log *SystemLog) GetError() []string {
+func (log *SystemLog) GetErrors() []string {
 	return log.errors
 }
 

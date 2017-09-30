@@ -76,3 +76,23 @@ form#f {
     width: 800px;
     min-height: 50px;
 }
+
+
+#production-box {
+    box-sizing: content-box;
+    border: 1px solid #888;
+    padding: 3px;
+    margin: 10px;
+    width: 95%;
+}
+
+.productions td {
+    vertical-align: top;
+    border-bottom: 1px solid #6d95e0;
+}
+
+.production_name {
+    font-weight: bold;
+    width: 130px;
+    color: #405952;
+}

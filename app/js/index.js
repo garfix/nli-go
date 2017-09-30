@@ -8,6 +8,26 @@ $(function(){
         document.getElementById('answer-box').innerHTML = answer;
     }
 
+    function showProductions(productions) {
+
+        html = '<table class="productions">';
+
+        for (var key in productions) {
+            production = productions[key];
+
+            matches = production.match(/([^:]+)/);
+            name = matches[1];
+            value = production.substr(name.length + 1).replace("\n", "<br>");
+
+            html += "<tr><td class='production_name'>" + name + "</td>";
+            html += "<td class='production_value'>" + value + "</td></tr>";
+        }
+
+        html += "</table>";
+
+        document.getElementById('production-box').innerHTML = html;
+    }
+
     function autoCompleteSource(request, response) {
 
         $.ajax({
@@ -21,9 +41,9 @@ $(function(){
                 var success = data.Success;
                 var errorLines = data.ErrorLines;
 
-                if (!success) {
-                    showError(errorLines)
-                } else {
+                showError(errorLines);
+
+                if (success) {
 
                     response($.map(suggests, function (item) {
                         return {
@@ -61,14 +81,13 @@ $(function(){
             success: function (data) {
 
                 var answers = data.Value;
-                var success = data.Success;
                 var errorLines = data.ErrorLines;
+                var productions = data.Productions;
 
-                if (!success) {
-                    showError(errorLines)
-                } else {
-                    showAnswer(answers[0])
-                }
+                showError(errorLines);
+                showAnswer(answers[0]);
+                showProductions(productions)
+
             },
             error: function (request, status, error) {
                 showError(error)

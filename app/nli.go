@@ -11,6 +11,7 @@ import (
 type Result struct {
 	Success    bool
 	ErrorLines []string
+	Productions []string
 	Value      []string
 }
 
@@ -56,12 +57,15 @@ func main() {
 	}
 
 	if !log.IsOk() {
-		errorLines = append(errorLines, log.GetDebugLines()...)
+		errorLines = append(errorLines, log.GetErrors()...)
 	}
+
+	productions := log.GetProductions()
 
 	result := Result{
 		Success:    log.IsOk(),
 		ErrorLines: errorLines,
+		Productions: productions,
 		Value:      value,
 	}
 

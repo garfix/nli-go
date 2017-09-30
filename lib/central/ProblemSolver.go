@@ -218,8 +218,8 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 				// create a version of the conditions with bound variables
 				boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.Replacement, internalBinding)
 
-				// match1 this bound version to the database
-				internalBindings, match3 := factBase.Bind(boundConditions)
+				// match this bound version to the database
+				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(boundConditions, factBase)
 
 				if match3 {
 					for _, binding := range internalBindings {
@@ -233,6 +233,10 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 	solver.log.EndDebug("FindFacts", subgoalBindings)
 
 	return subgoalBindings
+}
+
+func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(relations []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
+	return factBase.Bind(relations)
 }
 
 // goalRelation e.g. father('jack', Z)

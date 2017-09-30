@@ -58,16 +58,10 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 		for _, node := range nodes {
 
 			// functions like join(N, ' ', F, I, L)
-
-			for _, functionBase := range matcher.functionBases {
-				functionBinding := node.Binding.Copy()
-				returnValue, ok := functionBase.Execute(needleRelation, functionBinding)
-				if ok {
-					functionBinding[needleRelation.Arguments[0].TermValue] = returnValue
-//					newIndexes := append(node.Indexes, 0)
-newIndexes := node.Indexes
-					newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
-				}
+			functionBinding, functionFound := matcher.MatchRelationToFunction(needleRelation, node.Binding)
+			if functionFound {
+				newIndexes := node.Indexes
+				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 			}
 
 			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.Binding)
@@ -92,6 +86,26 @@ newIndexes := node.Indexes
 	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, matchedIndexes, match)
 
 	return newBindings, matchedIndexes, nodes, match
+}
+
+// functions like join(N, ' ', F, I, L)
+// returns a binding with only one variable
+func (matcher *RelationMatcher) MatchRelationToFunction(needleRelation Relation, binding Binding) (Binding, bool) {
+
+	newBinding := Binding{}
+	functionFound := false
+	returnValue := Term{}
+
+	for _, functionBase := range matcher.functionBases {
+		returnValue, functionFound = functionBase.Execute(needleRelation, binding)
+		if functionFound {
+			newBinding = binding.Copy()
+			newBinding[needleRelation.Arguments[0].TermValue] = returnValue
+			break
+		}
+	}
+
+	return newBinding, functionFound
 }
 
 // Matches a single relation to a relation set
@@ -128,6 +142,8 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
+		match = false
+	} else if (len(needleRelation.Arguments) != len(haystackRelation.Arguments)) {
 		match = false
 	} else {
 

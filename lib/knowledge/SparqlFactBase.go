@@ -40,6 +40,8 @@ func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Bind
 
 		relationBindings := []mentalese.Binding{}
 
+// todo: doesn't this always apply?
+
 		if len(relationBindings) == 0 {
 
 			resultBindings := factBase.matchRelationToDatabase(relation)

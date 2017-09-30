@@ -3,4 +3,5 @@
     name(A, N) => name(A, N);
     gender(A, male) => isa(A, male);
     gender(A, female) => isa(A, female);
+    and(R, A, B) => conjunction(R, A, B) isa(R, and);
 ]

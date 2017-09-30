@@ -6,9 +6,11 @@
     name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => birth_name(A, N);
     name(A, N, full_name) => birth_name(A, N);
 
-    name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => name(A, N);
-    name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => name(A, N);
-    name(A, N, full_name) => name(A, N);
+    name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => foaf_name(A, N);
+    name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => foaf_name(A, N);
+    name(A, N, full_name) => foaf_name(A, N);
+
+    name(A, N, canonical_name) => foaf_name(A, N);
 
     gender(A, male) => gender(A, 'male');
     gender(A, female) => gender(A, 'female');

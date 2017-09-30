@@ -1,6 +1,6 @@
 {
   "spouse": "http://dbpedia.org/ontology/spouse",
   "birth_name": "http://dbpedia.org/ontology/birthName",
-  "name": "http://xmlns.com/foaf/0.1/name",
+  "foaf_name": "http://xmlns.com/foaf/0.1/name",
   "gender": "http://xmlns.com/foaf/0.1/gender"
 }

@@ -61,7 +61,7 @@ func TestSolver(t *testing.T) {
 	for _, test := range tests {
 
 		input := parser.CreateRelationSet(test.input)
-		resultBindings := solver.SolveRelationSet(input, []mentalese.Binding{})
+		resultBindings := solver.SolveRelationSet(input, []mentalese.Binding{{}})
 		resultRelationSets := matcher.BindRelationSetMultipleBindings(input, resultBindings)
 
 		if fmt.Sprintf("%v", resultRelationSets) != test.wantRelationSets {

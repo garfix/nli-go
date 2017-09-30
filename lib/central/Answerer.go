@@ -68,7 +68,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 	} else {
 
 		// resultBindings: map goal variables to answers
-		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{})
+		resultBindings := answerer.solver.SolveRelationSet(goal, []mentalese.Binding{{}})
 
 		// choose a handler based on whether there were results
 		resultHandler := solution.NoResults

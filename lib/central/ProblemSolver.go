@@ -122,16 +122,9 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 
 	} else {
 
-// TODO kan ook door met 1 lege binding te beginnen?
-
-		if len(bindings) == 0 {
-			groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, mentalese.Binding{})
+		for _, binding := range bindings {
+			groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, binding)
 			newBindings = append(newBindings, groupBindings...)
-		} else {
-			for _, binding := range bindings {
-				groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, binding)
-				newBindings = append(newBindings, groupBindings...)
-			}
 		}
 
 	}

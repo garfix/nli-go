@@ -46,71 +46,11 @@ func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []st
 	factBase.tableDescriptions[tableName] = columns
 }
 
-func (factBase MySqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
-
-	factBase.log.StartDebug("MySqlFactBase.Bind", goal)
-
-	internalBindings, match := factBase.MatchSequenceToDatabase(goal)
-
-	factBase.log.EndDebug("MySqlFactBase.Bind", internalBindings, match)
-
-	return internalBindings, match
-}
-
-// Matches a sequence of relations to the relations of the MySql database
-// sequence: [ marriages(A, C) person(A, 'John', _, _) ]
-// return: [ { C: 1, A: 5 } ]
-func (factBase MySqlFactBase) MatchSequenceToDatabase(sequence mentalese.RelationSet) ([]mentalese.Binding, bool) {
-
-	factBase.log.StartDebug("MatchSequenceToDatabase", sequence)
-
-	// bindings using database level variables
-	sequenceBindings := []mentalese.Binding{}
-	match := true
-
-	for _, relation := range sequence {
-
-		relationBindings := []mentalese.Binding{}
-
-		if len(relationBindings) == 0 {
-
-			resultBindings := factBase.matchRelationToDatabase(relation)
-			relationBindings = resultBindings
-
-		} else {
-
-			// go through the bindings resulting from previous relation
-			for _, binding := range sequenceBindings {
-
-				boundRelation := factBase.matcher.BindSingleRelationSingleBinding(relation, binding)
-				resultBindings := factBase.matchRelationToDatabase(boundRelation)
-
-				// found bindings must be extended with the bindings already present
-				for _, resultBinding := range resultBindings {
-					newRelationBinding := binding.Merge(resultBinding)
-					relationBindings = append(relationBindings, newRelationBinding)
-				}
-			}
-		}
-
-		sequenceBindings = relationBindings
-
-		if len(sequenceBindings) == 0 {
-			match = false
-			break
-		}
-	}
-
-	factBase.log.EndDebug("MatchSequenceToDatabase", sequenceBindings, match)
-
-	return sequenceBindings, match
-}
-
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
+func (factBase MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
-	factBase.log.StartDebug("matchRelationToDatabase", needleRelation)
+	factBase.log.StartDebug("MatchRelationToDatabase", needleRelation)
 
 	dbBindings := []mentalese.Binding{}
 
@@ -172,7 +112,7 @@ func (factBase MySqlFactBase) matchRelationToDatabase(needleRelation mentalese.R
 		}
 	}
 
-	factBase.log.EndDebug("matchRelationToDatabase", dbBindings)
+	factBase.log.EndDebug("MatchRelationToDatabase", dbBindings)
 
 	return dbBindings
 }

@@ -235,8 +235,51 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 	return subgoalBindings
 }
 
-func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(relations []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
-	return factBase.Bind(relations)
+func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(sequence []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
+
+	solver.log.StartDebug("SolveMultipleRelationSingleFactBase", sequence)
+
+	// bindings using database level variables
+	sequenceBindings := []mentalese.Binding{}
+	match := true
+
+	for _, relation := range sequence {
+
+		relationBindings := []mentalese.Binding{}
+
+		if len(sequenceBindings) == 0 {
+
+			resultBindings := factBase.MatchRelationToDatabase(relation)
+			relationBindings = resultBindings
+
+		} else {
+
+			//// go through the bindings resulting from previous relation
+			for _, binding := range sequenceBindings {
+
+				boundRelation := solver.matcher.BindSingleRelationSingleBinding(relation, binding)
+				resultBindings := factBase.MatchRelationToDatabase(boundRelation)
+
+				// found bindings must be extended with the bindings already present
+				for _, resultBinding := range resultBindings {
+					newRelationBinding := binding.Merge(resultBinding)
+					relationBindings = append(relationBindings, newRelationBinding)
+				}
+			}
+
+		}
+
+		sequenceBindings = relationBindings
+
+		if len(sequenceBindings) == 0 {
+			match = false
+			break
+		}
+	}
+
+	solver.log.EndDebug("SolveMultipleRelationSingleFactBase", sequenceBindings, match)
+
+	return sequenceBindings, match
 }
 
 // goalRelation e.g. father('jack', Z)

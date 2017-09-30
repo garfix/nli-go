@@ -4,7 +4,7 @@ import "nli-go/lib/mentalese"
 
 type FactBase interface {
 	KnowledgeBase
-	Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool)
+	MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding
 	GetMappings() []mentalese.RelationTransformation
 	GetStatistics() mentalese.DbStats
 }

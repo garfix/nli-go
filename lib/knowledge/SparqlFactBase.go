@@ -28,54 +28,6 @@ func NewSparqlFactBase(baseUrl string, defaultGraphUri string, matcher *mentales
 	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, stats: stats, matcher: matcher, log: log}
 }
 
-func (factBase SparqlFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
-
-	factBase.log.StartDebug("SparqlFactBase Bind", goal)
-
-	// bindings using database level variables
-	sequenceBindings := []mentalese.Binding{}
-	match := true
-
-	for _, relation := range goal {
-
-		relationBindings := []mentalese.Binding{}
-
-// todo: doesn't this always apply?
-
-		if len(relationBindings) == 0 {
-
-			resultBindings := factBase.matchRelationToDatabase(relation)
-			relationBindings = resultBindings
-
-		} else {
-
-			// go through the bindings resulting from previous relation
-			for _, binding := range sequenceBindings {
-
-				boundRelation := factBase.matcher.BindSingleRelationSingleBinding(relation, binding)
-				resultBindings := factBase.matchRelationToDatabase(boundRelation)
-
-				// found bindings must be extended with the bindings already present
-				for _, resultBinding := range resultBindings {
-					newRelationBinding := binding.Merge(resultBinding)
-					relationBindings = append(relationBindings, newRelationBinding)
-				}
-			}
-		}
-
-		sequenceBindings = relationBindings
-
-		if len(sequenceBindings) == 0 {
-			match = false
-			break
-		}
-	}
-
-	factBase.log.EndDebug("SparqlFactBase Bind", sequenceBindings)
-
-	return sequenceBindings, match
-}
-
 func (factBase SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
@@ -90,9 +42,9 @@ func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase SparqlFactBase) matchRelationToDatabase(relation mentalese.Relation) []mentalese.Binding {
+func (factBase SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) []mentalese.Binding {
 
-	factBase.log.StartDebug("matchRelationToDatabase", relation)
+	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
 	bindings := []mentalese.Binding{}
 
@@ -194,7 +146,7 @@ func (factBase SparqlFactBase) matchRelationToDatabase(relation mentalese.Relati
 		bindings = append(bindings, binding)
 	}
 
-	factBase.log.EndDebug("matchRelationToDatabase", bindings)
+	factBase.log.EndDebug("MatchRelationToDatabase", bindings)
 
 	return bindings
 }

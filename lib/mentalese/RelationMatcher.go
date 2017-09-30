@@ -143,7 +143,7 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
 		match = false
-	} else if (len(needleRelation.Arguments) != len(haystackRelation.Arguments)) {
+	} else if len(needleRelation.Arguments) != len(haystackRelation.Arguments) {
 		match = false
 	} else {
 

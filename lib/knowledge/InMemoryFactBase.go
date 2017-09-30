@@ -29,15 +29,8 @@ func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }
 
-// Note! An internal fact base would use the same predicates as the domain language;
-// This is an simulation of an external database
-func (factBase InMemoryFactBase) Bind(goal []mentalese.Relation) ([]mentalese.Binding, bool) {
+func (factBase InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
-	factBase.log.StartDebug("Factbase Bind", goal)
-
-	internalBindings, match := factBase.matcher.MatchSequenceToSet(goal, factBase.facts, mentalese.Binding{})
-
-	factBase.log.EndDebug("Factbase Bind", internalBindings, match)
-
-	return internalBindings, match
+	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, mentalese.Binding{})
+	return bindings
 }

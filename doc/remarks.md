@@ -1,3 +1,17 @@
+## 2017-09-30
+
+Finished n:m mapping for domain-kb. Yes! That was a lot of work! Had to rewrite the optimizer as well.
+
+I use to have this long term task:
+
+- Permanent goal: improve the grammar; extend it with new phrases, make it more precise. I think there's such a thing as an NLI-English grammar that exists of grammar rules commonly used when talking to a computer. It's a small subset of full English grammar, with an emphasis on questions.
+
+I will abandon this goal, because a large grammar is actually detrimental to the performance of an NLI. It introduces ambiguity where it is not needed in individual domains. Plus it makes things much more complex. The downside is that grammars need to be copied from one domain to the next. But maybe I can create a basic set, or some sets, of grammar rules that are often needed.
+
+I also introduced "solution routes". A solution route is one way to solve a problem. It consists of relation groups, together with a kb id and a cost of execution. A solution route is always ordered by least expensive first.
+
+A consequence of these solution routes is an aggregate function in a solution route only applies to the bindings of _that route_. This may once become a problem, but I see no way around it.
+
 ## 2017-09-19
 
 I have to change the ds2db mapping from 1-n to n-m. Which is quite a task! It introduced relation groups, that group a set of relations into relation groups. Each group server directly as input to a knowledge base.

@@ -1,14 +1,12 @@
 # Todo
 
-## omschrijving (?)
+## Misc
 
 * grouped relations in matcher and solver: (), and, or, not
-* handle common questions
+* name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
 * declaratives and imperatives that update the database
 * Blocks World examples
 * Names with and without insertion
-* name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
-* married(A, B) :- married(B, A)
 
 ## Syntax
 
@@ -17,10 +15,9 @@
     join('', firstName, lastName: name)
     join('', firstName, lastName -> name)
     name = join('', firstName, lastName)
+- Namespace predicates?
 - should you be allowed to mix predicates of several sets? Is this confusing or a necessity to keep things manageable?
 - Must be able to write whword in place of whword(); but wait, maybe we need multiple variables as well?
-- is het misschien nodig om predicates en constants te namespacen? Eigenlijk is de predicate al een namespace
-- find a solution for multiple (2, 3) insertions
 
 ## Aggregations
 

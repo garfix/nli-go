@@ -8,6 +8,12 @@
 * Blocks World examples
 * Names with and without insertion
 
+## Aggregation
+
+My system works with a mix of breadth-first and depth first. I have not thought this through well enough.
+
+Want to have aggregation functions that work reliably.
+
 ## Syntax
 
 - Perhaps replace the syntax of functions like number_of(N, X) to

@@ -63,6 +63,18 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings []menta
 		}}
 
 		result = append(result, relation)
+
+	} else if len(bindings) == 1 {
+
+		onlyBinding := bindings[0]
+
+		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
+			parentValue,
+			onlyBinding[entityVar],
+			onlyBinding[entityVar],
+		}}
+
+		result = append(result, relation)
 	}
 
 	return result

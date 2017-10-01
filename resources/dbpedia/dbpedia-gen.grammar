@@ -7,7 +7,8 @@
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, female) }
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, male) }
 
-    { rule: np(C) -> np(P1) comma(C) np(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _) }
-    { rule: np(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2) }
+    { rule: np(C) -> np(P1),                                                      condition: conjunction(C, P1, P1) }
+    { rule: np(C) -> np(P1) comma(C) np(P2),                                      condition: conjunction(C, P1, P2) conjunction(P2, _, _) }
+    { rule: np(C) -> np(P1) conjunction(C) np(P2),                                condition: conjunction(C, P1, P2) }
 
 ]

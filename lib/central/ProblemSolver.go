@@ -15,24 +15,24 @@ import (
 // SolutionRoute: describes a single path through a series of knowledge base calls
 // RelationGroup: a single step in a solution route; it is the input for a specified knowledge base, having a calculation cost
 type ProblemSolver struct {
-	allKnowledgeBases     []knowledge.KnowledgeBase
-	factBases             []knowledge.FactBase
-	ruleBases             []knowledge.RuleBase
-	multipleBindingsBases []knowledge.MultipleBindingsBase
-	nestedStructureBase   []knowledge.NestedStructureBase
-	matcher               *mentalese.RelationMatcher
-	optimizer			  Optimizer
-	log                   *common.SystemLog
+	allKnowledgeBases   []knowledge.KnowledgeBase
+	factBases           []knowledge.FactBase
+	ruleBases           []knowledge.RuleBase
+	aggregateBases      []knowledge.AggregateBase
+	nestedStructureBase []knowledge.NestedStructureBase
+	matcher             *mentalese.RelationMatcher
+	optimizer           Optimizer
+	log                 *common.SystemLog
 }
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
-		factBases:             []knowledge.FactBase{},
-		ruleBases:             []knowledge.RuleBase{},
-		multipleBindingsBases: []knowledge.MultipleBindingsBase{},
-		matcher:               matcher,
-		optimizer: 			   NewOptimizer(matcher),
-		log:                   log,
+		factBases:      []knowledge.FactBase{},
+		ruleBases:      []knowledge.RuleBase{},
+		aggregateBases: []knowledge.AggregateBase{},
+		matcher:        matcher,
+		optimizer:      NewOptimizer(matcher),
+		log:            log,
 	}
 }
 
@@ -46,8 +46,8 @@ func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, ruleBase)
 }
 
-func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.MultipleBindingsBase) {
-	solver.multipleBindingsBases = append(solver.multipleBindingsBases, source)
+func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.AggregateBase) {
+	solver.aggregateBases = append(solver.aggregateBases, source)
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, source)
 }
 
@@ -115,11 +115,11 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 	newBindings := []mentalese.Binding{}
 
 	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
-	multipleBindingsBase, isMultipleBindingsBase := knowledgeBase.(knowledge.MultipleBindingsBase)
+	aggregateBase, isAggregateBase := knowledgeBase.(knowledge.AggregateBase)
 
-	if isMultipleBindingsBase {
+	if isAggregateBase {
 
-		mbBindings, ok := multipleBindingsBase.Bind(relationGroup.Relations[0], bindings)
+		mbBindings, ok := aggregateBase.Bind(relationGroup.Relations[0], bindings)
 
 		if ok {
 			newBindings = append(newBindings, mbBindings...)
@@ -219,7 +219,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 				boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.Replacement, internalBinding)
 
 				// match this bound version to the database
-				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(boundConditions, factBase)
+				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(ds2db.Replacement, boundConditions, factBase)
 
 				if match3 {
 					for _, binding := range internalBindings {
@@ -235,38 +235,59 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 	return subgoalBindings
 }
 
-func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(sequence []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
+func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
 
-	solver.log.StartDebug("SolveMultipleRelationSingleFactBase", sequence)
+	solver.log.StartDebug("SolveMultipleRelationSingleFactBase", boundSequence)
 
 	// bindings using database level variables
 	sequenceBindings := []mentalese.Binding{}
 	match := true
 
-	for _, relation := range sequence {
+	for i, relation := range boundSequence {
 
 		relationBindings := []mentalese.Binding{}
 
-		if len(sequenceBindings) == 0 {
-
-			resultBindings := factBase.MatchRelationToDatabase(relation)
-			relationBindings = resultBindings
-
-		} else {
-
-			//// go through the bindings resulting from previous relation
-			for _, binding := range sequenceBindings {
-
-				boundRelation := solver.matcher.BindSingleRelationSingleBinding(relation, binding)
-				resultBindings := factBase.MatchRelationToDatabase(boundRelation)
-
-				// found bindings must be extended with the bindings already present
-				for _, resultBinding := range resultBindings {
-					newRelationBinding := binding.Merge(resultBinding)
-					relationBindings = append(relationBindings, newRelationBinding)
-				}
+		aggregateFunctionFound := false
+		for _, aggregateBase := range solver.aggregateBases {
+			newRelationBindings, ok := aggregateBase.Bind(unboundSequence[i], sequenceBindings)
+			if ok {
+				relationBindings = newRelationBindings
+				aggregateFunctionFound = true
+				break
 			}
+		}
 
+		if !aggregateFunctionFound {
+
+			if len(sequenceBindings) == 0 {
+
+				resultBindings := factBase.MatchRelationToDatabase(relation)
+				relationBindings = resultBindings
+
+			} else {
+
+				//functionBindings, functionFound := solver.matcher.MatchRelationToFunction(relation, sequenceBindings)
+				//if functionFound {
+				//
+				//	relationBindings = functionBindings
+				//
+				//} else {
+
+				//// go through the bindings resulting from previous relation
+				for _, binding := range sequenceBindings {
+
+					boundRelation := solver.matcher.BindSingleRelationSingleBinding(relation, binding)
+					resultBindings := factBase.MatchRelationToDatabase(boundRelation)
+
+					// found bindings must be extended with the bindings already present
+					for _, resultBinding := range resultBindings {
+						newRelationBinding := binding.Merge(resultBinding)
+						relationBindings = append(relationBindings, newRelationBinding)
+					}
+				}
+				//			}
+
+			}
 		}
 
 		sequenceBindings = relationBindings

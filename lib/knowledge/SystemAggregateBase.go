@@ -51,16 +51,40 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 		differentValues := base.getDifferentValues(bindings, subjectVariable)
 		aggregate = mentalese.Term{TermType: mentalese.Term_number, TermValue: strconv.Itoa(len(differentValues))}
 
-	//} else if goal.Predicate == "first" {
-	//
-	//	newBindings := []mentalese.Binding{}
-	//
-	//	for _, binding := range bindings {
-	//
-	//		for
-	//
-	//	}
-	//
+	} else if goal.Predicate == "first" {
+
+		for _, binding := range bindings {
+
+			alreadyPresent := false
+
+			for _, newBinding := range newBindings {
+
+				allFound := true
+
+				for _, argument := range goal.Arguments {
+
+					_, found := newBinding[argument.TermValue]
+					if !found {
+						allFound = false
+					}
+				}
+
+				if allFound {
+					alreadyPresent = true
+				}
+
+			}
+
+			if !alreadyPresent {
+				newBindings = append(newBindings, binding)
+			}
+
+		}
+
+// todo the first values must be applied to all bindings; do not just throw them away!
+
+		return newBindings, true
+
 	} else if goal.Predicate == "exists" {
 
 		subjectVariable := goal.Arguments[1].TermValue

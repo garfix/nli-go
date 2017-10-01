@@ -1,3 +1,11 @@
+# 2017 -10-01
+
+My first DBPedia sentence is "Who married <person>". Just when I thought I had it finished I found out that people can have multiple spouses. Well, I _knew_ that of course :)
+
+My "and" generator did not work with single np's. I fixed it temporarily.
+
+I have to think about aggregation functions. My system works with a mix of breadth-first and depth first. I have not thought this through well enough.
+
 ## 2017-09-30
 
 Finished n:m mapping for domain-kb. Yes! That was a lot of work! Had to rewrite the optimizer as well.

@@ -160,7 +160,7 @@ func (b Binding) Equals(c Binding) bool {
 	return true
 }
 
-// Removes a copy of bindings that contains each Binding only once
+// Returns copy of bindings that contains each Binding only once
 func UniqueBindings(bindings []Binding) []Binding {
 	uniqueBindings := []Binding{}
 	for _, binding := range bindings {

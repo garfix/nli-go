@@ -88,6 +88,9 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	}
 
+	// remove duplicates because they cause unnecessary work and they cause problems for the generator
+	newBindings = mentalese.UniqueBindings(newBindings)
+
 	solver.log.EndDebug("SolveRelationSet", newBindings)
 
 	return newBindings

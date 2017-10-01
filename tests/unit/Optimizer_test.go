@@ -61,23 +61,23 @@ func TestOptimizer(t *testing.T) {
 		remaining       string
 	}{
 		// one predicate ('name') has stats and occurs in both fact bases; it is put up front
-		{"[married_to(A, B) name(B, 'Lord Byron')]", "[\n [[name(B, 'Lord Byron')]@0, [married_to(A, B)]@0]\n [[name(B, 'Lord Byron')]@1, [married_to(A, B)]@0]]", "[]"},
+		{"[married_to(A, B) name(B, 'Lord Byron')]", "[[[name(B, 'Lord Byron')]@0, [married_to(A, B)]@0]\n [[name(B, 'Lord Byron')]@1, [married_to(A, B)]@0]]", "[]"},
 
 		// a predicate ('who') that does not occur in any of the fact bases will appear in the remaining set
 		{"[married_to(A, B) who(A) name(B, 'Lord Byron')]", "[]", "[who(A)]"},
 
 		// a predicate ('king') that occurs in one fact base, but has no stats will appear last
-		{"[married_to(A, B) king(A) name(B, 'Lord Byron')]", "[\n [[name(B, 'Lord Byron')]@0, [married_to(A, B)]@0, [king(A)]@1]\n [[name(B, 'Lord Byron')]@1, [married_to(A, B)]@0, [king(A)]@1]]", "[]"},
+		{"[married_to(A, B) king(A) name(B, 'Lord Byron')]", "[[[name(B, 'Lord Byron')]@0, [married_to(A, B)]@0, [king(A)]@1]\n [[name(B, 'Lord Byron')]@1, [married_to(A, B)]@0, [king(A)]@1]]", "[]"},
 
 		// a predicate ('queen') with stats that occurs in one fact base, but not in the other will have a high position
 		// in this example, all variables are unbound; the order is purely determined by the sizes of the tables
-		{"[married_to(A, B) queen(A) name(A, B)]", "[\n [[queen(A)]@1, [married_to(A, B)]@0, [name(A, B)]@0]\n [[queen(A)]@1, [married_to(A, B)]@0, [name(A, B)]@1]]", "[]"},
+		{"[married_to(A, B) queen(A) name(A, B)]", "[[[queen(A)]@1, [married_to(A, B)]@0, [name(A, B)]@0]\n [[queen(A)]@1, [married_to(A, B)]@0, [name(A, B)]@1]]", "[]"},
 
 		// match 2 predicates
 		{"[first_name(C, 'Elvis') first_name(A, 'Lord') last_name(A, 'Byron')]", "[]", "[first_name(C, 'Elvis')]"},
 
 		// 2 predicates that is more bound should precede 2 predicates that is less
-		{"[first_name(A, 'Lord') last_name(A, 'Byron') first_name(11, 'Lord') last_name(11, 'Byron')]", "[\n [[first_name(11, 'Lord') last_name(11, 'Byron')]@0, [first_name(A, 'Lord') last_name(A, 'Byron')]@0]]", "[]"},
+		{"[first_name(A, 'Lord') last_name(A, 'Byron') first_name(11, 'Lord') last_name(11, 'Byron')]", "[[[first_name(11, 'Lord') last_name(11, 'Byron')]@0, [first_name(A, 'Lord') last_name(A, 'Byron')]@0]]", "[]"},
 	}
 
 	for _, test := range tests {

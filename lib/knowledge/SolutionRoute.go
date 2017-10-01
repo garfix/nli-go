@@ -87,10 +87,11 @@ func (s SolutionRoute) String() string {
 func (s SolutionRoutes) String() string {
 
 	str := "["
-	sep := "\n "
+	sep := ""
 
 	for _, route := range s {
 		str += sep + route.String()
+		sep = "\n "
 	}
 
 	str += "]"

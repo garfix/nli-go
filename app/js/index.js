@@ -17,7 +17,13 @@ $(function(){
 
             matches = production.match(/([^:]+)/);
             name = matches[1];
-            value = production.substr(name.length + 1).replace("\n", "<br>");
+            value = production.substr(name.length + 1)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace("\n", "<br>");
 
             html += "<tr><td class='production_name'>" + name + "</td>";
             html += "<td class='production_value'>" + value + "</td></tr>";

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const max_sparql_results = 100
@@ -93,12 +94,19 @@ func (factBase SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 
 	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(max_sparql_results)
 
+	start := time.Now()
+
 	resp, err := http.PostForm(factBase.baseUrl,
 		url.Values{
 			"default-graph-uri": {factBase.defaultGraphUri},
 			"query": {query},
 			"format": {"application/json"},
 		})
+
+	t := time.Now()
+	elapsed := t.Sub(start)
+
+	factBase.log.AddProduction("SPARQL Query", query + " (" + elapsed.String() + ")")
 
 	if err != nil {
 		factBase.log.AddError("Error posting SPARQL request: " + err.Error())

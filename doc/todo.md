@@ -8,6 +8,12 @@
 * Blocks World examples
 * Names with and without insertion
 
+## Rules
+
+Test if this works or make it work:
+
+    married_to(A, B) :- married_to(B, A);
+
 ## Aggregation
 
 My system works with a mix of breadth-first and depth first. I have not thought this through well enough.

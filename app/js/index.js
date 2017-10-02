@@ -25,8 +25,10 @@ $(function(){
                 .replace(/'/g, "&#039;")
                 .replace("\n", "<br>");
 
+            className = name.toLowerCase().replace(' ', '-');
+
             html += "<tr><td class='production_name'>" + name + "</td>";
-            html += "<td class='production_value'>" + value + "</td></tr>";
+            html += "<td class='production_value " + className + "'>" + value + "</td></tr>";
         }
 
         html += "</table>";

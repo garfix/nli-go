@@ -23,6 +23,7 @@ func TestDBPedia(t *testing.T) {
 		{"Who married Lord Byron?", "Anne Isabella Byron married him"},
 		{"Who married Anne Isabella Milbanke?", "Lord Byron married her"},
 		{"Who married Michael Jackson?", "Lisa Marie Presley and Debbie Rowe married him"},
+		{"Who married Xyz Abc?", "I do not know"},
 	}
 
 	for _, test := range tests {

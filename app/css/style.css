@@ -96,3 +96,11 @@ form#f {
     width: 130px;
     color: #405952;
 }
+
+.sparql-query {
+    color: #ff585d;
+}
+
+.solution-routes {
+    color: #6d95e0;
+}

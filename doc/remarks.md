@@ -1,4 +1,10 @@
-# 2017 -10-01
+# 2017-10-02
+
+Another reason for not wanting a huge grammar, is that of scope. You don't want the grammar rules of one domain to affect another domain. It would only work if the perfect grammar was found.
+
+There probably is no such thing. For all known languages.
+
+# 2017-10-01
 
 My first DBPedia sentence is "Who married <person>". Just when I thought I had it finished I found out that people can have multiple spouses. Well, I _knew_ that of course :)
 

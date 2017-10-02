@@ -2,13 +2,15 @@
     { rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E) }
 
     { rule: vp(V) -> verb(V) np(E),                                               condition: object(V, E) }
+    { rule: vp(V) -> aux_verb(V) negative(V) verb(V),                             condition: negation(V) }
+    { rule: vp(V) -> verb(V) }
 
     { rule: np(E) -> proper_noun(E),                                              condition: name(E, Name) }
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, female) }
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, male) }
+    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, i) }
 
     { rule: np(C) -> np(P1),                                                      condition: conjunction(C, P1, P1) }
     { rule: np(C) -> np(P1) comma(C) np(P2),                                      condition: conjunction(C, P1, P2) conjunction(P2, _, _) }
     { rule: np(C) -> np(P1) conjunction(C) np(P2),                                condition: conjunction(C, P1, P2) }
-
 ]

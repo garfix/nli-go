@@ -41,6 +41,11 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecede
 
 		for _, consequent := range rule.Consequents {
 
+			if len(consequent.Arguments) == 0 {
+				generator.log.AddError("Predicate has zero arguments: " + consequent.String())
+				continue
+			}
+
 			consequentBinding := conditionBinding.Extract(consequent.Arguments[0].TermValue)
 			words = append(words, generator.generateSingleConsequent(consequent, consequentBinding, sentenceSense)...)
 		}

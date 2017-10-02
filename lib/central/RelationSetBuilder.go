@@ -33,8 +33,14 @@ func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, binding
 		}
 
 		if !generatorUsed {
-			relations := builder.matcher.BindSingleRelationMultipleBindings(templateRelation, bindings)
-			newSet = newSet.Merge(relations)
+
+			if len(bindings) == 0 {
+				newSet = append(newSet, templateRelation)
+			} else {
+				relations := builder.matcher.BindSingleRelationMultipleBindings(templateRelation, bindings)
+				newSet = newSet.Merge(relations)
+			}
+
 		}
 	}
 

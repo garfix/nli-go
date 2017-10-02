@@ -1,7 +1,11 @@
 [
     married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
     name(A, N) => name(A, N);
+
     gender(A, male) => isa(A, male);
     gender(A, female) => isa(A, female);
+
     and(R, A, B) => conjunction(R, A, B) isa(R, and);
+
+    dont_know() => isa(P1, know) negation(P1) subject(P1, S1) isa(S1, i);
 ]

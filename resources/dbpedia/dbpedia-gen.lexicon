@@ -3,7 +3,7 @@
     { form: 'has',	        pos: verb,		    condition: isa(E, have) }
     { form: 'know',	        pos: verb,		    condition: isa(E, know) }
 
-    { form: 'do',	        pos: aux_verb,		condition: isa(E, know) }
+    { form: 'do',	        pos: aux_verb }
 
     { form: 'children',	    pos: noun,		    condition: isa(E, child) }
 

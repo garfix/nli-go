@@ -8,6 +8,10 @@
 * Blocks World examples
 * Names with and without insertion
 
+## Quant
+
+Evaluation of the range of quant cannot work. Too many results.
+
 ## Rules
 
 Test if this works or make it work:

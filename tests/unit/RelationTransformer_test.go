@@ -98,7 +98,7 @@ func TestRelationTransformerWitQuant(t *testing.T) {
 	transformer := mentalese.NewRelationTransformer(matcher, log)
 
 	input := parser.CreateRelationSet(`[
-		quant(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ])
+		quantification(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ])
 	]`)
 
 	transformations := parser.CreateTransformations(`[
@@ -106,7 +106,7 @@ func TestRelationTransformerWitQuant(t *testing.T) {
 	]`)
 
 	result := transformer.Replace(transformations, input)
-	want := "[quant(E1, [how_many(E1)], D1, [how_many(D1)])]"
+	want := "[quantification(E1, [how_many(E1)], D1, [how_many(D1)])]"
 
 	if result.String() != want {
 		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", result, want)

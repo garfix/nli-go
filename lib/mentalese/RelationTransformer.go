@@ -20,10 +20,13 @@ func NewRelationTransformer(matcher *RelationMatcher, log *common.SystemLog) *Re
 // return the original relations, but replace the ones that have matched with their replacements
 func (transformer *RelationTransformer) Replace(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
-	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, relationSet)
+	// replace the relations embeded in quants
+	replacedSet := transformer.ReplaceEmbeddedRelations(transformations, relationSet)
+
+	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, replacedSet)
 	newRelations := RelationSet{}
 
-	for i, oldRelation := range relationSet {
+	for i, oldRelation := range replacedSet {
 		if !common.IntArrayContains(matchedIndexes, i) {
 			newRelations = append(newRelations, oldRelation)
 		}
@@ -32,6 +35,27 @@ func (transformer *RelationTransformer) Replace(transformations []RelationTransf
 	newRelations = append(newRelations, replacements...)
 
 	return newRelations
+}
+
+func (transformer *RelationTransformer) ReplaceEmbeddedRelations(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
+
+	// replace inside hierarchical relations
+	replacedSet := RelationSet{}
+	for _, relation := range relationSet {
+
+		if relation.Predicate == Predicate_Quant {
+			replacedRelation := relation.Copy()
+			replacedRelation.Arguments[Quantification_RangeIndex].TermValueRelationSet =
+				transformer.Replace(transformations, relation.Arguments[Quantification_RangeIndex].TermValueRelationSet)
+			replacedRelation.Arguments[Quantification_QuantifierIndex].TermValueRelationSet =
+				transformer.Replace(transformations, relation.Arguments[Quantification_QuantifierIndex].TermValueRelationSet)
+			replacedSet = append(replacedSet, replacedRelation)
+		} else {
+			replacedSet = append(replacedSet, relation)
+		}
+	}
+
+	return replacedSet
 }
 
 // Try to match all transformations to relationSet, and return the replacements that resulted from the transformations

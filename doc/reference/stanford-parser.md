@@ -4,7 +4,7 @@ The online parser: http://nlp.stanford.edu:8080/parser/index.jsp
 
 ## Syntactic categories
 
-A list of categories http://cs.jhu.edu/~jason/465/hw-parse/treebank-manual.pdf (formerly http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
+A list of categories https://web.archive.org/web/20161129000734/http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html (formerly http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
 
 ## Universal Dependency Relations
 

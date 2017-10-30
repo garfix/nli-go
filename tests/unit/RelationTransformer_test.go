@@ -89,3 +89,26 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", replacedResult, wantReplaced)
 	}
 }
+
+func TestRelationTransformerWitQuant(t *testing.T) {
+
+	log := common.NewSystemLog(false)
+	parser := importer.NewInternalGrammarParser()
+	matcher := mentalese.NewRelationMatcher(log)
+	transformer := mentalese.NewRelationTransformer(matcher, log)
+
+	input := parser.CreateRelationSet(`[
+		quant(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ])
+	]`)
+
+	transformations := parser.CreateTransformations(`[
+		isa(A, how) isa(A, many) => how_many(A);
+	]`)
+
+	result := transformer.Replace(transformations, input)
+	want := "[quant(E1, [how_many(E1)], D1, [how_many(D1)])]"
+
+	if result.String() != want {
+		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", result, want)
+	}
+}

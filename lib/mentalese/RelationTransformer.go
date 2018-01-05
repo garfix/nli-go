@@ -20,10 +20,13 @@ func NewRelationTransformer(matcher *RelationMatcher, log *common.SystemLog) *Re
 // return the original relations, but replace the ones that have matched with their replacements
 func (transformer *RelationTransformer) Replace(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
-	// replace the relations embeded in quants
-	replacedSet := transformer.ReplaceEmbeddedRelations(transformations, relationSet)
+	// prepare flat set of relations where all scopes are removed
+	unScopedRelationSet := relationSet.UnScope()
 
-	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, replacedSet)
+	// replace the relations embedded in quants
+	replacedSet := transformer.replaceEmbeddedRelations(transformations, relationSet)
+
+	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, replacedSet, unScopedRelationSet)
 	newRelations := RelationSet{}
 
 	for i, oldRelation := range replacedSet {
@@ -37,7 +40,7 @@ func (transformer *RelationTransformer) Replace(transformations []RelationTransf
 	return newRelations
 }
 
-func (transformer *RelationTransformer) ReplaceEmbeddedRelations(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
+func (transformer *RelationTransformer) replaceEmbeddedRelations(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
 
 	// replace inside hierarchical relations
 	replacedSet := RelationSet{}
@@ -60,21 +63,28 @@ func (transformer *RelationTransformer) ReplaceEmbeddedRelations(transformations
 
 // Attempts all transformations on all relations
 // Returns the Indexes of the matched relations, and the replacements that were created, each in a single set
-func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet) {
+func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet, unScopedRelations RelationSet) ([]int, RelationSet) {
 
 	transformer.log.StartDebug("matchAllTransformations", transformations)
 
-	matchedIndexes := []int{}
-	replacements := RelationSet{}
+	var matchedIndexes []int
+	var replacements RelationSet
 
 	for _, transformation := range transformations {
 
-		// each transformation application is completely independent from the others
-		bindings, newIndexes, _, match := transformer.matcher.MatchSequenceToSetWithIndexes(transformation.Pattern, haystackSet, Binding{})
-		if match {
-			matchedIndexes = append(matchedIndexes, newIndexes...)
-			for _, binding := range bindings {
-				replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
+		conditionBindings, ok := transformer.bindCondition(transformation, unScopedRelations)
+
+		if ok {
+			for _, conditionBinding := range conditionBindings {
+
+				// each transformation application is completely independent from the others
+				bindings, newIndexes, _, match := transformer.matcher.MatchSequenceToSetWithIndexes(transformation.Pattern, haystackSet, conditionBinding)
+				if match {
+					matchedIndexes = append(matchedIndexes, newIndexes...)
+					for _, binding := range bindings {
+						replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
+					}
+				}
 			}
 		}
 	}
@@ -84,6 +94,20 @@ func (transformer *RelationTransformer) matchAllTransformations(transformations 
 	transformer.log.EndDebug("matchAllTransformations", matchedIndexes, replacements)
 
 	return matchedIndexes, replacements
+}
+
+func (transformer *RelationTransformer) bindCondition(transformation RelationTransformation, unScopedRelations RelationSet) ([]Binding, bool) {
+
+	bindings := []Binding{{}}
+
+	ok := true
+
+	if len(transformation.Condition) > 0 {
+
+		bindings, ok = transformer.matcher.MatchSequenceToSet(transformation.Condition, unScopedRelations, Binding{})
+	}
+
+	return bindings, ok
 }
 
 func (transformer *RelationTransformer) createReplacements(relations RelationSet, bindings Binding) RelationSet {

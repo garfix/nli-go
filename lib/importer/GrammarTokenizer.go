@@ -11,6 +11,8 @@ import (
 
 const (
 	_ = iota // number these constants 1, 2, ...
+	t_if
+	t_then
 	t_predicate
 	t_variable
 	t_anonymousVariable
@@ -49,6 +51,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		id      int
 		pattern string
 	}{
+		{t_if, "IF"},
+		{t_then, "THEN"},
 		{t_predicate, "[a-z][a-z0-9_]*"},
 		{t_variable, "[A-Z][a-z0-9_]*"},
 		{t_anonymousVariable, "_"},

@@ -43,8 +43,9 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
-	newBindings := []Binding{}
-	matchedIndexes := []int{}
+	var newBindings []Binding
+	var matchedIndexes []int
+
 	match := true
 
 	nodes := []solutionNode{
@@ -53,7 +54,7 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 	for _, needleRelation := range needleSequence {
 
-		newNodes := []solutionNode{}
+		var newNodes []solutionNode
 
 		for _, node := range nodes {
 

@@ -26,43 +26,35 @@ func TestRelationTransformer(t *testing.T) {
 
 	tests := []struct {
 		transformations string
-		wantExtracted   string
 		wantReplaced    string
-		wantAppended    string
 	}{
 		{
 			`[
 				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => task(A, B) subject(Y);
 				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => done();
 				predicate(A, X) predicate(X, A) => magic(A, X);
+				IF object(A, O) THEN predicate(A, X) => label(A, O);
+				IF object(A, A) THEN predicate(A, X) => signal(A, X);
 			]`,
-			"[task(S1, all) subject(E1) done()]",
-			"[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done()]",
-			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) task(S1, all) subject(E1) done()]",
+			"[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done() label(S1, E1)]",
 		},
 		{
 			`[
 				instance_of(Z, B) => isa(Z, B);
 			]`,
-			"[isa(E2, name) isa(E1, customer) isa(D1, all)]",
 			"[predicate(S1, name) object(S1, E1) determiner(E1, D1) isa(E2, name) isa(E1, customer) isa(D1, all)]",
-			"[instance_of(E2, name) predicate(S1, name) object(S1, E1) instance_of(E1, customer) determiner(E1, D1) instance_of(D1, all) isa(E2, name) isa(E1, customer) isa(D1, all)]",
 		},
 	}
 	for _, test := range tests {
 
 		transformations := parser.CreateTransformations(test.transformations)
 
-		wantExtracted := parser.CreateRelationSet(test.wantExtracted)
 		wantReplaced := parser.CreateRelationSet(test.wantReplaced)
-		wantAppended := parser.CreateRelationSet(test.wantAppended)
 
-		extractedResult := transformer.Extract(transformations, relationSet)
 		replacedResult := transformer.Replace(transformations, relationSet)
-		appendedResult := transformer.Append(transformations, relationSet)
 
-		if extractedResult.String() != wantExtracted.String() || replacedResult.String() != wantReplaced.String() || appendedResult.String() != wantAppended.String() {
-			t.Errorf("RelationTransformer: got\n%v\n%v\n%v,\nwant\n%v\n%v\n%v", extractedResult, replacedResult, appendedResult, wantExtracted, wantReplaced, wantAppended)
+		if replacedResult.String() != wantReplaced.String() {
+			t.Errorf("RelationTransformer: got\n%v,\nwant\n%v", replacedResult, wantReplaced)
 		}
 	}
 }
@@ -90,7 +82,7 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 	}
 }
 
-func TestRelationTransformerWitQuant(t *testing.T) {
+func TestRelationTransformerWithQuant(t *testing.T) {
 
 	log := common.NewSystemLog(false)
 	parser := importer.NewInternalGrammarParser()

@@ -118,17 +118,9 @@ func TestAnswerer(t *testing.T) {
 	}
 }
 
-func TestUnscope(t *testing.T) {
+func TestUnScope(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
-
-	matcher := mentalese.NewRelationMatcher(log)
-
-	solver := central.NewProblemSolver(matcher, log)
-
-	answerer := central.NewAnswerer(matcher, solver, log)
-
 	tests := []struct {
 		input           string
 		wantRelationSet string
@@ -143,7 +135,7 @@ func TestUnscope(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Unscope(input)
+		resultRelationSet := input.UnScope()
 
 		if resultRelationSet.String() != test.wantRelationSet {
 			t.Errorf("Answerer: got %v, want %s", resultRelationSet, test.wantRelationSet)

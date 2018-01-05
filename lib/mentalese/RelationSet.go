@@ -123,3 +123,31 @@ func (set RelationSet) String() string {
 
 	return "[" + s + "]"
 }
+
+func (set RelationSet) UnScope() RelationSet {
+
+	unscoped := RelationSet{}
+
+	for _, relation := range set {
+
+		relationCopy := relation.Copy()
+
+		if relation.Predicate == Predicate_Quant {
+			// unscope the relation sets
+			for i, argument := range relation.Arguments {
+				if argument.IsRelationSet() {
+
+					scopedSet := relationCopy.Arguments[i].TermValueRelationSet
+					relationCopy.Arguments[i].TermValueRelationSet = RelationSet{}
+
+					// recurse into the scope
+					unscoped = append(unscoped, scopedSet.UnScope()...)
+				}
+			}
+		}
+
+		unscoped = append(unscoped, relationCopy)
+	}
+
+	return unscoped
+}

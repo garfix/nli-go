@@ -54,17 +54,32 @@ func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startI
 	return transformations, startIndex, ok
 }
 
-// a(A) b(B) := c(A) d(B)
+// a(A) b(B) => c(A) d(B)
+// IF d(A) THEN a(A) b(B) => c(A) d(B)
 func (parser *InternalGrammarParser) parseTransformation(tokens []Token, startIndex int) (mentalese.RelationTransformation, int, bool) {
 
 	transformation := mentalese.RelationTransformation{}
 	ok := true
+	newStartIndex := 0
 
-	transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
-	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_transform)
+	_, newStartIndex, ifFound := parser.parseSingleToken(tokens, startIndex, t_if)
+	if ifFound {
+		startIndex = newStartIndex
+		transformation.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		if ok {
-			transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_then)
+		}
+	} else {
+		transformation.Condition = mentalese.RelationSet{}
+	}
+
+	if ok {
+		transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_transform)
+			if ok {
+				transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			}
 		}
 	}
 

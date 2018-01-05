@@ -58,26 +58,6 @@ func (transformer *RelationTransformer) ReplaceEmbeddedRelations(transformations
 	return replacedSet
 }
 
-// Try to match all transformations to relationSet, and return the replacements that resulted from the transformations
-func (transformer *RelationTransformer) Extract(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
-
-	_, replacements := transformer.matchAllTransformations(transformations, relationSet)
-
-	return replacements
-}
-
-// only add the replacements to the original relations
-func (transformer *RelationTransformer) Append(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
-
-	_, replacements := transformer.matchAllTransformations(transformations, relationSet)
-
-	newRelations := RelationSet{}
-	newRelations = append(newRelations, relationSet...)
-	newRelations = append(newRelations, replacements...)
-
-	return newRelations
-}
-
 // Attempts all transformations on all relations
 // Returns the Indexes of the matched relations, and the replacements that were created, each in a single set
 func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet) ([]int, RelationSet) {

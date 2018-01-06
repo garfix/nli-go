@@ -9,4 +9,14 @@
             answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
         }
     }
+    {
+        condition: who_question(A) married_to(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(B, G) name(A, N, canonical_name),
+            answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
+        }
+    }
 ]

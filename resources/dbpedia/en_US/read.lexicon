@@ -1,7 +1,13 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
+    { form: 'had',                  pos: aux_verb,              sense: isa(E, have) }
 
     { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
+    { form: 'how',                  pos: wh_word,                sense: isa(E, how) }
+
+    { form: 'many',                 pos: adjective,              sense: isa(E, many) }
+
+    { form: 'children',             pos: noun,                   sense: isa(E, child) }
 
     { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, first_name) }
     { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, second_name) }

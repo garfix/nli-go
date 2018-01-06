@@ -1,9 +1,9 @@
 {
   "lexicons": [
-    "../common/english-1.lexicon"
+    "english-1.lexicon"
   ],
   "grammars": [
-    "../common/english-1.grammar"
+    "english-1.grammar"
   ],
   "generationlexicons": [
     "relationships-gen.lexicon"

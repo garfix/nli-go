@@ -1,15 +1,15 @@
 {
   "lexicons": [
-    "english-fragment.lexicon"
+    "en_US/read.lexicon"
   ],
   "grammars": [
-    "english-fragment.grammar"
+    "en_US/read.grammar"
   ],
   "generationlexicons": [
-    "dbpedia-gen.lexicon"
+    "en_US/write.lexicon"
   ],
   "generationgrammars": [
-    "dbpedia-gen.grammar"
+    "en_US/write.grammar"
   ],
   "factbases": {
     "relation": [

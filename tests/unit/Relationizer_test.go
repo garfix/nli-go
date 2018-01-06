@@ -11,7 +11,7 @@ func TestRelationizer(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/common/english-1.grammar"))
+	grammar := internalGrammarParser.CreateGrammar(internalGrammarParser.LoadText("../../resources/relationships/english-1.grammar"))
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		{ form: 'the',        pos: determiner,        sense: isa(E, the) }
 		{ form: 'book',       pos: noun,              sense: isa(E, book) }

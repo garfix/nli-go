@@ -132,7 +132,7 @@ func (set RelationSet) UnScope() RelationSet {
 
 		relationCopy := relation.Copy()
 
-		if relation.Predicate == Predicate_Quant {
+		if relation.Predicate == Predicate_Quant || relation.Predicate == Predicate_Quantification {
 			// unscope the relation sets
 			for i, argument := range relation.Arguments {
 				if argument.IsRelationSet() {

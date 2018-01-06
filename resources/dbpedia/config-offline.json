@@ -3,7 +3,7 @@
   "factbases": {
     "relation": [
       {
-        "facts": "dbpedia.relation",
+        "facts": "offline.relation",
         "map": "dbpedia-db.map"
       }
     ]

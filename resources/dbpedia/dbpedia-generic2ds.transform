@@ -1,7 +1,11 @@
 [
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
+    IF isa(S, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
+    IF isa(O, child) THEN isa(P1, have) subject(P1, S) object(P1, O)  => have_child(S, O);
+
     question(S, wh_question) subject(S, E) isa(E, who) => who_question(E);
+    isa(Q, how) isa(Q, many) => how_many_question(Q);
 
     tense(P1, T) => ;
 ]

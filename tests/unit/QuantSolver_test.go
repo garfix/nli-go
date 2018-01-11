@@ -60,6 +60,8 @@ func TestQuantSolver(t *testing.T) {
 			"{X: 3}",
 			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
 		},
+
+// do 2 parents each have 2 children?
 	}
 
 	matcher := mentalese.NewRelationMatcher(log)

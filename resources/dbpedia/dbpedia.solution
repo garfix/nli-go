@@ -10,13 +10,13 @@
         }
     }
     {
-        condition: who_question(A) married_to(A, B),
+        condition: question(S, wh_question) isa(Q, how) isa(Q, many) have_child(A, B),
         no_results: {
             answer: dont_know()
         },
         some_results: {
-            preparation: gender(B, G) name(A, N, canonical_name),
-            answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
+            preparation: gender(A, G) number_of(N, B),
+            answer: gender(A, G) count(C, N) have_child(A, C)
         }
     }
 ]

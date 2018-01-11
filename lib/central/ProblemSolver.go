@@ -23,6 +23,8 @@ type ProblemSolver struct {
 	matcher             *mentalese.RelationMatcher
 	optimizer           Optimizer
 	log                 *common.SystemLog
+// todo refactor into something more decent
+	quantLevel			int
 }
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog) *ProblemSolver {
@@ -33,6 +35,7 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 		matcher:        matcher,
 		optimizer:      NewOptimizer(matcher),
 		log:            log,
+		quantLevel:     0,
 	}
 }
 
@@ -66,7 +69,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
-	newBindings := []mentalese.Binding{}
+	var newBindings []mentalese.Binding
 
 	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them
 	set = set.RemoveDuplicates()
@@ -153,7 +156,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	boundRelations := solver.matcher.BindRelationSetSingleBinding(relationGroup.Relations, binding)
 
-	newBindings := []mentalese.Binding{}
+	var newBindings []mentalese.Binding
 
 	if isNestedStructureBase {
 
@@ -185,7 +188,7 @@ func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, bindin
 
 	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
 
-	newBindings := []mentalese.Binding{}
+	var newBindings []mentalese.Binding
 
 	if goal.Predicate == mentalese.Predicate_Quant {
 

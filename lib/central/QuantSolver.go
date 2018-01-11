@@ -18,60 +18,148 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	solver.log.StartDebug("SolveQuant", quant, binding)
 
 	rangeVariable := quant.Arguments[mentalese.Quantification_RangeVariableIndex]
-	rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
-	quantifierSet := quant.Arguments[mentalese.Quantification_QuantifierIndex].TermValueRelationSet
 	scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
 
-	// bind the range to variable bindings
-	rangeBindings := solver.SolveRelationSet(rangeSet, []mentalese.Binding{{}})
+	// todo refactor this
+	solver.quantLevel++
 
-	// evaluate the scope for each of the variable bindings
-	scopeBindings := []mentalese.Binding{}
-	for _, rangeBinding := range rangeBindings {
-		scopeBinding := binding.Merge(rangeBinding)
-		scopeBindings = append(scopeBindings, solver.SolveRelationSet(scopeSet, []mentalese.Binding{scopeBinding})...)
+	// evaluate the scope
+	scopeBindings := solver.SolveRelationSet(scopeSet, []mentalese.Binding{binding})
+
+	solver.quantLevel--
+
+	if solver.quantLevel == 0 {
+		// outermost quant: collect all bindings that quantify, if any
+		scopeBindings = solver.validateNestedQuants(quant, scopeBindings, []mentalese.Term{rangeVariable})
 	}
 
-	// validate with the quantifier
-	quantBindings := scopeBindings
-	if !solver.validate(quantifierSet, rangeVariable, rangeBindings, scopeBindings) {
-		quantBindings = []mentalese.Binding{}
-	}
+	solver.log.EndDebug("SolveQuant", scopeBindings)
 
-	solver.log.EndDebug("SolveQuant", quantBindings)
-
-	return quantBindings
+	return scopeBindings
 }
 
-// Checks whether the quantity of scope with respect to range is according to the quantifier
-func (solver ProblemSolver) validate(quantifierSet mentalese.RelationSet, rangeVariable mentalese.Term, rangeBindings []mentalese.Binding, scopeBindings []mentalese.Binding) bool {
+// returns all bindings that quantify
+func (solver ProblemSolver) validateNestedQuants(quant mentalese.Relation, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
 
-	solver.log.StartDebug("validate", quantifierSet, rangeVariable, rangeBindings, scopeBindings)
+	resultBindings := bindings
 
-	ok := false
-	rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
-	scopeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, scopeBindings)
+	// validate lower levels
+	scopeSet := quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet
+	for _, relation := range scopeSet  {
+		if relation.Predicate == mentalese.Predicate_Quant {
 
-	ok = scopeCount >= 1
+			rangeVariable := relation.Arguments[mentalese.Quantification_RangeVariableIndex]
+			newRangeVariables := append(rangeVariables, rangeVariable)
 
-	if len(quantifierSet) == 1 {
-		quantifier := quantifierSet[0]
-		simpleQuantifier := quantifier.Arguments[1]
-
-		if simpleQuantifier.TermType == mentalese.Term_number {
-
-			quantity, _ := strconv.Atoi(simpleQuantifier.TermValue)
-			ok = quantity == scopeCount
-
-		} else if simpleQuantifier.TermType == mentalese.Term_predicateAtom {
-
-			if simpleQuantifier.TermValue == "all" {
-				ok = scopeCount == rangeCount
+			resultBindings = solver.validateNestedQuants(relation, bindings, newRangeVariables)
+			if len(resultBindings) == 0 {
+				break
 			}
 		}
 	}
 
-	solver.log.EndDebug("validate", ok)
+	// validate current level
+	if len(resultBindings) > 0 {
+		resultBindings = solver.validateQuantification(quant, resultBindings, rangeVariables)
+	}
 
-	return ok
+	return resultBindings
+}
+
+func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
+
+	rangeVariable := quant.Arguments[mentalese.Quantification_RangeVariableIndex]
+	rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
+	quantifierSet := quant.Arguments[mentalese.Quantification_QuantifierIndex].TermValueRelationSet
+
+	// lazy loading of range bindings
+	var rangeBindings []mentalese.Binding
+	rangeBindings = nil
+
+	// group bindings by the combination of range values A2/B2/C1 = [bindings]
+	groupedBindings := solver.groupBindings(quant, bindings, rangeVariables)
+
+	var resultBindings []mentalese.Binding
+
+	for _, bindingGroup := range groupedBindings {
+
+		ok := false
+
+		uniqueRangeValues := mentalese.CountUniqueValues(rangeVariable.TermValue, bindingGroup)
+
+		if len(quantifierSet) == 1 {
+			quantifier := quantifierSet[0]
+			simpleQuantifier := quantifier.Arguments[1]
+
+			if simpleQuantifier.TermType == mentalese.Term_number {
+
+				// todo
+
+				quantity, _ := strconv.Atoi(simpleQuantifier.TermValue)
+				ok = quantity == uniqueRangeValues
+
+			} else if simpleQuantifier.TermType == mentalese.Term_predicateAtom {
+
+				if simpleQuantifier.TermValue == "all" {
+
+					// load range bindings once
+					if rangeBindings == nil {
+						rangeBindings = solver.SolveRelationSet(rangeSet, []mentalese.Binding{{}})
+					}
+
+					rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
+					ok = rangeCount == uniqueRangeValues
+				}
+			}
+		}
+
+		if ok {
+			resultBindings = append(resultBindings, bindingGroup...)
+		}
+	}
+
+	solver.log.EndDebug("validate", resultBindings)
+
+	return resultBindings
+}
+
+func (solver ProblemSolver) groupBindings(quant mentalese.Relation, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) [][]mentalese.Binding {
+
+	mappedGroupedBindings := map[string][]mentalese.Binding{}
+
+	rangeVar := rangeVariables[len(rangeVariables) - 1]
+
+	// group all bindings by range variables
+	for _, binding := range bindings {
+
+		// key = A1/B2/C1
+		key := ""
+		sep := ""
+		for i := 0; i < len(rangeVariables) - 1; i++ {
+			rangeVariable := rangeVariables[i]
+			val, ok := binding[rangeVariable.TermValue]
+			if ok {
+				key += sep + val.TermValue
+				sep = "/"
+			}
+		}
+
+		_, ok := binding[rangeVar.TermValue]
+		if ok {
+
+			_, found := mappedGroupedBindings[key]
+			if !found {
+				mappedGroupedBindings[key] = []mentalese.Binding{}
+			}
+			mappedGroupedBindings[key] = append(mappedGroupedBindings[key], binding)
+		}
+	}
+
+	// unpack grouped bindings into a simple array of arrays
+	var groupedBindings [][]mentalese.Binding
+	for _, bindingArray := range mappedGroupedBindings {
+		groupedBindings = append(groupedBindings, bindingArray)
+	}
+
+	return groupedBindings
 }

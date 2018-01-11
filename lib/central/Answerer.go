@@ -60,7 +60,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet) mentalese.RelationSe
 		}
 
 		// solutionBindings: map condition variables to results
-		solutionBindings := []mentalese.Binding{}
+		var solutionBindings []mentalese.Binding
 		for _, conditionBinding := range conditionBindings {
 			for _, resultBinding := range resultBindings {
 				solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))

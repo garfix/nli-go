@@ -110,7 +110,14 @@ func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bin
 					rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)
 					ok = rangeCount == uniqueRangeValues
 				}
+
+				if simpleQuantifier.TermValue == "which" {
+					ok = true
+				}
 			}
+		} else {
+			// how many; todo
+			ok = true
 		}
 
 		if ok {

@@ -20,10 +20,10 @@ func TestDBPedia(t *testing.T) {
 		question string
 		answer   string
 	}{
-		//{"Who married Lord Byron?", "Anne Isabella Byron married him"},
-		//{"Who married Anne Isabella Milbanke?", "Lord Byron married her"},
-		//{"Who married Michael Jackson?", "Lisa Marie Presley and Debbie Rowe married him"},
-		//{"Who married Xyz Abc?", "I do not know"},
+		{"Who married Lord Byron?", "Anne Isabella Byron married him"},
+		{"Who married Anne Isabella Milbanke?", "Lord Byron married her"},
+		{"Who married Michael Jackson?", "Lisa Marie Presley and Debbie Rowe married him"},
+		{"Who married Xyz Abc?", "I do not know"},
 		{"How many children had Lord Byron?", "He had 2 children, Ada and Allegra"},
 	}
 

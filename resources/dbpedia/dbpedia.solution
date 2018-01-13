@@ -15,8 +15,8 @@
             answer: dont_know()
         },
         some_results: {
-            preparation: gender(A, G) number_of(N, B),
-            answer: gender(A, G) count(C, N) have_child(A, C)
+            preparation: gender(A, Gender) number_of(Number, B),
+            answer: gender(A, Gender) have_child(A, C) count(C, Number)
         }
     }
 ]

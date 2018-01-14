@@ -106,8 +106,6 @@ func (factBase SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 	t := time.Now()
 	elapsed := t.Sub(start)
 
-	factBase.log.AddProduction("SPARQL Query", query + " (" + elapsed.String() + ")")
-
 	if err != nil {
 		factBase.log.AddError("Error posting SPARQL request: " + err.Error())
 		return bindings
@@ -127,6 +125,8 @@ func (factBase SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 		factBase.log.AddError("Error parsing SPARQL response JSON: " + err.Error() + "\nResponse body: " + string(bodyJson))
 		return bindings
 	}
+
+	factBase.log.AddProduction("SPARQL Query", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(response.Results.Bindings)) + " results)")
 
 	for _, resultBinding := range response.Results.Bindings  {
 

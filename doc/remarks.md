@@ -1,3 +1,8 @@
+# 2018-01-14
+
+I released http://patrickvanbergen.com/dbpedia/app/ and mentioned it on Twitter. It is very unimpressive for a demo, but I had to release _something_ so that I can show 
+other people what I am doing. It will be nice to gradually improve upon it. 
+
 # 2018-01-09
 
 This picture is just to clarify things to myself. A, B, C, and D are range variables in nested scopes.

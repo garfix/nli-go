@@ -10,12 +10,7 @@
     <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <header>Query DBPedia</header>
-
-    <p>
-        This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br><br>
-        It connects you to <a href="http://wiki.dbpedia.org/about">DBPedia</a>, a Sparql database that contains data from Wikipedia.
-    </p>
+    <h1>NLI-GO: Query DBPedia</h1>
 
     <header>What's your question?</header>
 
@@ -24,11 +19,27 @@
         <button type="submit">Enter</button>
     </form>
 
+    <header>Answer</header>
+    <div id="answer-box"></div>
+
+    <header>Errors</header>
+    <div id="error-box"></div>
+
+    <header>Productions</header>
+    <div id="production-box"></div>
+
+    <header>About this page</header>
+    <p>
+        This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br>
+        It connects you to <a href="http://wiki.dbpedia.org/about">DBPedia</a>, a Sparql database that contains data from Wikipedia.
+    </p>
+
     <p>
         It's scope is still quite limited. For example, in the input field above, you can only ask questions of these types:
     </p>
     <ul>
         <li>Who married &lt;PERSON&gt;</li>
+        <li>How many children had &lt;PERSON&gt;</li>
     </ul>
     <p>
         Where &lt;PERSON&gt; must be the name of a person in the database, it must consist of 2 or 3 words, each of which must start with a capital.<br>
@@ -39,15 +50,6 @@
         <li>Elvis Presley</li>
         <li>Michael Jackson</li>
     </ul>
-
-    <header>Answer</header>
-    <div id="answer-box"></div>
-
-    <header>Errors</header>
-    <div id="error-box"></div>
-
-    <header>Productions</header>
-    <div id="production-box"></div>
 
     <footer>Input component by <a href="http://aehlke.github.io/tag-it/" target="_blank">Tag-it!</a></footer>
 

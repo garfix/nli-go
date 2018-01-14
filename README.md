@@ -4,6 +4,10 @@ nli-go is a library, written in Go, that provides a natural language interface t
 
 For years to come, this system is not easy to use, not present for production, and not very robust either. Still, if you really need an nli, it may be worth your trouble to learn it. I think it's pretty cool.
 
+## Demo
+
+A demo of this library can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia. 
+
 ## Purpose
 
 This library helps a developer to create a system that allow end-users to use plain English / French / German to interface with a database. That means that an end user can type a question like

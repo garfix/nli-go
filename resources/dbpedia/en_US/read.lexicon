@@ -1,6 +1,7 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
     { form: 'had',                  pos: aux_verb,              sense: isa(E, have) }
+    { form: 'has',                  pos: aux_verb,              sense: isa(E, have) }
 
     { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
     { form: 'how',                  pos: wh_word,                sense: isa(E, how) }

@@ -4,6 +4,11 @@ import "sort"
 
 type Binding map[string]Term
 
+func (b Binding) ContainsVariable(variable string) bool {
+	_, found := b[variable]
+	return found
+}
+
 // Returns a new Binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 

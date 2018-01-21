@@ -75,7 +75,9 @@ func (log *SystemLog) EndDebug(text string, vals ...interface{}) {
 		return
 	}
 
-	log.debugDepth--
+	if log.debugDepth > 0 {
+		log.debugDepth--
+	}
 
 	stmt := strings.Repeat("  ", log.debugDepth) + text + " "
 	for _, val := range vals {

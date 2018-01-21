@@ -108,13 +108,14 @@ func (system *system) Answer(input string) string {
 		return ""
 	}
 
-	scopedDomainSpecificRelations := system.quantifierScoper.Scope(dsRelations)
-
-	if system.log.IsOk() {
-		system.log.AddProduction("Scoped", scopedDomainSpecificRelations.String())
-	} else {
-		return ""
-	}
+	//scopedDomainSpecificRelations := system.quantifierScoper.Scope(dsRelations)
+	//
+	//if system.log.IsOk() {
+	//	system.log.AddProduction("Scoped", scopedDomainSpecificRelations.String())
+	//} else {
+	//	return ""
+	//}
+scopedDomainSpecificRelations := dsRelations
 
 	dsAnswer := system.answerer.Answer(scopedDomainSpecificRelations)
 

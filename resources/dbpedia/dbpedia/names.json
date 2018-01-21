@@ -1,6 +1,7 @@
 {
   "spouse": "http://dbpedia.org/ontology/spouse",
   "child": "http://dbpedia.org/ontology/child",
+  "children": "http://dbpedia.org/property/children",
   "birth_name": "http://dbpedia.org/ontology/birthName",
   "foaf_name": "http://xmlns.com/foaf/0.1/name",
   "gender": "http://xmlns.com/foaf/0.1/gender"

@@ -125,8 +125,6 @@ func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bin
 		}
 	}
 
-	solver.log.EndDebug("validate", resultBindings)
-
 	return resultBindings
 }
 

@@ -19,4 +19,18 @@
             answer: gender(A, Gender) have_child(A, C) count(C, Number)
         }
     }
+    {
+        condition: question(S, wh_question) isa(Q, how) isa(Q, many) have_child(A, B),
+        transformations: [
+            have_child(A, B) => have_n_children(A, Number);
+quantification(_, _, _, _) => ;
+        ],
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(A, Gender),
+            answer: gender(A, Gender) have_child(A, C) count(C, Number)
+        }
+    }
 ]

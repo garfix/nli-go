@@ -1,3 +1,34 @@
+# 2018-01-21
+
+I have done what I described. A problem can now have multiple solutions.
+I added the possibility to transform an input sentence so that it forms a different type of solution.
+I also changed the place where the scoping is performed. It used to be a major step in the pipeline,
+    now it is only executed just before solving the problem, and after the solution transformations have been executed.
+
+# 2018-01-19
+
+DBPedia has two ways of storing parent-child relationships. It has the dbo:child relation and the dbp:children relation. The former stores links to other persons (children),
+the latter stores the number of children. When the first is given, the second is not (I think) and vice versa.
+
+So when I want to know how many children a person has, I need to try both ways. The standard query that is produced from the input sentence maps to the dbo:child relation.
+If the standard query fails, I want to be able to try the other way. This means that I want to try 2 solutions for the same problem.
+
+Currently I am trying only a single solution and when that fails, the answer is that it is unknown how many children the person has.
+
+I can easily change this into trying all solutions. There are some issues now:
+
+- each solution has a "no results" section. Which section should I use if all solutions fail?
+- or should I do a single solution with multiple sub-solutions?
+- are different solution paths database-dependent (db layer) or solution dependent (domain specific). I tend to go for the last option.
+- can I make the solution "rephrase the question" in order to answer it?
+
+If I would rephrase the question about the number of children, this would become something like this:
+
+    have_child(A, B) how(_) many(_) => have_n_children(A, N)
+
+A plain verb is turned into an abstract, problem specific, relation. Is this still the domain model, or is it the database model?
+Is it even possible to solve this at the database level? Must it be solved at the database level?
+
 # 2018-01-14
 
 I released http://patrickvanbergen.com/dbpedia/app/ and mentioned it on Twitter. It is very unimpressive for a demo, but I had to release _something_ so that I can show 

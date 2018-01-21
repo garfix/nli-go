@@ -134,10 +134,39 @@ The first transformation, from generic to domain specific mainly performs these 
 
  The second transformation is from domain specific to generic.
 
-### Quantifier Scoper
+### Answerer
 
-The quantifier scoper creates a scope hierarchy by turning quantification() relations into quant() relations. When this query is executed, 
-the inner quant() will be bound to different variable quantifier values from its outer quant()'s.   
+The answerer turns a question (its domain specific representation) into an answer (also at a domain specific level). To do this, it goes through the following steps:
+
+#### Find a solution
+
+Each question requires a specific type of answer. To answer a question, a solution must be found. A solution looks like this
+
+    condition: act(question, howMany) child(A, B) focus(A),
+    transformations: []
+    no_results: {
+        answer: dont_know()
+    },
+    some_results: {
+        preparation: gender(B, G) number_of(N, A),
+        answer: gender(B, G) count(C, N) have_child(B, C);
+    }
+
+The first solution whose condition matches the question will be used.
+
+Transformations is a list of transformations on the input relations. It is an interpretation of the input sentence. For example:
+"How many children has A?" can mean: "get all children and count them" or it can mean "get the number-of-children attribute"
+
+If the condition returns no results, the relation set from "no_results" will be used to phrase the result. Otherwise, the answer of "some_results" will be used.
+
+"preparation" is a relation set that will be solved by the system just to prepare answering the question. Notice that preparation may contain aggregate predicates (i.e. number_of).
+
+"answer" does not connect to any knowledge base. It just formats resulting bindings.
+
+#### Quantifier Scoper
+
+The quantifier scoper creates a scope hierarchy by turning quantification() relations into quant() relations. When this query is executed,
+the inner quant() will be bound to different variable quantifier values from its outer quant()'s.
 
 Before:
 
@@ -152,42 +181,17 @@ After:
              have_child(S1, O1)
          ])
     ])
-    
+
 After quantifier the current example looks like this:
-     
+
      [
         quant(E5, [isa(E5, child)], A5, [specification(A5, W5) isa(A5, many)], [
-            have_child(E6, E5) focus(E5)]) 
-         name(E6, 'Lord', firstName)  name(E6, 'Byron', lastName) 
+            have_child(E6, E5) focus(E5)])
+         name(E6, 'Lord', firstName)  name(E6, 'Byron', lastName)
         act(question, howMany)
      ]
 
 Unquantified variables have an implicit existential quantifier (exists).
-
-### Answerer
-
-The answerer turns a question (its domain specific representation) into an answer (also at a domain specific level). To do this, it goes through the following steps:
-
-#### Find a solution
-
-Each question requires a specific type of answer. To answer a question, a solution must be found. A solution looks like this
-
-    condition: act(question, howMany) child(A, B) focus(A),
-    no_results: {
-        answer: dont_know()
-    },
-    some_results: {
-        preparation: gender(B, G) number_of(N, A),
-        answer: gender(B, G) count(C, N) have_child(B, C);
-    }
-
-The first solution whose condition matches the question will be used.
-
-If the condition returns no results, the relation set from "no_results" will be used to phrase the result. Otherwise, the answer of "some_results" will be used.
-
-"preparation" is a relation set that will be solved by the system just to prepare answering the question. Notice that preparation may contain aggregate predicates (i.e. number_of).
-
-"answer" does not connect to any knowledge base. It just formats resulting bindings.
 
 #### Execute the question
 

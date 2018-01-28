@@ -4,5 +4,6 @@
   "children": "http://dbpedia.org/property/children",
   "birth_name": "http://dbpedia.org/ontology/birthName",
   "foaf_name": "http://xmlns.com/foaf/0.1/name",
-  "gender": "http://xmlns.com/foaf/0.1/gender"
+  "gender": "http://xmlns.com/foaf/0.1/gender",
+  "parent": "http://dbpedia.org/ontology/parent"
 }

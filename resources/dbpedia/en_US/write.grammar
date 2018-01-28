@@ -5,6 +5,8 @@
     { rule: vp(V) -> aux_verb(V) negative(V) verb(V),                             condition: negation(V) }
     { rule: vp(V) -> verb(V) }
 
+    { rule: np(E1) -> pronoun(E2) nbar(E1),                                       condition: possession(E2, E1) }
+
     { rule: np(E) -> proper_noun(E),                                              condition: name(E, Name) }
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, female) }
     { rule: np(E) -> pronoun(E),                                                  condition: isa(E, male) }

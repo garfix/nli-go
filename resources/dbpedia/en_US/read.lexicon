@@ -2,6 +2,7 @@
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
     { form: 'had',                  pos: aux_verb,              sense: isa(E, have) }
     { form: 'has',                  pos: aux_verb,              sense: isa(E, have) }
+    { form: 'was',                  pos: aux_verb,              sense: isa(E, be) }
 
     { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
     { form: 'how',                  pos: wh_word,                sense: isa(E, how) }
@@ -9,11 +10,16 @@
     { form: 'many',                 pos: adjective,              sense: isa(E, many) }
 
     { form: 'children',             pos: noun,                   sense: isa(E, child) }
+    { form: 'father',               pos: noun,                   sense: isa(E, father) }
+    { form: 'mother',               pos: noun,                   sense: isa(E, mother) }
 
     { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, first_name) }
     { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, second_name) }
     { form: /^[A-Z]/,	            pos: last_name,              sense: name(E, Form, last_name) }
     { form: /^[A-Z]/,	            pos: full_name,              sense: name(E, Form, full_name) }
+
+    { form: '\'',                   pos: possessive_marker_1 }
+    { form: 's',                    pos: possessive_marker_2 }
 
     { form: '?',                    pos: question_mark }
 ]

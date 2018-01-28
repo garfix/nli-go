@@ -1,6 +1,9 @@
 [
     married_to(A, B) => isa(P1, marry) subject(P1, A) object(P1, B);
     have_child(A, B) => isa(P1, have) subject(P1, A) object(P1, B) isa(B, child);
+    has_father(A, S) => isa(P1, be) subject(P1, S) object(P1, B) possession(A, B) isa(B, father);
+    has_mother(A, S) => isa(P1, be) subject(P1, S) object(P1, B) possession(A, B) isa(B, mother);
+
     name(A, N) => name(A, N);
 
     gender(A, male) => isa(A, male);

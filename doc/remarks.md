@@ -1,3 +1,13 @@
+# 2018-01-27
+
+Working on the question "Who was X's father?". The sentence has the structure 'isa(Z, who) identity(Z, Y) father(X, Y)', but the condition is now
+
+    question(S, wh_question) isa(X, who) has_father(A, B)
+
+I left out the 'identity' clause. The reason for this is that both 'isa(Z, who) identity(Z, Y)' cannot match anything on their own.
+They could be used as the final relations in a set, in which case the 'identity' relation would unify the variables Z and Y. But for the present example
+there is no use for it, and I will handle such a case only when it presents itself.
+
 # 2018-01-21
 
 I have done what I described. A problem can now have multiple solutions.

@@ -1,11 +1,14 @@
 [
     { form: 'married',	    pos: verb,		    condition: isa(E, marry) }
     { form: 'has',	        pos: verb,		    condition: isa(E, have) }
+    { form: 'was',	        pos: verb,		    condition: isa(E, be) }
     { form: 'know',	        pos: verb,		    condition: isa(E, know) }
 
     { form: 'do',	        pos: aux_verb }
 
     { form: 'children',	    pos: noun,		    condition: isa(E, child) }
+    { form: 'father',	    pos: noun,		    condition: isa(E, father) }
+    { form: 'mother',	    pos: noun,		    condition: isa(E, mother) }
 
     { form: 'yes',	        pos: adverb,	    condition: isa(E, yes) }
     { form: 'no',	        pos: adverb,	    condition: isa(E, no) }
@@ -13,6 +16,8 @@
     { form: 'he',	        pos: pronoun,	    condition: subject(P, S) isa(S, male) }
     { form: 'she',	        pos: pronoun,	    condition: subject(P, S) isa(S, female) }
     { form: 'her',	        pos: pronoun,	    condition: object(S, O) isa(O, female) }
+    { form: 'her',	        pos: pronoun,	    condition: possession(O, P) isa(O, female) }
+    { form: 'his',	        pos: pronoun,	    condition: possession(O, P) isa(O, male) }
     { form: 'him',	        pos: pronoun,	    condition: object(S, O) isa(O, male) }
     { form: 'i',	        pos: pronoun,	    condition: subject(P, S) isa(S, i) }
 

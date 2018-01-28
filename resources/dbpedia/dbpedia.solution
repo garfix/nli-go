@@ -1,6 +1,6 @@
 [
     {
-        condition: who_question(A) married_to(A, B),
+        condition: question(S, wh_question) isa(A, who) married_to(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -31,6 +31,26 @@ quantification(_, _, _, _) => ;
         some_results: {
             preparation: gender(A, Gender),
             answer: gender(A, Gender) have_child(A, C) count(C, Number)
+        }
+    }
+    {
+        condition: question(S, wh_question) isa(X, who) has_father(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(A, Gender) name(B, N, canonical_name),
+            answer: gender(A, Gender) name(B, N) has_father(A, B)
+        }
+    }
+    {
+        condition: question(S, wh_question) isa(X, who) has_mother(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(A, Gender) name(B, N, canonical_name),
+            answer: gender(A, Gender) name(B, N) has_mother(A, B)
         }
     }
 ]

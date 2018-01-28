@@ -17,4 +17,7 @@
 
     have_child(A, B) => child(A, B);
     have_n_children(A, N) => children(A, N);
+
+    has_father(A, B) => parent(A, B) gender(B, 'male');
+    has_mother(A, B) => parent(A, B) gender(B, 'female');
 ]

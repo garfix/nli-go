@@ -6,6 +6,12 @@ For the semantic language holds:
  * string constants: use single quotes: 'De Nachtwacht'
  * numbers: 25 1.5
 
+ ## Comments
+
+ In any file (except the json files) comments may be placed on any position, like this:
+
+    == much ado about nothing! ==
+
 ## Senses
 
 In the general relational representation I have these senses:

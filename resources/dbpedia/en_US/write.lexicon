@@ -1,11 +1,14 @@
 [
+    == verbs ==
     { form: 'married',	    pos: verb,		    condition: isa(E, marry) }
     { form: 'has',	        pos: verb,		    condition: isa(E, have) }
     { form: 'was',	        pos: verb,		    condition: isa(E, be) }
     { form: 'know',	        pos: verb,		    condition: isa(E, know) }
 
+    == auxiliaries ==
     { form: 'do',	        pos: aux_verb }
 
+    == nouns ==
     { form: 'children',	    pos: noun,		    condition: isa(E, child) }
     { form: 'father',	    pos: noun,		    condition: isa(E, father) }
     { form: 'mother',	    pos: noun,		    condition: isa(E, mother) }

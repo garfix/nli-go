@@ -1,4 +1,5 @@
 [
+    == Who married X? ==
     {
         condition: question(S, wh_question) isa(A, who) married_to(A, B),
         no_results: {
@@ -9,6 +10,8 @@
             answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
         }
     }
+
+    == How many children had X? (counting the children) ==
     {
         condition: question(S, wh_question) isa(Q, how) isa(Q, many) have_child(A, B),
         no_results: {
@@ -19,6 +22,8 @@
             answer: gender(A, Gender) have_child(A, C) count(C, Number)
         }
     }
+
+    == How many children had X? (using a number-of-children attribute) ==
     {
         condition: question(S, wh_question) isa(Q, how) isa(Q, many) have_child(A, B),
         transformations: [
@@ -33,6 +38,8 @@ quantification(_, _, _, _) => ;
             answer: gender(A, Gender) have_child(A, C) count(C, Number)
         }
     }
+
+    == Who was X's father? ==
     {
         condition: question(S, wh_question) isa(X, who) has_father(A, B),
         no_results: {
@@ -43,6 +50,8 @@ quantification(_, _, _, _) => ;
             answer: gender(A, Gender) name(B, N) has_father(A, B)
         }
     }
+
+    == Who was X's mother? ==
     {
         condition: question(S, wh_question) isa(X, who) has_mother(A, B),
         no_results: {

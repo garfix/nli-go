@@ -11,6 +11,7 @@ import (
 
 const (
 	_ = iota // number these constants 1, 2, ...
+	t_comment
 	t_if
 	t_then
 	t_predicate
@@ -51,6 +52,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		id      int
 		pattern string
 	}{
+		{t_comment, "==.*?=="},
 		{t_if, "IF"},
 		{t_then, "THEN"},
 		{t_predicate, "[a-z][a-z0-9_]*"},
@@ -103,6 +105,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 
 		if tokenId == _newline {
 			lineNumber++
+			continue
+		} else if tokenId == t_comment {
 			continue
 		} else if tokenId == t_stringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)

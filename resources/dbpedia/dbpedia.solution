@@ -62,4 +62,16 @@ quantification(_, _, _, _) => ;
             answer: gender(A, Gender) name(B, N) has_mother(A, B)
         }
     }
+
+    == When was X born? ==
+    {
+        condition: question(S, wh_question) birth_date(A, Ymd),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
+            answer: gender(A, Gender) birth_date(A, Day, Month, Year)
+        }
+    }
 ]

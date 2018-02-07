@@ -20,4 +20,6 @@
 
     has_father(A, B) => parent(A, B) gender(B, 'male');
     has_mother(A, B) => parent(A, B) gender(B, 'female');
+
+    birth_date(P, D) => birth_date(P, D);
 ]

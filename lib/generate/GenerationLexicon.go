@@ -47,6 +47,7 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 	}
 
 	partOfSpeech := consequent.Predicate
+	applicableLexemeFound := false
 
 	lexemes, found := lexicon.lexemes[partOfSpeech]
 	if found {
@@ -64,14 +65,16 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 					resultLexeme.Form = bindings[0]["Name"].TermValue
 				}
 
+				applicableLexemeFound = true
+
 				break
 			}
 		}
 	}
 
-	lexicon.log.EndDebug("GetLexemeForGeneration", resultLexeme, found)
+	lexicon.log.EndDebug("GetLexemeForGeneration", resultLexeme, applicableLexemeFound)
 
-	return resultLexeme, found
+	return resultLexeme, applicableLexemeFound
 }
 
 func (lexicon *GenerationLexicon) ImportFrom(fromLexicon *GenerationLexicon) {

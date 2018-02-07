@@ -29,6 +29,7 @@ func TestDBPedia(t *testing.T) {
 		{"Who was Ada Lovelace's father?", "Lord Byron was her father"},
 		{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother"},
 		{"Who was Percy Florence Shelley's father?", "Percy Bysshe Shelley was his father"},
+		{"When was Lord Byron born?", "He was born on January 22, 1788"},
 	}
 
 	for _, test := range tests {

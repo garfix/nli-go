@@ -1,11 +1,13 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
+    { form: 'born',                 pos: verb, 	                sense: isa(E, bear) tense(E, past) }
     { form: 'had',                  pos: aux_verb,              sense: isa(E, have) }
     { form: 'has',                  pos: aux_verb,              sense: isa(E, have) }
     { form: 'was',                  pos: aux_verb,              sense: isa(E, be) }
 
     { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
     { form: 'how',                  pos: wh_word,                sense: isa(E, how) }
+    { form: 'when',                 pos: wh_word,                sense: isa(E, when) }
 
     { form: 'many',                 pos: adjective,              sense: isa(E, many) }
 

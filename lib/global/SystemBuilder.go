@@ -50,6 +50,8 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 
 	solver := central.NewProblemSolver(matcher, builder.log)
 
+	solver.AddFunctionBase(systemFunctionBase)
+
 	systemAggregateBase := knowledge.NewSystemAggregateBase(builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 

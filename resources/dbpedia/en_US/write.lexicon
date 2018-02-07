@@ -1,21 +1,25 @@
 [
     == verbs ==
     { form: 'married',	    pos: verb,		    condition: isa(E, marry) }
+    { form: 'born',	        pos: verb,		    condition: isa(E, bear) }
     { form: 'has',	        pos: verb,		    condition: isa(E, have) }
     { form: 'was',	        pos: verb,		    condition: isa(E, be) }
     { form: 'know',	        pos: verb,		    condition: isa(E, know) }
 
     == auxiliaries ==
     { form: 'do',	        pos: aux_verb }
+    { form: 'was',          pos: aux_verb_be,   condition: tense(E, past) }
 
     == nouns ==
     { form: 'children',	    pos: noun,		    condition: isa(E, child) }
     { form: 'father',	    pos: noun,		    condition: isa(E, father) }
     { form: 'mother',	    pos: noun,		    condition: isa(E, mother) }
 
+    == adverbs ==
     { form: 'yes',	        pos: adverb,	    condition: isa(E, yes) }
     { form: 'no',	        pos: adverb,	    condition: isa(E, no) }
 
+    == pronouns ==
     { form: 'he',	        pos: pronoun,	    condition: subject(P, S) isa(S, male) }
     { form: 'she',	        pos: pronoun,	    condition: subject(P, S) isa(S, female) }
     { form: 'her',	        pos: pronoun,	    condition: object(S, O) isa(O, female) }
@@ -24,6 +28,9 @@
     { form: 'him',	        pos: pronoun,	    condition: object(S, O) isa(O, male) }
     { form: 'i',	        pos: pronoun,	    condition: subject(P, S) isa(S, i) }
 
+    == prepositions ==
+    { form: 'on',	        pos: preposition,	condition: isa(E, on) }
+
     { form: '?',	        pos: proper_noun,	condition: name(E, Name) }
 
     { form: 'and',	        pos: conjunction,	condition: isa(E, and) }
@@ -31,4 +38,18 @@
     { form: 'not',	        pos: negative }
 
     { form: ',',	        pos: comma,         condition: isa(E, and) }
+    { form: ',',            pos: comma }
+
+    { form: 'January',      pos: month_name,         condition: month(E, '01') }
+    { form: 'February',     pos: month_name,         condition: month(E, '02') }
+    { form: 'March',        pos: month_name,         condition: month(E, '03') }
+    { form: 'April',        pos: month_name,         condition: month(E, '04') }
+    { form: 'May',          pos: month_name,         condition: month(E, '05') }
+    { form: 'June',         pos: month_name,         condition: month(E, '06') }
+    { form: 'July',         pos: month_name,         condition: month(E, '07') }
+    { form: 'August',       pos: month_name,         condition: month(E, '08') }
+    { form: 'September',    pos: month_name,         condition: month(E, '09') }
+    { form: 'October',      pos: month_name,         condition: month(E, '10') }
+    { form: 'November',     pos: month_name,         condition: month(E, '11') }
+    { form: 'December',     pos: month_name,         condition: month(E, '12') }
 ]

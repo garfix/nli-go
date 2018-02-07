@@ -1,6 +1,7 @@
 [
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
     isa(P1, be) subject(P1, A) object(P1, B) => ;
+    isa(P1, bear) subject(P1, S) isa(W, when) isa(A, be) => birth_date(S, B1);
 
     IF isa(S, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
     IF isa(O, child) THEN isa(P1, have) subject(P1, S) object(P1, O)  => have_child(S, O);

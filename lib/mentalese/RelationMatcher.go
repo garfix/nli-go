@@ -94,14 +94,13 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 func (matcher *RelationMatcher) MatchRelationToFunction(needleRelation Relation, binding Binding) (Binding, bool) {
 
 	newBinding := Binding{}
+	resultBinding := Binding{}
 	functionFound := false
-	returnValue := Term{}
 
 	for _, functionBase := range matcher.functionBases {
-		returnValue, functionFound = functionBase.Execute(needleRelation, binding)
+		resultBinding, functionFound = functionBase.Execute(needleRelation, binding)
 		if functionFound {
-			newBinding = binding.Copy()
-			newBinding[needleRelation.Arguments[0].TermValue] = returnValue
+			newBinding = resultBinding
 			break
 		}
 	}

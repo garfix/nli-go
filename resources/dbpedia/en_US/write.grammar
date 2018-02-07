@@ -1,6 +1,12 @@
 [
     { rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E) }
 
+    { rule: vp(V1) -> vbar(V1) pp(P1),                                            condition: prepositional_object(V1, P1) }
+
+    { rule: vbar(V1) -> aux_verb_be(V1) vgp(V1),                                  condition: tense(V1, past) }
+
+    { rule: vgp(V1) -> verb(V1) }
+
     { rule: vp(V) -> verb(V) np(E),                                               condition: object(V, E) }
     { rule: vp(V) -> aux_verb(V) negative(V) verb(V),                             condition: negation(V) }
     { rule: vp(V) -> verb(V) }
@@ -22,5 +28,9 @@
 
     { rule: nbar(E) -> noun(E) }
 
+    { rule: pp(R1) -> preposition(P1) np(E1),                                     condition: relation(R1, P1, E1) }
+
     { rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1) }
+
+    { rule: noun(Date) -> month_name(Date) number(D) comma(C) number(Y),          condition: day(Date, D) month(Date, M) year(Date, Y) }
 ]

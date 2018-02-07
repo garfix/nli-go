@@ -44,6 +44,10 @@ func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, factBase)
 }
 
+func (solver *ProblemSolver) AddFunctionBase(functionBase knowledge.FunctionBase) {
+	solver.allKnowledgeBases = append(solver.allKnowledgeBases, functionBase)
+}
+
 func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, ruleBase)
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, ruleBase)
@@ -152,6 +156,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
 	factBase, isFactBase := knowledgeBase.(knowledge.FactBase)
 	ruleBase, isRuleBase := knowledgeBase.(knowledge.RuleBase)
+	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
 	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
 
 	boundRelations := solver.matcher.BindRelationSetSingleBinding(relationGroup.Relations, binding)
@@ -170,6 +175,14 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 			combinedBinding := binding.Merge(sourceBinding)
 			newBindings = append(newBindings, combinedBinding)
+		}
+
+	} else if isFunctionBase {
+
+		var relation = relationGroup.Relations[0]
+		resultBinding, functionFound := functionBase.Execute(relation, binding)
+		if functionFound {
+			newBindings = append(newBindings, resultBinding)
 		}
 
 	} else if isRuleBase {

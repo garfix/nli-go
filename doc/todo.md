@@ -2,6 +2,7 @@
 
 ## Misc
 
+* If a name is ambiguous, show the user a selection of names (requires a big change in architecture)
 * grouped relations in matcher and solver: (), and, or, not
 * name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
 * declaratives and imperatives that update the database

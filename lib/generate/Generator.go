@@ -49,6 +49,8 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecede
 			consequentBinding := conditionBinding.Extract(consequent.Arguments[0].TermValue)
 			words = append(words, generator.generateSingleConsequent(consequent, consequentBinding, sentenceSense)...)
 		}
+	} else {
+		generator.log.AddError("Cannot generate response for syntax node " + antecedent.String())
 	}
 
 	generator.log.EndDebug("GenerateNode", words)

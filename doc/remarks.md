@@ -1,3 +1,74 @@
+# 2018-09-02
+
+Let's see what happens when there are 2 databases and both have Lord Byron.
+
+Database 1:
+
+* 16882 name "Lord Byron"
+
+Database 2:
+
+* <http://name.org/byron> name "Lord Byron"
+* <http://name.org/byron_(umpire)> name "Lord Byron"
+
+Preprocessing:
+
+Lord Byron:
+    * db 1: id = 16882, description = "English Lord that lived from ..."
+    * db 2: id = <http://name.org/byron>, description = "English Lord that lived from ..."
+    * db 2: id = <http://name.org/byron_(umpire)>, description = "American baseball umpire"
+
+Input: "Name Lord Byron's children"
+
+Name resolution phase: in this imperative sentence the NP can be resolved into the proper name "Lord Byron". The system then knows of three persons Lord Byron in two databases. It must determine which Lord Byron the user means.
+
+This could be a way:
+
+"By 'Lord Byron' did you mean":
+
+Database 1:
+(o) English Lord that lived from ...
+
+Database 2:
+(o) English Lord that lived from ...
+( ) American baseball umpire
+
+"Please check all applicable answers, and press OK"
+
+And the user is given two radio groups, one for each database. Multiple answers may be checked, but only one per database.
+
+Once the choice is made, the meaning of the sentence could contain some database specific information:
+
+"Lord Byron" => name(A, "Lord Byron"), reference(A, 16882, person, db1), reference(A, person, <http://name.org/byron>, db2)
+
+The meaning of "reference" is simply that of the logical reference: a link to the actual instance.
+
+This is actually much better then what I have been doing so far, where the variable A is given the id of the database. The new form is better suited to integrate information of two or more databases.
+
+# 2018-08-31
+
+I picked up where I left off. There are two persons called "Lord Byron" in DBPedia. One of them is a baseball umpire.
+So when someone asks a question about Lord Byron, the system needs to ask "Which one?" followed by some meaningful description of the two men that sets them apart in a way that is easily distinguishable by the user.
+
+If you think this is a highly improbable case, check "Michael Jackson". However, in both cases, the first person with the same name is more important or primary than the others. Nevertheless, it should at least be possible to query the other ones and they should not be mixed up.
+
+This case is problematic for the following reasons:
+
+* The system now needs to enter a dialog with the user (no dialog was used so far)
+* This dialog needs to be independent of the user interface. Cannot just do a "readline", the user interface may be completely different. It may be a web interface for instance.
+* Also, the process of answering the question may need to be stopped and picked up later, when the user has made his choice.
+* The options that follow "Which one?" are database specific.
+* The name "Lord Byron" may occur in multiple databases that are used in the session with the user. For some questions it is necessary to know which Lord Byron from the first database corresponds to the Lord Byron of the second database.
+* In what part of the process are the names recognized and in what part does the user choose one over the other?
+
+A _name_ is a special form in syntactic processing, because proper names are not in the dictionary. Currently I am handling this by requiring that names are written with capitals and only certain combinations of capitalized words and insertions are allowed. This is far from ideal, especially as we start to extend proper names to other things than persons.
+
+For this reason it would be good to search the database for names that might match "proper noun" parts. An idea is to add all proper names to the dictionary, but this requires regular syncs from the database to the dictionary, and these syncs may be quite large.
+
+However, if one wants to support correction of mis-spellings, preprocessed names may be necessary. ("Lord Biron? Did you mean Lord Byron?")
+
+Using database specific structures in the parsing phase contrasts with the design I used to far, that database specific data is used only in specific places of the answering phase. However, there is no good reason to keep it restricted to that place. Using databases forces one to make choices that are enforced by the database.
+
 # 2018-01-27
 
 Working on the question "Who was X's father?". The sentence has the structure 'isa(Z, who) identity(Z, Y) father(X, Y)', but the condition is now

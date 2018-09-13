@@ -1,3 +1,22 @@
+# 2018-09-13
+
+It occurred to me that the technique of using tasks is also a solution for a problem that I had stuck away.
+
+Syntactic and semantic analysis of a sentence can be ambiguous: it can result in multiple possibilities. Up until now I have chosen to pick only the first one of these. I simply had no way of dealing with any others and I expected there were not many cases in with this mattered.
+
+However, when the process is split up in tasks, the task of parsing may yield 2 or three parse trees, and these can all be dealt with.
+
+In the days before I have found:
+
+* the task T
+* the task sequence [T T T]
+
+I now add to this
+
+* the task switch (T | T | T)
+
+The result of the task switch is the first result, or null if none yields a result. When one path has a result, the others need not be followed.
+
 # 2018-09-02
 
 Let's see what happens when there are 2 databases and both have Lord Byron.
@@ -28,12 +47,14 @@ This could be a way:
 
 Database 1:
 (o) English Lord that lived from ...
+( ) None of the above
 
 Database 2:
 (o) English Lord that lived from ...
 ( ) American baseball umpire
+( ) None of the above
 
-"Please check all applicable answers, and press OK"
+"Please choose one option per database, and press OK"
 
 And the user is given two radio groups, one for each database. Multiple answers may be checked, but only one per database.
 
@@ -44,6 +65,8 @@ Once the choice is made, the meaning of the sentence could contain some database
 The meaning of "reference" is simply that of the logical reference: a link to the actual instance.
 
 This is actually much better then what I have been doing so far, where the variable A is given the id of the database. The new form is better suited to integrate information of two or more databases.
+
+Since the system is not able to automatically determine if the same name in two database refers to the same person in real life, it simply asks the user. This needs to be done only once per session.
 
 # 2018-08-31
 

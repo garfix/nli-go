@@ -1,3 +1,22 @@
+
+# 2018-09-20
+
+Yes I am still thinking about how to ask the user something.
+
+But I have decided not to break the application up into tasks. It's a pretty idea, but would require forcing it into strange unnatural structures, which isn't good.
+
+I will continue with an alternative that I will now explain:
+
+The system uses a Dialog Context, which is persisted somewhere where other processes can access it too.
+
+When the system has a question it
+* checks the Dialog Context for an answer, or
+* stops the application with a question for the user
+
+If the application is stopped, it is up to the process that ran the application to ask the user the question, and place the answer in the Dialog Context.
+
+Next, the same question is passed to the system. The system processes the question in the same way. Except when it checks the Dialog Context, it succeeds and continues.
+
 # 2018-09-13
 
 It occurred to me that the technique of using tasks is also a solution for a problem that I had stuck away.

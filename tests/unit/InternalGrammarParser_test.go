@@ -45,7 +45,7 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[1]))
 	}
 	if len(rules[0].Sense) != 1 {
-		t.Error(fmt.Printf("Error in number of sense relations: %s", len(rules[0].Sense)))
+		t.Error(fmt.Printf("Error in number of sense relations: %d", len(rules[0].Sense)))
 	}
 
 	grammar = parser.CreateGrammar("[" +

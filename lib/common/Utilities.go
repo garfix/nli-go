@@ -66,6 +66,10 @@ func ReadFile(path string) (string, error) {
 	return source, err
 }
 
+func WriteFile(path string, contents string) error {
+	return ioutil.WriteFile(path, []byte(contents), 0666)
+}
+
 // If path is an absolute path, returns path
 // Otherwise, adds path to baseDir to create an absolute path
 func AbsolutePath(baseDir string, path string) string {

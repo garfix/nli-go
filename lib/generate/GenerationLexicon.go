@@ -62,7 +62,7 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 				resultLexeme = lexeme
 
 				if partOfSpeech == "proper_noun" {
-					resultLexeme.Form = bindings[0]["Name"].TermValue
+					resultLexeme.Form = bindings[0]["NameField"].TermValue
 				}
 
 				applicableLexemeFound = true

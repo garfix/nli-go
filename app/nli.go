@@ -6,6 +6,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
+	"path/filepath"
 )
 
 type Result struct {
@@ -19,10 +20,10 @@ type Result struct {
 func main() {
 
 	if len(os.Args) != 4 {
-		fmt.Println("Usage: nli <command> </path/to/config.json> <full sentence>")
+		fmt.Println("Usage: nli <command> -s <session-id> </path/to/config.json> <full sentence>")
 		fmt.Println("")
 		fmt.Println("Example:")
-		fmt.Println("    nli answer fox/config.json \"Did the quick brown jump over the lazy dog?\"")
+		fmt.Println("    nli answer fox/config.json \"Did the quick brown fox jump over the lazy dog?\"")
 		fmt.Println("")
 		fmt.Println("Commands:")
 		fmt.Println("    answer     Return an answer to <full sentence>")
@@ -41,22 +42,31 @@ func main() {
 
 	log := common.NewSystemLog(false)
 	system := global.NewSystem(path, log)
+	config := system.ReadConfig(configPath, log)
 
 	value := []string{}
 	errorLines := []string{}
 
 	if log.IsOk() {
-		switch command {
-		case "answer":
-			value = []string{system.Answer(sentence)}
-		case "suggest":
-			value = system.Suggest(sentence)
-		default:
-			errorLines = []string{fmt.Sprintf("%s is not valid command.\n", os.Args[1])}
-		}
-	}
 
-	if !log.IsOk() {
+		builder := global.NewSystemBuilder(filepath.Dir(configPath), log)
+		builder.BuildFromConfig(system, config)
+
+		if log.IsOk() {
+			switch command {
+			case "answer":
+				value = []string{system.Answer(sentence)}
+			case "suggest":
+				value = system.Suggest(sentence)
+			default:
+				errorLines = []string{fmt.Sprintf("%s is not valid command.\n", os.Args[1])}
+			}
+		}
+
+		if log.IsOk() {
+			builder.SaveDialogContextFromPath(system, config.DialogContextPath)
+		}
+
 		errorLines = append(errorLines, log.GetErrors()...)
 	}
 

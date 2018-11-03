@@ -6,6 +6,7 @@ import (
 )
 
 type SystemFunctionBase struct {
+	KnowledgeBaseCore
 }
 
 func NewSystemFunctionBase() *SystemFunctionBase {

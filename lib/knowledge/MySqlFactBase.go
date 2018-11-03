@@ -12,22 +12,33 @@ import (
 )
 
 type MySqlFactBase struct {
+	KnowledgeBaseCore
 	db                *sql.DB
 	tableDescriptions map[string][]string
 	ds2db             []mentalese.RelationTransformation
 	stats			  mentalese.DbStats
+	entities 		  mentalese.Entities
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewMySqlFactBase(domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
 
 	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
 		log.AddError("Error opening MySQL: " + err.Error())
 	}
 
-	return &MySqlFactBase{db: db, tableDescriptions: map[string][]string{}, ds2db: ds2db, stats: stats, matcher: matcher, log: log}
+	return &MySqlFactBase{
+		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
+		db: db,
+		tableDescriptions: map[string][]string{},
+		ds2db: ds2db,
+		stats: stats,
+		entities: entities,
+		matcher: matcher,
+		log: log,
+	}
 }
 
 func (factBase MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
@@ -40,6 +51,10 @@ func (factBase MySqlFactBase) GetMappings() []mentalese.RelationTransformation {
 
 func (factBase MySqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
+}
+
+func (factBase MySqlFactBase) GetEntities() mentalese.Entities {
+	return factBase.entities
 }
 
 func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []string) {

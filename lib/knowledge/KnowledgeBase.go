@@ -4,5 +4,6 @@ import "nli-go/lib/mentalese"
 
 type KnowledgeBase interface {
 
+	GetName() string
 	GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup
 }

@@ -9,12 +9,14 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
-	"path/filepath"
 	"os"
+	"path/filepath"
 )
 
 type system struct {
 	log               *common.SystemLog
+	dialogContext     *central.DialogContext
+	nameResolver      *central.NameResolver
 	lexicon           *parse.Lexicon
 	grammar           *parse.Grammar
 	generationLexicon *generate.GenerationLexicon
@@ -34,12 +36,12 @@ type system struct {
 func NewSystem(configPath string, log *common.SystemLog) *system {
 
 	system := &system{log: log}
-	config := system.ReadConfig(configPath, log)
-
-	if log.IsOk() {
-		builder := newSystemBuilder(filepath.Dir(configPath), log)
-		builder.buildFromConfig(system, config)
-	}
+	//config := system.ReadConfig(configPath, log)
+	//
+	//if log.IsOk() {
+	//	builder := NewSystemBuilder(filepath.Dir(configPath), log)
+	//	builder.BuildFromConfig(system, config)
+	//}
 
 	return system
 }
@@ -76,7 +78,15 @@ func (system *system) ReadConfig(configPath string, log *common.SystemLog) (syst
 
 func (system *system) Answer(input string) string {
 
-	tokens := system.tokenizer.Process(input)
+	originalInput := system.dialogContext.Process(input)
+
+	if system.log.IsOk() {
+		system.log.AddProduction("Dialog Context", "ok")
+	} else {
+		return ""
+	}
+
+	tokens := system.tokenizer.Process(originalInput)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
@@ -100,6 +110,16 @@ func (system *system) Answer(input string) string {
 		return ""
 	}
 
+	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
+	// each access to a data store, replace E5 with its ID
+	nameResolvedRelations, userQuestion := system.nameResolver.Resolve(genericRelations)
+
+	if userQuestion == "" {
+		system.log.AddProduction("NameResolver", nameResolvedRelations.String())
+	} else {
+		return userQuestion
+	}
+
 	dsRelations := system.transformer.Replace(system.generic2ds, genericRelations)
 
 	if system.log.IsOk() {
@@ -108,16 +128,7 @@ func (system *system) Answer(input string) string {
 		return ""
 	}
 
-	//scopedDomainSpecificRelations := system.quantifierScoper.Scope(dsRelations)
-	//
-	//if system.log.IsOk() {
-	//	system.log.AddProduction("Scoped", scopedDomainSpecificRelations.String())
-	//} else {
-	//	return ""
-	//}
-scopedDomainSpecificRelations := dsRelations
-
-	dsAnswer := system.answerer.Answer(scopedDomainSpecificRelations)
+	dsAnswer := system.answerer.Answer(dsRelations)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("DS Answer", dsAnswer.String())
@@ -148,6 +159,8 @@ scopedDomainSpecificRelations := dsRelations
 	} else {
 		return ""
 	}
+
+// todo: save dialog context
 
 	return answer
 }

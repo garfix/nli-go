@@ -1,12 +1,12 @@
 package knowledge
 
 import (
-	"nli-go/lib/mentalese"
-	"nli-go/lib/common"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
-	"io/ioutil"
-	"encoding/json"
+	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 	"strconv"
 	"strings"
 	"time"
@@ -15,18 +15,30 @@ import (
 const max_sparql_results = 100
 
 type SparqlFactBase struct {
+	KnowledgeBaseCore
 	baseUrl           string
 	defaultGraphUri   string
 	ds2db             []mentalese.RelationTransformation
 	names 			  mentalese.ConfigMap
 	stats			  mentalese.DbStats
+	entities 		  mentalese.Entities
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewSparqlFactBase(baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *SparqlFactBase {
 
-	return &SparqlFactBase{baseUrl: baseUrl, defaultGraphUri: defaultGraphUri, ds2db: ds2db, names: names, stats: stats, matcher: matcher, log: log}
+	return &SparqlFactBase{
+		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
+		baseUrl: baseUrl,
+		defaultGraphUri: defaultGraphUri,
+		ds2db: ds2db,
+		names: names,
+		stats: stats,
+		entities: entities,
+		matcher: matcher,
+		log: log,
+	}
 }
 
 func (factBase SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
@@ -39,6 +51,10 @@ func (factBase SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, know
 
 func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
+}
+
+func (factBase SparqlFactBase) GetEntities() mentalese.Entities {
+	return factBase.entities
 }
 
 // Matches needleRelation to all relations in the database

@@ -6,6 +6,7 @@ import (
 )
 
 type InMemoryFactBase struct {
+	KnowledgeBaseCore
 	facts   mentalese.RelationSet
 	ds2db   []mentalese.RelationTransformation
 	stats	mentalese.DbStats
@@ -13,8 +14,15 @@ type InMemoryFactBase struct {
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) FactBase {
-	return InMemoryFactBase{facts: facts, ds2db: ds2db, stats: stats, matcher: matcher, log: log}
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) InMemoryFactBase {
+	return InMemoryFactBase{
+		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
+		facts: facts,
+		ds2db: ds2db,
+		stats: stats,
+		matcher: matcher,
+		log: log,
+	}
 }
 
 func (factBase InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
@@ -27,6 +35,36 @@ func (factBase InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, kn
 
 func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
+}
+
+func (factBase InMemoryFactBase) GetEntities() mentalese.Entities {
+	return mentalese.Entities{}
+}
+
+func (factBase InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {
+	factBase.facts = relations
+}
+
+func (factBase InMemoryFactBase) GetRelations() mentalese.RelationSet {
+	return factBase.facts
+}
+
+func (factBase InMemoryFactBase) AddRelation(relation mentalese.Relation) {
+	factBase.facts = append(factBase.facts, relation)
+}
+
+// Removes all facts that match relation
+func (factBase InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
+	newFacts := []mentalese.Relation{}
+
+	for _, fact := range factBase.facts {
+		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.Binding{})
+		if !found {
+			newFacts = append(newFacts, fact)
+		}
+	}
+
+	factBase.facts = newFacts
 }
 
 func (factBase InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {

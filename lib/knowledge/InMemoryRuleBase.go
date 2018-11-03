@@ -7,12 +7,17 @@ import (
 )
 
 type InMemoryRuleBase struct {
+	KnowledgeBaseCore
 	rules []mentalese.Rule
 	log   *common.SystemLog
 }
 
-func NewRuleBase(rules []mentalese.Rule, log *common.SystemLog) RuleBase {
-	return InMemoryRuleBase{rules: rules, log: log}
+func NewRuleBase(name string, rules []mentalese.Rule, log *common.SystemLog) RuleBase {
+	return InMemoryRuleBase{
+		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
+		rules: rules,
+		log: log,
+	}
 }
 
 func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {

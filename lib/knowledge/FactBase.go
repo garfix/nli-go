@@ -7,6 +7,7 @@ type FactBase interface {
 	MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding
 	GetMappings() []mentalese.RelationTransformation
 	GetStatistics() mentalese.DbStats
+	GetEntities() mentalese.Entities
 }
 
 const worst_cost = 100000000.0

@@ -1,6 +1,7 @@
 package global
 
 import (
+	"encoding/json"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
@@ -9,7 +10,6 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
-	"encoding/json"
 )
 
 type systemBuilder struct {
@@ -18,7 +18,7 @@ type systemBuilder struct {
 	parser  *importer.InternalGrammarParser
 }
 
-func newSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
+func NewSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
@@ -30,7 +30,11 @@ func newSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
 	}
 }
 
-func (builder systemBuilder) buildFromConfig(system *system, config systemConfig) {
+func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig) {
+
+	systemFunctionBase := knowledge.NewSystemFunctionBase()
+	matcher := mentalese.NewRelationMatcher(builder.log)
+	matcher.AddFunctionBase(systemFunctionBase)
 
 	system.lexicon = parse.NewLexicon()
 	system.grammar = parse.NewGrammar()
@@ -42,10 +46,6 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
 	system.generic2ds = []mentalese.RelationTransformation{}
 	system.ds2generic = []mentalese.RelationTransformation{}
-
-	systemFunctionBase := knowledge.NewSystemFunctionBase()
-	matcher := mentalese.NewRelationMatcher(builder.log)
-	matcher.AddFunctionBase(systemFunctionBase)
 	system.transformer = mentalese.NewRelationTransformer(matcher, builder.log)
 
 	solver := central.NewProblemSolver(matcher, builder.log)
@@ -58,6 +58,11 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
+	system.dialogContext = central.NewDialogContext(matcher, builder.log)
+
+	builder.ImportDialogContextFromPath(system, config.DialogContextPath)
+
+	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
@@ -86,10 +91,10 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 		builder.ImportRelationSetFactBase(solver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Mysql {
-		builder.ImportMySqlDatabase(solver, factBase, matcher)
+		builder.ImportMySqlDatabase(factBase.Database, solver, system.nameResolver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Sparql {
-		builder.ImportSparqlDatabase(solver, factBase, matcher)
+		builder.ImportSparqlDatabase(factBase.Name, solver, system.nameResolver, factBase, matcher)
 	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
@@ -101,6 +106,51 @@ func (builder systemBuilder) buildFromConfig(system *system, config systemConfig
 	for _, transformationsPath := range config.Generic2ds {
 		path := common.AbsolutePath(builder.baseDir, transformationsPath)
 		builder.ImportGeneric2DsTransformations(system, path)
+	}
+}
+
+func (builder systemBuilder) ImportDialogContextFromPath(system *system, dialogContextPath string) {
+
+	if dialogContextPath == "" {
+		return
+	}
+
+	path := common.AbsolutePath(builder.baseDir, dialogContextPath)
+	dialogContextJson, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return
+	}
+
+	values := mentalese.RelationSet{}
+
+	err = json.Unmarshal([]byte(dialogContextJson), &values)
+	if err != nil {
+		builder.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
+		return
+	}
+
+	system.dialogContext.Initialize(values)
+}
+
+func (builder systemBuilder) SaveDialogContextFromPath(system *system, dialogContextPath string) {
+
+	if dialogContextPath == "" {
+		return
+	}
+
+	jsonBytes, err := json.Marshal(system.dialogContext.GetRelations())
+	if err != nil {
+		builder.log.AddError("Error serializing dialog context (" + err.Error() + ")")
+		return
+	}
+
+	jsonString := string(jsonBytes)
+
+	err = common.WriteFile(dialogContextPath, jsonString)
+	if err != nil {
+		builder.log.AddError("Error writing dialog context file " + dialogContextPath + " (" + err.Error() + ")")
+		return
 	}
 }
 
@@ -192,7 +242,7 @@ func (builder systemBuilder) ImportRuleBaseFromPath(solver *central.ProblemSolve
 		return
 	}
 
-	solver.AddRuleBase(knowledge.NewRuleBase(rules, builder.log))
+	solver.AddRuleBase(knowledge.NewRuleBase("rules", rules, builder.log))
 }
 
 func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSolver, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
@@ -227,10 +277,10 @@ func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSo
 
 	stats, _ := builder.CreateDbStats(factBase.Stats)
 
-	solver.AddFactBase(knowledge.NewInMemoryFactBase(facts, matcher, dbMap, stats, builder.log))
+	solver.AddFactBase(knowledge.NewInMemoryFactBase("memory", facts, matcher, dbMap, stats, builder.log))
 }
 
-func (builder systemBuilder) ImportMySqlDatabase(solver *central.ProblemSolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(path)
@@ -246,9 +296,17 @@ func (builder systemBuilder) ImportMySqlDatabase(solver *central.ProblemSolver, 
 		return
 	}
 
-	stats, _ := builder.CreateDbStats(factBase.Stats)
+	stats, ok := builder.CreateDbStats(factBase.Stats)
+	if !ok {
+		return
+	}
 
-	database := knowledge.NewMySqlFactBase(factBase.Domain, factBase.Username, factBase.Password, factBase.Database, matcher, dbMap, stats, builder.log)
+	entities, ok := builder.CreateEntities(factBase.Entities)
+	if !ok {
+		return
+	}
+
+	database := knowledge.NewMySqlFactBase(name, factBase.Domain, factBase.Username, factBase.Password, factBase.Database, matcher, dbMap, stats, entities, builder.log)
 
 	for _, table := range factBase.Tables {
 		columns := []string{}
@@ -263,7 +321,7 @@ func (builder systemBuilder) ImportMySqlDatabase(solver *central.ProblemSolver, 
 	}
 }
 
-func (builder systemBuilder) ImportSparqlDatabase(solver *central.ProblemSolver, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	mapPath := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(mapPath)
@@ -285,8 +343,16 @@ func (builder systemBuilder) ImportSparqlDatabase(solver *central.ProblemSolver,
 	}
 
 	stats, ok := builder.CreateDbStats(factBase.Stats)
+	if !ok {
+		return
+	}
 
-	database := knowledge.NewSparqlFactBase(factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, builder.log)
+	entities, ok := builder.CreateEntities(factBase.Entities)
+	if !ok {
+		return
+	}
+
+	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, builder.log)
 
 	solver.AddFactBase(database)
 }
@@ -333,6 +399,30 @@ func (builder systemBuilder) CreateDbStats(path string) (mentalese.DbStats, bool
 	}
 
 	return stats, true
+}
+
+func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bool) {
+
+	entities := mentalese.Entities{}
+
+	if path != "" {
+
+		absolutePath := common.AbsolutePath(builder.baseDir, path)
+
+		content, err := common.ReadFile(absolutePath)
+		if err != nil {
+			builder.log.AddError("Error reading entities file " + absolutePath + " (" + err.Error() + ")")
+			return entities, false
+		}
+
+		err = json.Unmarshal([]byte(content), &entities)
+		if err != nil {
+			builder.log.AddError("Error parsing entities file " + absolutePath + " (" + err.Error() + ")")
+			return entities, false
+		}
+	}
+
+	return entities, true
 }
 
 func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solutionBasePath string) {

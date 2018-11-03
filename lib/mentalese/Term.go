@@ -17,6 +17,30 @@ const Term_regExp = 6
 const Term_relationSet = 7
 const Term_id = 8
 
+func NewVariable(name string) Term {
+	return Term{ TermType: Term_variable, TermValue: name, TermValueRelationSet: nil}
+}
+
+func NewAnonymousVariable() Term {
+	return Term{ TermType: Term_anonymousVariable, TermValue: nil, TermValueRelationSet: nil}
+}
+
+func NewNumber(number string) Term {
+	return Term{ TermType: Term_number, TermValue: number, TermValueRelationSet: nil}
+}
+
+func NewString(value string) Term {
+	return Term{ TermType: Term_stringConstant, TermValue: value, TermValueRelationSet: nil}
+}
+
+func NewPredicateAtom(value string) Term {
+	return Term{ TermType: Term_predicateAtom, TermValue: value, TermValueRelationSet: nil}
+}
+
+func NewId(id string) Term {
+	return Term{ TermType: Term_id, TermValue: id, TermValueRelationSet: nil}
+}
+
 func (term Term) IsVariable() bool {
 	return term.TermType == Term_variable
 }

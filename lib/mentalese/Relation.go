@@ -8,11 +8,21 @@ type Relation struct {
 const Predicate_Quantification = "quantification"
 const Predicate_Quant = "quant"
 
+const PredicateName = "name"
+const PredicateSense = "sense"
+
 const Quantification_RangeVariableIndex = 0
 const Quantification_RangeIndex = 1
 const Quantification_QuantifierVariableIndex = 2
 const Quantification_QuantifierIndex = 3
 const Quantification_ScopeIndex = 4
+
+func NewRelation(predicate string, arguments []Term) Relation {
+	return Relation{
+		Predicate: predicate,
+		Arguments: arguments,
+	}
+}
 
 func (relation Relation) Equals(otherRelation Relation) bool {
 

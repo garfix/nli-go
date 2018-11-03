@@ -1,3 +1,59 @@
+# 2018-10-16
+
+Current form for name recognition: an entities.json file with, per entity, its name, a "knownby" with at least a "name", and possibly some other fields to help identification.
+
+The id of the entity is mapped to the variable Id. The relevant other variable is stored in N.
+Each knownby is a relation set (no a relation), consisting of database specific relations.
+
+    {
+      "person": {
+        "knownby": {
+          "name": "foaf_name(Id, Name)",
+          "birth_date": "birth_date(Id, Name)",
+          "birth_place": "birth_place(Id, Name)"
+        }
+      }
+    }
+
+# 2018-10-06
+
+A name can be an identifier of different things. The name of a person, or the code of a mineral.
+Different relations are used to name these things. Different fields are needed to disambiguate between different entities of the same field.
+
+    person: name(), birthdate(), birthplace()
+    town: name(), state(), country()
+
+Some but not all of the fields may be present. You need to know the entity's type in order to determine the fields.
+
+# 2018-09-24
+
+I plan to postpone proper name recognition until after the parse phase. But only _directly_ after it.
+
+This means that I will recognize "Lord Byron" as a name of two words. I will not recognize that it it stored in DBPedia at this time.
+
+Until now I recognized names by their capitalized names (L)ord (B)yron and insertions (van, de). I will not do this any more. The main reason is that this principle does not hold for most of the proper names in the rest of the world.
+
+I now plan to recognize _any word_ as a proper noun. The advantage of this is that finding the name in the database can be postponed until after the parse phase and be put in its own phase.
+
+I assumed that I would have to try the longest possible proper noun first, because the match of a longer proper noun is always preferable. However, matching a long proper name built from _any words_ is a recipe for problems. And the longest possible proper name does not exist. It may take up to 10 words or more.
+
+So what I'll do is I'll start with 1 word proper nouns. If it is still possible to parse the whole sentence, the one word noun is fine.
+
+Name recognition just should not be done _before_ the parse phase. Exactly because anything can be a name.
+
+======================
+
+Name resolution phase takes as input generic relations, and adds to these a number of senses:
+
+    name(E5, "John") => name(E5, "John") sense(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
+
+Each store has at most 1 sense, and the "reference" of these senses must be the same (i.e. the same person occurs in multiple databases)
+
+Then, when data store 'dbpedia' is accessed, the variable 'E5' is replaced by the store specific ID <http://dbpedia.org/resource/John>
+
+# 2018-09-23
+
+I will do it a little bit differently. The Dialog Context is only contacted by the system, and the system places the answer in the DC.
 
 # 2018-09-20
 
@@ -79,9 +135,11 @@ And the user is given two radio groups, one for each database. Multiple answers 
 
 Once the choice is made, the meaning of the sentence could contain some database specific information:
 
-"Lord Byron" => name(A, "Lord Byron"), reference(A, 16882, person, db1), reference(A, person, <http://name.org/byron>, db2)
+"Lord Byron" => name(A, "Lord Byron"), sense(A, 16882, person, db1), sense(A, person, <http://name.org/byron>, db2)
 
-The meaning of "reference" is simply that of the logical reference: a link to the actual instance.
+The meaning of "sense" is simply that of the logical sense: one of many representation of a single meaning
+
+https://en.wikipedia.org/wiki/Sense_and_reference
 
 This is actually much better then what I have been doing so far, where the variable A is given the id of the database. The new form is better suited to integrate information of two or more databases.
 

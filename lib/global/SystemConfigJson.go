@@ -22,16 +22,19 @@ type mysqlFactBase struct {
 	Database string
 	Map      string
 	Stats	 string
+	Entities string
 	Tables   []mysqlTable
 	Enabled  bool
 }
 
 type sparqlFactBase struct {
-	Baseurl   string
+	Name     string
+	Baseurl  string
 	Defaultgraphuri string
 	Map      string
 	Names    string
 	Stats	 string
+	Entities string
 }
 
 type factBases struct {
@@ -42,6 +45,7 @@ type factBases struct {
 
 type systemConfig struct {
 	ParentConfig       string
+	DialogContextPath  string
 	Lexicons           []string
 	Grammars           []string
 	Rulebases          []string
@@ -56,6 +60,7 @@ type systemConfig struct {
 func (firstConfig systemConfig) Merge(secondConfig systemConfig) systemConfig {
 	newConfig := systemConfig{
 		ParentConfig: secondConfig.ParentConfig,
+		DialogContextPath: "",
 		Lexicons: append(firstConfig.Lexicons, secondConfig.Lexicons...),
 		Grammars: append(firstConfig.Grammars, secondConfig.Grammars...),
 		Rulebases: append(firstConfig.Rulebases, secondConfig.Rulebases...),

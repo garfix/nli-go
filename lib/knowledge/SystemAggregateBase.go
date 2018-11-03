@@ -7,6 +7,7 @@ import (
 )
 
 type SystemAggregateBase struct {
+	KnowledgeBaseCore
 	rules []mentalese.Rule
 	log   *common.SystemLog
 }

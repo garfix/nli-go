@@ -4,6 +4,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
+	"sort"
 	"strconv"
 )
 
@@ -182,6 +183,10 @@ func (resolver *NameResolver) collectNames(relations mentalese.RelationSet) map[
 			indexString := relation.Arguments[2]
 			index, err := strconv.Atoi(indexString.TermValue)
 			if err == nil {
+				_, found := nameTree[variable]
+				if !found {
+					nameTree[variable] = map[int]string{}
+				}
 				nameTree[variable][index] = value
 			}
 		}
@@ -193,13 +198,13 @@ func (resolver *NameResolver) collectNames(relations mentalese.RelationSet) map[
 
 		name := ""
 
-		for i := 0; i < len(branch); i++ {
+		for i := 1; i <= len(branch); i++ {
 			value, found := branch[i]
 			if found {
 				if name == "" {
 					name = value
 				} else {
-					name = " " + value
+					name = name + " " + value
 				}
 			}
 		}
@@ -228,20 +233,31 @@ func (resolver *NameResolver) resolveName(name string, factBase knowledge.FactBa
 		for _, binding := range bindings {
 
 			id, _ := binding[mentalese.IdVar]
-			information := ""
+			information := entityType
 
-			for infoType, relationSet := range entityInfo.Knownby {
+			// sort because the resulting strings must not be in random order
+			sortedInfoTypes := []string{}
+			for infoType := range entityInfo.Knownby {
+				sortedInfoTypes = append(sortedInfoTypes, infoType)
+			}
+			sort.Strings(sortedInfoTypes)
+
+			for _, infoType := range sortedInfoTypes {
+
+				relationSet := entityInfo.Knownby[infoType]
 
 				// create a relation set for each field that gives Information about this name
 				boundRelationSet := resolver.matcher.BindRelationSetSingleBinding(relationSet, mentalese.Binding{
-					mentalese.IdVar: mentalese.NewString(id.TermValue),
+					mentalese.IdVar: mentalese.NewId(id.TermValue),
 				})
 
-				bindings := resolver.solver.FindFacts(factBase, boundRelationSet)
+				bindings2 := resolver.solver.FindFacts(factBase, boundRelationSet)
 
-				for _, binding := range bindings {
-					value, _ := binding[mentalese.IdVar]
-					information += entityType + "/" + infoType + ": " + value.TermValue + "; "
+				for _, binding2 := range bindings2 {
+					value, _ := binding2[mentalese.ValueVar]
+					information += "; " + infoType + ": " + value.TermValue
+					// DBPedia sometimes returns multiple results for a date, while there should be only one
+					break
 				}
 			}
 

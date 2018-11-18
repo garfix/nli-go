@@ -1,8 +1,7 @@
 [
-    { rule: proper_noun(N1) -> full_name(N1) }
-    { rule: proper_noun(N1) -> first_name(N1) last_name(N1) }
-    { rule: proper_noun(N1) -> first_name(N1) insertion(N1) last_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) last_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) }
 
     { rule: vgp(V1) -> verb(V1) }
 

@@ -13,12 +13,12 @@ const predicateOriginalInput = "original_input"
 // The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
 // It may also be used to store relations that may be needed in the next call of the library (within the same session)
 type DialogContext struct {
-	factBase knowledge.InMemoryFactBase
+	factBase *knowledge.InMemoryFactBase
 	solver *ProblemSolver
 	values mentalese.RelationSet
 }
 
-func NewDialogContext(matcher *mentalese.RelationMatcher, log *common.SystemLog) *DialogContext {
+func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *DialogContext {
 
 	factBase := knowledge.NewInMemoryFactBase(
 		"in-memory",
@@ -31,6 +31,7 @@ func NewDialogContext(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 
 	return &DialogContext{
 		factBase: factBase,
+		solver: solver,
 	}
 }
 

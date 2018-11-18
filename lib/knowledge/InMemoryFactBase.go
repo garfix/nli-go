@@ -14,8 +14,8 @@ type InMemoryFactBase struct {
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) InMemoryFactBase {
-	return InMemoryFactBase{
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) *InMemoryFactBase {
+	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts: facts,
 		ds2db: ds2db,
@@ -25,36 +25,36 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *ment
 	}
 }
 
-func (factBase InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 
-func (factBase InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
-func (factBase InMemoryFactBase) GetStatistics() mentalese.DbStats {
+func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }
 
-func (factBase InMemoryFactBase) GetEntities() mentalese.Entities {
+func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {
 	return mentalese.Entities{}
 }
 
-func (factBase InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {
+func (factBase *InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {
 	factBase.facts = relations
 }
 
-func (factBase InMemoryFactBase) GetRelations() mentalese.RelationSet {
+func (factBase *InMemoryFactBase) GetRelations() mentalese.RelationSet {
 	return factBase.facts
 }
 
-func (factBase InMemoryFactBase) AddRelation(relation mentalese.Relation) {
+func (factBase *InMemoryFactBase) AddRelation(relation mentalese.Relation) {
 	factBase.facts = append(factBase.facts, relation)
 }
 
 // Removes all facts that match relation
-func (factBase InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
+func (factBase *InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
 	newFacts := []mentalese.Relation{}
 
 	for _, fact := range factBase.facts {
@@ -67,7 +67,7 @@ func (factBase InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
 	factBase.facts = newFacts
 }
 
-func (factBase InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
+func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
 	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, mentalese.Binding{})
 	return bindings

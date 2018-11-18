@@ -1,4 +1,4 @@
-# Deployment of a nli-go app
+# Deployment of an nli-go app
 
 To deploy an application on a web server
 

@@ -1,3 +1,15 @@
+# 2018-11-11
+
+I am dropping the "suggest" option that auto-suggests the next word in a sentence. It didn't really help the user.
+Many suggestions were made that were syntactically correct, but not semantically.
+
+The consequence of this is that we must provide example sentences to the user.
+Or, more formally, we must specify to the user exactly what the format is that the sentences must adhere to.
+
+This is actually not such a bad idea. Humans always expect an nli to understand everything he asks it.
+But that may cease when the user is given a list of allowed sentences and phrases he can use.
+I think it is a necessary and reasonable idea in human-computer interaction.
+
 # 2018-10-16
 
 Current form for name recognition: an entities.json file with, per entity, its name, a "knownby" with at least a "name", and possibly some other fields to help identification.

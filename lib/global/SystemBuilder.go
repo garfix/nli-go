@@ -58,10 +58,8 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
-	system.dialogContext = central.NewDialogContext(matcher, builder.log)
-
-	builder.ImportDialogContextFromPath(system, config.DialogContextPath)
-
+	system.dialogContext = central.NewDialogContext(matcher, solver, builder.log)
+	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
@@ -109,50 +107,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	}
 }
 
-func (builder systemBuilder) ImportDialogContextFromPath(system *system, dialogContextPath string) {
 
-	if dialogContextPath == "" {
-		return
-	}
-
-	path := common.AbsolutePath(builder.baseDir, dialogContextPath)
-	dialogContextJson, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError(err.Error())
-		return
-	}
-
-	values := mentalese.RelationSet{}
-
-	err = json.Unmarshal([]byte(dialogContextJson), &values)
-	if err != nil {
-		builder.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
-		return
-	}
-
-	system.dialogContext.Initialize(values)
-}
-
-func (builder systemBuilder) SaveDialogContextFromPath(system *system, dialogContextPath string) {
-
-	if dialogContextPath == "" {
-		return
-	}
-
-	jsonBytes, err := json.Marshal(system.dialogContext.GetRelations())
-	if err != nil {
-		builder.log.AddError("Error serializing dialog context (" + err.Error() + ")")
-		return
-	}
-
-	jsonString := string(jsonBytes)
-
-	err = common.WriteFile(dialogContextPath, jsonString)
-	if err != nil {
-		builder.log.AddError("Error writing dialog context file " + dialogContextPath + " (" + err.Error() + ")")
-		return
-	}
-}
 
 func (builder systemBuilder) ImportLexiconFromPath(system *system, lexiconPath string) {
 
@@ -415,10 +370,39 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 			return entities, false
 		}
 
-		err = json.Unmarshal([]byte(content), &entities)
+		entityStructure := Entities{}
+
+		err = json.Unmarshal([]byte(content), &entityStructure)
 		if err != nil {
 			builder.log.AddError("Error parsing entities file " + absolutePath + " (" + err.Error() + ")")
 			return entities, false
+		}
+
+		for key, entityInfo := range entityStructure {
+
+			nameRelationSet := builder.parser.CreateRelationSet(entityInfo.Name)
+
+			parseResult := builder.parser.GetLastParseResult()
+			if !parseResult.Ok {
+				builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
+				return entities, false
+			}
+
+			knownBy := map[string]mentalese.RelationSet{}
+			for knownByKey, knownByValue := range entityInfo.Knownby {
+				knownBy[knownByKey] = builder.parser.CreateRelationSet(knownByValue)
+
+				parseResult := builder.parser.GetLastParseResult()
+				if !parseResult.Ok {
+					builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
+					return entities, false
+				}
+			}
+
+			entities[key] = mentalese.EntityInfo{
+				Name: nameRelationSet,
+				Knownby: knownBy,
+			}
 		}
 	}
 

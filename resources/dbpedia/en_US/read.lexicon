@@ -15,10 +15,10 @@
     { form: 'father',               pos: noun,                   sense: isa(E, father) }
     { form: 'mother',               pos: noun,                   sense: isa(E, mother) }
 
-    { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, first_name) }
-    { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, second_name) }
-    { form: /^[A-Z]/,	            pos: last_name,              sense: name(E, Form, last_name) }
-    { form: /^[A-Z]/,	            pos: full_name,              sense: name(E, Form, full_name) }
+    { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, 1) }
+    { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, 2) }
+    { form: /^[A-Z]/,	            pos: third_name,             sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,	            pos: full_name,              sense: name(E, Form, 1) }
 
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }

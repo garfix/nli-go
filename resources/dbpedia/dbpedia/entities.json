@@ -1,9 +1,9 @@
 {
   "person": {
-    "name": "foaf_name(Id, Name)",
+    "name": "[name(Id, Name, full_name)]",
     "knownby": {
-      "birth_date": "birth_date(Id, Name)",
-      "birth_place": "birth_place(Id, Name)"
+      "birth_date": "[birth_date(Id, Value)]",
+      "birth_place": "[birth_place(Id, Value)]"
     }
   }
 }

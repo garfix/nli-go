@@ -22,7 +22,7 @@ func NewVariable(name string) Term {
 }
 
 func NewAnonymousVariable() Term {
-	return Term{ TermType: Term_anonymousVariable, TermValue: nil, TermValueRelationSet: nil}
+	return Term{ TermType: Term_anonymousVariable, TermValue: "", TermValueRelationSet: nil}
 }
 
 func NewNumber(number string) Term {

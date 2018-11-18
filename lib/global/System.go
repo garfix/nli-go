@@ -16,6 +16,7 @@ import (
 type system struct {
 	log               *common.SystemLog
 	dialogContext     *central.DialogContext
+	dialogContextStorage *DialogContextFileStorage
 	nameResolver      *central.NameResolver
 	lexicon           *parse.Lexicon
 	grammar           *parse.Grammar
@@ -35,13 +36,13 @@ type system struct {
 
 func NewSystem(configPath string, log *common.SystemLog) *system {
 
-	system := &system{log: log}
-	//config := system.ReadConfig(configPath, log)
-	//
-	//if log.IsOk() {
-	//	builder := NewSystemBuilder(filepath.Dir(configPath), log)
-	//	builder.BuildFromConfig(system, config)
-	//}
+	system := &system{ log: log }
+	config := system.ReadConfig(configPath, log)
+
+	if log.IsOk() {
+		builder := NewSystemBuilder(filepath.Dir(configPath), log)
+		builder.BuildFromConfig(system, config)
+	}
 
 	return system
 }
@@ -76,12 +77,20 @@ func (system *system) ReadConfig(configPath string, log *common.SystemLog) (syst
 	return config
 }
 
+func (system *system) PopulateDialogContext(sessionDataPath string) {
+	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext)
+}
+
+func (system *system) StoreDialogContext(sessionDataPath string) {
+	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
+}
+
 func (system *system) Answer(input string) string {
 
 	originalInput := system.dialogContext.Process(input)
 
 	if system.log.IsOk() {
-		system.log.AddProduction("Dialog Context", "ok")
+		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
 	} else {
 		return ""
 	}

@@ -11,4 +11,5 @@ const NameField = "name"
 const KnownByField = "knownby"
 
 const NameVar = "Name"
-const IdVar = "IdVar"
+const ValueVar = "Value"
+const IdVar = "Id"

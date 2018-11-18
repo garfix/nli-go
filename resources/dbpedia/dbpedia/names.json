@@ -6,5 +6,6 @@
   "foaf_name": "http://xmlns.com/foaf/0.1/name",
   "gender": "http://xmlns.com/foaf/0.1/gender",
   "parent": "http://dbpedia.org/ontology/parent",
-  "birth_date": "http://dbpedia.org/ontology/birthDate"
+  "birth_date": "http://dbpedia.org/ontology/birthDate",
+  "birth_place": "http://dbpedia.org/ontology/birthPlace"
 }

@@ -1,11 +1,5 @@
 package mentalese
 
-import (
-	"encoding/json"
-	"errors"
-	"nli-go/lib/importer"
-)
-
 type RelationSet []Relation
 
 func (set RelationSet) Copy() RelationSet {
@@ -158,26 +152,26 @@ func (set RelationSet) UnScope() RelationSet {
 	return unscoped
 }
 
-func (set RelationSet) UnmarshalJSON(b []byte) error {
-
-	var raw string
-
-	var parser importer.InternalGrammarParser
-
-	err := json.Unmarshal(b, &raw)
-	if err != nil {
-		return err
-	}
-
-	relationSet := parser.CreateRelationSet(raw)
-	parseResult := parser.GetLastParseResult()
-	if !parseResult.Ok {
-		return errors.New(parseResult.String())
-	}
-
-	for _, relation := range relationSet {
-		set = append(set, relation)
-	}
-
-	return nil
-}
+//func (set RelationSet) UnmarshalJSON(b []byte) error {
+//
+//	var raw string
+//
+//	var parser importer.InternalGrammarParser
+//
+//	err := json.Unmarshal(b, &raw)
+//	if err != nil {
+//		return err
+//	}
+//
+//	relationSet := parser.CreateRelationSet(raw)
+//	parseResult := parser.GetLastParseResult()
+//	if !parseResult.Ok {
+//		return errors.New(parseResult.String())
+//	}
+//
+//	for _, relation := range relationSet {
+//		set = append(set, relation)
+//	}
+//
+//	return nil
+//}

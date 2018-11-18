@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
-	"path/filepath"
 )
 
 type Result struct {
@@ -19,64 +19,60 @@ type Result struct {
 // This application takes a sentence as its parameter and executes a given command.
 func main() {
 
-	if len(os.Args) != 4 {
-		fmt.Println("Usage: nli <command> -s <session-id> </path/to/config.json> <full sentence>")
+	var sessionId = ""
+	var absSessionPath = ""
+	var configPath = ""
+
+	value := []string{}
+
+	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog context")
+	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a JSON nli-go config file")
+
+	flag.Parse()
+
+	if len(flag.Args()) != 2 {
+		fmt.Println("Usage: nli [-s <session_id>] [-c </path/to/config.json>] <full sentence>")
 		fmt.Println("")
 		fmt.Println("Example:")
-		fmt.Println("    nli answer fox/config.json \"Did the quick brown fox jump over the lazy dog?\"")
+		fmt.Println("    nli -s 73926642 -c fox/config.json \"Did the quick brown fox jump over the lazy dog?\"")
 		fmt.Println("")
-		fmt.Println("Commands:")
-		fmt.Println("    answer     Return an answer to <full sentence>")
-		fmt.Println("    suggest    Returns next word suggestions")
 		return
 	}
 
-	command := os.Args[1]
-	configPath := os.Args[2]
-	sentence := os.Args[3]
+	sentence := flag.Arg(1)
+	absConfigPath := common.AbsolutePath(common.Dir(), configPath)
+	log := common.NewSystemLog(false)
+	system := global.NewSystem(absConfigPath, log)
 
-	path := configPath
-	if len(path) > 0 && path[0] != os.PathSeparator {
-		path = common.Dir() + string(os.PathSeparator) + configPath
+	// load dialog context
+	if sessionId != "" {
+		absSessionPath := common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
+		system.PopulateDialogContext(absSessionPath)
 	}
 
-	log := common.NewSystemLog(false)
-	system := global.NewSystem(path, log)
-	config := system.ReadConfig(configPath, log)
+	if !log.IsOk() {
+		goto done
+	}
 
-	value := []string{}
-	errorLines := []string{}
+	// the actual system call
+	value = []string{system.Answer(sentence)}
 
 	if log.IsOk() {
-
-		builder := global.NewSystemBuilder(filepath.Dir(configPath), log)
-		builder.BuildFromConfig(system, config)
-
-		if log.IsOk() {
-			switch command {
-			case "answer":
-				value = []string{system.Answer(sentence)}
-			case "suggest":
-				value = system.Suggest(sentence)
-			default:
-				errorLines = []string{fmt.Sprintf("%s is not valid command.\n", os.Args[1])}
-			}
-		}
-
-		if log.IsOk() {
-			builder.SaveDialogContextFromPath(system, config.DialogContextPath)
-		}
-
-		errorLines = append(errorLines, log.GetErrors()...)
+		goto done
 	}
 
-	productions := log.GetProductions()
+	// store dialog context for next call
+	if sessionId != "" {
+		system.StoreDialogContext(absSessionPath)
+	}
+
+	done:
 
 	result := Result{
-		Success:    log.IsOk(),
-		ErrorLines: errorLines,
-		Productions: productions,
-		Value:      value,
+		Success: log.IsOk(),
+		ErrorLines: log.GetErrors(),
+		Productions: log.GetProductions(),
+		Value: value,
 	}
 
 	jsonString, _ := json.Marshal(result)

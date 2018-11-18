@@ -97,7 +97,6 @@ func (dc *DialogContext) SetAnswerToOpenQuestion(answer string) {
 
 func (dc *DialogContext) GetAnswerToOpenQuestion() (string, bool) {
 	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
-		mentalese.NewString(predicateOriginalInput),
 		mentalese.NewVariable("A"),
 	}))
 
@@ -110,7 +109,7 @@ func (dc *DialogContext) GetAnswerToOpenQuestion() (string, bool) {
 }
 
 func (dc* DialogContext) RemoveOpenQuestion() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
+	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
 		mentalese.NewAnonymousVariable(),
 	}))
 }

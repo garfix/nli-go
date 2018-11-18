@@ -262,6 +262,7 @@ func (resolver *NameResolver) resolveName(name string, factBase knowledge.FactBa
 			}
 
 			nameInformations = append(nameInformations, NameInformation{
+				Name: name,
 				DatabaseName: factBase.GetName(),
 				EntityId:     id.TermValue,
 				Information:  information,

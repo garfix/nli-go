@@ -129,6 +129,8 @@ func (system *system) Answer(input string) string {
 		return userQuestion
 	}
 
+	genericRelations = append(genericRelations, nameResolvedRelations...)
+
 	dsRelations := system.transformer.Replace(system.generic2ds, genericRelations)
 
 	if system.log.IsOk() {
@@ -168,8 +170,6 @@ func (system *system) Answer(input string) string {
 	} else {
 		return ""
 	}
-
-// todo: save dialog context
 
 	return answer
 }

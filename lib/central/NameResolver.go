@@ -70,6 +70,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (mentales
 
 					dialogNameInformations = resolver.selectNameInformationsFromAnswer(factBaseNameInformations, answer)
 					resolver.SaveNameInformations(name, dialogNameInformations)
+					resolver.dialogContext.RemoveAnswerToOpenQuestion()
 
 				} else {
 

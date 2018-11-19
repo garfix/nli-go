@@ -89,6 +89,12 @@ func (dc *DialogContext) GetOpenQuestion() (string, bool) {
 	}
 }
 
+func (dc* DialogContext) RemoveOpenQuestion() {
+	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
+		mentalese.NewAnonymousVariable(),
+	}))
+}
+
 func (dc *DialogContext) SetAnswerToOpenQuestion(answer string) {
 	dc.factBase.AddRelation(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
 		mentalese.NewString(answer),
@@ -108,8 +114,8 @@ func (dc *DialogContext) GetAnswerToOpenQuestion() (string, bool) {
 	}
 }
 
-func (dc* DialogContext) RemoveOpenQuestion() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
+func (dc* DialogContext) RemoveAnswerToOpenQuestion() {
+	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
 		mentalese.NewAnonymousVariable(),
 	}))
 }

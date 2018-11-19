@@ -1,3 +1,55 @@
+# 2018-11-19
+
+I finally managed to implement asking the user which of the persons named Lord Byron s?he means.
+
+Now I have sense() relations. I think I turn these into a simple array of sense information.
+
+Once I have sense information about the senses of each of the names in a query, I think I must remove the name() relations from the queries I sent to the knowledge bases, and replace the entity-variables with their entity-ids.
+
+For example:
+
+in:
+
+name(E1, N) born(E1, B) has_child(E1, X)
+
+extract senses
+
+born(E1, B) has_child(E1, X)
+sense(E1, 'db1', 8311)
+sense(E1, 'db2', 136)
+
+query databases
+
+born(E1, B)
+    db1: born(E1, B) -->  born(8311, B)  -->  B = '1880-10-09'
+    db2: born(E1, B) -->  born(136, B)   -->  B = nil
+
+has_child(E1, X)
+    db1: has_child(E1, X)  -->  has_child(8311, X)  -->  X = nil
+    db2: has_child(E1, X)  -->  has_child(135, X)   -->  X = 2
+
+result:
+    B = '1880-10-09', X = 2
+
+Note: this is the solution of how to find the answer of a question whose information is spread over multiple databases.
+
+# 2018-11-18
+
+Steps for selecting a person from a given name that occurs multiple times.
+
+* User asks a question
+* System extracts the names
+* System finds database/id identities for each name, along with a sort of description of each identity, for the user
+* System stores the original question, along with the open question original_input(), open_question()
+* System outputs these as a multiple choice question to the user
+* User answers the question with a single answer
+* System stores answer_open_question() and removes open_question()
+* System finds database/id identities again for each name, along with a sort of description of each identity, for the user
+* System selects the ones that match the user's answer from answer_open_question()
+* System removes answer_open_question() and adds name_information()
+
+From that point on, name_information() is present for the name and this will be used whenever the name is used in the dialog.
+
 # 2018-11-11
 
 I am dropping the "suggest" option that auto-suggests the next word in a sentence. It didn't really help the user.

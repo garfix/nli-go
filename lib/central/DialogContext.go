@@ -11,7 +11,7 @@ const predicateAnswerToOpenQuestion = "answer_open_question"
 const predicateOriginalInput = "original_input"
 
 // The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
-// It may also be used to store relations that may be needed in the next call of the library (within the same session)
+// It may also be used to data relations that may be needed in the next call of the library (within the same session)
 type DialogContext struct {
 	factBase *knowledge.InMemoryFactBase
 	solver *ProblemSolver
@@ -127,7 +127,7 @@ func (dc* DialogContext) Process(currentInput string) string {
 	_, found := dc.GetOpenQuestion()
 	if found {
 
-		// store user response in open question
+		// data user response in open question
 		dc.SetAnswerToOpenQuestion(currentInput)
 
 		// return to not expecting an answer
@@ -140,7 +140,7 @@ func (dc* DialogContext) Process(currentInput string) string {
 
 		originalInput = currentInput
 
-		// store original question
+		// data original question
 		dc.SetOriginalInput(currentInput)
 
 	}

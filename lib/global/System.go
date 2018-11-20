@@ -121,17 +121,16 @@ func (system *system) Answer(input string) string {
 
 	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
 	// each access to a data store, replace E5 with its ID
-	nameResolvedRelations, userQuestion := system.nameResolver.Resolve(genericRelations)
+	nameStore, namelessRelations, userQuestion := system.nameResolver.Resolve(genericRelations)
 
 	if userQuestion == "" {
-		system.log.AddProduction("NameResolver", nameResolvedRelations.String())
+		system.log.AddProduction("NameResolver", namelessRelations.String())
+		system.log.AddProduction("NameResolver", nameStore.String())
 	} else {
 		return userQuestion
 	}
 
-	genericRelations = append(genericRelations, nameResolvedRelations...)
-
-	dsRelations := system.transformer.Replace(system.generic2ds, genericRelations)
+	dsRelations := system.transformer.Replace(system.generic2ds, namelessRelations)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Generic 2 DS", dsRelations.String())

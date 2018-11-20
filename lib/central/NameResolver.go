@@ -28,12 +28,17 @@ func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, 
 }
 
 // Returns a set of senses, or a human readable question to the user
-func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (mentalese.RelationSet, string) {
+func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*ResolvedNameStore, mentalese.RelationSet, string) {
+
+	nameStore := NewResolvedNameStore()
+	namelessRelations := mentalese.RelationSet{}
+	userQuestion := ""
+
+
+//verwijder de Name()'s
+
 
 	names := resolver.collectNames(relations)
-
-	senses := mentalese.RelationSet{}
-	userQuestion := ""
 
 	for variable, name := range names {
 
@@ -90,10 +95,22 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (mentales
 			}
 		}
 
-		senses = append(senses, resolver.createNameSensesFromNameInformations(dialogNameInformations, variable)...)
+		for _, info := range dialogNameInformations {
+			nameStore.AddName(variable, info.DatabaseName, info.EntityId)
+		}
 	}
 
-	return senses, userQuestion
+	nameTemplate := mentalese.NewRelation(mentalese.PredicateName, []mentalese.Term{
+		mentalese.NewAnonymousVariable(),
+		mentalese.NewAnonymousVariable(),
+		mentalese.NewAnonymousVariable(),
+	})
+
+	nameRelationBindings, _ := resolver.matcher.MatchRelationToSet(nameTemplate, relations, mentalese.Binding{})
+	nameRelations := resolver.matcher.BindSingleRelationMultipleBindings(nameTemplate, nameRelationBindings)
+	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
+
+	return nameStore, namelessRelations, userQuestion
 }
 
 func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations []NameInformation, answer string) []NameInformation {

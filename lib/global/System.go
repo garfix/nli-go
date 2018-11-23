@@ -138,7 +138,7 @@ func (system *system) Answer(input string) string {
 		return ""
 	}
 
-	dsAnswer := system.answerer.Answer(dsRelations)
+	dsAnswer := system.answerer.Answer(dsRelations, nameStore)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("DS Answer", dsAnswer.String())

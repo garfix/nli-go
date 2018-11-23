@@ -34,8 +34,8 @@ func TestDBPedia(t *testing.T) {
 		//{"Who was Ada Lovelace's father?", "Lord Byron was her father", "", ""},
 		//{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother", "", ""},
 		//{"Who was Percy Florence Shelley's father?", "Percy Bysshe Shelley was his father", "", ""},
-		//{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; birth_date: 1788-01-22; birth_place: London [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; birth_date: 1872-09-18; birth_place: New York City", "", "session-1.json"},
-		{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 23, 1788", "session-1.json", "session-2.json"},
+		{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; birth_date: 1788-01-22; birth_place: London [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; birth_date: 1872-09-18; birth_place: New York City", "", "session-1.json"},
+		{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 22, 1788", "session-1.json", "session-2.json"},
 	}
 
 	for _, test := range tests {
@@ -46,7 +46,9 @@ func TestDBPedia(t *testing.T) {
 
 		if test.inSessionName != "" {
 			inSessionPath := common.AbsolutePath(common.Dir(), "resources/" + test.inSessionName)
-			os.Link(inSessionPath, actualSessionPath)
+			//os.Link(inSessionPath, actualSessionPath)
+			inSession, _ := common.ReadFile(inSessionPath)
+			common.WriteFile(actualSessionPath, inSession)
 		}
 
 		system.PopulateDialogContext(actualSessionPath)

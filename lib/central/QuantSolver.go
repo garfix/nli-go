@@ -24,7 +24,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	solver.quantLevel++
 
 	// evaluate the scope
-	scopeBindings := solver.SolveRelationSet(scopeSet, []mentalese.Binding{binding})
+	scopeBindings := solver.SolveRelationSet(scopeSet, nil, []mentalese.Binding{binding})
 
 	solver.quantLevel--
 
@@ -104,7 +104,7 @@ func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bin
 
 					// load range bindings once
 					if rangeBindings == nil {
-						rangeBindings = solver.SolveRelationSet(rangeSet, []mentalese.Binding{{}})
+						rangeBindings = solver.SolveRelationSet(rangeSet, nil, []mentalese.Binding{{}})
 					}
 
 					rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)

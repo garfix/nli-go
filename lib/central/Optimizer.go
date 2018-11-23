@@ -21,11 +21,11 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
-func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
+func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *ResolvedNameStore) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
 	routes := knowledge.SolutionRoutes{}
 
-	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases)
+	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases, nameStore)
 
 	remainingRelations := mentalese.RelationSet{}
 
@@ -74,7 +74,7 @@ func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []kno
 	return false
 }
 
-func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.SolutionRoutes {
+func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *ResolvedNameStore) knowledge.SolutionRoutes {
 
 	routes := knowledge.SolutionRoutes{}
 
@@ -87,11 +87,13 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 
 			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
 
+			factBaseGroup.Relations = optimizer.bindKnowledgeBaseVariables(factBaseGroup.Relations, nameStore, knowledgeBases[i].GetName())
+
 			route := baseRoute
 			route = append(baseRoute, factBaseGroup)
 			routes = append(routes, route)
 
-			restRoutes := optimizer.findSolutionRoutes(route, restOfSet, knowledgeBases)
+			restRoutes := optimizer.findSolutionRoutes(route, restOfSet, knowledgeBases, nameStore)
 			for _, restRoute := range restRoutes {
 				routes = append(routes, restRoute)
 			}
@@ -99,4 +101,19 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 	}
 
 	return routes
+}
+
+func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
+
+	values := nameStore.GetValues(knowledgeBaseName)
+
+	binding := mentalese.Binding{}
+
+	for key, value := range values {
+		binding[key] = mentalese.NewId(value)
+	}
+
+	boundRelations := optimizer.matcher.BindRelationSetSingleBinding(set, binding)
+
+	return boundRelations
 }

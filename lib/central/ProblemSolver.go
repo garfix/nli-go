@@ -69,17 +69,26 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 //  { X: john, Z: jack, Y: billy }
 //  { X: john, Z: jack, Y: bob }
 // ]
-func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStore *ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
+
+	if nameStore == nil {
+		nameStore = &ResolvedNameStore{}
+	}
 
 	var newBindings []mentalese.Binding
 
 	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them
 	set = set.RemoveDuplicates()
 
+
+//vul de nameStore variabelen in in de solution routes
+
+
+
 	// sort the relations to reduce the number of tuples retrieved from the fact bases
-	solutionRoutes, remainingRelations, ok := solver.optimizer.CreateSolutionRoutes(set, solver.allKnowledgeBases)
+	solutionRoutes, remainingRelations, ok := solver.optimizer.CreateSolutionRoutes(set, solver.allKnowledgeBases, nameStore)
 
 	solver.log.AddProduction("Solution Routes", solutionRoutes.String())
 
@@ -352,7 +361,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		// subgoalBinding: from subgoal variable to goal constant
 		subgoalBinding := sourceBinding.RemoveVariables()
 
-		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, []mentalese.Binding{subgoalBinding})
+		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, nil, []mentalese.Binding{subgoalBinding})
 
 		// subgoalResultBinding: from subgoal variables to constants (contains temporary variables)
 		for _, subgoalResultBinding := range subgoalResultBindings {

@@ -11,16 +11,28 @@ func NewResolvedNameStore() *ResolvedNameStore {
 	}
 }
 
-func (store *ResolvedNameStore) AddName(variable string, databaseName string , entityId string) {
-	_, found := store.data[variable]
+func (store *ResolvedNameStore) AddName(variable string, databaseName string, entityId string) {
+	_, found := store.data[databaseName]
 
 	if !found {
-		store.data[variable] = map[string]string{}
+		store.data[databaseName] = map[string]string{}
 	}
 
-	store.data[variable][databaseName] = entityId
+	store.data[databaseName][variable] = entityId
 }
 
+func (store *ResolvedNameStore) GetValues(databaseName string) map[string]string {
+
+	values := map[string]string{}
+
+	_, found := store.data[databaseName]
+
+	if found {
+		values = store.data[databaseName]
+	}
+
+	return values
+}
 func (store *ResolvedNameStore) String() string {
 
 	string := ""

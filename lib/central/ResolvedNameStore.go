@@ -33,6 +33,7 @@ func (store *ResolvedNameStore) GetValues(databaseName string) map[string]string
 
 	return values
 }
+
 func (store *ResolvedNameStore) String() string {
 
 	string := ""

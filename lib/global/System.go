@@ -81,6 +81,10 @@ func (system *system) PopulateDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext)
 }
 
+func (system *system) ClearDialogContext() {
+	system.dialogContext.Initialize([]mentalese.Relation{})
+}
+
 func (system *system) StoreDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
 }

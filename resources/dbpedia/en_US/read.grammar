@@ -1,5 +1,5 @@
 [
-    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) last_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) third_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) }
 

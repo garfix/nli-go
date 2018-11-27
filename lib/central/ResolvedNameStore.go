@@ -11,6 +11,10 @@ func NewResolvedNameStore() *ResolvedNameStore {
 	}
 }
 
+func (store *ResolvedNameStore) IsEmpty() bool {
+	return len(store.data) == 0
+}
+
 func (store *ResolvedNameStore) AddName(variable string, databaseName string, entityId string) {
 	_, found := store.data[databaseName]
 

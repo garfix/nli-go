@@ -2,6 +2,7 @@ package central
 
 import (
 	"nli-go/lib/common"
+	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
@@ -20,11 +21,19 @@ type DialogContext struct {
 
 func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *DialogContext {
 
+	transformationString := "[" +
+		"name_information(Name, Database_name, Entity_id) => name_information(Name, Database_name, Entity_id); " +
+		"]"
+
+	parser := importer.NewInternalGrammarParser()
+
+	transformations := parser.CreateTransformations(transformationString)
+
 	factBase := knowledge.NewInMemoryFactBase(
 		"in-memory",
 		mentalese.RelationSet{},
 		matcher,
-		[]mentalese.RelationTransformation{},
+		transformations,
 		mentalese.DbStats{},
 		log,
 	)
@@ -56,6 +65,12 @@ func (dc *DialogContext) GetOriginalInput() (string, bool) {
 	} else {
 		return "", false
 	}
+}
+
+func (dc* DialogContext) RemoveOriginalInput() {
+	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOriginalInput, []mentalese.Term{
+		mentalese.NewAnonymousVariable(),
+	}))
 }
 
 func (dc *DialogContext) AddRelation(relation mentalese.Relation) {

@@ -125,13 +125,13 @@ func (system *system) Answer(input string) string {
 
 	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
 	// each access to a data store, replace E5 with its ID
-	nameStore, namelessRelations, userQuestion := system.nameResolver.Resolve(genericRelations)
+	nameStore, namelessRelations, userResponse := system.nameResolver.Resolve(genericRelations)
 
-	if userQuestion == "" {
+	if userResponse == "" {
 		system.log.AddProduction("NameResolver", namelessRelations.String())
 		system.log.AddProduction("NameResolver", nameStore.String())
 	} else {
-		return userQuestion
+		return userResponse
 	}
 
 	dsRelations := system.transformer.Replace(system.generic2ds, namelessRelations)
@@ -173,6 +173,8 @@ func (system *system) Answer(input string) string {
 	} else {
 		return ""
 	}
+
+	system.dialogContext.RemoveOriginalInput()
 
 	return answer
 }

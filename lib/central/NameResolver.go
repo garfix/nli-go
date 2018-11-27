@@ -32,18 +32,14 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 
 	nameStore := NewResolvedNameStore()
 	namelessRelations := mentalese.RelationSet{}
-	userQuestion := ""
-
-
-//verwijder de Name()'s
-
+	userResponse := ""
 
 	names := resolver.collectNames(relations)
 
 	for variable, name := range names {
 
 		// check if the name is known in the dialog context
-		dialogNameInformations := resolver.RetrieveNameInformations(name)
+		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
 
 		if len(dialogNameInformations) == 0 {
 
@@ -66,7 +62,11 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 				}
 			}
 
-			if factBasesWithResults > 1 || multipleResultsInFactBase {
+			if factBasesWithResults == 0 {
+
+				userResponse = "Name not found in any knowledge base: " + name
+
+			} else if factBasesWithResults > 1 || multipleResultsInFactBase {
 
 				// check if the user has just answered this question
 				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
@@ -80,8 +80,8 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 				} else {
 
 					// need to ask user
-					userQuestion = resolver.composeUserQuestion(factBaseNameInformations)
-					resolver.dialogContext.SetOpenQuestion(userQuestion)
+					userResponse = resolver.composeUserQuestion(factBaseNameInformations)
+					resolver.dialogContext.SetOpenQuestion(userResponse)
 					break
 
 				}
@@ -110,7 +110,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 	nameRelations := resolver.matcher.BindSingleRelationMultipleBindings(nameTemplate, nameRelationBindings)
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
-	return nameStore, namelessRelations, userQuestion
+	return nameStore, namelessRelations, userResponse
 }
 
 func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations []NameInformation, answer string) []NameInformation {
@@ -165,7 +165,7 @@ func (resolver *NameResolver) SaveNameInformations(name string, nameInformations
 	}
 }
 
-func (resolver *NameResolver) RetrieveNameInformations(name string) []NameInformation {
+func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInformation {
 
 	bindings := resolver.dialogContext.FindRelations(mentalese.RelationSet{
 		mentalese.NewRelation(predicateNameInformation, []mentalese.Term{

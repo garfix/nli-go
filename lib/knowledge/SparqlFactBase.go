@@ -14,6 +14,9 @@ import (
 
 const max_sparql_results = 100
 
+const MAX_QUERIES = 100
+
+
 type SparqlFactBase struct {
 	KnowledgeBaseCore
 	baseUrl           string
@@ -23,6 +26,7 @@ type SparqlFactBase struct {
 	stats			  mentalese.DbStats
 	entities 		  mentalese.Entities
 	matcher           *mentalese.RelationMatcher
+	queryCount 		  int
 	log               *common.SystemLog
 }
 
@@ -37,33 +41,42 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		stats: stats,
 		entities: entities,
 		matcher: matcher,
+		queryCount: 0,
 		log: log,
 	}
 }
 
-func (factBase SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 
-func (factBase SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
-func (factBase SparqlFactBase) GetStatistics() mentalese.DbStats {
+func (factBase *SparqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }
 
-func (factBase SparqlFactBase) GetEntities() mentalese.Entities {
+func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
 }
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) []mentalese.Binding {
+func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) []mentalese.Binding {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
 	bindings := []mentalese.Binding{}
+
+	factBase.queryCount++
+
+	if factBase.queryCount > MAX_QUERIES {
+		factBase.log.AddError("Too many SPARQL queries")
+		return bindings
+	}
+
 
 	if len(relation.Arguments) != 2 {
 		factBase.log.AddError("Relation does not have exactly two arguments: " + relation.String())

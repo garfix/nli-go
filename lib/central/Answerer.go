@@ -90,7 +90,14 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *ResolvedN
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, nameStore, solutionBindings)
+
+				if len(conditionBindings) > 1 {
+					answerer.log.AddError("A case with multiple condition bindings!")
+				}
+
+				preparationNameStore := nameStore.ReplaceVariables(nameStore, conditionBindings[0])
+
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, preparationNameStore, solutionBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings

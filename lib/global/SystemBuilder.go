@@ -55,7 +55,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	systemAggregateBase := knowledge.NewSystemAggregateBase(builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
-	nestedStructureBase := knowledge.NewNestedStructureBase(builder.log)
+	nestedStructureBase := knowledge.NewSystemNestedStructureBase(builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	system.dialogContext = central.NewDialogContext(matcher, solver, builder.log)
@@ -197,7 +197,7 @@ func (builder systemBuilder) ImportRuleBaseFromPath(solver *central.ProblemSolve
 		return
 	}
 
-	solver.AddRuleBase(knowledge.NewRuleBase("rules", rules, builder.log))
+	solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, builder.log))
 }
 
 func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSolver, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {

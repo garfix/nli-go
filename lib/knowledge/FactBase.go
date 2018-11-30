@@ -1,6 +1,8 @@
 package knowledge
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+)
 
 type FactBase interface {
 	KnowledgeBase

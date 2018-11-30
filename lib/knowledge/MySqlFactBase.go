@@ -41,29 +41,29 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 	}
 }
 
-func (factBase MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (factBase *MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
 }
 
-func (factBase MySqlFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
 }
 
-func (factBase MySqlFactBase) GetStatistics() mentalese.DbStats {
+func (factBase *MySqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }
 
-func (factBase MySqlFactBase) GetEntities() mentalese.Entities {
+func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
 }
 
-func (factBase MySqlFactBase) AddTableDescription(tableName string, columns []string) {
+func (factBase *MySqlFactBase) AddTableDescription(tableName string, columns []string) {
 	factBase.tableDescriptions[tableName] = columns
 }
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
+func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", needleRelation)
 

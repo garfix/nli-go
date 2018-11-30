@@ -123,6 +123,11 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(max_sparql_results)
 
+if relationUri == "http://dbpedia.org/ontology/child" {
+	a := 1
+	a++
+}
+
 	start := time.Now()
 
 	resp, err := http.PostForm(factBase.baseUrl,

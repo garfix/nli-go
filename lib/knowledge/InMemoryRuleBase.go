@@ -12,15 +12,15 @@ type InMemoryRuleBase struct {
 	log   *common.SystemLog
 }
 
-func NewRuleBase(name string, rules []mentalese.Rule, log *common.SystemLog) RuleBase {
-	return InMemoryRuleBase{
+func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.SystemLog) *InMemoryRuleBase {
+	return &InMemoryRuleBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
 		rules: rules,
 		log: log,
 	}
 }
 
-func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
@@ -37,7 +37,7 @@ func (ruleBase InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, kn
 	return matchingGroups
 }
 
-func (ruleBase InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
+func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
 
 	ruleBase.log.StartDebug("RuleBase Bind", goal)
 

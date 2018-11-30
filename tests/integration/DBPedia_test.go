@@ -26,11 +26,11 @@ func TestDBPedia(t *testing.T) {
 		outSessionName string
 	}{
 		{
-			//{"Who married Anne Isabella Milbanke?", "Lord Byron married her", "", ""},
-			//{"Who was Ada Lovelace's father?", "Lord Byron was her father", "", ""},
-			//{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother", "", ""},
-			//{"Who was Percy Florence Shelley's father?", "Percy Bysshe Shelley was his father", "", ""},
-			//{"Who married Xyz Abc?", "Name not found in any knowledge base: Xyz Abc", "", ""},
+			{"Who married Anne Isabella Milbanke?", "Lord Byron married her", "", ""},
+			{"Who was Ada Lovelace's father?", "Lord Byron was her father", "", ""},
+			{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother", "", ""},
+			{"Who was Percy Florence Shelley's father?", "Percy Bysshe Shelley was his father", "", ""},
+			{"Who married Xyz Abc?", "Name not found in any knowledge base: Xyz Abc", "", ""},
 		},
 		{
 //	{"Who married Michael Jackson?", "Lisa Marie Presley and Debbie Rowe married him", "", ""},
@@ -41,8 +41,8 @@ func TestDBPedia(t *testing.T) {
 		{
 			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; birth_date: 1788-01-22; birth_place: London [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; birth_date: 1872-09-18; birth_place: New York City", "", "session-1.json"},
 			{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 22, 1788", "session-1.json", "session-2.json"},
-//			{"Who married Lord Byron?", "Anne Isabella Byron married him", "session-2.json", ""},
-			{"How many children had Lord Byron?", "He has 2 children", "session-2.json", ""}, // Ada and Allegra
+			{"Who married Lord Byron?", "Anne Isabella Byron married him", "session-2.json", ""},
+//			{"How many children had Lord Byron?", "He has 2 children", "session-2.json", ""}, // Ada and Allegra
 		},
 
 		//	//{"dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)", "He was born on September 18, 1872", "session-1.json", "session-3-remove.json"},

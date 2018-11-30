@@ -86,6 +86,8 @@ func (matcher *RelationMatcher) BindSingleRelationSingleBinding(relation Relatio
 			if found {
 				arg = newValue
 			}
+		} else if argument.IsRelationSet() {
+			arg.TermValueRelationSet = matcher.BindRelationSetSingleBinding(argument.TermValueRelationSet, binding)
 		}
 
 		boundRelation.Arguments = append(boundRelation.Arguments, arg)

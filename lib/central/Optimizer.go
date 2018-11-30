@@ -1,8 +1,8 @@
 package central
 
 import (
-	"nli-go/lib/mentalese"
 	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
 	"sort"
 )
 
@@ -87,6 +87,8 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 
 			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
 
+			factBaseGroup.Relations = optimizer.bindKnowledgeBaseVariables(factBaseGroup.Relations, nameStore, factBase.GetName())
+
 			route := baseRoute
 			route = append(baseRoute, factBaseGroup)
 			routes = append(routes, route)
@@ -99,4 +101,19 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 	}
 
 	return routes
+}
+
+func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
+
+	values := nameStore.GetValues(knowledgeBaseName)
+
+	binding := mentalese.Binding{}
+
+	for key, value := range values {
+		binding[key] = mentalese.NewId(value)
+	}
+
+	boundRelations := optimizer.matcher.BindRelationSetSingleBinding(set, binding)
+
+	return boundRelations
 }

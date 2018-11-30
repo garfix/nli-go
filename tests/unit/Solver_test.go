@@ -108,7 +108,7 @@ func TestSolver(t *testing.T) {
 	]`)
 
 	factBase2 := knowledge.NewInMemoryFactBase(facts2, matcher, ds2db2, stats, log)
-	ruleBase2 := knowledge.NewRuleBase(rules2, log)
+	ruleBase2 := knowledge.NewInMemoryRuleBase(rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, log)
 	solver2.AddFactBase(factBase2)

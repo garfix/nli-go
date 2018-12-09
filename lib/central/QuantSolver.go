@@ -13,7 +13,7 @@ import (
 //             have_child(S1, O1)
 //         ])
 //     ])
-func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveQuant", quant, binding)
 
@@ -24,13 +24,13 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	solver.quantLevel++
 
 	// evaluate the scope
-	scopeBindings := solver.SolveRelationSet(scopeSet, nil, []mentalese.Binding{binding})
+	scopeBindings := solver.SolveRelationSet(scopeSet, nameStore, []mentalese.Binding{binding})
 
 	solver.quantLevel--
 
 	if solver.quantLevel == 0 {
 		// outermost quant: collect all bindings that quantify, if any
-		scopeBindings = solver.validateNestedQuants(quant, scopeBindings, []mentalese.Term{rangeVariable})
+		scopeBindings = solver.validateNestedQuants(quant, nameStore, scopeBindings, []mentalese.Term{rangeVariable})
 	}
 
 	solver.log.EndDebug("SolveQuant", scopeBindings)
@@ -39,7 +39,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 }
 
 // returns all bindings that quantify
-func (solver ProblemSolver) validateNestedQuants(quant mentalese.Relation, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
+func (solver ProblemSolver) validateNestedQuants(quant mentalese.Relation, nameStore *ResolvedNameStore, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
 
 	resultBindings := bindings
 
@@ -51,7 +51,7 @@ func (solver ProblemSolver) validateNestedQuants(quant mentalese.Relation, bindi
 			rangeVariable := relation.Arguments[mentalese.Quantification_RangeVariableIndex]
 			newRangeVariables := append(rangeVariables, rangeVariable)
 
-			resultBindings = solver.validateNestedQuants(relation, bindings, newRangeVariables)
+			resultBindings = solver.validateNestedQuants(relation, nameStore, bindings, newRangeVariables)
 			if len(resultBindings) == 0 {
 				break
 			}
@@ -60,13 +60,13 @@ func (solver ProblemSolver) validateNestedQuants(quant mentalese.Relation, bindi
 
 	// validate current level
 	if len(resultBindings) > 0 {
-		resultBindings = solver.validateQuantification(quant, resultBindings, rangeVariables)
+		resultBindings = solver.validateQuantification(quant, nameStore, resultBindings, rangeVariables)
 	}
 
 	return resultBindings
 }
 
-func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
+func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, nameStore *ResolvedNameStore, bindings []mentalese.Binding, rangeVariables[]mentalese.Term) []mentalese.Binding {
 
 	rangeVariable := quant.Arguments[mentalese.Quantification_RangeVariableIndex]
 	rangeSet := quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet
@@ -104,7 +104,7 @@ func (solver ProblemSolver) validateQuantification(quant mentalese.Relation, bin
 
 					// load range bindings once
 					if rangeBindings == nil {
-						rangeBindings = solver.SolveRelationSet(rangeSet, nil, []mentalese.Binding{{}})
+						rangeBindings = solver.SolveRelationSet(rangeSet, nameStore, []mentalese.Binding{{}})
 					}
 
 					rangeCount := mentalese.CountUniqueValues(rangeVariable.TermValue, rangeBindings)

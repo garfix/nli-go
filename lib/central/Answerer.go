@@ -66,6 +66,8 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *ResolvedN
 			quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
 			transformedGoal = quantifierScoper.Scope(transformedGoal)
 
+			answerer.log.AddProduction("Scoped", transformedGoal.String())
+
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, nameStore, []mentalese.Binding{{}})
 

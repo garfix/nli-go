@@ -42,7 +42,7 @@ func TestDBPedia(t *testing.T) {
 			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; birth_date: 1788-01-22; birth_place: London [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; birth_date: 1872-09-18; birth_place: New York City", "", "session-1.json"},
 			{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 22, 1788", "session-1.json", "session-2.json"},
 			{"Who married Lord Byron?", "Anne Isabella Byron married him", "session-2.json", ""},
-//			{"How many children had Lord Byron?", "He has 2 children", "session-2.json", ""}, // Ada and Allegra
+			{"How many children had Lord Byron?", "He has 2 children", "session-2.json", ""}, // Ada and Allegra
 		},
 
 		//	//{"dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)", "He was born on September 18, 1872", "session-1.json", "session-3-remove.json"},

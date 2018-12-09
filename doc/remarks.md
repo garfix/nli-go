@@ -1,3 +1,7 @@
+# 2018-12-01
+
+I will stop solving relation sets, and in stead solve relation routes and relation groups.
+
 # 2018-11-19
 
 I finally managed to implement asking the user which of the persons named Lord Byron s?he means.

@@ -382,6 +382,8 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 			nameRelationSet := builder.parser.CreateRelationSet(entityInfo.Name)
 
+			isaRelationSet := builder.parser.CreateRelationSet(entityInfo.Isa)
+
 			parseResult := builder.parser.GetLastParseResult()
 			if !parseResult.Ok {
 				builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
@@ -401,6 +403,7 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 			entities[key] = mentalese.EntityInfo{
 				Name: nameRelationSet,
+				Isa: isaRelationSet,
 				Knownby: knownBy,
 			}
 		}

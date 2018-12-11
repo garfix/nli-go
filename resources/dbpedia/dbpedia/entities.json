@@ -1,6 +1,7 @@
 {
   "person": {
-    "name": "[name(Id, Name, full_name)]",
+    "name": "[name(Id, Name, full_name) person(Id)]",
+    "isa": "[person(Id)]",
     "knownby": {
       "birth_date": "[birth_date(Id, Value)]",
       "birth_place": "[birth_place(Id, Value)]"

@@ -241,17 +241,37 @@ func (resolver *NameResolver) resolveName(name string, factBase knowledge.FactBa
 	for entityType, entityInfo := range factBase.GetEntities() {
 
 		// create a relation set for the name
-		boundNameSet := resolver.matcher.BindRelationSetSingleBinding(entityInfo.Name, mentalese.Binding{
-			mentalese.NameVar: mentalese.NewString(name),
-		})
+		//boundNameSet := resolver.matcher.BindRelationSetSingleBinding(entityInfo.Name, mentalese.Binding{
+		//	mentalese.NameVar: mentalese.NewString(name),
+		//})
+		//
+		//// ask fact base for entities (ids) with this name
+		//bindings := resolver.solver.FindFacts(factBase, boundNameSet)
 
-		// ask fact base for entities (ids) with this name
-		bindings := resolver.solver.FindFacts(factBase, boundNameSet)
+		bindings := resolver.solver.SolveRelationSet(entityInfo.Name, nil, []mentalese.Binding{{
+			mentalese.NameVar: mentalese.NewString(name),
+		}})
 
 		for _, binding := range bindings {
 
 			id, _ := binding[mentalese.IdVar]
 			information := entityType
+
+			//// check type
+			//boundNameSet := resolver.matcher.BindRelationSetSingleBinding(entityInfo.Isa, mentalese.Binding{
+			//	mentalese.IdVar: mentalese.NewId(id.TermValue),
+			//})
+			//
+			//// ask fact base for entities (ids) with this name
+			//typeBindings := resolver.solver.FindFacts(factBase, boundNameSet)
+
+			//typeBindings := resolver.solver.SolveRelationSet(boundNameSet, nil, []mentalese.Binding{{
+			//	mentalese.IdVar: mentalese.NewId(id.TermValue),
+			//}})
+			//
+			//if len(typeBindings) == 0 {
+			//	continue
+			//}
 
 			// sort because the resulting strings must not be in random order
 			sortedInfoTypes := []string{}

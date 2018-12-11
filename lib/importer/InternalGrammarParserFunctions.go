@@ -719,16 +719,22 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 						term.TermType = mentalese.Term_anonymousVariable
 						term.TermValue = tokenValue
 					} else {
-						relationSet := mentalese.RelationSet{}
-						relationSet, startIndex, ok = parser.parseRelationSet(tokens, startIndex)
+						tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_id)
 						if ok {
-							term.TermType = mentalese.Term_relationSet
-							term.TermValueRelationSet = relationSet
+							term.TermType = mentalese.Term_id
+							term.TermValue = tokenValue
 						} else {
-							tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+							relationSet := mentalese.RelationSet{}
+							relationSet, startIndex, ok = parser.parseRelationSet(tokens, startIndex)
 							if ok {
-								term.TermType = mentalese.Term_regExp
-								term.TermValue = tokenValue
+								term.TermType = mentalese.Term_relationSet
+								term.TermValueRelationSet = relationSet
+							} else {
+								tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+								if ok {
+									term.TermType = mentalese.Term_regExp
+									term.TermValue = tokenValue
+								}
 							}
 						}
 					}

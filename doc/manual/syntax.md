@@ -5,6 +5,7 @@ For the semantic language holds:
  * atoms, like predicates
  * string constants: use single quotes: 'De Nachtwacht'
  * numbers: 25 1.5
+ * id: anything between backticks: `38911` `http://dbpedia.org/page/Michael_Jackson_(actor)`
 
  ## Comments
 

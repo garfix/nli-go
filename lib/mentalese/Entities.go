@@ -4,6 +4,7 @@ type Entities map[string]EntityInfo
 
 type EntityInfo struct {
 	Name RelationSet
+	Isa RelationSet
 	Knownby map[string]RelationSet
 }
 

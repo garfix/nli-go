@@ -70,12 +70,12 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	bindings := []mentalese.Binding{}
 
-	factBase.queryCount++
-
-	if factBase.queryCount > MAX_QUERIES {
-		factBase.log.AddError("Too many SPARQL queries")
-		return bindings
-	}
+	//factBase.queryCount++
+	//
+	//if factBase.queryCount > MAX_QUERIES {
+	//	factBase.log.AddError("Too many SPARQL queries")
+	//	return bindings
+	//}
 
 
 	if len(relation.Arguments) != 2 {
@@ -95,7 +95,7 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 		if relation.Arguments[0].TermType == mentalese.Term_stringConstant {
 			var1 += "@en"
 		} else if relation.Arguments[0].TermType == mentalese.Term_id {
-			var1 = "<" + var1 + ">"
+			var1 = "<" + relation.Arguments[0].TermValue + ">"
 		}
 	}
 
@@ -107,7 +107,7 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 		if relation.Arguments[1].TermType == mentalese.Term_stringConstant {
 			var2 += "@en"
 		} else if relation.Arguments[1].TermType == mentalese.Term_id {
-			var2 = "<" + var2 + ">"
+			var2 = "<" + relation.Arguments[1].TermValue + ">"
 		}
 	}
 
@@ -122,11 +122,6 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 	}
 
 	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(max_sparql_results)
-
-if relationUri == "http://dbpedia.org/ontology/child" {
-	a := 1
-	a++
-}
 
 	start := time.Now()
 

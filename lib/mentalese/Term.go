@@ -106,7 +106,7 @@ func (term Term) String() string {
 	case Term_relationSet:
 		s = term.TermValueRelationSet.String()
 	case Term_id:
-		s = term.TermValue
+		s = "`" + term.TermValue + "`"
 	default:
 		s = "<unknown>"
 	}

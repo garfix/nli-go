@@ -41,6 +41,7 @@ type Entities map[string]EntityInfo
 
 type EntityInfo struct {
 	Name string
+	Isa string
 	Knownby map[string]string
 }
 

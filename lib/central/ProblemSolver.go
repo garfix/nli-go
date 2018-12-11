@@ -75,6 +75,10 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 
 	solver.log.AddProduction("Solve", set.String())
 
+	if nameStore == nil {
+		nameStore = &ResolvedNameStore{}
+	}
+
 	var newBindings []mentalese.Binding
 
 	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them

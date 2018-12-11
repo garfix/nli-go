@@ -82,7 +82,7 @@ func TestAnswerer(t *testing.T) {
 		"person": {Size: 100, DistinctValues: []int{100, 100}},
 	}
 
-	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase(log)
 
 	solver := central.NewProblemSolver(matcher, log)
@@ -110,7 +110,7 @@ func TestAnswerer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Answer(input)
+		resultRelationSet := answerer.Answer(input, central.NewResolvedNameStore())
 
 		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
 			t.Errorf("Answerer(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)

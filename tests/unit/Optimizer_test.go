@@ -46,8 +46,8 @@ func TestOptimizer(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	factBase1 := knowledge.NewInMemoryFactBase(facts1, matcher, ds2db1, stats1, log)
-	factBase2 := knowledge.NewInMemoryFactBase(facts2, matcher, ds2db2, stats2, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory-1", facts1, matcher, ds2db1, stats1, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-2", facts2, matcher, ds2db2, stats2, log)
 
 	factBases := []knowledge.KnowledgeBase{factBase1, factBase2}
 
@@ -84,7 +84,7 @@ func TestOptimizer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		routes, remainingRelations, _ := optimizer.CreateSolutionRoutes(input, factBases)
+		routes, remainingRelations, _ := optimizer.CreateSolutionRoutes(input, factBases, central.NewResolvedNameStore())
 		outputString := routes.String()
 
 		if outputString != test.output {

@@ -67,11 +67,11 @@ func TestQuantSolver(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher(log)
 
 	stats := mentalese.DbStats{}
-	factBase1 := knowledge.NewInMemoryFactBase(dbFacts, matcher, ds2db, stats, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, stats, log)
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 
-	nestedStructureBase := knowledge.NewNestedStructureBase(log)
+	nestedStructureBase := knowledge.NewSystemNestedStructureBase(log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	for _, test := range tests {
@@ -79,7 +79,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := solver.SolveQuant(quant, binding)
+		result := solver.SolveQuant(quant, central.NewResolvedNameStore(), binding)
 		result = mentalese.UniqueBindings(result)
 
 		resultString := ""

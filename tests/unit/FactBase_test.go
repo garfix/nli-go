@@ -39,7 +39,7 @@ func TestFactBase(t *testing.T) {
 
 	stats := mentalese.DbStats{}
 	matcher := mentalese.NewRelationMatcher(log)
-	factBase := knowledge.NewInMemoryFactBase(facts, matcher, ds2db, stats, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, log)
 	solver := central.NewProblemSolver(matcher, log)
 
 	tests := []struct {

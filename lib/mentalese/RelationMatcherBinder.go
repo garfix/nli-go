@@ -72,6 +72,14 @@ func (matcher *RelationMatcher) BindTerm(subjectArgument Term, patternArgument T
 	}
 }
 
+
+
+
+// todo!! these are moved to RelationSet
+
+
+
+
 // Returns a new relation, that has all variables bound to bindings
 func (matcher *RelationMatcher) BindSingleRelationSingleBinding(relation Relation, binding Binding) Relation {
 

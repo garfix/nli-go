@@ -75,12 +75,12 @@
     { form: 'how',                pos: wh_word,               sense: isa(E, how) }
     { form: 'which',              pos: wh_word,               sense: isa(E, which) }
 
-    { form: 'de',                 pos: insertion,             sense: name(E, 'de', insertion) }
-    { form: 'van',                pos: insertion,             sense: name(E, 'van', insertion) }
+    { form: 'de',                 pos: insertion,             sense: name(E, 'de', 2) }
+    { form: 'van',                pos: insertion,             sense: name(E, 'van', 2) }
 
-    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, first_name) }
-    { form: /^[A-Z]/,             pos: last_name,             sense: name(E, Form, last_name) }
-    { form: /^[A-Z]/,             pos: full_name,             sense: name(E, Form, full_name) }
+    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, 1) }
+    { form: /^[A-Z]/,             pos: last_name,             sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,             pos: full_name,             sense: name(E, Form, 1) }
 
     { form: /^[0-9]+/,            pos: number,                sense: number(E, Form) }
 

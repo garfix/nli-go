@@ -10,16 +10,18 @@ type InMemoryFactBase struct {
 	facts   mentalese.RelationSet
 	ds2db   []mentalese.RelationTransformation
 	stats	mentalese.DbStats
+	entities 		  mentalese.Entities
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts: facts,
 		ds2db: ds2db,
 		stats: stats,
+		entities: entities,
 		matcher: matcher,
 		log: log,
 	}
@@ -38,7 +40,7 @@ func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {
 }
 
 func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {
-	return mentalese.Entities{}
+	return factBase.entities
 }
 
 func (factBase *InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {

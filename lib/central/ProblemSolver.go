@@ -73,11 +73,11 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
-	solver.log.AddProduction("Solve", set.String())
-
 	if nameStore == nil {
 		nameStore = &ResolvedNameStore{}
 	}
+
+	solver.log.AddProduction("Solve", set.String() + " " + nameStore.String())
 
 	var newBindings []mentalese.Binding
 
@@ -373,23 +373,12 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		// sourceBinding: from subgoal variable to goal argument
 		sourceBinding := sourceBindings[i]
 
-		// subgoalBinding: from subgoal variable to goal constant
-		subgoalBinding := sourceBinding.RemoveVariables()
+		// rewrite the variables of subgoal set to those of goalRelation
+		sourceSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
-		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, nameStore, []mentalese.Binding{subgoalBinding})
+		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, nameStore, []mentalese.Binding{binding})
 
-		// subgoalResultBinding: from subgoal variables to constants (contains temporary variables)
-		for _, subgoalResultBinding := range subgoalResultBindings {
-
-			// sourceBinding e.g. { A:X, B:'yellow' }
-			// after swap { X:A }
-			// bind { X:A } with { A:'red', B:'yellow', C:'blue' } results in { X:'red' }
-			convertedBinding := sourceBinding.Swap().Bind(subgoalResultBinding)
-
-			// start extending the new binding with goalRelation variables as keys
-			goalBinding := binding.Merge(convertedBinding)
-			goalBindings = append(goalBindings, goalBinding)
-		}
+		goalBindings = append(goalBindings, subgoalResultBindings...)
 	}
 
 	solver.log.EndDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalBindings)

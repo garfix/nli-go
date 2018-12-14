@@ -91,6 +91,9 @@ func (system *system) StoreDialogContext(sessionDataPath string) {
 
 func (system *system) Answer(input string) string {
 
+	// reset created system variables
+	mentalese.ResetVariables()
+
 	originalInput := system.dialogContext.Process(input)
 
 	if system.log.IsOk() {

@@ -232,7 +232,12 @@ func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSo
 
 	stats, _ := builder.CreateDbStats(factBase.Stats)
 
-	solver.AddFactBase(knowledge.NewInMemoryFactBase("memory", facts, matcher, dbMap, stats, builder.log))
+	entities, ok := builder.CreateEntities(factBase.Entities)
+	if !ok {
+		return
+	}
+
+	solver.AddFactBase(knowledge.NewInMemoryFactBase("memory", facts, matcher, dbMap, stats, entities, builder.log))
 }
 
 func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
@@ -382,8 +387,6 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 			nameRelationSet := builder.parser.CreateRelationSet(entityInfo.Name)
 
-			isaRelationSet := builder.parser.CreateRelationSet(entityInfo.Isa)
-
 			parseResult := builder.parser.GetLastParseResult()
 			if !parseResult.Ok {
 				builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
@@ -403,7 +406,6 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 			entities[key] = mentalese.EntityInfo{
 				Name: nameRelationSet,
-				Isa: isaRelationSet,
 				Knownby: knownBy,
 			}
 		}

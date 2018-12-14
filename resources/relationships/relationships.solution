@@ -11,22 +11,18 @@
     } {
         condition: act(question, yes_no) married_to(A, B),
         no_results: {
-            preparation: exists(G, A),
-            answer: result(G)
+            answer: result(false)
         },
         some_results: {
-            preparation: exists(G, A),
-            answer: result(G)
+            answer: result(true)
         }
     } {
         condition: act(question, yes_no) siblings(A, B),
         no_results: {
-            preparation: exists(G, A),
-            answer: result(G)
+            answer: result(false)
         },
         some_results: {
-            preparation: exists(G, A),
-            answer: result(G)
+            answer: result(true)
         }
     } {
         condition: act(question, how_many) have_child(B, A) focus(A),

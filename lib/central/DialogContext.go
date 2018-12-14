@@ -35,6 +35,7 @@ func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver,
 		matcher,
 		transformations,
 		mentalese.DbStats{},
+		mentalese.Entities{},
 		log,
 	)
 

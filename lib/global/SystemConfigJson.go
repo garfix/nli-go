@@ -4,6 +4,7 @@ type relationSetFactBase struct {
 	Facts    string
 	Map      string
 	Stats	 string
+	Entities string
 }
 
 type mysqlColumn struct {
@@ -41,7 +42,6 @@ type Entities map[string]EntityInfo
 
 type EntityInfo struct {
 	Name string
-	Isa string
 	Knownby map[string]string
 }
 

@@ -36,6 +36,17 @@ $(function(){
         document.getElementById('production-box').innerHTML = html;
     }
 
+    $('#samples a').click(function(event){
+        event.preventDefault();
+        $('#q').val(this.innerHTML);
+        $('#samples').hide();
+    });
+
+    $('#show-samples').click(function (event) {
+        event.preventDefault();
+        $('#samples').show();
+    });
+
     $('#f').submit(function(){
         $.ajax({
             url: 'ajax-answer.php',

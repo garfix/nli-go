@@ -4,31 +4,28 @@ html {
 }
 
 body {
-    font-family: arial;
+    font-family: arial, sans-serif;
     margin: 0;
     padding: 0;
     background-image: url("../img/dbpedia_bg.png");
     background-repeat: repeat;
 }
 
+a {
+    color: #FE5F55;
+}
+
+h1 {
+    color: #0A2463;
+}
+
 #main {
     max-width: 800px;
     margin: 40px auto 0 auto;
-    padding: 0 50px 0 50px;
+    padding: 25px 25px 0 25px;
     background-color: white;
     border-width: 5px 0 5px 0;
-    border: solid #6060f0;
-}
-
-.ui-menu {
-    padding: 0;
-    font-weight: bold;
-    color: #405952;
-}
-
-a.ui-corner-all:hover {
-    background-color: #FF974F;
-    font-weight: bold;
+    border: solid #0A2463;
 }
 
 header {
@@ -43,7 +40,18 @@ header {
     width: 400px;
     padding: 5px;
     font-size: 20px;
+    margin: 10px 0 10px 0;
 }
+
+#samples {
+    margin: 10px 0 10px 0;
+}
+
+    #samples a {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 20px;
+    }
 
 #submit-button {
     padding: 5px;
@@ -54,31 +62,30 @@ header {
 #answer-box {
     background: #f0f0f0;
     margin: 10px 0 10px 0;
-    width: 800px;
     padding: 10px;
     font-size: 20px;
     font-weight: bold;
+    color: #AF0000;
 }
 
 #error-box {
     border: 1px solid #888;
     padding: 3px;
     margin: 10px 0 10px 0;
-    width: 800px;
 }
 
-
 #production-box {
-    box-sizing: content-box;
     border: 1px solid #888;
     padding: 3px;
     margin: 10px 0 10px 0;
-    width: 95%;
 }
 
 .productions td {
+    font-family: monospace;
     vertical-align: top;
     border-bottom: 1px solid #6d95e0;
+    word-break: break-all;
+    padding: 5px;
 }
 
 .production_name {
@@ -87,10 +94,38 @@ header {
     color: #405952;
 }
 
+.production_value {
+    font-weight: bold;
+}
+
+.dialog-context {
+
+}
+
+.tokenizer {
+
+}
+
+.nameresolver {
+
+}
+
+.parser {
+
+}
+
+.relationizer {
+
+}
+
+.solve {
+
+}
+
 .sparql-query {
-    color: #ff585d;
+    color: #AF0000;
 }
 
 .solution-routes {
-    color: #6d95e0;
+    color: #213ba6;
 }

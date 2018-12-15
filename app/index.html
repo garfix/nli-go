@@ -6,9 +6,17 @@
 </head>
 <body>
     <div id="main">
-        <h1>NLI-GO: Query DBpedia</h1>
+        <h1>Query DBpedia with NLI-GO</h1>
 
-        <header>What's your question?</header>
+        <header>What's your question?&nbsp;&nbsp;&nbsp;[ <a id="show-samples" href="">Show me some sample questions</a> ]</header>
+
+        <div id="samples" style="display: none">
+            <a href="" title="Click to select">How many children had Madonna?</a>
+            <a href="" title="Click to select">Who was Ada Lovelace's father?</a>
+            <a href="" title="Click to select">Who was Ada Lovelace's mother?</a>
+            <a href="" title="Click to select">Who married Lord Byron?</a>
+            <a href="" title="Click to select">When was Elvis Presley born?</a>
+        </div>
 
         <form id="f">
             <input type="text" name="input" id="q">

@@ -2,60 +2,55 @@
 <html>
 <head>
     <script src="js/jquery-1.5.2.js" type="text/javascript" charset="utf-8"></script>
-    <script src="js/jquery-ui.1.8.12.js" type="text/javascript" charset="utf-8"></script>
-    <script src="js/tag-it.js"></script>
-
-    <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
-    <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
     <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <h1>NLI-GO: Query DBPedia</h1>
+    <div id="main">
+        <h1>NLI-GO: Query DBpedia</h1>
 
-    <header>What's your question?</header>
+        <header>What's your question?</header>
 
-    <form id="f">
-        <input type="text" name="q" id="q">
-        <button type="submit">Enter</button>
-    </form>
+        <form id="f">
+            <input type="text" name="input" id="q">
+            <button type="submit" id="submit-button">Enter</button>
+        </form>
 
-    <header>Answer</header>
-    <div id="answer-box"></div>
+        <header>Answer</header>
+        <div id="answer-box">&nbsp;</div>
 
-    <header>Errors</header>
-    <div id="error-box"></div>
+        <header>Errors</header>
+        <div id="error-box">&nbsp;</div>
 
-    <header>Productions</header>
-    <div id="production-box"></div>
+        <header>Productions</header>
+        <div id="production-box">&nbsp;</div>
 
-    <header>About this page</header>
-    <p>
-        This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br>
-        It connects you to <a href="http://wiki.dbpedia.org/about">DBPedia</a>, a Sparql database that contains data from Wikipedia.
-    </p>
+        <header>About this page</header>
+        <p>
+            This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br>
+            It connects you to <a href="http://wiki.dbpedia.org/about">DBPedia</a>, a Sparql database that contains data from Wikipedia.
+        </p>
 
-    <p>
-        It's scope is still quite limited. For example, in the input field above, you can only ask questions of these types:
-    </p>
-    <ul>
-        <li>Who married &lt;PERSON&gt;</li>
-        <li>How many children had &lt;PERSON&gt;</li>
-        <li>Who was &lt;PERSON&gt;'s father</li>
-        <li>Who was &lt;PERSON&gt;'s mother</li>
-        <li>When was &lt;PERSON&gt; born</li>
-    </ul>
-    <p>
-        Where &lt;PERSON&gt; must be the name of a person in the database, it must consist of 2 or 3 words, each of which must start with a capital.<br>
-        For example:
-    </p>
-    <p>Note! The application cannot handle names that belong to multiple persons, yet. If you try, you may see that the data of the persons will get mixed up.</p>
-    <ul>
-        <li>Lord Byron</li>
-        <li>Elvis Presley</li>
-        <li>Michael Jackson</li>
-    </ul>
-
-    <footer>Input component by <a href="http://aehlke.github.io/tag-it/" target="_blank">Tag-it!</a></footer>
+        <p>
+            It's scope is still quite limited. For example, in the input field above, you can only ask questions of these types:
+        </p>
+        <ul>
+            <li>Who married &lt;PERSON&gt;</li>
+            <li>How many children had &lt;PERSON&gt;</li>
+            <li>Who was &lt;PERSON&gt;'s father</li>
+            <li>Who was &lt;PERSON&gt;'s mother</li>
+            <li>When was &lt;PERSON&gt; born</li>
+        </ul>
+        <p>
+            Where &lt;PERSON&gt; must be the name of a person in the database, it must consist of 2 or 3 words, each of which must start with a capital.<br>
+            For example:
+        </p>
+        <ul>
+            <li>Lord Byron</li>
+            <li>Elvis Presley</li>
+            <li>Michael Jackson</li>
+        </ul>
+        <p>When your question contains a name that belongs to several people in the database, the application asks you to choose among them.</p>
+    </div>
 
     <script src="js/index.js"></script>
 </body>

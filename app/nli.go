@@ -30,7 +30,7 @@ func main() {
 
 	flag.Parse()
 
-	if len(flag.Args()) != 2 {
+	if len(flag.Args()) != 1 {
 		fmt.Println("Usage: nli [-s <session_id>] [-c </path/to/config.json>] <full sentence>")
 		fmt.Println("")
 		fmt.Println("Example:")
@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 
-	sentence := flag.Arg(1)
+	sentence := flag.Arg(0)
 	absConfigPath := common.AbsolutePath(common.Dir(), configPath)
 	log := common.NewSystemLog(false)
 	system := global.NewSystem(absConfigPath, log)

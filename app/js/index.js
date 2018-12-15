@@ -10,14 +10,14 @@ $(function(){
 
     function showProductions(productions) {
 
-        html = '<table class="productions">';
+        var html = '<table class="productions">';
 
         for (var key in productions) {
-            production = productions[key];
+            var production = productions[key];
 
-            matches = production.match(/([^:]+)/);
-            name = matches[1];
-            value = production.substr(name.length + 1)
+            var matches = production.match(/([^:]+)/);
+            var name = matches[1];
+            var value = production.substr(name.length + 1)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -25,7 +25,7 @@ $(function(){
                 .replace(/'/g, "&#039;")
                 .replace("\n", "<br>");
 
-            className = name.toLowerCase().replace(' ', '-');
+            var className = name.toLowerCase().replace(' ', '-');
 
             html += "<tr><td class='production_name'>" + name + "</td>";
             html += "<td class='production_value " + className + "'>" + value + "</td></tr>";
@@ -35,50 +35,6 @@ $(function(){
 
         document.getElementById('production-box').innerHTML = html;
     }
-
-    function autoCompleteSource(request, response) {
-
-        $.ajax({
-            url: 'ajax-suggest.php',
-            data: { format: "json", query: $('#q').val() },
-            dataType: 'json',
-            type: 'GET',
-            success: function (data) {
-
-                var suggests = data.Value;
-                var success = data.Success;
-                var errorLines = data.ErrorLines;
-
-                showError(errorLines);
-
-                if (success) {
-
-                    response($.map(suggests, function (item) {
-                        return {
-                            label: item,
-                            value: item
-                        }
-                    }));
-                }
-            },
-            error: function (request, status, error) {
-                showError(error)
-            }
-        })
-    }
-
-    $('#q').tagit({
-        autocomplete: {delay: 0, minLength: 0, source: autoCompleteSource},
-        showAutocompleteOnFocus: true,
-        removeConfirmation: false,
-        caseSensitive: true,
-        allowDuplicates: true,
-        allowSpaces: false,
-        readOnly: false,
-        tagLimit: null,
-        tabIndex: null,
-        placeholderText: "Next word ..."
-    });
 
     $('#f').submit(function(){
         $.ajax({

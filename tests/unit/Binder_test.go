@@ -37,7 +37,7 @@ func TestBinder(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		originalBinding := binding
 		wantBinding := parser.CreateBinding(test.wantBinding)
-		resultBinding, resultOk := matcher.BindTerm(subject, object, binding)
+		resultBinding, resultOk := matcher.MatchTerm(subject, object, binding)
 
 		if !resultBinding.Equals(wantBinding) || resultOk != test.wantOk {
 			t.Errorf("bindTerm(%v, %v, %v): got %v %v, want %v %v", subject, object, binding, resultBinding, resultOk, wantBinding, test.wantOk)

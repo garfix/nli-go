@@ -170,33 +170,10 @@ func createVariable() Term {
 
 
 
-// todo!! move some of these to Relation
 
 
 
-// Returns a new relation, that has all variables bound to bindings
-func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relation {
 
-	boundRelation := Relation{}
-	boundRelation.Predicate = relation.Predicate
-
-	for _, argument := range relation.Arguments {
-
-		arg := argument
-		if argument.IsVariable() {
-			newValue, found := binding[argument.TermValue]
-			if found {
-				arg = newValue
-			}
-		} else if argument.IsRelationSet() {
-			arg.TermValueRelationSet = argument.TermValueRelationSet.BindRelationSetSingleBinding(binding)
-		}
-
-		boundRelation.Arguments = append(boundRelation.Arguments, arg)
-	}
-
-	return boundRelation
-}
 
 // Returns a new relation set, that has all variables bound to bindings
 func (relations RelationSet) BindRelationSetSingleBinding(binding Binding) RelationSet {
@@ -204,18 +181,6 @@ func (relations RelationSet) BindRelationSetSingleBinding(binding Binding) Relat
 	boundRelations := RelationSet{}
 
 	for _, relation := range relations {
-		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
-	}
-
-	return boundRelations
-}
-
-// Returns multiple relations, that has all variables bound to bindings
-func (relation Relation) BindSingleRelationMultipleBindings(bindings []Binding) []Relation {
-
-	boundRelations := []Relation{}
-
-	for _, binding := range bindings {
 		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
 	}
 
@@ -233,9 +198,6 @@ func (set RelationSet) BindRelationSetMultipleBindings(bindings []Binding) []Rel
 
 	return boundRelationSets
 }
-
-
-
 
 func (set RelationSet) String() string {
 

@@ -1,5 +1,7 @@
 package mentalese
 
+import "nli-go/lib/common"
+
 type Relation struct {
 	Predicate string
 	Arguments []Term
@@ -22,6 +24,19 @@ func NewRelation(predicate string, arguments []Term) Relation {
 		Predicate: predicate,
 		Arguments: arguments,
 	}
+}
+
+func (relation Relation) GetVariableNames() []string {
+
+	var names []string
+
+	for _, argument := range relation.Arguments {
+		if argument.IsVariable() {
+			names = append(names, argument.TermValue)
+		}
+	}
+
+	return common.StringArrayDeduplicate(names)
 }
 
 func (relation Relation) Equals(otherRelation Relation) bool {

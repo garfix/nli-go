@@ -134,7 +134,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 
 	// replace variables in set
 
-	return set.BindRelationSetSingleBinding(set, importBinding)
+	return set.BindRelationSetSingleBinding(importBinding)
 }
 
 func findVariables(set RelationSet) []string {
@@ -175,7 +175,7 @@ func createVariable() Term {
 
 
 // Returns a new relation, that has all variables bound to bindings
-func (set RelationSet) BindSingleRelationSingleBinding(relation Relation, binding Binding) Relation {
+func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relation {
 
 	boundRelation := Relation{}
 	boundRelation.Predicate = relation.Predicate
@@ -189,7 +189,7 @@ func (set RelationSet) BindSingleRelationSingleBinding(relation Relation, bindin
 				arg = newValue
 			}
 		} else if argument.IsRelationSet() {
-			arg.TermValueRelationSet = set.BindRelationSetSingleBinding(argument.TermValueRelationSet, binding)
+			arg.TermValueRelationSet = argument.TermValueRelationSet.BindRelationSetSingleBinding(binding)
 		}
 
 		boundRelation.Arguments = append(boundRelation.Arguments, arg)
@@ -199,36 +199,36 @@ func (set RelationSet) BindSingleRelationSingleBinding(relation Relation, bindin
 }
 
 // Returns a new relation set, that has all variables bound to bindings
-func (set RelationSet) BindRelationSetSingleBinding(relations RelationSet, binding Binding) RelationSet {
+func (relations RelationSet) BindRelationSetSingleBinding(binding Binding) RelationSet {
 
 	boundRelations := RelationSet{}
 
 	for _, relation := range relations {
-		boundRelations = append(boundRelations, set.BindSingleRelationSingleBinding(relation, binding))
+		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
 	}
 
 	return boundRelations
 }
 
 // Returns multiple relations, that has all variables bound to bindings
-func (set RelationSet) BindSingleRelationMultipleBindings(relation Relation, bindings []Binding) []Relation {
+func (relation Relation) BindSingleRelationMultipleBindings(bindings []Binding) []Relation {
 
 	boundRelations := []Relation{}
 
 	for _, binding := range bindings {
-		boundRelations = append(boundRelations, set.BindSingleRelationSingleBinding(relation, binding))
+		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
 	}
 
 	return boundRelations
 }
 
 // Returns new relation sets, that have all variables bound to bindings
-func (set RelationSet) BindRelationSetMultipleBindings(relations RelationSet, bindings []Binding) []RelationSet {
+func (set RelationSet) BindRelationSetMultipleBindings(bindings []Binding) []RelationSet {
 
 	boundRelationSets := []RelationSet{}
 
 	for _, binding := range bindings {
-		boundRelationSets = append(boundRelationSets, set.BindRelationSetSingleBinding(relations, binding))
+		boundRelationSets = append(boundRelationSets, set.BindRelationSetSingleBinding(binding))
 	}
 
 	return boundRelationSets

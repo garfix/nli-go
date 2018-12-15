@@ -118,6 +118,19 @@ func (b Binding) Swap() Binding {
 	return result
 }
 
+func (b Binding) FilterVariablesByName(variableNames []string) Binding {
+	newBinding := Binding{}
+
+	for _, variableName := range variableNames {
+		_, found := b[variableName]
+		if found {
+			newBinding[variableName] = b[variableName]
+		}
+	}
+
+	return newBinding
+}
+
 // Returns a new Binding with just key, if exists
 func (b Binding) Extract(key string) Binding {
 	newBinding := Binding{}

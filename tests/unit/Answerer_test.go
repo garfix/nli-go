@@ -82,7 +82,9 @@ func TestAnswerer(t *testing.T) {
 		"person": {Size: 100, DistinctValues: []int{100, 100}},
 	}
 
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, log)
+	entities := mentalese.Entities{}
+
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase(log)
 
 	solver := central.NewProblemSolver(matcher, log)

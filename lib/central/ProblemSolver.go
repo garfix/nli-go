@@ -362,6 +362,8 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		}
 	}
 
+	inputVariables := goalRelation.GetVariableNames()
+
 	goalBindings := []mentalese.Binding{}
 
 	// match rules from the rule base to the goalRelation
@@ -374,11 +376,21 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		sourceBinding := sourceBindings[i]
 
 		// rewrite the variables of subgoal set to those of goalRelation
-		sourceSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
+		importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
-		subgoalResultBindings := solver.SolveRelationSet(sourceSubgoalSet, nameStore, []mentalese.Binding{binding})
+		subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, nameStore, []mentalese.Binding{binding})
 
-		goalBindings = append(goalBindings, subgoalResultBindings...)
+		// subgoalResultBinding: from subgoal variables to constants (contains temporary variables)
+		for _, subgoalResultBinding := range subgoalResultBindings {
+
+			// filter out the input variables
+			filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
+
+			// make sure all variables of the original binding are present
+			goalBinding := binding.Merge(filteredBinding)
+
+			goalBindings = append(goalBindings, goalBinding)
+		}
 	}
 
 	solver.log.EndDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalBindings)

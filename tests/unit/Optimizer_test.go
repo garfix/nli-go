@@ -46,8 +46,10 @@ func TestOptimizer(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	factBase1 := knowledge.NewInMemoryFactBase("memory-1", facts1, matcher, ds2db1, stats1, log)
-	factBase2 := knowledge.NewInMemoryFactBase("memory-2", facts2, matcher, ds2db2, stats2, log)
+	entities := mentalese.Entities{}
+
+	factBase1 := knowledge.NewInMemoryFactBase("memory-1", facts1, matcher, ds2db1, stats1, entities, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-2", facts2, matcher, ds2db2, stats2, entities, log)
 
 	factBases := []knowledge.KnowledgeBase{factBase1, factBase2}
 

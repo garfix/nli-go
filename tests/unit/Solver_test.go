@@ -41,7 +41,8 @@ func TestSolver(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher(log)
 
 	stats := mentalese.DbStats{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, log)
+	entities := mentalese.Entities{}
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
 
 	solver := central.NewProblemSolver(matcher, log)
 	solver.AddFactBase(factBase)
@@ -107,7 +108,7 @@ func TestSolver(t *testing.T) {
 		link(A, B) => link(A, B);
 	]`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, stats, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, stats, entities, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, log)

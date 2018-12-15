@@ -2,7 +2,6 @@ package knowledge
 
 import (
 	"nli-go/lib/mentalese"
-	"strconv"
 )
 
 // A relation group is a small set of relations that, together, form the input to a single knowledge base
@@ -12,14 +11,14 @@ import (
 
 type RelationGroup struct {
 	Relations mentalese.RelationSet
-	KnowledgeBaseIndex int
+	KnowledgeBaseName string
 	Cost float64
 }
 
 
 func (s RelationGroup) String() string {
 
-	str := s.Relations.String() + "@" + strconv.Itoa(s.KnowledgeBaseIndex)
+	str := s.Relations.String() + "@" + s.KnowledgeBaseName
 
 	return str
 }
@@ -27,6 +26,6 @@ func (s RelationGroup) String() string {
 
 func (s RelationGroup) Equals(t RelationGroup) bool {
 	return s.Cost == t.Cost &&
-		s.KnowledgeBaseIndex == t.KnowledgeBaseIndex &&
+		s.KnowledgeBaseName == t.KnowledgeBaseName &&
 		s.Relations.Equals(t.Relations)
 }

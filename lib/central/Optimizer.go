@@ -82,8 +82,8 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 		return routes
 	}
 
-	for i, factBase := range knowledgeBases {
-		for _, factBaseGroup := range factBase.GetMatchingGroups(set, i) {
+	for _, factBase := range knowledgeBases {
+		for _, factBaseGroup := range factBase.GetMatchingGroups(set, factBase.GetName()) {
 
 			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
 

@@ -20,7 +20,7 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
-func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
@@ -28,7 +28,7 @@ func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, k
 		for _, setRelation := range set {
 			if rule.Goal.Predicate == setRelation.Predicate {
 // TDOD calculate real costs
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
 				break
 			}
 		}

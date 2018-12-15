@@ -98,7 +98,6 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 		for _, solutionRoute := range solutionRoutes {
 			newBindings = append(newBindings, solver.solveSingleSolutionRouteMultipleBindings(solutionRoute, nameStore, bindings)...)
 		}
-
 	}
 
 	// remove duplicates because they cause unnecessary work and they cause problems for the generator
@@ -124,13 +123,23 @@ func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRou
 	return newBindings
 }
 
+func (solver ProblemSolver) findKnowledgeBaseByName(name string) knowledge.KnowledgeBase {
+	for _, knowledgeBase := range solver.allKnowledgeBases {
+		if knowledgeBase.GetName() == name {
+			return knowledgeBase
+		}
+	}
+
+	return nil
+}
+
 func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, nameStore *ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("solveSingleRelationGroupMultipleBindings", relationGroup, bindings)
 
 	newBindings := []mentalese.Binding{}
 
-	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
+	knowledgeBase := solver.findKnowledgeBaseByName(relationGroup.KnowledgeBaseName)
 	aggregateBase, isAggregateBase := knowledgeBase.(knowledge.AggregateBase)
 
 	if isAggregateBase {
@@ -147,7 +156,6 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 			groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, nameStore, binding)
 			newBindings = append(newBindings, groupBindings...)
 		}
-
 	}
 
 	solver.log.EndDebug("solveSingleRelationGroupMultipleBindings", newBindings)
@@ -159,7 +167,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	solver.log.StartDebug("solveSingleRelationGroupSingleBinding", relationGroup, binding)
 
-	knowledgeBase := solver.allKnowledgeBases[relationGroup.KnowledgeBaseIndex]
+	knowledgeBase := solver.findKnowledgeBaseByName(relationGroup.KnowledgeBaseName)
 	factBase, isFactBase := knowledgeBase.(knowledge.FactBase)
 	ruleBase, isRuleBase := knowledgeBase.(knowledge.RuleBase)
 	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
@@ -170,8 +178,6 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	var newBindings []mentalese.Binding
 
 	if isFactBase {
-
-//		resolvedBoundRelations := solver.bindKnowledgeBaseVariables(boundRelations, nameStore, factBase.GetName())
 
 		sourceBindings := solver.FindFacts(factBase, boundRelations)
 
@@ -203,23 +209,6 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	return newBindings
 }
-
-
-//func (solver ProblemSolver) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
-//
-//	values := nameStore.GetValues(knowledgeBaseName)
-//
-//	binding := mentalese.Binding{}
-//
-//	for key, value := range values {
-//		binding[key] = mentalese.NewId(value)
-//	}
-//
-//	boundRelations := solver.matcher.BindRelationSetSingleBinding(set, binding)
-//
-//	return boundRelations
-//}
-
 
 func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 
@@ -309,13 +298,6 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 
 			} else {
 
-				//functionBindings, functionFound := solver.matcher.MatchRelationToFunction(relation, sequenceBindings)
-				//if functionFound {
-				//
-				//	relationBindings = functionBindings
-				//
-				//} else {
-
 				//// go through the bindings resulting from previous relation
 				for _, binding := range sequenceBindings {
 
@@ -328,8 +310,6 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 						relationBindings = append(relationBindings, newRelationBinding)
 					}
 				}
-				//			}
-
 			}
 		}
 

@@ -31,8 +31,8 @@ func (factBase *InMemoryFactBase) GetMappings() []mentalese.RelationTransformati
 	return factBase.ds2db
 }
 
-func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
+func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
 }
 
 func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {

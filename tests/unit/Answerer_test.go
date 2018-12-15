@@ -85,7 +85,7 @@ func TestAnswerer(t *testing.T) {
 	entities := mentalese.Entities{}
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
-	systemAggregateBase := knowledge.NewSystemAggregateBase(log)
+	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
 
 	solver := central.NewProblemSolver(matcher, log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)

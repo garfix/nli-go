@@ -9,11 +9,11 @@ type SystemFunctionBase struct {
 	KnowledgeBaseCore
 }
 
-func NewSystemFunctionBase() *SystemFunctionBase {
-	return &SystemFunctionBase{}
+func NewSystemFunctionBase(name string) *SystemFunctionBase {
+	return &SystemFunctionBase{ KnowledgeBaseCore{ Name: name } }
 }
 
-func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{"join", "split"}
@@ -22,7 +22,7 @@ func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, kno
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
 				// TODO calculate real cost
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
 				break
 			}
 		}

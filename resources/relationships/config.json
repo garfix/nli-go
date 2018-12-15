@@ -14,10 +14,12 @@
   "factbases": {
     "relation": [
       {
+        "name": "system-relations",
         "facts": "core.relation",
         "map": "core-db.map"
       },
       {
+        "name": "relations",
         "facts": "relationships.relation",
         "map": "relationships-db.map",
         "stats": "relationships-db-stats.json",

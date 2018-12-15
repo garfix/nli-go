@@ -34,15 +34,17 @@ func (s SolutionRoute) Less(i, j int) bool {
 		return false
 	} else {
 
-		if s[i].KnowledgeBaseIndex < s[j].KnowledgeBaseIndex {
-			return true
-		} else if s[i].KnowledgeBaseIndex > s[j].KnowledgeBaseIndex {
-			return false
-		} else {
+		return true
 
-			return s[i].Relations.String() < s[j].Relations.String()
-
-		}
+		//if s[i].KnowledgeBaseIndex < s[j].KnowledgeBaseIndex {
+		//	return true
+		//} else if s[i].KnowledgeBaseIndex > s[j].KnowledgeBaseIndex {
+		//	return false
+		//} else {
+		//
+		//	return s[i].Relations.String() < s[j].Relations.String()
+		//
+		//}
 
 	}
 }

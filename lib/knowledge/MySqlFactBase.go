@@ -41,8 +41,8 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 	}
 }
 
-func (factBase *MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
+func (factBase *MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
 }
 
 func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation {

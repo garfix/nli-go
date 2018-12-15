@@ -12,11 +12,11 @@ type SystemAggregateBase struct {
 	log   *common.SystemLog
 }
 
-func NewSystemAggregateBase(log *common.SystemLog) *SystemAggregateBase {
-	return &SystemAggregateBase{log: log}
+func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregateBase {
+	return &SystemAggregateBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
+func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{"number_of", "exists", "first"}
@@ -25,7 +25,7 @@ func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
 // TODO calculate real cost
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseIndex, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
 				break
 			}
 		}

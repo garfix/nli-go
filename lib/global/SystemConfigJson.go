@@ -1,6 +1,7 @@
 package global
 
 type relationSetFactBase struct {
+	Name     string
 	Facts    string
 	Map      string
 	Stats	 string

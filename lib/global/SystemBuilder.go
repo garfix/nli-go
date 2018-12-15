@@ -32,7 +32,7 @@ func NewSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
 
 func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig) {
 
-	systemFunctionBase := knowledge.NewSystemFunctionBase()
+	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function")
 	matcher := mentalese.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 
@@ -52,7 +52,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	solver.AddFunctionBase(systemFunctionBase)
 
-	systemAggregateBase := knowledge.NewSystemAggregateBase(builder.log)
+	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(builder.log)
@@ -86,7 +86,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 		builder.ImportRuleBaseFromPath(solver, path)
 	}
 	for _, factBase := range config.Factbases.Relation {
-		builder.ImportRelationSetFactBase(solver, factBase, matcher)
+		builder.ImportInMemoryFactBase(factBase.Name, solver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Mysql {
 		builder.ImportMySqlDatabase(factBase.Database, solver, system.nameResolver, factBase, matcher)
@@ -200,7 +200,7 @@ func (builder systemBuilder) ImportRuleBaseFromPath(solver *central.ProblemSolve
 	solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, builder.log))
 }
 
-func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSolver, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central.ProblemSolver, factBase relationSetFactBase, matcher *mentalese.RelationMatcher) {
 
 	path := common.AbsolutePath(builder.baseDir, factBase.Facts)
 	factString, err := common.ReadFile(path)
@@ -237,7 +237,7 @@ func (builder systemBuilder) ImportRelationSetFactBase(solver *central.ProblemSo
 		return
 	}
 
-	solver.AddFactBase(knowledge.NewInMemoryFactBase("memory", facts, matcher, dbMap, stats, entities, builder.log))
+	solver.AddFactBase(knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, stats, entities, builder.log))
 }
 
 func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {

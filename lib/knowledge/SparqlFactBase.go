@@ -50,8 +50,8 @@ func (factBase *SparqlFactBase) GetMappings() []mentalese.RelationTransformation
 	return factBase.ds2db
 }
 
-func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseIndex int) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, knowledgeBaseIndex)
+func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
 }
 
 func (factBase *SparqlFactBase) GetStatistics() mentalese.DbStats {

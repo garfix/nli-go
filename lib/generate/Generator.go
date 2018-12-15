@@ -116,7 +116,7 @@ func (generator *Generator) generateSingleConsequent(consequent mentalese.Relati
 
 	generator.log.StartDebug("generateSingleConsequent", consequent, consequentBinding)
 
-	boundConsequent := generator.matcher.BindSingleRelationSingleBinding(consequent, consequentBinding)
+	boundConsequent := consequent.BindSingleRelationSingleBinding(consequentBinding)
 
 	lexItem, found := generator.Lexicon.GetLexemeForGeneration(boundConsequent, sentenceSense)
 	if found {

@@ -1,3 +1,8 @@
+# 2018-12-15
+
+Merged the branch askuser into master. All tests passed again. I am happy, this all was a large improvement. Now I have to do some cleanup and
+a lot of communication to my users (yes, there aren't any, I know, haha).
+
 # 2018-12-01
 
 I will stop solving relation sets, and in stead solve relation routes and relation groups.

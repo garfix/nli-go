@@ -32,7 +32,7 @@ func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese
 				matchingRelations = append(matchingRelations, set[i])
 			}
 
-			boundReplacement := matcher.BindRelationSetSingleBinding(mapping.Replacement, binding)
+			boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
 
 			cost := float64(0.0)
 			stats := factBase.GetStatistics()

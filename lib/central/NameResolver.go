@@ -107,7 +107,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 	})
 
 	nameRelationBindings, _ := resolver.matcher.MatchRelationToSet(nameTemplate, relations, mentalese.Binding{})
-	nameRelations := resolver.matcher.BindSingleRelationMultipleBindings(nameTemplate, nameRelationBindings)
+	nameRelations := nameTemplate.BindSingleRelationMultipleBindings(nameRelationBindings)
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
 	return nameStore, namelessRelations, userResponse
@@ -285,7 +285,7 @@ func (resolver *NameResolver) resolveName(name string, factBase knowledge.FactBa
 				relationSet := entityInfo.Knownby[infoType]
 
 				// create a relation set for each field that gives Information about this name
-				boundRelationSet := resolver.matcher.BindRelationSetSingleBinding(relationSet, mentalese.Binding{
+				boundRelationSet := relationSet.BindRelationSetSingleBinding(mentalese.Binding{
 					mentalese.IdVar: mentalese.NewId(id.TermValue),
 				})
 

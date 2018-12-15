@@ -63,7 +63,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 		resultBindings := solver.SolveRelationSet(input, nil, []mentalese.Binding{{}})
-		resultRelationSets := matcher.BindRelationSetMultipleBindings(input, resultBindings)
+		resultRelationSets := input.BindRelationSetMultipleBindings(resultBindings)
 
 		if fmt.Sprintf("%v", resultRelationSets) != test.wantRelationSets {
 			t.Errorf("SolverTest: got %v, want %s", resultRelationSets, test.wantRelationSets)

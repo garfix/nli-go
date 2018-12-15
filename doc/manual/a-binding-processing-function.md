@@ -51,6 +51,43 @@ Therefore the resulting bindings must be filtered with
 - the variables from the relation set
 - the variables from the input binding
 
+## Skeletal function
 
+Here's an example of what this looks like
 
+    func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 
+        inputVariables := goalRelation.GetVariableNames()
+
+        goalBindings := []mentalese.Binding{}
+
+        // find helper structure (named source)
+        sourceSubgoalSets, sourceBindings := findSource(goalRelation)
+
+        for i, sourceSubgoalSet := range sourceSubgoalSets {
+
+            sourceBinding := sourceBindings[i]
+
+            // rewrite the variables from the source namespace to our namespace
+            importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
+
+            // perform the actual action
+            subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, nameStore, []mentalese.Binding{binding})
+
+            // process the resulting bindings
+            for _, subgoalResultBinding := range subgoalResultBindings {
+
+                // filter out the input variables
+                filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
+
+                // make sure all variables of the original binding are present
+                goalBinding := binding.Merge(filteredBinding)
+
+                goalBindings = append(goalBindings, goalBinding)
+            }
+        }
+
+        solver.log.EndDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalBindings)
+
+        return goalBindings
+    }

@@ -165,7 +165,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
 	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
 
-	boundRelations := solver.matcher.BindRelationSetSingleBinding(relationGroup.Relations, binding)
+	boundRelations := relationGroup.Relations.BindRelationSetSingleBinding(binding)
 
 	var newBindings []mentalese.Binding
 
@@ -259,7 +259,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 				externalBinding := externalBindings[0]
 
 				// create a version of the conditions with bound variables
-				boundConditions := solver.matcher.BindRelationSetSingleBinding(ds2db.Replacement, internalBinding)
+				boundConditions := ds2db.Replacement.BindRelationSetSingleBinding(internalBinding)
 
 				// match this bound version to the database
 				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(ds2db.Replacement, boundConditions, factBase)
@@ -319,7 +319,7 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 				//// go through the bindings resulting from previous relation
 				for _, binding := range sequenceBindings {
 
-					boundRelation := solver.matcher.BindSingleRelationSingleBinding(relation, binding)
+					boundRelation := relation.BindSingleRelationSingleBinding(binding)
 					resultBindings := factBase.MatchRelationToDatabase(boundRelation)
 
 					// found bindings must be extended with the bindings already present
@@ -367,7 +367,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 	goalBindings := []mentalese.Binding{}
 
 	// match rules from the rule base to the goalRelation
-	boundRelation := solver.matcher.BindSingleRelationSingleBinding(goalRelation, binding)
+	boundRelation := goalRelation.BindSingleRelationSingleBinding(binding)
 	sourceSubgoalSets, sourceBindings := ruleBase.Bind(boundRelation)
 
 	for i, sourceSubgoalSet := range sourceSubgoalSets {

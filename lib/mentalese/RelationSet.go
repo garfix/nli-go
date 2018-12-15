@@ -159,13 +159,9 @@ func findVariables(set RelationSet) []string {
 
 var i = 0
 
-func ResetVariables() {
-	i = 0
-}
-
 func createVariable() Term {
 	i++
-	return NewVariable("X" + strconv.Itoa(i))
+	return NewVariable("Gen" + strconv.Itoa(i))
 }
 
 

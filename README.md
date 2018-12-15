@@ -1,8 +1,6 @@
 # NLI-GO
 
-nli-go is a library, written in Go, that provides a natural language interface to databases. It is in fact just my hobby-project, but I am trying hard to make this the best nli system ever created!
-
-For years to come, this system is not easy to use, not present for production, and not very robust either. Still, if you really need an nli, it may be worth your trouble to learn it. I think it's pretty cool.
+nli-go is a library, written in Go, that provides a natural language interface to databases. I use it to experiment with nli techniques.
 
 ## Demo
 
@@ -20,45 +18,23 @@ and the library looks up the answer in a relational database, and formats the re
 
 Every part of the system is configurable.
 
-## Install the program
+## Techniques
 
-Build this application's executable:  
+Some of the techniques used:
 
-```
-cd ~/go/src/nli-go/app/cli
-go build nli.go
-```
+* An Earley parser to create a syntax tree from an input sentence, with semantic attachments
+* Mentalese, a Predicate Logic based internal language to process the user input
+* A Datalog implementation for rule based reasoning
+* A DBPedia and a MySQL connection as well as an in-memory "database"
+* A dialog context to remember information earlier in the conversation
+* A quantifier scoper that allows aggregations
+* A query optimiser that uses cost-per-relation to determine the best order of executing a query
+* A generator to produce human readable responses
 
-If you like, you can move it to a place where it can be found from any location. In a Linux environment you might use:
+## Docs
 
-```
-sudo mv nli /usr/local/bin 
-```
+Documentation is located in the docs directory, here you can find:
 
-## Command-line use
-
-You can use the executable as you would use any command-line application. It has two sub-commands: 
- 
-Use nli to answer a question, based on a configuration stored in a JSON config file. It returns a JSON string with the answer and / or an error.
- 
-```
-./nli answer fox/config.json "Did the quick brown jump over the lazy dog?"
-``` 
-
-Or use it to suggest the next words the user can type.
-
-```
-./nli suggest fox/config.json "Did the quick"
-``` 
-
-The config file is described [here](doc/manual/config.md).
-
-## Example web page
-
-An example web page in PHP is included to show how you may use this library. It's in app/web:
-
-![Web app showing the library in action](doc/images/webapp.png)
-
-## Processing
-
-For details about the processing of a request see [Processing](doc/manual/processing.md)
+* [My personal log](doc/remarks.md)
+* [The processing of a request](doc/manual/processing.md)
+* [Build the go application](doc/manual/use.md)

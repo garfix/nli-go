@@ -48,27 +48,93 @@ $(function(){
     });
 
     $('#f').submit(function(){
+
+        postQuestion($('#q').val());
+        return false;
+    });
+
+    function postQuestion(question) {
         $.ajax({
             url: 'ajax-answer.php',
-            data: { format: "json", query: $('#q').val() },
+            data: { format: "json", query: question },
             dataType: 'json',
             type: 'GET',
             success: function (data) {
 
-                var answers = data.Value;
                 var errorLines = data.ErrorLines;
                 var productions = data.Productions;
+                var answerComponents = processAnswer(data.Value[0]);
+                var answer = answerComponents[0];
+                var options = answerComponents[1];
 
                 showError(errorLines);
-                showAnswer(answers[0]);
-                showProductions(productions)
+                showAnswer(answer);
+                showProductions(productions);
+                showOptions(options);
 
             },
             error: function (request, status, error) {
                 showError(error)
             }
         });
+    }
 
-        return false;
-    })
+    function processAnswer(answer) {
+
+        var text = "";
+        var options = [];
+        var state = "text";
+        var key = "";
+        var value = "";
+
+        for (var i = 0; i < answer.length; i++) {
+            var c = answer.substr(i, 1);
+
+            if (c === "[") {
+                state = "key";
+
+                if (key !== "") {
+                    options.push([key, value]);
+                    key = "";
+                    value = "";
+                }
+
+            } else if (c === "]") {
+                state = "value";
+            } else if (state === "text") {
+                text += c;
+            } else if (state === "key") {
+                key += c;
+            } else {
+                value += c;
+            }
+        }
+
+        if (key !== "") {
+            options.push([key, value]);
+        }
+
+        return [text, options];
+    }
+
+    function showOptions(options) {
+        var html = "";
+
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            html += "<a href='" + option[0] + "'>" + option[1] + "</a>";
+        }
+
+        if (html) {
+            html = "<div>" + html + "</div>";
+        }
+
+        document.getElementById('options-box').innerHTML = html;
+
+        $('#options-box a').click(function (event) {
+            event.preventDefault();
+            postQuestion($(this).attr('href'));
+        });
+
+    }
 });

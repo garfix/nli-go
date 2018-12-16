@@ -68,6 +68,17 @@ header {
     color: #AF0000;
 }
 
+#options-box div {
+    padding: 20px 0 20px 0;
+}
+
+#options-box a {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
 #error-box {
     border: 1px solid #888;
     padding: 3px;

@@ -46,7 +46,7 @@ func main() {
 
 	// load dialog context
 	if sessionId != "" {
-		absSessionPath := common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
+		absSessionPath = common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
 		system.PopulateDialogContext(absSessionPath)
 	}
 
@@ -57,13 +57,13 @@ func main() {
 	// the actual system call
 	value = []string{system.Answer(sentence)}
 
-	if log.IsOk() {
-		goto done
-	}
-
 	// store dialog context for next call
 	if sessionId != "" {
 		system.StoreDialogContext(absSessionPath)
+	}
+
+	if log.IsOk() {
+		goto done
 	}
 
 	done:

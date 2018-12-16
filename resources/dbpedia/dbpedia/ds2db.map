@@ -12,6 +12,8 @@
 
     name(A, N, canonical_name) => foaf_name(A, N) first(N);
 
+    description(A, D) => description(A, D);
+
     gender(A, male) => gender(A, 'male');
     gender(A, female) => gender(A, 'female');
 

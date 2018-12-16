@@ -8,5 +8,6 @@
   "parent": "http://dbpedia.org/ontology/parent",
   "birth_date": "http://dbpedia.org/ontology/birthDate",
   "birth_place": "http://dbpedia.org/ontology/birthPlace",
-  "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+  "description": "http://purl.org/dc/terms/description"
 }

@@ -7,6 +7,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
+	"path/filepath"
 )
 
 type Result struct {
@@ -46,7 +47,11 @@ func main() {
 
 	// load dialog context
 	if sessionId != "" {
-		absSessionPath = common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
+
+		executable, _ := os.Executable()
+		executablePath := filepath.Dir(executable)
+
+		absSessionPath = common.AbsolutePath(executablePath, "sessions/" + sessionId + ".json")
 		system.PopulateDialogContext(absSessionPath)
 	}
 

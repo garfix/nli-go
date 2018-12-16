@@ -81,7 +81,10 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 
 					// need to ask user
 					userResponse = resolver.composeUserQuestion(factBaseNameInformations)
-					resolver.dialogContext.SetOpenQuestion(userResponse)
+
+					// store options
+					resolver.storeOptions(factBaseNameInformations)
+
 					break
 
 				}
@@ -111,6 +114,13 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
 	return nameStore, namelessRelations, userResponse
+}
+
+func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {
+
+	for _, nameInformation := range nameInformations {
+		resolver.dialogContext.AddOption(nameInformation.GetIdentifier())
+	}
 }
 
 func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations []NameInformation, answer string) []NameInformation {

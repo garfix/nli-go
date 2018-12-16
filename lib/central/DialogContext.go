@@ -7,7 +7,7 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-const predicateOpenQuestion = "open_question"
+const predicateOption = "option"
 const predicateAnswerToOpenQuestion = "answer_open_question"
 const predicateOriginalInput = "original_input"
 
@@ -86,27 +86,28 @@ func (dc *DialogContext) GetRelations() mentalese.RelationSet {
 	return dc.factBase.GetRelations()
 }
 
-func (dc *DialogContext) SetOpenQuestion(question string) {
-	dc.factBase.AddRelation(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
-		mentalese.NewString(question),
+func (dc *DialogContext) AddOption(option string) {
+	dc.factBase.AddRelation(mentalese.NewRelation(predicateOption, []mentalese.Term{
+		mentalese.NewString(option),
 	}))
 }
 
-func (dc *DialogContext) GetOpenQuestion() (string, bool) {
-	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
+func (dc *DialogContext) GetOpenOptions() []string {
+	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateOption, []mentalese.Term{
 		mentalese.NewVariable("Q"),
 	}))
 
-	if len(results) > 0 {
-		result := results[0]
-		return result["Q"].TermValue, true
-	} else {
-		return "", false
+	var options []string
+
+	for _, result := range results {
+		options = append(options, result["Q"].TermValue)
 	}
+
+	return options
 }
 
-func (dc* DialogContext) RemoveOpenQuestion() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOpenQuestion, []mentalese.Term{
+func (dc* DialogContext) RemoveOpenOptions() {
+	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOption, []mentalese.Term{
 		mentalese.NewAnonymousVariable(),
 	}))
 }
@@ -140,17 +141,36 @@ func (dc* DialogContext) Process(currentInput string) string {
 
 	originalInput := ""
 
-	_, found := dc.GetOpenQuestion()
-	if found {
+	options := dc.GetOpenOptions()
 
-		// data user response in open question
-		dc.SetAnswerToOpenQuestion(currentInput)
+	// are we expecting an answer from the user?
+	if len(options) > 0 {
 
-		// return to not expecting an answer
-		dc.RemoveOpenQuestion()
+		// check if user response matches options
+		match := false
+		for _, option := range options {
+			if option == currentInput {
+				match = true
+			}
+		}
 
-		// continue with the user's original question
-		originalInput, _ = dc.GetOriginalInput()
+		if match {
+
+			// data user response in open question
+			dc.SetAnswerToOpenQuestion(currentInput)
+
+			// continue with the user's original question
+			originalInput, _ = dc.GetOriginalInput()
+
+		} else {
+
+			// the user gave a response that does not match our expectation
+			// assume the user is posing a new question
+			originalInput = currentInput
+		}
+
+		// stop expecting an answer
+		dc.RemoveOpenOptions()
 
 	} else {
 

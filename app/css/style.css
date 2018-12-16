@@ -103,15 +103,18 @@ header {
 }
 
 .tokenizer {
-
-}
-
-.nameresolver {
-
+    color: #4785ce;
 }
 
 .parser {
+    color: #3c5299;
+}
 
+.nameresolver {
+    color: #008000;
+}
+
+.nameless {
 }
 
 .relationizer {
@@ -119,10 +122,10 @@ header {
 }
 
 .solve {
-
+    color: #2b4dd8;
 }
 
-.sparql-query {
+.sparql {
     color: #AF0000;
 }
 

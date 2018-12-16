@@ -14,8 +14,7 @@ import (
 
 const max_sparql_results = 100
 
-const MAX_QUERIES = 100
-
+const MAX_QUERIES = 1000
 
 type SparqlFactBase struct {
 	KnowledgeBaseCore
@@ -70,13 +69,12 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	bindings := []mentalese.Binding{}
 
-	//factBase.queryCount++
-	//
-	//if factBase.queryCount > MAX_QUERIES {
-	//	factBase.log.AddError("Too many SPARQL queries")
-	//	return bindings
-	//}
+	factBase.queryCount++
 
+	if factBase.queryCount > MAX_QUERIES {
+		factBase.log.AddError("Too many SPARQL queries")
+		return bindings
+	}
 
 	if len(relation.Arguments) != 2 {
 		factBase.log.AddError("Relation does not have exactly two arguments: " + relation.String())
@@ -155,7 +153,7 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 		return bindings
 	}
 
-	factBase.log.AddProduction("SPARQL Query", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(response.Results.Bindings)) + " results)")
+	factBase.log.AddProduction("SPARQL", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(response.Results.Bindings)) + " results)")
 
 	for _, resultBinding := range response.Results.Bindings  {
 

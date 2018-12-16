@@ -128,11 +128,12 @@ func (system *system) Answer(input string) string {
 	nameStore, namelessRelations, userResponse := system.nameResolver.Resolve(genericRelations)
 
 	if userResponse == "" {
-		system.log.AddProduction("NameResolver", namelessRelations.String())
 		system.log.AddProduction("NameResolver", nameStore.String())
 	} else {
 		return userResponse
 	}
+
+	system.log.AddProduction("Nameless", namelessRelations.String())
 
 	dsRelations := system.transformer.Replace(system.generic2ds, namelessRelations)
 

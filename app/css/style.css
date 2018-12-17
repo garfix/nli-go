@@ -5,6 +5,7 @@ html {
 
 body {
     font-family: arial, sans-serif;
+    font-size: larger;
     margin: 0;
     padding: 0;
     background-image: url("../img/dbpedia_bg.png");
@@ -39,8 +40,8 @@ header {
 #q {
     width: 400px;
     padding: 5px;
-    font-size: 20px;
     margin: 10px 0 10px 0;
+    font-size: larger;
 }
 
 #samples {
@@ -50,12 +51,11 @@ header {
     #samples a {
         display: block;
         margin-bottom: 3px;
-        font-size: 20px;
     }
 
 #submit-button {
     padding: 5px;
-    font-size: 20px;
+    font-size: larger;
 }
 
 
@@ -63,7 +63,6 @@ header {
     background: #f0f0f0;
     margin: 10px 0 10px 0;
     padding: 10px;
-    font-size: 20px;
     font-weight: bold;
     color: #AF0000;
 }
@@ -76,7 +75,6 @@ header {
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
-    font-size: 20px;
 }
 
 #error-box {

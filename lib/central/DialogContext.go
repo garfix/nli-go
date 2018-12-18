@@ -30,7 +30,7 @@ func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver,
 	transformations := parser.CreateTransformations(transformationString)
 
 	factBase := knowledge.NewInMemoryFactBase(
-		"in-memory",
+		"dialog-context",
 		mentalese.RelationSet{},
 		matcher,
 		transformations,

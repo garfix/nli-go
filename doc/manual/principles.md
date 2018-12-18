@@ -20,3 +20,4 @@ Since this system does not work out-of-the-box for new domains, it needs the fol
 ## Principles
 
 * ease of use is paramount, for all types of users, but the knowledge engineer has priority
+* small queries: the interface to the knowledge base should be as small as possible

@@ -16,7 +16,8 @@ Create the following directory structure on the server:
 
  public_html
     css
+    img
     js
  resources
 
-And copy all files of the web app, and the necessary resources, to the server.
+And copy all files of the web app, and the necessary resources (for example dbpedia), to the server.

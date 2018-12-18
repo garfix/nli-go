@@ -2,6 +2,7 @@
 
 Processing a request consists of these phases:
 
+* Dialog Context: check if the input is just an answer to a question by the system
 * Tokenization: from raw text to a string of tokens
 * Parsing: from tokens to parse tree with attached generic relations
 * Relationizer: combine the relations to a single set with unified variables
@@ -18,6 +19,7 @@ Processing a request consists of these phases:
 * Transformation: from domain specific relations to generic relations
 * Generation: create an array of words from the generic relations
 * Surface realization: concatenate the words to raw text
+* Store dialog context
 
 Note that there are three types of representation that are expressed by relations:
 
@@ -28,6 +30,27 @@ Note that there are three types of representation that are expressed by relation
 Generic maps n:m to domain specific. Domain specific maps n:m to database.
 
 I will describe the components that make all of this possible.
+
+### Dialog context
+
+The system starts by checking if the user input is not a question, but rather an answer to a question posed earlier by the system.
+
+The system may need to ask the user a question if his/her question is ambiguous and needs clarification.
+
+The system compares user input with 'option' relations in its 'dialog-context' in memory database.
+
+If there is a match, the input is stored as 'answer_open_question' in the dialog context, and the system proceeds to replace the user input (the answer) with the dialog context's 'original_input'.
+
+For example:
+
+* User: Who married Lord Byron?
+* System: Which one? [a] the englishman [b] the american // stores 'Who married Lord Byron' as 'original_input', and 'a' and 'b' as 'option's
+* User: a
+* System: // stores a as the 'answer_open_question', but continues to use 'original_input' as the input the the rest of the request
+
+If there is no match, the input is not taken to be a user answer to a system question, but as a new user question.
+
+Any open options are now discarded.
 
 ### Tokenizer
 
@@ -293,3 +316,7 @@ Generation starts from an s() clause. The first rule that matches condition is u
 ### Surface Representation
 
 Finally the words are concatenated by spaces, except for comma's and periods. And the first letter is capitalized.
+
+### Store Dialog Context
+
+The dialog context is persisted in a JSON file.

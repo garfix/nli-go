@@ -1,3 +1,17 @@
+# 2018-12-30
+
+I will let go of the concept "domain specific". It used to represent the conceptual space between generic and database specific, but it proved difficult because:
+
+- the user has not really an idea of the "conceptual space" of a domain. Dealing with the concepts of the database is hard enough.
+- the system may deal with multiple domains; and the separation between domains is not always clear
+- each domain would have to have its own set of domain specific relations. This would get too complicated for the developer.
+
+However, there is still a need to transform the generic relations into a more workable form, and therefore I introduce a level that has the same function as the old "domain specific" and I call it:
+
+    Application Semantics
+
+I mean by this the representation of semantics that works best for the application developer of the NLI system.
+
 # 2018-12-15
 
 Merged the branch askuser into master. All tests passed again. I am happy, this all was a large improvement. Now I have to do some cleanup and

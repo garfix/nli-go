@@ -64,7 +64,11 @@ func TestDBPedia(t *testing.T) {
 				system.PopulateDialogContext(actualSessionPath)
 			}
 
-			answer := system.Answer(test.question)
+			answer, options := system.Answer(test.question)
+
+			if options.HasOptions() {
+				answer += options.String()
+			}
 
 			system.StoreDialogContext(actualSessionPath)
 

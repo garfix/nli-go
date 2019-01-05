@@ -61,16 +61,10 @@ $(function(){
             type: 'GET',
             success: function (data) {
 
-                var errorLines = data.ErrorLines;
-                var productions = data.Productions;
-                var answerComponents = processAnswer(data.Value[0]);
-                var answer = answerComponents[0];
-                var options = answerComponents[1];
-
-                showError(errorLines);
-                showAnswer(answer);
-                showProductions(productions);
-                showOptions(options);
+                showError(data.ErrorLines);
+                showAnswer(data.Answer);
+                showProductions(data.productions);
+                showOptions(data.OptionKeys, data.OptionValues);
 
             },
             error: function (request, status, error) {
@@ -79,50 +73,11 @@ $(function(){
         });
     }
 
-    function processAnswer(answer) {
-
-        var text = "";
-        var options = [];
-        var state = "text";
-        var key = "";
-        var value = "";
-
-        for (var i = 0; i < answer.length; i++) {
-            var c = answer.substr(i, 1);
-
-            if (c === "[") {
-                state = "key";
-
-                if (key !== "") {
-                    options.push([key, value]);
-                    key = "";
-                    value = "";
-                }
-
-            } else if (c === "]") {
-                state = "value";
-            } else if (state === "text") {
-                text += c;
-            } else if (state === "key") {
-                key += c;
-            } else {
-                value += c;
-            }
-        }
-
-        if (key !== "") {
-            options.push([key, value]);
-        }
-
-        return [text, options];
-    }
-
-    function showOptions(options) {
+    function showOptions(optionKeys, optionValues) {
         var html = "";
 
-        for (var i = 0; i < options.length; i++) {
-            var option = options[i];
-            html += "<a href='" + option[0] + "'>" + option[1] + "</a>";
+        for (var i = 0; i < optionKeys.length; i++) {
+            html += "<a href='" + optionKeys[i] + "'>" + optionValues[i] + "</a>";
         }
 
         if (html) {

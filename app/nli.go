@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
@@ -11,10 +12,12 @@ import (
 )
 
 type Result struct {
-	Success    bool
-	ErrorLines []string
-	Productions []string
-	Value      []string
+	Success      bool
+	ErrorLines   []string
+	Productions  []string
+	Answer       string
+	OptionKeys   []string
+	OptionValues []string
 }
 
 // This application takes a sentence as its parameter and executes a given command.
@@ -24,7 +27,8 @@ func main() {
 	var absSessionPath = ""
 	var configPath = ""
 
-	value := []string{}
+	answer := ""
+	options := central.NewOptions()
 
 	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog context")
 	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a JSON nli-go config file")
@@ -60,7 +64,7 @@ func main() {
 	}
 
 	// the actual system call
-	value = []string{system.Answer(sentence)}
+	answer, options = system.Answer(sentence)
 
 	// store dialog context for next call
 	if sessionId != "" {
@@ -74,10 +78,12 @@ func main() {
 	done:
 
 	result := Result{
-		Success: log.IsOk(),
-		ErrorLines: log.GetErrors(),
-		Productions: log.GetProductions(),
-		Value: value,
+		Success:      log.IsOk(),
+		ErrorLines:   log.GetErrors(),
+		Productions:  log.GetProductions(),
+		Answer:       answer,
+		OptionKeys:   options.GetKeys(),
+		OptionValues: options.GetValues(),
 	}
 
 	jsonString, _ := json.Marshal(result)

@@ -28,11 +28,12 @@ func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, 
 }
 
 // Returns a set of senses, or a human readable question to the user
-func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*ResolvedNameStore, mentalese.RelationSet, string) {
+func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*ResolvedNameStore, mentalese.RelationSet, string, *Options) {
 
 	nameStore := NewResolvedNameStore()
 	namelessRelations := mentalese.RelationSet{}
 	userResponse := ""
+	options := NewOptions()
 
 	names := resolver.collectNames(relations)
 
@@ -80,7 +81,8 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 				} else {
 
 					// need to ask user
-					userResponse = resolver.composeUserQuestion(factBaseNameInformations)
+					userResponse = "Which one?"
+					options = resolver.composeOptions(factBaseNameInformations)
 
 					// store options
 					resolver.storeOptions(factBaseNameInformations)
@@ -113,7 +115,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 	nameRelations := nameTemplate.BindSingleRelationMultipleBindings(nameRelationBindings)
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
-	return nameStore, namelessRelations, userResponse
+	return nameStore, namelessRelations, userResponse, options
 }
 
 func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {
@@ -135,14 +137,15 @@ func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations 
 	return answerNameInformations
 }
 
-func (resolver *NameResolver) composeUserQuestion(nameInformations []NameInformation) string {
-	question := "Which one?"
+func (resolver *NameResolver) composeOptions(nameInformations []NameInformation) *Options {
+
+	options := &Options{}
 
 	for _, nameInformation := range nameInformations {
-		question += " [" + nameInformation.GetIdentifier() + "] " + nameInformation.Information
+		options.AddOption(nameInformation.GetIdentifier(), nameInformation.Information)
 	}
 
-	return question
+	return options
 }
 
 func (resolver *NameResolver) createNameSensesFromNameInformations(nameInformations []NameInformation, variable string) mentalese.RelationSet {

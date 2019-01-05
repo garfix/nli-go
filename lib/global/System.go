@@ -89,14 +89,15 @@ func (system *system) StoreDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
 }
 
-func (system *system) Answer(input string) string {
+func (system *system) Answer(input string) (string, *central.Options) {
 
 	originalInput := system.dialogContext.Process(input)
+	options := central.NewOptions()
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	tokens := system.tokenizer.Process(originalInput)
@@ -104,7 +105,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
 	} else {
-		return ""
+		return "", options
 	}
 
 	parseTree := system.parser.Parse(tokens)
@@ -112,7 +113,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Parser", parseTree.String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	genericRelations := system.relationizer.Relationize(parseTree)
@@ -120,17 +121,17 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Relationizer", genericRelations.String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
 	// each access to a data store, replace E5 with its ID
-	nameStore, namelessRelations, userResponse := system.nameResolver.Resolve(genericRelations)
+	nameStore, namelessRelations, userResponse, options := system.nameResolver.Resolve(genericRelations)
 
 	if userResponse == "" {
 		system.log.AddProduction("NameResolver", nameStore.String())
 	} else {
-		return userResponse
+		return userResponse, options
 	}
 
 	system.log.AddProduction("Nameless", namelessRelations.String())
@@ -140,7 +141,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Generic 2 DS", dsRelations.String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	dsAnswer := system.answerer.Answer(dsRelations, nameStore)
@@ -148,7 +149,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("DS Answer", dsAnswer.String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	genericAnswer := system.transformer.Replace(system.ds2generic, dsAnswer)
@@ -156,7 +157,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Generic Answer", genericAnswer.String())
 	} else {
-		return ""
+		return "", options
 	}
 
 	answerWords := system.generator.Generate(genericAnswer)
@@ -164,7 +165,7 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
 	} else {
-		return ""
+		return "", options
 	}
 
 	answer := system.surfacer.Create(answerWords)
@@ -172,12 +173,12 @@ func (system *system) Answer(input string) string {
 	if system.log.IsOk() {
 		system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
 	} else {
-		return ""
+		return "", options
 	}
 
 	system.dialogContext.RemoveOriginalInput()
 
-	return answer
+	return answer, options
 }
 
 func (system *system) Suggest(input string) []string {

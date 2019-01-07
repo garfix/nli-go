@@ -1,6 +1,6 @@
 [
     {
-        condition: act(question, who) married_to(A, B) focus(A),
+        condition: act(question, who) married_to(A, B),
         no_results: {
             answer: none()
         },
@@ -25,7 +25,7 @@
             answer: result(true)
         }
     } {
-        condition: act(question, how_many) have_child(B, A) focus(A),
+        condition: act(question, how_many) have_child(B, A),
         no_results: {
             answer: none()
         },
@@ -34,7 +34,7 @@
             answer: gender(B, G) count(C, N) have_child(C, B)
         }
     } {
-        condition: act(question, which) have_child(B, A) focus(A),
+        condition: act(question, which) have_child(B, A),
         no_results: {
             answer: none()
         },

@@ -63,7 +63,7 @@ $(function(){
 
                 showError(data.ErrorLines);
                 showAnswer(data.Answer);
-                showProductions(data.productions);
+                showProductions(data.Productions);
                 showOptions(data.OptionKeys, data.OptionValues);
 
             },
@@ -75,6 +75,10 @@ $(function(){
 
     function showOptions(optionKeys, optionValues) {
         var html = "";
+
+        if (!optionKeys) {
+            return;
+        }
 
         for (var i = 0; i < optionKeys.length; i++) {
             html += "<a href='" + optionKeys[i] + "'>" + optionValues[i] + "</a>";

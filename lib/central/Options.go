@@ -1,5 +1,8 @@
 package central
 
+// These options are output along with a response by System.Answer()
+// There are choices for the user to respond to a system clarification question
+
 type Options struct {
 	keys []string
 	values []string

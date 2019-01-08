@@ -16,6 +16,8 @@ func TestRelationizer(t *testing.T) {
 		{ form: 'the',        pos: determiner,        sense: isa(E, the) }
 		{ form: 'book',       pos: noun,              sense: isa(E, book) }
 		{ form: 'falls',      pos: verb,              sense: isa(E, fall) }
+		{ form: 'on',         pos: preposition,       sense: isa(E, on) }
+	    { form: 'ground',     pos: noun,       		  sense: isa(E, ground) }
 		{ form: '.',          pos: period }
 	]`)
 	log := common.NewSystemLog(false)
@@ -35,5 +37,13 @@ func TestRelationizer(t *testing.T) {
 	want = "[declaration(S6) subject(S6, E6) quantification(E6, [isa(E6, book)], D6, [isa(D6, the)]) isa(S6, fall)]"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
+	}
+
+	parseTree2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."})
+	result2 := relationizer.Relationize(parseTree2)
+
+	want2 := "[declaration(S7) subject(S7, E7) quantification(E7, [isa(E7, book)], D7, [isa(D7, the)]) isa(S7, fall) relation(P5, P6, E8) isa(P6, on) quantification(E8, [isa(E8, ground)], D8, [isa(D8, the)])]"
+	if result2.String() != want2 {
+		t.Errorf("got %s, want %s", result2.String(), want2)
 	}
 }

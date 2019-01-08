@@ -34,6 +34,8 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVar
 	m := map[string]string{}
 	antecedentVariable := formalVariables[0]
 
+	m[antecedentVariable] = actualAntecedent
+
 	for i := 1; i < len(formalVariables); i++ {
 
 		consequentVariable := formalVariables[i]

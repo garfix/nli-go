@@ -14,6 +14,8 @@
     { form: 'children',	    pos: noun,		    condition: isa(E, child) }
     { form: 'father',	    pos: noun,		    condition: isa(E, father) }
     { form: 'mother',	    pos: noun,		    condition: isa(E, mother) }
+    { form: 'daughter',	    pos: noun,		    condition: isa(E, daughter) }
+    { form: 'son',	        pos: noun,		    condition: isa(E, son) }
 
     == adverbs ==
     { form: 'yes',	        pos: adverb,	    condition: isa(E, yes) }

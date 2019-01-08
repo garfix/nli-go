@@ -1,5 +1,7 @@
 [
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
+    isa(P1, marry) subject(P1, A) prepositional_object(P1, P3) relation(P3, P2, B) isa(P2, to) => married_to(A, B);
+
     isa(P1, be) subject(P1, A) object(P1, B) => ;
     isa(P1, bear) subject(P1, S) isa(W, when) isa(A, be) => birth_date(S, B1);
 
@@ -8,6 +10,8 @@
 
     possession(A, B) isa(B, father) => has_father(A, B);
     possession(A, B) isa(B, mother) => has_mother(A, B);
+    possession(A, B) isa(B, daughter) => has_daughter(A, B);
+    possession(A, B) isa(B, son) => has_son(A, B);
 
     tense(P1, T) => ;
 ]

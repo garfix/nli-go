@@ -14,6 +14,10 @@
     { form: 'children',             pos: noun,                   sense: isa(E, child) }
     { form: 'father',               pos: noun,                   sense: isa(E, father) }
     { form: 'mother',               pos: noun,                   sense: isa(E, mother) }
+    { form: 'daughter',             pos: noun,                   sense: isa(E, daughter) }
+    { form: 'son',                  pos: noun,                   sense: isa(E, son) }
+
+    { form: 'to',                   pos: preposition,            sense: isa(E, to) }
 
     { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, 1) }
     { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, 2) }

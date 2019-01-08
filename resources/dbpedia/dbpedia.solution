@@ -11,6 +11,17 @@
         }
     }
 
+    == Was X married to Y? ==
+    {
+        condition: question(S, wh_question) married_to(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            answer: result(true)
+        }
+    }
+
     == How many children had X? (counting the children) ==
     {
         condition: question(S, wh_question) isa(Q, how) isa(Q, many) have_child(A, B),

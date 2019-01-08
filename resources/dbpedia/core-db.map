@@ -2,4 +2,5 @@
     who_question(A) => who_question(A);
     question(S5, wh_question) => question(S5, wh_question);
     isa(A, who) => isa(A, who);
+    isa(A, be) => isa(A, be);
 ]

@@ -22,6 +22,8 @@
 
     has_father(A, B) => parent(A, B) gender(B, 'male');
     has_mother(A, B) => parent(A, B) gender(B, 'female');
+    has_daughter(A, B) => parent(B, A) gender(B, 'female');
+    has_son(A, B) => parent(B, A) gender(B, 'male');
 
     birth_date(E, D) => birth_date(E, D);
     birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);

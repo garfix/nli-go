@@ -1,6 +1,8 @@
 [
     { rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E) }
 
+    { rule: s(P) -> adverb(M),                                                    condition: modifier(P, M) }
+
     { rule: vp(V1) -> vbar(V1) pp(P1),                                            condition: prepositional_object(V1, P1) }
 
     { rule: vbar(V1) -> aux_verb_be(V1) vgp(V1),                                  condition: tense(V1, past) }

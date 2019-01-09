@@ -44,9 +44,9 @@
 
     { rule: preposition(P1) -> preposition(P2) conjunction(P1) preposition(P3),  sense: conjunction(P1, P2, P3) }
 
-    { rule: pp(R1) -> preposition(P1) np(E1),                                    sense: relation(R1, P1, E1) }
-    { rule: pp(R1) -> preposition(P1) pp(P2),                                    sense: relation(R1, P1, P2) }
-    { rule: pp(R1) -> p_spec(P1) preposition(P2) np(E1),                         sense: relation(R1, P2, E1) specification(R1, P1) }
+    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(P1, E1) }
+    { rule: pp(P1) -> preposition(P1) pp(P2),                                    sense: case(P1, P2) }
+    { rule: pp(P1) -> p_spec(Ps) preposition(P1) np(E1),                         sense: case(P1, E1) specification(P1, Ps) }
     { rule: pp(R1) -> pp(P1) conjunction(R1) pp(P2),                             sense: conjunction(R1, P1, P2) }
 
     { rule: vgp(V1) -> verb(V1) }

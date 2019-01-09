@@ -16,7 +16,7 @@
 
     { rule: nbar(E1) -> noun(E1) }
 
-    { rule: pp(R1) -> preposition(P1) np(E1),                                    sense: relation(R1, P1, E1) }
+    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 
     { rule: possessive_marker(E1) -> possessive_marker_1() possessive_marker_2() }
 
@@ -36,7 +36,7 @@
     { rule: s_interrogative(S1) -> wh_word(W1) aux_verb(A1) np(E2) vp(S1),      sense: question(S1, wh_question) subject(S1, E2) }
 
     == was X married ==
-    { rule: s_interrogative(S1) -> aux_verb(A1) np(E2) vp(S1),                  sense: question(S1, wh_question) subject(S1, E2) }
+    { rule: s_interrogative(S1) -> aux_verb(A1) np(E2) vp(S1),                  sense: question(S1, wh_question) passive_aux(S1, A1) subject(S1, E2) }
 
     { rule: s_interrogative(S1) -> s_interrogative(S1) question_mark() }
 

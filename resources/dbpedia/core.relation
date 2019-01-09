@@ -1,5 +1,4 @@
 [
     question(S, wh_question)
     isa(A, who)
-    isa(A, be)
 ]

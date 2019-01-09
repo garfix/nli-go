@@ -1,3 +1,24 @@
+# 2019-01-09
+
+The relations that are produced by the relationizer should be considered "syntactic relations". Thus far I have considered them as semantic.
+
+The difference is subtle. What matters to me is that some of the relations that are produced are not semantic. And these need to be stripped in the next step.
+
+---
+
+With the previous change the three representations will be:
+
+- Syntactic Relations
+- Application Semantics
+- Database Relations
+
+---
+
+I looked at Dependency Grammars once again. Apparently DG always uses machine learning to learn the rules for creating the parse tree.
+
+My grammar uses rewrite rules from Phrase Structure grammar, and syntactic relations from Dependency Grammar. I use the commonly used rules for VP, NP etc.
+But the rules at the sentence level differ. I will make use of DG style to represent it, because it matches closer to the semantic relations I need.
+
 # 2018-12-30
 
 I will let go of the concept "domain specific". It used to represent the conceptual space between generic and database specific, but it proved difficult because:

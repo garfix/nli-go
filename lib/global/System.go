@@ -116,17 +116,17 @@ func (system *system) Answer(input string) (string, *central.Options) {
 		return "", options
 	}
 
-	genericRelations := system.relationizer.Relationize(parseTree)
+	syntacticRelations := system.relationizer.Relationize(parseTree)
 
 	if system.log.IsOk() {
-		system.log.AddProduction("Relationizer", genericRelations.String())
+		system.log.AddProduction("Relationizer", syntacticRelations.String())
 	} else {
 		return "", options
 	}
 
 	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
 	// each access to a data store, replace E5 with its ID
-	nameStore, namelessRelations, userResponse, options := system.nameResolver.Resolve(genericRelations)
+	nameStore, namelessSyntacticRelations, userResponse, options := system.nameResolver.Resolve(syntacticRelations)
 
 	if userResponse == "" {
 		system.log.AddProduction("NameResolver", nameStore.String())
@@ -134,9 +134,9 @@ func (system *system) Answer(input string) (string, *central.Options) {
 		return userResponse, options
 	}
 
-	system.log.AddProduction("Nameless", namelessRelations.String())
+	system.log.AddProduction("Nameless", namelessSyntacticRelations.String())
 
-	dsRelations := system.transformer.Replace(system.generic2ds, namelessRelations)
+	dsRelations := system.transformer.Replace(system.generic2ds, namelessSyntacticRelations)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Generic 2 DS", dsRelations.String())

@@ -27,7 +27,7 @@ In the general relational representation I have these senses:
  * quantification(O, [], D, []) Creates a non-scoped quantifier. O is the quantified variable. The first [] will hold the _range_, the second [] will hold the _quantifier_.
  * possession(E1, E2)           Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
  * modality(P, M)               Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
- * relation(R, P, E)            Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)
+ * case(R, P, E)                Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)
  * specification(E1, E2)        The specification of an entity (which is a set) is its intersection with another entity (set)
  * modifier(V, P)               Modifies the meaning of a verb because it has a particle (look at is different from look into)
  * conjunction(C, E1, E2)       A new entity (C) formed out of two other entities.

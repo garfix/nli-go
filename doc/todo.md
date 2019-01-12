@@ -9,6 +9,7 @@
 * get rid of mappings in memory basis
 * Blocks World examples
 * Names with and without insertion
+* Solutions: do not just create cases for 0 or any results, but allow for arbitrary conditions (a relation set), for the response
 
 ## Rules
 

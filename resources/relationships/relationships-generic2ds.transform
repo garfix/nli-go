@@ -8,6 +8,6 @@
 
     question(S, wh_question) subject(S, E) isa(D1, which) => act(question, which);
     question(S, wh_question) subject(S, E) isa(E, who) => act(question, who);
-    question(S, wh_question) isa(A, how) isa(B, many) specification(B, A) => act(question, how_many);
+    question(S, wh_question) isa(A, how) isa(B, many) specification(B, A) specification(C, B) => act(question, how_many);
     question(S, yes_no_question) => act(question, yes_no);
 ]

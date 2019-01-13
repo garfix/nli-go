@@ -14,7 +14,6 @@
     { form: 'several',            pos: quantifier,            sense: isa(E, several) }
     { form: 'enough',             pos: quantifier,            sense: isa(E, enough) }
     { form: 'both',               pos: quantifier,            sense: isa(E, both) }
-    { form: 'many',               pos: quantifier,            sense: isa(E, many) }
     { form: 'much',               pos: quantifier,            sense: isa(E, much) }
     { form: 'more',               pos: quantifier,            sense: isa(E, more) }
     { form: 'most',               pos: quantifier,            sense: isa(E, most) }
@@ -25,9 +24,11 @@
     { form: 'very',               pos: degree,                sense: isa(E, very) }
 
     { form: 'quickly',            pos: adverb,                sense: isa(E, quick) }
+    { form: 'how',                pos: adverb,                sense: isa(E, how) }
 
     { form: 'small',              pos: adjective,             sense: isa(E, small) }
     { form: 'large',              pos: adjective,             sense: isa(E, large) }
+    { form: 'many',               pos: adjective,             sense: isa(E, many) }
 
     { form: 'i',                  pos: pronoun,               sense: isa(E, i) }
     { form: 'you',                pos: pronoun,               sense: isa(E, you) }
@@ -72,7 +73,6 @@
     { form: 'will',               pos: modal,                 sense: isa(E, will) }
 
     { form: 'who',                pos: wh_word,               sense: isa(E, who) }
-    { form: 'how',                pos: wh_word,               sense: isa(E, how) }
     { form: 'which',              pos: wh_word,               sense: isa(E, which) }
 
     { form: 'de',                 pos: insertion,             sense: name(E, 'de', 2) }

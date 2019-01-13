@@ -1,22 +1,18 @@
 [
-    { rule: how_many(W1) -> wh_word(W1) quantifier(A1),                         sense: specification(A1, W1) }
-
     { rule: dp(D1) -> determiner(D1) }
     { rule: dp(D1) -> article(D1) }
     { rule: dp(D1) -> qp(D1) }
+    { rule: dp(D1) -> number(D1) }
 
     { rule: qp(Q1) -> quantifier(Q1) }
-    { rule: qp(D1) -> number(D1) }
-    { rule: qp(Q1) -> qp(Q2) conjunction(Q1) qp(Q3),                             sense: conjunction(Q1, Q2, Q3) }
-    { rule: qp(Q1) -> adjective(A1) sub_conjunction() number(N1),                sense: relation(Q1, A1, N1) }
-
-    { rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3) }
 
     { rule: adverb(A1) -> adverb(A2) conjunction(A1) adverb(A3),                 sense: conjunction(A1, A2, A3) }
 
     { rule: advp(A1) -> adverb(A1) }
     { rule: advp(A1) -> degree(D1) adverb(A1),                                   sense: degree(A1, D1) }
     { rule: advp(A1) -> advp(A2) conjunction(A1) advp(A3),                       sense: conjunction(A1, A2, A3) }
+
+    { rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3) }
 
     { rule: adjp(A1) -> adjective(A1) }
     { rule: adjp(A1) -> degree(D1) adjective(A1),                                sense: degree(A1, D1) }
@@ -80,17 +76,18 @@
     { rule: clause(S1) -> clause(S1) pp(P) }
     { rule: clause(S1) -> s(S1) sbar(S2),                                        sense: object(S1, S2) }
 
-    { rule: s_declarative(S1) -> clause(S1) period(),                            sense: declaration(S1) }
+    { rule: s_declarative(S1) -> clause(S1),                                     sense: declaration(S1) }
+    { rule: s_declarative(S1) -> s_declarative(S1) period() }
 
-    { rule: s_interrogative(S1) -> aux_verb(A) np(E1) vp(S1) question_mark(),    sense: question(S1, yes_no_question) subject(S1, E1) }
-    { rule: s_interrogative(S1) -> aux_verb(S1) np(E1) np(E2) question_mark(),   sense: question(S1, yes_no_question) subject(S1, E1) object(S1, E2) }
-    { rule: s_interrogative(S1) -> how_many(W1) nbar(E1) aux_verb(S1)
-        np(E2) question_mark(),                                                 sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
-    { rule: s_interrogative(S1) -> wh_word(E1) vp(S1) np(E2) question_mark(),   sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
-    { rule: s_interrogative(S1) -> wh_word(D1) np(E1) aux_verb(S1)
-        np(E2) question_mark(),                                                 sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> aux_verb(A) np(E1) vp(S1),                    sense: question(S1, yes_no_question) subject(S1, E1) }
+    { rule: s_interrogative(S1) -> aux_verb(S1) np(E1) np(E2),                   sense: question(S1, yes_no_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> np(E1) aux_verb(S1) np(E2),                   sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> wh_word(E1) vp(S1) np(E2),                    sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> wh_word(D1) np(E1) aux_verb(S1) np(E2),       sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> s_interrogative(S1) question_mark() }
 
-    { rule: s_imperative(S1) -> vp(S1) exclamation_mark(),                         sense: command(S1) }
+    { rule: s_imperative(S1) -> vp(S1),                                          sense: command(S1) }
+    { rule: s_imperative(S1) -> s_imperative(S1) exclamation_mark() }
 
     { rule: s(S1) -> s_declarative(S1) }
     { rule: s(S1) -> s_interrogative(S1) }

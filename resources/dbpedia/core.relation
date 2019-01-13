@@ -1,4 +1,5 @@
 [
     question(S, wh_question)
+    act(question, _, _)
     isa(A, who)
 ]

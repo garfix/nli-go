@@ -44,9 +44,9 @@ func TestQuantSolver(t *testing.T) {
 	}{
 		{
 			// does every parent have 2 children?
-			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [ have_child(S1, O1) number_of(2, O1) ])",
 			"{}",
-			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
+			"{S1:4}{S1:1}",
 		},
 		{
 			// does every parent have 3 children?
@@ -56,9 +56,9 @@ func TestQuantSolver(t *testing.T) {
 		},
 		{
 			// keep extra bindings?
-			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [ have_child(S1, O1) ]) ])",
+			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [have_child(S1, O1) number_of(2, O1) ])",
 			"{X: 3}",
-			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
+			"{S1:4, X:3}{S1:1, X:3}",
 		},
 
 // do 2 parents each have 2 children?
@@ -74,6 +74,9 @@ func TestQuantSolver(t *testing.T) {
 
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(log)
 	solver.AddNestedStructureBase(nestedStructureBase)
+
+	aggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
+	solver.AddMultipleBindingsBase(aggregateBase)
 
 	for _, test := range tests {
 

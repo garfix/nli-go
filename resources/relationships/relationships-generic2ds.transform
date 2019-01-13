@@ -1,8 +1,8 @@
 [
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
 
-    IF isa(S, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
-    IF isa(O, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(S, O);
+    isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
+    isa(O, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(S, O);
 
     isa(P1, be) subject(P1, A) conjunction(A, A1, A2) isa(A, and) object(P1, B) isa(B, sibling) => siblings(A1, A2);
 
@@ -10,4 +10,8 @@
     question(S, wh_question) subject(S, E) isa(E, who) => act(question, who);
     question(S, wh_question) isa(A, how) isa(B, many) specification(B, A) specification(C, B) => act(question, how_many);
     question(S, yes_no_question) => act(question, yes_no);
+
+    determiner(E1, D1) number(D1, N1) => number_of(N1, E1);
+
+    isa(S, do) => ;
 ]

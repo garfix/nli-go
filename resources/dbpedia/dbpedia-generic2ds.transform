@@ -1,11 +1,13 @@
 [
+    subject(S1, E1) specification(E1, Q1) specification(Q1, A1)  isa(A1, how) isa(Q1, many) => act(question, how_many, E1);
+
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
     isa(P1, marry) subject(P1, A) prepositional_object(P1, Prep) case(B, Prep) isa(Prep, to) => married_to(A, B);
 
     isa(P1, bear) subject(P1, S) isa(W, when) isa(A, be) => birth_date(S, B1);
 
-    IF isa(S, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
-    IF isa(O, child) THEN isa(P1, have) subject(P1, S) object(P1, O) => have_child(S, O);
+    isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
+    isa(O, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(S, O);
 
     possession(A, B) isa(B, father) => has_father(A, B);
     possession(A, B) isa(B, mother) => has_mother(A, B);

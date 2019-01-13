@@ -27,8 +27,11 @@ func NewQuantifierScoper(log *common.SystemLog) QuantifierScoper {
 
 func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 
+	// turn new_quantifier into quantifier
+	newRelations := scoper.fromNewQuantifierToQuantifier(relations)
+
 	// collect all quantifications
-	quantifications, nonQuantifications := scoper.collectQuantifications(relations)
+	quantifications, nonQuantifications := scoper.collectQuantifications(newRelations)
 
 	// sort the quantifications by hard constraints and preferences
 	sort.Sort(QuantificationArray(quantifications))
@@ -40,6 +43,94 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 	scoper.addNonQuantifications(&scopedRelations, len(quantifications), nonQuantifications)
 
 	return scopedRelations
+}
+
+func (scoper QuantifierScoper) fromNewQuantifierToQuantifier(relations RelationSet) RelationSet {
+
+	newRelations := RelationSet{}
+	rangeRelations := RelationSet{}
+	quantifierRelations := RelationSet{}
+
+	workingSet := relations.Copy()
+
+	for len(workingSet) > 0 {
+
+		relation := workingSet[0]
+		workingSet = workingSet[1:]
+
+		newRelation := relation
+
+		if relation.Predicate == Predicate_New_Quantification {
+
+			quantificationVar := relation.Arguments[0]
+			quantifierVar := relation.Arguments[1]
+			rangeVar := relation.Arguments[2]
+
+			rangeRelations, workingSet = scoper.extractRelationsWithVariable(workingSet, rangeVar.TermValue)
+			quantifierRelations, workingSet = scoper.extractRelationsWithVariable(workingSet, quantifierVar.TermValue)
+
+			workingSet = scoper.replaceVariable(workingSet, quantificationVar.TermValue, rangeVar.TermValue)
+
+			newRelation = Relation{
+				Predicate: Predicate_Quantification,
+				Arguments: []Term{
+					relation.Arguments[2],
+					NewRelationSet(rangeRelations),
+					relation.Arguments[1],
+					NewRelationSet(quantifierRelations),
+				},
+			}
+		}
+
+		newRelations = append(newRelations, newRelation)
+	}
+
+	return newRelations
+}
+
+func (scoper QuantifierScoper) extractRelationsWithVariable(relations RelationSet, variable string ) (RelationSet, RelationSet) {
+
+	result := RelationSet{}
+	remainder := RelationSet{}
+
+	for _, relation := range relations {
+
+		found := false
+
+		for _, argument := range relation.Arguments {
+			if argument.IsVariable() && argument.TermValue == variable {
+				found = true
+			}
+		}
+
+		if found {
+			result = append(result, relation)
+		} else {
+			remainder = append(remainder, relation)
+		}
+	}
+
+	return result, remainder
+}
+
+func (scoper QuantifierScoper) replaceVariable(relations RelationSet, oldVar string, newVar string) RelationSet {
+
+	result := RelationSet{}
+
+	for _, relation := range relations {
+
+		newRelation := relation.Copy()
+
+		for i, argument := range newRelation.Arguments {
+			if argument.IsVariable() && argument.TermValue == oldVar {
+				newRelation.Arguments[i].TermValue = newVar
+			}
+		}
+
+		result = append(result, newRelation)
+	}
+
+	return result
 }
 
 func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (QuantificationArray, RelationSet) {
@@ -96,6 +187,8 @@ func (scoper QuantifierScoper) addNonQuantifications(scopedRelations *RelationSe
 
 			if scoper.variableMatches(nonQuantification, rangeVariable) {
 				nonQuantificationScope = scope
+			} else if scoper.someRelationVariableMatches(nonQuantification, scope) {
+				nonQuantificationScope = scope
 			}
 		}
 
@@ -110,6 +203,30 @@ func (scoper QuantifierScoper) variableMatches(relation Relation, variable Term)
 		if argument.Equals(variable) {
 			match = true
 			break
+		}
+	}
+
+	return match
+}
+
+// if range variable is R5 and scope is
+//		have_child(R5, E6)
+// and needle is
+//      number_of(E6, 4)
+// then it should be added to the scope
+func (scoper QuantifierScoper) someRelationVariableMatches(needle Relation, hayStack *RelationSet) bool {
+	match := false
+
+	for _, argument1 := range needle.Arguments {
+		if argument1.IsVariable() {
+			for _, straw := range *hayStack {
+				for _, argument2 := range straw.Arguments {
+					if argument2.IsVariable() && argument2.TermValue == argument1.TermValue {
+						match = true
+						break
+					}
+				}
+			}
 		}
 	}
 

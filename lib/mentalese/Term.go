@@ -37,6 +37,10 @@ func NewPredicateAtom(value string) Term {
 	return Term{ TermType: Term_predicateAtom, TermValue: value, TermValueRelationSet: nil}
 }
 
+func NewRelationSet(value RelationSet) Term {
+	return Term{ TermType: Term_relationSet, TermValue: "", TermValueRelationSet: value}
+}
+
 func NewId(id string) Term {
 	return Term{ TermType: Term_id, TermValue: id, TermValueRelationSet: nil}
 }

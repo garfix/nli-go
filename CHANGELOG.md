@@ -1,5 +1,9 @@
 # Changelog
 
+## ??
+
+* Only real quantifiers like ALL are handled with quantification; numbers are not
+
 ## 1.4: Interactive with dialog context - 15-12-2018
 
 * When a question is about Lord Byron, and the database has two persons "Lord Byron" asks "which one"

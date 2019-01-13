@@ -3,6 +3,10 @@
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) }
 
+    { rule: qp(Q1) -> quantifier(Q1) }
+
+    { rule: dp(D1) -> number(D1) }
+
     { rule: vgp(V1) -> verb(V1) }
 
     { rule: vbar(V1) -> vgp(V1) }
@@ -10,21 +14,25 @@
 
     { rule: vp(V1) -> vbar(V1) }
 
-    { rule: np(E1) -> noun(E1) }
-    { rule: np(E1) -> np(E2) possessive_marker() nbar(E1),                      sense: possession(E2, E1) }
+    { rule: advp(A1) -> adverb(A1) }
+
+    { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: specification(A1, Adv1) }
+
+    { rule: np(E1) -> nbar(E1) }
+    { rule: np(E1) -> np(E2) possessive_marker() nbar(E1),                       sense: possession(E2, E1) }
     { rule: np(E1) -> proper_noun(E1) }
+    { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: new_quantification(E1, Q1, R1) }
+    { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
 
     { rule: nbar(E1) -> noun(E1) }
+    { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: specification(E1, A1) }
 
     { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 
     { rule: possessive_marker(E1) -> possessive_marker_1() possessive_marker_2() }
 
-    { rule: wh_adjp(A1) -> wh_word(A1) adjective(A1) }
-    { rule: wh_adjp(A1) -> wh_word(A1) }
-
-    == how many X had Y ==
-    { rule: s_interrogative(S1) -> wh_adjp(Q1) np(R1) aux_verb(S1) np(E2),      sense: question(S1, wh_question) quantification(R1, [], Q1, []) subject(S1, R1) object(S1, E2) }
+    == how many children had X ==
+    { rule: s_interrogative(S1) -> np(R1) aux_verb(S1) np(E2),                  sense: subject(S1, R1) object(S1, E2) }
 
     == who married X ==
     { rule: s_interrogative(S1) -> wh_word(E1) vp(S1) np(E2),                   sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }

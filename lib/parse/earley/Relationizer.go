@@ -1,7 +1,6 @@
 package earley
 
 import (
-	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
@@ -72,22 +71,8 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 
 	relationizer.log.StartDebug("processChildRelations", parentSet, childSets, rule)
 
-	newSet := mentalese.RelationSet{}
+	newSet := parentSet.Copy()
 	extractedSetIndexes := map[int]bool{}
-	compoundRelation := mentalese.Relation{}
-
-	for i, parentRelation := range parentSet {
-
-		// special case
-		if parentRelation.Predicate == mentalese.Predicate_Quantification {
-
-			compoundRelation, extractedSetIndexes = relationizer.doQuantification(parentRelation, i, childSets, rule, extractedSetIndexes)
-			newSet = append(newSet, compoundRelation)
-
-		} else {
-			newSet = append(newSet, parentRelation)
-		}
-	}
 
 	for i, childSet := range childSets {
 
@@ -101,38 +86,4 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	relationizer.log.EndDebug("processChildRelations", newSet)
 
 	return newSet
-}
-
-// Example:
-// relation = quantification(E1, [], D1, [])
-// extractedSetIndexes = []
-// childSets = [ [], [isa(E1, dog)], [], [isa(D1, every)] ]
-// rule = np(E1) -> dp(D1) nbar(E1);
-func (relationizer Relationizer) doQuantification(actualRelation mentalese.Relation, childIndex int, childSets []mentalese.RelationSet, rule parse.GrammarRule, extractedSetIndexes map[int]bool) (mentalese.Relation, map[int]bool) {
-
-	relationizer.log.StartDebug("doQuantification", actualRelation, childSets, rule)
-
-	formalRelation := rule.Sense[childIndex]
-	lastVariable := ""
-
-	for i, formalArgument := range formalRelation.Arguments {
-		if formalArgument.IsVariable() {
-			lastVariable = formalArgument.TermValue
-		} else if formalArgument.IsRelationSet() {
-			index, found := rule.GetConsequentIndexByVariable(lastVariable)
-			if found {
-				actualArgument := actualRelation.Arguments[i]
-				extractedSetIndexes[index] = true
-				subSet := append(actualArgument.TermValueRelationSet, childSets[index]...)
-				relationSetArgument := mentalese.Term{TermType: mentalese.Term_relationSet, TermValueRelationSet: subSet}
-				actualRelation.Arguments[i] = relationSetArgument
-			} else {
-				panic(fmt.Sprintf("Relation set placeholder should be preceded by a variable from the rule  %v %s", rule, lastVariable))
-			}
-		}
-	}
-
-	relationizer.log.EndDebug("doQuantification", actualRelation, extractedSetIndexes)
-
-	return actualRelation, extractedSetIndexes
 }

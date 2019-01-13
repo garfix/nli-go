@@ -5,24 +5,25 @@
     { form: 'has',                  pos: aux_verb,              sense: isa(E, have) }
     { form: 'was',                  pos: aux_verb,              sense: isa(E, be) }
 
-    { form: 'who',                  pos: wh_word,                sense: isa(E, who) }
-    { form: 'how',                  pos: wh_word,                sense: isa(E, how) }
-    { form: 'when',                 pos: wh_word,                sense: isa(E, when) }
+    { form: 'who',                  pos: wh_word,               sense: isa(E, who) }
+    { form: 'when',                 pos: wh_word,               sense: isa(E, when) }
 
-    { form: 'many',                 pos: adjective,              sense: isa(E, many) }
+    { form: 'how',                  pos: adverb,                sense: isa(E, how) }
 
-    { form: 'children',             pos: noun,                   sense: isa(E, child) }
-    { form: 'father',               pos: noun,                   sense: isa(E, father) }
-    { form: 'mother',               pos: noun,                   sense: isa(E, mother) }
-    { form: 'daughter',             pos: noun,                   sense: isa(E, daughter) }
-    { form: 'son',                  pos: noun,                   sense: isa(E, son) }
+    { form: 'many',                 pos: adjective,             sense: isa(E, many) }
 
-    { form: 'to',                   pos: preposition,            sense: isa(E, to) }
+    { form: 'children',             pos: noun,                  sense: isa(E, child) }
+    { form: 'father',               pos: noun,                  sense: isa(E, father) }
+    { form: 'mother',               pos: noun,                  sense: isa(E, mother) }
+    { form: 'daughter',             pos: noun,                  sense: isa(E, daughter) }
+    { form: 'son',                  pos: noun,                  sense: isa(E, son) }
 
-    { form: /^[A-Z]/,	            pos: first_name,             sense: name(E, Form, 1) }
-    { form: /^[A-Z]/,	            pos: second_name,            sense: name(E, Form, 2) }
-    { form: /^[A-Z]/,	            pos: third_name,             sense: name(E, Form, 3) }
-    { form: /^[A-Z]/,	            pos: full_name,              sense: name(E, Form, 1) }
+    { form: 'to',                   pos: preposition,           sense: isa(E, to) }
+
+    { form: /^[A-Z]/,	            pos: first_name,            sense: name(E, Form, 1) }
+    { form: /^[A-Z]/,	            pos: second_name,           sense: name(E, Form, 2) }
+    { form: /^[A-Z]/,	            pos: third_name,            sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,	            pos: full_name,             sense: name(E, Form, 1) }
 
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }

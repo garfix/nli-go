@@ -1,3 +1,7 @@
+# 2019-01-13
+
+I already fixed the quantification part. Very happy with this! Thing have gotten much more simple.
+
 # 2019-01-12
 
 I found out that quantification only needs to be done for "quantifiers". These exclude numerals.

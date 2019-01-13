@@ -24,7 +24,7 @@
 
     { rule: np(E1) -> nbar(E1) }
     { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
-    { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: new_quantification(E1, Q1, R1) }
+    { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
     { rule: np(E1) -> poss(E2) nbar(E1),                                         sense: possession(E1, E2) }
     { rule: np(E1) -> pronoun(E1) }
     { rule: np(E1) -> proper_noun(E1) }

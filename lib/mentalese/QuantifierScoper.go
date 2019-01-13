@@ -28,7 +28,7 @@ func NewQuantifierScoper(log *common.SystemLog) QuantifierScoper {
 func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 
 	// turn new_quantifier into quantifier
-	newRelations := scoper.fromNewQuantifierToQuantifier(relations)
+	newRelations := scoper.fromQuantifierToTemp(relations)
 
 	// collect all quantifications
 	quantifications, nonQuantifications := scoper.collectQuantifications(newRelations)
@@ -45,7 +45,7 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 	return scopedRelations
 }
 
-func (scoper QuantifierScoper) fromNewQuantifierToQuantifier(relations RelationSet) RelationSet {
+func (scoper QuantifierScoper) fromQuantifierToTemp(relations RelationSet) RelationSet {
 
 	newRelations := RelationSet{}
 	rangeRelations := RelationSet{}
@@ -60,7 +60,7 @@ func (scoper QuantifierScoper) fromNewQuantifierToQuantifier(relations RelationS
 
 		newRelation := relation
 
-		if relation.Predicate == Predicate_New_Quantification {
+		if relation.Predicate == Predicate_Quantification {
 
 			quantificationVar := relation.Arguments[0]
 			quantifierVar := relation.Arguments[1]
@@ -72,7 +72,7 @@ func (scoper QuantifierScoper) fromNewQuantifierToQuantifier(relations RelationS
 			workingSet = scoper.replaceVariable(workingSet, quantificationVar.TermValue, rangeVar.TermValue)
 
 			newRelation = Relation{
-				Predicate: Predicate_Quantification,
+				Predicate: Predicate_Temp_Quantification,
 				Arguments: []Term{
 					relation.Arguments[2],
 					NewRelationSet(rangeRelations),
@@ -137,7 +137,7 @@ func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (Qu
 	quantifications := QuantificationArray{}
 	nonQuantifications := RelationSet{}
 	for _, relation := range relations {
-		if relation.Predicate == Predicate_Quantification {
+		if relation.Predicate == Predicate_Temp_Quantification {
 			quantifications = append(quantifications, relation)
 		} else {
 			nonQuantifications = append(nonQuantifications, relation)

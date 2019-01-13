@@ -1,16 +1,16 @@
 package mentalese
 
-type QuantificationArray RelationSet
+type QuantArray RelationSet
 
-func (s QuantificationArray) Len() int {
+func (s QuantArray) Len() int {
 	return len(s)
 }
 
-func (s QuantificationArray) Swap(i, j int) {
+func (s QuantArray) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
-func (s QuantificationArray) Less(i, j int) bool {
+func (s QuantArray) Less(i, j int) bool {
 
 	less := false
 

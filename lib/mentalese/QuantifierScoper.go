@@ -34,10 +34,10 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 	quantifications, nonQuantifications := scoper.collectQuantifications(newRelations)
 
 	// sort the quantifications by hard constraints and preferences
-	sort.Sort(QuantificationArray(quantifications))
+	sort.Sort(QuantArray(quantifications))
 
 	// nest the quantifications to create scopes
-	scopedRelations := scoper.scopeQuantifications(quantifications)
+	scopedRelations := scoper.scopeQuants(quantifications)
 
 	// fill in the other relations at the outermost position where they still are scoped.
 	scoper.addNonQuantifications(&scopedRelations, len(quantifications), nonQuantifications)
@@ -72,12 +72,13 @@ func (scoper QuantifierScoper) fromQuantifierToTemp(relations RelationSet) Relat
 			workingSet = scoper.replaceVariable(workingSet, quantificationVar.TermValue, rangeVar.TermValue)
 
 			newRelation = Relation{
-				Predicate: Predicate_Temp_Quantification,
+				Predicate: Predicate_Quant,
 				Arguments: []Term{
 					relation.Arguments[2],
 					NewRelationSet(rangeRelations),
 					relation.Arguments[1],
 					NewRelationSet(quantifierRelations),
+					NewRelationSet(RelationSet{}),
 				},
 			}
 		}
@@ -133,11 +134,11 @@ func (scoper QuantifierScoper) replaceVariable(relations RelationSet, oldVar str
 	return result
 }
 
-func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (QuantificationArray, RelationSet) {
-	quantifications := QuantificationArray{}
+func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (QuantArray, RelationSet) {
+	quantifications := QuantArray{}
 	nonQuantifications := RelationSet{}
 	for _, relation := range relations {
-		if relation.Predicate == Predicate_Temp_Quantification {
+		if relation.Predicate == Predicate_Quant {
 			quantifications = append(quantifications, relation)
 		} else {
 			nonQuantifications = append(nonQuantifications, relation)
@@ -146,24 +147,14 @@ func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (Qu
 	return quantifications, nonQuantifications
 }
 
-func (scoper QuantifierScoper) scopeQuantifications(quantifications QuantificationArray) RelationSet {
+func (scoper QuantifierScoper) scopeQuants(quants QuantArray) RelationSet {
 
 	scope := RelationSet{}
 
-	for i := len(quantifications) - 1; i >= 0; i-- {
+	for i := len(quants) - 1; i >= 0; i-- {
 
-		quantification := quantifications[i]
-
-		quant := Relation{
-			Predicate: Predicate_Quant,
-			Arguments: []Term{
-				quantification.Arguments[0],
-				quantification.Arguments[1],
-				quantification.Arguments[2],
-				quantification.Arguments[3],
-				{TermType: Term_relationSet, TermValueRelationSet: scope},
-			},
-		}
+		quant := quants[i]
+		quant.Arguments[Quantification_ScopeIndex] = NewRelationSet(scope)
 
 		scope = RelationSet{quant}
 	}

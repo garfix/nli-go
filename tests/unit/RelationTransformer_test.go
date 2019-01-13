@@ -67,15 +67,15 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 	transformer := mentalese.NewRelationTransformer(matcher, log)
 
 	relationSet := parser.CreateRelationSet(`[
-		quantification(E1, [ isa(E1, ball) ], D1, [ isa(D1, every) ])
+		quant(E1, [ isa(E1, ball) ], D1, [ isa(D1, every) ], [])
 	]`)
 
 	transformations := parser.CreateTransformations(`[
-		quantification(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ]) => quantification(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ]) ok(E2, D2);
+		quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) => quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) ok(E2, D2);
 	]`)
 
 	replacedResult := transformer.Replace(transformations, relationSet)
-	wantReplaced := "[quantification(E1, [isa(E1, ball)], D1, [isa(D1, every)]) ok(E1, D1)]"
+	wantReplaced := "[quant(E1, [isa(E1, ball)], D1, [isa(D1, every)], []) ok(E1, D1)]"
 
 	if replacedResult.String() != wantReplaced {
 		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", replacedResult, wantReplaced)
@@ -90,7 +90,7 @@ func TestRelationTransformerWithQuant(t *testing.T) {
 	transformer := mentalese.NewRelationTransformer(matcher, log)
 
 	input := parser.CreateRelationSet(`[
-		quantification(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ])
+		quant(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ], [])
 	]`)
 
 	transformations := parser.CreateTransformations(`[
@@ -98,7 +98,7 @@ func TestRelationTransformerWithQuant(t *testing.T) {
 	]`)
 
 	result := transformer.Replace(transformations, input)
-	want := "[quantification(E1, [how_many(E1)], D1, [how_many(D1)])]"
+	want := "[quant(E1, [how_many(E1)], D1, [how_many(D1)], [])]"
 
 	if result.String() != want {
 		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", result, want)

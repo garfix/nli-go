@@ -13,27 +13,42 @@ For the semantic language holds:
 
     == much ado about nothing! ==
 
-## Senses
+## Syntactic Relations
+
+Syntactic relations are formed in the relationizer phase, when the semantic attachments from the lexicon and grammar are combined.
+
+I try to use the Universal Dependencies (used by the Stanford Parser), but there are some exceptions, needed for semantic processing.
+
+http://universaldependencies.org/u/dep/index.html
+http://nlp.stanford.edu:8080/parser/index.jsp
 
 In the general relational representation I have these senses:
 
- * declaration(P)               Based on a verb, this forms the main node of a sentence.
- * command(I)                   Based on the sentence structure, the verb must be interpretered as a command (Go!)
- * question(Q)                  Based on a verb, this sentence forms a question.
- * subject(P, S)                The semantic subject of a sentence (may differ from the syntactic subject)
- * object(P, O)                 Idem for object.
- * indirect_object(P, I)         Idem for indirect object.
- * prepositional_object(P, PO)   Like object, but linked via a preposition. "to the teacher"
- * quantification(O, [], D, []) Creates a non-scoped quantifier. O is the quantified variable. The first [] will hold the _range_, the second [] will hold the _quantifier_.
- * possession(E1, E2)           Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
- * modality(P, M)               Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
- * case(R, P, E)                Exposes the relation between two entities based on a preposition: the cat is on the mat (relation: on)
- * specification(E1, E2)        The specification of an entity (which is a set) is its intersection with another entity (set)
- * modifier(V, P)               Modifies the meaning of a verb because it has a particle (look at is different from look into)
- * conjunction(C, E1, E2)       A new entity (C) formed out of two other entities.
- * degree(E, D)                 Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
+ * root(S)                              The root of a sentence
+ * subject(P, S)               nsubj    The syntactic subject of a sentence
+ * object(P, O)                obj      The syntactic object
+ * ind_object(P, I)            iobj     The syntactic indirect object
+ * aux(S, A)                   aux      Auxiliary verb relation
+ * copula(S, C)                cop      Copula relation
+ * name(E, N, P)                        The name of an entity. E is an entity, N is a name string constant (i.e. 'Charles') and P is its position (1, 2, 3)
+ * quantification(E, R, Q)     -        A quantification. E is the scoped relations. R is the range. Q is the quantifier variable.
+ * determiner(E1, D1)          det      The relation between a noun phrase and its determiner
+ * case(E, C)                  case     The relation between a prepositional object and a preposition
+ * mod(E1, E2)                 nmod     Modifies the meaning of a noun phrase with an attribute
+ * mod(E1, E2)                 adjmod   Modifies the meaning of a noun phrase with an adjective
+ * mod(E1, E2)                 nummod   Modifies the meaning of a noun with a number
+ * mod(E1, E2)                 advmod   Modifies the meaning of a verb phrase with an adverb
+ * mod(E1, E2)                 obl      Modifies the meaning of a verb phrase with a proposition
+ * conjunction(C, E1, E2)      conj     A new entity (C) formed out of two other entities.
+
+ * degree(E, D)                         Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
+ * declaration(P)                       Based on a verb, this forms the main node of a sentence.
+ * command(I)                           Based on the sentence structure, the verb must be interpretered as a command (Go!)
+ * question(Q)                          Based on a verb, this sentence forms a question.
+ * possession(E1, E2)          case     Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
+ * ERROR prepositional_object(P, PO)          Like object, but linked via a preposition. "to the teacher"
+ * modality(P, M)                       Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
  * complement(P, C)
- * name(E, N, T)                Here E is an entity, N is a name string constant (i.e. 'Charles') and T is its type (fullName, firstName, lastName, insertion)
 
 More of these means that it is easier to create specific transformations based on these relations.
 

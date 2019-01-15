@@ -1,0 +1,90 @@
+[
+    { form: 'a',                  pos: article,               sense: isa(E, a) }
+    { form: 'an',                 pos: article,               sense: isa(E, a) }
+    { form: 'the',                pos: article,               sense: isa(E, the) }
+
+    { form: 'this',               pos: determiner,            sense: isa(E, this) }
+    { form: 'that',               pos: determiner,            sense: isa(E, that) }
+
+    { form: 'no',                 pos: quantifier,            sense: isa(E, no) }
+    { form: 'few',                pos: quantifier,            sense: isa(E, few) }
+    { form: 'little',             pos: quantifier,            sense: isa(E, little) }
+    { form: 'some',               pos: quantifier,            sense: isa(E, some) }
+    { form: 'any',                pos: quantifier,            sense: isa(E, some) }
+    { form: 'several',            pos: quantifier,            sense: isa(E, several) }
+    { form: 'enough',             pos: quantifier,            sense: isa(E, enough) }
+    { form: 'both',               pos: quantifier,            sense: isa(E, both) }
+    { form: 'much',               pos: quantifier,            sense: isa(E, much) }
+    { form: 'more',               pos: quantifier,            sense: isa(E, more) }
+    { form: 'most',               pos: quantifier,            sense: isa(E, most) }
+    { form: 'each',               pos: quantifier,            sense: isa(E, all) }
+    { form: 'every',              pos: quantifier,            sense: isa(E, all) }
+    { form: 'all',                pos: quantifier,            sense: isa(E, all) }
+
+    { form: 'very',               pos: degree,                sense: isa(E, very) }
+
+    { form: 'quickly',            pos: adverb,                sense: isa(E, quick) }
+    { form: 'how',                pos: adverb,                sense: isa(E, how) }
+
+    { form: 'small',              pos: adjective,             sense: isa(E, small) }
+    { form: 'large',              pos: adjective,             sense: isa(E, large) }
+    { form: 'many',               pos: adjective,             sense: isa(E, many) }
+
+    { form: 'i',                  pos: pronoun,               sense: isa(E, i) }
+    { form: 'you',                pos: pronoun,               sense: isa(E, you) }
+
+    { form: 'that',               pos: complementizer,        sense: isa(E, that) }
+
+    { form: 'and',                pos: conjunction,           sense: isa(E, and) }
+    { form: 'or',                 pos: conjunction,           sense: isa(E, or) }
+
+    { form: 'than',               pos: sub_conjunction,       sense: isa(E, than) }
+
+    { form: 'person',             pos: noun,                  sense: isa(E, person) }
+    { form: 'siblings',           pos: noun,                  sense: isa(E, sibling) }
+    { form: 'children',           pos: noun,                  sense: isa(E, child) }
+    { form: 'parent',             pos: noun,                  sense: isa(E, parent) }
+    { form: 'mother',             pos: noun,                  sense: isa(E, mother) }
+
+    { form: '\'s',                pos: possessive_marker }
+
+    { form: 'on',                 pos: preposition,           sense: isa(E, on) }
+    { form: 'at',                 pos: preposition,           sense: isa(E, at) }
+
+    { form: 'right',              pos: p_spec,                sense: isa(E, right) }
+
+    { form: 'is',                 pos: aux_verb,              sense: isa(E, be) }
+    { form: 'was',                pos: aux_verb,              sense: isa(E, be) }
+    { form: 'are',                pos: aux_verb,              sense: isa(E, be) }
+    { form: 'does',               pos: aux_verb,              sense: isa(E, do) }
+    { form: 'did',                pos: aux_verb,              sense: isa(E, do) }
+    { form: 'has',                pos: aux_verb,              sense: isa(E, have) }
+
+    { form: 'have',               pos: verb,                  sense: isa(E, have) }
+    { form: 'is',                 pos: verb,                  sense: isa(E, be) }
+    { form: 'are',                pos: verb,                  sense: isa(E, be) }
+    { form: 'married',            pos: verb,                  sense: isa(E, marry) }
+    { form: 'marry',              pos: verb,                  sense: isa(E, marry) }
+
+    { form: 'at',                 pos: particle,              sense: isa(E, are) }
+
+    { form: 'can',                pos: modal,                 sense: isa(E, can) }
+    { form: 'must',               pos: modal,                 sense: isa(E, must) }
+    { form: 'will',               pos: modal,                 sense: isa(E, will) }
+
+    { form: 'who',                pos: wh_word,               sense: isa(E, who) }
+    { form: 'which',              pos: wh_word,               sense: isa(E, which) }
+
+    { form: 'de',                 pos: insertion,             sense: name(E, 'de', 2) }
+    { form: 'van',                pos: insertion,             sense: name(E, 'van', 2) }
+
+    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, 1) }
+    { form: /^[A-Z]/,             pos: last_name,             sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,             pos: full_name,             sense: name(E, Form, 1) }
+
+    { form: /^[0-9]+/,            pos: number,                sense: number(E, Form) }
+
+    { form: '?',                  pos: question_mark }
+    { form: '.',                  pos: period }
+    { form: '!',                  pos: exc }
+]

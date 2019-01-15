@@ -1,0 +1,95 @@
+[
+    { rule: dp(D1) -> determiner(D1) }
+    { rule: dp(D1) -> article(D1) }
+    { rule: dp(D1) -> number(D1) }
+
+    { rule: qp(Q1) -> quantifier(Q1) }
+
+    { rule: adverb(A1) -> adverb(A2) conjunction(A1) adverb(A3),                 sense: conjunction(A1, A2, A3) }
+
+    { rule: advp(A1) -> adverb(A1) }
+    { rule: advp(A1) -> degree(D1) adverb(A1),                                   sense: degree(A1, D1) }
+    { rule: advp(A1) -> advp(A2) conjunction(A1) advp(A3),                       sense: conjunction(A1, A2, A3) }
+
+    { rule: adjective(A1) -> adjective(A2) conjunction(A1) adjective(A3),        sense: conjunction(A1, A2, A3) }
+
+    { rule: adjp(A1) -> adjective(A1) }
+    { rule: adjp(A1) -> degree(D1) adjective(A1),                                sense: degree(A1, D1) }
+    { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: adv_modifier(A1, Adv1) }
+    { rule: adjp(A1) -> adjp(A2) conjunction(A1) adjp(A3),                       sense: conjunction(A1, A2, A3) }
+
+    { rule: proper_noun(N1) -> full_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) last_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) insertion(N1) last_name(N1) }
+
+    { rule: np(E1) -> nbar(E1) }
+    { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
+    { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
+    { rule: np(E1) -> poss(E2) nbar(E1),                                         sense: possession(E1, E2) }
+    { rule: np(E1) -> pronoun(E1) }
+    { rule: np(E1) -> proper_noun(E1) }
+    { rule: np(E1) -> sbar(E1) }
+    { rule: np(E1) -> np(E2) conjunction(E1) np(E3),                             sense: conjunction(E1, E2, E3) }
+
+    { rule: nbar(E1) -> noun(E1) }
+    { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: specification(E1, A1) }
+    { rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: nominal_mod(E1, P) }
+    { rule: nbar(E1) -> nbar(E1) sbar(S),                                        sense: specification(E1, S) }
+
+    { rule: poss(E1) -> np(E1) possessive_marker() }
+
+    { rule: preposition(P1) -> preposition(P2) conjunction(P1) preposition(P3),  sense: conjunction(P1, P2, P3) }
+
+    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(P1, E1) }
+    { rule: pp(P1) -> preposition(P1) pp(P2),                                    sense: case(P1, P2) }
+    { rule: pp(P1) -> p_spec(Ps) preposition(P1) np(E1),                         sense: case(P1, E1) specification(P1, Ps) }
+    { rule: pp(R1) -> pp(P1) conjunction(R1) pp(P2),                             sense: conjunction(R1, P1, P2) }
+
+    { rule: vgp(V1) -> verb(V1) }
+    { rule: vgp(V1) -> verb(V1) particle(P1),                                    sense: modifier(V1, P1) }
+    { rule: vgp(V1) -> modal(A1) verb(V1),                                       sense: modality(V1, A1) }
+    { rule: vgp(V1) -> modal(A1) verb(V1) particle(P1),                          sense: modifier(V1, P1) modality(V1, A1) }
+
+    { rule: vbar(V1) -> vgp(V1) }
+    { rule: vbar(V1) -> vgp(V1) np(E1),                                          sense: object(V1, E1) }
+    { rule: vbar(V1) -> vgp(V1) np(E1) np(E2),                                   sense: object(V1, E1) indirect_object(V1, E2) }
+    { rule: vbar(V1) -> vgp(V1) np(E1) pp(P1),                                   sense: object(V1, E1) prepositional_object(V1, P1) }
+    { rule: vbar(V1) -> vgp(V1) advp(A1),                                        sense: adv_modifier(V1, A1) }
+    { rule: vbar(V1) -> vgp(V1) np(E1) advp(A1),                                 sense: object(V1, E1) adv_modifier(V1, A1) }
+    { rule: vbar(V1) -> vgp(V1) pp(P1),                                          sense: prepositional_object(V1, P1) }
+    { rule: vbar(V1) -> vgp(V1) pp(P1) pp(P2),                                   sense: prepositional_object(V1, P1) prepositional_object(V1, P2) }
+    { rule: vbar(V1) -> vgp(V1) sbar(S),                                         sense: object(V1, S) }
+    { rule: vbar(V1) -> vgp(V1) np(E1) particle(P),                              sense: modifier(V1, P) object(V1, E1) }
+
+    { rule: vp(V1) -> vbar(V1) }
+    { rule: vp(V1) -> vbar(V1) pp(P1),                                           sense: prepositional_object(V1, P1) }
+    { rule: vp(V1) -> vbar(V1) advp(A1),                                         sense: specification(V1, A1) }
+    { rule: vp(V1) -> vbar(V1) np(E1),                                           sense: object(V1, E1) }
+
+    { rule: sbar(S1) -> complementizer(C) clause(S1),                            sense: complement(S1, C) }
+
+    { rule: clause(S1) -> np(E1) vp(S1),                                         sense: subject(S1, E1) }
+    { rule: clause(S1) -> np(E1) modal(M) vp(S1),                                sense: subject(S1, E1) modality(S1, M) }
+    { rule: clause(S1) -> advp(A) clause(S1) }
+    { rule: clause(S1) -> pp(P) clause(S1) }
+    { rule: clause(S1) -> clause(S1) advp(A) }
+    { rule: clause(S1) -> clause(S1) pp(P) }
+    { rule: clause(S1) -> s(S1) sbar(S2),                                        sense: object(S1, S2) }
+
+    { rule: s_declarative(S1) -> clause(S1),                                     sense: declaration(S1) }
+    { rule: s_declarative(S1) -> s_declarative(S1) period() }
+
+    { rule: s_interrogative(S1) -> aux_verb(A) np(E1) vp(S1),                    sense: question(S1, yes_no_question) subject(S1, E1) aux(S1, A) }
+    { rule: s_interrogative(S1) -> aux_verb(S1) np(E1) np(E2),                   sense: question(S1, yes_no_question) subject(S1, E1) object(S1, E2) aux(S1, A) }
+    { rule: s_interrogative(S1) -> np(E1) aux_verb(S1) np(E2),                   sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> wh_word(E1) vp(S1) np(E2),                    sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> wh_word(D1) np(E1) aux_verb(S1) np(E2),       sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(S1) -> s_interrogative(S1) question_mark() }
+
+    { rule: s_imperative(S1) -> vp(S1),                                          sense: command(S1) }
+    { rule: s_imperative(S1) -> s_imperative(S1) exclamation_mark() }
+
+    { rule: s(S1) -> s_declarative(S1) }
+    { rule: s(S1) -> s_interrogative(S1) }
+    { rule: s(S1) -> s_imperative(S1) }
+]

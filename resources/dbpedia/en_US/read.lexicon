@@ -1,9 +1,13 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
     { form: 'born',                 pos: verb, 	                sense: isa(E, bear) tense(E, past) }
-    { form: 'had',                  pos: aux_verb,              sense: isa(E, have) }
-    { form: 'has',                  pos: aux_verb,              sense: isa(E, have) }
-    { form: 'was',                  pos: aux_verb,              sense: isa(E, be) }
+    { form: 'has',                  pos: verb,                  sense: isa(E, have) }
+    { form: 'had',                  pos: verb,                  sense: isa(E, have) tense(E, past) }
+
+    { form: 'was',                  pos: aux_copula,            sense: isa(E, be) }
+    { form: 'is',                   pos: aux_copula,            sense: isa(E, be) }
+    { form: 'was',                  pos: aux_passive,           sense: isa(E, be) }
+    { form: 'is',                   pos: aux_passive,           sense: isa(E, be) }
 
     { form: 'who',                  pos: wh_word,               sense: isa(E, who) }
     { form: 'when',                 pos: wh_word,               sense: isa(E, when) }
@@ -23,7 +27,6 @@
     { form: /^[A-Z]/,	            pos: first_name,            sense: name(E, Form, 1) }
     { form: /^[A-Z]/,	            pos: second_name,           sense: name(E, Form, 2) }
     { form: /^[A-Z]/,	            pos: third_name,            sense: name(E, Form, 3) }
-    { form: /^[A-Z]/,	            pos: full_name,             sense: name(E, Form, 1) }
 
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }

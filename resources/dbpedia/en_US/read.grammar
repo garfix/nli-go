@@ -1,4 +1,6 @@
 [
+    { rule: possessive_marker(M1) -> possessive_marker_1(M1) possessive_marker_2(M1), sense: isa(M1, possession) }
+
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) third_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) }
@@ -10,41 +12,39 @@
     { rule: vgp(V1) -> verb(V1) }
 
     { rule: vbar(V1) -> vgp(V1) }
-    { rule: vbar(V1) -> vgp(V1) pp(P1),                                          sense: prepositional_object(V1, P1) }
+    { rule: vbar(V1) -> vgp(V1) pp(P1),                                          sense: mod(V1, P1) }
+    { rule: vbar(V1) -> vgp(V1) np(E1),                                          sense: object(V1, E1) }
 
     { rule: vp(V1) -> vbar(V1) }
 
     { rule: advp(A1) -> adverb(A1) }
 
-    { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: specification(A1, Adv1) }
+    { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: mod(A1, Adv1) }
 
+    { rule: np(E1) -> wh_word(E1) }
     { rule: np(E1) -> nbar(E1) }
-    { rule: np(E1) -> np(E2) possessive_marker() nbar(E1),                       sense: possession(E2, E1) }
     { rule: np(E1) -> proper_noun(E1) }
     { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
     { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
 
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: specification(E1, A1) }
+    { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: mod(E1, A1) }
+    { rule: nbar(E1) -> np(E2) possessive_marker(M1) nbar(E1),                   sense: mod(E1, E2) case(E2, M1) }
 
     { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 
-    { rule: possessive_marker(E1) -> possessive_marker_1() possessive_marker_2() }
-
-    == how many children had X ==
-    { rule: s_interrogative(S1) -> np(R1) aux_verb(S1) np(E2),                  sense: subject(S1, R1) object(S1, E2) }
-
     == who married X ==
-    { rule: s_interrogative(S1) -> wh_word(E1) vp(S1) np(E2),                   sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    == how many children has X ==
+    { rule: s_interrogative(P1) -> np(E1) vp(P1),                                sense: root(P1) subject(P1, E1) }
 
     == who was X's mother ==
-    { rule: s_interrogative(S1) -> wh_word(E1) aux_verb(S1) np(E2),             sense: question(S1, wh_question) subject(S1, E1) object(S1, E2) }
+    { rule: s_interrogative(E2) -> np(E1) aux_copula(A1) np(E2),                 sense: root(E1) copula(E1, A1) subject(E1, E2) }
 
     == when was X born ==
-    { rule: s_interrogative(S1) -> wh_word(W1) aux_verb(A1) np(E2) vp(S1),      sense: question(S1, wh_question) subject(S1, E2) }
+    { rule: s_interrogative(P1) -> wh_word(W1) aux_passive(A1) np(E1) vp(P1),    sense: root(P1) subject(P1, E1) aux(P1, A1) mod(P1, W1) }
 
-    == was X married ==
-    { rule: s_interrogative(S1) -> aux_verb(A1) np(E2) vp(S1),                  sense: question(S1, wh_question) passive_aux(S1, A1) subject(S1, E2) }
+    == was X married to Y ==
+    { rule: s_interrogative(P1) -> aux_passive(A1) np(E1) vp(P1),                sense: root(P1) subject(P1, E1) aux(P1, A1) }
 
     { rule: s_interrogative(S1) -> s_interrogative(S1) question_mark() }
 

@@ -1,5 +1,3 @@
 [
-    question(S5, wh_question) => question(S5, wh_question);
-    act(question, _, _) => act(question, _, _);
-    isa(A, who) => isa(A, who);
+    act(question, _) => act(question, _);
 ]

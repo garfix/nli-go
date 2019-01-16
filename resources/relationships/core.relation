@@ -1,5 +1,3 @@
 [
     act(question, _)
-    every(_)
-    isa(_, do)
 ]

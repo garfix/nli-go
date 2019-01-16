@@ -1,7 +1,7 @@
 [
     == Who married X? ==
     {
-        condition: question(S, wh_question) isa(A, who) married_to(A, B),
+        condition: act(question, who) married_to(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -13,7 +13,7 @@
 
     == Was X married to Y? ==
     {
-        condition: question(S, wh_question) married_to(A, B),
+        condition: act(question, yes_no) married_to(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -24,7 +24,7 @@
 
     == How many children had X? (counting the children) ==
     {
-        condition: act(question, how_many, B) have_child(A, B),
+        condition: act(question, how_many) have_child(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -36,7 +36,7 @@
 
     == How many children had X? (using a number-of-children attribute) ==
     {
-        condition: act(question, how_many, B) have_child(A, B),
+        condition: act(question, how_many) have_child(A, B),
         transformations: [
             have_child(A, B) => have_n_children(A, Number);
         ],
@@ -51,7 +51,7 @@
 
     == Who was X's father? ==
     {
-        condition: question(S, wh_question) isa(X, who) has_father(A, B),
+        condition: act(question, who) has_father(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -63,7 +63,7 @@
 
     == Who was X's mother? ==
     {
-        condition: question(S, wh_question) isa(X, who) has_mother(A, B),
+        condition: act(question, who) has_mother(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -75,7 +75,7 @@
 
     == When was X born? ==
     {
-        condition: question(S, wh_question) birth_date(A, Ymd),
+        condition: act(question, when) birth_date(A, Ymd),
         no_results: {
             answer: dont_know()
         },

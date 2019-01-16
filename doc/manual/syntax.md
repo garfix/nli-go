@@ -7,11 +7,24 @@ For the semantic language holds:
  * numbers: 25 1.5
  * id: anything between backticks: `38911` `http://dbpedia.org/page/Michael_Jackson_(actor)`
 
- ## Comments
+## Comments
 
  In any file (except the json files) comments may be placed on any position, like this:
 
     == much ado about nothing! ==
+
+## Parts-of-speech
+
+* verb (have, marry)
+* noun (child, parent)
+* adverb (how)
+* adjective (red, many)
+* conjunction (and, or)
+* quantifier (every)
+* aux_passive (is)
+* aux_copula (is)
+* wh_word (which, who)
+* preposition (on, to)
 
 ## Syntactic Relations
 
@@ -41,14 +54,9 @@ In the general relational representation I have these senses:
  * mod(E1, E2)                 obl      Modifies the meaning of a verb phrase with a proposition
  * conjunction(C, E1, E2)      conj     A new entity (C) formed out of two other entities.
 
- * degree(E, D)                         Based on a degree adverb, denotes the degree in which something is the case (i.e. very)
  * declaration(P)                       Based on a verb, this forms the main node of a sentence.
  * command(I)                           Based on the sentence structure, the verb must be interpretered as a command (Go!)
  * question(Q)                          Based on a verb, this sentence forms a question.
- * possession(E1, E2)          case     Based on "'s", it always denotes a possession relationship. Read: E1 is in possession by E2.
- * ERROR prepositional_object(P, PO)          Like object, but linked via a preposition. "to the teacher"
- * modality(P, M)                       Based on modal auxiliary words like "can", "will" and "must", it denotes the modality of a predication.
- * complement(P, C)
 
 More of these means that it is easier to create specific transformations based on these relations.
 

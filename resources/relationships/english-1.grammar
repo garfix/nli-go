@@ -31,6 +31,7 @@
 
     == Who married X ==
     == Which children has X ==
+    == How many children has X ==
     { rule: s_interrogative(P1) -> np(E1) vp(P1),                                sense: root(P1) subject(P1, E1) }
     == Did X marry Y ==
     == Does every parent have 4 children ==

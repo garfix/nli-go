@@ -1,6 +1,3 @@
 [
     act(question, X) => act(question, X);
-    focus(A) => focus(A);
-    every(A) => every(A);
-    isa(_, B) => isa(_, B);
 ]

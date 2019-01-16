@@ -42,6 +42,10 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 	found := true
 	aggregate := mentalese.Term{}
 
+	if len(goal.Arguments) == 0 {
+		return newBindings, false
+	}
+
 	resultArgument := goal.Arguments[0]
 	resultVariable := resultArgument.TermValue
 

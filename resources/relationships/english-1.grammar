@@ -41,6 +41,6 @@
     == ? ==
     { rule: s_interrogative(P1) -> s_interrogative(P1) question_mark() }
 
-    { rule: s(S1) -> s_interrogative(S1) }
+    { rule: s(S1) -> s_interrogative(S1),                                        sense: question() }
 
 ]

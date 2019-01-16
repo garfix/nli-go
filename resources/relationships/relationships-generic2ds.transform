@@ -1,9 +1,9 @@
 [
-    root(P1) subject(P1, S1) isa(S1, who) => act(question, who);
-    root(P1) aux(P1, A1) isa(A1, do) => act(question, yes_no);
-    root(E2) copula(E2, A1) subject(E2, E1) isa(A1, be)  => act(question, yes_no);
-    root(P1) subject(P1, E) determiner(E1, D1) isa(D1, which) => act(question, which);
-    root(P1) subject(P1, S1) mod(S1, M1) mod(M1, M2) isa(M2, how) isa(M1, many) => act(question, how_many);
+    root(P1) subject(P1, S1) isa(S1, who) => who(S1);
+    root(P1) aux(P1, A1) isa(A1, do) => yes_no();
+    root(E2) copula(E2, A1) subject(E2, E1) isa(A1, be) => yes_no();
+    root(P1) subject(P1, E1) determiner(E1, D1) isa(D1, which) => which(E1);
+    root(P1) subject(P1, S1) mod(S1, M1) mod(M1, M2) isa(M2, how) isa(M1, many) => how_many(S1);
 
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
     isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);

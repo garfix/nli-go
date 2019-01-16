@@ -1,3 +1,7 @@
 [
-    act(question, X) => act(question, X);
+    question() => question();
+    who(_) => who(_);
+    which(_) => which(_);
+    how_many(_) => how_many(_);
+    yes_no() => yes_no();
 ]

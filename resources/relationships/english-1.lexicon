@@ -10,7 +10,7 @@
 
     { form: 'did',                pos: aux,                   sense: isa(E, do) tense(E, past) }
     { form: 'does',               pos: aux,                   sense: isa(E, do) }
-    { form: 'are',                pos: aux,                   sense: isa(E, be) }
+    { form: 'are',                pos: aux_copula,            sense: isa(E, be) }
 
     { form: 'many',               pos: adjective,             sense: isa(E, many) }
 

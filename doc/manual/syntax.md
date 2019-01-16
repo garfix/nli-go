@@ -21,8 +21,9 @@ For the semantic language holds:
 * adjective (red, many)
 * conjunction (and, or)
 * quantifier (every)
-* aux_passive (is)
-* aux_copula (is)
+* aux (does, do)
+* aux_passive (is, was)
+* aux_copula (is, was)
 * wh_word (which, who)
 * preposition (on, to)
 

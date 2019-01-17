@@ -2,4 +2,4 @@
 /app/nli
 /tests/integration/sessions
 /app/sessions
-/app/queries.log
+/app/log

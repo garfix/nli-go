@@ -16,7 +16,7 @@ $process = exec($fullCommand, $output);
 
 $result = json_decode(implode($output), true);
 
-$handle = fopen(__DIR__ . '/queries.log', 'a');
+$handle = fopen(__DIR__ . '/log/' . date('Y-m') . '-queries.log', 'a');
 
 $answer = $result['Answer'];
 $optionKeys = $result['OptionKeys'];

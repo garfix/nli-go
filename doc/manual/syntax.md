@@ -55,9 +55,9 @@ In the general relational representation I have these senses:
  * mod(E1, E2)                 obl      Modifies the meaning of a verb phrase with a proposition
  * conjunction(C, E1, E2)      conj     A new entity (C) formed out of two other entities.
 
- * declaration(P)                       Based on a verb, this forms the main node of a sentence.
- * command(I)                           Based on the sentence structure, the verb must be interpretered as a command (Go!)
- * question(Q)                          Based on a verb, this sentence forms a question.
+ * declaration()                        Based on a verb, this forms the main node of a sentence.
+ * command()                            Based on the sentence structure, the verb must be interpretered as a command (Go!)
+ * question()                           Based on a verb, this sentence forms a question.
 
 More of these means that it is easier to create specific transformations based on these relations.
 

@@ -3,6 +3,8 @@
 ## ??
 
 * Only real quantifiers like ALL are handled with quantification; numbers are not
+* syntactic relations are modelled after Stanford Parser Universal Dependencies
+* introduce root()
 
 ## 1.4: Interactive with dialog context - 15-12-2018
 

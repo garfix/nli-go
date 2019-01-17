@@ -1,15 +1,9 @@
 # Todo
 
-- quantification() will only be applied to dp's with 'every', 'all', 'none'.
-- numerals will be treated as simple modifiers
-- quantification() will not be processed in the relationizer step (step part will be removed)
-- quantification scoping will do the part that was earlier done by the relationizer
-
-I must also change:
-
-- introduce root()
-- syntactic relations will be made to look like the ones from Stanford Parser Universal Dependencies
-
+* Log all queries, to understand what users need
+* Fix the problem with growing dialog context
+* Provide common user queries
+* Allow lower case proper names
 
 ## Misc
 

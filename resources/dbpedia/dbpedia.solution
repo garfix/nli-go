@@ -85,16 +85,16 @@
         }
     }
 
-        == Who is X? ==
-        {
-            condition: question() who(B),
-            no_results: {
-                answer: dont_know()
-            },
-            some_results: {
-                preparation: long_description(B, D),
-                answer: canned(D)
-            }
+    == Who is X? ==
+    {
+        condition: question() who(B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: long_description(B, D),
+            answer: canned(D)
         }
+    }
 
 ]

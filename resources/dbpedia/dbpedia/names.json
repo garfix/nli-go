@@ -9,5 +9,6 @@
   "birth_date": "http://dbpedia.org/ontology/birthDate",
   "birth_place": "http://dbpedia.org/ontology/birthPlace",
   "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  "description": "http://purl.org/dc/terms/description"
+  "description": "http://purl.org/dc/terms/description",
+  "abstract": "http://dbpedia.org/ontology/abstract"
 }

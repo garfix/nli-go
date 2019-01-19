@@ -46,6 +46,9 @@ func TestDBPedia(t *testing.T) {
 			{"Who married Lord Byron?", "Anne Isabella Byron married him", "session-2.json", ""},
 			{"How many children had Lord Byron?", "He has 2 children", "session-2.json", ""}, // Ada and Allegra
 		},
+		{
+			{"Who is Lisa Marie Presley?", "Lisa Marie Presley (born February 1, 1968) is an American singer-songwriter. She is the daughter of musician-actor Elvis Presley and actress and business magnate Priscilla Presley, and is Elvis' only child. Sole heir to her father's estate, she has developed a career in the music business and has issued three albums. Presley has been married four times, including to singer Michael Jackson and actor Nicolas Cage, before marrying music producer Michael Lockwood, father of her twin girls.", "", ""},
+		},
 	}
 
 	for _, session := range tests {

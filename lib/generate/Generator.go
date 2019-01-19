@@ -19,6 +19,11 @@ func NewGenerator(Grammar *GenerationGrammar, Lexicon *GenerationLexicon, log *c
 // Creates an array of words that forms the surface representation of a mentalese sense
 func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []string {
 
+	// canned response
+	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == "canned" {
+		return []string{ sentenceSense[0].Arguments[0].TermValue }
+	}
+
 	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.Term_variable, "S1", mentalese.RelationSet{}}}}
 
 	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, sentenceSense)

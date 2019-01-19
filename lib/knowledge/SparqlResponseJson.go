@@ -16,4 +16,5 @@ type sparqlResponseBinding struct {
 type sparqlResponseVariable struct {
 	Type string
 	Value string
+	Lang string `json:"xml:lang"`
 }

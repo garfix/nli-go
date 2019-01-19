@@ -164,6 +164,11 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 			termType := mentalese.Term_stringConstant
 			if resultBinding.Variable1.Type == "uri" {
 				termType = mentalese.Term_id
+			} else {
+				// skip non-english results
+				if resultBinding.Variable1.Lang != "" && resultBinding.Variable1.Lang != "en" {
+					continue
+				}
 			}
 			binding[relation.Arguments[0].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable1.Value }
 		}
@@ -173,6 +178,11 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 			termType := mentalese.Term_stringConstant
 			if resultBinding.Variable2.Type == "uri" {
 				termType = mentalese.Term_id
+			} else {
+				// skip non-english results
+				if resultBinding.Variable2.Lang != "" && resultBinding.Variable2.Lang != "en" {
+					continue
+				}
 			}
 
 			binding[relation.Arguments[1].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable2.Value }

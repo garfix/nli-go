@@ -61,7 +61,7 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 			if match {
 				resultLexeme = lexeme
 
-				if partOfSpeech == "proper_noun" {
+				if partOfSpeech == "proper_noun" || partOfSpeech == "canned" {
 					resultLexeme.Form = bindings[0]["Name"].TermValue
 				}
 

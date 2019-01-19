@@ -11,9 +11,12 @@ $sessionId = session_id();
 $command = __DIR__ . '/nli';
 $configPath = __DIR__ . '/../resources/dbpedia/config-online.json';
 $fullCommand = sprintf('%s -s %s -c %s "%s"', $command, $sessionId, $configPath, $query);
+$start = microtime(true);
 
 $process = exec($fullCommand, $output);
 
+$end = microtime(true);
+$duration = sprintf("%.2f", $end - $start);
 $result = json_decode(implode($output), true);
 
 $handle = fopen(__DIR__ . '/log/' . date('Y-m') . '-queries.log', 'a');
@@ -22,7 +25,7 @@ $answer = $result['Answer'];
 $optionKeys = $result['OptionKeys'];
 $optionValues = $result['OptionValues'];
 
-fwrite($handle, "#  " . date('Y-m-d H:i:s') . " " . $sessionId . "\n");
+fwrite($handle, "#  " . date('Y-m-d H:i:s') . " " . $sessionId .  " (" . $duration . "s)\n");
 fwrite($handle, "Q: " . $query . "\n");
 fwrite($handle, "A: " . $answer . "\n");
 

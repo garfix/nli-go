@@ -27,6 +27,7 @@
     has_son(A, B) => parent(B, A) gender(B, 'male');
 
     birth_date(E, D) => birth_date(E, D);
+    death_date(E, D) => death_date(E, D);
     birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);
 
     person(E) => type(E, `http://dbpedia.org/ontology/Person`);

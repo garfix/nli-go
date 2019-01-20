@@ -5,7 +5,8 @@
 
     { rule: vp(V1) -> vbar(V1) pp(P1),                                            condition: prepositional_object(V1, P1) }
 
-    { rule: vbar(V1) -> aux_verb_be(V1) vgp(V1),                                  condition: tense(V1, past) }
+    { rule: vbar(V1) -> aux_verb_be(V1) vgp(V1),                                  condition: tense(V1, past) voice(V1, passive) }
+    { rule: vbar(V1) -> vgp(V1),                                                  condition: tense(V1, past) }
 
     { rule: vgp(V1) -> verb(V1) }
 

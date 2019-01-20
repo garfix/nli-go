@@ -2,6 +2,7 @@
     == verbs ==
     { form: 'married',	    pos: verb,		    condition: isa(E, marry) }
     { form: 'born',	        pos: verb,		    condition: isa(E, bear) }
+    { form: 'died',	        pos: verb,		    condition: isa(E, die) }
     { form: 'has',	        pos: verb,		    condition: isa(E, have) }
     { form: 'was',	        pos: verb,		    condition: isa(E, be) }
     { form: 'know',	        pos: verb,		    condition: isa(E, know) }

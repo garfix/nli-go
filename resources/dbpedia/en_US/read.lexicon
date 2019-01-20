@@ -1,6 +1,7 @@
 [
     { form: 'married',              pos: verb, 	                sense: isa(E, marry) tense(E, past) }
     { form: 'born',                 pos: verb, 	                sense: isa(E, bear) tense(E, past) }
+    { form: 'die',                  pos: verb, 	                sense: isa(E, die) }
     { form: 'has',                  pos: verb,                  sense: isa(E, have) }
     { form: 'had',                  pos: verb,                  sense: isa(E, have) tense(E, past) }
 
@@ -8,8 +9,9 @@
     { form: 'is',                   pos: aux_copula,            sense: isa(E, be) }
     { form: 'was',                  pos: aux_passive,           sense: isa(E, be) }
     { form: 'is',                   pos: aux_passive,           sense: isa(E, be) }
+    { form: 'did',                  pos: aux,                   sense: isa(E, do) }
 
-    { form: 'the',                pos: determiner,            sense: isa(E, the) }
+    { form: 'the',                  pos: determiner,            sense: isa(E, the) }
 
     { form: 'who',                  pos: wh_word,               sense: isa(E, who) }
     { form: 'when',                 pos: wh_word,               sense: isa(E, when) }

@@ -5,7 +5,10 @@
     has_mother(A, S) => isa(P1, be) subject(P1, S) object(P1, B) possession(A, B) isa(B, mother);
     has_daughter(A, S) => isa(P1, be) subject(P1, S) object(P1, B) possession(A, B) isa(B, daughter);
     has_son(A, S) => isa(P1, be) subject(P1, S) object(P1, B) possession(A, B) isa(B, son);
-    birth_date(S, Day, Month, Year) => isa(P1, bear) tense(P1, past) subject(P1, S)
+    birth_date(S, Day, Month, Year) => isa(P1, bear) tense(P1, past) voice(P1, passive) subject(P1, S)
+        prepositional_object(P1, Pp1) relation(Pp1, Prep, B1) isa(Prep, on) day(B1, Day) month(B1, Month) year(B1, Year);
+
+    death_date(S, Day, Month, Year) => isa(P1, die) tense(P1, past) subject(P1, S)
         prepositional_object(P1, Pp1) relation(Pp1, Prep, B1) isa(Prep, on) day(B1, Day) month(B1, Month) year(B1, Year);
 
     name(A, N) => name(A, N);

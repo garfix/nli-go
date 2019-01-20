@@ -85,6 +85,18 @@
         }
     }
 
+    == When did X die? ==
+    {
+        condition: question() when() death_date(A, Ymd),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
+            answer: gender(A, Gender) death_date(A, Day, Month, Year)
+        }
+    }
+
     == Who is X? ==
     {
         condition: question() who(B),

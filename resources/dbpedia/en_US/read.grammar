@@ -42,8 +42,9 @@
     == who was X's mother ==
     { rule: s_interrogative(E2) -> np(E1) aux_copula(A1) np(E2),                 sense: root(E1) copula(E1, A1) subject(E1, E2) }
 
-    == when was X born ==
+    == when was X born, when did X die ==
     { rule: s_interrogative(P1) -> wh_word(W1) aux_passive(A1) np(E1) vp(P1),    sense: root(P1) subject(P1, E1) aux(P1, A1) mod(P1, W1) }
+    { rule: s_interrogative(P1) -> wh_word(W1) aux(A1) np(E1) vp(P1),            sense: root(P1) subject(P1, E1) aux(P1, A1) mod(P1, W1) }
 
     == was X married to Y ==
     { rule: s_interrogative(P1) -> aux_passive(A1) np(E1) vp(P1),                sense: root(P1) subject(P1, E1) aux(P1, A1) }

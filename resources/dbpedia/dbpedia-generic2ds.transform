@@ -5,8 +5,9 @@
     root(P1) subject(P1, S1) mod(S1, M1) mod(M1, M2) isa(M2, how) isa(M1, many) => how_many(S1);
     root(P1) aux(P1, A1) isa(A1, be) subject(P1, E1) => yes_no();
 
-    == when born? ==
+    == when born / die? ==
     root(P1) isa(P1, bear) subject(P1, S1) aux(P1, A1) isa(A1, be) mod(P1, W1) isa(W1, when) isa(A, be) => when() birth_date(S1, B1);
+    root(P1) isa(P1, die) subject(P1, S1) aux(P1, A1) isa(A1, do) mod(P1, W1) isa(W1, when) => when() death_date(S1, B1);
 
     == married to ==
     isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);

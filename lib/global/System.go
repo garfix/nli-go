@@ -91,8 +91,25 @@ func (system *system) StoreDialogContext(sessionDataPath string) {
 
 func (system *system) Answer(input string) (string, *central.Options) {
 
+	// process possible user responses and start with the original question
 	originalInput := system.dialogContext.Process(input)
+
+	// process it (again)
+	answer, options := system.Process(originalInput)
+
+	// does the system ask the user a question?
+	if !options.HasOptions() {
+		// the original question has been answered
+		system.dialogContext.RemoveOriginalInput()
+	}
+
+	return answer, options
+}
+
+func (system *system) Process(originalInput string) (string, *central.Options) {
+
 	options := central.NewOptions()
+	answer := ""
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
@@ -168,15 +185,13 @@ func (system *system) Answer(input string) (string, *central.Options) {
 		return "", options
 	}
 
-	answer := system.surfacer.Create(answerWords)
+	answer = system.surfacer.Create(answerWords)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
 	} else {
 		return "", options
 	}
-
-	system.dialogContext.RemoveOriginalInput()
 
 	return answer, options
 }

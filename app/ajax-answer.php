@@ -24,6 +24,9 @@ $handle = fopen(__DIR__ . '/log/' . date('Y-m') . '-queries.log', 'a');
 $answer = $result['Answer'];
 $optionKeys = $result['OptionKeys'];
 $optionValues = $result['OptionValues'];
+$errorLines = $result['ErrorLines'];
+
+$answer = strlen($answer) < 300 ? $answer : substr($answer, 0, 300) . "...";
 
 fwrite($handle, "#  " . date('Y-m-d H:i:s') . " " . $sessionId .  " (" . $duration . "s)\n");
 fwrite($handle, "Q: " . $query . "\n");
@@ -31,6 +34,10 @@ fwrite($handle, "A: " . $answer . "\n");
 
 foreach ($optionKeys as $i => $optionKey) {
     fwrite($handle, " * " . $optionKey . " (" . $optionValues[$i] . ")\n");
+}
+
+foreach ($errorLines as $errorLine) {
+    fwrite($handle, "E: " . $errorLine . "\n");
 }
 
 fwrite($handle, "\n");

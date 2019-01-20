@@ -76,16 +76,15 @@ $(function(){
     function showOptions(optionKeys, optionValues) {
         var html = "";
 
-        if (!optionKeys) {
-            return;
-        }
+        if (optionKeys) {
 
-        for (var i = 0; i < optionKeys.length; i++) {
-            html += "<a href='" + optionKeys[i] + "'>" + optionValues[i] + "</a>";
-        }
+            for (var i = 0; i < optionKeys.length; i++) {
+                html += "<a href='" + optionKeys[i] + "'>" + optionValues[i] + "</a>";
+            }
 
-        if (html) {
-            html = "<div>" + html + "</div>";
+            if (html) {
+                html = "<div>" + html + "</div>";
+            }
         }
 
         document.getElementById('options-box').innerHTML = html;

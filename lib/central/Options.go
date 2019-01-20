@@ -9,7 +9,10 @@ type Options struct {
 }
 
 func NewOptions() *Options {
-	return &Options{}
+	return &Options{
+		keys: []string{},
+		values: []string{},
+	}
 }
 
 func (options *Options) AddOption(key string, value string) {

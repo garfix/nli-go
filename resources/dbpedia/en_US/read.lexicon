@@ -9,6 +9,8 @@
     { form: 'was',                  pos: aux_passive,           sense: isa(E, be) }
     { form: 'is',                   pos: aux_passive,           sense: isa(E, be) }
 
+    { form: 'the',                pos: determiner,            sense: isa(E, the) }
+
     { form: 'who',                  pos: wh_word,               sense: isa(E, who) }
     { form: 'when',                 pos: wh_word,               sense: isa(E, when) }
 
@@ -23,6 +25,7 @@
     { form: 'son',                  pos: noun,                  sense: isa(E, son) }
 
     { form: 'to',                   pos: preposition,           sense: isa(E, to) }
+    { form: 'of',                   pos: preposition,           sense: isa(E, of) }
 
     { form: /^[A-Z]/,	            pos: first_name,            sense: name(E, Form, 1) }
     { form: /^[A-Z]/,	            pos: second_name,           sense: name(E, Form, 2) }

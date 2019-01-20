@@ -8,6 +8,7 @@
     { rule: qp(Q1) -> quantifier(Q1) }
 
     { rule: dp(D1) -> number(D1) }
+    { rule: dp(E1) -> determiner(E1) }
 
     { rule: vgp(V1) -> verb(V1) }
 
@@ -29,9 +30,10 @@
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: mod(E1, A1) }
+    { rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: mod(E1, P) }
     { rule: nbar(E1) -> np(E2) possessive_marker(M1) nbar(E1),                   sense: mod(E1, E2) case(E2, M1) }
 
-    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
+    { rule: pp(E1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 
     == who married X ==
     == how many children has X ==

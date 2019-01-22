@@ -14,6 +14,7 @@
 
     description(A, D) => description(A, D);
     long_description(A, D) => abstract(A, D);
+    label(A, D) => label(A, D);
 
     gender(A, male) => gender(A, 'male');
     gender(A, female) => gender(A, 'female');
@@ -26,9 +27,13 @@
     has_daughter(A, B) => parent(B, A) gender(B, 'female');
     has_son(A, B) => parent(B, A) gender(B, 'male');
 
+    founding_date(E, D) => founding_date(E, D);
+    has_capital(A, B) => has_capital(A, B);
+
     birth_date(E, D) => birth_date(E, D);
     death_date(E, D) => death_date(E, D);
     birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);
 
     person(E) => type(E, `http://dbpedia.org/ontology/Person`);
+    country(E) => type(E, `http://dbpedia.org/ontology/Country`);
 ]

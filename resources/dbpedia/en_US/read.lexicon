@@ -14,6 +14,7 @@
     { form: 'the',                  pos: determiner,            sense: isa(E, the) }
 
     { form: 'who',                  pos: wh_word,               sense: isa(E, who) }
+    { form: 'what',                 pos: wh_word,               sense: isa(E, what) }
     { form: 'when',                 pos: wh_word,               sense: isa(E, when) }
 
     { form: 'how',                  pos: adverb,                sense: isa(E, how) }
@@ -25,6 +26,7 @@
     { form: 'mother',               pos: noun,                  sense: isa(E, mother) }
     { form: 'daughter',             pos: noun,                  sense: isa(E, daughter) }
     { form: 'son',                  pos: noun,                  sense: isa(E, son) }
+    { form: 'capital',              pos: noun,                  sense: isa(E, capital) }
 
     { form: 'to',                   pos: preposition,           sense: isa(E, to) }
     { form: 'of',                   pos: preposition,           sense: isa(E, of) }

@@ -51,6 +51,10 @@ func TestDBPedia(t *testing.T) {
 		{
 			{"Who is Lisa Marie Presley?", "Lisa Marie Presley (born February 1, 1968) is an American singer-songwriter. She is the daughter of musician-actor Elvis Presley and actress and business magnate Priscilla Presley, and is Elvis' only child. Sole heir to her father's estate, she has developed a career in the music business and has issued three albums. Presley has been married four times, including to singer Michael Jackson and actor Nicolas Cage, before marrying music producer Michael Lockwood, father of her twin girls.", "", ""},
 		},
+		{
+			{"What is the capital of Iraq?", "Which one? [dbpedia/http://dbpedia.org/resource/Coalition_Provisional_Authority] country; founding_date: 2003-04-21; label: Coalition Provisional Authority [dbpedia/http://dbpedia.org/resource/Ba'athist_Iraq] country; founding_date: 1968-07-17; label: Ba'athist Iraq [dbpedia/http://dbpedia.org/resource/Iraqi_Republic_(1958–68)] country; founding_date: 1958-07-14; label: Iraqi Republic (1958–68) [dbpedia/http://dbpedia.org/resource/Iraq] country; founding_date: 1932-10-03; label: Iraq [dbpedia/http://dbpedia.org/resource/Mandatory_Iraq] country; founding_date: 1920-08-10; label: Mandatory Iraq [dbpedia/http://dbpedia.org/resource/Kingdom_of_Iraq] country; founding_date: 1932-10-03; label: Kingdom of Iraq", "", ""},
+			{"dbpedia/http://dbpedia.org/resource/Iraq", "Baghdad", "session-5.json", ""},
+		},
 	}
 
 	for _, session := range tests {

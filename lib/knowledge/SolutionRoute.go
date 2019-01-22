@@ -1,6 +1,9 @@
 package knowledge
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+	"strings"
+)
 
 type SolutionRoute []RelationGroup
 type SolutionRoutes []SolutionRoute
@@ -34,7 +37,14 @@ func (s SolutionRoute) Less(i, j int) bool {
 		return false
 	} else {
 
-		return true
+		//return true
+
+		// arbitrary comparison to disallow all meaningless permutations
+		if strings.Compare(s[i].Relations.String(), s[j].Relations.String()) < 0 {
+			return true
+		} else {
+			return false
+		}
 
 		//if s[i].KnowledgeBaseIndex < s[j].KnowledgeBaseIndex {
 		//	return true

@@ -2,6 +2,7 @@
     == question types ==
     root(P1) subject(P1, S1) isa(S1, who) => who(S1);
     root(E1) copula(E1, A1) subject(E1, E2) isa(A1, be) isa(E1, who) => who(E2);
+    root(E1) copula(E1, A1) subject(E1, E2) isa(A1, be) isa(E1, what) => what(E2);
     root(P1) subject(P1, S1) mod(S1, M1) mod(M1, M2) isa(M2, how) isa(M1, many) => how_many(S1);
     root(P1) aux(P1, A1) isa(A1, be) subject(P1, E1) => yes_no();
 
@@ -24,6 +25,9 @@
     mod(E1, E2) isa(E1, mother) case(E2, M1) isa(M2, of) => has_mother(E2, E1);
     mod(E1, E2) isa(E1, daughter) case(E2, M1) isa(M2, of) => has_daughter(E2, E1);
     mod(E1, E2) isa(E1, son) case(E2, M1) isa(M2, of) => has_son(E2, E1);
+
+    == the capital of X ==
+    mod(E1, E2) isa(E1, capital) case(E2, M1) isa(M2, of) => has_capital(E2, E1);
 
     == have child ==
     isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);

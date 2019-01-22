@@ -109,4 +109,16 @@
         }
     }
 
+    == What is the capital of X? ==
+        {
+            condition: question() what(B),
+            no_results: {
+                answer: dont_know()
+            },
+            some_results: {
+                preparation: label(B, L),
+                answer: canned(L)
+            }
+        }
+
 ]

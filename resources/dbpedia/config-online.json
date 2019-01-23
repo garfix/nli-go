@@ -6,10 +6,10 @@
         "name": "dbpedia",
         "baseurl": "https://dbpedia.org/sparql",
         "defaultgraphuri": "http://dbpedia.org",
-        "map": "dbpedia/ds2db.map",
-        "names": "dbpedia/names.json",
-        "stats": "dbpedia/stats.json",
-        "entities": "dbpedia/entities.json"
+        "map": "db/ds2db.map",
+        "names": "db/names.json",
+        "stats": "db/stats.json",
+        "entities": "entities.json"
       }
     ]
   }

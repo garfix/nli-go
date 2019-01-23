@@ -31,3 +31,24 @@ To use a canned response, use "canned()" in the answer of a solution, like this:
     }
 
 As you see the "answer" in the solution contains the single relation "canned()". When that happens, the contents of its variable will be used as the response.
+
+## Specify entity-types for predicate arguments
+
+Create a file predicates.json, for example like this
+
+    {
+      "has_capital": {"entityTypes": ["country", "city"] }
+    }
+
+This file specifies the entity types of the arguments of the domain specific predicate "has_capital".
+
+The entity types used here are the same as in the entities file.
+
+Add the file to the config file.
+
+    {
+      "predicates": [
+        "predicates.json"
+      ]
+    }
+

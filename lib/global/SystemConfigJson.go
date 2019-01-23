@@ -63,9 +63,17 @@ type systemConfig struct {
 	Generationgrammars []string
 	Generic2ds         []string
 	Ds2generic         []string
+	Predicates         string
 }
 
 func (firstConfig systemConfig) Merge(secondConfig systemConfig) systemConfig {
+
+	predicates := firstConfig.Predicates
+
+	if secondConfig.Predicates != "" {
+		predicates = secondConfig.Predicates
+	}
+
 	newConfig := systemConfig{
 		ParentConfig: secondConfig.ParentConfig,
 		Lexicons: append(firstConfig.Lexicons, secondConfig.Lexicons...),
@@ -81,6 +89,7 @@ func (firstConfig systemConfig) Merge(secondConfig systemConfig) systemConfig {
 		Generationgrammars: append(firstConfig.Generationgrammars, secondConfig.Generationgrammars...),
 		Generic2ds: append(firstConfig.Generic2ds, secondConfig.Generic2ds...),
 		Ds2generic: append(firstConfig.Ds2generic, secondConfig.Ds2generic...),
+		Predicates: predicates,
 	}
 
 	return newConfig

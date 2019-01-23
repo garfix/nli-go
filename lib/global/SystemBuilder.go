@@ -58,9 +58,11 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
+	predicates, _ := builder.CreatePredicates(config.Predicates)
+
 	system.dialogContext = central.NewDialogContext(matcher, solver, builder.log)
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
-	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
+	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
@@ -107,7 +109,29 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	}
 }
 
+func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates, bool) {
 
+	predicates := mentalese.Predicates{}
+
+	if path != "" {
+
+		absolutePath := common.AbsolutePath(builder.baseDir, path)
+
+		content, err := common.ReadFile(absolutePath)
+		if err != nil {
+			builder.log.AddError("Error reading predicates file " + absolutePath + " (" + err.Error() + ")")
+			return predicates, false
+		}
+
+		err = json.Unmarshal([]byte(content), &predicates)
+		if err != nil {
+			builder.log.AddError("Error parsing predicates file " + absolutePath + " (" + err.Error() + ")")
+			return predicates, false
+		}
+	}
+
+	return predicates, true
+}
 
 func (builder systemBuilder) ImportLexiconFromPath(system *system, lexiconPath string) {
 

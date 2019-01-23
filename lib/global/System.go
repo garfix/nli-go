@@ -141,19 +141,7 @@ func (system *system) Process(originalInput string) (string, *central.Options) {
 		return "", options
 	}
 
-	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
-	// each access to a data store, replace E5 with its ID
-	nameStore, namelessSyntacticRelations, userResponse, options := system.nameResolver.Resolve(syntacticRelations)
-
-	if userResponse == "" {
-		system.log.AddProduction("NameResolver", nameStore.String())
-	} else {
-		return userResponse, options
-	}
-
-	system.log.AddProduction("Nameless", namelessSyntacticRelations.String())
-
-	dsRelations := system.transformer.Replace(system.generic2ds, namelessSyntacticRelations)
+	dsRelations := system.transformer.Replace(system.generic2ds, syntacticRelations)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("Generic 2 DS", dsRelations.String())
@@ -161,7 +149,19 @@ func (system *system) Process(originalInput string) (string, *central.Options) {
 		return "", options
 	}
 
-	dsAnswer := system.answerer.Answer(dsRelations, nameStore)
+	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
+	// each access to a data store, replace E5 with its ID
+	nameStore, namelessDsRelations, userResponse, options := system.nameResolver.Resolve(dsRelations)
+
+	if userResponse == "" {
+		system.log.AddProduction("NameResolver", nameStore.String())
+	} else {
+		return userResponse, options
+	}
+
+	system.log.AddProduction("Nameless", namelessDsRelations.String())
+
+	dsAnswer := system.answerer.Answer(namelessDsRelations, nameStore)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("DS Answer", dsAnswer.String())

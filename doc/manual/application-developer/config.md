@@ -183,21 +183,37 @@ In this example the fact base contained a relation "description(Id, Value)" that
 
 ### rulebases
  
- An array of paths to rule base specifications.
+An array of paths to rule base specifications.
   
- A rule base is a set of Datalog-like inference rules are be used by the system to infer new facts from existing facts, in order to solve a query.
+A rule base is a set of Datalog-like inference rules are be used by the system to infer new facts from existing facts, in order to solve a query.
  
 ### solutions
  
- An array of paths to solutions.
+An array of paths to solutions.
  
- A solution is the way the system uses to link a problem to a solution.  
+A solution is the way the system uses to link a problem to a solution.
  
 ### generic2ds
  
- An array of paths to generic-to-domain-specific transformations.
+An array of paths to generic-to-domain-specific transformations.
  
 ### ds2generic
  
- An array of paths to domain-specific-to-generic transformations.
- 
+An array of paths to domain-specific-to-generic transformations.
+
+### predicates
+
+The path of a predicates json file, which looks like this:
+
+    {
+        "has_capital": {"entityTypes": ["country", "city"] }
+    }
+
+This file contains domain specific predicates, the ones that are used in transformation files.
+
+Here you can specify the entity types of the arguments.
+
+These entity types are used for name resolution. If a name is used in the sentence, the system uses the entities file to look up the names. At the same time it will look at the relations and the predicates file.
+From this it will find out what entity type belongs to the name. It will then only look for names that belong to this entity type.
+
+It is optional to specify the predicates in this file. If there is no need to specify the entity types, they may be omitted.

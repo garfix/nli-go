@@ -1,3 +1,30 @@
+# 2019-01-22
+
+I am now logging queries on the dbpedia demo site. This way I get to know how the application is used and what "my users" want.
+
+They definitively want to type human names without capitals, and to just type their last names. I deal with that later.
+
+Yesterday someone asked about the capital of Iraq. That was interesting. Apparently DBpedia has more than one entry for the country Iraq, so the user needs to disambiguate despite the fact that there is only one country at the moment.
+
+I forgot to mention the result of the question my colleague at work asked:
+
+    Who married Kim Kardashian?
+
+The answer of the app was:
+
+    Kanye West, Kris Humphries and The Underdogs married her
+
+Apparently "The Underdogs" is the production team of Kim Kardashian, and someone listed it under "spouse". Funny, but it makes you wonder about the quality of dbpedia.
+
+Back to capitals. "Iran" is not only a (or actually 3) country, but also a person. When someone now asks
+
+    What is the capital of Iran?
+
+He gets the answer: Which one? the Brazilian Footballer?
+
+That's obviously silly. The question implies countries, and I will now try to attempt to extend the system with entity types.
+For this I also need to change the order of the domain specific relation phase and entity recognition.
+
 # 2019-01-13
 
 I already fixed the quantification part. Very happy with this! Thing have gotten much more simple.

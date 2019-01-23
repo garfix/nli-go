@@ -27,9 +27,10 @@
     "dbpedia.solution"
   ],
   "generic2ds": [
-    "dbpedia-generic2ds.transform"
+    "generic2ds.transform"
   ],
   "ds2generic": [
-    "dbpedia-ds2generic.transform"
-  ]
+    "ds2generic.transform"
+  ],
+  "predicates": "predicates.json"
 }

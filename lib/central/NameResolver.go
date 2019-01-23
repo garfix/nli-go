@@ -10,18 +10,22 @@ import (
 
 const predicateNameInformation = "name_information"
 
+const defaultEntityType = "entity"
+
 // uses EntityId() relations to create new sense() relations, that hold the EntityId's of the entities of different knowledge bases
 type NameResolver struct {
 	solver 			*ProblemSolver
 	matcher 		*mentalese.RelationMatcher
+	predicates      mentalese.Predicates
 	log 			*common.SystemLog
 	dialogContext   *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
 		solver:      	solver,
 		matcher:	 	matcher,
+		predicates:		predicates,
 		log: 			log,
 		dialogContext:	dialogContext,
 	}
@@ -35,16 +39,19 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 	userResponse := ""
 	options := NewOptions()
 
-	names := resolver.collectNames(relations)
+	namesAndTypes := resolver.collectNamesAndTypes(relations)
 
-	for variable, name := range names {
+	for variable, nameAndType := range namesAndTypes {
 
-		// check if the name is known in the dialog context
+		name := nameAndType.name
+		entityType := nameAndType.entityType
+
+		// check if the nameAndType is known in the dialog context
 		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
 
 		if len(dialogNameInformations) == 0 {
 
-			// look up the name in all fact bases
+			// look up the nameAndType in all fact bases
 
 			multipleResultsInFactBase := false
 			factBasesWithResults := 0
@@ -52,7 +59,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 			var factBaseNameInformations []NameInformation
 
 			for _, factBase := range resolver.solver.factBases {
-				factBaseNameInformations = append(factBaseNameInformations, resolver.resolveName(name, factBase)...)
+				factBaseNameInformations = append(factBaseNameInformations, resolver.resolveName(name, entityType, factBase)...)
 
 				if len(factBaseNameInformations) > 0 {
 					factBasesWithResults++
@@ -93,7 +100,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*Resolve
 
 			} else {
 
-				// single meaning for name
+				// single meaning for nameAndType
 				dialogNameInformations = factBaseNameInformations
 				resolver.SaveNameInformations(name, dialogNameInformations)
 
@@ -201,16 +208,21 @@ func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInf
 	return nameInformations
 }
 
+type nameInfo struct {
+	name string
+	entityType string
+}
+
 // in: EntityId(E1, "de", 1) EntityId(E1, "Boer", 2) EntityId(E1, "Jan", 0)
 // out: E1: "Jan de Boer"
-func (resolver *NameResolver) collectNames(relations mentalese.RelationSet) map[string]string {
+func (resolver *NameResolver) collectNamesAndTypes(relations mentalese.RelationSet) map[string]nameInfo {
 
 	nameTree := map[string]map[int]string{}
 
 	for _, relation := range relations {
 		if relation.Predicate == mentalese.PredicateName {
 			variable := relation.Arguments[0].TermValue
-			value := relation.Arguments[1].TermValue
+			name := relation.Arguments[1].TermValue
 			indexString := relation.Arguments[2]
 			index, err := strconv.Atoi(indexString.TermValue)
 			if err == nil {
@@ -218,12 +230,12 @@ func (resolver *NameResolver) collectNames(relations mentalese.RelationSet) map[
 				if !found {
 					nameTree[variable] = map[int]string{}
 				}
-				nameTree[variable][index] = value
+				nameTree[variable][index] = name
 			}
 		}
 	}
 
-	names := map[string]string{}
+	names := map[string]nameInfo{}
 
 	for variable, branch := range nameTree {
 
@@ -240,18 +252,51 @@ func (resolver *NameResolver) collectNames(relations mentalese.RelationSet) map[
 			}
 		}
 
-		names[variable] = name
+		entityType := resolver.getEntityTypeFromRelations(variable, relations)
+
+		names[variable] = nameInfo{ name: name, entityType: entityType }
 	}
 
 	return names
 }
 
-func (resolver *NameResolver) resolveName(name string, factBase knowledge.FactBase) []NameInformation {
+func (resolver *NameResolver) getEntityTypeFromRelations(variable string, relations mentalese.RelationSet) string {
+
+	entityType := defaultEntityType
+
+	for _, relation := range relations {
+		predicate := relation.Predicate
+
+		for i, argument := range relation.Arguments {
+			if argument.IsVariable() && argument.TermValue == variable {
+
+				entityTypes, found := resolver.predicates[predicate]
+
+				if found {
+
+					if entityType != defaultEntityType && entityTypes.EntityTypes[i] != entityType {
+						panic("Conflict in entity types!")
+					}
+
+					entityType = entityTypes.EntityTypes[i]
+				}
+			}
+		}
+	}
+
+	return entityType
+}
+
+func (resolver *NameResolver) resolveName(name string, inducedEntityType string, factBase knowledge.FactBase) []NameInformation {
 
 	var nameInformations []NameInformation
 
 	// go through all entity types
 	for entityType, entityInfo := range factBase.GetEntities() {
+
+		if inducedEntityType != defaultEntityType && entityType != inducedEntityType {
+			continue
+		}
 
 		bindings := resolver.solver.SolveRelationSet(entityInfo.Name, nil, []mentalese.Binding{{
 			mentalese.NameVar: mentalese.NewString(name),

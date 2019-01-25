@@ -1,17 +1,19 @@
 # Changelog
 
-## 1.5:
+## 1.5: Providing support for new DBpedia queries - ???
 
 * Only real quantifiers like ALL are handled with quantification; numbers are not
 * syntactic relations are modelled after Stanford Parser Universal Dependencies
 * introduce root()
 * Start logging anonymous user interactions to get a feel of what types of questions the users of dbpedia test app pose en then support these types of questions
-* DBpedia app: allow human relations in questions.
+* checking entity types in predicate arguments for better name resolution
+* Support for non-ASCII letters
 
 Added DBpedia demo support for:
 
 * "Who is X?"
 * "When did X die?"
+* the father of X
 * "What is the capital of X?"
 
 ## 1.4: Interactive with dialog context - 15-12-2018

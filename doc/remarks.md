@@ -1,3 +1,203 @@
+# 2019-02-02
+
+Winograd has multiple "theorems" for the same predicate:
+
+TC-PICKUP, TCT-PICKUP, TCTE-PICKUP
+
+and these are just different versions of commands.
+
+Notice the difference in:
+
+    Pick up the red block.
+
+and
+
+    the red block I told you to pick up.
+
+The first "pick up" must perform an action, the second one must not perform an action. It just describes an action performed earlier.
+
+Each "action predicate" can be fulfilled by other action predicates, and by description predicates.
+
+Maybe I should make a distinction between these predicates and make action predicates look like this:
+
+    do_pick_up()
+    pick_up!()
+
+May be I should change
+
+    == pick up as a command ==
+    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => pick_up(O);
+
+to
+
+    == pick up as a command ==
+    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
+
+Only root predicates can be commands.
+
+And, since there can only be one command in the input, there is no need to specify it,
+    so I can leave out
+
+    action: goal(do_pick_up(E1)),
+
+It is also important that I think about declaratives, i.e. "The red block is small", this could use an action like this:
+
+        condition: declaration(),
+        some_results: {
+            answer: result(true)
+        },
+
+Een declarative sentence moet in zijn geheel ge-assert worden.
+
+===
+
+To summarize:
+
+A question
+ * Is a relation set with *question()* and one of the question relations (what(), who() etc).
+ * It is recognized by the question() relation
+ * It is executed by binding its variables.
+
+A declaration
+* Is a relation set with *declaration()*.
+* It is recognized by the declaration() relation.
+* It is executed by *asserting* all of its relations.
+
+A command
+* Is a relation set with *command()* and with one or more "command predicate" that ends with ! (like pick_up!() put_down!() ).
+* It is recognized by the command() relation.
+* It is executed as follows:
+    * Find the command predicates (ending in !)
+    * For each of the command predicates:
+        * Bind the arguments using the input relation set without the command predicates
+        * Execute (bind) the command predicate
+        * Pass the bound variables to the next command predicate
+
+Two new system predicates are introduced: assert() and erase(). Both take a relation set as their sole argument.
+
+# 2019-01-31
+
+What would the question solution look like?
+
+        condition: question() yes_no() married_to(A, B),
+        action: find(A, B)
+        no_results: {
+            answer: result(false)
+        },
+
+# 2019-01-30
+
+To perform an action, it is necessary to mention the main command. Thus far I have:
+
+    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => pick_up(O);
+
+    == Pick up X ==
+    {
+        condition: command() pick_up(E1),
+        action: goal(pick_up(E1)),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            answer: canned('OK')
+        }
+    }
+
+    pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(X) raise_hand();
+    move_hand(X, Y, Z) :- assert(at(`hand`, X, Y, Z));
+    grasp(X) :- assert(grasping(X));
+    raise_hand(X) :- at(`hand`, X Y Z1) add(Z1, 1000, Z2) move_hand(X Y Z2);
+
+This is how this would execute:
+
+- the condition of the solution is correct and of the same form as the questions.
+- the relations in the input cannot be processed in any order, like in a question
+- goal() accepts one relation of the input relation set
+- goal() first evaluates the arguments of the goal relation: here it is just E1
+- once the values for each of the arguments are found, pick_up() is evaluated, bound with the values just found
+- pick_up() is evaluated just like any other relation set
+- the results of goal(pick_up()) will be the bound variables, or empty set if it failed
+
+I noticed that 'pick up' as a command may need to be modelled differently from 'pick_up' as a declarative predicate.
+
+    (DEFPROP TC-PICKUP
+         (THCONSE (X (WHY (EV)) EV)
+              (#PICKUP $?X)
+              (MEMORY)
+              (THGOAL (#GRASP $?X) (THUSE TC-GRASP))
+              (THGOAL (#RAISEHAND) (THNODB) (THUSE TC-RAISEHAND))
+              (MEMOREND (#PICKUP $?EV $?X)))
+         THEOREM)
+
+
+# 2019-01-27
+
+I am starting to think about the SHRDLU demo. Since Winograd's work is brilliant, I will merely try to mimic it, and not try to do it better.
+
+I'll just handle Winograd's sample sentences one by one. First sentence:
+
+    Pick up a large red ball.
+
+My system does not know how to do anything, nor how to change something in a knowledge base. Both are necessary here.
+
+The system now knows that pick_up() is a command. It does not yet know what to do with it. This may be a start:
+
+    pick_up(X):
+    - FIND[ X ]
+    - GOAL[ grasp(X) ]
+
+Both find() and hold() would be actions (or plans). Find() would be the process I nave use up until now.
+Hold() would be a new action. In order to hold(X), the system would need to grasp(X) and then move(X, hold) where self is some temporary storage location.
+
+The action grasp() would make changes to the database.
+
+If I would rewrite Winograd's PLANNER code
+
+    (DEFTHEOREM THEOREM3
+        (THCONSE (X Y Z) (#PUT $?X $?Y))
+        (THGOAL (#ON $?X $?Z))
+        (THERASE (#ON $?X $?Z))
+        (THASSERT (#ON $?X $?Y))
+    )
+
+into my own words, it would be
+
+    PLAN put(X, Y) {
+        FIND [ on(X, Z) ]
+        ERASE [ on(X, Z) ]
+        ASSERT[ on(X, Y) ]
+    }
+
+It is also possible to write, in Prolog
+
+I don't understand the use of the term THEOREM in this context, and PLAN is, I think exactly what it is.
+THEOREM3 is the name of the plan, and it may be used in a explanatory session, but since it is just a arbitrary identifier, it doesn't explain anything.
+
+    put(X, Y) :- find(on(X, Z)) erase(on(X, Z)) assert(on(X, Y));
+
+Thinking about my own form:
+
+    == Pick up X ==
+    {
+        condition: command(P) pick_up(P, E1),
+        action: goal(pick_up(E1)),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            answer: canned('OK')
+        }
+    }
+
+    pick_up(X) :- grasp(X) raise_hand();
+        grasp(X) :- assert(grasping(X));
+        raise_hand(X) :- at(`hand`, X Y Z1) add(Z1, 1000, Z2) move_hand(X Y Z2);
+
+goal: resolve variables
+find: resolve variables
+erase: offer the relation set to each database capable of writing; the database must then remove the relations
+assert: offer the relation set to each database capable of writing; the database must then add the relations
+
 # 2019-01-22
 
 I am now logging queries on the dbpedia demo site. This way I get to know how the application is used and what "my users" want.

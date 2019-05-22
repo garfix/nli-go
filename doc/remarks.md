@@ -1,3 +1,45 @@
+# 2019-05-22
+
+I fixed the example question "which countries have population above 10000000".
+
+I have to remark that I needed to change the entities.json entries for "name" to
+
+{
+  "person": {
+    "name": "[person_name(Id, Name)]",
+    "knownby": {
+      "description": "[description(Id, Value)]"
+    }
+  },
+  "country": {
+    "name": "[country_name(Id, Name)]",
+    "knownby": {
+      "label": "[label(Id, Value)]",
+      "founding_date": "[founding_date(Id, Value)]"
+    }
+  }
+}
+
+Person name was first "[name(Id, Name, fullname)]".
+Then I changed it to "[name(Id, Name, fullname) person(Id)]", so the name "Iran" would be recognized as the name of a country, not a person.
+But there was a problem with "person", it resolved to
+
+    person(E) => type(E, `http://dbpedia.org/ontology/Person`);
+
+and type had a very low size
+
+    "type": {"size": 100, "distinctValues": [100000, 100] }
+
+This meant that "person" would be placed first in the list of execution, and that meant that all persons would be loaded (!)
+Hence the change to "[person_name(Id, Name)]" which maps to
+
+    person_name(A, N) => birth_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+    person_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+
+This is the desired order. It is also more specific, because a search for a country does need a search for birth_name:
+
+    country_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/class/yago/WikicatCountries`);
+
 # 2019-02-02
 
 Winograd has multiple "theorems" for the same predicate:

@@ -24,9 +24,9 @@ Some of the techniques used:
 
 * Stanford Universal Dependencies as syntactic relations
 * Earley parser to create a syntax tree from an input sentence, with semantic attachments
-* Mentalese, a Predicate Logic based internal language to process the user input
+* Mentalese, a based internal language, based on Predicate Logic, to process the user input
 * A Datalog implementation for rule based reasoning
-* Support for DBPedia and MySQL as well as an in-memory data stores
+* Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
 * A dialog context to remember information earlier in the conversation
 * A quantifier scoper that allows "every" structures
 * A query optimiser that uses cost-per-relation to determine the best order of executing a query

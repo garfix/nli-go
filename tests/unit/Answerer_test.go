@@ -112,7 +112,7 @@ func TestAnswerer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Answer(input, central.NewResolvedNameStore())
+		resultRelationSet := answerer.Answer(input, mentalese.NewResolvedNameStore())
 
 		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
 			t.Errorf("Answerer(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)

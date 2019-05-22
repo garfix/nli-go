@@ -1,0 +1,42 @@
+{
+  "lexicons": [
+    "english.lexicon"
+  ],
+  "grammars": [
+    "english.grammar"
+  ],
+  "generationlexicons": [
+    "english-gen.lexicon"
+  ],
+  "generationgrammars": [
+    "english-gen.grammar"
+  ],
+  "factbases": {
+    "relation": [
+      {
+        "name": "system-relations",
+        "facts": "core.relation",
+        "map": "core-db.map"
+      },
+      {
+        "name": "shrdlu",
+        "facts": "blocks.relation",
+        "map": "blocks-db.map",
+        "stats": "blocks-db-stats.json",
+        "entities": "entities.json"
+      }
+    ]
+  },
+  "rulebases": [
+    "blocks.rule"
+  ],
+  "solutions": [
+    "blocks.solution"
+  ],
+  "generic2ds": [
+    "generic2ds.transform"
+  ],
+  "ds2generic": [
+    "ds2generic.transform"
+  ]
+}

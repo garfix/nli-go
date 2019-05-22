@@ -1,0 +1,8 @@
+[
+    question()
+    who(_)
+    which(_)
+    how_many(_)
+    yes_no()
+    command(_)
+]

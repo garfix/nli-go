@@ -32,6 +32,16 @@
     == have child ==
     isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
 
+    == above/below n ==
+    case(P5, P6) isa(P6, above) number(P5, N1) => greater_than(P5, N1);
+    case(P5, P6) isa(P6, below) number(P5, N1) => less_than(P5, N1);
+
+    == country ==
+    isa(E1, country) => country(E1);
+
+    == have population ==
+    isa(P1, have) subject(P1, S1) object(P1, O1) isa(O1, population) mod(O1, M1) => population_count(S1, M1);
+
     == ignore these ==
     tense(V, _) => ;
     determiner(E, D) isa(D, the) => ;

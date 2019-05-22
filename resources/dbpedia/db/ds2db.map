@@ -6,9 +6,14 @@
     name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => birth_name(A, N);
     name(A, N, full_name) => birth_name(A, N);
 
+    person_name(A, N) => birth_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+
     name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => foaf_name(A, N);
     name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => foaf_name(A, N);
     name(A, N, full_name) => foaf_name(A, N);
+
+    person_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+    country_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/class/yago/WikicatCountries`);
 
     name(A, N, canonical_name) => foaf_name(A, N) first(N);
 
@@ -35,5 +40,8 @@
     birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);
 
     person(E) => type(E, `http://dbpedia.org/ontology/Person`);
-    country(E) => type(E, `http://dbpedia.org/ontology/Country`);
+    country(E) => type(E, `http://dbpedia.org/class/yago/WikicatCountries`);
+
+    population_count(Country, Count) => population_total(Country, Count);
+    population_count(Country, Count) => population_census(Country, Count);
 ]

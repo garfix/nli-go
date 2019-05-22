@@ -3,7 +3,9 @@ package knowledge
 // https://dinosaurscode.xyz/go/2016/06/19/golang-mysql-authentication/
 // go get github.com/go-sql-driver/mysql
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+)
 import "database/sql"
 import (
 	_ "github.com/go-sql-driver/mysql"
@@ -41,8 +43,8 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 	}
 }
 
-func (factBase *MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
+func (factBase *MySqlFactBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, nameStore)
 }
 
 func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation {

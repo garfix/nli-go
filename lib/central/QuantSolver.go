@@ -13,7 +13,7 @@ import (
 //         ])
 //     ])
 
-func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, nameStore *mentalese.ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 	// solve the range
 	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet, nameStore, []mentalese.Binding{binding})
 

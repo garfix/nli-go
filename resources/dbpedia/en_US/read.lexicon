@@ -3,6 +3,7 @@
     { form: 'born',                 pos: verb, 	                sense: isa(E, bear) tense(E, past) }
     { form: 'die',                  pos: verb, 	                sense: isa(E, die) }
     { form: 'has',                  pos: verb,                  sense: isa(E, have) }
+    { form: 'have',                 pos: verb,                  sense: isa(E, have) }
     { form: 'had',                  pos: verb,                  sense: isa(E, have) tense(E, past) }
 
     { form: 'was',                  pos: aux_copula,            sense: isa(E, be) }
@@ -27,13 +28,19 @@
     { form: 'daughter',             pos: noun,                  sense: isa(E, daughter) }
     { form: 'son',                  pos: noun,                  sense: isa(E, son) }
     { form: 'capital',              pos: noun,                  sense: isa(E, capital) }
+    { form: 'countries',            pos: noun,                  sense: isa(E, country) }
+    { form: 'population',           pos: noun,                  sense: isa(E, population) }
 
     { form: 'to',                   pos: preposition,           sense: isa(E, to) }
     { form: 'of',                   pos: preposition,           sense: isa(E, of) }
+    { form: 'above',                pos: preposition,           sense: isa(E, above) }
+    { form: 'below',                pos: preposition,           sense: isa(E, below) }
 
     { form: /^[A-Z]/,	            pos: first_name,            sense: name(E, Form, 1) }
     { form: /^[A-Z]/,	            pos: second_name,           sense: name(E, Form, 2) }
     { form: /^[A-Z]/,	            pos: third_name,            sense: name(E, Form, 3) }
+
+    { form: /^[0-9]+/,              pos: number,                sense: number(E, Form) }
 
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }

@@ -2,6 +2,7 @@ package knowledge
 
 import (
 	"nli-go/lib/mentalese"
+	"strconv"
 	"strings"
 )
 
@@ -13,16 +14,16 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 	return &SystemFunctionBase{ KnowledgeBaseCore{ Name: name } }
 }
 
-func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split"}
+	predicates := []string{"join", "split", "greater_than", "less_than"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
 				// TODO calculate real cost
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, worst_cost})
 				break
 			}
 		}
@@ -76,6 +77,57 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 
 		found = true
 
+	}
+
+	if input.Predicate == "greater_than" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		if int1 > int2 {
+			found = true
+		} else {
+			found = false
+		}
+	}
+
+
+	if input.Predicate == "less_than" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		if int1 < int2 {
+			found = true
+		} else {
+			found = false
+		}
 	}
 
 	return newBinding, found

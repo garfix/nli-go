@@ -14,7 +14,7 @@ type FactBase interface {
 
 const worst_cost = 100000000.0
 
-func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase) []RelationGroup {
+func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
@@ -34,26 +34,46 @@ func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese
 
 			boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
 
-			cost := float64(0.0)
-			stats := factBase.GetStatistics()
-			for _, replacementRelation := range boundReplacement {
-				product := 1
-				relationStats, usedInFactBase := stats[replacementRelation.Predicate]
-				if usedInFactBase {
-					for columnIndex, distinctValues := range relationStats.DistinctValues {
-						if !replacementRelation.Arguments[columnIndex].IsVariable() && !replacementRelation.Arguments[columnIndex].IsAnonymousVariable() {
-							product *= distinctValues
-						}
-					}
-					cost += float64(relationStats.Size) / float64(product)
-				} else {
-					cost += worst_cost
-				}
-			}
+			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
+
+			cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
 
 			matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
 		}
 	}
 
 	return matchingGroups
+}
+
+// The cost of a relation set that is to be resolved by a fact base. The fact base brings in the stats.
+// The higher the cost, the later it should be executed. Lower cost is better.
+// If no cost can be calculated, the cost is assumed to be high.
+// The function was found in "Efficient processing of interactive relational database queries expressed in logic" by David Warren
+func CalculateCost(boundReplacement mentalese.RelationSet, stats mentalese.DbStats) float64 {
+
+	cost := float64(0.0)
+
+	for _, replacementRelation := range boundReplacement {
+
+		relationStats, usedInFactBase := stats[replacementRelation.Predicate]
+
+		if usedInFactBase {
+			product := 1
+			for columnIndex, distinctValues := range relationStats.DistinctValues {
+
+				if !replacementRelation.Arguments[columnIndex].IsVariable() && !replacementRelation.Arguments[columnIndex].IsAnonymousVariable() {
+					product *= distinctValues
+				}
+			}
+
+			// the cost of a single relation is its domain size divided ("softened") by the product
+			// of the domain sizes of its instantiated arguments.
+			cost += float64(relationStats.Size) / float64(product)
+		} else {
+			// no cost available: presume high cost
+			cost += worst_cost
+		}
+	}
+
+	return cost
 }

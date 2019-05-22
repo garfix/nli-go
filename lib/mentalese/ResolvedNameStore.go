@@ -1,6 +1,4 @@
-package central
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 // stores and retrieves database id's for names
 type ResolvedNameStore struct {
@@ -40,7 +38,7 @@ func (store *ResolvedNameStore) GetValues(databaseName string) map[string]string
 	return values
 }
 
-func (store *ResolvedNameStore) ReplaceVariables(oldStore *ResolvedNameStore, binding mentalese.Binding) *ResolvedNameStore {
+func (store *ResolvedNameStore) ReplaceVariables(oldStore *ResolvedNameStore, binding Binding) *ResolvedNameStore {
 
 	newStore := NewResolvedNameStore()
 
@@ -64,6 +62,32 @@ func (store *ResolvedNameStore) ReplaceVariables(oldStore *ResolvedNameStore, bi
 	}
 
 	return newStore
+}
+
+func (store *ResolvedNameStore) BindToRelationSet(set RelationSet, knowledgeBaseName string) RelationSet {
+
+	newSet := RelationSet{}
+
+	databaseValues := store.GetValues(knowledgeBaseName)
+
+	for _, relation := range set {
+
+		newRelation := relation.Copy()
+
+		for i, argument := range relation.Arguments {
+			if argument.IsVariable() {
+				entityId, found := databaseValues[argument.TermValue]
+				if found {
+					newArgument := NewId(entityId)
+					newRelation.Arguments[i] = newArgument
+				}
+			}
+		}
+
+		newSet = append(newSet, newRelation)
+	}
+
+	return newSet
 }
 
 func (store *ResolvedNameStore) String() string {

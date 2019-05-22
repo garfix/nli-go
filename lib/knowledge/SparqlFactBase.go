@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const max_sparql_results = 100
+const max_sparql_results = 300
 
 const MAX_QUERIES = 1000
 
@@ -49,8 +49,8 @@ func (factBase *SparqlFactBase) GetMappings() []mentalese.RelationTransformation
 	return factBase.ds2db
 }
 
-func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
+func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, nameStore)
 }
 
 func (factBase *SparqlFactBase) GetStatistics() mentalese.DbStats {

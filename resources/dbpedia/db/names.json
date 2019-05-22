@@ -14,5 +14,7 @@
   "founding_date": "http://dbpedia.org/ontology/foundingDate",
   "has_capital": "http://dbpedia.org/ontology/capital",
   "abstract": "http://dbpedia.org/ontology/abstract",
-  "label": "http://www.w3.org/2000/01/rdf-schema#label"
+  "label": "http://www.w3.org/2000/01/rdf-schema#label",
+  "population_total": "http://dbpedia.org/ontology/populationTotal",
+  "population_census": "http://dbpedia.org/property/populationCensus"
 }

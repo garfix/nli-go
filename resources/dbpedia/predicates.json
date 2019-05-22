@@ -1,3 +1,4 @@
 {
-  "has_capital": {"entityTypes": ["country", "city"] }
+  "has_capital": {"entityTypes": ["country", "city"] },
+  "married_to": { "entityTypes": ["person", "person"] }
 }

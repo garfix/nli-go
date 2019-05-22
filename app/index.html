@@ -20,6 +20,7 @@
             <a href="" title="Click to select">Was Michael Jackson married to Elvis Presley's daughter?</a>
             <a href="" title="Click to select">Who is Lisa Marie Presley?</a>
             <a href="" title="Click to select">What is the capital of Canada?</a>
+            <a href="" title="Click to select">How many countries have population above 130000000?</a>
             <a href="" title="Click to select"></a>
         </div>
 
@@ -41,30 +42,11 @@
 
         <header>About this page</header>
         <p>
-            This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.<br>
+            This page is a demonstration of <a href="https://github.com/garfix/nli-go">NLI-GO</a>, a natural language library, written in Go, that allows a user to query a database in natural language.
             It connects you to <a href="http://wiki.dbpedia.org/about">DBpedia</a>, a Sparql database that contains data from Wikipedia.
         </p>
-
-        <p>
-            It's scope is still quite limited. For example, in the input field above, you can only ask questions of these types:
-        </p>
-        <ul>
-            <li>Who married &lt;PERSON&gt;</li>
-            <li>How many children had &lt;PERSON&gt;</li>
-            <li>Who was &lt;PERSON&gt;'s father</li>
-            <li>Who was &lt;PERSON&gt;'s mother</li>
-            <li>When was &lt;PERSON&gt; born</li>
-        </ul>
-        <p>
-            Where &lt;PERSON&gt; must be the name of a person in the database, it must consist of 2 or 3 words, each of which must start with a capital.<br>
-            For example:
-        </p>
-        <ul>
-            <li>Lord Byron</li>
-            <li>Elvis Presley</li>
-            <li>Michael Jackson</li>
-        </ul>
-        <p>When your question contains a name that belongs to several people in the database, the application asks you to choose among them.</p>
+        <p>Its scope is still quite limited. The example questions are about all that is supported.</p>
+        <p>Please note that the results you are given may be incorrect, due to errors in the library, the data modelling, and the database itself (DBpedia).</p>
     </div>
 
     <script src="js/index.js"></script>

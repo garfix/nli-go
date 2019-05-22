@@ -1,9 +1,11 @@
 package knowledge
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+)
 
 type KnowledgeBase interface {
 
 	GetName() string
-	GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup
+	GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup
 }

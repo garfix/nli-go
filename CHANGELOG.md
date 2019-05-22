@@ -15,6 +15,7 @@ Added DBpedia demo support for:
 * "When did X die?"
 * the father of X
 * "What is the capital of X?"
+* "How many countries have population above 130000000?"
 
 ## 1.4: Interactive with dialog context - 15-12-2018
 

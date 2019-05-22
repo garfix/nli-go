@@ -21,7 +21,7 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
-func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *ResolvedNameStore) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
+func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *mentalese.ResolvedNameStore) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
 	routes := knowledge.SolutionRoutes{}
 
@@ -74,7 +74,7 @@ func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []kno
 	return false
 }
 
-func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *ResolvedNameStore) knowledge.SolutionRoutes {
+func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *mentalese.ResolvedNameStore) knowledge.SolutionRoutes {
 
 	routes := knowledge.SolutionRoutes{}
 
@@ -83,7 +83,7 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 	}
 
 	for _, factBase := range knowledgeBases {
-		for _, factBaseGroup := range factBase.GetMatchingGroups(set, factBase.GetName()) {
+		for _, factBaseGroup := range factBase.GetMatchingGroups(set, nameStore) {
 
 			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
 
@@ -103,7 +103,7 @@ func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute,
 	return routes
 }
 
-func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
+func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
 
 	values := nameStore.GetValues(knowledgeBaseName)
 

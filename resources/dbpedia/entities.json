@@ -1,12 +1,12 @@
 {
   "person": {
-    "name": "[name(Id, Name, full_name) person(Id)]",
+    "name": "[person_name(Id, Name)]",
     "knownby": {
       "description": "[description(Id, Value)]"
     }
   },
   "country": {
-    "name": "[name(Id, Name, full_name) country(Id)]",
+    "name": "[country_name(Id, Name)]",
     "knownby": {
       "label": "[label(Id, Value)]",
       "founding_date": "[founding_date(Id, Value)]"

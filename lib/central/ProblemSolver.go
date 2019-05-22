@@ -69,12 +69,12 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 //  { X: john, Z: jack, Y: billy }
 //  { X: john, Z: jack, Y: bob }
 // ]
-func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStore *ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
 	if nameStore == nil {
-		nameStore = &ResolvedNameStore{}
+		nameStore = &mentalese.ResolvedNameStore{}
 	}
 
 	solver.log.AddProduction("Solve", set.String() + " " + nameStore.String())
@@ -108,7 +108,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, nameStore *ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, nameStore *mentalese.ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
 
 	newBindings := bindings
 
@@ -133,7 +133,7 @@ func (solver ProblemSolver) findKnowledgeBaseByName(name string) knowledge.Knowl
 	return nil
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, nameStore *ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, nameStore *mentalese.ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("solveSingleRelationGroupMultipleBindings", relationGroup, bindings)
 
@@ -163,7 +163,7 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup knowledge.RelationGroup, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup knowledge.RelationGroup, nameStore *mentalese.ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("solveSingleRelationGroupSingleBinding", relationGroup, binding)
 
@@ -210,7 +210,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	return newBindings
 }
 
-func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, nameStore *mentalese.ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
 
 	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
 
@@ -332,7 +332,7 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding, ruleBase knowledge.RuleBase) []mentalese.Binding {
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, nameStore *mentalese.ResolvedNameStore, binding mentalese.Binding, ruleBase knowledge.RuleBase) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 

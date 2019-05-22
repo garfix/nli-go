@@ -1,6 +1,5 @@
 package knowledge
 
-
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
@@ -20,15 +19,15 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
-func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
 	for _, rule := range ruleBase.rules {
 		for _, setRelation := range set {
 			if rule.Goal.Predicate == setRelation.Predicate {
-// TDOD calculate real costs
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
+// TODO calculate real costs
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, ruleBase.Name, worst_cost})
 				break
 			}
 		}

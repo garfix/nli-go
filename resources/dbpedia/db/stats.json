@@ -2,5 +2,8 @@
   "spouse": {"size": 40000, "distinctValues": [35000, 35000] },
   "birth_name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
   "foaf_name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
-  "gender": {"size": 14000000, "distinctValues": [14000000, 11] }
+  "gender": {"size": 14000000, "distinctValues": [14000000, 11] },
+  "population_total": {"size": 500, "distinctValues": [500, 500] },
+  "population_census": {"size": 500, "distinctValues": [500, 500] },
+  "type": {"size": 100, "distinctValues": [100000, 100] }
 }

@@ -34,6 +34,18 @@
         }
     }
 
+    == How many? ==
+    {
+        condition: question() how_many(B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: number_of(Number, B),
+            answer: canned(Number)
+        }
+    }
+
     == How many children had X? (using a number-of-children attribute) ==
     {
         condition: question() how_many(B) have_child(A, B),

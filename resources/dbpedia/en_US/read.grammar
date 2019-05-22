@@ -29,6 +29,7 @@
     { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
 
     { rule: nbar(E1) -> noun(E1) }
+    { rule: nbar(E1) -> number(E1) }
     { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: mod(E1, A1) }
     { rule: nbar(E1) -> nbar(E1) pp(P),                                          sense: mod(E1, P) }
     { rule: nbar(E1) -> np(E2) possessive_marker(M1) nbar(E1),                   sense: mod(E1, E2) case(E2, M1) }

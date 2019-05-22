@@ -75,6 +75,19 @@ A command
 
 Two new system predicates are introduced: assert() and erase(). Both take a relation set as their sole argument.
 
+===
+
+which countries have population above 10000000
+how many countries have population above 10000000
+
+I managed to implement the second question, which is very impressive! But:
+
+- some countries have populationCount, others have populationCensus, some both
+- The limit of 100 results is not enough for all places with a population count
+- DBpedia considers SEPA a country
+
+So the result is not correct.
+
 # 2019-01-31
 
 What would the question solution look like?

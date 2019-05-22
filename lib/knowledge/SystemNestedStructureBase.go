@@ -18,7 +18,7 @@ func NewSystemNestedStructureBase(log *common.SystemLog) *SystemNestedStructureB
 	}
 }
 
-func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationSet, knowledgeBaseName string) []RelationGroup {
+func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{mentalese.Predicate_Quant}
@@ -27,7 +27,7 @@ func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationS
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
 // TODO calculate real cost
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, knowledgeBaseName, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, worst_cost})
 			}
 		}
 	}

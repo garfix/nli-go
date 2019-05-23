@@ -1,6 +1,6 @@
 [
     == pick up as a command ==
-    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => pick_up!(O);
+    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
 
     mod(E1, A) isa(A, big) => big(E1);
     mod(E1, A) isa(A, red) => red(E1);

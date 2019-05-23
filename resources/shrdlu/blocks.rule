@@ -1,6 +1,6 @@
 [
-    pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(X) raise_hand();
+    do_pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(X) raise_hand();
     move_hand(X, Y, Z) :- assert(at(`hand`, X, Y, Z));
     grasp(X) :- assert(grasping(X));
-    raise_hand(X) :- at(`hand`, X Y Z1) add(Z1, 1000, Z2) move_hand(X Y Z2);
+    raise_hand(X) :- at(`hand`, X Y Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
 ]

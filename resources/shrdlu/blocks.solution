@@ -1,12 +1,8 @@
 [
-    == Pick up X ==
+    == Any command ==
     {
-        condition: command() pick_up(E1),
-        action: goal(pick_up(E1)),
+        condition: command(),
         no_results: {
-            answer: dont_know()
-        },
-        some_results: {
             answer: canned('OK')
         }
     }

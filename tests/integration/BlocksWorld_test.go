@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// Mimics some of SHRDLU's functions, but in the cli-go way
+// Mimics some of SHRDLU's functions, but in the nli-go way
 
 func TestBlocksWorld(t *testing.T) {
 	log := common.NewSystemLog(false)

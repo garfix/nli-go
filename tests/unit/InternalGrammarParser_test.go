@@ -63,4 +63,6 @@ func TestInternalGrammarParser(t *testing.T) {
 	}
 
 	grammar = parser.CreateGrammar("[]")
+
+	parser.CreateRelationSet("[assert(at(5, 3))]")
 }

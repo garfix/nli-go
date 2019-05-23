@@ -82,8 +82,8 @@
     color(`box`, white)
     color(`table`, black)
 
-    call(`shrdlu`, "SHRDLU")
-    call(`friend`, "YOU")
+    call(`shrdlu`, 'SHRDLU')
+    call(`friend`, 'YOU')
 
     at(`hand`, 40, 0, 0)
 ]

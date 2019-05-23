@@ -6,6 +6,19 @@ For the semantic language holds:
  * string constants: use single quotes: 'De Nachtwacht'
  * numbers: 25 1.5
  * id: anything between backticks: `38911` `http://dbpedia.org/page/Michael_Jackson_(actor)`
+ * relation: a predicate, followed by an argument list of terms: kick(john, jake)
+
+ A term can be any of these
+
+ * atom
+ * number
+ * variable
+ * anonymous variable
+ * string constant
+ * regular expression
+ * id
+ * relation
+ * relation set
 
 ## Comments
 

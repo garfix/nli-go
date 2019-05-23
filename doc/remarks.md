@@ -1,3 +1,19 @@
+# 2019-05-23
+
+Sometimes I get some 405 (Method not allowed) responses from DBPedia. I think they tell me I am crossing the fair use limit.
+
+If the number of queries to DBPedia proves to be too high, I might do some caching.
+I could query all triples with a given verb at once, and store the results locally.
+After that, whenever I need results with that verb, I can use the cache, for some time.
+
+For example: select part of the Foaf names
+
+    select ?a, ?b where { ?a <http://xmlns.com/foaf/0.1/name> ?b } offset 10000 limit 5000
+
+===
+
+I think I'll go for `do_pick_up()` rather than `pick_up!()`. The ! is a nice touch, but I don't like the change in allowed names it requires.
+
 # 2019-05-22
 
 I fixed the example question "which countries have population above 10000000".
@@ -89,7 +105,7 @@ It is also important that I think about declaratives, i.e. "The red block is sma
             answer: result(true)
         },
 
-Een declarative sentence moet in zijn geheel ge-assert worden.
+A declarative sentence must be asserted in whole.
 
 ===
 

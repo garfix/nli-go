@@ -2,8 +2,11 @@
     == Any command ==
     {
         condition: command(),
-        no_results: {
+        some_results: {
             answer: canned('OK')
+        },
+        no_results: {
+            answer: canned('Not OK')
         }
     }
 ]

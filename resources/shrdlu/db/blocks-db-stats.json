@@ -1,3 +1,4 @@
 {
-
+  "is": {"size": 20, "distinctValues": [20, 5] },
+  "color": {"size": 20, "distinctValues": [20, 5] }
 }

@@ -1,28 +1,28 @@
 {
   "lexicons": [
-    "english.lexicon"
+    "en_US/english.lexicon"
   ],
   "grammars": [
-    "english.grammar"
+    "en_US/english.grammar"
   ],
   "generationlexicons": [
-    "english-gen.lexicon"
+    "en_US/english-gen.lexicon"
   ],
   "generationgrammars": [
-    "english-gen.grammar"
+    "en_US/english-gen.grammar"
   ],
   "factbases": {
     "relation": [
       {
         "name": "system-relations",
-        "facts": "core.relation",
-        "map": "core-db.map"
+        "facts": "db/core.relation",
+        "map": "db/core-db.map"
       },
       {
         "name": "shrdlu",
-        "facts": "blocks.relation",
-        "map": "blocks-db.map",
-        "stats": "blocks-db-stats.json",
+        "facts": "db/blocks.relation",
+        "map": "db/blocks-db.map",
+        "stats": "db/blocks-db-stats.json",
         "entities": "entities.json"
       }
     ]

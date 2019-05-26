@@ -1,3 +1,7 @@
 [
-
+    block(E) => is(E, block);
+    == todo ==
+    big(E) => is(E, _);
+    red(E) => color(E, red);
+    at(E, X, Y, Z) => at(E, X, Y, Z);
 ]

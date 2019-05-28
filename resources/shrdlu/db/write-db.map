@@ -1,0 +1,4 @@
+[
+    at(E, X, Y, Z) => at(E, X, Y, Z);
+    grasping(E) => grasping(E);
+]

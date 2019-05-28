@@ -3,8 +3,9 @@ package global
 type relationSetFactBase struct {
 	Name     string
 	Facts    string
-	Map      string
-	Stats	 string
+	ReadMap  string
+	WriteMap string
+	Stats    string
 	Entities string
 }
 

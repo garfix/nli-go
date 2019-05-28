@@ -9,17 +9,19 @@ type InMemoryFactBase struct {
 	KnowledgeBaseCore
 	facts   mentalese.RelationSet
 	ds2db   []mentalese.RelationTransformation
+	ds2dbWrite []mentalese.RelationTransformation
 	stats	mentalese.DbStats
 	entities 		  mentalese.Entities
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, ds2dbWrite []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts: facts,
 		ds2db: ds2db,
+		ds2dbWrite: ds2dbWrite,
 		stats: stats,
 		entities: entities,
 		matcher: matcher,
@@ -29,6 +31,10 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *ment
 
 func (factBase *InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
 	return factBase.ds2db
+}
+
+func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.RelationTransformation {
+	return factBase.ds2dbWrite
 }
 
 func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
@@ -53,6 +59,22 @@ func (factBase *InMemoryFactBase) GetRelations() mentalese.RelationSet {
 
 func (factBase *InMemoryFactBase) AddRelation(relation mentalese.Relation) {
 	factBase.facts = append(factBase.facts, relation)
+}
+
+func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
+
+	for _, fact := range factBase.facts {
+		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.Binding{})
+		if found {
+			return
+		}
+	}
+
+	factBase.facts = append(factBase.facts, relation)
+}
+
+func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
+	factBase.RemoveRelation(relation)
 }
 
 // Removes all facts that match relation

@@ -1,7 +1,11 @@
 [
+    == commands ==
     do_pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(X) raise_hand();
 
-    move_hand(X, Y, Z) :- assert(at(`hand`, X, Y, Z));
-    grasp(X) :- assert(grasping(X));
-    raise_hand(X) :- at(`hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
+    == inferences ==
+    raise_hand() :- at(`hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
+
+    == actions ==
+    move_hand(X, Y, Z) :- retract(at(`hand`, _, _, _)) assert(at(`hand`, X, Y, Z));
+    grasp(X) :- retract(grasping(_)) assert(grasping(X));
 ]

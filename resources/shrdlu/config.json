@@ -16,12 +16,13 @@
       {
         "name": "system-relations",
         "facts": "db/core.relation",
-        "map": "db/core-db.map"
+        "readMap": "db/core-db.map"
       },
       {
         "name": "shrdlu",
         "facts": "db/blocks.relation",
-        "map": "db/blocks-db.map",
+        "readMap": "db/read-db.map",
+        "writeMap": "db/write-db.map",
         "stats": "db/blocks-db-stats.json",
         "entities": "entities.json"
       }

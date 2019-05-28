@@ -1,3 +1,44 @@
+# 2019-05-26
+
+Earlier I described the command execution process as:
+
+A command
+* Is a relation set with *command()* and with one or more "command predicate" that ends with ! (like pick_up!() put_down!() ).
+* It is recognized by the command() relation.
+* It is executed as follows:
+    * Find the command predicates (ending in !)
+    * For each of the command predicates:
+        * Bind the arguments using the input relation set without the command predicates
+        * Execute (bind) the command predicate
+        * Pass the bound variables to the next command predicate
+
+But as I am implementing the command, without doing anything special, I get
+
+    [[an(E5)]@shrdlu, [big(E5)]@shrdlu, [block(E5)]@shrdlu, [command()]@system-relations, [do_pick_up(E5)]@rules, [red(E5)]@shrdlu]
+
+This is just about what I specified before. Before calling do_pick_up(E5), E5 must be determined. By placing `do_pick_up(E5)` at the end, this is just what happens, automatically
+
+    [[an(E5)]@shrdlu, [big(E5)]@shrdlu, [block(E5)]@shrdlu, [command()]@system-relations, [red(E5)]@shrdlu, [do_pick_up(E5)]@rules]
+
+So I don't have to do anything extra! Let's see how this works out.
+
+I managed to place do_pick_up() at the end by creating stats for the other predicates (A stats-less predicate will always be executed last). This is not a proper solution, but it will do for now.
+
+===
+
+Now working on 'assert'.
+
+    assert([grasping(X)])
+
+The arguments (relations) are on a domain level, not db level. The available knowledge bases will be asked to accept this information.
+
+In order to apply for a certain assert, a knowledge base should be able to:
+
+ * Allow asserts / retracts
+ * Handle the predicates in the assert
+
+ Only fact bases can allow asserts for now.
+
 # 2019-05-23
 
 Sometimes I get some 405 (Method not allowed) responses from DBPedia. I think they tell me I am crossing the fair use limit.

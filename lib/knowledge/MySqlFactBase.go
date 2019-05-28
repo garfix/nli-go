@@ -51,6 +51,10 @@ func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation 
 	return factBase.ds2db
 }
 
+func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.RelationTransformation {
+	return []mentalese.RelationTransformation{}
+}
+
 func (factBase *MySqlFactBase) GetStatistics() mentalese.DbStats {
 	return factBase.stats
 }
@@ -132,4 +136,12 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 	factBase.log.EndDebug("MatchRelationToDatabase", dbBindings)
 
 	return dbBindings
+}
+
+func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
+
+}
+
+func (factBase *MySqlFactBase) Retract(relation mentalese.Relation) {
+
 }

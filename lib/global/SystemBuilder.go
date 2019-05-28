@@ -240,18 +240,35 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 		return
 	}
 
-	path = common.AbsolutePath(builder.baseDir, factBase.Map)
-	mapString, err := common.ReadFile(path)
+	path = common.AbsolutePath(builder.baseDir, factBase.ReadMap)
+	readMapString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.AddError("Error reading map file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading read map file " + path + " (" + err.Error() + ")")
 		return
 	}
 
-	dbMap := builder.parser.CreateTransformations(mapString)
+	dbMap := builder.parser.CreateTransformations(readMapString)
 	lastResult = builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing read map file " + path + " (" + lastResult.String() + ")")
 		return
+	}
+
+	dbMapWrite := []mentalese.RelationTransformation{}
+	path = common.AbsolutePath(builder.baseDir, factBase.WriteMap)
+	if path != "" {
+		writeMapString, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading write map file " + path + " (" + err.Error() + ")")
+			return
+		}
+
+		dbMapWrite = builder.parser.CreateTransformations(writeMapString)
+		lastResult = builder.parser.GetLastParseResult()
+		if !lastResult.Ok {
+			builder.log.AddError("Error parsing write map file " + path + " (" + lastResult.String() + ")")
+			return
+		}
 	}
 
 	stats, _ := builder.CreateDbStats(factBase.Stats)
@@ -261,7 +278,7 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 		return
 	}
 
-	solver.AddFactBase(knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, stats, entities, builder.log))
+	solver.AddFactBase(knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, dbMapWrite, stats, entities, builder.log))
 }
 
 func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {

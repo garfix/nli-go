@@ -22,6 +22,7 @@ type ProblemSolver struct {
 	nestedStructureBase []knowledge.NestedStructureBase
 	matcher             *mentalese.RelationMatcher
 	optimizer           Optimizer
+	modifier            *FactBaseModifier
 	log                 *common.SystemLog
 // todo refactor into something more decent
 	quantLevel			int
@@ -34,6 +35,7 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 		aggregateBases: []knowledge.AggregateBase{},
 		matcher:        matcher,
 		optimizer:      NewOptimizer(matcher),
+		modifier: 		NewFactBaseModifier(log),
 		log:            log,
 		quantLevel:     0,
 	}
@@ -179,12 +181,25 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	if isFactBase {
 
-		sourceBindings := solver.FindFacts(factBase, boundRelations)
+		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
 
-		for _, sourceBinding := range sourceBindings {
+			solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, nameStore)
+			newBindings = append(newBindings, binding)
 
-			combinedBinding := binding.Merge(sourceBinding)
-			newBindings = append(newBindings, combinedBinding)
+		} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
+
+			solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, nameStore)
+			newBindings = append(newBindings, binding)
+
+		} else {
+
+			sourceBindings := solver.FindFacts(factBase, boundRelations)
+
+			for _, sourceBinding := range sourceBindings {
+
+				combinedBinding := binding.Merge(sourceBinding)
+				newBindings = append(newBindings, combinedBinding)
+			}
 		}
 
 	} else if isFunctionBase {

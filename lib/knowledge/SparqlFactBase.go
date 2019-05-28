@@ -49,6 +49,10 @@ func (factBase *SparqlFactBase) GetMappings() []mentalese.RelationTransformation
 	return factBase.ds2db
 }
 
+func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.RelationTransformation {
+	return []mentalese.RelationTransformation{}
+}
+
 func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, nameStore)
 }
@@ -194,4 +198,12 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 	factBase.log.EndDebug("MatchRelationToDatabase", bindings)
 
 	return bindings
+}
+
+func (factBase *SparqlFactBase) Assert(relation mentalese.Relation) {
+
+}
+
+func (factBase *SparqlFactBase) Retract(relation mentalese.Relation) {
+
 }

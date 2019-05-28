@@ -17,7 +17,7 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split", "greater_than", "less_than"}
+	predicates := []string{"join", "split", "greater_than", "less_than", "add"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
@@ -128,6 +128,31 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		} else {
 			found = false
 		}
+	}
+
+	if input.Predicate == "add" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		sum := int1 + int2
+
+		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(sum))
+
+		found = true
 	}
 
 	return newBinding, found

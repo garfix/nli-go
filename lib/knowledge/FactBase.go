@@ -7,7 +7,10 @@ import (
 type FactBase interface {
 	KnowledgeBase
 	MatchRelationToDatabase(needleRelation mentalese.Relation) []mentalese.Binding
+	Assert(relation mentalese.Relation)
+	Retract(relation mentalese.Relation)
 	GetMappings() []mentalese.RelationTransformation
+	GetWriteMappings() []mentalese.RelationTransformation
 	GetStatistics() mentalese.DbStats
 	GetEntities() mentalese.Entities
 }
@@ -15,6 +18,18 @@ type FactBase interface {
 const worst_cost = 100000000.0
 
 func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+
+	matchingGroups := []RelationGroup{}
+
+	matchingGroups = append(matchingGroups, getFactBaseReadGroups(matcher, set, factBase, nameStore)...)
+
+	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, nameStore, mentalese.PredicateAssert)...)
+	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, nameStore, mentalese.PredicateRetract)...)
+
+	return matchingGroups
+}
+
+func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
@@ -39,6 +54,38 @@ func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese
 			cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
 
 			matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
+		}
+	}
+
+	return matchingGroups
+}
+
+func getFactBaseWriteGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore, predicate string) []RelationGroup {
+
+	matchingGroups := []RelationGroup{}
+
+	for _, relation := range set {
+		if relation.Predicate == mentalese.PredicateAssert || relation.Predicate == mentalese.PredicateRetract {
+			content := relation.Arguments[0].TermValueRelationSet
+
+			for _, mapping := range factBase.GetWriteMappings() {
+
+				_, _, indexesPerNode, match := matcher.MatchSequenceToSetWithIndexes(mapping.Pattern, content, mentalese.Binding{})
+
+				if match {
+
+					indexes := indexesPerNode[0].Indexes
+
+					matchingRelations := mentalese.RelationSet{}
+					for _, i := range indexes {
+						matchingRelations = append(matchingRelations, set[i])
+					}
+
+					cost := worst_cost
+
+					matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
+				}
+			}
 		}
 	}
 

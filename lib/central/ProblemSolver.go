@@ -373,9 +373,18 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		// rewrite the variables of subgoal set to those of goalRelation
 		importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
-		subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, nameStore, []mentalese.Binding{binding})
+		//subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, nameStore, []mentalese.Binding{binding})
 
 		// subgoalResultBinding: from subgoal variables to constants (contains temporary variables)
+		//for _, subgoalResultBinding := range subgoalResultBindings {
+
+		subgoalResultBindings := []mentalese.Binding{binding}
+
+		for _, subGoal := range importedSubgoalSet {
+
+			subgoalResultBindings = solver.SolveRelationSet([]mentalese.Relation{subGoal}, nameStore, subgoalResultBindings)
+		}
+
 		for _, subgoalResultBinding := range subgoalResultBindings {
 
 			// filter out the input variables

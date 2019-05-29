@@ -1,3 +1,10 @@
+# 2019-05-29
+
+ProblemSolver::SolveRelationSet() now solves a set in most-efficient order. Sometimes however, you need it to be executed in the order of the set.
+When the sub-goals of a rule are executed, for example.
+
+I have now split up these goals and feed them one-by-one to SolveRelationSet(), but I'd rather have a SolveRelationSetInOrder() function that I could call.
+
 # 2019-05-26
 
 Earlier I described the command execution process as:

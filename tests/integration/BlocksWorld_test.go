@@ -27,7 +27,7 @@ func TestBlocksWorld(t *testing.T) {
 		outSessionName string
 	}{
 		{
-			{"Pick up a big red block", "OK", "", ""},
+			{"Pick up a big red block", "OK1", "", ""},
 		},
 	}
 

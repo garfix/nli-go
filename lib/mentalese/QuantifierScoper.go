@@ -28,7 +28,7 @@ func NewQuantifierScoper(log *common.SystemLog) QuantifierScoper {
 func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 
 	// turn new_quantifier into quantifier
-	newRelations := scoper.fromQuantifierToTemp(relations)
+	newRelations := scoper.fromQuantifierToQuant(relations)
 
 	// collect all quantifications
 	quantifications, nonQuantifications := scoper.collectQuantifications(newRelations)
@@ -45,7 +45,7 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 	return scopedRelations
 }
 
-func (scoper QuantifierScoper) fromQuantifierToTemp(relations RelationSet) RelationSet {
+func (scoper QuantifierScoper) fromQuantifierToQuant(relations RelationSet) RelationSet {
 
 	newRelations := RelationSet{}
 	rangeRelations := RelationSet{}

@@ -5,6 +5,16 @@ When the sub-goals of a rule are executed, for example.
 
 I have now split up these goals and feed them one-by-one to SolveRelationSet(), but I'd rather have a SolveRelationSetInOrder() function that I could call.
 
+=====
+
+Is there a difference in the number 5 between these two sentences?
+
+* Put 5 blocks on the table.
+* Are there 5 blocks on the table?
+
+The first 5 is about 5 separate actions. For exactly five times, put a block on the table.
+The second 5 is about counting. Find all blocks on the table. Count them.
+
 # 2019-05-26
 
 Earlier I described the command execution process as:

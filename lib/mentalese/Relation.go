@@ -8,7 +8,6 @@ type Relation struct {
 }
 
 const Predicate_Quantification = "quantification"
-const Predicate_Temp_Quantification = "temp_quantification"
 const Predicate_Quant = "quant"
 
 const PredicateName = "name"

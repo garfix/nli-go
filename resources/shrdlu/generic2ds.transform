@@ -5,7 +5,5 @@
     mod(E1, A) isa(A, big) => big(E1);
     mod(E1, A) isa(A, red) => red(E1);
 
-    determiner(E1, A) isa(A, an) => ;
-
     isa(A5, block) => block(E5);
 ]

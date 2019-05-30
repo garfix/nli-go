@@ -5,4 +5,5 @@
     how_many(_)
     yes_no()
     command()
+    number(_, _)
 ]

@@ -3,7 +3,7 @@
 
     { form: 'up',                pos: particle,              sense: isa(E, up) }
 
-    { form: 'a',                 pos: determiner,            sense: isa(E, an) }
+    { form: 'a',                 pos: quantifier,            sense: number(E, 1) }
 
     { form: 'big',               pos: adjective,             sense: isa(E, big) }
     { form: 'red',               pos: adjective,             sense: isa(E, red) }

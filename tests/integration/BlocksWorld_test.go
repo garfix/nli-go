@@ -27,7 +27,10 @@ func TestBlocksWorld(t *testing.T) {
 		outSessionName string
 	}{
 		{
+			// todo: "big"; move the green block on top of it away
 			{"Pick up a big red block", "OK", "", ""},
+			// todo "I don't understand which pyramid you mean"
+			{"Grasp the pyramid", "Not OK", "", ""},
 		},
 	}
 

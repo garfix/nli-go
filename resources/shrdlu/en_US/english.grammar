@@ -3,6 +3,7 @@
     { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
     { rule: proper_noun(N1) -> first_name(N1) }
 
+    { rule: dp(Q1) -> determiner(Q1) }
     { rule: qp(Q1) -> quantifier(Q1) }
 
     { rule: advp(A1) -> adverb(A1) }
@@ -13,6 +14,7 @@
     { rule: np(E1) -> wh_word(E1) }
     { rule: np(E1) -> proper_noun(E1) }
     { rule: np(E1) -> nbar(E1) }
+    { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
     { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
     { rule: np(E1) -> np(E2) conjunction(E1) np(E3),                             sense: conjunction(E1, E2, E3) }
 

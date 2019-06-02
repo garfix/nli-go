@@ -1,6 +1,7 @@
 [
     == commands ==
     do_pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
+    do_grasp(E1) :- grasp(E1);
 
     == inferences ==
     raise_hand() :- at(`hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);

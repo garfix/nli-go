@@ -1,14 +1,17 @@
 [
     { form: 'pick',              pos: verb,                  sense: isa(E, pick) }
+    { form: 'grasp',             pos: verb,                  sense: isa(E, grasp) }
 
     { form: 'up',                pos: particle,              sense: isa(E, up) }
 
     { form: 'a',                 pos: quantifier,            sense: number(E, 1) }
+    { form: 'the',               pos: determiner,            sense: isa(E, the) }
 
     { form: 'big',               pos: adjective,             sense: isa(E, big) }
     { form: 'red',               pos: adjective,             sense: isa(E, red) }
 
     { form: 'block',             pos: noun,                  sense: isa(E, block) }
+    { form: 'pyramid',           pos: noun,                  sense: isa(E, pyramid) }
 
     { form: '.',                 pos: period }
 ]

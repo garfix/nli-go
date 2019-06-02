@@ -1,3 +1,29 @@
+# 2019-06-02
+
+Next question in the SHRDLU conversation: "Grasp the pyramid". 
+
+The problem here is the simple word "the". It is combined with a noun ("pyramid") and forms a determiner phrase (DP).
+
+The referent of a DP is an object in the dialog context (DC). 
+
+I *have* a dialog context, but it just remembers the answers the user gave on previous questions. And it is not an actual knowledge base that can be accessed by the solver.
+
+Then, I need the system to understand that "the pyramid" refers to information in that knowledge base. 
+
+Finally, it would be nice if the system could answer "I don't understand which pyramid you mean" like SHRDLU does. The reason being that the pyramid has not been mentioned before in the dialog. But I might settle for a "Not OK" :) 
+
+===
+
+It occurred to me that "the pyramid" may mean something else. If there is only one pyramid in the scene, one may very well refer to it as "the pyramid". So if a search for pyramids in the scene results in 1 pyramid, then this is "the pyramid". However if I was talking about some specific pyramid and I say "the pyramid", then it is clear that I mean the pyramid from the dialog context.
+
+I think actually that this second meaning is what Winograd means. I may be able to make this without too much work.   
+
+# 2019-05-30
+
+"Pick up a big red block" is almost done! I skipped the definition of "big" for now.
+
+I added numbers as quantifiers. So I can now say "Pick up 1 block" and it will limit its actions to 1.
+
 # 2019-05-29
 
 ProblemSolver::SolveRelationSet() now solves a set in most-efficient order. Sometimes however, you need it to be executed in the order of the set.
@@ -553,11 +579,11 @@ Bij 'every' is het ook altijd zo dat de entiteiten in de database afzonderlijk z
 
 Ik moet hier een naam voor hebben.
 
-https://en.wikipedia.org/wiki/Quantifier_(linguistics)
+<https://en.wikipedia.org/wiki/Quantifier_(linguistics)>
 
 Wow. Natuurlijke getallen zijn helemaal geen quantifiers(!)
 
-https://en.wikipedia.org/wiki/Numeral_(linguistics)
+<https://en.wikipedia.org/wiki/Numeral_(linguistics)>
 
 Ok, dan moet ik quantification alleen gebruiken voor quantifiers. :)
 

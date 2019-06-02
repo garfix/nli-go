@@ -1,9 +1,13 @@
 [
-    == pick up as a command ==
+    == commands ==
     root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
+    root(P1) isa(P1, grasp) object(P, O) => do_grasp(O);
 
     mod(E1, A) isa(A, big) => big(E1);
     mod(E1, A) isa(A, red) => red(E1);
 
-    isa(A5, block) => block(E5);
+    isa(E1, block) => block(E1);
+    isa(E1, pyramid) => pyramid(E1);
+
+    determiner(E1, D1) isa(D1, the) => number_of(1, E1);
 ]

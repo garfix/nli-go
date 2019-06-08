@@ -1,3 +1,77 @@
+# 2019-06-08
+
+    "Find a block which is taller than the one you are holding"
+    
+Parse tree:  
+
+    [s 
+        [s_imperative 
+            [s_imperative 
+                [s_imperative 
+                    [vp 
+                        [vbar 
+                            [vgp [verb Find]] 
+                            [np 
+                                [qp [quantifier a]] 
+                                [nbar 
+                                    [nbar [noun block]] 
+                                    [sbar 
+                                        [wh_determiner which] 
+                                        [aux_copula is] 
+                                        [adjp 
+                                            [comparative_adjective taller] 
+                                            [than_clause 
+                                                [subordinating_conjunction than] 
+                                                [gerund 
+                                                    [np 
+                                                        [dp [determiner the]] 
+                                                        [nbar [noun one]]
+                                                    ] 
+                                                    [np [pronoun you]] 
+                                                    [aux_verb are] 
+                                                    [gerund holding]]]]]]]]]] 
+    
+relations:
+    
+    root(P6) 
+    isa(P6, find)                       // find
+    object(P6, E7) 
+        quantification(E7, Q6, R6) 
+            number(Q6, 1)               // a 
+            isa(R6, block)              // block
+            mod(R6, S8) 
+                subject(S8, S9) 
+                    isa(S9, which)      // which
+                isa(S8, taller)         // taller
+                mod(S8, P8) 
+                    case(P8, C6) 
+                        isa(C6, than)   // than
+                    object(P8, O5) 
+                        determiner(O5, D6) 
+                            isa(D6, the)// the 
+                        number(O5, 1)   // one
+                    subject(P8, S10)
+                        isa(P8, hold)   // holding
+                        isa(S10, you)   // you
+                
+             
+
+# 2019-06-03
+
+Challenge of the day:
+
+    "Find a block which is taller than the one you are holding and put it into the box."
+    
+Wow! Som many new things! Let's try to list them:
+
+- A "which" modifier
+- The concept "taller" and the comparison "taller than"
+- The discourse object You
+- A conjunction ("and") at the sentence level, joining two verbs.
+- Anaphora (the pronoun "it"), that refers to a noun in the same sentence.   
+
+"Find a block", once processed, should place the block found into the dialog context, where it can be picked up by the second part of the sentence.  
+
 # 2019-06-02
 
 Next question in the SHRDLU conversation: "Grasp the pyramid". 

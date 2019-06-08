@@ -1,6 +1,6 @@
 [
     == commands ==
-    root(P1) isa(P1, pick) modifier(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
+    root(P1) isa(P1, pick) mod(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
     root(P1) isa(P1, grasp) object(P, O) => do_grasp(O);
 
     mod(E1, A) isa(A, big) => big(E1);

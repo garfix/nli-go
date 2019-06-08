@@ -4,15 +4,24 @@
     { rule: proper_noun(N1) -> first_name(N1) }
 
     { rule: dp(Q1) -> determiner(Q1) }
+
     { rule: qp(Q1) -> quantifier(Q1) }
+
+    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(P1, E1) }
 
     { rule: advp(A1) -> adverb(A1) }
 
     { rule: adjp(A1) -> adjective(A1) }
     { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: mod(A1, Adv1) }
+    { rule: adjp(A1) -> comparative_adjective(A1) than_clause(P1),               sense: mod(A1, P1) }
+
+    { rule: than_clause(P1) -> subordinating_conjunction(C1) gerund(P1),         sense: case(P1, C1) }
+
+    { rule: gerund(P1) -> np(O1) np(S1) aux_verb(Aux) gerund(P1),                sense: subject(P1, S1) object(P1, O1) }
 
     { rule: np(E1) -> wh_word(E1) }
     { rule: np(E1) -> proper_noun(E1) }
+    { rule: np(E1) -> pronoun(E1) }
     { rule: np(E1) -> nbar(E1) }
     { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
     { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
@@ -20,16 +29,21 @@
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E1) -> adjp(A1) nbar(E1),                                       sense: mod(E1, A1) }
+    { rule: nbar(E1) -> nbar(E1) sbar(S),                                        sense: mod(E1, S) }
 
     { rule: vgp(V1) -> verb(V1) }
-    { rule: vgp(V1) -> verb(V1) particle(P1),                                    sense: modifier(V1, P1) }
+    { rule: vgp(V1) -> verb(V1) particle(P1),                                    sense: mod(V1, P1) }
 
     { rule: vbar(V1) -> vgp(V1) np(E1),                                          sense: object(V1, E1) }
+    { rule: vbar(V1) -> vgp(V1) np(E1) pp(P1),                                   sense: object(V1, E1) mod(V1, P1) }
+    { rule: vbar(V1) -> aux_verb(Aux) gerund(V1) }
 
     { rule: vp(V1) -> vbar(V1) }
 
-    == pick up X ==
+    { rule: sbar(S1) -> wh_determiner(S) aux_copula(Cp) adjp(S1),                sense: subject(S1, S) }
+
     { rule: s_imperative(P1) -> vp(P1),                                          sense: root(P1) }
+    { rule: s_imperative(C) -> s_imperative(P1) conjunction(C) s_imperative(P2) }
 
     { rule: s_interrogative(P1) -> s_interrogative(P1) question_mark() }
     { rule: s_imperative(P1) -> s_imperative(P1) period() }

@@ -31,6 +31,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"Pick up a big red block", "OK", "", ""},
 			// todo "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "Not OK", "", ""},
+			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
+			{"Find a block which is taller than the one you are holding and put it into the box.", "OK", "", ""},
 		},
 	}
 

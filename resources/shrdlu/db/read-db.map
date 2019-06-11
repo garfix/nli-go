@@ -1,10 +1,11 @@
 [
     block(E) => is(E, block);
     pyramid(E) => is(E, pyramid);
-
-    == todo ==
-    big(E) => is(E, _);
+    box(E) => is(E, box);
 
     red(E) => color(E, red);
+
     at(E, X, Y, Z) => at(E, X, Y, Z);
+    grasping(E) => grasping(E);
+    size(E, Width, Length, Height) => size(E, Width, Length, Height);
 ]

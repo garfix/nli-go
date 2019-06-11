@@ -7,7 +7,7 @@
 
     { rule: qp(Q1) -> quantifier(Q1) }
 
-    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: case(P1, E1) }
+    { rule: pp(E1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 
     { rule: advp(A1) -> adverb(A1) }
 

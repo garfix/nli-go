@@ -1,6 +1,7 @@
 package central
 
 import (
+	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"sort"
@@ -76,31 +77,80 @@ func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []kno
 
 func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *mentalese.ResolvedNameStore) knowledge.SolutionRoutes {
 
-	routes := knowledge.SolutionRoutes{}
-
-	if len(set) == 0 {
-		return routes
+	// find matching groups in all knowledge bases
+	matchingGroupSets := [][]knowledge.RelationGroup{}
+	for _, factBase := range knowledgeBases {
+		matchingGroupSets = append(matchingGroupSets, factBase.GetMatchingGroups(set, nameStore))
 	}
 
-	for _, factBase := range knowledgeBases {
-		for _, factBaseGroup := range factBase.GetMatchingGroups(set, nameStore) {
+	// collect groups by relation (relation index => group set, group index)
 
-			restOfSet := set.RemoveRelations(factBaseGroup.Relations)
+	// initialize data
+	indexedGroups := map[int]map[int]map[int]knowledge.RelationGroup{}
+	indexedGroupRelationIndexes := map[int]map[int][]int{}
 
-			factBaseGroup.Relations = optimizer.bindKnowledgeBaseVariables(factBaseGroup.Relations, nameStore, factBase.GetName())
+	for r := range set {
+		indexedGroups[r] = map[int]map[int]knowledge.RelationGroup{}
+		for s := range matchingGroupSets {
+			indexedGroups[r][s] = map[int]knowledge.RelationGroup{}
+		}
+	}
+	for s, groupSet := range matchingGroupSets {
+		indexedGroupRelationIndexes[s] = map[int][]int{}
+		for g := range groupSet {
+			indexedGroupRelationIndexes[s][g] = []int{}
+		}
+	}
 
-			route := baseRoute
-			route = append(baseRoute, factBaseGroup)
-			routes = append(routes, route)
-
-			restRoutes := optimizer.findSolutionRoutes(route, restOfSet, knowledgeBases, nameStore)
-			for _, restRoute := range restRoutes {
-				routes = append(routes, restRoute)
+	// fill data structure
+	for r, relation := range set {
+		for s, groupSet := range matchingGroupSets {
+			for g, group := range groupSet {
+				for _, rel := range group.Relations {
+					if relation.Equals(rel) {
+						indexedGroups[r][s][g] = group
+						indexedGroupRelationIndexes[s][g] = append(indexedGroupRelationIndexes[s][g], r)
+					}
+				}
 			}
 		}
 	}
 
+	// create routes
+	routes := optimizer.createRoutes(set, 0, []int{}, indexedGroups, indexedGroupRelationIndexes, knowledge.SolutionRoute{})
+
 	return routes
+}
+
+func (optimizer Optimizer) createRoutes(set mentalese.RelationSet, r int, handledRelationIndexes []int, indexedGroups map[int]map[int]map[int]knowledge.RelationGroup, indexedGroupRelationIndexes map[int]map[int][]int, solutionRoute knowledge.SolutionRoute) knowledge.SolutionRoutes {
+
+	solutionRoutes := []knowledge.SolutionRoute{}
+
+	if r == len(set) {
+		solutionRoutes = append(solutionRoutes, solutionRoute)
+	} else if common.IntArrayContains(handledRelationIndexes, r) {
+		// relation already present in earlier group, skip it
+		newSolutionRoutes := optimizer.createRoutes(set, r + 1, handledRelationIndexes, indexedGroups, indexedGroupRelationIndexes, solutionRoute)
+		solutionRoutes = append(solutionRoutes, newSolutionRoutes...)
+	} else {
+		var found = false
+		for s, groupSet := range indexedGroups[r] {
+			for g, group := range groupSet {
+				found = true
+				newSolutionRoute := append(solutionRoute, group)
+				newSolutionRelationIndexes := append(handledRelationIndexes, indexedGroupRelationIndexes[s][g]...)
+				newSolutionRoutes := optimizer.createRoutes(set, r + 1, newSolutionRelationIndexes, indexedGroups, indexedGroupRelationIndexes, newSolutionRoute)
+				solutionRoutes = append(solutionRoutes, newSolutionRoutes...)
+			}
+		}
+		if !found {
+			// relation not handled by any kb, skip it
+			newSolutionRoutes := optimizer.createRoutes(set, r + 1, handledRelationIndexes, indexedGroups, indexedGroupRelationIndexes, solutionRoute)
+			solutionRoutes = append(solutionRoutes, newSolutionRoutes...)
+		}
+	}
+
+	return solutionRoutes
 }
 
 func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {

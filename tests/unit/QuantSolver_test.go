@@ -37,6 +37,8 @@ func TestQuantSolver(t *testing.T) {
 		isa(A, child) => have_child(_, A);
 	]`)
 
+	ds2dbWrite := internalGrammarParser.CreateTransformations(`[]`)
+
 	tests := []struct {
 		quant   string
 		binding string
@@ -68,7 +70,7 @@ func TestQuantSolver(t *testing.T) {
 
 	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
-	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, stats, entities, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 

@@ -33,6 +33,8 @@ func TestOptimizer(t *testing.T) {
 		lord(A) => title(A, 'lord');
 	]`)
 
+	ds2dbWrite := parser.CreateTransformations(`[]`)
+
 	stats1 := mentalese.DbStats{
 		"spouse": {Size: 100, DistinctValues: []int{75, 75}},
 		"name": {Size: 200, DistinctValues: []int{200, 180}},
@@ -48,8 +50,8 @@ func TestOptimizer(t *testing.T) {
 
 	entities := mentalese.Entities{}
 
-	factBase1 := knowledge.NewInMemoryFactBase("memory-1", facts1, matcher, ds2db1, stats1, entities, log)
-	factBase2 := knowledge.NewInMemoryFactBase("memory-2", facts2, matcher, ds2db2, stats2, entities, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory-1", facts1, matcher, ds2db1, ds2dbWrite, stats1, entities, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-2", facts2, matcher, ds2db2, ds2dbWrite, stats2, entities, log)
 
 	factBases := []knowledge.KnowledgeBase{factBase1, factBase2}
 
@@ -78,7 +80,7 @@ func TestOptimizer(t *testing.T) {
 		// match 2 predicates
 		{"[first_name(C, 'Elvis') first_name(A, 'Lord') last_name(A, 'Byron')]", "[]", "[first_name(C, 'Elvis')]"},
 
-		// 2 predicates that is more bound should precede 2 predicates that is less
+		// 2 predicates that are more bound should precede 2 predicates that are less bound
 		{"[first_name(A, 'Lord') last_name(A, 'Byron') first_name(11, 'Lord') last_name(11, 'Byron')]", "[[[first_name(11, 'Lord') last_name(11, 'Byron')]@memory-1, [first_name(A, 'Lord') last_name(A, 'Byron')]@memory-1]]", "[]"},
 	}
 

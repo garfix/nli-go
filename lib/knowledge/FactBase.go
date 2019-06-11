@@ -39,21 +39,24 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 
 		if match {
 
-			binding := bindings[0]
-			indexes := indexesPerNode[0].Indexes
+			for i := range bindings {
 
-			matchingRelations := mentalese.RelationSet{}
-			for _, i := range indexes {
-				matchingRelations = append(matchingRelations, set[i])
+				binding := bindings[i]
+				indexes := indexesPerNode[i].Indexes
+
+				matchingRelations := mentalese.RelationSet{}
+				for _, i := range indexes {
+					matchingRelations = append(matchingRelations, set[i])
+				}
+
+				boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
+
+				keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
+
+				cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
+
+				matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
 			}
-
-			boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
-
-			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
-
-			cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
-
-			matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
 		}
 	}
 

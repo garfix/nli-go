@@ -1,3 +1,7 @@
+# 2019-06-11
+
+The optimizer had a complexity of n! and it started to show for 20 relations and several knowledge bases. I rewrote it and now it's back to normal.
+
 # 2019-06-08
 
     "Find a block which is taller than the one you are holding"
@@ -25,8 +29,7 @@ Parse tree:
                                                 [gerund 
                                                     [np 
                                                         [dp [determiner the]] 
-                                                        [nbar [noun one]]
-                                                    ] 
+                                                        [nbar [noun one]]                                                    ] 
                                                     [np [pronoun you]] 
                                                     [aux_verb are] 
                                                     [gerund holding]]]]]]]]]] 
@@ -54,7 +57,9 @@ relations:
                         isa(P8, hold)   // holding
                         isa(S10, you)   // you
                 
-             
+I found the nbar -> nbar sbar rewrite to be much too free. It created ambiguity that wasn't necessary. I created some more restricted rules.
+
+A modifier of a np is another np; its's not a preposition. The preposition is the case of the modifier.              
 
 # 2019-06-03
 

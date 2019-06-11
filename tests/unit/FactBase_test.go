@@ -37,10 +37,12 @@ func TestFactBase(t *testing.T) {
 		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
+	ds2dbWrite := parser.CreateTransformations(`[]`)
+
 	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
 	matcher := mentalese.NewRelationMatcher(log)
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	solver := central.NewProblemSolver(matcher, log)
 
 	tests := []struct {

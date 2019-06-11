@@ -38,11 +38,13 @@ func TestSolver(t *testing.T) {
 		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
+	ds2dbWrite := parser.CreateTransformations(`[]`)
+
 	matcher := mentalese.NewRelationMatcher(log)
 
 	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 
 	solver := central.NewProblemSolver(matcher, log)
 	solver.AddFactBase(factBase)
@@ -108,7 +110,7 @@ func TestSolver(t *testing.T) {
 		link(A, B) => link(A, B);
 	]`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, stats, entities, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, stats, entities, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, log)

@@ -37,6 +37,8 @@ func TestAnswerer(t *testing.T) {
 		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
+	ds2dbWrite := parser.CreateTransformations(`[]`)
+
 	solutions := parser.CreateSolutions(`[
 		{
 			condition: write(Person_name, Book_name) publish(Pub_name, Book_name),
@@ -84,7 +86,7 @@ func TestAnswerer(t *testing.T) {
 
 	entities := mentalese.Entities{}
 
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, stats, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
 
 	solver := central.NewProblemSolver(matcher, log)

@@ -154,9 +154,6 @@ func findVariables(set RelationSet) []string {
 	return variables
 }
 
-
-
-
 var i = 0
 
 func createVariable() Term {
@@ -233,6 +230,61 @@ func (set RelationSet) UnScope() RelationSet {
 	}
 
 	return unscoped
+}
+
+// Returns all relations with variable as argument; those relations have other variables, find all relations with those as well
+func (set RelationSet) findRelationsStartingWithVariable(variable string) RelationSet {
+
+	foundVariables := map[string]bool{ variable: true }
+	markedRelationIndexes := map[int]bool{}
+	awaitingVariables := []string{ variable }
+
+	// process a stack with variables
+	for len(awaitingVariables) != 0 {
+		// pop
+		var activeVariable = awaitingVariables[0]
+		awaitingVariables = awaitingVariables[1:]
+
+		// check all relations for this variable
+		for r, relation := range set {
+
+			// quick skip
+			_, processedBefore := markedRelationIndexes[r]
+			if processedBefore {
+				continue
+			}
+
+			//var activeVariableFound = false
+			//for _, argument := range relation.Arguments {
+			//	if argument.TermType == Term_variable && argument.TermValue == activeVariable {
+			//		activeVariableFound = true
+			//	}
+			//}
+			if relation.RelationUsesVariable(activeVariable) {
+				// mark this relation
+				markedRelationIndexes[r] = true
+				// add all variables of this relation
+				for _, argument := range relation.Arguments {
+					if argument.TermType == Term_variable {
+						var someVar = argument.TermValue
+						var _, variableAlreadyFound = foundVariables[someVar]
+						if !variableAlreadyFound {
+							foundVariables[someVar] = true
+							awaitingVariables = append(awaitingVariables, someVar)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// create result set
+	var resultSet RelationSet
+	for i := range markedRelationIndexes {
+		resultSet = append(resultSet, set[i])
+	}
+
+	return resultSet
 }
 
 //func (set RelationSet) UnmarshalJSON(b []byte) error {

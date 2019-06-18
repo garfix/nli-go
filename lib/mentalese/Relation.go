@@ -10,6 +10,9 @@ type Relation struct {
 const Predicate_Quantification = "quantification"
 const Predicate_Quant = "quant"
 
+const Predicate_Sequence = "sequence"
+const Predicate_Seq = "seq"
+
 const PredicateName = "name"
 const PredicateSense = "sense"
 
@@ -23,6 +26,9 @@ const Quantification_RangeIndex = 1
 const Quantification_QuantifierVariableIndex = 2
 const Quantification_QuantifierIndex = 3
 const Quantification_ScopeIndex = 4
+
+const SeqFirstOperandIndex = 0;
+const SeqSecondOperandIndex = 2;
 
 func NewRelation(predicate string, arguments []Term) Relation {
 	return Relation{
@@ -100,6 +106,24 @@ func (relation Relation) BindSingleRelationMultipleBindings(bindings []Binding) 
 	}
 
 	return boundRelations
+}
+
+// check if relation uses a variable (perhaps in one of its nested arguments)
+func (relation Relation) RelationUsesVariable(variable string) bool {
+
+	var found = false
+
+	for _, argument := range relation.Arguments {
+		if argument.IsVariable() {
+			found = found || argument.TermValue == variable
+		} else if argument.IsRelationSet() {
+			for _, rel := range argument.TermValueRelationSet {
+				found = found || rel.RelationUsesVariable(variable)
+			}
+		}
+	}
+
+	return found
 }
 
 func (relation Relation) String() string {

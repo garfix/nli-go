@@ -1,3 +1,68 @@
+# 2019-06-16
+
+I added another nested structure: sequence.
+
+I am now noticing that relations who have no connection to the rest of the structure (the relation set) fall outside the scope of the nested structures.
+
+Thus, in the transformation phase from generic to domain specific, the connection must remain intact.
+
+    So not:
+    
+    isa(P1, hold) subject(P1, S) object(P1, O) isa(S, you) => grasping(O);
+    
+    but
+    
+    isa(P1, hold) subject(P1, S) object(P1, O) isa(S, you) => grasping(P1, O);
+
+The `P1` connects `grasping` with the rest of the structure and allows it to be nested along with the other relations.
+`P1` is an event variable. I may also need it later when dealing with events in the past.
+
+====
+
+Let's talk about Stanford universal dependencies.
+
+When I say "the block is taller than the pyramid"
+
+these dependencies will have you do something like
+
+    NN block -> relcl -> JJR taller -> nmod -> NN pyramid
+    
+and 
+
+    NN pyramid -> case -> IN than
+    
+In relations
+
+    block(A) relcl(A, C) taller(C) nmod(c, B) block(B) case(B, than)     
+        
+What I don't like is that there is a link to a pyramid, an entity, and this entity has a relation to a case.
+
+I don't think that entities should have references to cases. To me this is very counter-intuitive.        
+    
+I want to write it like this
+
+block(A) mod(A, M) isa(M, taller) mod(M, N) isa(N, than) ref(N, B) block(B) 
+
+# 2019-06-14
+
+The sentence has two imperative clauses and one sentence root. This changes the way I dealt with it before.
+
+Make sure the sequences can be nested, just like other conjunctions.
+
+# 2019-06-13
+
+I just ignored "and". The left-to-right translation of words into meaning would take care of the order of the two clauses in the sentence.
+It did not work. The optimizer changes the order of the relations and disturbs the order of the clauses.
+
+"and" needs to be explicitly represented. And it _should be_. "And", at the sentence level, in imperative sentences, is not just syntactic glue. 
+It implies order. It means, B should be executed after A. 
+
+While the logical AND is commutative, the imperative AND is not.
+
+Winograd has a whole section on the semantics of AND.
+
+It needs to get its own "nested structure", the second after "quant".
+
 # 2019-06-11
 
 The optimizer had a complexity of n! and it started to show for 20 relations and several knowledge bases. I rewrote it and now it's back to normal.

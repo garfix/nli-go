@@ -51,7 +51,7 @@ http://nlp.stanford.edu:8080/parser/index.jsp
 
 In the general relational representation I have these senses:
 
- * root(S)                              The root of a sentence
+ * root(S)                              The root of a sentence (clause?)
  * subject(P, S)               nsubj    The syntactic subject of a sentence
  * object(P, O)                obj      The syntactic object
  * ind_object(P, I)            iobj     The syntactic indirect object
@@ -67,6 +67,7 @@ In the general relational representation I have these senses:
  * mod(E1, E2)                 advmod   Modifies the meaning of a verb phrase with an adverb
  * mod(E1, E2)                 obl      Modifies the meaning of a verb phrase with a proposition
  * conjunction(C, E1, E2)      conj     A new entity (C) formed out of two other entities.
+ * sequence(C, P1, P2)                  Clauses P1 and P2 must be executed in the specified order.                     
 
  * declaration()                        Based on a verb, this forms the main node of a sentence.
  * command()                            Based on the sentence structure, the verb must be interpretered as a command (Go!)

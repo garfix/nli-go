@@ -6,6 +6,7 @@
     red(E) => color(E, red);
 
     at(E, X, Y, Z) => at(E, X, Y, Z);
-    grasping(E) => grasping(E);
+    grasping(P1, E1) => grasping(P1, E1);
     size(E, Width, Length, Height) => size(E, Width, Length, Height);
+    dialog_subject(E) => dialog_subject(E);
 ]

@@ -7,7 +7,7 @@
 
     { rule: qp(Q1) -> quantifier(Q1) }
 
-    { rule: pp(E1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
+    { rule: pp(P1) -> preposition(P1) np(E1),                                    sense: ref(P1, E1) }
 
     { rule: advp(A1) -> adverb(A1) }
 
@@ -15,9 +15,9 @@
     { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: mod(A1, Adv1) }
     { rule: adjp(A1) -> comparative_adjective(A1) than_clause(P1),               sense: mod(A1, P1) }
 
-    { rule: than_clause(P1) -> subordinating_conjunction(C1) gerund(P1),         sense: case(P1, C1) }
+    { rule: than_clause(C1) -> subordinating_conjunction(C1) gerund_object(P1),  sense: ref(C1, P1) }
 
-    { rule: gerund(P1) -> np(O1) np(S1) aux_verb(Aux) gerund(P1),                sense: subject(P1, S1) object(P1, O1) }
+    { rule: gerund_object(O1) -> np(O1) np(S1) aux_verb(Aux) gerund(P1),         sense: subject(P1, S1) object(P1, O1) }
 
     { rule: np(E1) -> wh_word(E1) }
     { rule: np(E1) -> proper_noun(E1) }
@@ -40,13 +40,15 @@
 
     { rule: vp(V1) -> vbar(V1) }
 
-    { rule: sbar(S1) -> wh_determiner(S) aux_copula(Cp) adjp(S1),                sense: subject(S1, S) }
+    { rule: sbar(S1) -> wh_determiner(S) aux_copula(Cp) adjp(S1) }
 
-    { rule: s_imperative(P1) -> vp(P1),                                          sense: root(P1) }
-    { rule: s_imperative(C) -> s_imperative(P1) conjunction(C) s_imperative(P2) }
+    { rule: s_imperative_clause(P1) -> vp(P1),                                   sense: root(P1) }
+    { rule: s_imperative_clause(C) -> s_imperative_clause(P1) conjunction(C) s_imperative_clause(P2),  sense: sequence(P1, C, P2) }
+
+    { rule: s_imperative(P1) -> s_imperative_clause(P1) period() }
+    { rule: s_imperative(P1) -> s_imperative_clause(P1) }
 
     { rule: s_interrogative(P1) -> s_interrogative(P1) question_mark() }
-    { rule: s_imperative(P1) -> s_imperative(P1) period() }
 
     { rule: s(S1) -> s_imperative(S1),                                           sense: command() }
     { rule: s(S1) -> s_interrogative(S1),                                        sense: question() }

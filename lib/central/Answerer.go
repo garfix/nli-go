@@ -68,6 +68,12 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 
 			answerer.log.AddProduction("Scoped", transformedGoal.String())
 
+			// apply sequences
+			sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
+			transformedGoal = sequenceApplier.ApplySequences(transformedGoal)
+
+			answerer.log.AddProduction("With Sequences", transformedGoal.String())
+
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, nameStore, []mentalese.Binding{{}})
 

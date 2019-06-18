@@ -94,22 +94,25 @@ func (scoper QuantifierScoper) extractRelationsWithVariable(relations RelationSe
 	result := RelationSet{}
 	remainder := RelationSet{}
 
-	for _, relation := range relations {
+	//for _, relation := range relations {
+	//
+	//	found := false
+	//
+	//	for _, argument := range relation.Arguments {
+	//		if argument.IsVariable() && argument.TermValue == variable {
+	//			found = true
+	//		}
+	//	}
+	//
+	//	if found {
+	//		result = append(result, relation)
+	//	} else {
+	//		remainder = append(remainder, relation)
+	//	}
+	//}
 
-		found := false
-
-		for _, argument := range relation.Arguments {
-			if argument.IsVariable() && argument.TermValue == variable {
-				found = true
-			}
-		}
-
-		if found {
-			result = append(result, relation)
-		} else {
-			remainder = append(remainder, relation)
-		}
-	}
+	result = relations.findRelationsStartingWithVariable(variable)
+	remainder = relations.RemoveRelations(result)
 
 	return result, remainder
 }

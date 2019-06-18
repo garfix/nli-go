@@ -115,6 +115,9 @@ func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRou
 	newBindings := bindings
 
 	for _, relationGroup := range solutionRoute {
+
+		solver.log.AddProduction("Goal", relationGroup.String())
+
 		newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, nameStore, newBindings)
 
 		if len(newBindings) == 0 {
@@ -234,6 +237,11 @@ func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, nameSt
 	if goal.Predicate == mentalese.Predicate_Quant {
 
 		newBindings = solver.SolveQuant(goal, nameStore, binding)
+
+	} else if goal.Predicate == mentalese.Predicate_Seq {
+
+		newBindings = solver.SolveSeq(goal, nameStore, binding)
+
 	}
 
 	solver.log.EndDebug("NestedStructureBase BindChildStructures", newBindings)

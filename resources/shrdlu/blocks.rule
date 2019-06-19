@@ -13,7 +13,7 @@
 
     == actions ==
     move_hand(X, Y, Z) :- retract(at(`hand`, _, _, _)) assert(at(`hand`, X, Y, Z));
-    grasp(X) :- retract(grasping(_, _)) assert(grasping(_, X));
-    release(E1) :- retract(grasping(_, _)) at(`hand`, X, Y, Z) at(E1, X, Y, Z);
+    grasp(X) :- retract(grasping(_)) assert(grasping(X));
+    release(E1) :- retract(grasping(_)) at(`hand`, X, Y, Z) assert(at(E1, X, Y, Z));
     set_dialog_subject(E1) :- retract(dialog_subject(_)) assert(dialog_subject(E1));
 ]

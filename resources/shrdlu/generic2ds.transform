@@ -1,13 +1,13 @@
 [
     == commands ==
-    root(P1) isa(P1, pick) mod(P, Pt) isa(Pt, up) object(P, O) => do_pick_up(O);
+    root(P1) isa(P1, pick) mod(P, Pt) isa(Pt, up) object(P1, O) => do_pick_up(O);
     root(P1) isa(P1, grasp) object(P1, O) => do_grasp(O);
     root(P1) isa(P1, find) object(P1, O) => do_find(P1, O);
     root(P1) isa(P1, put) object(P1, S) mod(P1, M1) isa(M1, into) ref(M1, T) => do_put_into(P1, S, T);
 
     mod(E1, M1) isa(M1, taller) mod(M1, N1) isa(N1, than) ref(N1, E2) => taller(E1, E2);
 
-    isa(P1, hold) subject(P1, S) object(P1, O) isa(S, you) => grasping(P1, O);
+    isa(P1, hold) subject(P1, S) object(P1, O) isa(S, you) => grasping(O);
 
     isa(S1, which) => ;
     isa(C1, and) => ;
@@ -21,5 +21,5 @@
     isa(E1, pyramid) => pyramid(E1);
     isa(E1, box) => box(E1);
 
-    determiner(E1, D1) isa(D1, the) => number(E1, 1);
+    determiner(E1, D1) isa(D1, the) => number_of(1, E1);
 ]

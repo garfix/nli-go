@@ -95,16 +95,17 @@ func (store *ResolvedNameStore) String() string {
 	string := ""
 	sep := ""
 
-	for variable, ids := range store.data {
+	for databaseName, ids := range store.data {
 
-		string += sep + variable + ": "
+		string += sep + "{"
 
 		sep2 := ""
-		for databaseName, entityId := range ids {
-			string += sep2 + databaseName + " = " + entityId
+		for variable, entityId := range ids {
+			string += sep2 + variable + ": " + entityId
 			sep2 = ", "
 		}
 
+		string += "}@" + databaseName
 		sep = "; "
 	}
 

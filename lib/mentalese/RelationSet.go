@@ -254,12 +254,6 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 				continue
 			}
 
-			//var activeVariableFound = false
-			//for _, argument := range relation.Arguments {
-			//	if argument.TermType == Term_variable && argument.TermValue == activeVariable {
-			//		activeVariableFound = true
-			//	}
-			//}
 			if relation.RelationUsesVariable(activeVariable) {
 				// mark this relation
 				markedRelationIndexes[r] = true
@@ -286,27 +280,3 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 
 	return resultSet
 }
-
-//func (set RelationSet) UnmarshalJSON(b []byte) error {
-//
-//	var raw string
-//
-//	var parser importer.InternalGrammarParser
-//
-//	err := json.Unmarshal(b, &raw)
-//	if err != nil {
-//		return err
-//	}
-//
-//	relationSet := parser.CreateRelationSet(raw)
-//	parseResult := parser.GetLastParseResult()
-//	if !parseResult.Ok {
-//		return errors.New(parseResult.String())
-//	}
-//
-//	for _, relation := range relationSet {
-//		set = append(set, relation)
-//	}
-//
-//	return nil
-//}

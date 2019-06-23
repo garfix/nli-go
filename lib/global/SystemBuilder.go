@@ -353,7 +353,9 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, builder.log)
+	doCache := factBase.DoCache
+
+	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, doCache, builder.log)
 
 	solver.AddFactBase(database)
 }

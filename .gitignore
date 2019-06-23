@@ -3,3 +3,4 @@
 /tests/integration/sessions
 /app/sessions
 /app/log
+/cache/

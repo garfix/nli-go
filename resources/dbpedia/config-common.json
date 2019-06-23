@@ -16,7 +16,7 @@
       {
         "name": "system-relations",
         "facts": "core.relation",
-        "map": "core-db.map"
+        "readMap": "core-db.map"
       }
     ]
   },

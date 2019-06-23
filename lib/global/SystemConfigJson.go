@@ -31,13 +31,14 @@ type mysqlFactBase struct {
 }
 
 type sparqlFactBase struct {
-	Name     string
-	Baseurl  string
+	Name            string
+	Baseurl         string
 	Defaultgraphuri string
-	Map      string
-	Names    string
-	Stats	 string
-	Entities string
+	Map             string
+	Names           string
+	Stats           string
+	Entities        string
+	DoCache         bool
 }
 
 type Entities map[string]EntityInfo

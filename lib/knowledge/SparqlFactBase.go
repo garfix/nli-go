@@ -12,36 +12,37 @@ import (
 	"time"
 )
 
-const max_sparql_results = 300
-
-const MAX_QUERIES = 1000
+const maxSparqlResults = 5000
+const MaxQueries = 200
 
 type SparqlFactBase struct {
 	KnowledgeBaseCore
-	baseUrl           string
-	defaultGraphUri   string
-	ds2db             []mentalese.RelationTransformation
-	names 			  mentalese.ConfigMap
-	stats			  mentalese.DbStats
-	entities 		  mentalese.Entities
-	matcher           *mentalese.RelationMatcher
-	queryCount 		  int
-	log               *common.SystemLog
+	baseUrl         string
+	defaultGraphUri string
+	ds2db           []mentalese.RelationTransformation
+	names           mentalese.ConfigMap
+	stats           mentalese.DbStats
+	entities        mentalese.Entities
+	matcher         *mentalese.RelationMatcher
+	queryCount      int
+	doCache         bool
+	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
-		baseUrl: baseUrl,
-		defaultGraphUri: defaultGraphUri,
-		ds2db: ds2db,
-		names: names,
-		stats: stats,
-		entities: entities,
-		matcher: matcher,
-		queryCount: 0,
-		log: log,
+		baseUrl:           baseUrl,
+		defaultGraphUri:   defaultGraphUri,
+		ds2db:             ds2db,
+		names:             names,
+		stats:             stats,
+		entities:          entities,
+		matcher:           matcher,
+		queryCount:        0,
+		doCache:           doCache,
+		log:               log,
 	}
 }
 
@@ -71,20 +72,47 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
-	bindings := []mentalese.Binding{}
-
-	factBase.queryCount++
-
-	if factBase.queryCount > MAX_QUERIES {
-		factBase.log.AddError("Too many SPARQL queries")
-		return bindings
-	}
+	bindings := mentalese.Bindings{}
 
 	if len(relation.Arguments) != 2 {
 		factBase.log.AddError("Relation does not have exactly two arguments: " + relation.String())
 		return bindings
 	}
 
+	if factBase.queryCount > MaxQueries {
+		factBase.log.AddError("Too many SPARQL queries")
+		return bindings
+	}
+
+	bindings = factBase.doQuery(relation)
+
+	factBase.log.EndDebug("MatchRelationToDatabase", bindings)
+
+	return bindings
+}
+
+func (factBase *SparqlFactBase) doQuery(relation mentalese.Relation) mentalese.Bindings {
+
+	bindings := mentalese.Bindings{}
+	sparqlResponse := sparqlResponse{}
+
+	query := factBase.createQuery(relation)
+	if query == "" {
+		return bindings
+	}
+
+	if factBase.doCache {
+		sparqlResponse = factBase.doCachedQuery(query)
+	} else {
+		sparqlResponse = factBase.callSparql(query)
+	}
+
+	bindings = factBase.processSparqlResponse(relation, sparqlResponse)
+
+	return bindings
+}
+
+func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string {
 	var1 := ""
 	var2 := ""
 	variables := []string{}
@@ -120,12 +148,21 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 	relationUri, ok := factBase.names[relation.Predicate]
 	if !ok {
 		factBase.log.AddError("Relation uri not found in names: " + relation.Predicate)
-		return bindings
+		return ""
 	}
 
-	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(max_sparql_results)
+	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(maxSparqlResults)
+
+	return query
+}
+
+func (factBase *SparqlFactBase) callSparql(query string) sparqlResponse {
+
+	sparqlResponse := sparqlResponse{}
 
 	start := time.Now()
+
+	factBase.queryCount++
 
 	resp, err := http.PostForm(factBase.baseUrl,
 		url.Values{
@@ -139,27 +176,40 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	if err != nil {
 		factBase.log.AddError("Error posting SPARQL request: " + err.Error())
-		return bindings
+		return sparqlResponse
+	} else if resp.StatusCode == 405 {
+		factBase.log.AddError("Error posting SPARQL request: 405 Not Allowed. Probably too many queries (" + strconv.Itoa(factBase.queryCount) + ")")
+		return sparqlResponse
+	} else if resp.StatusCode != 200 {
+		factBase.log.AddError("Error posting SPARQL request: " + http.StatusText(resp.StatusCode))
+		return sparqlResponse
 	}
 
 	defer resp.Body.Close()
+
 	bodyJson, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		factBase.log.AddError("Error reading body of SPARQL response: " + err.Error())
-		return bindings
+		factBase.log.AddError("Error reading body of SPARQL sparqlResponse: " + err.Error())
+		return sparqlResponse
 	}
 
-	response := sparqlResponse{}
-	err = json.Unmarshal([]byte(bodyJson), &response)
+	err = json.Unmarshal([]byte(bodyJson), &sparqlResponse)
 	if err != nil {
-		factBase.log.AddError("Error parsing SPARQL response JSON: " + err.Error() + "\nResponse body: " + string(bodyJson))
-		return bindings
+		factBase.log.AddError("Error parsing SPARQL sparqlResponse JSON: " + err.Error() + "\nResponse body: " + string(bodyJson))
+		return sparqlResponse
 	}
 
-	factBase.log.AddProduction("SPARQL", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(response.Results.Bindings)) + " results)")
+	factBase.log.AddProduction("SPARQL", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(sparqlResponse.Results.Bindings)) + " results)")
 
-	for _, resultBinding := range response.Results.Bindings  {
+	return sparqlResponse
+}
+
+func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relation,  sparqlResponse sparqlResponse) mentalese.Bindings {
+
+	bindings := mentalese.Bindings{}
+
+	for _, resultBinding := range sparqlResponse.Results.Bindings {
 
 		binding := mentalese.Binding{}
 
@@ -194,8 +244,6 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 		bindings = append(bindings, binding)
 	}
-
-	factBase.log.EndDebug("MatchRelationToDatabase", bindings)
 
 	return bindings
 }

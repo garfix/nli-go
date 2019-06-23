@@ -9,7 +9,8 @@
         "map": "db/ds2db.map",
         "names": "db/names.json",
         "stats": "db/stats.json",
-        "entities": "entities.json"
+        "entities": "entities.json",
+        "doCache": true
       }
     ]
   }

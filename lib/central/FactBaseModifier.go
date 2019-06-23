@@ -32,7 +32,7 @@ func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase know
 				matchingRelations = append(matchingRelations, set[i])
 			}
 
-			boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
+			boundReplacement := mapping.Replacement.BindSingle(binding)
 
 			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
 
@@ -60,7 +60,7 @@ func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase kno
 				matchingRelations = append(matchingRelations, set[i])
 			}
 
-			boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
+			boundReplacement := mapping.Replacement.BindSingle(binding)
 
 			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
 

@@ -43,8 +43,20 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
 
+	// scope here, just before finding the solution
+	quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
+	scopedGoal := quantifierScoper.Scope(goal)
+
+	answerer.log.AddProduction("Scoped", scopedGoal.String())
+
+	// apply sequences
+	sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
+	sequencedGoal := sequenceApplier.ApplySequences(scopedGoal)
+
+	answerer.log.AddProduction("With Sequences", sequencedGoal.String())
+
 	// conditionBindings: map condition variables to goal variables
-	allSolutions, allConditionBindings := answerer.findSolutions(goal)
+	allSolutions := answerer.findSolutions(sequencedGoal)
 
 	if len(allSolutions) == 0 {
 
@@ -54,25 +66,8 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 
 		for i, solution := range allSolutions {
 
-			conditionBindings := allConditionBindings[i]
-
-			// add transformation variables
-			conditionBindings = answerer.addVariablesFromTransformationReplacements(conditionBindings, solution.Transformations)
-
 			// apply transformation, if available
-			transformedGoal := transformer.Replace(solution.Transformations, goal)
-
-			// scope here, just before finding the solution
-			quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
-			transformedGoal = quantifierScoper.Scope(transformedGoal)
-
-			answerer.log.AddProduction("Scoped", transformedGoal.String())
-
-			// apply sequences
-			sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
-			transformedGoal = sequenceApplier.ApplySequences(transformedGoal)
-
-			answerer.log.AddProduction("With Sequences", transformedGoal.String())
+			transformedGoal := transformer.Replace(solution.Transformations, sequencedGoal)
 
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, nameStore, []mentalese.Binding{{}})
@@ -90,22 +85,10 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 
 			// solutionBindings: map condition variables to results
 			var solutionBindings []mentalese.Binding
-			for _, conditionBinding := range conditionBindings {
-				for _, resultBinding := range resultBindings {
-					solutionBindings = append(solutionBindings, conditionBinding.Bind(resultBinding))
-				}
-			}
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-
-				if len(conditionBindings) > 1 {
-					answerer.log.AddError("A case with multiple condition bindings!")
-				}
-
-				preparationNameStore := nameStore.ReplaceVariables(nameStore, conditionBindings[0])
-
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, preparationNameStore, solutionBindings)
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, nameStore, resultBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings
@@ -120,38 +103,12 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 	return answer
 }
 
-func (answerer Answerer) addVariablesFromTransformationReplacements(conditionBindings []mentalese.Binding, transformations []mentalese.RelationTransformation) []mentalese.Binding {
-
-	var newBindings []mentalese.Binding
-	for _, binding := range conditionBindings {
-
-		newBinding := binding.Copy()
-
-		for _, transformation := range transformations {
-			for _, relation := range transformation.Replacement {
-				for _, argument := range relation.Arguments {
-					if argument.TermType == mentalese.Term_variable {
-						if !binding.ContainsVariable(argument.TermValue) {
-							newBinding = newBinding.Merge(mentalese.Binding{argument.TermValue: mentalese.Term{TermType: mentalese.Term_variable, TermValue: argument.TermValue}})
-						}
-					}
-				}
-			}
-		}
-
-		newBindings = append(newBindings, newBinding)
-	}
-
-	return newBindings
-}
-
 // Returns the solutions whose condition matches the goal, and a set of bindings per solution
-func (answerer Answerer) findSolutions(goal mentalese.RelationSet) ([]mentalese.Solution, [][]mentalese.Binding) {
+func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.Solution {
 
 	answerer.log.StartDebug("findSolutions", goal)
 
 	var solutions []mentalese.Solution
-	var allBindings [][]mentalese.Binding
 
 	for _, aSolution := range answerer.solutions {
 
@@ -159,12 +116,15 @@ func (answerer Answerer) findSolutions(goal mentalese.RelationSet) ([]mentalese.
 
 		bindings, found := answerer.matcher.MatchSequenceToSet(aSolution.Condition, unScopedGoal, mentalese.Binding{})
 		if found {
-			solutions = append(solutions, aSolution)
-			allBindings = append(allBindings, bindings)
+
+			for _, binding := range bindings {
+				boundSolution := aSolution.BindSingle(binding)
+				solutions = append(solutions, boundSolution)
+			}
 		}
 	}
 
-	answerer.log.EndDebug("findSolutions", solutions, allBindings)
+	answerer.log.EndDebug("findSolutions", solutions)
 
-	return solutions, allBindings
+	return solutions
 }

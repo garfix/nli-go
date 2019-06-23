@@ -71,7 +71,7 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 //  { X: john, Z: jack, Y: billy }
 //  { X: john, Z: jack, Y: bob }
 // ]
-func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, bindings mentalese.Bindings) []mentalese.Binding {
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
@@ -81,9 +81,9 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 
 	head := strings.Repeat("  ", solver.SolveDepth)
 
-	solver.log.AddProduction(head + "Solve Set", set.String() + " " + nameStore.String())
+	solver.log.AddProduction(head + "Solve Set", set.String() + " " + nameStore.String() + " " + bindings.String())
 
-	var newBindings []mentalese.Binding
+	newBindings := mentalese.Bindings{}
 
 	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them
 	set = set.RemoveDuplicates()
@@ -91,7 +91,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 	// sort the relations to reduce the number of tuples retrieved from the fact bases
 	solutionRoutes, remainingRelations, ok := solver.optimizer.CreateSolutionRoutes(set, solver.allKnowledgeBases, nameStore)
 
-	//solver.log.AddProduction(head + "Solution Routes", solutionRoutes.String())
+	solver.log.AddProduction(head + "Solution Routes", solutionRoutes.String())
 
 	if !ok {
 
@@ -106,6 +106,8 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, nameStor
 
 	// remove duplicates because they cause unnecessary work and they cause problems for the generator
 	newBindings = mentalese.UniqueBindings(newBindings)
+
+	solver.log.AddProduction(head + "Result", newBindings.String())
 
 	solver.log.EndDebug("SolveRelationSet", newBindings)
 
@@ -188,7 +190,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
 	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
 
-	boundRelations := relationGroup.Relations.BindRelationSetSingleBinding(binding)
+	boundRelations := relationGroup.Relations.BindSingle(binding)
 
 	var newBindings []mentalese.Binding
 
@@ -287,7 +289,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 				externalBinding := externalBindings[0]
 
 				// create a version of the conditions with bound variables
-				boundConditions := ds2db.Replacement.BindRelationSetSingleBinding(internalBinding)
+				boundConditions := ds2db.Replacement.BindSingle(internalBinding)
 
 				// match this bound version to the database
 				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(ds2db.Replacement, boundConditions, factBase)

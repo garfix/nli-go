@@ -319,7 +319,7 @@ func (resolver *NameResolver) resolveName(name string, inducedEntityType string,
 				relationSet := entityInfo.Knownby[infoType]
 
 				// create a relation set for each field that gives Information about this name
-				boundRelationSet := relationSet.BindRelationSetSingleBinding(mentalese.Binding{
+				boundRelationSet := relationSet.BindSingle(mentalese.Binding{
 					mentalese.IdVar: mentalese.NewId(id.TermValue),
 				})
 

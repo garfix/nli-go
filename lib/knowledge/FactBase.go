@@ -49,7 +49,7 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 					matchingRelations = append(matchingRelations, set[i])
 				}
 
-				boundReplacement := mapping.Replacement.BindRelationSetSingleBinding(binding)
+				boundReplacement := mapping.Replacement.BindSingle(binding)
 
 				keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
 

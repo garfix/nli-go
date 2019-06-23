@@ -87,7 +87,7 @@ func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relati
 				arg = newValue
 			}
 		} else if argument.IsRelationSet() {
-			arg.TermValueRelationSet = argument.TermValueRelationSet.BindRelationSetSingleBinding(binding)
+			arg.TermValueRelationSet = argument.TermValueRelationSet.BindSingle(binding)
 		}
 
 		boundRelation.Arguments = append(boundRelation.Arguments, arg)

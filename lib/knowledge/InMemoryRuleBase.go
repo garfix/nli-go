@@ -38,7 +38,7 @@ func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, n
 
 func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
 
-	ruleBase.log.StartDebug("RuleBase Bind", goal)
+	ruleBase.log.StartDebug("RuleBase BindSingle", goal)
 
 	matcher := mentalese.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
@@ -54,7 +54,7 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.Rel
 		}
 	}
 
-	ruleBase.log.EndDebug("RuleBase Bind", subgoalRelationSets, subgoalBindings)
+	ruleBase.log.EndDebug("RuleBase BindSingle", subgoalRelationSets, subgoalBindings)
 
 	return subgoalRelationSets, subgoalBindings
 }

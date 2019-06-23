@@ -36,7 +36,7 @@ func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet
 
 func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
 
-	base.log.StartDebug("SystemAggregateBase Bind", goal, bindings)
+	base.log.StartDebug("SystemAggregateBase BindSingle", goal, bindings)
 
 	newBindings := []mentalese.Binding{}
 	found := true
@@ -135,7 +135,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 		}
 	}
 
-	base.log.EndDebug("SystemAggregateBase Bind", newBindings, found)
+	base.log.EndDebug("SystemAggregateBase BindSingle", newBindings, found)
 
 	return newBindings, found
 }

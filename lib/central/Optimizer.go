@@ -163,7 +163,7 @@ func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet,
 		binding[key] = mentalese.NewId(value)
 	}
 
-	boundRelations := set.BindRelationSetSingleBinding(binding)
+	boundRelations := set.BindSingle(binding)
 
 	return boundRelations
 }

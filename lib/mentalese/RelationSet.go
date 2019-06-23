@@ -134,7 +134,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 
 	// replace variables in set
 
-	return set.BindRelationSetSingleBinding(importBinding)
+	return set.BindSingle(importBinding)
 }
 
 func findVariables(set RelationSet) []string {
@@ -169,7 +169,7 @@ func createVariable() Term {
 
 
 // Returns a new relation set, that has all variables bound to bindings
-func (relations RelationSet) BindRelationSetSingleBinding(binding Binding) RelationSet {
+func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 
 	boundRelations := RelationSet{}
 
@@ -186,7 +186,7 @@ func (set RelationSet) BindRelationSetMultipleBindings(bindings []Binding) []Rel
 	boundRelationSets := []RelationSet{}
 
 	for _, binding := range bindings {
-		boundRelationSets = append(boundRelationSets, set.BindRelationSetSingleBinding(binding))
+		boundRelationSets = append(boundRelationSets, set.BindSingle(binding))
 	}
 
 	return boundRelationSets

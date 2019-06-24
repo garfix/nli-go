@@ -1,3 +1,11 @@
+# 2019-06-23
+
+"Find a block" succeeded! This is quite a milestone! 
+
+I took a shortcut in that the active subject of the sentence was stored in the database by an explicit relation, this should be done by the framework.
+
+Sparql query results are now cached to reduce dependency on DBPedia (I got "Not allowed" responses for too many queries) and to make tests faster.
+
 # 2019-06-16
 
 I added another nested structure: sequence.

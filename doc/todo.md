@@ -1,7 +1,5 @@
 # Todo
 
-* Log all queries, to understand what users need
-* Fix the problem with growing dialog context
 * Provide common user queries
 * Allow lower case proper names
 * name store => key cabinet

@@ -1,6 +1,10 @@
 package mentalese
 
-// stores and retrieves database id's for names
+// A Key Cabinet maps variables database ids for multiple databases
+//
+// for instance:
+//
+// entity variable E1 is identified by `311` in database 1, and by `urn:red-phone-90712` in database 2
 type KeyCabinet struct {
 	data map[string]map[string]string
 }

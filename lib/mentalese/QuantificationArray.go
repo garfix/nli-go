@@ -15,10 +15,10 @@ func (s QuantArray) Less(i, j int) bool {
 	less := false
 
 	first := s[i]
-	firstQuantifier := first.Arguments[Quantification_QuantifierIndex]
+	firstQuantifier := first.Arguments[QuantificationQuantifierIndex]
 
 	second := s[j]
-	secondQuantifier := second.Arguments[Quantification_QuantifierIndex]
+	secondQuantifier := second.Arguments[QuantificationQuantifierIndex]
 
 	firstQuantifierSimple := ""
 	secondQuantifierSimple := ""

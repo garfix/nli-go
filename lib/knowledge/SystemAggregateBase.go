@@ -54,7 +54,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 		subjectVariable := goal.Arguments[1].TermValue
 
 		differentValues := base.getDifferentValues(bindings, subjectVariable)
-		aggregate = mentalese.Term{TermType: mentalese.Term_number, TermValue: strconv.Itoa(len(differentValues))}
+		aggregate = mentalese.Term{TermType: mentalese.TermNumber, TermValue: strconv.Itoa(len(differentValues))}
 
 	} else if goal.Predicate == "first" {
 
@@ -99,7 +99,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 		if len(differentValues) > 0 {
 			val = "true"
 		}
-		aggregate = mentalese.Term{TermType: mentalese.Term_predicateAtom, TermValue: val}
+		aggregate = mentalese.Term{TermType: mentalese.TermPredicateAtom, TermValue: val}
 
 	} else {
 		found = false

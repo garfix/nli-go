@@ -83,7 +83,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 	for i, argument := range needleRelation.Arguments {
 		column := columns[i]
-		if argument.TermType != mentalese.Term_anonymousVariable && argument.TermType != mentalese.Term_variable {
+		if argument.TermType != mentalese.TermAnonymousVariable && argument.TermType != mentalese.TermVariable {
 			whereClause += " AND " + column + " = ?"
 			values = append(values, argument.TermValue)
 		}
@@ -125,7 +125,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 			for i, argument := range needleRelation.Arguments {
 				if argument.IsVariable() {
 					variable := argument.TermValue
-					binding[variable] = mentalese.Term{TermType: mentalese.Term_stringConstant, TermValue: resultValues[i]}
+					binding[variable] = mentalese.Term{TermType: mentalese.TermStringConstant, TermValue: resultValues[i]}
 				}
 			}
 

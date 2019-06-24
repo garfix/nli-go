@@ -2,6 +2,7 @@ package mentalese
 
 import "strconv"
 
+// An array of relations
 type RelationSet []Relation
 
 func (set RelationSet) Copy() RelationSet {
@@ -212,7 +213,7 @@ func (set RelationSet) UnScope() RelationSet {
 
 		relationCopy := relation.Copy()
 
-		if relation.Predicate == Predicate_Quant {
+		if relation.Predicate == PredicateQuant {
 			// unscope the relation sets
 			for i, argument := range relation.Arguments {
 				if argument.IsRelationSet() {
@@ -259,7 +260,7 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 				markedRelationIndexes[r] = true
 				// add all variables of this relation
 				for _, argument := range relation.Arguments {
-					if argument.TermType == Term_variable {
+					if argument.TermType == TermVariable {
 						var someVar = argument.TermValue
 						var _, variableAlreadyFound = foundVariables[someVar]
 						if !variableAlreadyFound {

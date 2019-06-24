@@ -46,14 +46,14 @@ func (transformer *RelationTransformer) replaceEmbeddedRelations(transformations
 	replacedSet := RelationSet{}
 	for _, relation := range relationSet {
 
-		if relation.Predicate == Predicate_Quant {
+		if relation.Predicate == PredicateQuant {
 			replacedRelation := relation.Copy()
-			replacedRelation.Arguments[Quantification_RangeIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[Quantification_RangeIndex].TermValueRelationSet)
-			replacedRelation.Arguments[Quantification_QuantifierIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[Quantification_QuantifierIndex].TermValueRelationSet)
-			replacedRelation.Arguments[Quantification_ScopeIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[Quantification_ScopeIndex].TermValueRelationSet)
+			replacedRelation.Arguments[QuantificationRangeIndex].TermValueRelationSet =
+				transformer.Replace(transformations, relation.Arguments[QuantificationRangeIndex].TermValueRelationSet)
+			replacedRelation.Arguments[QuantificationQuantifierIndex].TermValueRelationSet =
+				transformer.Replace(transformations, relation.Arguments[QuantificationQuantifierIndex].TermValueRelationSet)
+			replacedRelation.Arguments[QuantificationScopeIndex].TermValueRelationSet =
+				transformer.Replace(transformations, relation.Arguments[QuantificationScopeIndex].TermValueRelationSet)
 			replacedSet = append(replacedSet, replacedRelation)
 		} else {
 			replacedSet = append(replacedSet, relation)

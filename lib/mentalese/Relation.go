@@ -7,11 +7,11 @@ type Relation struct {
 	Arguments []Term
 }
 
-const Predicate_Quantification = "quantification"
-const Predicate_Quant = "quant"
+const PredicateQuantification = "quantification"
+const PredicateQuant = "quant"
 
-const Predicate_Sequence = "sequence"
-const Predicate_Seq = "seq"
+const PredicateSequence = "sequence"
+const PredicateSeq = "seq"
 
 const PredicateName = "name"
 const PredicateSense = "sense"
@@ -21,11 +21,11 @@ const PredicateRetract = "retract"
 
 const PredicateNumber = "number"
 
-const Quantification_RangeVariableIndex = 0
-const Quantification_RangeIndex = 1
-const Quantification_QuantifierVariableIndex = 2
-const Quantification_QuantifierIndex = 3
-const Quantification_ScopeIndex = 4
+const QuantificationRangeVariableIndex = 0
+const QuantificationRangeIndex = 1
+const QuantificationQuantifierVariableIndex = 2
+const QuantificationQuantifierIndex = 3
+const QuantificationScopeIndex = 4
 
 const SeqFirstOperandIndex = 0;
 const SeqSecondOperandIndex = 2;

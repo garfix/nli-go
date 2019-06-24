@@ -24,7 +24,7 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 		return []string{ sentenceSense[0].Arguments[0].TermValue }
 	}
 
-	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.Term_variable, "S1", mentalese.RelationSet{}}}}
+	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.TermVariable, "S1", mentalese.RelationSet{}}}}
 
 	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, sentenceSense)
 }

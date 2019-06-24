@@ -8,68 +8,68 @@ type Term struct {
 	TermValueRelationSet RelationSet
 }
 
-const Term_variable = 1
-const Term_predicateAtom = 2
-const Term_stringConstant = 3
-const Term_number = 4
-const Term_anonymousVariable = 5
-const Term_regExp = 6
-const Term_relationSet = 7
-const Term_id = 8
+const TermVariable = 1
+const TermPredicateAtom = 2
+const TermStringConstant = 3
+const TermNumber = 4
+const TermAnonymousVariable = 5
+const TermRegExp = 6
+const TermRelationSet = 7
+const TermId = 8
 
 func NewVariable(name string) Term {
-	return Term{ TermType: Term_variable, TermValue: name, TermValueRelationSet: nil}
+	return Term{ TermType: TermVariable, TermValue: name, TermValueRelationSet: nil}
 }
 
 func NewAnonymousVariable() Term {
-	return Term{ TermType: Term_anonymousVariable, TermValue: "", TermValueRelationSet: nil}
+	return Term{ TermType: TermAnonymousVariable, TermValue: "", TermValueRelationSet: nil}
 }
 
 func NewNumber(number string) Term {
-	return Term{ TermType: Term_number, TermValue: number, TermValueRelationSet: nil}
+	return Term{ TermType: TermNumber, TermValue: number, TermValueRelationSet: nil}
 }
 
 func NewString(value string) Term {
-	return Term{ TermType: Term_stringConstant, TermValue: value, TermValueRelationSet: nil}
+	return Term{ TermType: TermStringConstant, TermValue: value, TermValueRelationSet: nil}
 }
 
 func NewPredicateAtom(value string) Term {
-	return Term{ TermType: Term_predicateAtom, TermValue: value, TermValueRelationSet: nil}
+	return Term{ TermType: TermPredicateAtom, TermValue: value, TermValueRelationSet: nil}
 }
 
 func NewRelationSet(value RelationSet) Term {
-	return Term{ TermType: Term_relationSet, TermValue: "", TermValueRelationSet: value}
+	return Term{ TermType: TermRelationSet, TermValue: "", TermValueRelationSet: value}
 }
 
 func NewId(id string) Term {
-	return Term{ TermType: Term_id, TermValue: id, TermValueRelationSet: nil}
+	return Term{ TermType: TermId, TermValue: id, TermValueRelationSet: nil}
 }
 
 func (term Term) IsVariable() bool {
-	return term.TermType == Term_variable
+	return term.TermType == TermVariable
 }
 
 func (term Term) IsNumber() bool {
-	return term.TermType == Term_number
+	return term.TermType == TermNumber
 }
 
 func (term Term) IsRegExp() bool {
-	return term.TermType == Term_regExp
+	return term.TermType == TermRegExp
 }
 
 func (term Term) IsAnonymousVariable() bool {
-	return term.TermType == Term_anonymousVariable
+	return term.TermType == TermAnonymousVariable
 }
 
 func (term Term) IsRelationSet() bool {
-	return term.TermType == Term_relationSet
+	return term.TermType == TermRelationSet
 }
 
 func (term Term) Equals(otherTerm Term) bool {
 	if term.TermType != otherTerm.TermType {
 		return false
 	}
-	if term.TermType == Term_relationSet {
+	if term.TermType == TermRelationSet {
 		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
 	} else {
 		return term.TermValue == otherTerm.TermValue
@@ -95,21 +95,21 @@ func (term Term) String() string {
 	s := ""
 
 	switch term.TermType {
-	case Term_variable:
+	case TermVariable:
 		s = term.TermValue
-	case Term_predicateAtom:
+	case TermPredicateAtom:
 		s = term.TermValue
-	case Term_stringConstant:
+	case TermStringConstant:
 		s = "'" + term.TermValue + "'"
-	case Term_regExp:
+	case TermRegExp:
 		s = "/" + term.TermValue + "/"
-	case Term_number:
+	case TermNumber:
 		s = term.TermValue
-	case Term_anonymousVariable:
+	case TermAnonymousVariable:
 		s = "_"
-	case Term_relationSet:
+	case TermRelationSet:
 		s = term.TermValueRelationSet.String()
-	case Term_id:
+	case TermId:
 		s = "`" + term.TermValue + "`"
 	default:
 		s = "<unknown>"

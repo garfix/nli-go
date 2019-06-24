@@ -23,7 +23,7 @@ func (applier SequenceApplier) ApplySequences(set RelationSet) RelationSet {
 	var remainingRelations = RelationSet{}
 
 	for _, relation := range set {
-		if relation.Predicate == Predicate_Sequence {
+		if relation.Predicate == PredicateSequence {
 			sequenceRelations = append(sequenceRelations, relation)
 		} else {
 			remainingRelations = append(remainingRelations, relation)
@@ -41,7 +41,7 @@ func (applier SequenceApplier) ApplySequences(set RelationSet) RelationSet {
 		var2Relations := remainingRelations.findRelationsStartingWithVariable(var2.TermValue)
 		remainingRelations = remainingRelations.RemoveRelations(var2Relations)
 
-		seqRelation := NewRelation(Predicate_Seq, []Term{
+		seqRelation := NewRelation(PredicateSeq, []Term{
 			NewRelationSet(var0Relations),
 			var1,
 			NewRelationSet(var2Relations),

@@ -34,12 +34,12 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings []menta
 	entityVar := template.Arguments[0].TermValue
 	rootVar := template.Arguments[1].TermValue
 
-	parentValue := mentalese.Term{TermType: mentalese.Term_variable, TermValue: rootVar}
+	parentValue := mentalese.Term{TermType: mentalese.TermVariable, TermValue: rootVar}
 
 	for i := 0; i < len(bindings)-2; i++ {
 
 		binding := bindings[i]
-		rightValue := mentalese.Term{TermType: mentalese.Term_variable, TermValue: rootVar + strconv.Itoa(i+1)}
+		rightValue := mentalese.Term{TermType: mentalese.TermVariable, TermValue: rootVar + strconv.Itoa(i+1)}
 
 		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
 			parentValue,

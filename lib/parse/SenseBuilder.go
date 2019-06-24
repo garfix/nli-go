@@ -69,14 +69,14 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 
 		for a, argument := range newRelation.Arguments {
 
-			if argument.TermType == mentalese.Term_variable {
+			if argument.TermType == mentalese.TermVariable {
 
-				newRelation.Arguments[a].TermType = mentalese.Term_variable
+				newRelation.Arguments[a].TermType = mentalese.TermVariable
 				newRelation.Arguments[a].TermValue = variableMap[argument.TermValue]
 
-			} else if argument.TermType == mentalese.Term_relationSet {
+			} else if argument.TermType == mentalese.TermRelationSet {
 
-				newRelation.Arguments[a].TermType = mentalese.Term_relationSet
+				newRelation.Arguments[a].TermType = mentalese.TermRelationSet
 				newRelation.Arguments[a].TermValueRelationSet = builder.CreateGrammarRuleRelations(argument.TermValueRelationSet, variableMap)
 			}
 		}
@@ -90,8 +90,8 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 // Create actual relations given a set of templates and an actual variable to replace any * positions
 func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.RelationSet, variable string) mentalese.RelationSet {
 
-	from := mentalese.Term{TermType: mentalese.Term_variable, TermValue: "E"}
-	to := mentalese.Term{TermType: mentalese.Term_variable, TermValue: variable}
+	from := mentalese.Term{TermType: mentalese.TermVariable, TermValue: "E"}
+	to := mentalese.Term{TermType: mentalese.TermVariable, TermValue: variable}
 
 	return builder.ReplaceTerm(relationTemplates, from, to)
 }

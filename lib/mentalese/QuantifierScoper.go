@@ -60,7 +60,7 @@ func (scoper QuantifierScoper) fromQuantifierToQuant(relations RelationSet) Rela
 
 		newRelation := relation
 
-		if relation.Predicate == Predicate_Quantification {
+		if relation.Predicate == PredicateQuantification {
 
 			quantificationVar := relation.Arguments[0]
 			quantifierVar := relation.Arguments[1]
@@ -72,7 +72,7 @@ func (scoper QuantifierScoper) fromQuantifierToQuant(relations RelationSet) Rela
 			workingSet = scoper.replaceVariable(workingSet, quantificationVar.TermValue, rangeVar.TermValue)
 
 			newRelation = Relation{
-				Predicate: Predicate_Quant,
+				Predicate: PredicateQuant,
 				Arguments: []Term{
 					relation.Arguments[2],
 					NewRelationSet(rangeRelations),
@@ -141,7 +141,7 @@ func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (Qu
 	quantifications := QuantArray{}
 	nonQuantifications := RelationSet{}
 	for _, relation := range relations {
-		if relation.Predicate == Predicate_Quant {
+		if relation.Predicate == PredicateQuant {
 			quantifications = append(quantifications, relation)
 		} else {
 			nonQuantifications = append(nonQuantifications, relation)
@@ -157,7 +157,7 @@ func (scoper QuantifierScoper) scopeQuants(quants QuantArray) RelationSet {
 	for i := len(quants) - 1; i >= 0; i-- {
 
 		quant := quants[i]
-		quant.Arguments[Quantification_ScopeIndex] = NewRelationSet(scope)
+		quant.Arguments[QuantificationScopeIndex] = NewRelationSet(scope)
 
 		scope = RelationSet{quant}
 	}
@@ -175,9 +175,9 @@ func (scoper QuantifierScoper) addNonQuantifications(scopedRelations *RelationSe
 		for d := 0; d < depth; d++ {
 
 			scopedRelation := (*scope)[0]
-			rangeVariable := scopedRelation.Arguments[Quantification_RangeVariableIndex]
+			rangeVariable := scopedRelation.Arguments[QuantificationRangeVariableIndex]
 
-			scope = &scopedRelation.Arguments[Quantification_ScopeIndex].TermValueRelationSet
+			scope = &scopedRelation.Arguments[QuantificationScopeIndex].TermValueRelationSet
 
 			if scoper.variableMatches(nonQuantification, rangeVariable) {
 				nonQuantificationScope = scope

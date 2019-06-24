@@ -16,11 +16,11 @@ import (
 
 func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) []mentalese.Binding {
 	// solve the range
-	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.Quantification_RangeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{binding})
+	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationRangeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{binding})
 
 	combinedScopeBindings := [][]mentalese.Binding{}
 
-	quantifier := quant.Arguments[mentalese.Quantification_QuantifierIndex]
+	quantifier := quant.Arguments[mentalese.QuantificationQuantifierIndex]
 	count := 0
 
 	// pick the number from the quantifier, if applicable
@@ -35,7 +35,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 	index := 0
 	for _, rangeBinding := range rangeBindings {
 
-		scopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.Quantification_ScopeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{rangeBinding})
+		scopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationScopeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{rangeBinding})
 
 		if len(scopeBindings) > 0 {
 			combinedScopeBindings = append(combinedScopeBindings, scopeBindings)

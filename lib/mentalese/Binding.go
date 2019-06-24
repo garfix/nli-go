@@ -92,7 +92,7 @@ func (b Binding) RemoveVariables() Binding {
 	result := Binding{}
 
 	for key, value := range b {
-		if value.TermType != Term_variable {
+		if value.TermType != TermVariable {
 			result[key] = value
 		}
 	}
@@ -110,8 +110,8 @@ func (b Binding) Swap() Binding {
 	result := Binding{}
 
 	for key, value := range b {
-		if value.TermType == Term_variable {
-			result[value.TermValue] = Term{TermType: Term_variable, TermValue: key}
+		if value.TermType == TermVariable {
+			result[value.TermValue] = Term{TermType: TermVariable, TermValue: key}
 		}
 	}
 

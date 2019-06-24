@@ -252,11 +252,11 @@ func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCab
 
 	var newBindings []mentalese.Binding
 
-	if goal.Predicate == mentalese.Predicate_Quant {
+	if goal.Predicate == mentalese.PredicateQuant {
 
 		newBindings = solver.SolveQuant(goal, keyCabinet, binding)
 
-	} else if goal.Predicate == mentalese.Predicate_Seq {
+	} else if goal.Predicate == mentalese.PredicateSeq {
 
 		newBindings = solver.SolveSeq(goal, keyCabinet, binding)
 
@@ -378,7 +378,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 
 	for _, val := range binding {
-		if val.TermType == mentalese.Term_variable {
+		if val.TermType == mentalese.TermVariable {
 			panic("Variable bound to variable")
 		}
 	}

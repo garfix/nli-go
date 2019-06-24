@@ -117,26 +117,26 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 	var2 := ""
 	variables := []string{}
 
-	if relation.Arguments[0].TermType == mentalese.Term_anonymousVariable || relation.Arguments[0].TermType == mentalese.Term_variable {
+	if relation.Arguments[0].TermType == mentalese.TermAnonymousVariable || relation.Arguments[0].TermType == mentalese.TermVariable {
 		var1 = "?variable1"
 		variables = append(variables, var1)
 	} else {
 		var1 = relation.Arguments[0].String()
-		if relation.Arguments[0].TermType == mentalese.Term_stringConstant {
+		if relation.Arguments[0].TermType == mentalese.TermStringConstant {
 			var1 += "@en"
-		} else if relation.Arguments[0].TermType == mentalese.Term_id {
+		} else if relation.Arguments[0].TermType == mentalese.TermId {
 			var1 = "<" + relation.Arguments[0].TermValue + ">"
 		}
 	}
 
-	if relation.Arguments[1].TermType == mentalese.Term_anonymousVariable || relation.Arguments[1].TermType == mentalese.Term_variable {
+	if relation.Arguments[1].TermType == mentalese.TermAnonymousVariable || relation.Arguments[1].TermType == mentalese.TermVariable {
 		var2 = "?variable2"
 		variables = append(variables, var2)
 	} else {
 		var2 = relation.Arguments[1].String()
-		if relation.Arguments[1].TermType == mentalese.Term_stringConstant {
+		if relation.Arguments[1].TermType == mentalese.TermStringConstant {
 			var2 += "@en"
-		} else if relation.Arguments[1].TermType == mentalese.Term_id {
+		} else if relation.Arguments[1].TermType == mentalese.TermId {
 			var2 = "<" + relation.Arguments[1].TermValue + ">"
 		}
 	}
@@ -215,9 +215,9 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		if relation.Arguments[0].IsVariable() {
 
-			termType := mentalese.Term_stringConstant
+			termType := mentalese.TermStringConstant
 			if resultBinding.Variable1.Type == "uri" {
-				termType = mentalese.Term_id
+				termType = mentalese.TermId
 			} else {
 				// skip non-english results
 				if resultBinding.Variable1.Lang != "" && resultBinding.Variable1.Lang != "en" {
@@ -229,9 +229,9 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		if relation.Arguments[1].IsVariable() {
 
-			termType := mentalese.Term_stringConstant
+			termType := mentalese.TermStringConstant
 			if resultBinding.Variable2.Type == "uri" {
-				termType = mentalese.Term_id
+				termType = mentalese.TermId
 			} else {
 				// skip non-english results
 				if resultBinding.Variable2.Lang != "" && resultBinding.Variable2.Lang != "en" {

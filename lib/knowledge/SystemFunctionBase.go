@@ -48,7 +48,7 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 			for i, argument := range input.Arguments[2:] {
 				variable := argument.TermValue
 				newTerm := mentalese.Term{}
-				newTerm.TermType = mentalese.Term_stringConstant
+				newTerm.TermType = mentalese.TermStringConstant
 				newTerm.TermValue = parts[i]
 				newBinding[variable] = newTerm
 			}
@@ -66,7 +66,7 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 			variable := argument.TermValue
 			variableValue, variableFound := binding[variable]
 			if variableFound {
-				result.TermType = mentalese.Term_stringConstant
+				result.TermType = mentalese.TermStringConstant
 				result.TermValue += sep + variableValue.TermValue
 				sep = input.Arguments[1].TermValue
 			}

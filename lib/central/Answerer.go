@@ -36,7 +36,7 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 
 // goal e.g. [ question(Q) child(S, O) EntityId(S, 'Janice', fullName) number_of(N, O) focus(Q, N) ]
 // return e.g. [ child(S, O) gender(S, female) number_of(N, O) ]
-func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) mentalese.RelationSet {
+func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) mentalese.RelationSet {
 
 	answerer.log.StartDebug("Answer")
 
@@ -70,7 +70,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 			transformedGoal := transformer.Replace(solution.Transformations, sequencedGoal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, nameStore, []mentalese.Binding{{}})
+			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, []mentalese.Binding{{}})
 
 			// choose a handler based on whether there were results
 			resultHandler := solution.NoResults
@@ -88,7 +88,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, nameStore *mentalese
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, nameStore, resultBindings)
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, keyCabinet, resultBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings

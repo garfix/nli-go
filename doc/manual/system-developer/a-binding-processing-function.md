@@ -1,6 +1,6 @@
 # A binding-processing function
 
-The library contains many functions that have a relation set as input, together with a set of bindings and possibly a name store.
+The library contains many functions that have a relation set as input, together with a set of bindings and possibly a key cabinet.
 
 The relation set is part of the query that needs answering and many be some levels deep in the processing flow.
 
@@ -14,7 +14,7 @@ For example
 
 X=1 R=3
 
-The name store contains variable bindings that are knowledge base specific. They should only be used when the query is transformed into a knowledge base query.
+The key cabinet contains variable bindings that are knowledge base specific. They should only be used when the query is transformed into a knowledge base query.
 
 dbpedia: { Y=http://dbpedia.nl/byron } in-memory: { S=823 }
 
@@ -38,7 +38,7 @@ solution:
     pre: aaa(X) :- ddd(X, Q1) eee(Q1, Q2)
     post: fff(Q1)
 
-Now the solution can be processed in terms of the original bindings and the name store.
+Now the solution can be processed in terms of the original bindings and the key cabinet.
 
 The resulting bindings are also from the namespace of the input variables, but they may contain some extra variables
 
@@ -55,7 +55,7 @@ Therefore the resulting bindings must be filtered with
 
 Here's an example of what this looks like
 
-    func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, nameStore *ResolvedNameStore, binding mentalese.Binding) []mentalese.Binding {
+    func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, keyCabinet *ResolvedKeyCabinet, binding mentalese.Binding) []mentalese.Binding {
 
         inputVariables := goalRelation.GetVariableNames()
 
@@ -72,7 +72,7 @@ Here's an example of what this looks like
             importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
             // perform the actual action
-            subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, nameStore, []mentalese.Binding{binding})
+            subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, keyCabinet, []mentalese.Binding{binding})
 
             // process the resulting bindings
             for _, subgoalResultBinding := range subgoalResultBindings {

@@ -88,7 +88,7 @@ func TestOptimizer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		routes, remainingRelations, _ := optimizer.CreateSolutionRoutes(input, factBases, mentalese.NewResolvedNameStore())
+		routes, remainingRelations, _ := optimizer.CreateSolutionRoutes(input, factBases, mentalese.NewKeyCabinet())
 		outputString := routes.String()
 
 		if outputString != test.output {

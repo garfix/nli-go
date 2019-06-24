@@ -32,9 +32,9 @@ func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, 
 }
 
 // Returns a set of senses, or a human readable question to the user
-func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentalese.ResolvedNameStore, mentalese.RelationSet, string, *Options) {
+func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet, string, *Options) {
 
-	nameStore := mentalese.NewResolvedNameStore()
+	keyCabinet := mentalese.NewKeyCabinet()
 	namelessRelations := mentalese.RelationSet{}
 	userResponse := ""
 	options := NewOptions()
@@ -108,7 +108,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 		}
 
 		for _, info := range dialogNameInformations {
-			nameStore.AddName(variable, info.DatabaseName, info.EntityId)
+			keyCabinet.AddName(variable, info.DatabaseName, info.EntityId)
 		}
 	}
 
@@ -122,7 +122,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 	nameRelations := nameTemplate.BindSingleRelationMultipleBindings(nameRelationBindings)
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
-	return nameStore, namelessRelations, userResponse, options
+	return keyCabinet, namelessRelations, userResponse, options
 }
 
 func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {

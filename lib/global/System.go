@@ -151,17 +151,17 @@ func (system *system) Process(originalInput string) (string, *central.Options) {
 
 	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
 	// each access to a data store, replace E5 with its ID
-	nameStore, namelessDsRelations, userResponse, options := system.nameResolver.Resolve(dsRelations)
+	keyCabinet, namelessDsRelations, userResponse, options := system.nameResolver.Resolve(dsRelations)
 
 	if userResponse == "" {
-		system.log.AddProduction("NameResolver", nameStore.String())
+		system.log.AddProduction("NameResolver", keyCabinet.String())
 	} else {
 		return userResponse, options
 	}
 
 	system.log.AddProduction("Nameless", namelessDsRelations.String())
 
-	dsAnswer := system.answerer.Answer(namelessDsRelations, nameStore)
+	dsAnswer := system.answerer.Answer(namelessDsRelations, keyCabinet)
 
 	if system.log.IsOk() {
 		system.log.AddProduction("DS Answer", dsAnswer.String())

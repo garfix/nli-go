@@ -16,7 +16,7 @@ func NewFactBaseModifier(log *common.SystemLog) *FactBaseModifier {
 	}
 }
 
-func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase knowledge.FactBase, nameStore *mentalese.ResolvedNameStore) {
+func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase knowledge.FactBase, keyCabinet *mentalese.KeyCabinet) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
@@ -34,7 +34,7 @@ func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase know
 
 			boundReplacement := mapping.Replacement.BindSingle(binding)
 
-			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
+			keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 			for _, replacementRelation := range keyBoundReplacement {
 
@@ -44,7 +44,7 @@ func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase know
 	}
 }
 
-func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase knowledge.FactBase, nameStore *mentalese.ResolvedNameStore) {
+func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase knowledge.FactBase, keyCabinet *mentalese.KeyCabinet) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
@@ -62,7 +62,7 @@ func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase kno
 
 			boundReplacement := mapping.Replacement.BindSingle(binding)
 
-			keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
+			keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 			for _, replacementRelation := range keyBoundReplacement {
 

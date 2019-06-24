@@ -85,7 +85,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := solver.SolveQuant(quant, mentalese.NewResolvedNameStore(), binding)
+		result := solver.SolveQuant(quant, mentalese.NewKeyCabinet(), binding)
 		result = mentalese.UniqueBindings(result)
 
 		resultString := ""

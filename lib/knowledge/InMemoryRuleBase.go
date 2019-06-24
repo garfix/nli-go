@@ -19,7 +19,7 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
-func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 

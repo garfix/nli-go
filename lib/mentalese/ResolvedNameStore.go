@@ -1,21 +1,21 @@
 package mentalese
 
 // stores and retrieves database id's for names
-type ResolvedNameStore struct {
+type KeyCabinet struct {
 	data map[string]map[string]string
 }
 
-func NewResolvedNameStore() *ResolvedNameStore {
-	return &ResolvedNameStore{
+func NewKeyCabinet() *KeyCabinet {
+	return &KeyCabinet{
 		data: map[string]map[string]string{},
 	}
 }
 
-func (store *ResolvedNameStore) IsEmpty() bool {
+func (store *KeyCabinet) IsEmpty() bool {
 	return len(store.data) == 0
 }
 
-func (store *ResolvedNameStore) AddName(variable string, databaseName string, entityId string) {
+func (store *KeyCabinet) AddName(variable string, databaseName string, entityId string) {
 	_, found := store.data[databaseName]
 
 	if !found {
@@ -25,7 +25,7 @@ func (store *ResolvedNameStore) AddName(variable string, databaseName string, en
 	store.data[databaseName][variable] = entityId
 }
 
-func (store *ResolvedNameStore) GetValues(databaseName string) map[string]string {
+func (store *KeyCabinet) GetValues(databaseName string) map[string]string {
 
 	values := map[string]string{}
 
@@ -38,9 +38,9 @@ func (store *ResolvedNameStore) GetValues(databaseName string) map[string]string
 	return values
 }
 
-func (store *ResolvedNameStore) ReplaceVariables(oldStore *ResolvedNameStore, binding Binding) *ResolvedNameStore {
+func (store *KeyCabinet) ReplaceVariables(oldStore *KeyCabinet, binding Binding) *KeyCabinet {
 
-	newStore := NewResolvedNameStore()
+	newStore := NewKeyCabinet()
 
 	for knowledgeBaseName, values := range oldStore.data {
 		for oldVariable, value := range values {
@@ -64,7 +64,7 @@ func (store *ResolvedNameStore) ReplaceVariables(oldStore *ResolvedNameStore, bi
 	return newStore
 }
 
-func (store *ResolvedNameStore) BindToRelationSet(set RelationSet, knowledgeBaseName string) RelationSet {
+func (store *KeyCabinet) BindToRelationSet(set RelationSet, knowledgeBaseName string) RelationSet {
 
 	newSet := RelationSet{}
 
@@ -90,7 +90,7 @@ func (store *ResolvedNameStore) BindToRelationSet(set RelationSet, knowledgeBase
 	return newSet
 }
 
-func (store *ResolvedNameStore) String() string {
+func (store *KeyCabinet) String() string {
 
 	string := ""
 	sep := ""

@@ -22,11 +22,11 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
-func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *mentalese.ResolvedNameStore) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
+func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, keyCabinet *mentalese.KeyCabinet) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
 	routes := knowledge.SolutionRoutes{}
 
-	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases, nameStore)
+	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases, keyCabinet)
 
 	remainingRelations := mentalese.RelationSet{}
 
@@ -75,12 +75,12 @@ func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []kno
 	return false
 }
 
-func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, nameStore *mentalese.ResolvedNameStore) knowledge.SolutionRoutes {
+func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, keyCabinet *mentalese.KeyCabinet) knowledge.SolutionRoutes {
 
 	// find matching groups in all knowledge bases
 	matchingGroupSets := [][]knowledge.RelationGroup{}
 	for _, factBase := range knowledgeBases {
-		matchingGroupSets = append(matchingGroupSets, factBase.GetMatchingGroups(set, nameStore))
+		matchingGroupSets = append(matchingGroupSets, factBase.GetMatchingGroups(set, keyCabinet))
 	}
 
 	// collect groups by relation (relation index => group set, group index)
@@ -153,9 +153,9 @@ func (optimizer Optimizer) createRoutes(set mentalese.RelationSet, r int, handle
 	return solutionRoutes
 }
 
-func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore, knowledgeBaseName string) mentalese.RelationSet {
+func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet, knowledgeBaseName string) mentalese.RelationSet {
 
-	values := nameStore.GetValues(knowledgeBaseName)
+	values := keyCabinet.GetValues(knowledgeBaseName)
 
 	binding := mentalese.Binding{}
 

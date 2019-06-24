@@ -17,19 +17,19 @@ type FactBase interface {
 
 const worst_cost = 100000000.0
 
-func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
-	matchingGroups = append(matchingGroups, getFactBaseReadGroups(matcher, set, factBase, nameStore)...)
+	matchingGroups = append(matchingGroups, getFactBaseReadGroups(matcher, set, factBase, keyCabinet)...)
 
-	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, nameStore, mentalese.PredicateAssert)...)
-	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, nameStore, mentalese.PredicateRetract)...)
+	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, keyCabinet, mentalese.PredicateAssert)...)
+	matchingGroups = append(matchingGroups, getFactBaseWriteGroups(matcher, set, factBase, keyCabinet, mentalese.PredicateRetract)...)
 
 	return matchingGroups
 }
 
-func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 
@@ -51,7 +51,7 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 
 				boundReplacement := mapping.Replacement.BindSingle(binding)
 
-				keyBoundReplacement := nameStore.BindToRelationSet(boundReplacement, factBase.GetName())
+				keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 				cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
 
@@ -63,7 +63,7 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 	return matchingGroups
 }
 
-func getFactBaseWriteGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, nameStore *mentalese.ResolvedNameStore, predicate string) []RelationGroup {
+func getFactBaseWriteGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase, keyCabinet *mentalese.KeyCabinet, predicate string) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 

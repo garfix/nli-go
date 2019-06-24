@@ -2,7 +2,6 @@
 
 * Provide common user queries
 * Allow lower case proper names
-* name store => key cabinet
 
 ## Misc
 

@@ -16,7 +16,7 @@ func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregate
 	return &SystemAggregateBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, nameStore *mentalese.ResolvedNameStore) []RelationGroup {
+func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{"number_of", "exists", "first"}

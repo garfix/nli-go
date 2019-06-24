@@ -70,7 +70,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 			transformedGoal := transformer.Replace(solution.Transformations, sequencedGoal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, []mentalese.Binding{{}})
+			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, mentalese.Bindings{{}})
 
 			// choose a handler based on whether there were results
 			resultHandler := solution.NoResults
@@ -84,7 +84,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 			}
 
 			// solutionBindings: map condition variables to results
-			var solutionBindings []mentalese.Binding
+			var solutionBindings mentalese.Bindings
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {

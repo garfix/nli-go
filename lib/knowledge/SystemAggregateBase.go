@@ -34,11 +34,11 @@ func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet
 	return matchingGroups
 }
 
-func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mentalese.Binding) ([]mentalese.Binding, bool) {
+func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
 
 	base.log.StartDebug("SystemAggregateBase BindSingle", goal, bindings)
 
-	newBindings := []mentalese.Binding{}
+	newBindings := mentalese.Bindings{}
 	found := true
 	aggregate := mentalese.Term{}
 
@@ -106,7 +106,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 	}
 
 	if found {
-		newBindings = []mentalese.Binding{}
+		newBindings = mentalese.Bindings{}
 
 		// number_of(4, E1)
 		if resultArgument.IsNumber() {
@@ -140,7 +140,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings []mental
 	return newBindings, found
 }
 
-func (base *SystemAggregateBase) getDifferentValues(bindings []mentalese.Binding, subjectVariable string) []mentalese.Term {
+func (base *SystemAggregateBase) getDifferentValues(bindings mentalese.Bindings, subjectVariable string) []mentalese.Term {
 
 	differentValues := []mentalese.Term{}
 

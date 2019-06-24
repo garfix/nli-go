@@ -31,7 +31,7 @@ type solutionNode struct {
 	Indexes []int
 }
 
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, bool) {
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, bool) {
 
 	bindings, _, _, match := matcher.MatchSequenceToSetWithIndexes(needleSequence, haystackSet, binding)
 	return bindings, match
@@ -39,11 +39,11 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 // Matches a relation sequence to a set
 // Returns multiple bindings for variables in needleSequence
-func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) ([]Binding, []int, []solutionNode, bool) {
+func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, []int, []solutionNode, bool) {
 
 	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
-	var newBindings []Binding
+	var newBindings Bindings
 	var matchedIndexes []int
 
 	match := true
@@ -110,11 +110,11 @@ func (matcher *RelationMatcher) MatchRelationToFunction(needleRelation Relation,
 
 // Matches a single relation to a relation set
 // Returns multiple bindings
-func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) ([]Binding, []int) {
+func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (Bindings, []int) {
 
 	matcher.log.StartDebug("matchRelationToSet", needleRelation, haystackSet, binding)
 
-	newBindings := []Binding{}
+	newBindings := Bindings{}
 	indexes := []int{}
 
 	for i, haystackRelation := range haystackSet {

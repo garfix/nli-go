@@ -14,11 +14,11 @@ import (
 //         ])
 //     ])
 
-func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 	// solve the range
-	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationRangeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{binding})
+	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationRangeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{binding})
 
-	combinedScopeBindings := [][]mentalese.Binding{}
+	combinedScopeBindings := []mentalese.Bindings{}
 
 	quantifier := quant.Arguments[mentalese.QuantificationQuantifierIndex]
 	count := 0
@@ -35,7 +35,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 	index := 0
 	for _, rangeBinding := range rangeBindings {
 
-		scopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationScopeIndex].TermValueRelationSet, keyCabinet, []mentalese.Binding{rangeBinding})
+		scopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantificationScopeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{rangeBinding})
 
 		if len(scopeBindings) > 0 {
 			combinedScopeBindings = append(combinedScopeBindings, scopeBindings)
@@ -52,14 +52,14 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 		if len(combinedScopeBindings) == count {
 			return rangeBindings
 		} else {
-			return []mentalese.Binding{}
+			return mentalese.Bindings{}
 		}
 	} else {
 		// EVERY
 		if len(combinedScopeBindings) == len(rangeBindings) {
 			return rangeBindings
 		} else {
-			return []mentalese.Binding{}
+			return mentalese.Bindings{}
 		}
 	}
 }

@@ -4,12 +4,12 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-func (solver ProblemSolver) SolveSeq(seq mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveSeq(seq mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 
 	first := seq.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := seq.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
-	newBindings := []mentalese.Binding{binding}
+	newBindings := mentalese.Bindings{binding}
 
 	newBindings = solver.SolveRelationSet(first, keyCabinet, newBindings)
 

@@ -68,7 +68,7 @@ func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) []mentalese.Binding {
+func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) mentalese.Bindings {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 

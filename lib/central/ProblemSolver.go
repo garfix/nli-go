@@ -71,7 +71,7 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 //  { X: john, Z: jack, Y: billy }
 //  { X: john, Z: jack, Y: bob }
 // ]
-func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) []mentalese.Binding {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) mentalese.Bindings {
 
 	solver.log.StartDebug("SolveRelationSet", set, bindings)
 
@@ -114,7 +114,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabin
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) mentalese.Bindings {
 
 	newBindings := bindings
 
@@ -150,7 +150,7 @@ func (solver ProblemSolver) findKnowledgeBaseByName(name string) knowledge.Knowl
 	return nil
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, keyCabinet *mentalese.KeyCabinet, bindings []mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) mentalese.Bindings {
 
 	solver.log.StartDebug("solveSingleRelationGroupMultipleBindings", relationGroup, bindings)
 
@@ -180,7 +180,7 @@ func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGro
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup knowledge.RelationGroup, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup knowledge.RelationGroup, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 
 	solver.log.StartDebug("solveSingleRelationGroupSingleBinding", relationGroup, binding)
 
@@ -192,7 +192,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	boundRelations := relationGroup.Relations.BindSingle(binding)
 
-	var newBindings []mentalese.Binding
+	var newBindings mentalese.Bindings
 
 	if isFactBase {
 
@@ -246,11 +246,11 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	return newBindings
 }
 
-func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 
 	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
 
-	var newBindings []mentalese.Binding
+	var newBindings mentalese.Bindings
 
 	if goal.Predicate == mentalese.PredicateQuant {
 
@@ -268,11 +268,11 @@ func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCab
 }
 
 
-func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentalese.RelationSet) []mentalese.Binding {
+func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentalese.RelationSet) mentalese.Bindings {
 
 	solver.log.StartDebug("FindFacts", goal)
 
-	subgoalBindings := []mentalese.Binding{}
+	subgoalBindings := mentalese.Bindings{}
 
 	for _, ds2db := range factBase.GetMappings() {
 
@@ -308,17 +308,17 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 	return subgoalBindings
 }
 
-func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) ([]mentalese.Binding, bool) {
+func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) (mentalese.Bindings, bool) {
 
 	solver.log.StartDebug("SolveMultipleRelationSingleFactBase", boundSequence)
 
 	// bindings using database level variables
-	sequenceBindings := []mentalese.Binding{}
+	sequenceBindings := mentalese.Bindings{}
 	match := true
 
 	for i, relation := range boundSequence {
 
-		relationBindings := []mentalese.Binding{}
+		relationBindings := mentalese.Bindings{}
 
 		aggregateFunctionFound := false
 		for _, aggregateBase := range solver.aggregateBases {
@@ -373,7 +373,7 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding, ruleBase knowledge.RuleBase) []mentalese.Binding {
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding, ruleBase knowledge.RuleBase) mentalese.Bindings {
 
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 
@@ -385,7 +385,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	inputVariables := goalRelation.GetVariableNames()
 
-	goalBindings := []mentalese.Binding{}
+	goalBindings := mentalese.Bindings{}
 
 	// match rules from the rule base to the goalRelation
 	boundRelation := goalRelation.BindSingleRelationSingleBinding(binding)
@@ -399,7 +399,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		// rewrite the variables of subgoal set to those of goalRelation
 		importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
-		subgoalResultBindings := []mentalese.Binding{binding}
+		subgoalResultBindings := mentalese.Bindings{binding}
 
 		for _, subGoal := range importedSubgoalSet {
 

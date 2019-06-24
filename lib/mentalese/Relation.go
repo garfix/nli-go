@@ -97,7 +97,7 @@ func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relati
 }
 
 // Returns multiple relations, that has all variables bound to bindings
-func (relation Relation) BindSingleRelationMultipleBindings(bindings []Binding) []Relation {
+func (relation Relation) BindSingleRelationMultipleBindings(bindings Bindings) []Relation {
 
 	boundRelations := []Relation{}
 

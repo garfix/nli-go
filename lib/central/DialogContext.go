@@ -79,7 +79,7 @@ func (dc *DialogContext) AddRelation(relation mentalese.Relation) {
 	dc.factBase.AddRelation(relation)
 }
 
-func (dc *DialogContext) FindRelations(relationset mentalese.RelationSet) []mentalese.Binding {
+func (dc *DialogContext) FindRelations(relationset mentalese.RelationSet) mentalese.Bindings {
 	return dc.solver.FindFacts(dc.factBase, relationset)
 }
 

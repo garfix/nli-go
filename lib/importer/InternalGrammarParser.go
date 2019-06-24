@@ -278,14 +278,14 @@ func (parser *InternalGrammarParser) CreateBinding(source string) mentalese.Bind
 	return binding
 }
 
-func (parser *InternalGrammarParser) CreateBindings(source string) []mentalese.Binding {
+func (parser *InternalGrammarParser) CreateBindings(source string) mentalese.Bindings {
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
 	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return []mentalese.Binding{}
+		return mentalese.Bindings{}
 	}
 
 	// parse

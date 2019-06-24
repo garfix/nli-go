@@ -12,7 +12,7 @@ func NewSystemGenerator() *SystemGenerator {
 	return &SystemGenerator{}
 }
 
-func (gen SystemGenerator) generate(template mentalese.Relation, bindings []mentalese.Binding) (mentalese.RelationSet, bool) {
+func (gen SystemGenerator) generate(template mentalese.Relation, bindings mentalese.Bindings) (mentalese.RelationSet, bool) {
 
 	result := mentalese.RelationSet{}
 	found := false
@@ -28,7 +28,7 @@ func (gen SystemGenerator) generate(template mentalese.Relation, bindings []ment
 }
 
 // Creates a tree of 'and' relations, that grows to the right, and connects the entities from the first variable
-func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings []mentalese.Binding) mentalese.RelationSet {
+func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentalese.Bindings) mentalese.RelationSet {
 
 	result := mentalese.RelationSet{}
 	entityVar := template.Arguments[0].TermValue

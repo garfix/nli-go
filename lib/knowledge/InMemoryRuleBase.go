@@ -36,13 +36,13 @@ func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet, k
 	return matchingGroups
 }
 
-func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, []mentalese.Binding) {
+func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation) ([]mentalese.RelationSet, mentalese.Bindings) {
 
 	ruleBase.log.StartDebug("RuleBase BindSingle", goal)
 
 	matcher := mentalese.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
-	subgoalBindings := []mentalese.Binding{}
+	subgoalBindings := mentalese.Bindings{}
 
 	for _, rule := range ruleBase.rules {
 

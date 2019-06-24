@@ -182,7 +182,7 @@ func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 }
 
 // Returns new relation sets, that have all variables bound to bindings
-func (set RelationSet) BindRelationSetMultipleBindings(bindings []Binding) []RelationSet {
+func (set RelationSet) BindRelationSetMultipleBindings(bindings Bindings) []RelationSet {
 
 	boundRelationSets := []RelationSet{}
 

@@ -98,9 +98,9 @@ func (transformer *RelationTransformer) matchAllTransformations(transformations 
 	return matchedIndexes, replacements
 }
 
-func (transformer *RelationTransformer) bindCondition(transformation RelationTransformation, unScopedRelations RelationSet) ([]Binding, bool) {
+func (transformer *RelationTransformer) bindCondition(transformation RelationTransformation, unScopedRelations RelationSet) (Bindings, bool) {
 
-	bindings := []Binding{{}}
+	bindings := Bindings{{}}
 
 	ok := true
 

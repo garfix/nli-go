@@ -298,7 +298,7 @@ func (resolver *NameResolver) resolveName(name string, inducedEntityType string,
 			continue
 		}
 
-		bindings := resolver.solver.SolveRelationSet(entityInfo.Name, nil, []mentalese.Binding{{
+		bindings := resolver.solver.SolveRelationSet(entityInfo.Name, nil, mentalese.Bindings{{
 			mentalese.NameVar: mentalese.NewString(name),
 		}})
 

@@ -55,11 +55,11 @@ Therefore the resulting bindings must be filtered with
 
 Here's an example of what this looks like
 
-    func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, keyCabinet *ResolvedKeyCabinet, binding mentalese.Binding) []mentalese.Binding {
+    func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, keyCabinet *ResolvedKeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 
         inputVariables := goalRelation.GetVariableNames()
 
-        goalBindings := []mentalese.Binding{}
+        goalBindings := mentalese.Bindings{}
 
         // find helper structure (named source)
         sourceSubgoalSets, sourceBindings := findSource(goalRelation)
@@ -72,7 +72,7 @@ Here's an example of what this looks like
             importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
 
             // perform the actual action
-            subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, keyCabinet, []mentalese.Binding{binding})
+            subgoalResultBindings := solver.SolveRelationSet(importedSubgoalSet, keyCabinet, mentalese.Bindings{binding})
 
             // process the resulting bindings
             for _, subgoalResultBinding := range subgoalResultBindings {

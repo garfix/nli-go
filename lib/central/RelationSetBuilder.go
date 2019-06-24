@@ -15,7 +15,7 @@ func (builder *RelationSetBuilder) addGenerator(gen RelationGenerator) {
 	builder.generators = append(builder.generators, gen)
 }
 
-func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, bindings []mentalese.Binding) mentalese.RelationSet {
+func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, bindings mentalese.Bindings) mentalese.RelationSet {
 
 	newSet := mentalese.RelationSet{}
 

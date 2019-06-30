@@ -29,16 +29,20 @@ For the semantic language holds:
 ## Parts-of-speech
 
 * verb (have, marry)
+* particle (up; as in "pick up")
 * noun (child, parent)
+* pronoun (it, you)
 * adverb (how)
 * adjective (red, many)
-* conjunction (and, or)
+* comparative_adjective (taller)
 * quantifier (every)
 * aux (does, do)
 * aux_passive (is, was)
 * aux_copula (is, was)
 * wh_word (which, who)
 * preposition (on, to)
+* conjunction (and, or)
+* subordinating_conjunction (than)
 
 ## Syntactic Relations
 

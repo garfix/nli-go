@@ -46,7 +46,8 @@ func TestSolver(t *testing.T) {
 	entities := mentalese.Entities{}
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 
-	solver := central.NewProblemSolver(matcher, log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)
 
 	tests := []struct {
@@ -113,7 +114,7 @@ func TestSolver(t *testing.T) {
 	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, stats, entities, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
-	solver2 := central.NewProblemSolver(matcher, log)
+	solver2 := central.NewProblemSolver(matcher, dialogContext, log)
 	solver2.AddFactBase(factBase2)
 	solver2.AddRuleBase(ruleBase2)
 

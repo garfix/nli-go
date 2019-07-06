@@ -46,19 +46,19 @@ func TestQuantSolver(t *testing.T) {
 	}{
 		{
 			// does every parent have 2 children?
-			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [ have_child(S1, O1) number_of(2, O1) ])",
+			"quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ], [ have_child(S1, O1) number_of(2, O1) ])",
 			"{}",
 			"{S1:4}{S1:1}",
 		},
 		{
 			// does every parent have 3 children?
-			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ], [ have_child(S1, O1) ]) ])",
+			"quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ], [quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ], [ have_child(S1, O1) ]) ])",
 			"{}",
 			"",
 		},
 		{
 			// keep extra bindings?
-			"quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, all) ], [have_child(S1, O1) number_of(2, O1) ])",
+			"quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ], [have_child(S1, O1) number_of(2, O1) ])",
 			"{X: 3}",
 			"{S1:4, X:3}{S1:1, X:3}",
 		},
@@ -71,7 +71,8 @@ func TestQuantSolver(t *testing.T) {
 	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, stats, entities, log)
-	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), dialogContext, log)
 	solver.AddFactBase(factBase1)
 
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(log)

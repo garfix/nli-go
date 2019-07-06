@@ -20,15 +20,22 @@ const PredicateAssert = "assert"
 const PredicateRetract = "retract"
 
 const PredicateNumber = "number"
+const PredicateIsa = "isa"
+const AtomThe = "the"
+const AtomAll = "all"
 
-const QuantificationRangeVariableIndex = 0
-const QuantificationRangeIndex = 1
-const QuantificationQuantifierVariableIndex = 2
-const QuantificationQuantifierIndex = 3
-const QuantificationScopeIndex = 4
+const QuantificationQuantifierVariableIndex = 0
+const QuantificationRangeVariableIndex = 1
+const QuantificationScopeVariableIndex = 2
 
-const SeqFirstOperandIndex = 0;
-const SeqSecondOperandIndex = 2;
+const QuantQuantifierVariableIndex = 0
+const QuantQuantifierIndex = 1
+const QuantRangeVariableIndex = 2
+const QuantRangeIndex = 3
+const QuantScopeIndex = 4
+
+const SeqFirstOperandIndex = 0
+const SeqSecondOperandIndex = 2
 
 func NewRelation(predicate string, arguments []Term) Relation {
 	return Relation{

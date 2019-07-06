@@ -15,11 +15,10 @@ const predicateOriginalInput = "original_input"
 // It may also be used to data relations that may be needed in the next call of the library (within the same session)
 type DialogContext struct {
 	factBase *knowledge.InMemoryFactBase
-	solver *ProblemSolver
 	values mentalese.RelationSet
 }
 
-func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *DialogContext {
+func NewDialogContext(matcher *mentalese.RelationMatcher, log *common.SystemLog) *DialogContext {
 
 	transformationString := "[" +
 		"name_information(Name, Database_name, Entity_id) => name_information(Name, Database_name, Entity_id); " +
@@ -42,7 +41,6 @@ func NewDialogContext(matcher *mentalese.RelationMatcher, solver *ProblemSolver,
 
 	return &DialogContext{
 		factBase: factBase,
-		solver: solver,
 	}
 }
 
@@ -79,8 +77,8 @@ func (dc *DialogContext) AddRelation(relation mentalese.Relation) {
 	dc.factBase.AddRelation(relation)
 }
 
-func (dc *DialogContext) FindRelations(relationset mentalese.RelationSet) mentalese.Bindings {
-	return dc.solver.FindFacts(dc.factBase, relationset)
+func (dc *DialogContext) GetFactBase() knowledge.FactBase {
+	return dc.factBase
 }
 
 func (dc *DialogContext) GetRelations() mentalese.RelationSet {

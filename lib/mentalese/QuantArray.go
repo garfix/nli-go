@@ -15,10 +15,10 @@ func (s QuantArray) Less(i, j int) bool {
 	less := false
 
 	first := s[i]
-	firstQuantifier := first.Arguments[QuantificationQuantifierIndex]
+	firstQuantifier := first.Arguments[QuantQuantifierIndex]
 
 	second := s[j]
-	secondQuantifier := second.Arguments[QuantificationQuantifierIndex]
+	secondQuantifier := second.Arguments[QuantQuantifierIndex]
 
 	firstQuantifierSimple := ""
 	secondQuantifierSimple := ""
@@ -32,11 +32,11 @@ func (s QuantArray) Less(i, j int) bool {
 		secondQuantifierSimple = secondQuantifier.TermValueRelationSet[0].Arguments[1].TermValue
 	}
 
-	if firstQuantifierSimple == "all" && secondQuantifierSimple == "all" {
+	if firstQuantifierSimple == AtomAll && secondQuantifierSimple == AtomAll {
 		less = i < j
-	} else if firstQuantifierSimple == "all" {
+	} else if firstQuantifierSimple == AtomAll {
 		less = true
-	} else if secondQuantifierSimple == "all" {
+	} else if secondQuantifierSimple == AtomAll {
 		less = false
 	} else if false { // interrogative determiner
 		less = true

@@ -24,11 +24,12 @@ type ProblemSolver struct {
 	matcher             *mentalese.RelationMatcher
 	optimizer           Optimizer
 	modifier            *FactBaseModifier
+	dialogContext 		*DialogContext
 	log                 *common.SystemLog
 	SolveDepth int
 }
 
-func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog) *ProblemSolver {
+func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
 		factBases:      []knowledge.FactBase{},
 		ruleBases:      []knowledge.RuleBase{},
@@ -36,6 +37,7 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, log *common.SystemLog)
 		matcher:        matcher,
 		optimizer:      NewOptimizer(matcher),
 		modifier:       NewFactBaseModifier(log),
+		dialogContext:  dialogContext,
 		log:            log,
 		SolveDepth:     0,
 	}

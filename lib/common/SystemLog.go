@@ -11,6 +11,8 @@ type SystemLog struct {
 	debugLines  []string
 	debugDepth  int
 	errors      []string
+	clarificationQuestion string
+	clarificationOptions *Options
 	ok          bool
 }
 
@@ -26,6 +28,8 @@ func (log *SystemLog) Clear() {
 	log.debugLines = []string{}
 	log.debugDepth = 0
 	log.errors = []string{}
+	log.clarificationQuestion = ""
+	log.clarificationOptions = &Options{}
 	log.ok = true
 }
 
@@ -50,8 +54,25 @@ func (log *SystemLog) AddError(error string) {
 	log.errors = append(log.errors, error)
 }
 
+func (log *SystemLog) SetClarificationRequest(question string, options *Options) {
+	log.clarificationQuestion = question
+	log.clarificationOptions = options
+}
+
+func (log *SystemLog) GetClarificationQuestion() string {
+	return log.clarificationQuestion
+}
+
+func (log *SystemLog) GetClarificationOptions() *Options {
+	return log.clarificationOptions
+}
+
 func (log *SystemLog) IsOk() bool {
 	return log.ok
+}
+
+func (log *SystemLog) IsDone() bool {
+	return !log.ok || log.clarificationQuestion != ""
 }
 
 func (log *SystemLog) StartDebug(text string, vals ...interface{}) {

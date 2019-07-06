@@ -2,10 +2,12 @@
     { form: 'pick',              pos: verb,                  sense: isa(E, pick) }
     { form: 'grasp',             pos: verb,                  sense: isa(E, grasp) }
     { form: 'find',              pos: verb,                  sense: isa(E, find) }
+    { form: 'does',              pos: aux }
     { form: 'is',                pos: aux_copula }
     { form: 'are',               pos: aux_verb }
     { form: 'holding',           pos: gerund,                sense: isa(E, hold) }
     { form: 'put',               pos: verb,                  sense: isa(E, put) }
+    { form: 'contain',           pos: verb,                  sense: isa(E, contain) }
 
     { form: 'and',               pos: conjunction,           sense: isa(E, and) }
 
@@ -14,7 +16,7 @@
     { form: 'a',                 pos: quantifier,            sense: number(E, 1) }
     { form: 'one',               pos: quantifier,            sense: number(E, 1) }
 
-    { form: 'the',               pos: determiner,            sense: isa(E, the) }
+    { form: 'the',               pos: quantifier,            sense: isa(E, the) }
 
     { form: 'big',               pos: adjective,             sense: isa(E, big) }
     { form: 'red',               pos: adjective,             sense: isa(E, red) }
@@ -32,8 +34,10 @@
     { form: 'you',               pos: pronoun,               sense: isa(E, you) }
 
     { form: 'which',             pos: wh_determiner,         sense: isa(E, which) }
+    { form: 'what',              pos: wh_pronoun,            sense: isa(E, what) }
 
-    { form: 'than',              pos: subordinating_conjunction,           sense: isa(E, than) }
+    { form: 'than',              pos: subordinating_conjunction, sense: isa(E, than) }
 
     { form: '.',                 pos: period }
+    { form: '?',                 pos: question_mark }
 ]

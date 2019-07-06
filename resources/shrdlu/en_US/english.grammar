@@ -24,7 +24,7 @@
     { rule: np(E1) -> pronoun(E1) }
     { rule: np(E1) -> nbar(E1) }
     { rule: np(E1) -> dp(D1) nbar(E1),                                           sense: determiner(E1, D1) }
-    { rule: np(E1) -> qp(Q1) nbar(R1),                                           sense: quantification(E1, Q1, R1) }
+    { rule: np(S1) -> qp(Q1) nbar(R1),                                           sense: quantification(Q1, R1, S1) }
     { rule: np(E1) -> np(E2) conjunction(E1) np(E3),                             sense: conjunction(E1, E2, E3) }
 
     { rule: nbar(E1) -> noun(E1) }
@@ -34,6 +34,7 @@
     { rule: vgp(V1) -> verb(V1) }
     { rule: vgp(V1) -> verb(V1) particle(P1),                                    sense: mod(V1, P1) }
 
+    { rule: vbar(V1) -> vgp(V1) }
     { rule: vbar(V1) -> vgp(V1) np(E1),                                          sense: object(V1, E1) }
     { rule: vbar(V1) -> vgp(V1) np(E1) pp(P1),                                   sense: object(V1, E1) mod(V1, P1) }
     { rule: vbar(V1) -> aux_verb(Aux) gerund(V1) }
@@ -48,7 +49,8 @@
     { rule: s_imperative(P1) -> s_imperative_clause(P1) period() }
     { rule: s_imperative(P1) -> s_imperative_clause(P1) }
 
-    { rule: s_interrogative(P1) -> s_interrogative(P1) question_mark() }
+    { rule: s_interrogative(P1) -> wh_pronoun(O1) aux(A1) np(S1) vp(P1),         sense: subject(P1, S1) object(P1, O1) }
+    { rule: s_interrogative(P1) -> s_interrogative(P1) question_mark(Q1) }
 
     { rule: s(S1) -> s_imperative(S1),                                           sense: command() }
     { rule: s(S1) -> s_interrogative(S1),                                        sense: question() }

@@ -89,7 +89,7 @@ func (system *system) StoreDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
 }
 
-func (system *system) Answer(input string) (string, *central.Options) {
+func (system *system) Answer(input string) (string, *common.Options) {
 
 	// process possible user responses and start with the original question
 	originalInput := system.dialogContext.Process(input)
@@ -106,91 +106,73 @@ func (system *system) Answer(input string) (string, *central.Options) {
 	return answer, options
 }
 
-func (system *system) Process(originalInput string) (string, *central.Options) {
+func (system *system) Process(originalInput string) (string, *common.Options) {
 
-	options := central.NewOptions()
+	options := common.NewOptions()
 	answer := ""
+	tokens := []string{}
+	parseTree := earley.ParseTreeNode{}
+	syntacticRelations := mentalese.RelationSet{}
+	dsRelations := mentalese.RelationSet{}
+	namelessDsRelations := mentalese.RelationSet{}
+	dsAnswer := mentalese.RelationSet{}
+	genericAnswer := mentalese.RelationSet{}
+	answerWords := []string{}
 
-	if system.log.IsOk() {
+	var keyCabinet *mentalese.KeyCabinet
+
+	if !system.log.IsDone() {
 		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
-	} else {
-		return "", options
 	}
 
-	tokens := system.tokenizer.Process(originalInput)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		tokens = system.tokenizer.Process(originalInput)
 		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
-	} else {
-		return "", options
 	}
 
-	parseTree := system.parser.Parse(tokens)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		parseTree = system.parser.Parse(tokens)
 		system.log.AddProduction("Parser", parseTree.String())
-	} else {
-		return "", options
 	}
 
-	syntacticRelations := system.relationizer.Relationize(parseTree)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		syntacticRelations = system.relationizer.Relationize(parseTree)
 		system.log.AddProduction("Relationizer", syntacticRelations.String())
-	} else {
-		return "", options
 	}
 
-	dsRelations := system.transformer.Replace(system.generic2ds, syntacticRelations)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		dsRelations = system.transformer.Replace(system.generic2ds, syntacticRelations)
 		system.log.AddProduction("Generic 2 DS", dsRelations.String())
-	} else {
-		return "", options
 	}
 
-	// name(E5, "John") => name(E5, "John") reference(E5, 'dbpedia', <http://dbpedia.org/resource/John>)
-	// each access to a data store, replace E5 with its ID
-	keyCabinet, namelessDsRelations, userResponse, options := system.nameResolver.Resolve(dsRelations)
-
-	if userResponse == "" {
-		system.log.AddProduction("NameResolver", keyCabinet.String())
-	} else {
-		return userResponse, options
+	if !system.log.IsDone() {
+		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(dsRelations)
+		system.log.AddProduction("Nameless", namelessDsRelations.String())
 	}
 
-	system.log.AddProduction("Nameless", namelessDsRelations.String())
-
-	dsAnswer := system.answerer.Answer(namelessDsRelations, keyCabinet)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		dsAnswer = system.answerer.Answer(namelessDsRelations, keyCabinet)
 		system.log.AddProduction("DS Answer", dsAnswer.String())
-	} else {
-		return "", options
 	}
 
-	genericAnswer := system.transformer.Replace(system.ds2generic, dsAnswer)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		genericAnswer = system.transformer.Replace(system.ds2generic, dsAnswer)
 		system.log.AddProduction("Generic Answer", genericAnswer.String())
-	} else {
-		return "", options
 	}
 
-	answerWords := system.generator.Generate(genericAnswer)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		answerWords = system.generator.Generate(genericAnswer)
 		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
-	} else {
-		return "", options
 	}
 
-	answer = system.surfacer.Create(answerWords)
-
-	if system.log.IsOk() {
+	if !system.log.IsDone() {
+		answer = system.surfacer.Create(answerWords)
 		system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
-	} else {
-		return "", options
+	}
+
+	if system.log.GetClarificationQuestion() != "" {
+		answer = system.log.GetClarificationQuestion()
+		options = system.log.GetClarificationOptions()
 	}
 
 	return answer, options

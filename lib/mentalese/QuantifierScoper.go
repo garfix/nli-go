@@ -27,58 +27,67 @@ func NewQuantifierScoper(log *common.SystemLog) QuantifierScoper {
 
 func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 
-	// turn new_quantifier into quantifier
-	newRelations := scoper.fromQuantifierToQuant(relations)
+	// collect range and scope variables
+	rangeScopeVariables := scoper.collectRangeAndScopeVariables(relations)
 
-	// collect all quantifications
-	quantifications, nonQuantifications := scoper.collectQuantifications(newRelations)
+	// turn quantification into quant
+	newRelations := scoper.fromQuantificationToQuant(relations)
 
-	// sort the quantifications by hard constraints and preferences
-	sort.Sort(QuantArray(quantifications))
+	// separate quants from non-quants
+	quants, nonQuants := scoper.collectQuants(newRelations)
 
-	// nest the quantifications to create scopes
-	scopedRelations := scoper.scopeQuants(quantifications)
+	// add quantifiers
+	quants, nonQuants = scoper.addQuantifiersAndRanges(quants, nonQuants)
 
-	// fill in the other relations at the outermost position where they still are scoped.
-	scoper.addNonQuantifications(&scopedRelations, len(quantifications), nonQuantifications)
+	// sort the quants by hard constraints and preferences
+	sort.Sort(QuantArray(quants))
 
-	return scopedRelations
+	// nest the quants to create scopes
+	scopedRelations := scoper.scopeQuants(quants, nonQuants)
+
+	// replace scope variables with range variables
+	reducedVariableRelations := scoper.replaceVariables(scopedRelations, rangeScopeVariables)
+
+	return reducedVariableRelations
 }
 
-func (scoper QuantifierScoper) fromQuantifierToQuant(relations RelationSet) RelationSet {
+func (scoper QuantifierScoper) collectRangeAndScopeVariables(relations RelationSet) map[string]string {
+
+	variables := map[string]string{}
+
+	for _, relation := range relations {
+
+		if relation.Predicate == PredicateQuantification {
+
+			rangeVar := relation.Arguments[QuantificationRangeVariableIndex].TermValue
+			scopeVar := relation.Arguments[QuantificationScopeVariableIndex].TermValue
+
+			variables[rangeVar] = scopeVar
+		}
+	}
+
+	return variables
+}
+
+func (scoper QuantifierScoper) fromQuantificationToQuant(relations RelationSet) RelationSet {
 
 	newRelations := RelationSet{}
-	rangeRelations := RelationSet{}
-	quantifierRelations := RelationSet{}
 
-	workingSet := relations.Copy()
-
-	for len(workingSet) > 0 {
-
-		relation := workingSet[0]
-		workingSet = workingSet[1:]
+	for _, relation := range relations {
 
 		newRelation := relation
 
 		if relation.Predicate == PredicateQuantification {
 
-			quantificationVar := relation.Arguments[0]
-			quantifierVar := relation.Arguments[1]
-			rangeVar := relation.Arguments[2]
-
-			rangeRelations, workingSet = scoper.extractRelationsWithVariable(workingSet, rangeVar.TermValue)
-			quantifierRelations, workingSet = scoper.extractRelationsWithVariable(workingSet, quantifierVar.TermValue)
-
-			workingSet = scoper.replaceVariable(workingSet, quantificationVar.TermValue, rangeVar.TermValue)
-
 			newRelation = Relation{
 				Predicate: PredicateQuant,
 				Arguments: []Term{
-					relation.Arguments[2],
-					NewRelationSet(rangeRelations),
-					relation.Arguments[1],
-					NewRelationSet(quantifierRelations),
+					relation.Arguments[QuantificationQuantifierVariableIndex],
 					NewRelationSet(RelationSet{}),
+					relation.Arguments[QuantificationRangeVariableIndex],
+					NewRelationSet(RelationSet{}),
+					NewRelationSet(RelationSet{}),
+					relation.Arguments[QuantificationScopeVariableIndex],
 				},
 			}
 		}
@@ -89,32 +98,116 @@ func (scoper QuantifierScoper) fromQuantifierToQuant(relations RelationSet) Rela
 	return newRelations
 }
 
-func (scoper QuantifierScoper) extractRelationsWithVariable(relations RelationSet, variable string ) (RelationSet, RelationSet) {
+func (scoper QuantifierScoper) addQuantifiersAndRanges(quants QuantArray, nonQuants RelationSet) (QuantArray, RelationSet) {
 
-	result := RelationSet{}
-	remainder := RelationSet{}
+	newQuants := QuantArray{}
+	newNonQuants := nonQuants
 
-	//for _, relation := range relations {
-	//
-	//	found := false
-	//
-	//	for _, argument := range relation.Arguments {
-	//		if argument.IsVariable() && argument.TermValue == variable {
-	//			found = true
-	//		}
-	//	}
-	//
-	//	if found {
-	//		result = append(result, relation)
-	//	} else {
-	//		remainder = append(remainder, relation)
-	//	}
-	//}
+	for _, quant := range quants {
 
-	result = relations.findRelationsStartingWithVariable(variable)
-	remainder = relations.RemoveRelations(result)
+		quantifierVar := quant.Arguments[QuantQuantifierVariableIndex].TermValue
+		quantifier := newNonQuants.findRelationsStartingWithVariable(quantifierVar)
+		newNonQuants = newNonQuants.RemoveRelations(quantifier)
 
-	return result, remainder
+		rangeVar := quant.Arguments[QuantRangeVariableIndex].TermValue
+		rangeSet := newNonQuants.findRelationsStartingWithVariable(rangeVar)
+		newNonQuants = newNonQuants.RemoveRelations(rangeSet)
+
+		quant.Arguments[QuantQuantifierIndex] = NewRelationSet(quantifier)
+		quant.Arguments[QuantRangeIndex] = NewRelationSet(rangeSet)
+
+		newQuants = append(newQuants, quant)
+	}
+
+	return newQuants, newNonQuants
+}
+
+func (scoper QuantifierScoper) collectQuants(relations RelationSet) (QuantArray, RelationSet) {
+	quants := QuantArray{}
+	nonQuants := RelationSet{}
+	for _, relation := range relations {
+		if relation.Predicate == PredicateQuant {
+			quants = append(quants, relation)
+		} else {
+			nonQuants = append(nonQuants, relation)
+		}
+	}
+	return quants, nonQuants
+}
+
+func (scoper QuantifierScoper) scopeQuants(quants QuantArray, nonQuants RelationSet) RelationSet {
+
+	newQuants, newNonQuants := scoper.scopeFirstQuant(quants, nonQuants)
+
+	return append(newNonQuants, newQuants...)
+}
+
+func (scoper QuantifierScoper) scopeFirstQuant(quants QuantArray, nonQuants RelationSet) (QuantArray, RelationSet) {
+
+	combineScopedSet := RelationSet{}
+
+	if len(quants) == 0 {
+		return quants, nonQuants
+	}
+
+	if len(quants) > 1 {
+		// scope the rest of the quants first
+		restQuants, restNonQuants := scoper.scopeFirstQuant(quants[1:], nonQuants)
+
+		combineScopedSet = append(combineScopedSet, restQuants...)
+		nonQuants = restNonQuants
+	}
+
+	quant := quants[0]
+
+//	rangeVariable := quant.Arguments[QuantRangeVariableIndex].TermValue
+	scopeVariable := quant.Arguments[QuantScopeIndex + 1].TermValue
+
+	//rangeSet := nonQuants.findRelationsStartingWithVariable(rangeVariable)
+	//nonQuants = nonQuants.RemoveRelations(rangeSet)
+	scopeSet := nonQuants.findRelationsStartingWithVariable(scopeVariable)
+	nonQuants = nonQuants.RemoveRelations(scopeSet)
+
+	combineScopedSet = append(combineScopedSet, scopeSet...)
+
+//	quant.Arguments[QuantRangeIndex] = NewRelationSet(rangeSet)
+	quant.Arguments[QuantScopeIndex] = NewRelationSet(combineScopedSet)
+
+	return QuantArray{quant}, nonQuants
+}
+
+func (scoper QuantifierScoper) replaceVariables(relations RelationSet, rangeScopeMap map[string]string) RelationSet {
+
+	newRelations := RelationSet{}
+
+	for _, relation := range relations {
+
+		newRelation := relation
+
+		if relation.Predicate == PredicateQuant {
+
+			newScopeSet := scoper.replaceVariables(relation.Arguments[QuantScopeIndex].TermValueRelationSet, rangeScopeMap)
+
+			for rangeVar, scopeVar := range rangeScopeMap {
+				newScopeSet = scoper.replaceVariable(newScopeSet, scopeVar, rangeVar)
+			}
+
+			newRelation = Relation{
+				Predicate: PredicateQuant,
+				Arguments: []Term{
+					relation.Arguments[QuantQuantifierVariableIndex],
+					relation.Arguments[QuantQuantifierIndex],
+					relation.Arguments[QuantRangeVariableIndex],
+					relation.Arguments[QuantRangeIndex],
+					NewRelationSet(newScopeSet),
+				},
+			}
+		}
+
+		newRelations = append(newRelations, newRelation)
+	}
+
+	return newRelations
 }
 
 func (scoper QuantifierScoper) replaceVariable(relations RelationSet, oldVar string, newVar string) RelationSet {
@@ -135,94 +228,4 @@ func (scoper QuantifierScoper) replaceVariable(relations RelationSet, oldVar str
 	}
 
 	return result
-}
-
-func (scoper QuantifierScoper) collectQuantifications(relations RelationSet) (QuantArray, RelationSet) {
-	quantifications := QuantArray{}
-	nonQuantifications := RelationSet{}
-	for _, relation := range relations {
-		if relation.Predicate == PredicateQuant {
-			quantifications = append(quantifications, relation)
-		} else {
-			nonQuantifications = append(nonQuantifications, relation)
-		}
-	}
-	return quantifications, nonQuantifications
-}
-
-func (scoper QuantifierScoper) scopeQuants(quants QuantArray) RelationSet {
-
-	scope := RelationSet{}
-
-	for i := len(quants) - 1; i >= 0; i-- {
-
-		quant := quants[i]
-		quant.Arguments[QuantificationScopeIndex] = NewRelationSet(scope)
-
-		scope = RelationSet{quant}
-	}
-
-	return scope
-}
-
-func (scoper QuantifierScoper) addNonQuantifications(scopedRelations *RelationSet, depth int, nonQuantifications RelationSet) {
-
-	for _, nonQuantification := range nonQuantifications {
-
-		scope := scopedRelations
-		nonQuantificationScope := scope
-
-		for d := 0; d < depth; d++ {
-
-			scopedRelation := (*scope)[0]
-			rangeVariable := scopedRelation.Arguments[QuantificationRangeVariableIndex]
-
-			scope = &scopedRelation.Arguments[QuantificationScopeIndex].TermValueRelationSet
-
-			if scoper.variableMatches(nonQuantification, rangeVariable) {
-				nonQuantificationScope = scope
-			} else if scoper.someRelationVariableMatches(nonQuantification, scope) {
-				nonQuantificationScope = scope
-			}
-		}
-
-		*nonQuantificationScope = append(*nonQuantificationScope, nonQuantification)
-	}
-}
-
-func (scoper QuantifierScoper) variableMatches(relation Relation, variable Term) bool {
-	match := false
-
-	for _, argument := range relation.Arguments {
-		if argument.Equals(variable) {
-			match = true
-			break
-		}
-	}
-
-	return match
-}
-
-// if range variable is R5 and scope is
-//		have_child(R5, E6)
-// and needle is
-//      number_of(E6, 4)
-// then it should be added to the scope
-func (scoper QuantifierScoper) someRelationVariableMatches(needle Relation, hayStack *RelationSet) bool {
-	match := false
-
-	for _, argument1 := range needle.Arguments {
-		if argument1.IsVariable() {
-			for _, straw := range *hayStack {
-				for _, argument2 := range straw.Arguments {
-					if argument2.IsVariable() && argument2.TermValue == argument1.TermValue {
-						match = true
-						break
-					}
-				}
-			}
-		}
-	}
-
-	return match
 }

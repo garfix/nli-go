@@ -32,12 +32,12 @@ func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, 
 }
 
 // Returns a set of senses, or a human readable question to the user
-func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet, string, *Options) {
+func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet) {
 
 	keyCabinet := mentalese.NewKeyCabinet()
 	namelessRelations := mentalese.RelationSet{}
 	userResponse := ""
-	options := NewOptions()
+	options := common.NewOptions()
 
 	namesAndTypes := resolver.collectNamesAndTypes(relations)
 
@@ -122,7 +122,11 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 	nameRelations := nameTemplate.BindSingleRelationMultipleBindings(nameRelationBindings)
 	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
 
-	return keyCabinet, namelessRelations, userResponse, options
+	if userResponse != "" {
+		resolver.log.SetClarificationRequest(userResponse, options)
+	}
+
+	return keyCabinet, namelessRelations
 }
 
 func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {
@@ -144,9 +148,9 @@ func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations 
 	return answerNameInformations
 }
 
-func (resolver *NameResolver) composeOptions(nameInformations []NameInformation) *Options {
+func (resolver *NameResolver) composeOptions(nameInformations []NameInformation) *common.Options {
 
-	options := &Options{}
+	options := &common.Options{}
 
 	for _, nameInformation := range nameInformations {
 		options.AddOption(nameInformation.GetIdentifier(), nameInformation.Information)
@@ -187,7 +191,7 @@ func (resolver *NameResolver) SaveNameInformations(name string, nameInformations
 
 func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInformation {
 
-	bindings := resolver.dialogContext.FindRelations(mentalese.RelationSet{
+	bindings := resolver.solver.FindFacts(resolver.dialogContext.GetFactBase(), mentalese.RelationSet{
 		mentalese.NewRelation(predicateNameInformation, []mentalese.Term{
 			mentalese.NewString(name),
 			mentalese.NewVariable("databaseName"),

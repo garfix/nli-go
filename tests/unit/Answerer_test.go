@@ -89,7 +89,8 @@ func TestAnswerer(t *testing.T) {
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
 
-	solver := central.NewProblemSolver(matcher, log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 	solver.AddFactBase(factBase)
 
@@ -130,9 +131,9 @@ func TestUnScope(t *testing.T) {
 		wantRelationSet string
 	}{
 		// use all arguments
-		{"[abc(A, 1) quant(A, [isa(A, 1)], B, [isa(B, 2)], [make(A, B)])]", "[abc(A, 1) isa(A, 1) isa(B, 2) make(A, B) quant(A, [], B, [], [])]"},
+		{"[abc(A, 1) quant(B, [isa(B, 2)], A, [isa(A, 1)], [make(A, B)])]", "[abc(A, 1) isa(B, 2) isa(A, 1) make(A, B) quant(B, [], A, [], [])]"},
 		// recurse
-		{"[quant(A, [ quant(A, [ isa(A, 1) ], B, [], []) ], B, [], [])]", "[isa(A, 1) quant(A, [], B, [], []) quant(A, [], B, [], [])]"},
+		{"[quant(A, [ quant(B, [], A, [ isa(A, 1) ], []) ], B, [], [])]", "[isa(A, 1) quant(B, [], A, [], []) quant(A, [], B, [], [])]"},
 	}
 
 	for _, test := range tests {

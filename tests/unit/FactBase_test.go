@@ -43,7 +43,8 @@ func TestFactBase(t *testing.T) {
 	entities := mentalese.Entities{}
 	matcher := mentalese.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
-	solver := central.NewProblemSolver(matcher, log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 
 	tests := []struct {
 		input         string

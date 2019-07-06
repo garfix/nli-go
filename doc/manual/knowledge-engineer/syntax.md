@@ -62,7 +62,7 @@ In the general relational representation I have these senses:
  * aux(S, A)                   aux      Auxiliary verb relation
  * copula(S, C)                cop      Copula relation
  * name(E, N, P)                        The name of an entity. E is an entity, N is a name string constant (i.e. 'Charles') and P is its position (1, 2, 3)
- * quantification(E, R, Q)     -        A quantification. E is the scoped relations. R is the range. Q is the quantifier variable.
+ * quantification(Q, R, S)     -        A quantification. Q is the quantifier variable. R is the range. S are the scoped relations. 
  * determiner(E1, D1)          det      The relation between a noun phrase and its determiner
  * case(E, C)                  case     The relation between a prepositional object and a preposition
  * mod(E1, E2)                 nmod     Modifies the meaning of a noun phrase with an attribute

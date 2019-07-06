@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
@@ -28,7 +27,7 @@ func main() {
 	var configPath = ""
 
 	answer := ""
-	options := central.NewOptions()
+	options := common.NewOptions()
 
 	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog context")
 	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a JSON nli-go config file")

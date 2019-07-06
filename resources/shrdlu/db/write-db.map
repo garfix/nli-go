@@ -1,5 +1,5 @@
 [
     at(E, X, Y, Z) => at(E, X, Y, Z);
-    grasping(E1) => grasping(E1);
+    grasping(P1, E1) => grasping(P1, E1);
     dialog_subject(E) => dialog_subject(E);
 ]

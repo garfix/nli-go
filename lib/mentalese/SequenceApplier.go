@@ -50,6 +50,15 @@ func (applier SequenceApplier) ApplySequences(set RelationSet) RelationSet {
 		seqRelations = append(seqRelations, seqRelation)
 	}
 
-	var resultSet = append(seqRelations, remainingRelations...)
+	newRemainingRelations := RelationSet{}
+	for _, relation := range remainingRelations {
+		if relation.Predicate == PredicateQuant {
+			relation.Arguments[QuantScopeIndex] = NewRelationSet(applier.ApplySequences(relation.Arguments[QuantScopeIndex].TermValueRelationSet))
+		}
+
+		newRemainingRelations = append(newRemainingRelations, relation)
+	}
+
+	var resultSet = append(seqRelations, newRemainingRelations...)
 	return resultSet
 }

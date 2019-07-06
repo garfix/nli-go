@@ -14,8 +14,8 @@ func TestQuantifierScoper(t *testing.T) {
 		want  string
 	}{
 		{
-			"[have_child(S1, O1) quantification(Q1, D1, S1) isa(S1, parent) isa(D1, all) quantification(Q2, D2, O1) isa(O1, child) isa(D2, 2)]",
-			"[quant(S1, [isa(S1, parent)], D1, [isa(D1, all)], [quant(O1, [isa(O1, child)], D2, [isa(D2, 2)], [have_child(S1, O1)])])]",
+			"[have_child(S1, S2) isa(S2, man) quantification(Q1, R1, S1) isa(R1, parent) isa(Q1, all) quantification(Q2, R2, S2) isa(R2, child) isa(Q2, 2)]",
+			"[quant(Q1, [isa(Q1, all)], R1, [isa(R1, parent)], [quant(Q2, [isa(Q2, 2)], R2, [isa(R2, child)], [have_child(R1, R2) isa(R2, man)])])]",
 		},
 	}
 

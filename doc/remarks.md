@@ -1,3 +1,76 @@
+# 2019-07-06
+
+Back to the previous sentence. I used to treat one "the" as a number_of() in stead of a quantification(). I set this straight.
+It turned out that the quantifier scoper was not up to the task and needed to be rewritten.
+
+But now the seq() sequence is part of a scope and no longer top-level.
+Also I found out that the sentence "find a block" has a quant in its range (!) The algorithm allows only quants in scopes.
+
+So, back to the drawing board.
+
+# 2019-07-01
+
+The objects in the blocks world are identified by the combination of form, size and color. 
+The box can be identified by "the box", since there is only one.
+A block may be identified by "the large red block" since there are several blocks, and even several red ones.
+There are two medium sized green blocks.
+Pyramids can be identified by color alone.
+
+I am now working on "which one?" as a response to "grasp the pyramid". Currently options are:
+
+0: b2
+1: b4
+2: b5
+
+In this case there color is different, so a good response could be
+
+0: the green one
+1: the blue one
+2: the red one
+
+It would provide sufficient information in the most efficient way. But it is hard to do.
+Is is not even enough to find discerning attributes. A response like
+
+0: the one with x position 100
+1: the one with x position 150
+2: the one with x position 200
+
+would have the same information, but would still be less desirable to a human. Some attributes are more characteristic than others.
+
+I could name them. 
+    
+    name(`b2`, 'the green pyramid')
+    
+Or for the moment I could just bail out and say: "I don't understand which one you mean.", almost like the SHRDLU response.    
+
+# 2019-06-30
+
+Back to "grasp the pyramid". I had solved this with
+
+    determiner(E1, D1) isa(D1, the) => number_of(1, E1);
+    
+but I already knew it was no good. It results in grasping all pyramids and then counting if it was 1 picked up. Terrible really.
+
+"the" is also not a simple quantifier. It is a determiner. It refers to either an object in the scene, or to an object in the dialog context.
+
+And whereas "it" may refer to the latest subject in the dialog context, "the" may have a complete description attached. It seems terribly complicated! 
+
+I checked Winograd and he uses "the" only for things in the scene of which there is only one (the table, the box), and for vert complex constructions (the one which I told you to pick up).
+
+So for now I can treat "the" as a special kind of quantifier that applies only to the scene (not the dialog context) and means 
+
+    the only instance of a group
+    
+If the group contains more than one, NLI-GO can respond with "I do not know which one you mean", as does SHRDLU. 
+
+# 2019-06-27
+
+Next question: "What does the box contain?"
+
+For this question it is important that the "put into" has yielded an "contains" relation. Further this is the first answer that requires non-trivial generation:
+
+"The blue pyramid and the blue block"
+
 # 2019-06-23
 
 "Find a block" succeeded! This is quite a milestone! 

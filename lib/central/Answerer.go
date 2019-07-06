@@ -84,7 +84,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 			}
 
 			// solutionBindings: map condition variables to results
-			var solutionBindings mentalese.Bindings
+			var solutionBindings = resultBindings
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {

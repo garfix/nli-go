@@ -47,8 +47,9 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.generic2ds = []mentalese.RelationTransformation{}
 	system.ds2generic = []mentalese.RelationTransformation{}
 	system.transformer = mentalese.NewRelationTransformer(matcher, builder.log)
+	system.dialogContext = central.NewDialogContext(matcher, builder.log)
 
-	solver := central.NewProblemSolver(matcher, builder.log)
+	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 
 	solver.AddFunctionBase(systemFunctionBase)
 
@@ -60,7 +61,6 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	predicates, _ := builder.CreatePredicates(config.Predicates)
 
-	system.dialogContext = central.NewDialogContext(matcher, solver, builder.log)
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)

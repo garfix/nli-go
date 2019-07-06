@@ -1,4 +1,4 @@
-package central
+package common
 
 // These options are output along with a response by System.Answer()
 // There are choices for the user to respond to a system clarification question

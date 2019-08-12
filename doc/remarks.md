@@ -1,3 +1,17 @@
+# 2019-08-12
+
+The nested quantifiers cause so much trouble that I left this project for a month.
+
+This gave me some time to think. And read about other systems. Systems that use PHRAN, for example. PHRAN is a parser that parses directly to domain specific semantics. It works really really well. The parsing problems seem to go away like snow in the sun. But isn't this "just" a semantic parser? Isn't this cheating? Isn't there a catch that common sentences are other sentences are harder than necessary?
+
+The problem I face is that I now have several nested structures (Quantifier Phrases and Conjunction Phrases), that I break up, modify, and reassemble, in order to make them domain specific and apply the right quantifier scopes. The assembling part now proves ever more difficult. Too difficult for a system that aims to be simple.
+
+What if I parse directly to domain specific semantics? What if I allow the syntax rules to be domain specific? Would this be right or wrong?
+
+I could have generic parse rules and domain specific parse rules. The latter could have higher priority given that we know that a certain domain is active. It would even allow for domain specific constructs like <employer> in the syntax rules, as PHRAN does.
+
+I would not now mind so much about this any more. Practically because most important is that a system just works and is easy to configure. Theoretically because even humans may have domain specific parsing rules. Just as I don't see humans using transformational grammar, they probably don't convert a context free representation to a domain specific representation.  
+
 # 2019-07-06
 
 Back to the previous sentence. I used to treat one "the" as a number_of() in stead of a quantification(). I set this straight.

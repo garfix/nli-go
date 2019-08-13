@@ -1,3 +1,44 @@
+# 2019-08-13
+
+I _want_ to add raw words to the grammar rules.
+
+Here are some thought about rewriting the grammar for the last blocks-world grammar:
+    
+    find a block which is taller than the one you are holding and put it in a box
+    
+    s(P1) -> imperative(P1)
+    imperative(P1) -> imperative_clause(P1)
+    imperative_clause(P1) -> imperative_clause(P1) conjunction(C1) imperative_clause(P1)
+    
+    imperative(P1) -> 'find' np(E1)                 do_find(P1) object(P1, E1)
+    
+    np(S1) -> qp(Q1) nbar(R1),                      quantification(Q1, R1, S1) 
+    
+    adjp(A1) -> adj(A) 'than' np(E1)    // taller than np
+    
+    np(E1) -> np(E1) relative_clause(P1)
+    
+    relative_clause(P1) -> 'which' copula(C1) adjp(A1)              // which is taller
+    
+    relative_clause(P1) -> 'that' np(E1) aux_be(C1) gerund(P1)
+    relative_clause(P1) -> np(E1) aux_be(C1) gerund(P1)             // you are holding
+    
+    
+    alternatives:
+    
+    // taller(A, B) can be part of the grammar directly (!)
+    
+    // E1 which is taller than E2
+    np(E1) -> np(E1) 'which' copula 'taller' 'than' np(E1)       taller(E1, E2)
+    
+    // E1 which is / taller than E2
+    np(E1) -> np(E1) 'which' copula comparative_phrase(E1)
+    comparative_phrase(E1) -> 'taller' 'than' np(E2)             taller(E1, E2)
+
+The take away is that syntax rules must facilitate the creation of the semantics.
+
+Well-chosen rules make the transformation from global to domain specific unnecessary. 
+
 # 2019-08-12
 
 The nested quantifiers cause so much trouble that I left this project for a month.

@@ -1,10 +1,14 @@
 # Todo
 
-* Provide common user queries
-* Allow lower case proper names
+* Integrate ds mappings into grammar
+* Do quantification() and sequence() directly without extra quant() / seq() steps
+* All idioms must be solved in the grammar; the grammar is now domain-specific, but it may extend a general grammar 
 
 ## Misc
 
+* Comments with /* */ in stead of == == 
+* Provide common user queries
+* Allow lower case proper names
 * Separate interfaces (api) from implementations (model)
 * grouped relations in matcher and solver: (), and, or, not
 * name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);

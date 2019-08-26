@@ -1,9 +1,9 @@
 [
-    question() => question();
+    question(_) => question(_);
     who(_) => who(_);
     which(_) => which(_);
     what(_) => what(_);
     how_many(_) => how_many(_);
-    yes_no() => yes_no();
-    when() => when();
+    yes_no(_) => yes_no();
+    when(_) => when(_);
 ]

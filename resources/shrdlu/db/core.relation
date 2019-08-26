@@ -4,6 +4,6 @@
     which(_)
     how_many(_)
     yes_no()
-    command()
+    command(_)
     number(_, _)
 ]

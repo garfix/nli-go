@@ -15,8 +15,10 @@
     { rule: adjp(A1) -> advp(Adv1) adjective(A1),                                sense: mod(A1, Adv1) }
     { rule: adjp(A1) -> comparative_adjective(A1) than_clause(P1),               sense: mod(A1, P1) }
 
+
     { rule: than_clause(C1) -> subordinating_conjunction(C1) gerund_object(P1),  sense: ref(C1, P1) }
 
+== must be changed into a relative clause ==
     { rule: gerund_object(O1) -> np(O1) np(S1) aux_verb(Aux) gerund(P1),         sense: subject(P1, S1) object(P1, O1) }
 
     { rule: np(E1) -> wh_word(E1) }

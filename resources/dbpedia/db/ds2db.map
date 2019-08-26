@@ -1,6 +1,6 @@
 [
-    married_to(A, B) => spouse(A, B);
-    married_to(A, B) => spouse(B, A);
+    marry(_, A, B) => spouse(A, B);
+    marry(_, A, B) => spouse(B, A);
 
     name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => birth_name(A, N);
     name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => birth_name(A, N);
@@ -42,6 +42,6 @@
     person(E) => type(E, `http://dbpedia.org/ontology/Person`);
     country(E) => type(E, `http://dbpedia.org/class/yago/WikicatCountries`);
 
-    population_count(Country, Count) => population_total(Country, Count);
-    population_count(Country, Count) => population_census(Country, Count);
+    have_population(Country, Count) => population_total(Country, Count);
+    have_population(Country, Count) => population_census(Country, Count);
 ]

@@ -1,8 +1,8 @@
 [
     == commands ==
-    do_pick_up(E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
+    pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
     do_grasp(E1) :- grasp(E1);
-    do_find(Ev, E1) :- set_dialog_subject(E1);
+    find(P1, E1) :- command(P1) set_dialog_subject(E1);
     do_put_into(Ev, A, B) :- do_pick_up(A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A);
 
     == inferences ==

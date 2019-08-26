@@ -1,0 +1,52 @@
+[
+    == words ==
+    { rule: noun(E1) -> block(E1),                                          sense: block(E1) }
+    { rule: noun(E1) -> pyramid(E1),                                        sense: pyramid(E1) }
+    { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
+    { rule: noun(E1) -> one(E1) }
+
+    { rule: pronoun(E1) -> it(E1), sense: it(E1) }
+    { rule: pronoun(E1) -> you(E1), sense: you(E1) }
+
+    { rule: adjp(E1) -> taller(E1) than(E1) np(E2),                         sense: taller(E1, E2) }
+
+    { rule: adjective(E1) -> red(E1),                                       sense: red(E1) }
+    { rule: adjective(E1) -> big(E1),                                       sense: big(E1) }
+
+    { rule: pp(P1) -> into(P1) np(E1),                                      sense: into(P1, E1) }
+
+    { rule: vgp(P1) -> pick(P1) up(P1) np(E1),                              sense: pick_up(P1, E1) }
+    { rule: vgp(P1) -> grasp(P1) np(E1),                                    sense: grasp(P1, E1) }
+    { rule: vgp(P1) -> find(P1) np(E1),                                     sense: find(P1, E1) }
+    { rule: vgp(P1) -> put(P1) np(E1),                                      sense: put(P1, E1) }
+
+    { rule: qp(E1) -> a(E1),                                                sense: number(E1, 1) }
+    { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
+
+    == rules ==
+
+    { rule: adjp(E1) -> adjective(E1) }
+
+    { rule: relative_clause(E1) -> which(E1) copula(C1) adjp(E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1), sense: hold(P1, E2, E1) }
+
+    { rule: vp(P1) -> vp(P1) pp(P1) }
+    { rule: vp(P1) -> vgp(P1) }
+
+    { rule: np(E1) -> np(E1) relative_clause(E1) }
+    { rule: np(E1) -> pronoun(E1) }
+
+    { rule: nbar(E1) -> adjp(E1) nbar(E1) }
+    { rule: nbar(E1) -> noun(E1) }
+
+    { rule: np(S1) -> qp(Q1) nbar(R1),                                      sense: quantification(Q1, R1, S1) }
+
+    { rule: imperative_clause(P1) -> vp(P1),                                sense: command(P1) }
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: sequence(P1, C, P2) }
+
+    { rule: imperative(P1) -> imperative_clause(P1) period() }
+    { rule: imperative(P1) -> imperative_clause(P1) }
+
+    { rule: s(S1) -> imperative(S1) }
+    { rule: s(S1) -> interrogative(S1),                                     sense: question(S1) }
+]

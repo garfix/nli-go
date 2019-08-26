@@ -1,7 +1,7 @@
 [
     == Who married X? ==
     {
-        condition: question() who(A) married_to(A, B),
+        condition: question(_) who(A) marry(_, A, B),
         no_results: {
             answer: dont_know()
         },
@@ -13,7 +13,7 @@
 
     == Was X married to Y? ==
     {
-        condition: question() yes_no() married_to(A, B),
+        condition: question(_) yes_no(_) marry(_, A, B),
         no_results: {
             answer: dont_know()
         },
@@ -24,7 +24,7 @@
 
     == How many children had X? (counting the children) ==
     {
-        condition: question() how_many(B) have_child(A, B),
+        condition: question(_) how_many(B) have_child(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -36,7 +36,7 @@
 
     == How many? ==
     {
-        condition: question() how_many(B),
+        condition: question(_) how_many(B),
         no_results: {
             answer: dont_know()
         },
@@ -48,7 +48,7 @@
 
     == How many children had X? (using a number-of-children attribute) ==
     {
-        condition: question() how_many(B) have_child(A, B),
+        condition: question(_) how_many(B) have_child(A, B),
         transformations: [
             have_child(A, B) => have_n_children(A, Number);
         ],
@@ -63,7 +63,7 @@
 
     == Who was X's father? ==
     {
-        condition: question() who(B) has_father(A, B),
+        condition: question(_) who(B) has_father(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -75,7 +75,7 @@
 
     == Who was X's mother? ==
     {
-        condition: question() who(B) has_mother(A, B),
+        condition: question(_) who(B) has_mother(A, B),
         no_results: {
             answer: dont_know()
         },
@@ -87,19 +87,25 @@
 
     == When was X born? ==
     {
-        condition: question() when() birth_date(A, Ymd),
+        condition: question(P1) when(P1) bear(P1, A, B),
+        transformations: [
+            bear(P1, A, B) when(P1) => birth_date(B, Ymd);
+        ],
         no_results: {
             answer: dont_know()
         },
         some_results: {
-            preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: gender(A, Gender) birth_date(A, Day, Month, Year)
+            preparation: gender(B, Gender) split(Ymd, '-', Year, Month, Day),
+            answer: gender(B, Gender) birth_date(B, Day, Month, Year)
         }
     }
 
     == When did X die? ==
     {
-        condition: question() when() death_date(A, Ymd),
+        condition: question(P1) when(P1) die(P1, A),
+        transformations: [
+            die(P1, A) when(P1) => death_date(A, Ymd);
+        ],
         no_results: {
             answer: dont_know()
         },
@@ -111,7 +117,7 @@
 
     == Who is X? ==
     {
-        condition: question() who(B),
+        condition: question(_) who(B),
         no_results: {
             answer: dont_know()
         },
@@ -123,7 +129,7 @@
 
     == What is the capital of X? ==
     {
-        condition: question() what(B),
+        condition: question(_) what(B),
         no_results: {
             answer: dont_know()
         },

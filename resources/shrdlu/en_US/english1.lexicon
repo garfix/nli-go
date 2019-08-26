@@ -1,0 +1,29 @@
+[
+    { form: 'a',                 pos: a }
+    { form: 'an',                pos: a }
+    { form: 'the',               pos: the }
+    { form: 'one',               pos: one }
+    { form: 'red',               pos: red }
+    { form: 'big',               pos: big }
+    { form: 'taller',            pos: taller }
+    { form: 'than',              pos: than }
+    { form: 'block',             pos: block }
+    { form: 'pyramid',           pos: pyramid }
+    { form: 'box',               pos: box }
+    { form: 'you',               pos: you }
+    { form: 'it',                pos: it }
+    { form: 'into',              pos: into }
+    { form: 'and',               pos: and }
+    { form: 'grasp',             pos: grasp }
+    { form: 'put',               pos: put }
+    { form: 'find',              pos: find }
+    { form: 'is',                pos: copula }
+    { form: 'are',               pos: aux_be }
+    { form: 'holding',           pos: holding }
+    { form: 'which',             pos: which }
+    { form: 'pick',              pos: pick }
+    { form: 'picks',             pos: pick }
+    { form: 'picked',            pos: pick }
+    { form: 'up',                pos: up }
+    { form: '.',                 pos: period }
+]

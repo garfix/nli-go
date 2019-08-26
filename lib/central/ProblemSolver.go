@@ -381,7 +381,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	for _, val := range binding {
 		if val.TermType == mentalese.TermVariable {
-			panic("Variable bound to variable")
+			//panic("Variable bound to variable")
 		}
 	}
 

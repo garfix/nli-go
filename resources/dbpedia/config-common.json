@@ -1,9 +1,9 @@
 {
   "lexicons": [
-    "en_US/read.lexicon"
+    "en_US/read1.lexicon"
   ],
   "grammars": [
-    "en_US/read.grammar"
+    "en_US/read1.grammar"
   ],
   "generationlexicons": [
     "en_US/write.lexicon"
@@ -27,7 +27,7 @@
     "dbpedia.solution"
   ],
   "generic2ds": [
-    "generic2ds.transform"
+    "generic2ds1.transform"
   ],
   "ds2generic": [
     "ds2generic.transform"

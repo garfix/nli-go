@@ -4,6 +4,6 @@
     which(_) => which(_);
     how_many(_) => how_many(_);
     yes_no() => yes_no();
-    command() => command();
+    command(E1) => command(E1);
     number(E1, N1) => number(E1, N1);
 ]

@@ -17,13 +17,17 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split", "greater_than", "less_than", "add"}
+	predicates := []string{"join", "split", "greater_than", "less_than", "add", "number"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
 			if predicate == setRelation.Predicate {
+				cost := worst_cost
+				if predicate == "number" {
+					cost = 0.0
+				}
 				// TODO calculate real cost
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, cost})
 				break
 			}
 		}
@@ -71,6 +75,21 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 				sep = input.Arguments[1].TermValue
 			}
 		}
+
+		newBinding = binding.Copy()
+		newBinding[input.Arguments[0].TermValue] = result
+
+		found = true
+
+	}
+
+	if input.Predicate == "number" {
+
+		result := mentalese.Term{}
+
+		number := input.Arguments[1]
+		result.TermType = mentalese.TermNumber
+		result.TermValue = number.TermValue
 
 		newBinding = binding.Copy()
 		newBinding[input.Arguments[0].TermValue] = result

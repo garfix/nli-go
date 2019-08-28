@@ -1,6 +1,6 @@
 [
     {
-        condition: question() who(A) married_to(A, B),
+        condition: question(_) who(A) marry(P1, A, B),
         no_results: {
             answer: none()
         },
@@ -9,7 +9,7 @@
             answer: focus(A) married_to(A, B) gender(B, G) name(A, N)
         }
     } {
-        condition: question() yes_no() married_to(A, B),
+        condition: question(_) yes_no(_) marry(P1, A, B),
         no_results: {
             answer: result(false)
         },
@@ -17,7 +17,7 @@
             answer: result(true)
         }
     } {
-        condition: question() yes_no() siblings(A, B),
+        condition: question(_) yes_no(_) siblings(A, B),
         no_results: {
             answer: result(false)
         },
@@ -25,7 +25,7 @@
             answer: result(true)
         }
     } {
-        condition: question() how_many(A) have_child(B, A),
+        condition: question(_) how_many(A) have_child(B, A),
         no_results: {
             answer: none()
         },
@@ -34,7 +34,7 @@
             answer: gender(B, G) count(C, N) have_child(C, B)
         }
     } {
-        condition: question() which(A) have_child(B, A),
+        condition: question(_) which(A) have_child(B, A),
         no_results: {
             answer: none()
         },
@@ -43,7 +43,7 @@
             answer: name(A, N) make_and(A, R)
         }
     } {
-        condition: question() yes_no() have_child(B, A) every(B),
+        condition: question(_) yes_no(_) have_child(B, A) every(B),
         no_results: {
             answer: none()
         },
@@ -52,7 +52,7 @@
             answer: result(G)
         }
     } {
-        condition: question() yes_no() have_child(B, A),
+        condition: question(_) yes_no(_) have_child(B, A),
         no_results: {
             preparation: exists(G, B),
             answer: result(G)

@@ -1,0 +1,33 @@
+[
+    { form: 'who', pos: who }
+    { form: 'which', pos: which }
+    { form: 'how', pos: how }
+    { form: 'many', pos: many }
+
+    { form: 'did', pos: aux_do }
+    { form: 'does', pos: aux_do }
+    { form: 'has', pos: have }
+    { form: 'have', pos: have }
+    { form: 'are', pos: copula }
+    { form: 'married', pos: marry }
+    { form: 'marry', pos: marry }
+
+    { form: 'and', pos: and }
+
+    { form: 'siblings', pos: sibling }
+    { form: 'children', pos: child }
+    { form: 'parent', pos: parent }
+
+    { form: 'every', pos: every }
+
+    { form: 'de',                 pos: second_name,           sense: name(E, 'de', 2) }
+    { form: 'van',                pos: second_name,           sense: name(E, 'van', 2) }
+
+    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, 1) }
+    { form: /^[A-Z]/,             pos: second_name,           sense: name(E, Form, 2) }
+    { form: /^[A-Z]/,             pos: third_name,            sense: name(E, Form, 3) }
+
+    { form: /^[0-9]+/,            pos: number,                sense: number(E, Form) }
+
+    { form: '?',                  pos: question_mark }
+]

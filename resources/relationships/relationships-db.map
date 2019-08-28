@@ -1,5 +1,5 @@
 [
-    married_to(A, B) => marriages(A, B, _);
+    marry(_, A, B) => marriages(A, B, _);
     name(A, N) => person(A, N, _, _);
     parent(P, C) => parent(P, C);
     have_child(P, C) => parent(P, C);

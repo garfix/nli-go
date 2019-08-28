@@ -1,0 +1,29 @@
+[
+    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) third_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
+    { rule: proper_noun(N1) -> first_name(N1) }
+
+    { rule: qp(E1) -> every(E1),                                            sense: isa(E1, all) }
+
+    { rule: nbar(E1) -> noun(E1) }
+
+    { rule: noun(E1) -> parent(E1),                                 sense: parent(E1, _) }
+
+    { rule: np(S1) -> qp(Q1) nbar(R1),                              sense: quantification(Q1, R1, S1) }
+    { rule: np(E1) -> proper_noun(E1) }
+
+    { rule: which_clause(E1) -> child(E1) have(P1) np(E2),          sense: have_child(E2, E1) }
+    { rule: how_many_clause(E1) -> child(E1) have(P1) np(E2),       sense: have_child(E2, E1) }
+    { rule: subject_complement_clause(E1) -> marry(P1) np(E2),      sense: marry(P1, E1, E2) }
+    { rule: subject_complement_clause(E1) -> have() number(N2) child(E2),      sense: have_child(E1, E2) number_of(E2, N2) }
+    { rule: copula_clause(E1) -> np(E1) and() np(E2) sibling(),     sense: siblings(E1, E2) }
+
+    { rule: interrogative(P1) -> who(E1) subject_complement_clause(E1),         sense: who(E1) }
+    { rule: interrogative(P1) -> which(E1) which_clause(E1),                    sense: which(E1) }
+    { rule: interrogative(P1) -> how() many() how_many_clause(E1),              sense: how_many(E1) }
+    { rule: interrogative(P1) -> aux_do() np(E1) subject_complement_clause(E1), sense: yes_no(_) }
+    { rule: interrogative(P1) -> copula() copula_clause(),                      sense: yes_no(_) }
+
+    { rule: interrogative(S1) -> interrogative(S1) question_mark() }
+    { rule: s(S1) -> interrogative(S1),                              sense: question(S1) }
+]

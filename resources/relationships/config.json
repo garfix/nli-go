@@ -1,9 +1,9 @@
 {
   "lexicons": [
-    "english-1.lexicon"
+    "english-2.lexicon"
   ],
   "grammars": [
-    "english-1.grammar"
+    "english-2.grammar"
   ],
   "generationlexicons": [
     "relationships-gen.lexicon"
@@ -58,7 +58,7 @@
     "relationships.solution"
   ],
   "generic2ds": [
-    "relationships-generic2ds.transform"
+    "relationships-generic2ds1.transform"
   ],
   "ds2generic": [
     "relationships-ds2generic.transform"

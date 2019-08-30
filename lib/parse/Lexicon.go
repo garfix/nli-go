@@ -49,7 +49,7 @@ func (lexicon *Lexicon) AddLexItem(lexItem LexItem) {
 	}
 }
 
-func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, bool) {
+func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, bool, bool) {
 
 	// try the word as is
 	lexItems, found := lexicon.lexItems[word]
@@ -81,7 +81,7 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 					return LexItem{
 						Form:              word,
 						PartOfSpeech:      regExpItem.PartOfSpeech,
-						RelationTemplates: sense}, true
+						RelationTemplates: sense}, true, true
 				}
 			}
 		}
@@ -90,12 +90,12 @@ func (lexicon *Lexicon) GetLexItem(word string, partOfSpeech string) (LexItem, b
 	if found {
 		for _, lexItem := range lexItems {
 			if lexItem.PartOfSpeech == partOfSpeech {
-				return lexItem, true
+				return lexItem, true, false
 			}
 		}
 	}
 
-	return LexItem{}, false
+	return LexItem{}, false, false
 }
 
 func (lexicon *Lexicon) GetWordForms(partOfSpeech string) []string {

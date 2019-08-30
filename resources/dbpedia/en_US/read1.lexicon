@@ -33,11 +33,11 @@
     { form: 'daughter', pos: daughter }
     { form: 'son', pos: son }
 
-    { form: /^[0-9]+/,              pos: number,                sense: number(E, Form) }
+    { form: /^[0-9]+/,            pos: number }
 
-    { form: /^[A-Z]/,	            pos: first_name,            sense: name(E, Form, 1) }
-    { form: /^[A-Z]/,	            pos: second_name,           sense: name(E, Form, 2) }
-    { form: /^[A-Z]/,	            pos: third_name,            sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,             pos: first_name }
+    { form: /^[A-Z]/,             pos: second_name }
+    { form: /^[A-Z]/,             pos: third_name }
 
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }

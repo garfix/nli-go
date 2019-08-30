@@ -20,14 +20,14 @@
 
     { form: 'every', pos: every }
 
-    { form: 'de',                 pos: second_name,           sense: name(E, 'de', 2) }
-    { form: 'van',                pos: second_name,           sense: name(E, 'van', 2) }
+    { form: /^de$/,               pos: second_name }
+    { form: /^van$/,              pos: second_name }
 
-    { form: /^[A-Z]/,             pos: first_name,            sense: name(E, Form, 1) }
-    { form: /^[A-Z]/,             pos: second_name,           sense: name(E, Form, 2) }
-    { form: /^[A-Z]/,             pos: third_name,            sense: name(E, Form, 3) }
+    { form: /^[A-Z]/,             pos: first_name }
+    { form: /^[A-Z]/,             pos: second_name }
+    { form: /^[A-Z]/,             pos: third_name }
 
-    { form: /^[0-9]+/,            pos: number,                sense: number(E, Form) }
+    { form: /^[0-9]+/,            pos: number }
 
     { form: '?',                  pos: question_mark }
 ]

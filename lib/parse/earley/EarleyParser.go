@@ -167,7 +167,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 
-	_, lexItemFound := parser.lexicon.GetLexItem(endWord, nextConsequent)
+	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if lexItemFound {
 
 		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})

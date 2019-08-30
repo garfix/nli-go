@@ -57,7 +57,7 @@ func TestDBPedia(t *testing.T) {
 		},
 		{
 			{
-			"How many countries have population above 130000000", "8", "", "",
+			"How many countries have population above 130000000", "9", "", "",
 			},
 		},
 	}

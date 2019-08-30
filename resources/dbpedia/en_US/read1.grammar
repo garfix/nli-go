@@ -1,7 +1,7 @@
 [
-    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) third_name(N1) }
-    { rule: proper_noun(N1) -> first_name(N1) second_name(N1) }
-    { rule: proper_noun(N1) -> first_name(N1) }
+    { rule: proper_noun(N1) -> first_name(A) second_name(B) third_name(C),  sense: name(N1, A, 1) name(N1, B, 2) name(N1, C, 3) }
+    { rule: proper_noun(N1) -> first_name(A) second_name(B),                sense: name(N1, A, 1) name(N1, B, 2) }
+    { rule: proper_noun(N1) -> first_name(A),                               sense: name(N1, A, 1) }
 
     { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
 

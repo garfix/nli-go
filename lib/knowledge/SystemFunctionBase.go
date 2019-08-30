@@ -83,20 +83,20 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 
 	}
 
-	if input.Predicate == "number" {
-
-		result := mentalese.Term{}
-
-		number := input.Arguments[1]
-		result.TermType = mentalese.TermNumber
-		result.TermValue = number.TermValue
-
-		newBinding = binding.Copy()
-		newBinding[input.Arguments[0].TermValue] = result
-
-		found = true
-
-	}
+	//if input.Predicate == "number" {
+	//
+	//	result := mentalese.Term{}
+	//
+	//	number := input.Arguments[1]
+	//	result.TermType = mentalese.TermNumber
+	//	result.TermValue = number.TermValue
+	//
+	//	newBinding = binding.Copy()
+	//	newBinding[input.Arguments[0].TermValue] = result
+	//
+	//	found = true
+	//
+	//}
 
 	if input.Predicate == "greater_than" {
 

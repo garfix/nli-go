@@ -14,7 +14,7 @@ func TestLexiconParser(test *testing.T) {
 		{ form: 'boek', pos: noun }
 	]`)
 
-	_, ok = lexicon.GetLexItem("boek", "noun")
+	_, ok, _ = lexicon.GetLexItem("boek", "noun")
 	if !ok {
 		test.Error("Parse error")
 	}
@@ -24,11 +24,11 @@ func TestLexiconParser(test *testing.T) {
 		{ form: 'lees',   pos: verb }
 	]`)
 
-	_, ok = lexicon.GetLexItem("boek", "noun")
+	_, ok, _ = lexicon.GetLexItem("boek", "noun")
 	if !ok {
 		test.Error("Parse error")
 	}
-	_, ok = lexicon.GetLexItem("lees", "verb")
+	_, ok, _ = lexicon.GetLexItem("lees", "verb")
 	if !ok {
 		test.Error("Parse error")
 	}

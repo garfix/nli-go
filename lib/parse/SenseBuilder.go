@@ -29,12 +29,12 @@ func (builder SenseBuilder) GetNewVariable(formalVariable string) string {
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
-func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVariables []string) map[string]string {
+func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVariables []string) map[string]mentalese.Term {
 
-	m := map[string]string{}
+	m := map[string]mentalese.Term{}
 	antecedentVariable := formalVariables[0]
 
-	m[antecedentVariable] = actualAntecedent
+	m[antecedentVariable] = mentalese.NewVariable(actualAntecedent)
 
 	for i := 1; i < len(formalVariables); i++ {
 
@@ -43,14 +43,14 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVar
 		if consequentVariable == antecedentVariable {
 
 			// the consequent variable matches the antecedent variable, inherit its actual variable
-			m[consequentVariable] = actualAntecedent
+			m[consequentVariable] = mentalese.NewVariable(actualAntecedent)
 
 		} else {
 
 			// we're going to add a new actual variable, unless we already have
 			_, present := m[consequentVariable]
 			if !present {
-				m[consequentVariable] = builder.GetNewVariable(consequentVariable)
+				m[consequentVariable] = mentalese.NewVariable(builder.GetNewVariable(consequentVariable))
 			}
 		}
 	}
@@ -59,7 +59,7 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVar
 }
 
 // Create actual relations given a set of templates and a variable map (formal to actual variables)
-func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet, variableMap map[string]string) mentalese.RelationSet {
+func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet, variableMap map[string]mentalese.Term) mentalese.RelationSet {
 
 	relations := mentalese.RelationSet{}
 
@@ -71,8 +71,8 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 
 			if argument.TermType == mentalese.TermVariable {
 
-				newRelation.Arguments[a].TermType = mentalese.TermVariable
-				newRelation.Arguments[a].TermValue = variableMap[argument.TermValue]
+				newRelation.Arguments[a].TermType = variableMap[argument.TermValue].TermType
+				newRelation.Arguments[a].TermValue = variableMap[argument.TermValue].TermValue
 
 			} else if argument.TermType == mentalese.TermRelationSet {
 

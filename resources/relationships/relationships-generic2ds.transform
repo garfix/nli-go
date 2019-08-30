@@ -1,16 +1,2 @@
 [
-    root(P1) subject(P1, S1) isa(S1, who) => who(S1);
-    root(P1) aux(P1, A1) isa(A1, do) => yes_no();
-    root(E2) copula(E2, A1) subject(E2, E1) isa(A1, be) => yes_no();
-    root(P1) subject(P1, E1) determiner(E1, D1) isa(D1, which) => which(E1);
-    root(P1) subject(P1, S1) mod(S1, M1) mod(M1, M2) isa(M2, how) isa(M1, many) => how_many(S1);
-
-    isa(P1, marry) subject(P1, A) object(P1, B) => married_to(A, B);
-    isa(S, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(O, S);
-    isa(O, child) isa(P1, have) subject(P1, S) object(P1, O) => have_child(S, O);
-    subject(P1, S1) conjunction(S1, A1, A2) isa(A, and) isa(P1, sibling) => siblings(A1, A2);
-
-    determiner(E1, D1) number(D1, N1) => number_of(N1, E1);
-
-    tense(V, _) => ;
 ]

@@ -1,9 +1,9 @@
 {
   "lexicons": [
-    "en_US/english1.lexicon"
+    "en_US/english.lexicon"
   ],
   "grammars": [
-    "en_US/english1.grammar"
+    "en_US/english.grammar"
   ],
   "generationlexicons": [
     "en_US/english-gen.lexicon"
@@ -35,7 +35,7 @@
     "blocks.solution"
   ],
   "generic2ds": [
-    "generic2ds1.transform"
+    "generic2ds.transform"
   ],
   "ds2generic": [
     "ds2generic.transform"

@@ -1,43 +1,29 @@
 [
-    { form: 'pick',              pos: verb,                  sense: isa(E, pick) }
-    { form: 'grasp',             pos: verb,                  sense: isa(E, grasp) }
-    { form: 'find',              pos: verb,                  sense: isa(E, find) }
-    { form: 'does',              pos: aux }
-    { form: 'is',                pos: aux_copula }
-    { form: 'are',               pos: aux_verb }
-    { form: 'holding',           pos: gerund,                sense: isa(E, hold) }
-    { form: 'put',               pos: verb,                  sense: isa(E, put) }
-    { form: 'contain',           pos: verb,                  sense: isa(E, contain) }
-
-    { form: 'and',               pos: conjunction,           sense: isa(E, and) }
-
-    { form: 'up',                pos: particle,              sense: isa(E, up) }
-
-    { form: 'a',                 pos: quantifier,            sense: number(E, 1) }
-    { form: 'one',               pos: quantifier,            sense: number(E, 1) }
-
-    { form: 'the',               pos: quantifier,            sense: isa(E, the) }
-
-    { form: 'big',               pos: adjective,             sense: isa(E, big) }
-    { form: 'red',               pos: adjective,             sense: isa(E, red) }
-
-    { form: 'taller',            pos: comparative_adjective, sense: isa(E, taller) }
-
-    { form: 'into',              pos: preposition,           sense: isa(E, into) }
-
-    { form: 'block',             pos: noun,                  sense: isa(E, block) }
-    { form: 'pyramid',           pos: noun,                  sense: isa(E, pyramid) }
-    { form: 'box',               pos: noun,                  sense: isa(E, box) }
-    { form: 'one',               pos: noun,                  sense: number(E, 1) }
-
-    { form: 'it',                pos: pronoun,               sense: isa(E, it) }
-    { form: 'you',               pos: pronoun,               sense: isa(E, you) }
-
-    { form: 'which',             pos: wh_determiner,         sense: isa(E, which) }
-    { form: 'what',              pos: wh_pronoun,            sense: isa(E, what) }
-
-    { form: 'than',              pos: subordinating_conjunction, sense: isa(E, than) }
-
+    { form: 'a',                 pos: a }
+    { form: 'an',                pos: a }
+    { form: 'the',               pos: the }
+    { form: 'one',               pos: one }
+    { form: 'red',               pos: red }
+    { form: 'big',               pos: big }
+    { form: 'taller',            pos: taller }
+    { form: 'than',              pos: than }
+    { form: 'block',             pos: block }
+    { form: 'pyramid',           pos: pyramid }
+    { form: 'box',               pos: box }
+    { form: 'you',               pos: you }
+    { form: 'it',                pos: it }
+    { form: 'into',              pos: into }
+    { form: 'and',               pos: and }
+    { form: 'grasp',             pos: grasp }
+    { form: 'put',               pos: put }
+    { form: 'find',              pos: find }
+    { form: 'is',                pos: copula }
+    { form: 'are',               pos: aux_be }
+    { form: 'holding',           pos: holding }
+    { form: 'which',             pos: which }
+    { form: 'pick',              pos: pick }
+    { form: 'picks',             pos: pick }
+    { form: 'picked',            pos: pick }
+    { form: 'up',                pos: up }
     { form: '.',                 pos: period }
-    { form: '?',                 pos: question_mark }
 ]

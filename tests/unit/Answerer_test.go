@@ -49,7 +49,7 @@ func TestAnswerer(t *testing.T) {
 				answer: book(Book_name)
 			}
 		} {
-			condition: write(Person, Book) number_of(N, Book),
+			condition: write(Person, Book) number_of(Book, N),
 			no_results: {
 				answer: none()
 			},
@@ -108,7 +108,7 @@ func TestAnswerer(t *testing.T) {
 		//// return each relation only once
 		{"[write(Person_name, B) publish('Orbital', B)]", "[book('The red book')]"},
 		// number_of
-		{"[write('Sally Klein', Book) number_of(N, Book)]", "[focus(2)]"},
+		{"[write('Sally Klein', Book) number_of(Book, N)]", "[focus(2)]"},
 	}
 
 	for _, test := range tests {

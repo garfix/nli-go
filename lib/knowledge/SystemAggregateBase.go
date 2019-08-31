@@ -46,14 +46,18 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 		return newBindings, false
 	}
 
-	resultArgument := goal.Arguments[0]
-	resultVariable := resultArgument.TermValue
+	aggregateArgument := goal.Arguments[0]
+	aggregateVariable := aggregateArgument.TermValue
 
 	if goal.Predicate == "number_of" {
 
-		subjectVariable := goal.Arguments[1].TermValue
+		// exception
+		aggregateArgument = goal.Arguments[1]
+		aggregateVariable = aggregateArgument.TermValue
 
-		differentValues := base.getDifferentValues(bindings, subjectVariable)
+		sourceVariable := goal.Arguments[0].TermValue
+
+		differentValues := base.getDifferentValues(bindings, sourceVariable)
 		aggregate = mentalese.Term{TermType: mentalese.TermNumber, TermValue: strconv.Itoa(len(differentValues))}
 
 	} else if goal.Predicate == "first" {
@@ -108,27 +112,27 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 	if found {
 		newBindings = mentalese.Bindings{}
 
-		// number_of(4, E1)
-		if resultArgument.IsNumber() {
+		// number_of(E1, 4)
+		if aggregateArgument.IsNumber() {
 
-			if resultArgument.TermValue == aggregate.TermValue {
+			if aggregateArgument.TermValue == aggregate.TermValue {
 				newBindings = bindings
 			}
 
-			// number_of(N, E1)
+			// number_of(E1, N)
 		} else {
 
 			if len(bindings) > 0 {
 
 				for _, binding := range bindings {
 					newBinding := binding.Copy()
-					newBinding[resultVariable] = aggregate
+					newBinding[aggregateVariable] = aggregate
 					newBindings = append(newBindings, newBinding)
 				}
 			} else {
 
 				newBinding := mentalese.Binding{}
-				newBinding[resultVariable] = aggregate
+				newBinding[aggregateVariable] = aggregate
 				newBindings = append(newBindings, newBinding)
 
 			}

@@ -29,7 +29,7 @@
             answer: dont_know()
         },
         some_results: {
-            preparation: gender(A, Gender) number_of(Number, B),
+            preparation: gender(A, Gender) number_of(B, Number),
             answer: gender(A, Gender) have_child(A, C) count(C, Number)
         }
     }
@@ -41,7 +41,7 @@
             answer: dont_know()
         },
         some_results: {
-            preparation: number_of(Number, B),
+            preparation: number_of(B, Number),
             answer: canned(Number)
         }
     }

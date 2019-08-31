@@ -1,3 +1,19 @@
+# 2019-08-30
+
+I just did it. I rewrote all grammars and removed the generic -> domain-specific transformations. With a few adjustments I removed an entire step in the analysis and made writing grammars much simpler.
+
+I removed the difference between generic semantics and domain specific semantics. The generic semantics were very syntax oriented and the process of finding syntactic structures was hard enough, and then on top came the step of mapping these semantic structures to other semantic structures. Which required quite a lot of specific knowledge of the application, which made it quite hard to learn.
+
+I also found that the generic->DS step was for the most part about fixing problems that the first step caused, or didn't fix. With the new "semantic grammar" I can create the "domain specific" semantics in one step.
+
+I changed my opinion on semantic grammars. First I thought they were bad solutions that could never scale up. Now I see them as a completely different way of looking at sentences. It is more "human like", like the way you see the meaning of a sentence directly from the form, without seeing "syntactic structures". Syntactic structures are useful to determine if sentences belong to a language, but they are _too free_ and allow many forms that do not exist (like "pick down": verb particle). The new grammar can restrict this right away.
+
+It is still possible, if wanted, to create multiple lexicons and grammars, general ones and domain specific ones.
+
+All of this is quite a revelation! 
+
+The number of rules will increase a lot, but in this age this is not a problem for the Earley algorithm.
+
 # 2019-08-13
 
 I _want_ to add raw words to the grammar rules.

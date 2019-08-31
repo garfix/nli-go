@@ -96,6 +96,12 @@ Lexicon definitions may use either a string constant or an expression for the fo
 E            Will be replaced by the entity variable of current node (ex. E1)
 Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions. Form is a string, except when part-of-speech is 'number', then it is a number.
 
+Also: 
+
+    { rule: proper_noun(N1) -> first_name(A),                               sense: name(N1, A, 1) }
+    
+Variable A will be found to a constant that holds the raw name from the input.
+
 ## Transformation rules
 
 [

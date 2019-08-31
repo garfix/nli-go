@@ -34,8 +34,8 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	answerer.solutions = append(answerer.solutions, solutions...)
 }
 
-// goal e.g. [ question(Q) child(S, O) EntityId(S, 'Janice', fullName) number_of(N, O) focus(Q, N) ]
-// return e.g. [ child(S, O) gender(S, female) number_of(N, O) ]
+// goal e.g. [ question(Q) child(S, O) EntityId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
+// return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
 func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) mentalese.RelationSet {
 
 	answerer.log.StartDebug("Answer")

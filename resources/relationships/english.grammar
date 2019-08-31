@@ -15,7 +15,7 @@
     { rule: which_clause(E1) -> child(E1) have(P1) np(E2),          sense: have_child(E2, E1) }
     { rule: how_many_clause(E1) -> child(E1) have(P1) np(E2),       sense: have_child(E2, E1) }
     { rule: subject_complement_clause(E1) -> marry(P1) np(E2),      sense: marry(P1, E1, E2) }
-    { rule: subject_complement_clause(E1) -> have() number(N2) child(E2),      sense: have_child(E1, E2) number_of(N2, E2) }
+    { rule: subject_complement_clause(E1) -> have() number(N2) child(E2),      sense: have_child(E1, E2) number_of(E2, N2) }
     { rule: copula_clause(E1) -> np(E1) and() np(E2) sibling(),     sense: siblings(E1, E2) }
 
     { rule: interrogative(P1) -> who(E1) subject_complement_clause(E1),         sense: who(E1) }

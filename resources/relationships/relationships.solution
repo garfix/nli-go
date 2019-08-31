@@ -30,7 +30,7 @@
             answer: none()
         },
         some_results: {
-            preparation: gender(B, G) number_of(N, A),
+            preparation: gender(B, G) number_of(A, N),
             answer: gender(B, G) count(C, N) have_child(C, B)
         }
     } {

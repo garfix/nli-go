@@ -43,17 +43,19 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
 
-	// scope here, just before finding the solution
-	quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
-	scopedGoal := quantifierScoper.Scope(goal)
+	//// scope here, just before finding the solution
+	//quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
+	//scopedGoal := quantifierScoper.Scope(goal)
+	scopedGoal := goal
 
-	answerer.log.AddProduction("Scoped", scopedGoal.String())
+//	answerer.log.AddProduction("Scoped", scopedGoal.String())
 
 	// apply sequences
-	sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
-	sequencedGoal := sequenceApplier.ApplySequences(scopedGoal)
+//	sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
+//	sequencedGoal := sequenceApplier.ApplySequences(scopedGoal)
 
-	answerer.log.AddProduction("With Sequences", sequencedGoal.String())
+//	answerer.log.AddProduction("With Sequences", sequencedGoal.String())
+	sequencedGoal := scopedGoal
 
 	// conditionBindings: map condition variables to goal variables
 	allSolutions := answerer.findSolutions(sequencedGoal)

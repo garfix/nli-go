@@ -1,3 +1,32 @@
+# 2019-09-06
+
+    Find a block which is taller than the one you are holding and put it into the box.
+    
+    [
+        seq(S5, 
+            P5, [
+                command(P5) 
+                quant(
+                    Q5, [number(Q5, 1)], 
+                    E5, [
+                        block(E5) 
+                        quant(
+                            Q6, [isa(Q6, the)], 
+                            E6, [hold(P7, E7, E6) you(E7)], 
+                            [taller(E5, E6)])
+                    ], 
+                    [find(P5, E5)]
+                )], 
+            P6, [
+                command(P6) 
+                quant(
+                    Q7, [isa(Q7, the)], 
+                    E9, [box(E9)], 
+                    [put_into(P6, E8, E9)]) 
+                it(E8)
+            ])
+    ]
+  
 # 2019-09-03
 
 Again I need to solve the problem of quantification. By removing the extra QuantifierScoper step (it will once resurface in another form!) I have to think of a new way to do quantification right there in the grammar rules. 

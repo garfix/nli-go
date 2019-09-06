@@ -10,6 +10,8 @@ type Relation struct {
 const PredicateQuantification = "quantification"
 const PredicateQuant = "quant"
 
+const PredicateSem = "sem"
+
 const PredicateSequence = "sequence"
 const PredicateSeq = "seq"
 
@@ -23,6 +25,7 @@ const PredicateNumber = "number"
 const PredicateIsa = "isa"
 const AtomThe = "the"
 const AtomAll = "all"
+const AtomParent = "parent"
 
 const QuantificationQuantifierVariableIndex = 0
 const QuantificationRangeVariableIndex = 1

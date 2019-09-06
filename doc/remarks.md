@@ -1,3 +1,65 @@
+# 2019-09-03
+
+Again I need to solve the problem of quantification. By removing the extra QuantifierScoper step (it will once resurface in another form!) I have to think of a new way to do quantification right there in the grammar rules. 
+
+adjp(E1) => taller() than() np(E2),            taller(sem(0), sem(2))
+
+This does not provide a solution for the quantifiers, and it required a strange adaption to quantification code.
+
+It occurred to me that It would be possible to place the quant() outside of the predicate it belongs to like this:
+
+adjp(E1) => taller() than() np(E2),            quant(Q, sem(Q), R, sem(3), [ taller(E1, E2) ]) ERROR!
+adjp(E1) => taller() than() np(E2),            quant(Q, sem(np/qp), R, sem(3), [ taller(E1, E2) ]) ERROR!
+
+This doesn't work either. The quantifiers are problematic.
+
+What if I included the qp() in the formula?
+
+adjp(E1) => taller() than() np(E2),            quant(Q1, [isa(E1, a)], E2, sem(4), [ taller(E1, E2) ])
+adjp(E1) => taller() than() qp(Q1) np(E2),     quant(Q1, sem(3), E2, sem(4), [ taller(E1, E2) ])
+
+That is a proper solution! But its a bummer that I need two rules for every np(), in stead of one. This is intolerable.
+
+What about:
+
+adjp(E1) => taller() than() qp(Q1) nbar(E2),   quant(Q1, sem(3), E2, sem(4), [ taller(E1, E2) ])
+qp(E1) => nil,                                 isa(E1, a)
+
+The last rule represents an implicit existential quantifier when no determiner is present.
+
+Awesome.
+
+Except that the parser will have to be adjusted to allow for nil-constituents.
+
+Alternatives?
+
+adjp(E1) => taller() than() np(E2),     taller(E1, E2)
+np(E1) => qp(Q1) nbar(E2),              quant(Q1, sem(1), E2, sem(2), sem(0)) ERROR!
+
+No that is wrong, because there may be multiple np's in a predicate, and it messes with the bottom-to-top interpretation of semantics.
+
+-- a night's sleep --
+
+No, that conclusion is too quick. Checking Montague-like semantic interpretations (eg Natural Language Processing for Prolog Programmers, p.209) teaches just such a thing. In this routine, the last argument (sem(0), or: sem(parent), or: sense(parent)) "is awaiting the scope", that will be filled in by the parent.
+
+So:
+
+adjp(E1) => taller() than() np(E2),     taller(E1, E2)
+np(E1) => qp(Q1) nbar(E2),              quant(Q1, sem(1), E2, sem(2), sem(parent))
+
+How is this handled? When the relationizer processes the adjp(E1) it checks the child semantics.
+When one of these child relations has 'sem(parent)' as argument, then there is
+
+P parent relation
+C child relation (with quant)
+
+* the argument 'scope' in the quant of C is replaced by the current sem of P.
+* the the sem of P is replaced by this quant 
+
+My approach has some aspects of the Montague and the feature unification approaches, but it is much less verbose. Most standard semantic inheritance from child to parent is done implicitly, whereas these other approaches name each inheritance explicitly. I aim for simpleness. And even though my approach can still scare away the beginning programmer, I believe an experienced programmer will be able to understand it.   
+
+The last rules have the advantage that simple 'exists' quantifiers can remain implicit, allowing for query optimization. Also, the complexity is isolated to a single place, that of the 'quant' definition.
+
 # 2019-08-30
 
 I just did it. I rewrote all grammars and removed the generic -> domain-specific transformations. With a few adjustments I removed an entire step in the analysis and made writing grammars much simpler.

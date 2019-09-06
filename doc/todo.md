@@ -1,5 +1,6 @@
 # Todo
 
+* 'sense' => 'sem' 
 * isa(E1, the) -> the(E1)
 * Integrate ds mappings into grammar
 * Do quantification() and sequence() directly without extra quant() / seq() steps

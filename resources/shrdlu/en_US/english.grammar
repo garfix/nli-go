@@ -5,8 +5,8 @@
     { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
     { rule: noun(E1) -> one(E1) }
 
-    { rule: pronoun(E1) -> it(E1), sense: it(E1) }
-    { rule: pronoun(E1) -> you(E1), sense: you(E1) }
+    { rule: pronoun(E1) -> it(E1),                                          sense: it(E1) }
+    { rule: pronoun(E1) -> you(E1),                                         sense: you(E1) }
 
     { rule: adjp(E1) -> taller() than() np(E2),                             sense: taller(E1, E2) }
 
@@ -39,7 +39,7 @@
     { rule: nbar(E1) -> noun(E1) }
 
     { rule: imperative_clause(P1) -> vp(P1),                                sense: command(P1) }
-    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: seq(C, P1, sem(1), P2, sem(3)) }
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: seq(C, sem(1), sem(3)) }
 
     { rule: imperative(P1) -> imperative_clause(P1) period() }
     { rule: imperative(P1) -> imperative_clause(P1) }

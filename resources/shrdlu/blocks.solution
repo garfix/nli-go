@@ -1,7 +1,7 @@
 [
     == Any command ==
     {
-        condition: sequence(_),
+        condition: command(_),
         some_results: {
             answer: canned('OK')
         },

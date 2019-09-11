@@ -148,6 +148,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	if !system.log.IsDone() {
 		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(dsRelations)
 		system.log.AddProduction("Nameless", namelessDsRelations.String())
+		system.log.AddProduction("Key cabinet", keyCabinet.String())
 	}
 
 	if !system.log.IsDone() {

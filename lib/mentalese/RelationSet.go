@@ -94,19 +94,25 @@ func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 	return resultSet
 }
 
-// Removes all relations from set whose predicates match that of any of newSet
-func (set RelationSet) RemoveMatchingPredicates(newSet RelationSet) RelationSet {
+// Recursively removes all relations from set whose predicates match predicate
+func (set RelationSet) RemoveMatchingPredicate(predicate string) RelationSet {
 
 	resultSet := RelationSet{}
 
 	for _, relation := range set {
 		found := false
-		for _, newRelation := range newSet {
-			if relation.Predicate == newRelation.Predicate {
-				found = true
-				break
+
+		for a, relationArgument := range relation.Arguments {
+			if relationArgument.IsRelationSet() {
+				relation = relation.Copy()
+				relation.Arguments[a].TermValueRelationSet = relationArgument.TermValueRelationSet.RemoveMatchingPredicate(predicate)
 			}
 		}
+
+		if relation.Predicate == predicate {
+			found = true
+		}
+
 		if !found {
 			resultSet = append(resultSet, relation)
 		}
@@ -213,17 +219,15 @@ func (set RelationSet) UnScope() RelationSet {
 
 		relationCopy := relation.Copy()
 
-		if relation.Predicate == PredicateQuant {
-			// unscope the relation sets
-			for i, argument := range relation.Arguments {
-				if argument.IsRelationSet() {
+		// unscope the relation sets
+		for i, argument := range relation.Arguments {
+			if argument.IsRelationSet() {
 
-					scopedSet := relationCopy.Arguments[i].TermValueRelationSet
-					relationCopy.Arguments[i].TermValueRelationSet = RelationSet{}
+				scopedSet := relationCopy.Arguments[i].TermValueRelationSet
+				relationCopy.Arguments[i].TermValueRelationSet = RelationSet{}
 
-					// recurse into the scope
-					unscoped = append(unscoped, scopedSet.UnScope()...)
-				}
+				// recurse into the scope
+				unscoped = append(unscoped, scopedSet.UnScope()...)
 			}
 		}
 

@@ -37,7 +37,7 @@ const QuantRangeVariableIndex = 2
 const QuantRangeIndex = 3
 const QuantScopeIndex = 4
 
-const SeqFirstOperandIndex = 0
+const SeqFirstOperandIndex = 1
 const SeqSecondOperandIndex = 2
 
 func NewRelation(predicate string, arguments []Term) Relation {

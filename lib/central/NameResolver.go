@@ -39,7 +39,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 	userResponse := ""
 	options := common.NewOptions()
 
-	namesAndTypes := resolver.collectNamesAndTypes(relations)
+	namesAndTypes := resolver.collectNamesAndTypes(relations.UnScope())
 
 	for variable, nameAndType := range namesAndTypes {
 
@@ -112,15 +112,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 		}
 	}
 
-	nameTemplate := mentalese.NewRelation(mentalese.PredicateName, []mentalese.Term{
-		mentalese.NewAnonymousVariable(),
-		mentalese.NewAnonymousVariable(),
-		mentalese.NewAnonymousVariable(),
-	})
-
-	nameRelationBindings, _ := resolver.matcher.MatchRelationToSet(nameTemplate, relations, mentalese.Binding{})
-	nameRelations := nameTemplate.BindSingleRelationMultipleBindings(nameRelationBindings)
-	namelessRelations = relations.RemoveMatchingPredicates(nameRelations)
+	namelessRelations = relations.RemoveMatchingPredicate(mentalese.PredicateName)
 
 	if userResponse != "" {
 		resolver.log.SetClarificationRequest(userResponse, options)

@@ -9,7 +9,7 @@
 
     { rule: noun(E1) -> parent(E1),                                 sense: parent(E1, _) }
 
-    { rule: np(S1) -> qp(Q1) nbar(R1),                              sense: quantification(Q1, R1, S1) }
+    { rule: np(R1) -> qp(Q1) nbar(R1),                              sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
     { rule: np(E1) -> proper_noun(E1) }
 
     { rule: which_clause(E1) -> child(E1) have(P1) np(E2),          sense: have_child(E2, E1) }

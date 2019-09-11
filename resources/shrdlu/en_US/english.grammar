@@ -39,7 +39,7 @@
     { rule: nbar(E1) -> noun(E1) }
 
     { rule: imperative_clause(P1) -> vp(P1),                                sense: command(P1) }
-    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: seq(C, sem(1), sem(3)) }
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: sequence(C, sem(1), sem(3)) }
 
     { rule: imperative(P1) -> imperative_clause(P1) period() }
     { rule: imperative(P1) -> imperative_clause(P1) }

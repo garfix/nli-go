@@ -258,7 +258,7 @@ func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCab
 
 		newBindings = solver.SolveQuant(goal, keyCabinet, binding)
 
-	} else if goal.Predicate == mentalese.PredicateSeq {
+	} else if goal.Predicate == mentalese.PredicateSequence {
 
 		newBindings = solver.SolveSeq(goal, keyCabinet, binding)
 

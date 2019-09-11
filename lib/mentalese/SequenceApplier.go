@@ -41,7 +41,7 @@ func (applier SequenceApplier) ApplySequences(set RelationSet) RelationSet {
 		var2Relations := remainingRelations.findRelationsStartingWithVariable(var2.TermValue)
 		remainingRelations = remainingRelations.RemoveRelations(var2Relations)
 
-		seqRelation := NewRelation(PredicateSeq, []Term{
+		seqRelation := NewRelation(PredicateSequence, []Term{
 			NewRelationSet(var0Relations),
 			var1,
 			NewRelationSet(var2Relations),

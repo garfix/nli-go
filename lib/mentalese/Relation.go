@@ -13,7 +13,6 @@ const PredicateQuant = "quant"
 const PredicateSem = "sem"
 
 const PredicateSequence = "sequence"
-const PredicateSeq = "seq"
 
 const PredicateName = "name"
 const PredicateSense = "sense"

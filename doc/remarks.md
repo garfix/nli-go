@@ -1,3 +1,8 @@
+# 2019-09-11
+
+I finished this major rewrite that removed the generic => ds step, changed the power of grammar and removed the
+quantifier scoper.
+
 # 2019-09-06
 
     Find a block which is taller than the one you are holding and put it into the box.

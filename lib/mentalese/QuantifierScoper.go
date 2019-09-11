@@ -5,6 +5,10 @@ import (
 	"sort"
 )
 
+//
+// Note! Not currently in use, expected to be used again later, but in another form
+//
+
 // Turns a set of unscoped (or partially scoped) relations into scoped relations
 // Like this
 //

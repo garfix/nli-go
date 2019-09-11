@@ -43,22 +43,8 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
 
-	//// scope here, just before finding the solution
-	//quantifierScoper := mentalese.NewQuantifierScoper(answerer.log)
-	//scopedGoal := quantifierScoper.Scope(goal)
-	scopedGoal := goal
-
-//	answerer.log.AddProduction("Scoped", scopedGoal.String())
-
-	// apply sequences
-//	sequenceApplier := mentalese.NewSequenceApplier(answerer.log)
-//	sequencedGoal := sequenceApplier.ApplySequences(scopedGoal)
-
-//	answerer.log.AddProduction("With Sequences", sequencedGoal.String())
-	sequencedGoal := scopedGoal
-
 	// conditionBindings: map condition variables to goal variables
-	allSolutions := answerer.findSolutions(sequencedGoal)
+	allSolutions := answerer.findSolutions(goal)
 
 	if len(allSolutions) == 0 {
 
@@ -69,7 +55,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 		for i, solution := range allSolutions {
 
 			// apply transformation, if available
-			transformedGoal := transformer.Replace(solution.Transformations, sequencedGoal)
+			transformedGoal := transformer.Replace(solution.Transformations, goal)
 
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, mentalese.Bindings{{}})

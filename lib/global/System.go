@@ -140,10 +140,11 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 		system.log.AddProduction("Relationizer", syntacticRelations.String())
 	}
 
-	if !system.log.IsDone() {
-		dsRelations = system.transformer.Replace(system.generic2ds, syntacticRelations)
-		system.log.AddProduction("Generic 2 DS", dsRelations.String())
-	}
+	//if !system.log.IsDone() {
+	//	dsRelations = system.transformer.Replace(system.generic2ds, syntacticRelations)
+	//	system.log.AddProduction("Generic 2 DS", dsRelations.String())
+	//}
+	dsRelations = syntacticRelations
 
 	if !system.log.IsDone() {
 		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(dsRelations)

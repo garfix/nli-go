@@ -27,14 +27,8 @@ func NewQuantifierScoper(log *common.SystemLog) QuantifierScoper {
 
 func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 
-	// collect range and scope variables
-	rangeScopeVariables := scoper.collectRangeAndScopeVariables(relations)
-
-	// turn quantification into quant
-	newRelations := scoper.fromQuantificationToQuant(relations)
-
 	// separate quants from non-quants
-	quants, nonQuants := scoper.collectQuants(newRelations)
+	quants, nonQuants := scoper.collectQuants(relations)
 
 	// add quantifiers
 	quants, nonQuants = scoper.addQuantifiersAndRanges(quants, nonQuants)
@@ -45,57 +39,7 @@ func (scoper QuantifierScoper) Scope(relations RelationSet) RelationSet {
 	// nest the quants to create scopes
 	scopedRelations := scoper.scopeQuants(quants, nonQuants)
 
-	// replace scope variables with range variables
-	reducedVariableRelations := scoper.replaceVariables(scopedRelations, rangeScopeVariables)
-
-	return reducedVariableRelations
-}
-
-func (scoper QuantifierScoper) collectRangeAndScopeVariables(relations RelationSet) map[string]string {
-
-	variables := map[string]string{}
-
-	for _, relation := range relations {
-
-		if relation.Predicate == PredicateQuantification {
-
-			rangeVar := relation.Arguments[QuantificationRangeVariableIndex].TermValue
-			scopeVar := relation.Arguments[QuantificationScopeVariableIndex].TermValue
-
-			variables[rangeVar] = scopeVar
-		}
-	}
-
-	return variables
-}
-
-func (scoper QuantifierScoper) fromQuantificationToQuant(relations RelationSet) RelationSet {
-
-	newRelations := RelationSet{}
-
-	for _, relation := range relations {
-
-		newRelation := relation
-
-		if relation.Predicate == PredicateQuantification {
-
-			newRelation = Relation{
-				Predicate: PredicateQuant,
-				Arguments: []Term{
-					relation.Arguments[QuantificationQuantifierVariableIndex],
-					NewRelationSet(RelationSet{}),
-					relation.Arguments[QuantificationRangeVariableIndex],
-					NewRelationSet(RelationSet{}),
-					NewRelationSet(RelationSet{}),
-					relation.Arguments[QuantificationScopeVariableIndex],
-				},
-			}
-		}
-
-		newRelations = append(newRelations, newRelation)
-	}
-
-	return newRelations
+	return scopedRelations
 }
 
 func (scoper QuantifierScoper) addQuantifiersAndRanges(quants QuantArray, nonQuants RelationSet) (QuantArray, RelationSet) {

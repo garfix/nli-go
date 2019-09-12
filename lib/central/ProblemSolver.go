@@ -75,11 +75,11 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 // ]
 func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet, bindings mentalese.Bindings) mentalese.Bindings {
 
-	solver.log.StartDebug("SolveRelationSet", set, bindings)
-
 	if keyCabinet == nil {
 		keyCabinet = &mentalese.KeyCabinet{}
 	}
+
+	solver.SolveDepth++;
 
 	head := strings.Repeat("  ", solver.SolveDepth)
 
@@ -109,7 +109,9 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabin
 	// remove duplicates because they cause unnecessary work and they cause problems for the generator
 	newBindings = mentalese.UniqueBindings(newBindings)
 
-	solver.log.AddProduction(head + "Result", newBindings.String())
+	solver.log.AddProduction(head + "Solution Routes Result", newBindings.String())
+
+	solver.SolveDepth--
 
 	solver.log.EndDebug("SolveRelationSet", newBindings)
 
@@ -130,7 +132,7 @@ func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRou
 
 		newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, keyCabinet, newBindings)
 
-		solver.log.AddProduction(head + "Result", newBindings.String())
+		solver.log.AddProduction(head + "Solve RelationGroup Result", newBindings.String())
 
 		if len(newBindings) == 0 {
 			break

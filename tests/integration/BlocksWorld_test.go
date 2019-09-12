@@ -27,13 +27,13 @@ func TestBlocksWorld(t *testing.T) {
 		outSessionName string
 	}{
 		{
-			// todo: move the green block on top of it away
+			//// todo: move the green block on top of it away
 			{"Pick up a big red block", "OK", "", ""},
-			// todo "I don't understand which pyramid you mean"
+			//// todo "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "I don't understand which one you mean", "", ""},
-			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
+			//// todo "By "it", I assume you mean the block which is taller than the one I am holding"
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK", "", ""},
-			//{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
+			{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
 		},
 	}
 

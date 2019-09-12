@@ -1,29 +1,44 @@
 [
+    { form: 'which',             pos: which }
+    { form: 'what',              pos: what }
+
+    { form: 'is',                pos: copula }
+
+    { form: 'are',               pos: aux_be }
+    { form: 'does',              pos: aux_do }
+
     { form: 'a',                 pos: a }
     { form: 'an',                pos: a }
     { form: 'the',               pos: the }
-    { form: 'one',               pos: one }
+
     { form: 'red',               pos: red }
     { form: 'big',               pos: big }
+
     { form: 'taller',            pos: taller }
     { form: 'than',              pos: than }
+
+    { form: 'one',               pos: one }
     { form: 'block',             pos: block }
     { form: 'pyramid',           pos: pyramid }
     { form: 'box',               pos: box }
-    { form: 'you',               pos: you }
-    { form: 'it',                pos: it }
-    { form: 'into',              pos: into }
-    { form: 'and',               pos: and }
+
     { form: 'grasp',             pos: grasp }
+    { form: 'contain',           pos: contain }
     { form: 'put',               pos: put }
     { form: 'find',              pos: find }
-    { form: 'is',                pos: copula }
-    { form: 'are',               pos: aux_be }
     { form: 'holding',           pos: holding }
-    { form: 'which',             pos: which }
     { form: 'pick',              pos: pick }
     { form: 'picks',             pos: pick }
     { form: 'picked',            pos: pick }
+
+    { form: 'into',              pos: into }
     { form: 'up',                pos: up }
+
+    { form: 'and',               pos: and }
+
+    { form: 'you',               pos: you }
+    { form: 'it',                pos: it }
+
     { form: '.',                 pos: period }
+    { form: '?',                 pos: question_mark }
 ]

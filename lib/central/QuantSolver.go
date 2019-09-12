@@ -19,7 +19,8 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 	// solve the range
 	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{binding})
 
-	combinedScopeBindings := []mentalese.Bindings{}
+	groupedScopeBindings := []mentalese.Bindings{}
+	scopeBindings := mentalese.Bindings{}
 
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	quantifier := quant.Arguments[mentalese.QuantQuantifierIndex]
@@ -53,10 +54,11 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 	index := 0
 	for _, rangeBinding := range rangeBindings {
 
-		scopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantScopeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{rangeBinding})
+		singleScopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantScopeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{rangeBinding})
 
-		if len(scopeBindings) > 0 {
-			combinedScopeBindings = append(combinedScopeBindings, scopeBindings)
+		if len(singleScopeBindings) > 0 {
+			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)
+			scopeBindings = append(scopeBindings, singleScopeBindings...)
 		}
 
 		index++
@@ -67,15 +69,15 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 
 	if count > 0 {
 		// NUMBER
-		if len(combinedScopeBindings) == count {
-			return rangeBindings
+		if len(groupedScopeBindings) == count {
+			return scopeBindings
 		} else {
 			return mentalese.Bindings{}
 		}
 	} else {
 		// EVERY
-		if len(combinedScopeBindings) == len(rangeBindings) {
-			return rangeBindings
+		if len(groupedScopeBindings) == len(rangeBindings) {
+			return scopeBindings
 		} else {
 			return mentalese.Bindings{}
 		}
@@ -86,11 +88,6 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 func (solver ProblemSolver) rangeIndexClarification(rangeBindings mentalese.Bindings, rangeVariable string) (int, bool) {
 
 	options := common.NewOptions()
-
-	//for i, rangeBinding := range rangeBindings {
-	//	val := rangeBinding[rangeVariable].TermValue
-	//	options.AddOption(strconv.Itoa(i), val)
-	//}
 
 	answer, found := solver.dialogContext.GetAnswerToOpenQuestion()
 

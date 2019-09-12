@@ -2,4 +2,5 @@
     at(E, X, Y, Z) => at(E, X, Y, Z);
     grasping(P1, E1) => grasping(P1, E1);
     dialog_subject(E) => dialog_subject(E);
+    contain(A, B) => contain(A, B);
 ]

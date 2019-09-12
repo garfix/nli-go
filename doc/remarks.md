@@ -8,7 +8,7 @@ quantifier scoper.
     Find a block which is taller than the one you are holding and put it into the box.
     
     [
-        seq(S5, 
+        sequence(S5, 
             P5, [
                 command(P5) 
                 quant(

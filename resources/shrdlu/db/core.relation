@@ -1,6 +1,7 @@
 [
-    question()
+    question(_)
     who(_)
+    what(_)
     which(_)
     how_many(_)
     yes_no()

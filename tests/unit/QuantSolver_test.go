@@ -48,7 +48,7 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 2 children?
 			"quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ], [ have_child(S1, O1) number_of(O1, 2) ])",
 			"{}",
-			"{S1:4}{S1:1}",
+			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
 		},
 		{
 			// does every parent have 3 children?
@@ -60,7 +60,7 @@ func TestQuantSolver(t *testing.T) {
 			// keep extra bindings?
 			"quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ], [have_child(S1, O1) number_of(O1, 2) ])",
 			"{X: 3}",
-			"{S1:4, X:3}{S1:1, X:3}",
+			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
 		},
 
 // do 2 parents each have 2 children?

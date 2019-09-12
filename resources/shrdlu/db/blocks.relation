@@ -8,6 +8,9 @@
     is(`b7`, block)
     is(`b10`, block)
 
+    name(`b4`, 'the blue pyramid')
+    name(`b10`, 'the blue block')
+
     is(red, color)
     is(blue, color)
     is(green, color)

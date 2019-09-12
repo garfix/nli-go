@@ -46,6 +46,4 @@ A nested structure base passes control to the child relations of a relation.
 Currently there are two nested structures:
 
     quant()
-    seq()
-
-This is mainly a system base.
+    sequence()

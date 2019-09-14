@@ -1,3 +1,108 @@
+# 2019-09-13
+
+"What does the box contain?" was relatively easy. Answer: "The blue pyramid and the blue block". I gave the blocks and
+pyramids an explicit name, and that can be considered as cheating ;) but the alternative (dynamically creating a
+description that is both short and informative, is too much of a challenge right now.
+
+Next up: "What is the pyramid supported by?". The catch here is that "the pyramid" refers to the pyramid last mentioned
+(the one in the box), and not the other 2.
+
+Shrdlu uses a number of different forms of anaphora. In fact, it is almost a study in anaphora! So before I start an
+implementation, it may be useful to collect all of them.
+
+Sentence number, names and references (skipping duplicates and strong similars):
+
+- 1 "a big red block": one of the "big" red blocks in the scene
+- 2 "the pyramid": reference unknown
+- 3a "a block which is taller than the one you are holding": a complex reference to an object in the scene
+- 3b "it": refers to the object in 3a
+- 4 "the box": the single box in the scene
+- 5 "the pyramid": one of the two objects mentioned in the conjunction of the previous response
+- 6 "blocks": all blocks in the scene
+- 7a "one of them": refers to "four of them" from the previous response
+- 7b "the one which I told you to pick up": a complex reference to the direct object the last event in which "I tell you
+    to pick up" ("pick up") is true
+- 8 "it": refers to the the object in the previous response 
+- 10 "a pyramid", "a block": a pyramid-concept and a block-concept in the metadata knowledge base
+- 12 "two pyramids": exactly two of the pyramids in the scene
+- 13 "the blue pyramid": a single object in the scene
+- 14a "blocks which are not red" - this is a description of objects that have no direct reference
+- 14b "anything which supports a pyramid" - this is a description of objects that have no direct reference
+- 16 "anything in the box" - any type of object in the scene
+- 17 "both of the red blocks and either a green cube or a pyramid": complex reference to objects in the scene
+- 20 "a small one": "one" refers to the type "block" from previous question; extended with "small" 
+- 21a "the littlest pyramid": from all pyramids in the scene the one with the smallest height 
+- 21b "it": refers to "a small one", the direct object of the previous question
+- 26 "that" refers to the action in the previous response
+- 27 "that cube" refers to the direct object from the previous answer
+- 34 "the blue pyramid on the block" / "the blue pyramid on the block in the box" (ambiguous, but one interpretation has
+    a reference)
+- 37 "a stack which contains two green cubes and a pyramid" the description of a concept
+- 38 "any steeples" object from the scene
+- 41 "superblock" a proper name of an object in the scene
+
+These are all different _types_ of references. Anaphora resolution is tough.
+
+Let's try to group these references:
+
+an object (objects) in the scene (no stored referent)
+
+- 1 "a big red block": one of the "big" red blocks in the scene
+- 3a "a block which is taller than the one you are holding": a complex reference to an object in the scene
+- 4 "the box": the single box in the scene
+- 6 "blocks": all blocks in the scene
+- 12 "two pyramids": exactly two of the pyramids in the scene
+- 13 "the blue pyramid": a single object in the scene
+- 16 "anything in the box" - any type of object in the scene
+- 17 "both of the red blocks and either a green cube or a pyramid": complex reference to objects in the scene
+- 21a "the littlest pyramid": from all pyramids in the scene the one with the smallest height 
+- 34 "the blue pyramid on the block" / "the blue pyramid on the block in the box" (ambiguous, but one interpretation has
+    a reference)
+- 38 "any steeples" object from the scene
+- 41 "superblock" a proper name of an object in the scene
+
+an object from the same sentence
+
+- 3b "it": refers to the object in 3a
+
+an object from the previous question
+
+- 20 "a small one": "one" refers to the type "block" from previous question; extended with "small" 
+- 21b "it": refers to "a small one", the direct object of the previous question
+
+an object from the previous response
+
+- 5 "the pyramid": one of the two objects mentioned in the conjunction of the previous response
+- 7a "one of them": refers to "four of them" from the previous response
+- 8 "it": refers to the the object in the previous response 
+- 27 "that cube" refers to the direct object from the previous response
+
+an event from the previous response
+
+- 26 "that" refers to the action in the previous response
+
+an object from a previous event
+
+- 7b "the one which I told you to pick up": a complex reference to the direct object the last event in which "I tell you
+    to pick up" ("pick up") is true
+    
+a concept, an abstract object
+    
+- 10 "a pyramid", "a block": a pyramid-concept and a block-concept in the metadata knowledge base
+
+a description of an object (no stored referent)
+
+- 14a "blocks which are not red" - this is a description of objects that have no direct reference
+- 14b "anything which supports a pyramid" - this is a description of objects that have no direct reference
+- 37 "a stack which contains two green cubes and a pyramid" the description of a concept
+   
+none found
+
+- 2 "the pyramid": reference unknown
+
+Any noun phrase can become a referent, so all of them need to be stored in the dialog context as subject. Referents can
+be singular or plural. When a reference is a description, the full description needs to match the possible referent.
+
 # 2019-09-11
 
 I finished this major rewrite that removed the generic => ds step, changed the power of grammar and removed the

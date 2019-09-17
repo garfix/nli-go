@@ -113,7 +113,6 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	tokens := []string{}
 	parseTree := earley.ParseTreeNode{}
 	syntacticRelations := mentalese.RelationSet{}
-	dsRelations := mentalese.RelationSet{}
 	namelessDsRelations := mentalese.RelationSet{}
 	dsAnswer := mentalese.RelationSet{}
 	genericAnswer := mentalese.RelationSet{}
@@ -140,14 +139,8 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 		system.log.AddProduction("Relationizer", syntacticRelations.String())
 	}
 
-	//if !system.log.IsDone() {
-	//	dsRelations = system.transformer.Replace(system.generic2ds, syntacticRelations)
-	//	system.log.AddProduction("Generic 2 DS", dsRelations.String())
-	//}
-	dsRelations = syntacticRelations
-
 	if !system.log.IsDone() {
-		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(dsRelations)
+		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(syntacticRelations)
 		system.log.AddProduction("Nameless", namelessDsRelations.String())
 		system.log.AddProduction("Key cabinet", keyCabinet.String())
 	}

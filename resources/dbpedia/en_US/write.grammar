@@ -1,39 +1,23 @@
 [
-    { rule: s(S1) -> np(E) vp(S1),                                                condition: subject(S1, E) }
+    { rule: s(S1) -> boolean(S1),                                                 condition: result(S1) }
+    { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: married_to(E1, E2) }
+    { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2), condition: has_father(E1, E2) }
+    { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2), condition: has_mother(E1, E2) }
+    { rule: s(S1) -> subject(E1) have(S1) number(N) child(E2),                    condition: have_child(E1, E2) count(E2, N) }
+    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) on(D1) date(D1),             condition: birth_date(D1, Y, M, D) }
+    { rule: s(S1) -> subject(E1) die(S1) on(D1) date(D1),                         condition: death_date(D1, Y, M, D) }
 
-    { rule: s(P) -> adverb(M),                                                    condition: modifier(P, M) }
+    { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
+    { rule: subject(E) -> multiple_proper_noun(E) }
 
-    { rule: vp(V1) -> vbar(V1) pp(P1),                                            condition: prepositional_object(V1, P1) }
+    { rule: object(E) -> objective_personal_pronoun(E),                           condition: gender(E, _) }
+    { rule: object(E) -> multiple_proper_noun(E) }
 
-    { rule: vbar(V1) -> aux_verb_be(V1) vgp(V1),                                  condition: tense(V1, past) voice(V1, passive) }
-    { rule: vbar(V1) -> vgp(V1),                                                  condition: tense(V1, past) }
+    { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
+    { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
 
-    { rule: vgp(V1) -> verb(V1) }
-
-    { rule: vp(V) -> verb(V) np(E),                                               condition: object(V, E) }
-    { rule: vp(V) -> aux_verb(V) negative(V) verb(V),                             condition: negation(V) }
-    { rule: vp(V) -> verb(V) }
-
-    { rule: np(E1) -> pronoun(E2) nbar(E1),                                       condition: possession(E2, E1) }
-
-    { rule: np(E) -> proper_noun(E),                                              condition: name(E, Name) }
-    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, female) }
-    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, male) }
-    { rule: np(E) -> pronoun(E),                                                  condition: isa(E, i) }
-
-    { rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: quantification(E1, [], D1, []) }
-
-    { rule: np(C) -> np(P1),                                                      condition: conjunction(C, P1, P1) }
-    { rule: np(C) -> np(P1) comma(C) np(P2),                                      condition: conjunction(C, P1, P2) conjunction(P2, _, _) }
-    { rule: np(C) -> np(P1) conjunction(C) np(P2),                                condition: conjunction(C, P1, P2) }
-
-    { rule: np(E) -> nbar(E) }
-
-    { rule: nbar(E) -> noun(E) }
-
-    { rule: pp(R1) -> preposition(P1) np(E1),                                     condition: relation(R1, P1, E1) }
-
-    { rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1) }
-
-    { rule: noun(Date) -> month_name(Date) number(D) comma(C) number(Y),          condition: day(Date, D) month(Date, M) year(Date, Y) }
+    { rule: date(Date) -> month_name(M) number(D) comma(C) number(Y),          condition: birth_date(D1, D, M, Y) }
+    { rule: date(Date) -> month_name(M) number(D) comma(C) number(Y),          condition: death_date(D1, D, M, Y) }
 ]

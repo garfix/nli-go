@@ -33,11 +33,5 @@
   ],
   "solutions": [
     "blocks.solution"
-  ],
-  "generic2ds": [
-    "generic2ds.transform"
-  ],
-  "ds2generic": [
-    "ds2generic.transform"
   ]
 }

@@ -1,13 +1,17 @@
 [
-    { rule: s(P) -> np(E) vp(P),                                                  condition: subject(P, E) }
-    { rule: s(C) -> np(P1) comma(C) s(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _) }
-    { rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2) }
-    { rule: s(P) -> adverb(M),                                                    condition: modifier(P, M) }
-    { rule: vp(V) -> verb(V) np(H),                                               condition: object(V, H) }
-    { rule: np(F) -> proper_noun(F),                                              condition: name(F, Name) }
-    { rule: np(G) -> pronoun(G),                                                  condition: isa(G, female) }
-    { rule: np(G) -> pronoun(G),                                                  condition: isa(G, male) }
-    { rule: np(E1) -> determiner(D1) nbar(E1),                                    condition: quantification(E1, [], D1, []) }
-    { rule: determiner(E1) -> number(N1),                                         condition: isa(E1, N1) }
-    { rule: nbar(E1) -> noun(E1) }
+    { rule: s(S1) -> boolean(S1),                                                 condition: result(S1) }
+    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: and(S1, C1, C2) root(S1) }
+    { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: married_to(E1, E2) }
+    { rule: s(S1) -> subject(E2) have(S1) number(N) child(E1),                    condition: have_child(E1, E2) count(E1, N) }
+
+    { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
+    { rule: subject(E) -> multiple_proper_noun(E) }
+
+    { rule: object(E) -> objective_personal_pronoun(E),                           condition: gender(E, _) }
+    { rule: object(E) -> multiple_proper_noun(E) }
+
+    { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
+    { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
 ]

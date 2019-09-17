@@ -56,11 +56,5 @@
   ],
   "solutions": [
     "relationships.solution"
-  ],
-  "generic2ds": [
-    "relationships-generic2ds.transform"
-  ],
-  "ds2generic": [
-    "relationships-ds2generic.transform"
   ]
 }

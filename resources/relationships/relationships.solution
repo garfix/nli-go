@@ -40,7 +40,7 @@
         },
         some_results: {
             preparation: name(A, N),
-            answer: name(A, N) make_and(A, R)
+            answer: root(R) name(A, N) make_and(A, R)
         }
     } {
         condition: question(_) yes_no(_) have_child(B, A) every(B),

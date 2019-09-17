@@ -1,13 +1,22 @@
 [
-    { form: 'married',	    pos: verb,		    condition: isa(E, marry) }
-    { form: 'children',	    pos: noun,		    condition: isa(E, child) }
-    { form: 'has',	        pos: verb,		    condition: isa(E, have) }
-    { form: 'yes',	        pos: adverb,	    condition: isa(E, yes) }
-    { form: 'no',	        pos: adverb,	    condition: isa(E, no) }
-    { form: 'he',	        pos: pronoun,	    condition: subject(P, S) isa(S, male) }
-    { form: 'she',	        pos: pronoun,	    condition: subject(P, S) isa(S, female) }
-    { form: 'her',	        pos: pronoun,	    condition: object(S, O) isa(O, female) }
-    { form: '?',	        pos: proper_noun,	condition: name(E, Name) }
-    { form: 'and',	        pos: conjunction,	condition: isa(E, and) }
-    { form: ',',	        pos: comma,         condition: isa(E, and) }
+    { form: 'yes',          pos: boolean,                           condition: result(true) }
+    { form: 'no',           pos: boolean,                           condition: result(false) }
+
+    { form: 'married',	    pos: marry }
+    { form: 'has',	        pos: have }
+
+    { form: 'children',	    pos: child }
+
+    { form: 'him',	        pos: objective_personal_pronoun,	    condition: gender(E, male) }
+    { form: 'her',	        pos: objective_personal_pronoun,	    condition: gender(E, female) }
+
+    { form: 'he',	        pos: subjective_personal_pronoun,	    condition: gender(E, male) }
+    { form: 'she',	        pos: subjective_personal_pronoun,	    condition: gender(E, female) }
+
+    { form: 'and',	        pos: and }
+
+    { form: ',',	        pos: comma,                             condition: and(E) }
+    { form: ',',            pos: comma }
+
+    { form: '?',	        pos: proper_noun,	                    condition: name(E, Name) }
 ]

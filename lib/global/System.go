@@ -113,9 +113,8 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	tokens := []string{}
 	parseTree := earley.ParseTreeNode{}
 	syntacticRelations := mentalese.RelationSet{}
-	namelessDsRelations := mentalese.RelationSet{}
-	dsAnswer := mentalese.RelationSet{}
-	genericAnswer := mentalese.RelationSet{}
+	namelessRelations := mentalese.RelationSet{}
+	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
 
 	var keyCabinet *mentalese.KeyCabinet
@@ -140,23 +139,18 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
-		keyCabinet, namelessDsRelations = system.nameResolver.Resolve(syntacticRelations)
-		system.log.AddProduction("Nameless", namelessDsRelations.String())
+		keyCabinet, namelessRelations = system.nameResolver.Resolve(syntacticRelations)
+		system.log.AddProduction("Nameless", namelessRelations.String())
 		system.log.AddProduction("Key cabinet", keyCabinet.String())
 	}
 
 	if !system.log.IsDone() {
-		dsAnswer = system.answerer.Answer(namelessDsRelations, keyCabinet)
-		system.log.AddProduction("DS Answer", dsAnswer.String())
+		answerRelations = system.answerer.Answer(namelessRelations, keyCabinet)
+		system.log.AddProduction("DS Answer", answerRelations.String())
 	}
 
 	if !system.log.IsDone() {
-		genericAnswer = system.transformer.Replace(system.ds2generic, dsAnswer)
-		system.log.AddProduction("Generic Answer", genericAnswer.String())
-	}
-
-	if !system.log.IsDone() {
-		answerWords = system.generator.Generate(genericAnswer)
+		answerWords = system.generator.Generate(answerRelations)
 		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
 	}
 

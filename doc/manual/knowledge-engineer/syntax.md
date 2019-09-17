@@ -24,7 +24,7 @@ For the semantic language holds:
 
  In any file (except the json files) comments may be placed on any position, like this:
 
-    == much ado about nothing! ==
+    /* much ado about nothing! */
 
 ## Parts-of-speech
 

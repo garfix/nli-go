@@ -1,5 +1,5 @@
 [
-    == words ==
+    /* words */
     { rule: noun(E1) -> block(E1),                                          sense: block(E1) }
     { rule: noun(E1) -> pyramid(E1),                                        sense: pyramid(E1) }
     { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
@@ -21,7 +21,7 @@
     { rule: qp(E1) -> a(E1),                                                sense: number(E1, 1) }
     { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
 
-    == rules ==
+    /* rules */
 
     { rule: adjp(E1) -> adjective(E1) }
 

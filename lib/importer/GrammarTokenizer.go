@@ -53,7 +53,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		id      int
 		pattern string
 	}{
-		{t_comment, "==.*?=="},
+		{t_comment, "/\\*.*?\\*/"},
 		{t_if, "IF"},
 		{t_then, "THEN"},
 		{t_predicate, "[a-z][a-z0-9_]*"},

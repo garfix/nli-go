@@ -1,10 +1,10 @@
 [
-    == commands ==
+    /* commands */
     pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
     find(P1, E1) :- command(P1) set_dialog_subject(E1);
     put_into(Ev, A, B) :- pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
 
-    == inferences ==
+    /* inferences */
     hold(P1, E1, E2) :- grasping(E1, E2);
     contain(P1, E1, E2) :- contain(E1, E2);
     you(E1) :- ;
@@ -14,7 +14,7 @@
     big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
     taller(A, B) :- height(A, Ha) height(B, Hb) greater_than(Ha, Hb);
 
-    == storage ==
+    /* storage */
     make_containing(A, B) :- assert(contain(A, B));
     move_hand(X, Y, Z) :- retract(at(`hand`, _, _, _)) assert(at(`hand`, X, Y, Z));
     grasp(X) :- retract(grasping(_, _)) assert(grasping(`now`, X));

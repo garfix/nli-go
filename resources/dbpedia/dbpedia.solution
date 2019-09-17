@@ -1,5 +1,5 @@
 [
-    == Who married X? ==
+    /* Who married X? */
     {
         condition: question(_) who(A) marry(_, A, B),
         no_results: {
@@ -11,7 +11,7 @@
         }
     }
 
-    == Was X married to Y? ==
+    /* Was X married to Y? */
     {
         condition: question(_) yes_no(_) marry(_, A, B),
         no_results: {
@@ -22,7 +22,7 @@
         }
     }
 
-    == How many children had X? (counting the children) ==
+    /* How many children had X? (counting the children) */
     {
         condition: question(_) how_many(B) have_child(A, B),
         no_results: {
@@ -34,7 +34,7 @@
         }
     }
 
-    == How many? ==
+    /* How many? */
     {
         condition: question(_) how_many(B),
         no_results: {
@@ -46,7 +46,7 @@
         }
     }
 
-    == How many children had X? (using a number-of-children attribute) ==
+    /* How many children had X? (using a number-of-children attribute) */
     {
         condition: question(_) how_many(B) have_child(A, B),
         transformations: [
@@ -61,7 +61,7 @@
         }
     }
 
-    == Who was X's father? ==
+    /* Who was X's father? */
     {
         condition: question(_) who(B) has_father(A, B),
         no_results: {
@@ -73,7 +73,7 @@
         }
     }
 
-    == Who was X's mother? ==
+    /* Who was X's mother? */
     {
         condition: question(_) who(B) has_mother(A, B),
         no_results: {
@@ -85,7 +85,7 @@
         }
     }
 
-    == When was X born? ==
+    /* When was X born? */
     {
         condition: question(P1) when(P1) bear(P1, A, B),
         transformations: [
@@ -100,7 +100,7 @@
         }
     }
 
-    == When did X die? ==
+    /* When did X die? */
     {
         condition: question(P1) when(P1) die(P1, A),
         transformations: [
@@ -115,7 +115,7 @@
         }
     }
 
-    == Who is X? ==
+    /* Who is X? */
     {
         condition: question(_) who(B),
         no_results: {
@@ -127,7 +127,7 @@
         }
     }
 
-    == What is the capital of X? ==
+    /* What is the capital of X? */
     {
         condition: question(_) what(B),
         no_results: {

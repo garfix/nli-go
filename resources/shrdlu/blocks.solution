@@ -1,5 +1,5 @@
 [
-    == Any command ==
+    /* Any command */
     {
         condition: command(_),
         some_results: {
@@ -10,7 +10,7 @@
         }
     }
 
-    == What? ==
+    /* What? */
     {
         condition: question(_) what(B) contain(_, A, B),
         no_results: {

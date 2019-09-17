@@ -8,7 +8,7 @@ Each knowledge base provides bindings for the active variables of the query. Dif
 
 The fact base can be simply a file of relations, a MySQL database, or a SPARQL datastore.
 
-It has a number of "mappings" that map the domain specific input to fact base specific output. It maps one or more relations from the input to one or more relations from the output. The bindings come from the fact base.
+It has a number of "mappings" that map the input to fact base specific output. It maps one or more relations from the input to one or more relations from the output. The bindings come from the fact base.
 
 ## Function base
 

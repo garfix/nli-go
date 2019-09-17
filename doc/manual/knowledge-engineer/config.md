@@ -193,14 +193,6 @@ An array of paths to solutions.
  
 A solution is the way the system uses to link a problem to a solution.
  
-### generic2ds
- 
-An array of paths to generic-to-domain-specific transformations.
- 
-### ds2generic
- 
-An array of paths to domain-specific-to-generic transformations.
-
 ### predicates
 
 The path of a predicates json file, which looks like this:

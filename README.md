@@ -37,5 +37,5 @@ Some of the techniques used:
 Documentation is located in the docs directory, here you can find:
 
 * [My personal log](doc/remarks.md)
-* [The processing of a request](doc/manual/processing.md)
-* [Build the go application](doc/manual/use.md)
+* [The processing of a request](doc/manual/system-developer/processing.md)
+

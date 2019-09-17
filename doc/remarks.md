@@ -1,3 +1,16 @@
+# 2019-09-17
+
+I made a hello-world example (as a test).
+
+# 2019-09-14
+
+So in SHRDLU objects need to be used later for anaphora
+
+- when a question is processed (after relationization, before answering, so that within-sentence references can be
+    processed)
+- when a response is processed
+
+
 # 2019-09-13
 
 "What does the box contain?" was relatively easy. Answer: "The blue pyramid and the blue block". I gave the blocks and
@@ -81,7 +94,7 @@ an event from the previous response
 
 - 26 "that" refers to the action in the previous response
 
-an object from a previous event
+an object from an earlier question
 
 - 7b "the one which I told you to pick up": a complex reference to the direct object the last event in which "I tell you
     to pick up" ("pick up") is true

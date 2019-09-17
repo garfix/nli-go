@@ -117,6 +117,30 @@
 
     /* Who is X? */
     {
+        condition: question(_) who(B) has_husband(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: name(B, N, canonical_name),
+            answer: name(B, N) make_and(B, R) root(R)
+        }
+    }
+
+    /* Who is X? */
+    {
+        condition: question(_) who(B) has_wife(A, B),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: name(B, N, canonical_name),
+            answer: name(B, N) make_and(B, R) root(R)
+        }
+    }
+
+    /* Who is X? */
+    {
         condition: question(_) who(B),
         no_results: {
             answer: dont_know()

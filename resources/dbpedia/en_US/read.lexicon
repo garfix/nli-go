@@ -32,6 +32,8 @@
     { form: 'mother', pos: mother }
     { form: 'daughter', pos: daughter }
     { form: 'son', pos: son }
+    { form: 'husband', pos: husband }
+    { form: 'wife', pos: wife }
 
     { form: /^[0-9]+/,            pos: number }
 

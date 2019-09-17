@@ -2,6 +2,11 @@
     marry(_, A, B) => spouse(A, B);
     marry(_, A, B) => spouse(B, A);
 
+    has_husband(A, B) => spouse(A, B);
+    has_husband(A, B) => spouse(B, A);
+    has_wife(A, B) => spouse(A, B);
+    has_wife(A, B) => spouse(B, A);
+
     name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => birth_name(A, N);
     name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => birth_name(A, N);
     name(A, N, full_name) => birth_name(A, N);

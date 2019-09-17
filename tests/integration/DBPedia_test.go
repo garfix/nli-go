@@ -40,6 +40,8 @@ func TestDBPedia(t *testing.T) {
 		},
 		{
 			{"How many children has Madonna?", "She has 4 children", "", ""},
+			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie", "", ""},
+			{"Who is Sean Penn's wife?", "Robin Wright and Madonna", "", ""},
 		},
 		{
 			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; description: English poet and a leading figure in the Romantic movement [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; description: Major League Baseball umpire", "", "session-1.json"},

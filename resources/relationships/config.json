@@ -1,15 +1,15 @@
 {
   "lexicons": [
-    "english.lexicon"
+    "en_US/read.lexicon"
   ],
   "grammars": [
-    "english.grammar"
+    "en_US/read.grammar"
   ],
   "generationlexicons": [
-    "relationships-gen.lexicon"
+    "en_US/write.lexicon"
   ],
   "generationgrammars": [
-    "relationships-gen.grammar"
+    "en_US/write.grammar"
   ],
   "factbases": {
     "relation": [
@@ -20,9 +20,9 @@
       },
       {
         "name": "relations",
-        "facts": "relationships.relation",
-        "readMap": "relationships-db.map",
-        "stats": "relationships-db-stats.json",
+        "facts": "db/relationships.relation",
+        "readMap": "db/relationships-db.map",
+        "stats": "db/relationships-db-stats.json",
         "entities": "entities.json"
       }
     ],
@@ -47,7 +47,7 @@
             "columns": [ { "name": "person_id" }, { "name": "name" } ]
           }
         ],
-        "map": "relationships-db.map"
+        "map": "db/relationships-db.map"
       }
     ]
   },

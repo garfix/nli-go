@@ -26,6 +26,12 @@ func TestDBPedia(t *testing.T) {
 		outSessionName string
 	}{
 		{
+			{"How many children has Madonna?", "She has 4 children", "", ""},
+			{"When is Madonna's birthday?", "August 16, 1958", "", ""},
+			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie", "", ""},
+			{"Who is Sean Penn's wife?", "Robin Wright and Madonna", "", ""},
+		},
+		{
 			{"Who married Anne Isabella Milbanke?", "Lord Byron married her", "", ""},
 			{"Who was Ada Lovelace's father?", "Lord Byron was her father", "", ""},
 			{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother", "", ""},
@@ -37,11 +43,6 @@ func TestDBPedia(t *testing.T) {
 			{"dbpedia/http://dbpedia.org/resource/Michael_Jackson", "Lisa Marie Presley and Debbie Rowe married him", "session-3.json", "session-4.json"},
 			{"Was Michael Jackson married to Elvis Presley's daughter?", "Yes", "session-4.json", ""},
 			{"Was Michael Jackson married to the daughter of Elvis Presley?", "Yes", "session-4.json", ""},
-		},
-		{
-			{"How many children has Madonna?", "She has 4 children", "", ""},
-			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie", "", ""},
-			{"Who is Sean Penn's wife?", "Robin Wright and Madonna", "", ""},
 		},
 		{
 			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; description: English poet and a leading figure in the Romantic movement [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; description: Major League Baseball umpire", "", "session-1.json"},

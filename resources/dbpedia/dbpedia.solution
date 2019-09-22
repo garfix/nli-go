@@ -115,6 +115,18 @@
         }
     }
 
+    /* When? */
+    {
+        condition: question(Ymd) when(Ymd),
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: format_date(Ymd, Formatted),
+            answer: canned(Formatted)
+        }
+    }
+
     /* Who is X? */
     {
         condition: question(_) who(B) has_husband(A, B),
@@ -123,7 +135,7 @@
         },
         some_results: {
             preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, R) root(R)
+            answer: name(B, N) make_and(B, 1) root(1)
         }
     }
 
@@ -135,7 +147,7 @@
         },
         some_results: {
             preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, R) root(R)
+            answer: name(B, N) make_and(B, 1) root(1)
         }
     }
 

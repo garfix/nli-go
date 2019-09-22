@@ -17,7 +17,7 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split", "greater_than", "less_than", "add", "number"}
+	predicates := []string{"join", "split", "concat", "greater_than", "less_than", "add", "number"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
@@ -61,6 +61,7 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		}
 	}
 
+	// join(result, separator, arg1, arg2, ...)
 	if input.Predicate == "join" {
 
 		sep := ""
@@ -83,21 +84,32 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 
 	}
 
-	//if input.Predicate == "number" {
-	//
-	//	result := mentalese.Term{}
-	//
-	//	number := input.Arguments[1]
-	//	result.TermType = mentalese.TermNumber
-	//	result.TermValue = number.TermValue
-	//
-	//	newBinding = binding.Copy()
-	//	newBinding[input.Arguments[0].TermValue] = result
-	//
-	//	found = true
-	//
-	//}
+	// concat(result, arg1, arg2, ...)
+	if input.Predicate == "concat" {
 
+		result := mentalese.Term{}
+		result.TermType = mentalese.TermStringConstant
+
+		for _, argument := range input.Arguments[1:] {
+			if (argument.IsVariable()) {
+				variable := argument.TermValue
+				variableValue, variableFound := binding[variable]
+				if variableFound {
+					result.TermValue += variableValue.TermValue
+				}
+			} else {
+				result.TermValue += argument.TermValue
+			}
+		}
+
+		newBinding = binding.Copy()
+		newBinding[input.Arguments[0].TermValue] = result
+
+		found = true
+
+	}
+
+	// greater_than(arg1, arg2)
 	if input.Predicate == "greater_than" {
 
 		arg1 := input.Arguments[0]
@@ -123,7 +135,7 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		}
 	}
 
-
+	// less_than(arg1, arg2)
 	if input.Predicate == "less_than" {
 
 		arg1 := input.Arguments[0]
@@ -149,6 +161,7 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		}
 	}
 
+	// add(arg1, arg2, sum)
 	if input.Predicate == "add" {
 
 		arg1 := input.Arguments[0]

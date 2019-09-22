@@ -23,7 +23,11 @@ func TestMatchTwoRelations(t *testing.T) {
 		{"parent('Luke', 'George')", "parent(X, Y)", "{}", "{}", true},
 		{"parent('Luke', Y)", "parent('Luke', 'George')", "{}", "{Y: 'George'}", true},
 		{"parent('Luke', 'Richard')", "parent('Luke', 'George')", "{}", "{}", false},
+		{"same(X, Y)", "same(A, B)", "{X:C, Y:C}", "{X:C, Y:C}", true},
+		{"same(X, Y)", "same(A, A)", "{X:A, Y:A}", "{X:A, Y:A}", true},
+		{"same(X, Y)", "same(A, A)", "{X:C, Y:C}", "{X:C, Y:C}", true},
 		{"parent(X, Y)", "parent(A, B)", "{}", "{X:A, Y:B}", true},
+		{"parent(X, Y)", "parent(A, B)", "{X: 'Luke'}", "{X:'Luke', Y:B}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Luke'}", "{X: 'Luke', Y: 'George'}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Vincent'}", "{X: 'Vincent'}", false},
 		{"quantification(X, [], Y, [ isa(Y, every) ])", "quantification(A, [], B, [ isa(B, every) ])", "{}", "{X: A, Y: B}", true},
@@ -53,7 +57,13 @@ func TestMatchRelationToSet(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
-	haystack := parser.CreateRelationSet("[gender('Luke', male) gender('George', male) parent('Luke', 'George') parent('Carry', 'Steven') gender('Carry', female)]")
+	haystack := parser.CreateRelationSet(`[
+		gender('Luke', male) 
+		gender('George', male) 
+		parent('Luke', 'George') 
+		parent('Carry', 'Steven') 
+		gender('Carry', female)
+	]`)
 
 	var tests = []struct {
 		needle       string

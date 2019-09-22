@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -24,9 +25,14 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 		return []string{ sentenceSense[0].Arguments[0].TermValue }
 	}
 
+	// convert variables to constants
+	boundSense := sentenceSense.ConvertVariablesToConstants()
+
+	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
+
 	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.TermVariable, "S1", mentalese.RelationSet{}}}}
 
-	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, sentenceSense)
+	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, boundSense)
 }
 
 // Creates an array of words for a syntax tree node

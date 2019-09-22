@@ -15,6 +15,7 @@
 
     { form: 'is', pos: copula }
     { form: 'was', pos: copula }
+    { form: 'is', pos: aux_be }
     { form: 'was', pos: aux_be }
     { form: 'did', pos: aux_do }
     { form: 'has', pos: have }
@@ -22,12 +23,11 @@
     { form: 'had', pos: have }
     { form: 'the', pos: the }
 
-    { form: '\'s', pos: possessive_marker }
-
     { form: 'children', pos: child }
     { form: 'capital', pos: capital }
     { form: 'population', pos: population }
     { form: 'countries', pos: country }
+    { form: 'birthday', pos: birthday }
     { form: 'father', pos: father }
     { form: 'mother', pos: mother }
     { form: 'daughter', pos: daughter }

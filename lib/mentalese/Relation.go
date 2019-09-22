@@ -1,6 +1,9 @@
 package mentalese
 
-import "nli-go/lib/common"
+import (
+	"nli-go/lib/common"
+	"strings"
+)
 
 type Relation struct {
 	Predicate string
@@ -125,6 +128,26 @@ func (relation Relation) RelationUsesVariable(variable string) bool {
 	}
 
 	return found
+}
+
+func (relation Relation) ConvertVariablesToConstants() Relation {
+
+	newRelation := Relation{ Predicate: relation.Predicate }
+
+	for _, argument := range relation.Arguments {
+
+		newArgument := argument.Copy()
+
+		if argument.IsVariable() {
+			newArgument = NewPredicateAtom(strings.ToLower(argument.TermValue))
+		} else if argument.IsRelationSet() {
+			newArgument = NewRelationSet(argument.TermValueRelationSet.ConvertVariablesToConstants())
+		}
+
+		newRelation.Arguments = append(newRelation.Arguments, newArgument)
+	}
+
+	return newRelation
 }
 
 func (relation Relation) String() string {

@@ -78,7 +78,7 @@ func TestOptimizer(t *testing.T) {
 		{"[married_to(A, B) queen(A) name(A, B)]", "[[[queen(A)]@memory-2, [married_to(A, B)]@memory-1, [name(A, B)]@memory-1]\n [[queen(A)]@memory-2, [married_to(A, B)]@memory-1, [name(A, B)]@memory-2]]", "[]"},
 
 		// match 2 predicates
-		{"[first_name(C, 'Elvis') first_name(A, 'Lord') last_name(A, 'Byron')]", "[]", "[first_name(C, 'Elvis')]"},
+		{"[first_name(C, 'Elvis') first_name(A, 'Lord') last_name(A, 'Byron')]", "[]", "[]"},
 
 		// 2 predicates that are more bound should precede 2 predicates that are less bound
 		{"[first_name(A, 'Lord') last_name(A, 'Byron') first_name(11, 'Lord') last_name(11, 'Byron')]", "[[[first_name(11, 'Lord') last_name(11, 'Byron')]@memory-1, [first_name(A, 'Lord') last_name(A, 'Byron')]@memory-1]]", "[]"},

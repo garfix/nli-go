@@ -79,7 +79,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabin
 		keyCabinet = &mentalese.KeyCabinet{}
 	}
 
-	solver.SolveDepth++;
+	solver.SolveDepth++
 
 	head := strings.Repeat("  ", solver.SolveDepth)
 
@@ -237,7 +237,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	} else if isRuleBase {
 
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(boundRelations[0], keyCabinet, binding, ruleBase)...)
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(relationGroup.Relations[0], keyCabinet, binding, ruleBase)...)
 
 	} else if isNestedStructureBase {
 
@@ -381,31 +381,18 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 
-	for _, val := range binding {
-		if val.TermType == mentalese.TermVariable {
-			//panic("Variable bound to variable")
-		}
-	}
-
 	inputVariables := goalRelation.GetVariableNames()
 
 	goalBindings := mentalese.Bindings{}
 
 	// match rules from the rule base to the goalRelation
-	boundRelation := goalRelation.BindSingleRelationSingleBinding(binding)
-	sourceSubgoalSets, sourceBindings := ruleBase.Bind(boundRelation)
+	sourceSubgoalSets, _ := ruleBase.Bind(goalRelation, binding)
 
-	for i, sourceSubgoalSet := range sourceSubgoalSets {
-
-		// sourceBinding: from subgoal variable to goal argument
-		sourceBinding := sourceBindings[i]
-
-		// rewrite the variables of subgoal set to those of goalRelation
-		importedSubgoalSet := sourceSubgoalSet.ImportBinding(sourceBinding)
+	for _, sourceSubgoalSet := range sourceSubgoalSets {
 
 		subgoalResultBindings := mentalese.Bindings{binding}
 
-		for _, subGoal := range importedSubgoalSet {
+		for _, subGoal := range sourceSubgoalSet {
 
 			subgoalResultBindings = solver.SolveRelationSet([]mentalese.Relation{subGoal}, keyCabinet, subgoalResultBindings)
 		}

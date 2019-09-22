@@ -30,13 +30,11 @@ func TestRelationTransformer(t *testing.T) {
 	}{
 		{
 			`[
-				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => task(A, B) subject(Y);
-				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => done();
+				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => task(A, B);
 				predicate(A, X) predicate(X, A) => magic(A, X);
 				IF object(A, O) THEN predicate(A, X) => label(A, O);
-				IF object(A, A) THEN predicate(A, X) => signal(A, X);
 			]`,
-			"[instance_of(E2, name) instance_of(E1, customer) task(S1, all) subject(E1) done() label(S1, E1)]",
+			"[instance_of(E2, name) instance_of(E1, customer) task(S1, name) task(S1, customer) task(S1, all) label(S1, E1)]",
 		},
 		{
 			`[

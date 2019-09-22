@@ -285,3 +285,13 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 
 	return resultSet
 }
+
+func (set RelationSet) ConvertVariablesToConstants() RelationSet {
+	newSet := RelationSet{}
+
+	for _, relation := range set {
+		newSet = append(newSet, relation.ConvertVariablesToConstants())
+	}
+
+	return newSet
+}

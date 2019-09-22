@@ -164,7 +164,7 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 
 
 // Extends the Binding with new variable bindings for the variables of subjectArgument
-func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument Term, binding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument Term, subjectBinding Binding) (Binding, bool) {
 
 	success := false
 
@@ -174,32 +174,36 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 
 		// A, _
 		// _, A
-		return binding, true
+		return subjectBinding, true
 
 	} else if subjectArgument.IsVariable() {
 
-		// subject is variable
-
-		value, match := binding[subjectArgument.String()]
+		value, match := subjectBinding[subjectArgument.String()]
 		if match {
 
-			// A, 13 {A:13}
-			if patternArgument.Equals(value) {
+			if patternArgument.IsVariable() {
+				// A, B {A:C}
+				// A, B {A:13}
 				success = true
+			} else {
+				// A, 13 {A:B}
+				// A, 13 {A:15}
+				success = patternArgument.Equals(value)
 			}
-			return binding, success
+
+			return subjectBinding, success
 
 		} else {
 
 			// A, 13, {B:7} => {B:7, A:13}
-			newBinding := binding.Copy()
+			newBinding := subjectBinding.Copy()
 			newBinding[subjectArgument.String()] = patternArgument
 			return newBinding, true
 		}
 
 	} else if subjectArgument.IsRelationSet() {
 
-		newBinding := binding.Copy()
+		newBinding := subjectBinding.Copy()
 
 		if patternArgument.IsVariable() {
 			// [ isa(E, very) ], V
@@ -231,6 +235,6 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 			success = true
 		}
 
-		return binding, success
+		return subjectBinding, success
 	}
 }

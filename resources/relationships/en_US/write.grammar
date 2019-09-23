@@ -10,6 +10,8 @@
     { rule: object(E) -> objective_personal_pronoun(E),                           condition: gender(E, _) }
     { rule: object(E) -> multiple_proper_noun(E) }
 
+    { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
+
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
     { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }

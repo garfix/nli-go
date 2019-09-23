@@ -17,6 +17,4 @@
 
     { form: ',',	        pos: comma,                             condition: and(E) }
     { form: ',',            pos: comma }
-
-    { form: '?',	        pos: proper_noun,	                    condition: name(E, Name) }
 ]

@@ -1,4 +1,5 @@
 [
     { rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: and(C, P1, P2) }
     { rule: np(F) -> proper_noun(F),                                              condition: name(F, Name) }
+    { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
 ]

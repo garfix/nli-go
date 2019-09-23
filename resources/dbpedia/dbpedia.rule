@@ -1,19 +1,2 @@
 [
-    format_date(Ymd, Formatted) :-
-        split(Ymd, '-', Year, Month, Day)
-        format_month(Month, Formatted_month)
-        concat(Formatted, Formatted_month, ' ', Day, ', ', Year);
-
-    format_month('01', A) :- concat(A, 'January');
-    format_month('02', A) :- concat(A, 'February');
-    format_month('03', A) :- concat(A, 'March');
-    format_month('04', A) :- concat(A, 'April');
-    format_month('05', A) :- concat(A, 'May');
-    format_month('06', A) :- concat(A, 'June');
-    format_month('07', A) :- concat(A, 'july');
-    format_month('08', A) :- concat(A, 'August');
-    format_month('09', A) :- concat(A, 'September');
-    format_month('10', A) :- concat(A, 'October');
-    format_month('11', A) :- concat(A, 'November');
-    format_month('12', A) :- concat(A, 'December');
 ]

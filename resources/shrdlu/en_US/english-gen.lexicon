@@ -1,4 +1,3 @@
 [
     { form: 'and',	        pos: conjunction }
-    { form: '?',	        pos: proper_noun,	condition: name(E, Name) }
 ]

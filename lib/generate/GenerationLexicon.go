@@ -46,6 +46,11 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 		return resultLexeme, true
 	}
 
+	if consequent.Predicate == "text" {
+		resultLexeme.Form = consequent.Arguments[0].TermValue
+		return resultLexeme, true
+	}
+
 	partOfSpeech := consequent.Predicate
 	applicableLexemeFound := false
 
@@ -56,14 +61,10 @@ func (lexicon *GenerationLexicon) GetLexemeForGeneration(consequent mentalese.Re
 
 		for _, lexeme := range lexemes {
 
-			bindings, match := lexicon.matcher.MatchSequenceToSet(lexeme.Condition, sentenseSense, binding)
+			_, match := lexicon.matcher.MatchSequenceToSet(lexeme.Condition, sentenseSense, binding)
 
 			if match {
 				resultLexeme = lexeme
-
-				if partOfSpeech == "proper_noun" || partOfSpeech == "canned" {
-					resultLexeme.Form = bindings[0]["Name"].TermValue
-				}
 
 				applicableLexemeFound = true
 

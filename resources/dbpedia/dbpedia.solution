@@ -96,7 +96,7 @@
         },
         some_results: {
             preparation: gender(B, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: gender(B, Gender) birth_date(B, Day, Month, Year)
+            answer: gender(B, Gender) birth_date(B, D) date(D, Day, Month, Year)
         }
     }
 
@@ -111,7 +111,7 @@
         },
         some_results: {
             preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: gender(A, Gender) death_date(A, Day, Month, Year)
+            answer: gender(A, Gender) death_date(A, D) date(D, Day, Month, Year)
         }
     }
 
@@ -122,8 +122,8 @@
             answer: dont_know()
         },
         some_results: {
-            preparation: format_date(Ymd, Formatted),
-            answer: canned(Formatted)
+            preparation: split(Ymd, '-', Year, Month, Day),
+            answer: date(D, Day, Month, Year) root(D)
         }
     }
 

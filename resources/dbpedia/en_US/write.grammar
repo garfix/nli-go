@@ -4,9 +4,10 @@
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2), condition: has_father(E1, E2) }
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2), condition: has_mother(E1, E2) }
     { rule: s(S1) -> subject(E1) have(S1) number(N) child(E2),                    condition: have_child(E1, E2) count(E2, N) }
-    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) on(D1) date(D1),             condition: birth_date(D1, Y, M, D) }
-    { rule: s(S1) -> subject(E1) die(S1) on(D1) date(D1),                         condition: death_date(D1, Y, M, D) }
-    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: and(S1, C1, C2) root(S1) }
+    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) on(D1) date_formatted(D2),   condition: birth_date(D1, D2) }
+    { rule: s(S1) -> subject(E1) die(S1) on(D1) date_formatted(D2),               condition: death_date(D1, D2) }
+    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
+    { rule: s(S1) -> date_formatted(D2),                                          condition: root(D1) date(D1, Y, M, D) }
 
     { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
     { rule: subject(E) -> multiple_proper_noun(E) }
@@ -14,11 +15,12 @@
     { rule: object(E) -> objective_personal_pronoun(E),                           condition: gender(E, _) }
     { rule: object(E) -> multiple_proper_noun(E) }
 
+    { rule: date_formatted(Date) -> month_name(M) number(D) comma(C) number(Y),   condition: date(D1, D, M, Y) }
+
+    { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
+
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
     { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
     { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
-
-    { rule: date(Date) -> month_name(M) number(D) comma(C) number(Y),          condition: birth_date(D1, D, M, Y) }
-    { rule: date(Date) -> month_name(M) number(D) comma(C) number(Y),          condition: death_date(D1, D, M, Y) }
 ]

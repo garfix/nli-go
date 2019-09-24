@@ -1,15 +1,15 @@
 {
   "lexicons": [
-    "en_US/english.lexicon"
+    "en_US/read.lexicon"
   ],
   "grammars": [
-    "en_US/english.grammar"
+    "en_US/read.grammar"
   ],
   "generationlexicons": [
-    "en_US/english-gen.lexicon"
+    "en_US/write.lexicon"
   ],
   "generationgrammars": [
-    "en_US/english-gen.grammar"
+    "en_US/write.grammar"
   ],
   "factbases": {
     "relation": [

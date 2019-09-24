@@ -51,4 +51,3 @@ Add the file to the config file.
         "predicates.json"
       ]
     }
-

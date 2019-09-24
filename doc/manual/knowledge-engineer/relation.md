@@ -1,17 +1,19 @@
 # Relation
 
 The relation construct is very versatile. It has a remarkable set of uses. And it is such a simple form: it has a name
-and some arguments. The arguments can be variables, values or even sets of relations.
+and some arguments. 
 
-    relation_name()
     relation_name(argument1, argument2)
+
+The arguments can be variables, values or even sets of relations.
+
     relation_name(argument1, [relation_name() relation_name()])  
     
 The variables in the relation can be bound by both a binding
 
     { A: 11, B: `b6`, C: 'Byron' }
     
-and a key cabinet. The key cabinet contains per database a different value for an entity variable.
+and a key cabinet. The key cabinet contains per database a different value for each entity variable.
 
     A { database-1: `18`, database-2: `r22` }; B { database-1: `19`, database-2: `r23` } 
 

@@ -2,8 +2,8 @@
 
 The goal of this engine is to provide a means to interact with any database through natural language. Key goals are:
 
+* the system should able to handle complex natural language constructs. 
 * the system should be easy to understand. While "easy" may have to be stretched for this domain, any part of it should be extendable with only a few minutes of explanation.
-* the system should able to handle complex natural language constructs.
 * it should support multiple domains in a single session. The system should able to reason about people and factory parts, if both domains are modelled.
 * it should be able to handle multiple languages. It is okay if a change of session is required to switch languages.
 

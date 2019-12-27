@@ -4,6 +4,8 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
+	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
 	"strings"
 	"testing"
 )
@@ -25,7 +27,9 @@ func TestGenerator(t *testing.T) {
 		{ form: 'kissed',     pos: verb,		    condition: predication(E, kiss) }
 		{ form: 'married',	pos: verb,		    condition: predication(E, marry) }
 	]`, log)
-	generator := generate.NewGenerator(grammar, lexicon, log)
+	matcher := mentalese.NewRelationMatcher(log)
+	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function"))
+	generator := generate.NewGenerator(grammar, lexicon, log, matcher)
 
 	tests := []struct {
 		input string

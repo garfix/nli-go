@@ -56,6 +56,8 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 		var newNodes []solutionNode
 
+		nodeMatches := false
+
 		for _, node := range nodes {
 
 			// functions like join(N, ' ', F, I, L)
@@ -71,6 +73,14 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 				newIndexes := append(node.Indexes, someIndex)
 				newNodes = append(newNodes, solutionNode{someBinding, newIndexes})
 			}
+
+			if functionFound || len(someBindings) > 0 {
+				nodeMatches = true
+			}
+		}
+
+		if !nodeMatches {
+			match = false
 		}
 
 		nodes = newNodes
@@ -82,7 +92,6 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 	}
 
 	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
-	match = len(needleSequence) == 0 || len(matchedIndexes) > 0
 
 	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, matchedIndexes, match)
 

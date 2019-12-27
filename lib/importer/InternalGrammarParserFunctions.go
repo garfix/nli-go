@@ -273,7 +273,7 @@ func (parser *InternalGrammarParser) parseLexicon(tokens []Token, startIndex int
 
 func (parser *InternalGrammarParser) parseGenerationLexicon(tokens []Token, startIndex int, log *common.SystemLog) (*generate.GenerationLexicon, int, bool) {
 
-	lexicon := generate.NewGenerationLexicon(log)
+	lexicon := generate.NewGenerationLexicon(log, mentalese.NewRelationMatcher(log))
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)

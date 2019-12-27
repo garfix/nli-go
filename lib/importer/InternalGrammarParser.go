@@ -68,7 +68,7 @@ func (parser *InternalGrammarParser) CreateLexicon(source string) *parse.Lexicon
 // Parses source into a lexicon
 func (parser *InternalGrammarParser) CreateGenerationLexicon(source string, log *common.SystemLog) *generate.GenerationLexicon {
 
-	lexicon := generate.NewGenerationLexicon(log)
+	lexicon := generate.NewGenerationLexicon(log, mentalese.NewRelationMatcher(log))
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0

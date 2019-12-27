@@ -12,11 +12,11 @@ type GenerationLexicon struct {
 	log      *common.SystemLog
 }
 
-func NewGenerationLexicon(log *common.SystemLog) *GenerationLexicon {
+func NewGenerationLexicon(log *common.SystemLog, matcher *mentalese.RelationMatcher) *GenerationLexicon {
 	return &GenerationLexicon{
 		allItems: []GenerationLexeme{},
 		lexemes:  map[string][]GenerationLexeme{},
-		matcher:  mentalese.NewRelationMatcher(log),
+		matcher:  matcher,
 		log:      log,
 	}
 }

@@ -127,7 +127,7 @@
         }
     }
 
-    /* Who is X? */
+    /* Who is the husband of X? */
     {
         condition: question(_) who(B) has_husband(A, B),
         no_results: {
@@ -135,11 +135,11 @@
         },
         some_results: {
             preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, 1) root(1)
+            answer: name(B, N) make_and(B, R) root(R)
         }
     }
 
-    /* Who is X? */
+    /* Who is the wife of X? */
     {
         condition: question(_) who(B) has_wife(A, B),
         no_results: {
@@ -147,7 +147,7 @@
         },
         some_results: {
             preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, 1) root(1)
+            answer: name(B, N) make_and(B, R) root(R)
         }
     }
 
@@ -175,4 +175,18 @@
         }
     }
 
+    /* How old is X? */
+    {
+        condition: question(_) how_old(E1),
+        transformations: [
+            how_old(E1) => birth_date(E1, Ymd) date_today(Today) date_subtract_years(Today, Ymd, Y);
+        ],
+        no_results: {
+            answer: dont_know()
+        },
+        some_results: {
+            preparation: gender(E1, Gender) split(Ymd, '-', Year, Month, Day),
+            answer: report_age(E1, Y, Ymd) gender(E1, Gender) date(Ymd, Day, Month, Year)
+        }
+    }
 ]

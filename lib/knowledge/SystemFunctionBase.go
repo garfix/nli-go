@@ -4,6 +4,7 @@ import (
 	"nli-go/lib/mentalese"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type SystemFunctionBase struct {
@@ -17,7 +18,7 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split", "concat", "greater_than", "less_than", "add", "number"}
+	predicates := []string{"join", "split", "concat", "greater_than", "less_than", "equals", "add", "number", "date_today", "date_subtract_years"}
 
 	for _, setRelation := range set {
 		for _, predicate:= range predicates {
@@ -161,6 +162,32 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		}
 	}
 
+	// equals(arg1, arg2)
+	if input.Predicate == "equals" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		if int1 == int2 {
+			found = true
+		} else {
+			found = false
+		}
+	}
+
 	// add(arg1, arg2, sum)
 	if input.Predicate == "add" {
 
@@ -183,6 +210,37 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		sum := int1 + int2
 
 		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(sum))
+
+		found = true
+	}
+
+	if input.Predicate == "date_today" {
+
+		now := time.Now()
+		formatted := now.Format("2006-01-02")
+
+		newBinding[input.Arguments[0].TermValue] = mentalese.NewString(formatted)
+
+		found = true
+	}
+
+	if input.Predicate == "date_subtract_years" {
+
+		value1 := input.Arguments[0].Resolve(binding)
+		value2 := input.Arguments[1].Resolve(binding)
+
+		date1, err := time.Parse("2006-01-02", value1.TermValue)
+		date2, err := time.Parse("2006-01-02", value2.TermValue)
+		years := 0.0
+
+		if err == nil {
+			duration := date1.Sub(date2)
+			hours := duration.Hours()
+			totalDays := hours / 24
+			years = totalDays / 365
+		}
+
+		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(int(years)))
 
 		found = true
 	}

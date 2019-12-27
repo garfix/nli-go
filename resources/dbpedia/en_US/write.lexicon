@@ -8,10 +8,14 @@
     { form: 'died',	        pos: die }
 
     { form: 'was',	        pos: aux_be }
+    { form: 'is',	        pos: is }
 
     { form: 'father',	    pos: father }
     { form: 'mother',	    pos: mother }
     { form: 'children',	    pos: child }
+    { form: 'year', 	    pos: year,                              condition: equals(E, 1) }
+    { form: 'years', 	    pos: year }
+    { form: 'old', 	        pos: old }
 
     { form: 'on',	        pos: on }
 
@@ -26,6 +30,8 @@
 
     { form: 'and',	        pos: and }
     { form: ',',            pos: comma }
+    { form: '(',            pos: paren_open }
+    { form: ')',            pos: paren_close }
 
     { form: 'January',      pos: month_name,         condition: date(_, _, '01', _) }
     { form: 'February',     pos: month_name,         condition: date(_, _, '02', _) }

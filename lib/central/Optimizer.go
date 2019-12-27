@@ -4,7 +4,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
-	"sort"
 )
 
 // The optimizer reorders the relations in a set to minimize the number of tuples retrieved from the fact bases
@@ -46,7 +45,7 @@ func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowl
 		if relationCount == len(set) {
 
 			// sort relation groups by cost
-			sort.Sort(knowledge.SolutionRoute(route))
+//			sort.Sort(knowledge.SolutionRoute(route))
 
 			found := optimizer.isPresent(route, routes)
 			if !found {

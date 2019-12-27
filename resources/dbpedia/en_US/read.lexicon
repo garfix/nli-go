@@ -3,6 +3,8 @@
     { form: 'born', pos: bear }
     { form: 'die', pos: die }
 
+    { form: 'old', pos: old }
+
     { form: 'to', pos: to }
     { form: 'of', pos: of }
     { form: 'above', pos: above }

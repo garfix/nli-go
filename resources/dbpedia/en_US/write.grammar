@@ -9,6 +9,9 @@
     { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
     { rule: s(S1) -> date_formatted(D2),                                          condition: root(D1) date(D1, Y, M, D) }
 
+    { rule: s(S1) -> subject(E1) is(S1) number(Age) year(Age) old(E1) paren_open(E1) bear(S1) on(E1) date_formatted(Birth_date) paren_close(E1),
+                                                                                  condition: report_age(E1, Age, Birth_date) }
+
     { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
     { rule: subject(E) -> multiple_proper_noun(E) }
 

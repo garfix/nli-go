@@ -90,6 +90,22 @@ func (term Term) Copy() Term {
 	return newTerm
 }
 
+// If term is a variable, and occurs in binding, returns its binding
+// Otherwise, return term
+func (term Term) Resolve(binding Binding) Term {
+
+	resolved := term
+
+	if term.IsVariable() {
+		 value, found := binding[term.TermValue]
+		 if found {
+		 	resolved = value
+		 }
+	}
+
+	return resolved
+}
+
 func (term Term) String() string {
 
 	s := ""

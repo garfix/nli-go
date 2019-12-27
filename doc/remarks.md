@@ -1,3 +1,28 @@
+# 2019-12-27
+
+In order to answer "How old is Madonna?" I created some functions to compute the age in years. This was the solution:
+
+    birth_date(E1, Ymd) date_today(Today) date_subtract_years(Today, Ymd, Y) 
+
+There was a problem: the optimizer rearranged the functions and `date_today(Today)` was placed after
+`date_subtract_years(Today, Ymd, Y)`. This breaks the solution. I need to solve this. The order of the functions is
+important.
+
+Now trying to solve this. Disable the optimizer? Enable the optimizer only in certain situations? Apply the optimizer
+only on the first generated sense (the one created from the parse tree)?
+
+At the same time the ds2db mapping turns out to be 1-n only. I just removed the last remnants of the n-m mappings. If
+both the n-m mappings and the reordering can go, this means the optimizer can be removed.
+
+Can reordering go? I only use reordering within a restricted set of relations. The number of relations is typically very
+limited already. For hand-crafted relation sets (like in a solution) optimal ordering can be left to the developer. The
+example I gave here http://patrick-van-bergen.blogspot.com/2017/08/query-optimization.html was that of first finding the
+id of the name and then finding the marriage relations. But I already tackled the names in a different way, via the key
+cabinet.
+
+Can n-m mapping go? With semantic grammars the relations that are created can have any form you choose. And I might even
+insert another step that does n-m mapping once before solving takes place. I think it can go.
+
 # 2019-09-17
 
 I made a hello-world example (as a test).

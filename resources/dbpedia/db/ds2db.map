@@ -7,17 +7,9 @@
     has_wife(A, B) => spouse(A, B);
     has_wife(A, B) => spouse(B, A);
 
-    name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => birth_name(A, N);
-    name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => birth_name(A, N);
-    name(A, N, full_name) => birth_name(A, N);
-
     person_name(A, N) => birth_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
-
-    name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => foaf_name(A, N);
-    name(A, F, first_name) name(A, S, second_name) name(A, L, last_name) join(N, ' ', F, S, L) => foaf_name(A, N);
-    name(A, N, full_name) => foaf_name(A, N);
-
     person_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+
     country_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/class/yago/WikicatCountries`);
 
     name(A, N, canonical_name) => foaf_name(A, N) first(N);

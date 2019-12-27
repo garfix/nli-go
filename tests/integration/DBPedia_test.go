@@ -30,6 +30,7 @@ func TestDBPedia(t *testing.T) {
 			{"When is Madonna's birthday?", "August 16, 1958", "", ""},
 			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie", "", ""},
 			{"Who is Sean Penn's wife?", "Robin Wright and Madonna", "", ""},
+			{"How old is Madonna?", "She is 61 years old ( born on August 16, 1958 )", "", ""},
 		},
 		{
 			{"Who married Anne Isabella Milbanke?", "Lord Byron married her", "", ""},

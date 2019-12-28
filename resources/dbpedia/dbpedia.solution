@@ -2,48 +2,60 @@
     /* Who married X? */
     {
         condition: question(_) who(A) marry(_, A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(B, G) name(A, N, canonical_name),
-            answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(B, G) name(A, N, canonical_name),
+                answer: gender(B, G) name(A, N) make_and(A, R) married_to(R, B)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Was X married to Y? */
     {
         condition: question(_) yes_no(_) marry(_, A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            answer: result(true)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* How many children had X? (counting the children) */
     {
         condition: question(_) how_many(B) have_child(A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(A, Gender) number_of(B, Number),
-            answer: gender(A, Gender) have_child(A, C) count(C, Number)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender) number_of(B, Number),
+                answer: gender(A, Gender) have_child(A, C) count(C, Number)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* How many? */
     {
         condition: question(_) how_many(B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: number_of(B, Number),
-            answer: canned(Number)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: number_of(B, Number),
+                answer: canned(Number)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* How many children had X? (using a number-of-children attribute) */
@@ -52,37 +64,46 @@
         transformations: [
             have_child(A, B) => have_n_children(A, Number);
         ],
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(A, Gender),
-            answer: gender(A, Gender) have_child(A, C) count(C, Number)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender),
+                answer: gender(A, Gender) have_child(A, C) count(C, Number)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Who was X's father? */
     {
         condition: question(_) who(B) has_father(A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(A, Gender) name(B, N, canonical_name),
-            answer: gender(A, Gender) name(B, N) has_father(A, B)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender) name(B, N, canonical_name),
+                answer: gender(A, Gender) name(B, N) has_father(A, B)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Who was X's mother? */
     {
         condition: question(_) who(B) has_mother(A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(A, Gender) name(B, N, canonical_name),
-            answer: gender(A, Gender) name(B, N) has_mother(A, B)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender) name(B, N, canonical_name),
+                answer: gender(A, Gender) name(B, N) has_mother(A, B)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* When was X born? */
@@ -91,13 +112,16 @@
         transformations: [
             bear(P1, A, B) when(P1) => birth_date(B, Ymd);
         ],
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(B, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: gender(B, Gender) birth_date(B, D) date(D, Day, Month, Year)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(B, Gender) split(Ymd, '-', Year, Month, Day),
+                answer: gender(B, Gender) birth_date(B, D) date(D, Day, Month, Year)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* When did X die? */
@@ -106,87 +130,113 @@
         transformations: [
             die(P1, A) when(P1) => death_date(A, Ymd);
         ],
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: gender(A, Gender) death_date(A, D) date(D, Day, Month, Year)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender) split(Ymd, '-', Year, Month, Day),
+                answer: gender(A, Gender) death_date(A, D) date(D, Day, Month, Year)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* When? */
     {
         condition: question(Ymd) when(Ymd),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: split(Ymd, '-', Year, Month, Day),
-            answer: date(D, Day, Month, Year) root(D)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: split(Ymd, '-', Year, Month, Day),
+                answer: date(D, Day, Month, Year) root(D)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Who is the husband of X? */
     {
         condition: question(_) who(B) has_husband(A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, R) root(R)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N, canonical_name),
+                answer: name(B, N) make_and(B, R) root(R)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Who is the wife of X? */
     {
         condition: question(_) who(B) has_wife(A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: name(B, N, canonical_name),
-            answer: name(B, N) make_and(B, R) root(R)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N, canonical_name),
+                answer: name(B, N) make_and(B, R) root(R)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* Who is X? */
     {
         condition: question(_) who(B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: long_description(B, D),
-            answer: canned(D)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: long_description(B, D),
+                answer: canned(D)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* What is the capital of X? */
     {
         condition: question(_) what(B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: label(B, L),
-            answer: canned(L)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: label(B, L),
+                answer: canned(L)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
     /* How old is X? */
     {
         condition: question(_) how_old(E1),
         transformations: [
-            how_old(E1) => birth_date(E1, Ymd) date_today(Today) date_subtract_years(Today, Ymd, Y);
+            how_old(E1) => birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
         ],
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: gender(E1, Gender) split(Ymd, '-', Year, Month, Day),
-            answer: report_age(E1, Y, Ymd) gender(E1, Gender) date(Ymd, Day, Month, Year)
-        }
+        responses: [
+            {
+                condition: death_date(E1, Death_date) date_today(Today) date_subtract_years(Death_date, Today, Years_since_death) less_than(Years_since_death, 0),
+                preparation: gender(E1, Gender) date_subtract_years(Death_date, Birth_date, Age) split(Birth_date, '-', Year1, Month1, Day1) split(Death_date, '-', Year2, Month2, Day2),
+                answer: report_age_deceased(E1, Age, Birth_date, Death_date) gender(E1, Gender) date(Birth_date, Day1, Month1, Year1) date(Death_date, Day2, Month2, Year2)
+            }
+            {
+                condition: exists(),
+                preparation: gender(E1, Gender) split(Birth_date, '-', Year, Month, Day),
+                answer: report_age_alive(E1, Years_since_birth, Birth_date) gender(E1, Gender) date(Birth_date, Day, Month, Year)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 ]

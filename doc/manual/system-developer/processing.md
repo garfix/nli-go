@@ -142,13 +142,16 @@ Each question requires a specific type of answer. To answer a question, a soluti
 
     condition: act(question, howMany) child(A, B) focus(A),
     transformations: []
-    no_results: {
-        answer: dont_know()
-    },
-    some_results: {
-        preparation: gender(B, G) number_of(N, A),
-        answer: gender(B, G) count(C, N) have_child(B, C);
-    }
+    responses: [
+        {
+            condition: exists(),
+            preparation: gender(B, G) number_of(N, A),
+            answer: gender(B, G) count(C, N) have_child(B, C)
+        }
+        {
+            answer: dont_know()
+        }
+    ]
 
 The first solution whose condition matches the question will be used.
 

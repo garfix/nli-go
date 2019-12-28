@@ -21,13 +21,15 @@ To use a canned response, use "canned()" in the answer of a solution, like this:
 
     {
         condition: question() who(B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: long_description(B, D),
-            answer: canned(D)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: canned(D)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 
 As you see the "answer" in the solution contains the single relation "canned()". When that happens, the contents of its variable will be used as the response.

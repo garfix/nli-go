@@ -1,3 +1,38 @@
+# 2019-12-28
+
+I am rethinking the concept of a solution. In this new concept the transformation should be small. That means that
+
+    transformations: [
+        how_old(E1) => age(E1, Y);
+    ],
+    
+is better than
+
+    transformations: [
+        how_old(E1) => birth_date(E1, Ymd) date_today(Today) date_subtract_years(Today, Ymd, Y);
+    ], 
+
+`age()` should then be handled by one of the knowledge rules. This way, the relation `age()` can be used again for other
+things.
+
+The other thing is that the "answer" of a solution should contain an __intent__ rather than just a small set of
+relations. Check these answers:
+
+    answer: dont_know()
+    answer: report_age(E1, Y, Ymd)
+    
+The first answer will result in the sentence "I don't know"; the second answer results in "She is 61 years old ( born on
+born on August 16, 1958 )". The point is that the intent already tells us the single idea of how to answer. But the
+language specific grammar will specify the sentence that is linked to this idea.
+
+Next to this single idea, the answer may need some extra relations to fill in the details:
+
+    answer: report_age(E1, Y, Ymd) gender(E1, Gender) date(Ymd, Day, Month, Year)
+
+I will now make the possible answers more general. Up to now I had a distinction between an answer for no results and an
+answer for some results. I will now generalize and create an array of possible responses. Each with an optional
+condition.
+
 # 2019-12-27
 
 In order to answer "How old is Madonna?" I created some functions to compute the age in years. This was the solution:

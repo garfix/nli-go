@@ -42,12 +42,13 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 	found := true
 	aggregate := mentalese.Term{}
 
-	if len(goal.Arguments) == 0 {
-		return newBindings, false
-	}
+	aggregateArgument := mentalese.NewAnonymousVariable()
+	aggregateVariable := ""
 
-	aggregateArgument := goal.Arguments[0]
-	aggregateVariable := aggregateArgument.TermValue
+	if len(goal.Arguments) != 0 {
+		aggregateArgument = goal.Arguments[0]
+		aggregateVariable = aggregateArgument.TermValue
+	}
 
 	if goal.Predicate == "number_of" {
 
@@ -94,16 +95,13 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 
 		return newBindings, true
 
+
+	// check if there are still any bindings
 	} else if goal.Predicate == "exists" {
 
-		subjectVariable := goal.Arguments[1].TermValue
-
-		differentValues := base.getDifferentValues(bindings, subjectVariable)
-		val := "false"
-		if len(differentValues) > 0 {
-			val = "true"
+		if len(bindings) == 0 {
+			found = false
 		}
-		aggregate = mentalese.Term{TermType: mentalese.TermPredicateAtom, TermValue: val}
 
 	} else {
 		found = false

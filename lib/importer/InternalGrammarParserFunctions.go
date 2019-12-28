@@ -187,7 +187,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 
 	solution := mentalese.Solution{}
 	solution.Transformations = []mentalese.RelationTransformation{}
-	conditionFound, someResultsFound, noResultsFound := false, false, false
+	conditionFound, responsesFound := false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -200,24 +200,42 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			conditionFound = true
 		case field_transformations:
 			solution.Transformations, startIndex, ok = parser.parseTransformations(tokens, startIndex)
-		case field_some_results:
-			solution.SomeResults, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
-			ok = ok && !someResultsFound
-			someResultsFound = true
-		case field_no_results :
-			solution.NoResults, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
-			ok = ok && !noResultsFound
-			noResultsFound = true
+		case field_responses:
+			solution.Responses, startIndex, ok = parser.parseResponses(tokens, startIndex)
+			ok = ok && !responsesFound
+			responsesFound = true
 		default:
 			ok = false
 		}
 
-		return startIndex, ok, conditionFound && someResultsFound && noResultsFound
+		return startIndex, ok, conditionFound && responsesFound
 	}
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
 
 	return solution, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseResponses(tokens []Token, startIndex int) ([]mentalese.ResultHandler, int, bool) {
+
+	handlers := []mentalese.ResultHandler{}
+	ok := true
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+
+	for startIndex < len(tokens) {
+		rule := mentalese.ResultHandler{}
+		rule, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
+		if ok {
+			handlers = append(handlers, rule)
+		} else {
+			break
+		}
+	}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+
+	return handlers, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startIndex int) (mentalese.ResultHandler, int, bool) {
@@ -230,6 +248,8 @@ func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startInd
 		ok := true
 
 		switch key {
+		case field_condition:
+			resultHandler.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		case field_preparation:
 			resultHandler.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !preparationFound

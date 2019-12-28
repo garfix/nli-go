@@ -42,37 +42,49 @@ func TestAnswerer(t *testing.T) {
 	solutions := parser.CreateSolutions(`[
 		{
 			condition: write(Person_name, Book_name) publish(Pub_name, Book_name),
-			no_results: {
-				answer: none()
-			},
-			some_results: {
-				answer: book(Book_name)
-			}
+			responses: [
+				{
+					condition: exists(),
+					answer: book(Book_name)
+				}
+				{
+					answer: none()
+				}
+			]
 		} {
 			condition: write(Person, Book) number_of(Book, N),
-			no_results: {
-				answer: none()
-			},
-			some_results: {
-				answer: focus(N)
-			}
+			responses: [
+				{
+					condition: exists(),
+					answer: focus(N)
+				}
+				{
+					answer: none()
+				}
+			]
 		} {
 			condition: write(X, Y),
-			no_results: {
-				answer: none()
-			},
-			some_results: {
-				answer: write(X, Y)
-			}
+			responses: [
+				{
+					condition: exists(),
+					answer: write(X, Y)
+				}
+				{
+					answer: none()
+				}
+			]
 		} {
 			condition: publish(A, B),
-			no_results: {
-				answer: none()
-			},
-			some_results: {
-				preparation: write(C, B),
-				answer: publish_author(A, C)
-			}
+			responses: [
+				{
+					condition: exists(),
+					preparation: write(C, B),
+					answer: publish_author(A, C)
+				}
+				{
+					answer: none()
+				}
+			]
 		}
 	]`)
 

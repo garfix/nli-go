@@ -9,6 +9,7 @@
 
     { form: 'was',	        pos: aux_be }
     { form: 'is',	        pos: is }
+    { form: 'was',	        pos: was }
 
     { form: 'father',	    pos: father }
     { form: 'mother',	    pos: mother }
@@ -30,6 +31,7 @@
 
     { form: 'and',	        pos: and }
     { form: ',',            pos: comma }
+    { form: ';',            pos: semicolon }
     { form: '(',            pos: paren_open }
     { form: ')',            pos: paren_close }
 

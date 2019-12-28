@@ -85,16 +85,16 @@ Note that the most important entity (the governor, is that what it's called?) is
 
 ## Lexicon
  
-[
-    { form: 'book',           pos: noun,              sense: isa(E, book) }
-    { form: 'read',           pos: verb,              sense: isa(E, read) }
-    { form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, first_name) }
-]
+    [
+        { form: 'book',           pos: noun,              sense: isa(E, book) }
+        { form: 'read',           pos: verb,              sense: isa(E, read) }
+        { form: /^[A-Z]/,         pos: firstName,         sense: name(E, Form, first_name) }
+    ]
 
 Lexicon definitions may use either a string constant or an expression for the form and use these variables in the sense:
 
-E            Will be replaced by the entity variable of current node (ex. E1)
-Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions. Form is a string, except when part-of-speech is 'number', then it is a number.
+    E            Will be replaced by the entity variable of current node (ex. E1)
+    Form         Will be replaced by the word-form in the sentence. Only to be used with regular expressions. Form is a string, except when part-of-speech is 'number', then it is a number.
 
 Also: 
 
@@ -104,54 +104,64 @@ Variable A will be found to a constant that holds the raw name from the input.
 
 ## Transformation rules
 
-[
-    parent(A, B) male(A) => father(A, B);
-    parent(A, B) female(A) => mother(A, B) child(B, A);
-]
+    [
+        parent(A, B) male(A) => father(A, B);
+        parent(A, B) female(A) => mother(A, B) child(B, A);
+    ]
 
 It is possible to add a condition that applies to all relation of the question
 
-[
-    IF male(A) THEN parent(A, B) => father(A, B);
-]
+    [
+        IF male(A) THEN parent(A, B) => father(A, B);
+    ]
 
 this transforms 'parent' into 'father', if the relation 'male' is present. But it does not affect 'male'. It is not removed.
 
 ## Grammar
 
-[
-    { rule: s(P) -> np(E) vp(P),     sense: subject(P, E) }
-]
+    [
+        { rule: s(P) -> np(E) vp(P),     sense: subject(P, E) }
+    ]
 
 ## Inference
 
-[
-    father(A, B) :- parent(A, B) male(A);
-]
+    [
+        father(A, B) :- parent(A, B) male(A);
+    ]
 
 ## Solutions
 
-[
-    {
-        condition: relationSet,
-        no_results: {
-            answer: relationSet
-        },
-        some_results: {
-            preparation: relationSet,
-            answer: relationSet
+    [
+        {
+            condition: relationSet,
+            responses: [
+                {
+                    condition: relationSet, 
+                    transformation: transformation,
+                    preparation: relationSet,
+                    answer: relationSet
+                }
+                {
+                    condition: relationSet, 
+                    transformation: transformation,
+                    preparation: relationSet,
+                    answer: relationSet
+                }
+            ]
+        } 
+        {
+            condition: relationSet,
+            responses: [
+                {
+                    condition: relationSet, 
+                    answer: relationSet
+                }
+                {
+                    answer: relationSet
+                }
+            ]        
         }
-    } {
-        condition: relationSet,
-        no_results: {
-            answer: relationSet
-        },
-        some_results: {
-            preparation: relationSet,
-            answer: relationSet
-        }
-    }
-]
+    ]
 
 ## Binding
 

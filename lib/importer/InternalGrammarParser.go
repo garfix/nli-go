@@ -17,8 +17,7 @@ const (
 	field_rule            = "rule"
 	field_preparation     = "preparation"
 	field_answer          = "answer"
-	field_no_results      = "no_results"
-	field_some_results    = "some_results"
+	field_responses       = "responses"
 )
 
 type InternalGrammarParser struct {

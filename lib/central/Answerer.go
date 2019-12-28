@@ -48,7 +48,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 
 	if len(allSolutions) == 0 {
 
-		answerer.log.AddError("Answerer could not find a solution.")
+		answerer.log.AddError("There are no solutions for this problem")
 
 	} else {
 
@@ -60,23 +60,40 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 			// resultBindings: map goal variables to answers
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, mentalese.Bindings{{}})
 
-			// choose a handler based on whether there were results
-			resultHandler := solution.NoResults
-			if len(resultBindings) > 0 {
-				resultHandler = solution.SomeResults
-			} else {
-				// no results? try the next solution (if there is one)
+			// no results? try the next solution (if there is one)
+			if len(resultBindings) == 0 {
 				if i < len(allSolutions) - 1 {
 					continue
 				}
 			}
 
+			// find a handler
+			condionedBindings := resultBindings
+			var resultHandler *mentalese.ResultHandler
+			for _, response := range solution.Responses {
+				if !response.Condition.IsEmpty() {
+					conditionBindings := answerer.solver.SolveRelationSet(response.Condition, keyCabinet, resultBindings)
+					if len(conditionBindings) == 0 {
+						continue
+					} else {
+						condionedBindings = conditionBindings
+					}
+				}
+				resultHandler = &response
+				break
+			}
+
+			if resultHandler == nil {
+				answerer.log.AddError("No solution had its conditions fulfilled")
+				break
+			}
+
 			// solutionBindings: map condition variables to results
-			var solutionBindings = resultBindings
+			var solutionBindings = condionedBindings
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, keyCabinet, resultBindings)
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, keyCabinet, condionedBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings

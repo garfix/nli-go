@@ -1,11 +1,14 @@
 [
     {
         condition: hello_world(),
-        some_results: {
-            answer: canned('Welcome!')
-        },
-        no_results: {
-            answer: canned('Not welcome')
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: canned('Welcome!')
+            }
+            {
+                answer: canned('Not welcome')
+            }
+        ]
     }
 ]

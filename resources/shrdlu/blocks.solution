@@ -2,23 +2,29 @@
     /* Any command */
     {
         condition: command(_),
-        some_results: {
-            answer: canned('OK')
-        },
-        no_results: {
-            answer: canned('Not OK')
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: canned('OK')
+            }
+            {
+                answer: canned('Not OK')
+            }
+        ]
     }
 
     /* What? */
     {
         condition: question(_) what(B) contain(_, A, B),
-        no_results: {
-            answer: dont_know()
-        },
-        some_results: {
-            preparation: name(B, N),
-            answer: name(B, N) make_and(B, R)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N),
+                answer: name(B, N) make_and(B, R)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     }
 ]

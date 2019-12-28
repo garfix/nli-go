@@ -1,65 +1,83 @@
 [
     {
         condition: question(_) who(A) marry(P1, A, B),
-        no_results: {
-            answer: none()
-        },
-        some_results: {
-            preparation: gender(B, G) name(A, N),
-            answer: focus(A) married_to(A, B) gender(B, G) name(A, N)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(B, G) name(A, N),
+                answer: focus(A) married_to(A, B) gender(B, G) name(A, N)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
     } {
         condition: question(_) yes_no(_) marry(P1, A, B),
-        no_results: {
-            answer: result(false)
-        },
-        some_results: {
-            answer: result(true)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: result(false)
+            }
+        ]
     } {
         condition: question(_) yes_no(_) siblings(A, B),
-        no_results: {
-            answer: result(false)
-        },
-        some_results: {
-            answer: result(true)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: result(false)
+            }
+        ]
     } {
         condition: question(_) how_many(A) have_child(B, A),
-        no_results: {
-            answer: none()
-        },
-        some_results: {
-            preparation: gender(B, G) number_of(A, N),
-            answer: gender(B, G) count(C, N) have_child(C, B)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(B, G) number_of(A, N),
+                answer: gender(B, G) count(C, N) have_child(C, B)
+            }
+            {
+                answer: none()
+            }
+        ]
     } {
         condition: question(_) which(A) have_child(B, A),
-        no_results: {
-            answer: none()
-        },
-        some_results: {
-            preparation: name(A, N),
-            answer: root(R) name(A, N) make_and(A, R)
-        }
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(A, N),
+                answer: root(R) name(A, N) make_and(A, R)
+            }
+            {
+                answer: none()
+            }
+        ]
     } {
         condition: question(_) yes_no(_) have_child(B, A) every(B),
-        no_results: {
-            answer: none()
-        },
-        some_results: {
-            preparation: exists(G, B),
-            answer: result(G)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: none()
+            }
+        ]
     } {
         condition: question(_) yes_no(_) have_child(B, A),
-        no_results: {
-            preparation: exists(G, B),
-            answer: result(G)
-        },
-        some_results: {
-            preparation: exists(G, B),
-            answer: result(G)
-        }
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: result(false)
+            }
+        ]
     }
 ]

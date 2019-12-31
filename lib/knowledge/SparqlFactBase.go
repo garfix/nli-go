@@ -115,6 +115,7 @@ func (factBase *SparqlFactBase) doQuery(relation mentalese.Relation) mentalese.B
 func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string {
 	var1 := ""
 	var2 := ""
+	extra := ""
 	variables := []string{}
 
 	if relation.Arguments[0].TermType == mentalese.TermAnonymousVariable || relation.Arguments[0].TermType == mentalese.TermVariable {
@@ -133,9 +134,18 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 		var2 = "?variable2"
 		variables = append(variables, var2)
 	} else {
-		var2 = relation.Arguments[1].String()
 		if relation.Arguments[1].TermType == mentalese.TermStringConstant {
-			var2 += "@en"
+//todo make this into a config value
+			if false {
+				var2 = relation.Arguments[1].String() + "@en"
+			} else {
+				// case insensitive search
+				var2 = "?name"
+				// http://docs.openlinksw.com/virtuoso/rdfpredicatessparql/
+				extra = " . ?name bif:contains \"" + relation.Arguments[1].String() + "\""
+				// since bif:contains is inexact, it yields false positives; correct for those
+				extra += " . FILTER (LCASE(STR(?name)) = " + strings.ToLower(relation.Arguments[1].String()) + ")"
+			}
 		} else if relation.Arguments[1].TermType == mentalese.TermId {
 			var2 = "<" + relation.Arguments[1].TermValue + ">"
 		}
@@ -151,7 +161,7 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 		return ""
 	}
 
-	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + "} limit " + strconv.Itoa(maxSparqlResults)
+	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + extra + "} limit " + strconv.Itoa(maxSparqlResults)
 
 	return query
 }

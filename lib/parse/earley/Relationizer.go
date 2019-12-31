@@ -41,14 +41,10 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 	if node.IsLeafNode() {
 
 		// leaf state rule: category -> word
-		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
+		lexItem, _, _ := relationizer.lexicon.GetLexItem(node.form, node.category)
 		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
 		relationSet = lexItemRelations
-
-		// if the variable is assigned a constant now depends on it being a regexp; maybe this should be more explicit
-		if isRegExp {
-			makeConstant = true
-		}
+		makeConstant = node.category == ProperNounCategory
 
 	} else {
 

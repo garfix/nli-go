@@ -1,3 +1,81 @@
+# 2019-12-31
+
+I have that finished. But I am not done. I need to know the selectional restriction for the entity. "human" in this
+case.
+
+When the sentence "How old is A" is parsed, the parser first predicts the pattern "How old is A" with semantics
+how_old(A). The predicate `how_old` as argument types 'human', as specified in `predicates.json`.
+
+One might think it useful to integrate semantic analysis in the parsing process, but even if that is done (it is not
+hard to do, but quite a bit more computationally expensive), this would not help because the lower level human name
+'percy florence shelley' needs to be processed _before_ the relation `how_old` is integrated. Semantic integration is
+bottom-up. And the point here is exactly to have the upper level semantics available. What to do?
+
+Is it possible to pass the __argument types__ from the predicted state's sense to the lower level states? 
+
+# 2019-12-30
+
+I now want to look up proper nouns in the database while parsing. This way I can allow case insensitive proper nouns
+(which people commonly use).
+
+Now it appears that SPARQL is case sensitive and this is a big problem. MySQL is not and this is a big difference in
+this respect.
+
+The standard solution to do case insensitive matching in SPARQL is using an LCASE filter
+
+    select ?variable1 where { 
+        ?variable1 <http://xmlns.com/foaf/0.1/name> ?name . 
+        FILTER (LCASE(STR(?name)) = "percy florence shelley") 
+    } limit 5000
+    
+But doing a single search like this on FOAF names in DBPedia takes about 10 - 30 seconds. This is unacceptably long.
+
+I thought about presenting different versions of the name 
+
+    percy florence shelley
+    Percy Florence Shelley
+    PERCY FLORENCE SHELLEY
+    
+But I have to think about this name as well
+
+    Ludwig van Beethoven
+
+So I would have to check variants with lowercased small words. And then there is
+
+    the Who
+    
+This is classic troublesome name with words that are part of the dictionary. It may also be spelled as
+
+    the who
+    The Who
+    
+So if I want to make combinations I need to create a lot of them. And there is this
+
+    MasterCard
+    iPhone
+    
+Camelcasing.
+
+Now Virtuoso, on which DBPedia runs, has a SPARQL extension I can use. It is this
+
+    select ?variable1 where { 
+        ?variable1 <http://xmlns.com/foaf/0.1/name> ?name . 
+        ?name bif:contains "'percy florence shelley'"
+    } limit 5000
+
+http://docs.openlinksw.com/virtuoso/rdfsparqlrulefulltext/
+
+I think I am going to go for this one. It is not as generic as I'd like it to be, but at least it works.
+
+Note that this "contains" also matches strings in which this proper noun is just a part. So I will add an extra filter
+for exact matching:
+
+    select ?variable1 where { 
+        ?variable1 <http://xmlns.com/foaf/0.1/name> ?name . 
+        ?name bif:contains "'percy florence shelley'" . 
+        FILTER (LCASE(STR(?name)) = "percy florence shelley")
+    } limit 5000
+
 # 2019-12-28
 
 I am rethinking the concept of a solution. In this new concept the transformation should be small. That means that

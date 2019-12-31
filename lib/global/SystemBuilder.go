@@ -41,7 +41,6 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.generationLexicon = generate.NewGenerationLexicon(builder.log, matcher)
 	system.generationGrammar = generate.NewGenerationGrammar()
 	system.tokenizer = parse.NewTokenizer(builder.log)
-	system.parser = earley.NewParser(system.grammar, system.lexicon, builder.log)
 	system.quantifierScoper = mentalese.NewQuantifierScoper(builder.log)
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
 	system.generic2ds = []mentalese.RelationTransformation{}
@@ -63,6 +62,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
+	system.parser = earley.NewParser(system.grammar, system.lexicon, system.nameResolver, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)

@@ -1,26 +1,32 @@
 package earley
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"sort"
+	"strings"
 )
 
 // An implementation of Earley's top-down chart parsing algorithm as described in
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
 
+const ProperNounCategory = "proper_noun"
+
 type Parser struct {
 	grammar *parse.Grammar
 	lexicon *parse.Lexicon
+	nameResolver *central.NameResolver
 	log     *common.SystemLog
 }
 
-func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, log *common.SystemLog) *Parser {
+func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *central.NameResolver, log *common.SystemLog) *Parser {
 	return &Parser{
 		grammar: grammar,
 		lexicon: lexicon,
+		nameResolver: nameResolver,
 		log:     log,
 	}
 }
@@ -149,11 +155,17 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 	// go through all rules that have the next consequent as their antecedent
 	for _, newRule := range parser.grammar.FindRules(nextConsequent) {
 
+		//entityVariableTypes := parser.collectEntityVariableTypes(state)
+
 		predictedState := newChartState(newRule, 1, endWordIndex, endWordIndex)
 		parser.enqueue(chart, predictedState, endWordIndex)
 	}
 
 	parser.log.EndDebug("predict")
+}
+
+func (parser *Parser) collectEntityVariableTypes(state chartState) []string {
+	return []string{}
 }
 
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
@@ -164,10 +176,14 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	parser.log.StartDebug("scan", state)
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
+	nextConsequentVariable := state.rule.GetConsequentVariable(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 
 	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
+	if !lexItemFound && nextConsequent == ProperNounCategory {
+		lexItemFound = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable)
+	}
 	if lexItemFound {
 
 		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})
@@ -176,6 +192,43 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	}
 
 	parser.log.EndDebug("scan", endWord, lexItemFound)
+}
+
+func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string) bool {
+
+	word := chart.words[wordIndex]
+
+	// check memory
+	for startIndex, sequences := range chart.properNounSequences {
+		for _, sequence := range sequences {
+			endIndex := startIndex + len(sequence)
+			if wordIndex >= startIndex && wordIndex < endIndex {
+				sequenceWordIndex := wordIndex - startIndex
+				if word == sequence[sequenceWordIndex] {
+					return true
+				}
+			}
+		}
+	}
+
+	// prime memory
+	for endIndex := len(chart.words); endIndex > wordIndex; endIndex-- {
+
+		words := chart.words[wordIndex:endIndex]
+		wordString := strings.Join(words, " ")
+// todo entity type
+		nameInformations, _, _ := parser.nameResolver.ResolveName(wordString, "person")
+		if len(nameInformations) > 0 {
+			_, ok := chart.properNounSequences[wordIndex]
+			if !ok {
+				chart.properNounSequences[wordIndex] = [][]string{}
+			}
+			chart.properNounSequences[wordIndex] = append(chart.properNounSequences[wordIndex], words)
+			return true
+		}
+	}
+
+	return false
 }
 
 // This function is called whenever a state is completed.

@@ -5,6 +5,7 @@ package earley
 type chart struct {
 	states [][]chartState
 	words  []string
+	properNounSequences map[int][][]string
 
 	sentenceStates   []chartState
 	indexedStates    map[int]chartState
@@ -15,6 +16,7 @@ func newChart(words []string) *chart {
 	return &chart{
 		states:           make([][]chartState, len(words)+1),
 		words:            words,
+		properNounSequences: map[int][][]string{},
 		sentenceStates:   []chartState{},
 		indexedStates:    map[int]chartState{},
 		stateIdGenerator: 0,

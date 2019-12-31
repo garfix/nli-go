@@ -53,22 +53,7 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 
 			// look up the nameAndType in all fact bases
 
-			multipleResultsInFactBase := false
-			factBasesWithResults := 0
-
-			var factBaseNameInformations []NameInformation
-
-			for _, factBase := range resolver.solver.factBases {
-				factBaseNameInformations = append(factBaseNameInformations, resolver.resolveName(name, entityType, factBase)...)
-
-				if len(factBaseNameInformations) > 0 {
-					factBasesWithResults++
-				}
-
-				if len(factBaseNameInformations) > 1 {
-					multipleResultsInFactBase = true
-				}
-			}
+			factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults := resolver.ResolveName(name, entityType)
 
 			if factBasesWithResults == 0 {
 
@@ -283,7 +268,30 @@ func (resolver *NameResolver) getEntityTypeFromRelations(variable string, relati
 	return entityType
 }
 
-func (resolver *NameResolver) resolveName(name string, inducedEntityType string, factBase knowledge.FactBase) []NameInformation {
+func (resolver *NameResolver) ResolveName(name string, entityType string) ([]NameInformation, bool, int) {
+
+	multipleResultsInFactBase := false
+	factBasesWithResults := 0
+
+	factBaseNameInformations := []NameInformation{}
+
+	for _, factBase := range resolver.solver.factBases {
+		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, entityType, factBase)...)
+
+		if len(factBaseNameInformations) > 0 {
+			factBasesWithResults++
+		}
+
+		if len(factBaseNameInformations) > 1 {
+			multipleResultsInFactBase = true
+		}
+	}
+
+	return factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults
+}
+
+
+func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityType string, factBase knowledge.FactBase) []NameInformation {
 
 	var nameInformations []NameInformation
 

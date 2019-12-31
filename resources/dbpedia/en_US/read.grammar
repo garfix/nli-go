@@ -1,12 +1,12 @@
 [
-    { rule: proper_noun(N1) -> first_name(A) second_name(B) third_name(C),  sense: name(N1, A, 1) name(N1, B, 2) name(N1, C, 3) }
-    { rule: proper_noun(N1) -> first_name(A) second_name(B),                sense: name(N1, A, 1) name(N1, B, 2) }
-    { rule: proper_noun(N1) -> first_name(A),                               sense: name(N1, A, 1) }
+    { rule: proper_noun_group(N1) -> proper_noun(A) proper_noun(B) proper_noun(C), sense: name(N1, A, 1) name(N1, B, 2) name(N1, C, 3) }
+    { rule: proper_noun_group(N1) -> proper_noun(A) proper_noun(B),                sense: name(N1, A, 1) name(N1, B, 2) }
+    { rule: proper_noun_group(N1) -> proper_noun(A),                               sense: name(N1, A, 1) }
 
     { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
 
     { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
-    { rule: np(E1) -> proper_noun(E1) }
+    { rule: np(E1) -> proper_noun_group(E1) }
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E2) -> capital() of() np(E1),                              sense: has_capital(E1, E2) }

@@ -39,10 +39,6 @@
 
     { form: /^[0-9]+/,            pos: number }
 
-    { form: /^[A-Z]/,             pos: first_name }
-    { form: /^[A-Z]/,             pos: second_name }
-    { form: /^[A-Z]/,             pos: third_name }
-
     { form: '\'',                   pos: possessive_marker_1 }
     { form: 's',                    pos: possessive_marker_2 }
 

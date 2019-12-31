@@ -28,6 +28,10 @@ func (rule GrammarRule) GetConsequent(i int) string {
 	return rule.SyntacticCategories[i+1]
 }
 
+func (rule GrammarRule) GetConsequentVariable(i int) string {
+	return rule.EntityVariables[i+1]
+}
+
 func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }

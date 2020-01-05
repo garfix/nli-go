@@ -5,7 +5,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
-	"sort"
 	"strings"
 )
 
@@ -20,7 +19,6 @@ type Parser struct {
 	lexicon      *parse.Lexicon
 	nameResolver *central.NameResolver
 	predicates   mentalese.Predicates
-	relationizer EarleyRelationizer
 	log          *common.SystemLog
 }
 
@@ -30,7 +28,6 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *cen
 		lexicon:      lexicon,
 		nameResolver: nameResolver,
 		predicates:   predicates,
-		relationizer: EarleyRelationizer{},
 		log:          log,
 	}
 }
@@ -47,11 +44,11 @@ func (parser *Parser) Parse(words []string) ParseTreeNode {
 
 	if ok {
 
-		rootNode = parser.extractFirstTree(chart)
+		rootNode = extractFirstTree(chart)
 
 	} else {
 
-		lastParsedWordIndex, nextWord := parser.findLastCompletedWordIndex(chart)
+		lastParsedWordIndex, nextWord := findLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
 			parser.log.AddError("Incomplete. Could not parse word: " + nextWord)
@@ -67,33 +64,6 @@ func (parser *Parser) Parse(words []string) ParseTreeNode {
 	return rootNode
 }
 
-// For a given sequence of words, make suggestions for the next word, and return these in sorted order
-func (parser *Parser) Suggest(words []string) []string {
-
-	suggests := []string{}
-	position := len(words)
-
-	chart, ok := parser.buildChart(words)
-
-	if ok {
-
-	} else if len(chart.states) < position {
-
-	} else {
-
-		for _, state := range chart.states[position] {
-			if parser.isStateIncomplete(state) {
-				category := state.rule.SyntacticCategories[state.dotPosition]
-				suggests = append(suggests, parser.lexicon.GetWordForms(category)...)
-			}
-		}
-	}
-
-	suggests = common.StringArrayDeduplicate(suggests)
-	sort.Strings(suggests)
-	return suggests
-}
-
 // The body of Earley's algorithm
 func (parser *Parser) buildChart(words []string) (*chart, bool) {
 
@@ -103,7 +73,7 @@ func (parser *Parser) buildChart(words []string) (*chart, bool) {
 	wordCount := len(words)
 
 	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
-	parser.enqueue(chart, initialState, 0)
+	chart.enqueue(initialState, 0)
 
 	// go through all word positions in the sentence
 	for i := 0; i <= wordCount; i++ {
@@ -115,7 +85,7 @@ func (parser *Parser) buildChart(words []string) (*chart, bool) {
 			state := chart.states[i][j]
 
 			// check if the entry is parsed completely
-			if parser.isStateIncomplete(state) {
+			if state.isIncomplete() {
 
 				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
 
@@ -161,20 +131,16 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 	for _, rule := range parser.grammar.FindRules(nextConsequent) {
 
 		parentSSelection := state.sSelection[consequentIndex + 1]
-		sSelection, allowed := parser.relationizer.CombineSSelection(parser.predicates, parentSSelection, rule)
+		sSelection, allowed := combineSSelection(parser.predicates, parentSSelection, rule)
 		if !allowed {
 			continue
 		}
 
 		predictedState := newChartState(rule, sSelection, 1, endWordIndex, endWordIndex)
-		parser.enqueue(chart, predictedState, endWordIndex)
+		chart.enqueue(predictedState, endWordIndex)
 	}
 
 	parser.log.EndDebug("predict")
-}
-
-func (parser *Parser) collectEntityVariableTypes(state chartState) []string {
-	return []string{}
 }
 
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
@@ -201,7 +167,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		sType := state.sSelection[state.dotPosition - 1]
 		scannedState := newChartState(rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
-		parser.enqueue(chart, scannedState, endWordIndex+1)
+		chart.enqueue(scannedState, endWordIndex+1)
 	}
 
 	parser.log.EndDebug("scan", endWord, lexItemFound)
@@ -271,148 +237,15 @@ func (parser *Parser) complete(chart *chart, completedState chartState) bool {
 		advancedState := newChartState(rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 
 		// store extra information to make it easier to extract parse trees later
-		treeComplete, advancedState = parser.storeStateInfo(chart, completedState, chartedState, advancedState)
+		treeComplete, advancedState = chart.storeStateInfo(completedState, chartedState, advancedState)
 		if treeComplete {
 			break
 		}
 
-		parser.enqueue(chart, advancedState, completedState.endWordIndex)
+		chart.enqueue(advancedState, completedState.endWordIndex)
 	}
 
 	parser.log.EndDebug("complete")
 
 	return treeComplete
-}
-
-func (parser *Parser) enqueue(chart *chart, state chartState, position int) {
-
-	if !parser.isStateInChart(chart, state, position) {
-		parser.pushState(chart, state, position)
-	}
-}
-
-func (parser *Parser) isStateIncomplete(state chartState) bool {
-
-	return state.dotPosition < state.rule.GetConsequentCount()+1
-}
-
-func (parser *Parser) isStateInChart(chart *chart, state chartState, position int) bool {
-
-	for _, presentState := range chart.states[position] {
-
-		if presentState.rule.Equals(state.rule) &&
-			presentState.dotPosition == state.dotPosition &&
-			presentState.startWordIndex == state.startWordIndex &&
-			presentState.endWordIndex == state.endWordIndex {
-
-			return true
-		}
-	}
-
-	return false
-}
-
-func (parser *Parser) pushState(chart *chart, state chartState, position int) {
-
-	// index the state for later lookup
-	chart.stateIdGenerator++
-	state.id = chart.stateIdGenerator
-	chart.indexedStates[state.id] = state
-
-	chart.states[position] = append(chart.states[position], state)
-}
-
-func (parser *Parser) getNextCat(state chartState) string {
-
-	return state.rule.GetConsequent(state.dotPosition - 1)
-}
-
-func (parser *Parser) storeStateInfo(chart *chart, completedState chartState, chartedState chartState, advancedState chartState) (bool, chartState) {
-
-	treeComplete := false
-
-	// store the state's "children" to ease building the parse trees from the packed forest
-	advancedState.childStateIds = append(chartedState.childStateIds, completedState.id)
-
-	// rule complete?
-	if chartedState.dotPosition == chartedState.rule.GetConsequentCount() {
-
-		// complete sentence?
-		if chartedState.rule.GetAntecedent() == "gamma" {
-
-			// that matches all words?
-			if completedState.endWordIndex == len(chart.words) {
-
-				chart.sentenceStates = append(chart.sentenceStates, advancedState)
-
-				// set a flag to allow the Parser to stop at the first complete parse
-				treeComplete = true
-			}
-		}
-	}
-
-	return treeComplete, advancedState
-}
-
-func (parser *Parser) extractFirstTree(chart *chart) ParseTreeNode {
-
-	tree := ParseTreeNode{}
-
-	if len(chart.sentenceStates) > 0 {
-
-		rootStateId := chart.sentenceStates[0].childStateIds[0]
-		root := chart.indexedStates[rootStateId]
-		tree = parser.extractParseTreeBranch(chart, root)
-	}
-
-	return tree
-}
-
-func (parser *Parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
-
-	rule := state.rule
-	branch := ParseTreeNode{category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule, nameInformations: state.nameInformations}
-
-	if state.isLeafState() {
-
-		branch.form = rule.GetConsequent(0)
-
-	} else {
-
-		for _, childStateId := range state.childStateIds {
-
-			childState := chart.indexedStates[childStateId]
-			branch.constituents = append(branch.constituents, parser.extractParseTreeBranch(chart, childState))
-		}
-	}
-
-	return branch
-}
-
-// Returns the word that could not be parsed (or ""), and the index of the last completed word
-func (parser *Parser) findLastCompletedWordIndex(chart *chart) (int, string) {
-
-	nextWord := ""
-	lastIndex := -1
-
-	// find the last completed nextWord
-
-	for i := len(chart.states) - 1; i >= 0; i-- {
-		states := chart.states[i]
-		for _, state := range states {
-			if !parser.isStateIncomplete(state) {
-
-				lastIndex = state.endWordIndex - 1
-				goto done
-			}
-		}
-	}
-
-done:
-
-	if lastIndex <= len(chart.words)-2 {
-		nextWord = chart.words[lastIndex+1]
-	}
-
-	return lastIndex, nextWord
 }

@@ -36,3 +36,8 @@ func newChartState(rule parse.GrammarRule, sSelection parse.SSelection, dotPosit
 func (state chartState) isLeafState() bool {
 	return len(state.childStateIds) == 0
 }
+
+func (state chartState) isIncomplete() bool {
+
+	return state.dotPosition < state.rule.GetConsequentCount()+1
+}

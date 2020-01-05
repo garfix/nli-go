@@ -5,16 +5,12 @@ import (
 	"nli-go/lib/parse"
 )
 
-type EarleyRelationizer struct {
-
-}
-
 // Create a new child sense by applying a rule that contains a child sense template, and inherit the parent sense
 // Example:
 // 		parentSSelection: person
 // 		{ rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1),           sense: hold(P1, E2, E1) }
 // 		return E1 = person, E2 = object; or: false in case of conflict
-func (rel EarleyRelationizer) CombineSSelection(predicates mentalese.Predicates, parentType string, rule parse.GrammarRule) (parse.SSelection, bool) {
+func combineSSelection(predicates mentalese.Predicates, parentType string, rule parse.GrammarRule) (parse.SSelection, bool) {
 
 	sSelection := parse.SSelection{parentType}
 	antecedent := rule.GetAntecedentVariable()
@@ -26,7 +22,7 @@ func (rel EarleyRelationizer) CombineSSelection(predicates mentalese.Predicates,
 		if variable == antecedent {
 			sType = parentType
 		} else {
-			sType = rel.getTypeFromSense(predicates, variable, rule.Sense)
+			sType = getTypeFromSense(predicates, variable, rule.Sense)
 		}
 
 		sSelection = append(sSelection, sType)
@@ -35,7 +31,7 @@ func (rel EarleyRelationizer) CombineSSelection(predicates mentalese.Predicates,
 	return sSelection, true
 }
 
-func (rel EarleyRelationizer) getTypeFromSense(predicates mentalese.Predicates, variable string, sense mentalese.RelationSet) string {
+func getTypeFromSense(predicates mentalese.Predicates, variable string, sense mentalese.RelationSet) string {
 
 	sType := ""
 
@@ -52,7 +48,7 @@ func (rel EarleyRelationizer) getTypeFromSense(predicates mentalese.Predicates, 
 		}
 	}
 
-	end:
+end:
 
 	return sType
 }

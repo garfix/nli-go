@@ -160,26 +160,3 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 
 	return answer, options
 }
-
-func (system *system) Suggest(input string) []string {
-
-	system.log.Clear()
-
-	tokens := system.tokenizer.Process(input)
-
-	if system.log.IsOk() {
-		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
-	} else {
-		return []string{}
-	}
-
-	suggests := system.parser.Suggest(tokens)
-
-	if system.log.IsOk() {
-		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", suggests))
-	} else {
-		return []string{}
-	}
-
-	return suggests
-}

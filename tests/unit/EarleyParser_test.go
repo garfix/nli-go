@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
 	"sort"
@@ -39,9 +40,11 @@ func TestEarleyParser(test *testing.T) {
 	rawInput := "the small shy girl sings"
 	tokenizer := parse.NewTokenizer(log)
 
-	solver := central.NewProblemSolver(matcher)
-	nameResolver := central.NewNameResolver(solver)
-	predicates := NewPre
+	matcher := mentalese.NewRelationMatcher(log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	predicates := mentalese.Predicates{}
+	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 
 	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
 	relationizer := earley.NewRelationizer(lexicon, log)
@@ -49,7 +52,7 @@ func TestEarleyParser(test *testing.T) {
 	wordArray := tokenizer.Process(rawInput)
 
 	tree := parser.Parse(wordArray)
-	relations := relationizer.Relationize(tree)
+	relations := relationizer.Relationize(tree, &mentalese.KeyCabinet{}, nameResolver)
 
 	if relations.String() != "[subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, girl) predication(S5, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))
@@ -83,7 +86,14 @@ func TestEarleyParserSuggest(t *testing.T) {
 	]`)
 
 	log := common.NewSystemLog(false)
-	parser := earley.NewParser(grammar, lexicon, log)
+
+	matcher := mentalese.NewRelationMatcher(log)
+	dialogContext := central.NewDialogContext(matcher, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	predicates := mentalese.Predicates{}
+	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
+
+	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
 
 	var tests = []struct {
 		input []string

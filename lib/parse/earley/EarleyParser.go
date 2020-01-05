@@ -226,10 +226,11 @@ func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVa
 
 	// prime memory
 	for endIndex := len(chart.words); endIndex > wordIndex; endIndex-- {
+// todo max number of words should be deduced from grammar rules
 
 		words := chart.words[wordIndex:endIndex]
 		wordString := strings.Join(words, " ")
-		nameInformations, _, _ := parser.nameResolver.ResolveName(wordString, sType)
+		nameInformations := parser.nameResolver.ResolveName(wordString, sType)
 
 		if len(nameInformations) > 0 {
 			_, ok := chart.properNounSequences[wordIndex]

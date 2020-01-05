@@ -343,28 +343,16 @@ func (resolver *NameResolver) getEntityTypeFromRelations(variable string, relati
 	return entityType
 }
 
-func (resolver *NameResolver) ResolveName(name string, entityType string) ([]NameInformation, bool, int) {
-
-	multipleResultsInFactBase := false
-	factBasesWithResults := 0
+func (resolver *NameResolver) ResolveName(name string, entityType string) []NameInformation {
 
 	factBaseNameInformations := []NameInformation{}
 
 	for _, factBase := range resolver.solver.factBases {
 		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, entityType, factBase)...)
-
-		if len(factBaseNameInformations) > 0 {
-			factBasesWithResults++
-		}
-
-		if len(factBaseNameInformations) > 1 {
-			multipleResultsInFactBase = true
-		}
 	}
 
-	return factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults
+	return factBaseNameInformations
 }
-
 
 func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityType string, factBase knowledge.FactBase) []NameInformation {
 

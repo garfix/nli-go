@@ -1,5 +1,6 @@
 # Todo
 
+* the number of proper noun words searched in the database can be deduced from the grammar rules 
 * remove solution routes altogether; rebuild the solver
 * isa(E1, the) -> the(E1)
 * map relations to database => not many-to-many, but 1-to-many

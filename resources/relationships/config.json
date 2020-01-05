@@ -56,5 +56,6 @@
   ],
   "solutions": [
     "relationships.solution"
-  ]
+  ],
+  "predicates": "predicates.json"
 }

@@ -20,12 +20,20 @@ func (rule GrammarRule) GetAntecedent() string {
 	return rule.SyntacticCategories[0]
 }
 
+func (rule GrammarRule) GetAntecedentVariable() string {
+	return rule.EntityVariables[0]
+}
+
 func (rule GrammarRule) GetConsequents() []string {
 	return rule.SyntacticCategories[1:]
 }
 
 func (rule GrammarRule) GetConsequent(i int) string {
 	return rule.SyntacticCategories[i+1]
+}
+
+func (rule GrammarRule) GetConsequentVariables() []string {
+	return rule.EntityVariables[1:]
 }
 
 func (rule GrammarRule) GetConsequentVariable(i int) string {
@@ -59,6 +67,14 @@ func (rule GrammarRule) GetConsequentIndexByVariable(variable string) (int, bool
 	}
 
 	return 0, false
+}
+
+func (rule GrammarRule) Copy() GrammarRule {
+	return GrammarRule{
+		SyntacticCategories: rule.SyntacticCategories,
+		EntityVariables:     rule.EntityVariables,
+		Sense:               rule.Sense.Copy(),
+	}
 }
 
 func (rule GrammarRule) String() string {

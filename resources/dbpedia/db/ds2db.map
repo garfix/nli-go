@@ -39,6 +39,6 @@
     person(E) => type(E, `http://dbpedia.org/ontology/Person`);
     country(E) => type(E, `http://dbpedia.org/class/yago/WikicatCountries`);
 
-    have_population(Country, Count) => population_total(Country, Count);
-    have_population(Country, Count) => population_census(Country, Count);
+    has_population(Country, Count) => population_total(Country, Count);
+    has_population(Country, Count) => population_census(Country, Count);
 ]

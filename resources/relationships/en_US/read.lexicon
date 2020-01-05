@@ -20,13 +20,6 @@
 
     { form: 'every', pos: every }
 
-    { form: /^de$/,               pos: second_name }
-    { form: /^van$/,              pos: second_name }
-
-    { form: /^[A-Z]/,             pos: first_name }
-    { form: /^[A-Z]/,             pos: second_name }
-    { form: /^[A-Z]/,             pos: third_name }
-
     { form: /^[0-9]+/,            pos: number }
 
     { form: '?',                  pos: question_mark }

@@ -16,18 +16,22 @@ import (
 const ProperNounCategory = "proper_noun"
 
 type Parser struct {
-	grammar *parse.Grammar
-	lexicon *parse.Lexicon
+	grammar      *parse.Grammar
+	lexicon      *parse.Lexicon
 	nameResolver *central.NameResolver
-	log     *common.SystemLog
+	predicates   mentalese.Predicates
+	relationizer EarleyRelationizer
+	log          *common.SystemLog
 }
 
-func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *central.NameResolver, log *common.SystemLog) *Parser {
+func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *central.NameResolver, predicates mentalese.Predicates, log *common.SystemLog) *Parser {
 	return &Parser{
-		grammar: grammar,
-		lexicon: lexicon,
+		grammar:      grammar,
+		lexicon:      lexicon,
 		nameResolver: nameResolver,
-		log:     log,
+		predicates:   predicates,
+		relationizer: EarleyRelationizer{},
+		log:          log,
 	}
 }
 
@@ -98,7 +102,7 @@ func (parser *Parser) buildChart(words []string) (*chart, bool) {
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, mentalese.RelationSet{}), 1, 0, 0)
+	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
 	parser.enqueue(chart, initialState, 0)
 
 	// go through all word positions in the sentence
@@ -149,15 +153,20 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 
 	parser.log.StartDebug("predict", state)
 
-	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
+	consequentIndex := state.dotPosition - 1
+	nextConsequent := state.rule.GetConsequent(consequentIndex)
 	endWordIndex := state.endWordIndex
 
 	// go through all rules that have the next consequent as their antecedent
-	for _, newRule := range parser.grammar.FindRules(nextConsequent) {
+	for _, rule := range parser.grammar.FindRules(nextConsequent) {
 
-		//entityVariableTypes := parser.collectEntityVariableTypes(state)
+		parentSSelection := state.sSelection[consequentIndex + 1]
+		sSelection, allowed := parser.relationizer.CombineSSelection(parser.predicates, parentSSelection, rule)
+		if !allowed {
+			continue
+		}
 
-		predictedState := newChartState(newRule, 1, endWordIndex, endWordIndex)
+		predictedState := newChartState(rule, sSelection, 1, endWordIndex, endWordIndex)
 		parser.enqueue(chart, predictedState, endWordIndex)
 	}
 
@@ -179,22 +188,26 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	nextConsequentVariable := state.rule.GetConsequentVariable(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
+	nameInformations := []central.NameInformation{}
 
 	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if !lexItemFound && nextConsequent == ProperNounCategory {
-		lexItemFound = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable)
+		lexItemFound, nameInformations = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable, state.sSelection[state.dotPosition - 1 + 1])
+		lexItemFound = lexItemFound
 	}
 	if lexItemFound {
 
 		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})
-		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)
+		sType := state.sSelection[state.dotPosition - 1]
+		scannedState := newChartState(rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
+		scannedState.nameInformations = nameInformations
 		parser.enqueue(chart, scannedState, endWordIndex+1)
 	}
 
 	parser.log.EndDebug("scan", endWord, lexItemFound)
 }
 
-func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string) bool {
+func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string, sType string) (bool, []central.NameInformation) {
 
 	word := chart.words[wordIndex]
 
@@ -205,7 +218,7 @@ func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVa
 			if wordIndex >= startIndex && wordIndex < endIndex {
 				sequenceWordIndex := wordIndex - startIndex
 				if word == sequence[sequenceWordIndex] {
-					return true
+					return true, []central.NameInformation{}
 				}
 			}
 		}
@@ -216,19 +229,19 @@ func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVa
 
 		words := chart.words[wordIndex:endIndex]
 		wordString := strings.Join(words, " ")
-// todo entity type
-		nameInformations, _, _ := parser.nameResolver.ResolveName(wordString, "person")
+		nameInformations, _, _ := parser.nameResolver.ResolveName(wordString, sType)
+
 		if len(nameInformations) > 0 {
 			_, ok := chart.properNounSequences[wordIndex]
 			if !ok {
 				chart.properNounSequences[wordIndex] = [][]string{}
 			}
 			chart.properNounSequences[wordIndex] = append(chart.properNounSequences[wordIndex], words)
-			return true
+			return true, nameInformations
 		}
 	}
 
-	return false
+	return false, []central.NameInformation{}
 }
 
 // This function is called whenever a state is completed.
@@ -247,13 +260,14 @@ func (parser *Parser) complete(chart *chart, completedState chartState) bool {
 
 		dotPosition := chartedState.dotPosition
 		rule := chartedState.rule
+		sSelection := chartedState.sSelection
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition-1) != completedAntecedent) {
 			continue
 		}
 
-		advancedState := newChartState(rule, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
+		advancedState := newChartState(rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 
 		// store extra information to make it easier to extract parse trees later
 		treeComplete, advancedState = parser.storeStateInfo(chart, completedState, chartedState, advancedState)
@@ -356,7 +370,7 @@ func (parser *Parser) extractFirstTree(chart *chart) ParseTreeNode {
 func (parser *Parser) extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
 
 	rule := state.rule
-	branch := ParseTreeNode{category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule}
+	branch := ParseTreeNode{category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule, nameInformations: state.nameInformations}
 
 	if state.isLeafState() {
 

@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/parse"
@@ -38,7 +39,11 @@ func TestEarleyParser(test *testing.T) {
 	rawInput := "the small shy girl sings"
 	tokenizer := parse.NewTokenizer(log)
 
-	parser := earley.NewParser(grammar, lexicon, log)
+	solver := central.NewProblemSolver(matcher)
+	nameResolver := central.NewNameResolver(solver)
+	predicates := NewPre
+
+	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
 	relationizer := earley.NewRelationizer(lexicon, log)
 
 	wordArray := tokenizer.Process(rawInput)

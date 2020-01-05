@@ -136,15 +136,19 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 	} else {
 		if relation.Arguments[1].TermType == mentalese.TermStringConstant {
 //todo make this into a config value
+			arg1 := relation.Arguments[1].String()
 			if false {
 				var2 = relation.Arguments[1].String() + "@en"
+			// searching for punctuation marks leads to errors
+			} else if arg1 == "'?'" {
+				return ""
 			} else {
 				// case insensitive search
 				var2 = "?name"
 				// http://docs.openlinksw.com/virtuoso/rdfpredicatessparql/
-				extra = " . ?name bif:contains \"" + relation.Arguments[1].String() + "\""
+				extra = " . ?name bif:contains \"" + arg1 + "\""
 				// since bif:contains is inexact, it yields false positives; correct for those
-				extra += " . FILTER (LCASE(STR(?name)) = " + strings.ToLower(relation.Arguments[1].String()) + ")"
+				extra += " . FILTER (LCASE(STR(?name)) = " + strings.ToLower(arg1) + ")"
 			}
 		} else if relation.Arguments[1].TermType == mentalese.TermId {
 			var2 = "<" + relation.Arguments[1].TermValue + ">"
@@ -191,6 +195,7 @@ func (factBase *SparqlFactBase) callSparql(query string) sparqlResponse {
 		factBase.log.AddError("Error posting SPARQL request: 405 Not Allowed. Probably too many queries (" + strconv.Itoa(factBase.queryCount) + ")")
 		return sparqlResponse
 	} else if resp.StatusCode != 200 {
+		println(query)
 		factBase.log.AddError("Error posting SPARQL request: " + http.StatusText(resp.StatusCode))
 		return sparqlResponse
 	}

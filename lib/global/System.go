@@ -112,12 +112,11 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	answer := ""
 	tokens := []string{}
 	parseTree := earley.ParseTreeNode{}
-	syntacticRelations := mentalese.RelationSet{}
-	namelessRelations := mentalese.RelationSet{}
+	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
 
-	var keyCabinet *mentalese.KeyCabinet
+	var keyCabinet = mentalese.NewKeyCabinet()
 
 	if !system.log.IsDone() {
 		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
@@ -134,18 +133,13 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
-		syntacticRelations = system.relationizer.Relationize(parseTree)
-		system.log.AddProduction("Relationizer", syntacticRelations.String())
-	}
-
-	if !system.log.IsDone() {
-		keyCabinet, namelessRelations = system.nameResolver.Resolve(syntacticRelations)
-		system.log.AddProduction("Nameless", namelessRelations.String())
+		requestRelations = system.relationizer.Relationize(parseTree, keyCabinet, system.nameResolver)
+		system.log.AddProduction("Relationizer", requestRelations.String())
 		system.log.AddProduction("Key cabinet", keyCabinet.String())
 	}
 
 	if !system.log.IsDone() {
-		answerRelations = system.answerer.Answer(namelessRelations, keyCabinet)
+		answerRelations = system.answerer.Answer(requestRelations, keyCabinet)
 		system.log.AddProduction("DS Answer", answerRelations.String())
 	}
 

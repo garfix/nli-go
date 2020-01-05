@@ -31,42 +31,30 @@ func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, 
 	}
 }
 
-// Returns a set of senses, or a human readable question to the user
-func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet) {
+func (resolver *NameResolver) Resolve(nameInformations []NameInformation) []NameInformation {
 
-	keyCabinet := mentalese.NewKeyCabinet()
-	namelessRelations := mentalese.RelationSet{}
+	resolvedInformations := []NameInformation{}
 	userResponse := ""
 	options := common.NewOptions()
 
-	namesAndTypes := resolver.collectNamesAndTypes(relations.UnScope())
+	if len(nameInformations) > 0 {
 
-	for variable, nameAndType := range namesAndTypes {
+		name := nameInformations[0].Name
 
-		name := nameAndType.name
-		entityType := nameAndType.entityType
-
-		// check if the nameAndType is known in the dialog context
 		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
 
 		if len(dialogNameInformations) == 0 {
 
-			// look up the nameAndType in all fact bases
+			multipleResultsInFactBase, factBasesWithResults := resolver.collectMetaData(nameInformations)
 
-			factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults := resolver.ResolveName(name, entityType)
-
-			if factBasesWithResults == 0 {
-
-				userResponse = "Name not found in any knowledge base: " + name
-
-			} else if factBasesWithResults > 1 || multipleResultsInFactBase {
+			if factBasesWithResults > 1 || multipleResultsInFactBase {
 
 				// check if the user has just answered this question
 				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
 
 				if found {
 
-					dialogNameInformations = resolver.selectNameInformationsFromAnswer(factBaseNameInformations, answer)
+					dialogNameInformations = resolver.selectNameInformationsFromAnswer(nameInformations, answer)
 					resolver.SaveNameInformations(name, dialogNameInformations)
 					resolver.dialogContext.RemoveAnswerToOpenQuestion()
 
@@ -74,36 +62,123 @@ func (resolver *NameResolver) Resolve(relations mentalese.RelationSet) (*mentale
 
 					// need to ask user
 					userResponse = "Which one?"
-					options = resolver.composeOptions(factBaseNameInformations)
+					options = resolver.composeOptions(nameInformations)
 
 					// store options
-					resolver.storeOptions(factBaseNameInformations)
-
-					break
+					resolver.storeOptions(nameInformations)
 
 				}
-
 			} else {
 
 				// single meaning for nameAndType
-				dialogNameInformations = factBaseNameInformations
+				dialogNameInformations = nameInformations
 				resolver.SaveNameInformations(name, dialogNameInformations)
 
 			}
 		}
 
-		for _, info := range dialogNameInformations {
-			keyCabinet.AddName(variable, info.DatabaseName, info.EntityId)
-		}
+		resolvedInformations = dialogNameInformations
 	}
-
-	namelessRelations = relations.RemoveMatchingPredicate(mentalese.PredicateName)
 
 	if userResponse != "" {
 		resolver.log.SetClarificationRequest(userResponse, options)
 	}
 
-	return keyCabinet, namelessRelations
+	return resolvedInformations
+}
+
+// Returns a set of senses, or a human readable question to the user
+//func (resolver *NameResolver) Resolve2(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet) {
+//
+//	keyCabinet := mentalese.NewKeyCabinet()
+//	namelessRelations := mentalese.RelationSet{}
+//	userResponse := ""
+//	options := common.NewOptions()
+//
+//	namesAndTypes := resolver.collectNamesAndTypes(relations.UnScope())
+//
+//	for variable, nameAndType := range namesAndTypes {
+//
+//		name := nameAndType.name
+//		entityType := nameAndType.entityType
+//
+//		// check if the nameAndType is known in the dialog context
+//		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
+//
+//		if len(dialogNameInformations) == 0 {
+//
+//			// look up the nameAndType in all fact bases
+//
+//			factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults := resolver.ResolveName(name, entityType)
+//
+//			if factBasesWithResults == 0 {
+//
+//				userResponse = "Name not found in any knowledge base: " + name
+//
+//			} else if factBasesWithResults > 1 || multipleResultsInFactBase {
+//
+//				// check if the user has just answered this question
+//				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
+//
+//				if found {
+//
+//					dialogNameInformations = resolver.selectNameInformationsFromAnswer(factBaseNameInformations, answer)
+//					resolver.SaveNameInformations(name, dialogNameInformations)
+//					resolver.dialogContext.RemoveAnswerToOpenQuestion()
+//
+//				} else {
+//
+//					// need to ask user
+//					userResponse = "Which one?"
+//					options = resolver.composeOptions(factBaseNameInformations)
+//
+//					// store options
+//					resolver.storeOptions(factBaseNameInformations)
+//
+//					break
+//
+//				}
+//
+//			} else {
+//
+//				// single meaning for nameAndType
+//				dialogNameInformations = factBaseNameInformations
+//				resolver.SaveNameInformations(name, dialogNameInformations)
+//
+//			}
+//		}
+//
+//		for _, info := range dialogNameInformations {
+//			keyCabinet.AddName(variable, info.DatabaseName, info.EntityId)
+//		}
+//	}
+//
+//	namelessRelations = relations.RemoveMatchingPredicate(mentalese.PredicateName)
+//
+//	if userResponse != "" {
+//		resolver.log.SetClarificationRequest(userResponse, options)
+//	}
+//
+//	return keyCabinet, namelessRelations
+//}
+
+func (resolver *NameResolver) collectMetaData(nameInformations []NameInformation) (bool, int) {
+
+	factBases := map[string]bool{}
+
+	multipleResultsInFactBase := false
+
+	for _, nameInformation := range nameInformations {
+
+		_, found := factBases[nameInformation.DatabaseName]
+		if found {
+			multipleResultsInFactBase = true
+		} else {
+			factBases[nameInformation.DatabaseName] = true
+		}
+	}
+
+	return multipleResultsInFactBase, len(factBases)
 }
 
 func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {

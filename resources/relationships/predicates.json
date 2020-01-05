@@ -1,0 +1,6 @@
+{
+  "parent": {"entityTypes": ["person", "person"] },
+  "have_child": {"entityTypes": ["person", "person"] },
+  "siblings": {"entityTypes": ["person", "person"] },
+  "marry": { "entityTypes": ["event", "person", "person"] }
+}

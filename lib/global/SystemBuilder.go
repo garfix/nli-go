@@ -62,7 +62,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.grammar, system.lexicon, system.nameResolver, builder.log)
+	system.parser = earley.NewParser(system.grammar, system.lexicon, system.nameResolver, predicates, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)

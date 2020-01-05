@@ -1,6 +1,7 @@
 package earley
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
@@ -23,28 +24,35 @@ func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) Relationizer
 	}
 }
 
-func (relationizer Relationizer) Relationize(rootNode ParseTreeNode) mentalese.RelationSet {
-	sense, _ := relationizer.extractSenseFromNode(rootNode, relationizer.senseBuilder.GetNewVariable("Sentence"))
+func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, keyCabinet *mentalese.KeyCabinet, nameResolver *central.NameResolver) mentalese.RelationSet {
+	sense, _ := relationizer.extractSenseFromNode(rootNode, keyCabinet, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
 	return sense
 }
 
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antecedentVariable string) (mentalese.RelationSet, bool) {
+func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCabinet *mentalese.KeyCabinet, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, bool) {
 
 	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
 
 	relationSet := mentalese.RelationSet{}
 	var makeConstant = false
 
+	if len(node.nameInformations) > 0 {
+		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
+		for _, nameInformation := range resolvedNameInformations {
+			keyCabinet.AddName(antecedentVariable, nameInformation.DatabaseName, nameInformation.EntityId)
+		}
+	}
+
 	if node.IsLeafNode() {
 
 		// leaf state rule: category -> word
-		lexItem, _, _ := relationizer.lexicon.GetLexItem(node.form, node.category)
+		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
 		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
 		relationSet = lexItemRelations
-		makeConstant = node.category == ProperNounCategory
+		makeConstant = isRegExp || node.category == ProperNounCategory
 
 	} else {
 
@@ -56,7 +64,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 
 			entityVariable := node.rule.EntityVariables[i+1]
 			consequentVariable := variableMap[entityVariable]
-			childRelations, makeConstant := relationizer.extractSenseFromNode(childNode, consequentVariable.TermValue)
+			childRelations, makeConstant := relationizer.extractSenseFromNode(childNode, keyCabinet, nameResolver, consequentVariable.TermValue)
 			boundChildSets = append(boundChildSets, childRelations)
 
 			if makeConstant {

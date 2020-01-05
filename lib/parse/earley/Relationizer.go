@@ -16,8 +16,8 @@ type Relationizer struct {
 	log          *common.SystemLog
 }
 
-func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) Relationizer {
-	return Relationizer{
+func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) *Relationizer {
+	return &Relationizer{
 		lexicon:      lexicon,
 		senseBuilder: parse.NewSenseBuilder(),
 		log:          log,

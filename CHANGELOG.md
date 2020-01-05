@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.5: Providing support for new DBpedia queries - ???
+## ?
+
+* Support for case-insensitive proper nouns
+
+## 1.5: Providing support for new DBpedia queries - 21-01-2019
 
 * Only real quantifiers like ALL are handled with quantification; numbers are not
 * syntactic relations are modelled after Stanford Parser Universal Dependencies

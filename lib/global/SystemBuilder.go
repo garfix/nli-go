@@ -41,11 +41,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.generationLexicon = generate.NewGenerationLexicon(builder.log, matcher)
 	system.generationGrammar = generate.NewGenerationGrammar()
 	system.tokenizer = parse.NewTokenizer(builder.log)
-	system.quantifierScoper = mentalese.NewQuantifierScoper(builder.log)
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
-	system.generic2ds = []mentalese.RelationTransformation{}
-	system.ds2generic = []mentalese.RelationTransformation{}
-	system.transformer = mentalese.NewRelationTransformer(matcher, builder.log)
 	system.dialogContext = central.NewDialogContext(matcher, builder.log)
 
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
@@ -98,14 +94,6 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
-	}
-	for _, transformationsPath := range config.Ds2generic {
-		path := common.AbsolutePath(builder.baseDir, transformationsPath)
-		builder.ImportDs2GenericTransformations(system, path)
-	}
-	for _, transformationsPath := range config.Generic2ds {
-		path := common.AbsolutePath(builder.baseDir, transformationsPath)
-		builder.ImportGeneric2DsTransformations(system, path)
 	}
 }
 
@@ -476,44 +464,3 @@ func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solution
 	system.answerer.AddSolutions(solutions)
 }
 
-func (builder systemBuilder) ImportGeneric2DsTransformations(system *system, transformationsPath string) {
-
-	path := common.AbsolutePath(builder.baseDir, transformationsPath)
-	transformationstring, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError("Error reading transformations file " + path + " (" + err.Error() + ")")
-		return
-	}
-
-	transformations := builder.parser.CreateTransformations(transformationstring)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
-		return
-	}
-
-	for _, transformation := range transformations {
-		system.generic2ds = append(system.generic2ds, transformation)
-	}
-}
-
-func (builder systemBuilder) ImportDs2GenericTransformations(system *system, transformationsPath string) {
-
-	path := common.AbsolutePath(builder.baseDir, transformationsPath)
-	transformationstring, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError("Error reading transformations file " + path + " (" + err.Error() + ")")
-		return
-	}
-
-	transformations := builder.parser.CreateTransformations(transformationstring)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing transformations file " + path + " (" + lastResult.String() + ")")
-		return
-	}
-
-	for _, transformation := range transformations {
-		system.ds2generic = append(system.ds2generic, transformation)
-	}
-}

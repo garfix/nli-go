@@ -24,14 +24,10 @@ type system struct {
 	generationGrammar *generate.GenerationGrammar
 	tokenizer         *parse.Tokenizer
 	parser            *earley.Parser
-	quantifierScoper  mentalese.QuantifierScoper
-	relationizer      earley.Relationizer
-	transformer       *mentalese.RelationTransformer
+	relationizer      *earley.Relationizer
 	answerer          *central.Answerer
 	generator         *generate.Generator
 	surfacer          *generate.SurfaceRepresentation
-	generic2ds        []mentalese.RelationTransformation
-	ds2generic        []mentalese.RelationTransformation
 }
 
 func NewSystem(configPath string, log *common.SystemLog) *system {

@@ -111,8 +111,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
-
-	var keyCabinet = mentalese.NewKeyCabinet()
+	keyCabinet := mentalese.NewKeyCabinet()
 
 	if !system.log.IsDone() {
 		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())

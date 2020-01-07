@@ -158,7 +158,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 
 	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if !lexItemFound && nextConsequent == ProperNounCategory {
-		lexItemFound, nameInformations = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable, state.sSelection[state.dotPosition - 1 + 1])
+		lexItemFound, nameInformations = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable, state.sSelection[state.dotPosition - 1 + 1], len(state.rule.GetConsequents()))
 		lexItemFound = lexItemFound
 	}
 	if lexItemFound {
@@ -173,7 +173,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	parser.log.EndDebug("scan", endWord, lexItemFound)
 }
 
-func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string, sType string) (bool, []central.NameInformation) {
+func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string, sType string, wordCount int) (bool, []central.NameInformation) {
 
 	word := chart.words[wordIndex]
 
@@ -191,21 +191,17 @@ func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVa
 	}
 
 	// prime memory
-	for endIndex := len(chart.words); endIndex > wordIndex; endIndex-- {
-// todo max number of words should be deduced from grammar rules
+	words := chart.words[wordIndex:wordIndex + wordCount]
+	wordString := strings.Join(words, " ")
+	nameInformations := parser.nameResolver.ResolveName(wordString, sType)
 
-		words := chart.words[wordIndex:endIndex]
-		wordString := strings.Join(words, " ")
-		nameInformations := parser.nameResolver.ResolveName(wordString, sType)
-
-		if len(nameInformations) > 0 {
-			_, ok := chart.properNounSequences[wordIndex]
-			if !ok {
-				chart.properNounSequences[wordIndex] = [][]string{}
-			}
-			chart.properNounSequences[wordIndex] = append(chart.properNounSequences[wordIndex], words)
-			return true, nameInformations
+	if len(nameInformations) > 0 {
+		_, ok := chart.properNounSequences[wordIndex]
+		if !ok {
+			chart.properNounSequences[wordIndex] = [][]string{}
 		}
+		chart.properNounSequences[wordIndex] = append(chart.properNounSequences[wordIndex], words)
+		return true, nameInformations
 	}
 
 	return false, []central.NameInformation{}

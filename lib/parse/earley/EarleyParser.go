@@ -151,14 +151,13 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	parser.log.StartDebug("scan", state)
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
-	nextConsequentVariable := state.rule.GetConsequentVariable(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 	nameInformations := []central.NameInformation{}
 
 	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if !lexItemFound && nextConsequent == ProperNounCategory {
-		lexItemFound, nameInformations = parser.isProperNoun(chart, endWordIndex, nextConsequentVariable, state.sSelection[state.dotPosition - 1 + 1], len(state.rule.GetConsequents()))
+		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 		lexItemFound = lexItemFound
 	}
 	if lexItemFound {
@@ -173,34 +172,28 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	parser.log.EndDebug("scan", endWord, lexItemFound)
 }
 
-func (parser *Parser) isProperNoun(chart *chart, wordIndex int, nextConsequentVariable string, sType string, wordCount int) (bool, []central.NameInformation) {
+func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []central.NameInformation) {
 
-	word := chart.words[wordIndex]
+	wordIndex := state.endWordIndex
+	sType := state.sSelection[state.dotPosition - 1 + 1]
+	wordCount := len(state.rule.GetConsequents())
 
-	// check memory
-	for startIndex, sequences := range chart.properNounSequences {
-		for _, sequence := range sequences {
-			endIndex := startIndex + len(sequence)
-			if wordIndex >= startIndex && wordIndex < endIndex {
-				sequenceWordIndex := wordIndex - startIndex
-				if word == sequence[sequenceWordIndex] {
-					return true, []central.NameInformation{}
-				}
-			}
-		}
+	// if the first consequent has created a match, all following words match
+	if state.dotPosition > 1 {
+		return true, []central.NameInformation{}
 	}
 
-	// prime memory
+	// check if it is possible to match all words in the remainder of the sentence
+	if wordIndex + wordCount > len(chart.words) {
+		return false, []central.NameInformation{}
+	}
+
+	// first word in proper noun consequents?  try to match all words at once
 	words := chart.words[wordIndex:wordIndex + wordCount]
 	wordString := strings.Join(words, " ")
 	nameInformations := parser.nameResolver.ResolveName(wordString, sType)
 
 	if len(nameInformations) > 0 {
-		_, ok := chart.properNounSequences[wordIndex]
-		if !ok {
-			chart.properNounSequences[wordIndex] = [][]string{}
-		}
-		chart.properNounSequences[wordIndex] = append(chart.properNounSequences[wordIndex], words)
 		return true, nameInformations
 	}
 

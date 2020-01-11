@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 )
 
@@ -77,7 +78,7 @@ func AbsolutePath(baseDir string, path string) string {
 	absolutePath := path
 
 	if len(path) > 0 && path[0] != os.PathSeparator {
-		absolutePath = baseDir + string(os.PathSeparator) + path
+		absolutePath, _ = filepath.Abs(baseDir + string(os.PathSeparator) + path)
 	}
 
 	return absolutePath

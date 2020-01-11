@@ -6,20 +6,24 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"os"
+	"path/filepath"
+	"strconv"
 )
 
 func (factBase *SparqlFactBase) doCachedQuery(query string) sparqlResponse {
 
 	sparqlResponse := sparqlResponse{}
 	queryHash := fmt.Sprintf("%x", md5.Sum([]byte(query)))
-	cacheDir := common.AbsolutePath(common.Dir(), "../../cache/")
-	queryCachePath := cacheDir + queryHash + ".json"
+	executable, _ := os.Executable()
+	executablePath := filepath.Dir(executable)
+	cacheDir := common.AbsolutePath(executablePath, "cache")
+	queryCachePath := cacheDir + "/" + queryHash + ".json"
 
 	_, err := os.Stat(cacheDir)
 	if os.IsNotExist(err) {
 		err = os.MkdirAll(cacheDir, 0777)
 		if err != nil {
-			factBase.log.AddError("Error creating cache dir: " + err.Error())
+			factBase.log.AddError("Error creating cache dir " + cacheDir + " (" + err.Error() + ")")
 			return sparqlResponse
 		}
 	}
@@ -29,6 +33,8 @@ func (factBase *SparqlFactBase) doCachedQuery(query string) sparqlResponse {
 	if os.IsNotExist(err) {
 		sparqlResponse = factBase.populateCache(query, queryCachePath)
 	} else {
+		factBase.log.AddProduction("SPARQL", query + " (from cache)" + strconv.Itoa(len(sparqlResponse.Results.Bindings)) + " results)")
+
 		sparqlResponse = factBase.readFromCache(queryCachePath)
 	}
 

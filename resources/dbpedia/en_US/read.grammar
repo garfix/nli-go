@@ -40,6 +40,7 @@
     { rule: nbar(E1) -> mother(E1) of(E1) np(E2),  sense: has_mother(E2, E1) }
 
     { rule: interrogative(P1) -> who(E1) np_comp(E1),   sense: who(E1) }
+    { rule: interrogative(P1) -> who(E1) copula() proper_noun_group(E1),   sense: describe(E1) }
     { rule: interrogative(P1) -> who(E1) copula() np(E1),   sense: who(E1) }
     { rule: interrogative(P1) -> when(P1) np_comp3(P1),   sense: when(P1) }
     { rule: interrogative(P1) -> how() many() np_comp2(E1), sense: how_many(E1) }

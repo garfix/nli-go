@@ -1,6 +1,7 @@
 [
     question(_)
     who(_)
+    describe(_)
     which(_)
     what(_)
     how_many(_)

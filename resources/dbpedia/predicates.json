@@ -11,5 +11,6 @@
   "how_old": { "entityTypes": ["person"] },
   "bear": { "entityTypes": ["event", "person", "person"] },
   "die": { "entityTypes": ["event", "person"] },
-  "who": { "entityTypes": ["person"] }
+  "who": { "entityTypes": ["person"] },
+  "describe": { "entityTypes": ["person"] }
 }

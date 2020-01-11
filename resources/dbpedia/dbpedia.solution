@@ -158,23 +158,9 @@
     }
 
     /* Who is the husband of X? */
-    {
-        condition: question(_) who(B) has_husband(A, B),
-        responses: [
-            {
-                condition: exists(),
-                preparation: name(B, N, canonical_name),
-                answer: name(B, N) make_and(B, R) root(R)
-            }
-            {
-                answer: dont_know()
-            }
-        ]
-    }
-
     /* Who is the wife of X? */
     {
-        condition: question(_) who(B) has_wife(A, B),
+        condition: question(_) who(B),
         responses: [
             {
                 condition: exists(),
@@ -189,7 +175,7 @@
 
     /* Who is X? */
     {
-        condition: question(_) who(B),
+        condition: question(_) describe(B),
         responses: [
             {
                 condition: exists(),

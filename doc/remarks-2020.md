@@ -1,3 +1,13 @@
+# 2020-01-11
+
+I put a new version online http://patrickvanbergen.com/dbpedia/app/ that allows case insensitive names. This will reduce
+the number of failed queries quite a lot.
+
+Did you know?
+
+    Who is <name>?  --> Asks for a description 
+    Who is <description>? --> Asks for a name 
+
 # 2020-01-05
 
 I made case-insensitive names possible, and at the same time checking the database in the parsing process. Introduced

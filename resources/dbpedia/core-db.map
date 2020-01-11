@@ -6,4 +6,5 @@
     how_many(_) => how_many(_);
     yes_no(_) => yes_no();
     when(_) => when(_);
+    describe(_) => describe(_);
 ]

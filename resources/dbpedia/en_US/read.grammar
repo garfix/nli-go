@@ -39,14 +39,15 @@
     { rule: nbar(E1) -> father(E1) of(E1) np(E2),  sense: has_father(E2, E1) }
     { rule: nbar(E1) -> mother(E1) of(E1) np(E2),  sense: has_mother(E2, E1) }
 
-    { rule: interrogative(P1) -> who(E1) np_comp(E1),   sense: who(E1) }
-    { rule: interrogative(P1) -> who(E1) copula() proper_noun_group(E1),   sense: describe(E1) }
-    { rule: interrogative(P1) -> who(E1) copula() np(E1),   sense: who(E1) }
-    { rule: interrogative(P1) -> when(P1) np_comp3(P1),   sense: when(P1) }
+    { rule: interrogative(P1) -> who() np_comp(E1),   sense: who(E1) }
+    { rule: interrogative(P1) -> who() copula() proper_noun_group(E1),   sense: describe(E1) }
+    { rule: interrogative(P1) -> what() copula() the() name() of() np(E1), sense: who(E1) }
+    { rule: interrogative(P1) -> who() copula() np(E1),   sense: who(E1) }
+    { rule: interrogative(P1) -> when() np_comp3(P1),   sense: when(P1) }
     { rule: interrogative(P1) -> how() many() np_comp2(E1), sense: how_many(E1) }
     { rule: interrogative(P1) -> how() old() copula() np(E1), sense: how_old(E1) }
     { rule: interrogative(P1) -> aux_be() np_comp4(P1),   sense: yes_no(_) }
-    { rule: interrogative(P1) -> what(E1) copula() np(E1),   sense: what(E1) }
+    { rule: interrogative(P1) -> what() copula() np(E1),   sense: what(E1) }
 
     { rule: interrogative(S1) -> interrogative(S1) question_mark() }
     { rule: s(S1) -> interrogative(S1),                                     sense: question(S1) }

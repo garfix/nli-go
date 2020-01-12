@@ -36,6 +36,7 @@
     { form: 'son', pos: son }
     { form: 'husband', pos: husband }
     { form: 'wife', pos: wife }
+    { form: 'name', pos: name }
 
     { form: /^[0-9]+/,            pos: number }
 

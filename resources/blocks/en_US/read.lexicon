@@ -4,6 +4,9 @@
 
     { form: 'is',                pos: copula }
 
+    { form: 'by',                pos: by }
+
+    { form: 'is',                pos: aux_be }
     { form: 'are',               pos: aux_be }
     { form: 'does',              pos: aux_do }
 
@@ -24,6 +27,7 @@
 
     { form: 'grasp',             pos: grasp }
     { form: 'contain',           pos: contain }
+    { form: 'supported',         pos: support }
     { form: 'put',               pos: put }
     { form: 'find',              pos: find }
     { form: 'holding',           pos: holding }

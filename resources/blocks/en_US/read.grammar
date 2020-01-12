@@ -38,9 +38,10 @@
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
 
-    { rule: which_clause(E2) -> aux_do() np(E1) contain(P1),                sense: contain(P1, E1, E2) }
+    { rule: what_clause(E2) -> aux_do() np(E1) contain(P1),                sense: contain(P1, E1, E2) }
+    { rule: what_clause(E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E1, E2) }
 
-    { rule: interrogative_clause(P1) -> what() which_clause(E1),            sense: what(E1) }
+    { rule: interrogative_clause(P1) -> what() what_clause(E1),            sense: what(E1) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) question_mark() }
 

@@ -15,7 +15,7 @@
 
     /* What? */
     {
-        condition: question(_) what(B) contain(_, A, B),
+        condition: question(_) what(B),
         responses: [
             {
                 condition: exists(),

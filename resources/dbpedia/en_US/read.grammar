@@ -1,9 +1,9 @@
 [
-    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) proper_noun(N1)}
-    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1)}
-    { rule: proper_noun_group(N1) -> proper_noun(N1)}
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) }
 
-    { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
+    { rule: qp(E1) -> the(),                                                sense: isa(E1, the) }
 
     { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
     { rule: np(E1) -> proper_noun_group(E1) }
@@ -14,16 +14,16 @@
     { rule: pp(E1) -> above() number(N1),                                   sense: greater_than(E1, N1) }
 
     { rule: np_comp(E1) -> marry(P1) np(E2),            sense: marry(P1, E1, E2) }
-    { rule: np_comp(E1) -> marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
+    { rule: np_comp(E1) -> marry(P1) to() np(E2),     sense: marry(P1, E1, E2) }
 
-    { rule: np_comp2(E1) -> child(E1) have(P1) np(E2),  sense: have_child(E2, E1) }
-    { rule: np_comp2(E1) -> country(E1) have() population(E2) pp(E2),  sense: has_population(E1, E2) }
+    { rule: np_comp2(E1) -> child(E1) have() np(E2),  sense: have_child(E2, E1) }
+    { rule: np_comp2(E1) -> country(E1) have() population() pp(E2),         sense: has_population(E1, E2) }
 
-    { rule: np_comp3(P1) -> aux_be() np(E1) bear(P1),   sense: bear(P1, _, E1) }
+    { rule: np_comp3(P1) -> aux_be() np(E1) bear(P1),                       sense: bear(P1, _, E1) }
     { rule: np_comp3(Ymd) -> aux_be() np(E1) possessive_marker() birthday(Ymd),   sense: birth_date(E1, Ymd) }
     { rule: np_comp3(P1) -> aux_do() np(E1) die(P1),    sense: die(P1, E1) }
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) to() np(E2),     sense: marry(P1, E1, E2) }
 
     { rule: possessive_marker(P) -> possessive_marker_1() possessive_marker_2() }
 
@@ -34,10 +34,12 @@
     { rule: np(E1) -> np(E2) possessive_marker() wife(E1),  sense: has_wife(E2, E1) }
     { rule: np(E1) -> np(E2) possessive_marker() husband(E1),  sense: has_husband(E2, E1) }
 
-    { rule: nbar(E1) -> daughter(E1) of(E1) np(E2),  sense: has_daughter(E2, E1) }
-    { rule: nbar(E1) -> son(E1) of(E1) np(E2),  sense: has_son(E2, E1) }
-    { rule: nbar(E1) -> father(E1) of(E1) np(E2),  sense: has_father(E2, E1) }
-    { rule: nbar(E1) -> mother(E1) of(E1) np(E2),  sense: has_mother(E2, E1) }
+    { rule: nbar(E1) -> daughter(E1) of() np(E2),  sense: has_daughter(E2, E1) }
+    { rule: nbar(E1) -> son(E1) of() np(E2),  sense: has_son(E2, E1) }
+    { rule: nbar(E1) -> father(E1) of() np(E2),  sense: has_father(E2, E1) }
+    { rule: nbar(E1) -> mother(E1) of() np(E2),  sense: has_mother(E2, E1) }
+    { rule: nbar(E1) -> wife(E1) of() np(E2),  sense: has_wife(E2, E1) }
+    { rule: nbar(E1) -> husband(E1) of() np(E2),  sense: has_husband(E2, E1) }
 
     { rule: interrogative(P1) -> who() np_comp(E1),   sense: who(E1) }
     { rule: interrogative(P1) -> who() copula() proper_noun_group(E1),   sense: describe(E1) }

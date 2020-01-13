@@ -1,5 +1,6 @@
 {
   "has_capital": {"entityTypes": ["country", "city"] },
+  "has_population": {"entityTypes": ["country", ""] },
   "have_child": {"entityTypes": ["person", "person"] },
   "has_father": {"entityTypes": ["person", "person"] },
   "has_mother": {"entityTypes": ["person", "person"] },

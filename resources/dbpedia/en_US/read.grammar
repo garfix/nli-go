@@ -10,6 +10,7 @@
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E2) -> capital() of() np(E1),                              sense: has_capital(E1, E2) }
+    { rule: nbar(E2) -> population() of() np(E1),                           sense: has_population(E1, E2) }
 
     { rule: pp(E1) -> above() number(N1),                                   sense: greater_than(E1, N1) }
 

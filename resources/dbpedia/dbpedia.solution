@@ -188,6 +188,20 @@
         ]
     }
 
+    /* What is the population of X? */
+    {
+        condition: question(_) what(B) has_population(E1, B),
+        responses: [
+            {
+                condition: exists(),
+                answer: canned(B)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
+    }
+
     /* What is the capital of X? */
     {
         condition: question(_) what(B),

@@ -42,6 +42,7 @@ func TestDBPedia(t *testing.T) {
 			{"Who is Lisa Marie Presley?", "Lisa Marie Presley (born February 1, 1968) is an American singer-songwriter. She is the daughter of musician-actor Elvis Presley and actress and business magnate Priscilla Presley, and is Elvis' only child. Sole heir to her father's estate, she has developed a career in the music business and has issued three albums. Presley has been married four times, including to singer Michael Jackson and actor Nicolas Cage, before marrying music producer Michael Lockwood, father of her twin girls.", "", ""},
 			{"What is the capital of Iraq?", "Baghdad", "", ""},
 			{"What is the capital of Iran?", "Tehran", "", ""},
+			{"What is the population of Iraq?", "37056169", "", ""},
 			{"How many countries have population above 130000000", "9", "", ""},
 		},
 		{

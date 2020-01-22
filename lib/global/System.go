@@ -78,7 +78,7 @@ func (system *system) PopulateDialogContext(sessionDataPath string) {
 }
 
 func (system *system) ClearDialogContext() {
-	system.dialogContext.Initialize([]mentalese.Relation{})
+	system.dialogContext.Initialize()
 }
 
 func (system *system) StoreDialogContext(sessionDataPath string) {
@@ -114,7 +114,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	keyCabinet := mentalese.NewKeyCabinet()
 
 	if !system.log.IsDone() {
-		system.log.AddProduction("Dialog Context", system.dialogContext.GetRelations().String())
+		system.log.AddProduction("Dialog Context", "?")
 	}
 
 	if !system.log.IsDone() {

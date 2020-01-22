@@ -1,3 +1,7 @@
+# 2018-01-22
+
+I made the dialog context much simpler and more extendable by removing the fact base.
+
 # 2018-01-18
 
 I thought about anaphora resolution (handling pronouns like "it", and phrases like "the block", that refer to entities
@@ -55,7 +59,7 @@ This gives a match.
 
 Only if no match was found using the queue, will the range be matched with the knowledge bases without a key constraint.
 
-This is the basic idea; I expect there will need to made some adjustments to make this work.
+This is the basic idea; I expect there will need to be made some adjustments to make this work.
 
 # 2020-01-11
 

@@ -37,7 +37,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
 		},
 		{
-//			{"What is the pyramid supported by?", "The box", "", ""},
+			{"What is the pyramid supported by?", "The box", "", ""},
 		},
 	}
 

@@ -46,7 +46,7 @@ func TestSolver(t *testing.T) {
 	entities := mentalese.Entities{}
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 
-	dialogContext := central.NewDialogContext(matcher, log)
+	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)
 

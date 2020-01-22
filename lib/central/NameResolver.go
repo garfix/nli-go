@@ -8,8 +8,6 @@ import (
 	"strconv"
 )
 
-const predicateNameInformation = "name_information"
-
 const defaultEntityType = "entity"
 
 // uses EntityId() relations to create new sense() relations, that hold the EntityId's of the entities of different knowledge bases
@@ -87,81 +85,6 @@ func (resolver *NameResolver) Resolve(nameInformations []NameInformation) []Name
 	return resolvedInformations
 }
 
-// Returns a set of senses, or a human readable question to the user
-//func (resolver *NameResolver) Resolve2(relations mentalese.RelationSet) (*mentalese.KeyCabinet, mentalese.RelationSet) {
-//
-//	keyCabinet := mentalese.NewKeyCabinet()
-//	namelessRelations := mentalese.RelationSet{}
-//	userResponse := ""
-//	options := common.NewOptions()
-//
-//	namesAndTypes := resolver.collectNamesAndTypes(relations.UnScope())
-//
-//	for variable, nameAndType := range namesAndTypes {
-//
-//		name := nameAndType.name
-//		entityType := nameAndType.entityType
-//
-//		// check if the nameAndType is known in the dialog context
-//		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
-//
-//		if len(dialogNameInformations) == 0 {
-//
-//			// look up the nameAndType in all fact bases
-//
-//			factBaseNameInformations, multipleResultsInFactBase, factBasesWithResults := resolver.ResolveName(name, entityType)
-//
-//			if factBasesWithResults == 0 {
-//
-//				userResponse = "Name not found in any knowledge base: " + name
-//
-//			} else if factBasesWithResults > 1 || multipleResultsInFactBase {
-//
-//				// check if the user has just answered this question
-//				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
-//
-//				if found {
-//
-//					dialogNameInformations = resolver.selectNameInformationsFromAnswer(factBaseNameInformations, answer)
-//					resolver.SaveNameInformations(name, dialogNameInformations)
-//					resolver.dialogContext.RemoveAnswerToOpenQuestion()
-//
-//				} else {
-//
-//					// need to ask user
-//					userResponse = "Which one?"
-//					options = resolver.composeOptions(factBaseNameInformations)
-//
-//					// store options
-//					resolver.storeOptions(factBaseNameInformations)
-//
-//					break
-//
-//				}
-//
-//			} else {
-//
-//				// single meaning for nameAndType
-//				dialogNameInformations = factBaseNameInformations
-//				resolver.SaveNameInformations(name, dialogNameInformations)
-//
-//			}
-//		}
-//
-//		for _, info := range dialogNameInformations {
-//			keyCabinet.AddName(variable, info.DatabaseName, info.EntityId)
-//		}
-//	}
-//
-//	namelessRelations = relations.RemoveMatchingPredicate(mentalese.PredicateName)
-//
-//	if userResponse != "" {
-//		resolver.log.SetClarificationRequest(userResponse, options)
-//	}
-//
-//	return keyCabinet, namelessRelations
-//}
-
 func (resolver *NameResolver) collectMetaData(nameInformations []NameInformation) (bool, int) {
 
 	factBases := map[string]bool{}
@@ -232,33 +155,17 @@ func (resolver *NameResolver) createNameSensesFromNameInformations(nameInformati
 
 func (resolver *NameResolver) SaveNameInformations(name string, nameInformations []NameInformation) {
 
-	for _, nameInformation := range nameInformations {
-		resolver.dialogContext.AddRelation(mentalese.NewRelation(predicateNameInformation, []mentalese.Term{
-			mentalese.NewString(name),
-			mentalese.NewString(nameInformation.DatabaseName),
-			mentalese.NewString(nameInformation.EntityId),
-		}))
-	}
+	resolver.dialogContext.AddNameInformations(nameInformations)
 }
 
 func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInformation {
 
-	bindings := resolver.solver.FindFacts(resolver.dialogContext.GetFactBase(), mentalese.RelationSet{
-		mentalese.NewRelation(predicateNameInformation, []mentalese.Term{
-			mentalese.NewString(name),
-			mentalese.NewVariable("databaseName"),
-			mentalese.NewVariable("entityId"),
-		}),
-	})
-
 	nameInformations := []NameInformation{}
 
-	for _, binding := range bindings {
-		nameInformations = append(nameInformations, NameInformation{
-			Name:         name,
-			DatabaseName: binding["databaseName"].TermValue,
-			EntityId:     binding["entityId"].TermValue,
-		})
+	for _, nameInformation := range resolver.dialogContext.GetNameInformations() {
+		if nameInformation.Name == name {
+			nameInformations = append(nameInformations, nameInformation)
+		}
 	}
 
 	return nameInformations

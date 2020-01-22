@@ -1,139 +1,69 @@
 package central
 
-import (
-	"nli-go/lib/common"
-	"nli-go/lib/importer"
-	"nli-go/lib/knowledge"
-	"nli-go/lib/mentalese"
-)
-
-const predicateOption = "option"
-const predicateAnswerToOpenQuestion = "answer_open_question"
-const predicateOriginalInput = "original_input"
-
 // The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
 // It may also be used to data relations that may be needed in the next call of the library (within the same session)
 type DialogContext struct {
-	factBase *knowledge.InMemoryFactBase
-	values mentalese.RelationSet
+	OriginalInput string
+	AnswerToOpenQuestion string
+	NameInformations []NameInformation
+	Options []string
 }
 
-func NewDialogContext(matcher *mentalese.RelationMatcher, log *common.SystemLog) *DialogContext {
-
-	transformationString := "[" +
-		"name_information(Name, Database_name, Entity_id) => name_information(Name, Database_name, Entity_id); " +
-		"]"
-
-	parser := importer.NewInternalGrammarParser()
-
-	transformations := parser.CreateTransformations(transformationString)
-
-	factBase := knowledge.NewInMemoryFactBase(
-		"dialog-context",
-		mentalese.RelationSet{},
-		matcher,
-		transformations,
-		[]mentalese.RelationTransformation{},
-		mentalese.DbStats{},
-		mentalese.Entities{},
-		log,
-	)
-
-	return &DialogContext{
-		factBase: factBase,
-	}
+func NewDialogContext() *DialogContext {
+	dialogContext := &DialogContext{}
+	dialogContext.Initialize()
+	return dialogContext
 }
 
-func (dc *DialogContext) Initialize(values mentalese.RelationSet) {
-	dc.factBase.SetRelations(values)
+func (dc *DialogContext) Initialize() {
+	dc.OriginalInput = ""
+	dc.AnswerToOpenQuestion = ""
+	dc.NameInformations = []NameInformation{}
+	dc.Options = []string{}
 }
 
 func (dc *DialogContext) SetOriginalInput(originalInput string) {
-	dc.factBase.AddRelation(mentalese.NewRelation(predicateOriginalInput, []mentalese.Term{
-		mentalese.NewString(originalInput),
-	}))
+	dc.OriginalInput = originalInput
 }
 
 func (dc *DialogContext) GetOriginalInput() (string, bool) {
-	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateOriginalInput, []mentalese.Term{
-		mentalese.NewVariable("A"),
-	}))
-
-	if len(results) > 0 {
-		result := results[0]
-		return result["A"].TermValue, true
-	} else {
-		return "", false
-	}
+	return dc.OriginalInput, dc.OriginalInput != ""
 }
 
 func (dc* DialogContext) RemoveOriginalInput() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOriginalInput, []mentalese.Term{
-		mentalese.NewAnonymousVariable(),
-	}))
+	dc.OriginalInput = ""
 }
 
-func (dc *DialogContext) AddRelation(relation mentalese.Relation) {
-	dc.factBase.AddRelation(relation)
+func (dc *DialogContext) AddNameInformations(nameInformations []NameInformation) {
+	dc.NameInformations = append(dc.NameInformations, nameInformations...)
 }
 
-func (dc *DialogContext) GetFactBase() knowledge.FactBase {
-	return dc.factBase
-}
-
-func (dc *DialogContext) GetRelations() mentalese.RelationSet {
-	return dc.factBase.GetRelations()
+func (dc *DialogContext) GetNameInformations() []NameInformation {
+	return dc.NameInformations
 }
 
 func (dc *DialogContext) AddOption(option string) {
-	dc.factBase.AddRelation(mentalese.NewRelation(predicateOption, []mentalese.Term{
-		mentalese.NewString(option),
-	}))
+	dc.Options = append(dc.Options, option)
 }
 
 func (dc *DialogContext) GetOpenOptions() []string {
-	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateOption, []mentalese.Term{
-		mentalese.NewVariable("Q"),
-	}))
-
-	var options []string
-
-	for _, result := range results {
-		options = append(options, result["Q"].TermValue)
-	}
-
-	return options
+	return dc.Options
 }
 
 func (dc* DialogContext) RemoveOpenOptions() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateOption, []mentalese.Term{
-		mentalese.NewAnonymousVariable(),
-	}))
+	dc.Options = []string{}
 }
 
 func (dc *DialogContext) SetAnswerToOpenQuestion(answer string) {
-	dc.factBase.AddRelation(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
-		mentalese.NewString(answer),
-	}))
+	dc.AnswerToOpenQuestion = answer
 }
 
 func (dc *DialogContext) GetAnswerToOpenQuestion() (string, bool) {
-	results := dc.factBase.MatchRelationToDatabase(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
-		mentalese.NewVariable("A"),
-	}))
-
-	if len(results) > 0 {
-		result := results[0]
-		return result["A"].TermValue, true
-	} else {
-		return "", false
-	}
+	return dc.AnswerToOpenQuestion, dc.AnswerToOpenQuestion != ""
 }
 
 func (dc* DialogContext) RemoveAnswerToOpenQuestion() {
-	dc.factBase.RemoveRelation(mentalese.NewRelation(predicateAnswerToOpenQuestion, []mentalese.Term{
-		mentalese.NewAnonymousVariable(),
-	}))
+	dc.AnswerToOpenQuestion = ""
 }
 
 func (dc* DialogContext) Process(currentInput string) string {

@@ -1,6 +1,6 @@
 package mentalese
 
-// A Key Cabinet maps variables database ids for multiple databases
+// A Key Cabinet maps variables to database ids for multiple databases
 //
 // for instance:
 //

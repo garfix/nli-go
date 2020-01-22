@@ -1,1 +1,1 @@
-[{"Predicate":"name_information","Arguments":[{"TermType":3,"TermValue":"Lord Byron","TermValueRelationSet":null},{"TermType":3,"TermValue":"dbpedia","TermValueRelationSet":null},{"TermType":3,"TermValue":"http://dbpedia.org/resource/Lord_Byron","TermValueRelationSet":null}]}]
+{"OriginalInput":"","AnswerToOpenQuestion":"","NameInformations":[{"Name":"Lord Byron","DatabaseName":"dbpedia","EntityId":"http://dbpedia.org/resource/Lord_Byron","Information":"person; description: English poet and a leading figure in the Romantic movement"}],"Options":[]}

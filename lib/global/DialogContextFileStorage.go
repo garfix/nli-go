@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
-	"nli-go/lib/mentalese"
 	"os"
 )
 
@@ -34,15 +33,11 @@ func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogCon
 		return
 	}
 
-	values := mentalese.RelationSet{}
-
-	err = json.Unmarshal([]byte(dialogContextJson), &values)
+	err = json.Unmarshal([]byte(dialogContextJson), &dialogContext)
 	if err != nil {
 		storage.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
 		return
 	}
-
-	dialogContext.Initialize(values)
 }
 
 func (storage DialogContextFileStorage) Write(dialogContextPath string, dialogContext *central.DialogContext) {
@@ -51,7 +46,7 @@ func (storage DialogContextFileStorage) Write(dialogContextPath string, dialogCo
 		return
 	}
 
-	jsonBytes, err := json.Marshal(dialogContext.GetRelations())
+	jsonBytes, err := json.Marshal(dialogContext)
 	if err != nil {
 		storage.log.AddError("Error serializing dialog context (" + err.Error() + ")")
 		return

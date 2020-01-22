@@ -40,7 +40,7 @@ func TestEarleyParser(test *testing.T) {
 	tokenizer := parse.NewTokenizer(log)
 
 	matcher := mentalese.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(matcher, log)
+	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	predicates := mentalese.Predicates{}
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)

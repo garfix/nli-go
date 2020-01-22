@@ -42,7 +42,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.generationGrammar = generate.NewGenerationGrammar()
 	system.tokenizer = parse.NewTokenizer(builder.log)
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
-	system.dialogContext = central.NewDialogContext(matcher, builder.log)
+	system.dialogContext = central.NewDialogContext()
 
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 

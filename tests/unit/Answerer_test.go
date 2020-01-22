@@ -101,7 +101,7 @@ func TestAnswerer(t *testing.T) {
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
 
-	dialogContext := central.NewDialogContext(matcher, log)
+	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 	solver.AddFactBase(factBase)

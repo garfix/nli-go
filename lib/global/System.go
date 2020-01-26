@@ -114,10 +114,6 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	keyCabinet := mentalese.NewKeyCabinet()
 
 	if !system.log.IsDone() {
-		system.log.AddProduction("Dialog Context", "?")
-	}
-
-	if !system.log.IsDone() {
 		tokens = system.tokenizer.Process(originalInput)
 		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
 	}
@@ -135,7 +131,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 
 	if !system.log.IsDone() {
 		answerRelations = system.answerer.Answer(requestRelations, keyCabinet)
-		system.log.AddProduction("DS Answer", answerRelations.String())
+		system.log.AddProduction("Answer", answerRelations.String())
 	}
 
 	if !system.log.IsDone() {

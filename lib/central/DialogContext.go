@@ -1,5 +1,7 @@
 package central
 
+const MaxSizeAnaphoraQueue = 10;
+
 // The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
 // It may also be used to data relations that may be needed in the next call of the library (within the same session)
 type DialogContext struct {
@@ -7,6 +9,7 @@ type DialogContext struct {
 	AnswerToOpenQuestion string
 	NameInformations []NameInformation
 	Options []string
+	AnaphoraQueue []EntityReference
 }
 
 func NewDialogContext() *DialogContext {
@@ -20,6 +23,27 @@ func (dc *DialogContext) Initialize() {
 	dc.AnswerToOpenQuestion = ""
 	dc.NameInformations = []NameInformation{}
 	dc.Options = []string{}
+	dc.AnaphoraQueue = []EntityReference{}
+}
+
+func (dc *DialogContext) AddEntityReference(entityReference EntityReference) {
+	dc.AnaphoraQueue = append(dc.AnaphoraQueue, entityReference)
+
+	if len(dc.AnaphoraQueue) > MaxSizeAnaphoraQueue {
+		dc.AnaphoraQueue = dc.AnaphoraQueue[0:MaxSizeAnaphoraQueue]
+	}
+}
+
+func (dc *DialogContext) FindEntityReferences(entityType string) []EntityReference {
+	foundReferences := []EntityReference{}
+
+	for _, entityReference := range dc.AnaphoraQueue {
+		if entityReference.EntityType == entityType {
+			foundReferences = append(foundReferences, entityReference)
+		}
+	}
+
+	return foundReferences
 }
 
 func (dc *DialogContext) SetOriginalInput(originalInput string) {

@@ -110,8 +110,12 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 	if found {
 		newBindings = mentalese.Bindings{}
 
-		// number_of(E1, 4)
-		if aggregateArgument.IsNumber() {
+		if aggregateVariable == "" {
+
+			newBindings = bindings
+
+			// number_of(E1, 4)
+		} else if aggregateArgument.IsNumber() {
 
 			if aggregateArgument.TermValue == aggregate.TermValue {
 				newBindings = bindings

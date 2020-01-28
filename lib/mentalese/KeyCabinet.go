@@ -6,66 +6,36 @@ package mentalese
 //
 // entity variable E1 is identified by `311` in database 1, and by `urn:red-phone-90712` in database 2
 type KeyCabinet struct {
-	data map[string]map[string]string
+	Data map[string]map[string]string
 }
 
 func NewKeyCabinet() *KeyCabinet {
 	return &KeyCabinet{
-		data: map[string]map[string]string{},
+		Data: map[string]map[string]string{},
 	}
-}
-
-func (store *KeyCabinet) IsEmpty() bool {
-	return len(store.data) == 0
 }
 
 func (store *KeyCabinet) AddName(variable string, databaseName string, entityId string) {
-	_, found := store.data[databaseName]
+	_, found := store.Data[databaseName]
 
 	if !found {
-		store.data[databaseName] = map[string]string{}
+		store.Data[databaseName] = map[string]string{}
 	}
 
-	store.data[databaseName][variable] = entityId
+	store.Data[databaseName][variable] = entityId
 }
 
 func (store *KeyCabinet) GetValues(databaseName string) map[string]string {
 
 	values := map[string]string{}
 
-	_, found := store.data[databaseName]
+	_, found := store.Data[databaseName]
 
 	if found {
-		values = store.data[databaseName]
+		values = store.Data[databaseName]
 	}
 
 	return values
-}
-
-func (store *KeyCabinet) ReplaceVariables(oldStore *KeyCabinet, binding Binding) *KeyCabinet {
-
-	newStore := NewKeyCabinet()
-
-	for knowledgeBaseName, values := range oldStore.data {
-		for oldVariable, value := range values {
-
-			found := false
-
-			for newVariable, term := range binding {
-				if term.TermValue == oldVariable {
-					found = true
-					newStore.AddName(newVariable, knowledgeBaseName, value)
-					break
-				}
-			}
-
-			if !found {
-				newStore.AddName(oldVariable, knowledgeBaseName, value)
-			}
-		}
-	}
-
-	return newStore
 }
 
 func (store *KeyCabinet) BindToRelationSet(set RelationSet, knowledgeBaseName string) RelationSet {
@@ -79,7 +49,7 @@ func (store *KeyCabinet) BindToRelationSet(set RelationSet, knowledgeBaseName st
 		newRelation := relation.Copy()
 
 		for i, argument := range relation.Arguments {
-			if argument.IsVariable() {
+			if argument.IsId() {
 				entityId, found := databaseValues[argument.TermValue]
 				if found {
 					newArgument := NewId(entityId)
@@ -99,7 +69,7 @@ func (store *KeyCabinet) String() string {
 	string := ""
 	sep := ""
 
-	for databaseName, ids := range store.data {
+	for databaseName, ids := range store.Data {
 
 		string += sep + "{"
 

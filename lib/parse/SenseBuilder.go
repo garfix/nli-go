@@ -7,10 +7,11 @@ import (
 
 type SenseBuilder struct {
 	varIndexCounter map[string]int
+	constantCounter int
 }
 
 func NewSenseBuilder() SenseBuilder {
-	return SenseBuilder{varIndexCounter: map[string]int{}}
+	return SenseBuilder{varIndexCounter: map[string]int{}, constantCounter: 1}
 }
 
 // Returns a new variable name
@@ -110,10 +111,17 @@ func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet,
 
 			relationArgument := argument
 
-			if argument.TermType == from.TermType && argument.TermValue == from.TermValue {
+			if argument.IsRelationSet() {
 
-				relationArgument.TermType = to.TermType
-				relationArgument.TermValue = to.TermValue
+				relationArgument.TermValueRelationSet = builder.ReplaceTerm(relationArgument.TermValueRelationSet, from, to)
+
+			} else {
+
+				if argument.TermType == from.TermType && argument.TermValue == from.TermValue {
+
+					relationArgument.TermType = to.TermType
+					relationArgument.TermValue = to.TermValue
+				}
 			}
 
 			relation.Arguments = append(relation.Arguments, relationArgument)

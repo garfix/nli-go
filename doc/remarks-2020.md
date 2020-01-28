@@ -1,3 +1,12 @@
+# 2020-01-27
+
+Shared-id == meta-id.
+
+I will first un-use the key cabinet, and when that works, I will give it the new function of providing the shared-id -
+db-id mapping.
+
+I must make a test for the multiple-database query.
+
 # 2020-01-25
 
 What if a mapping between databases would exist? What would it look like? Preferably there would be a shared identity.

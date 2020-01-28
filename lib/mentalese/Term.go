@@ -53,6 +53,10 @@ func (term Term) IsNumber() bool {
 	return term.TermType == TermNumber
 }
 
+func (term Term) IsId() bool {
+	return term.TermType == TermId
+}
+
 func (term Term) IsRegExp() bool {
 	return term.TermType == TermRegExp
 }

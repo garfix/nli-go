@@ -151,18 +151,3 @@ func (optimizer Optimizer) createRoutes(set mentalese.RelationSet, r int, handle
 
 	return solutionRoutes
 }
-
-func (optimizer Optimizer) bindKnowledgeBaseVariables(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet, knowledgeBaseName string) mentalese.RelationSet {
-
-	values := keyCabinet.GetValues(knowledgeBaseName)
-
-	binding := mentalese.Binding{}
-
-	for key, value := range values {
-		binding[key] = mentalese.NewId(value)
-	}
-
-	boundRelations := set.BindSingle(binding)
-
-	return boundRelations
-}

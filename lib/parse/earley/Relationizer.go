@@ -48,11 +48,13 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCab
 
 	if node.IsLeafNode() {
 
+		isProperNoun := node.category == ProperNounCategory
+
 		// leaf state rule: category -> word
 		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
 		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
 		relationSet = lexItemRelations
-		makeConstant = isRegExp || node.category == ProperNounCategory
+		makeConstant = isRegExp || isProperNoun
 
 	} else {
 

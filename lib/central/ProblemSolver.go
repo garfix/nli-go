@@ -200,23 +200,19 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	if isFactBase {
 
-		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
+		boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
 
-			boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
+		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
 
 			solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, keyCabinet)
 			newBindings = append(newBindings, binding)
 
 		} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
 
-			boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
-
 			solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, keyCabinet)
 			newBindings = append(newBindings, binding)
 
 		} else {
-
-			boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
 
 			sourceBindings := solver.FindFacts(factBase, boundRelations)
 

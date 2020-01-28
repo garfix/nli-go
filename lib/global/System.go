@@ -130,6 +130,12 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
+		requestRelations, keyCabinet = system.replaceNameVariables(requestRelations, keyCabinet)
+		system.log.AddProduction("Relationizer 2", requestRelations.String())
+		system.log.AddProduction("Key cabinet 2", keyCabinet.String())
+	}
+
+	if !system.log.IsDone() {
 		answerRelations = system.answerer.Answer(requestRelations, keyCabinet)
 		system.log.AddProduction("Answer", answerRelations.String())
 	}
@@ -150,4 +156,25 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	return answer, options
+}
+
+func (system *system) replaceNameVariables(relations mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) ([]mentalese.Relation, *mentalese.KeyCabinet) {
+
+	newRelations := relations
+	builder := parse.NewSenseBuilder()
+	newData := map[string]map[string]string{}
+
+	for database, ids := range keyCabinet.Data {
+		newData[database] = map[string]string{}
+		for variable, id := range ids {
+			c := mentalese.NewId("C" + variable)
+			v := mentalese.NewVariable(variable)
+			newRelations = builder.ReplaceTerm(newRelations, v, c)
+			newData[database]["C" + variable] = id
+		}
+	}
+
+	keyCabinet.Data = newData
+
+	return newRelations, keyCabinet
 }

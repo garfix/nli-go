@@ -237,7 +237,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	} else if isNestedStructureBase {
 
-		newBindings = solver.SolveChildStructures(relationGroup.Relations[0], keyCabinet, binding)
+		newBindings = solver.solveChildStructures(relationGroup.Relations[0], keyCabinet, binding)
 
 	}
 
@@ -246,7 +246,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	return newBindings
 }
 
-func (solver ProblemSolver) SolveChildStructures(goal mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
 
 	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
 
@@ -292,7 +292,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 				boundConditions := ds2db.Replacement.BindSingle(internalBinding)
 
 				// match this bound version to the database
-				internalBindings, match3 := solver.SolveMultipleRelationSingleFactBase(ds2db.Replacement, boundConditions, factBase)
+				internalBindings, match3 := solver.solveMultipleRelationSingleFactBase(ds2db.Replacement, boundConditions, factBase)
 
 				if match3 {
 					for _, binding := range internalBindings {
@@ -308,9 +308,9 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 	return subgoalBindings
 }
 
-func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) (mentalese.Bindings, bool) {
+func (solver ProblemSolver) solveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) (mentalese.Bindings, bool) {
 
-	solver.log.StartDebug("SolveMultipleRelationSingleFactBase", boundSequence)
+	solver.log.StartDebug("solveMultipleRelationSingleFactBase", boundSequence)
 
 	// bindings using database level variables
 	sequenceBindings := mentalese.Bindings{}
@@ -362,7 +362,7 @@ func (solver ProblemSolver) SolveMultipleRelationSingleFactBase(unboundSequence 
 		}
 	}
 
-	solver.log.EndDebug("SolveMultipleRelationSingleFactBase", sequenceBindings, match)
+	solver.log.EndDebug("solveMultipleRelationSingleFactBase", sequenceBindings, match)
 
 	return sequenceBindings, match
 }

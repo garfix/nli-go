@@ -272,9 +272,11 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 			continue
 		}
 
-		bindings := resolver.solver.SolveRelationSet(entityInfo.Name, nil, mentalese.Bindings{{
+		boundName := entityInfo.Name.BindSingle(mentalese.Binding{
 			mentalese.NameVar: mentalese.NewString(name),
-		}})
+		})
+
+		bindings := resolver.solver.FindFacts(factBase, boundName)
 
 		for _, binding := range bindings {
 

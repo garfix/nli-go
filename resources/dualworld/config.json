@@ -1,0 +1,31 @@
+{
+  "lexicons": [
+    "english.lexicon"
+  ],
+  "grammars": [
+    "english.grammar"
+  ],
+  "solutions": [
+    "dual.solution"
+  ],
+  "factbases": {
+    "relation": [
+      {
+        "name": "db1",
+        "facts": "db1/db.relation",
+        "entities": "entities.json",
+        "readMap": "db1/db.map"
+      },
+      {
+        "name": "db2",
+        "facts": "db2/db.relation",
+        "entities": "entities.json",
+        "readMap": "db2/db.map"
+      }
+    ]
+  },
+  "rulebases": [
+    "relationships.rule"
+  ],
+  "predicates": "predicates.json"
+}

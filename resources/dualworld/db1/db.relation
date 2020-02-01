@@ -1,0 +1,6 @@
+[
+    has_parent(`a11`, `a34`)
+    has_parent(`a34`, `a71`)
+    name(`a11`, 'Erasmus Darwin')
+    name(`a71`, 'Charles Darwin')
+]

@@ -1,3 +1,13 @@
+# 2020-01-29
+
+I will interrupt my quest to answer question 5 to make a release that handles linked databases. I will make a new
+integration test that handles the following question:
+
+    Which poem wrote the grandfather of Charles Darwin?
+
+Charles Darwin and the link to his grandfather are stored in db1. Erasmus Darwin and his poem is stored in db2. Both
+databases are not directly linked, but there will be shared id tables.
+
 # 2020-01-27
 
 Shared-id == meta-id.

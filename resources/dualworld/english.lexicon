@@ -1,0 +1,9 @@
+[
+    { form: 'which', pos: which }
+    { form: 'poem', pos: noun, sense: poem(E) }
+    { form: 'wrote', pos: write }
+    { form: 'the', pos: the }
+    { form: 'grandfather', pos: grandfather }
+    { form: 'of', pos: of }
+    { form: '?', pos: question_mark }
+]

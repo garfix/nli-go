@@ -7,6 +7,7 @@ type relationSetFactBase struct {
 	WriteMap string
 	Stats    string
 	Entities string
+	SharedIds string
 }
 
 type mysqlColumn struct {
@@ -26,6 +27,7 @@ type mysqlFactBase struct {
 	Map      string
 	Stats	 string
 	Entities string
+	SharedIds string
 	Tables   []mysqlTable
 	Enabled  bool
 }
@@ -38,6 +40,7 @@ type sparqlFactBase struct {
 	Names           string
 	Stats           string
 	Entities        string
+	SharedIds 		string
 	DoCache         bool
 }
 

@@ -23,6 +23,7 @@ type SparqlFactBase struct {
 	names           mentalese.ConfigMap
 	stats           mentalese.DbStats
 	entities        mentalese.Entities
+	sharedIds 		SharedIds
 	matcher         *mentalese.RelationMatcher
 	queryCount      int
 	doCache         bool
@@ -64,6 +65,10 @@ func (factBase *SparqlFactBase) GetStatistics() mentalese.DbStats {
 
 func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
+}
+
+func (factBase *SparqlFactBase) SetSharedIds(sharedIds SharedIds) {
+	factBase.sharedIds = sharedIds
 }
 
 // Matches needleRelation to all relations in the database

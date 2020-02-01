@@ -20,6 +20,7 @@ type MySqlFactBase struct {
 	ds2db             []mentalese.RelationTransformation
 	stats			  mentalese.DbStats
 	entities 		  mentalese.Entities
+	sharedIds 		  SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
@@ -61,6 +62,10 @@ func (factBase *MySqlFactBase) GetStatistics() mentalese.DbStats {
 
 func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
+}
+
+func (factBase *MySqlFactBase) SetSharedIds(sharedIds SharedIds) {
+	factBase.sharedIds = sharedIds
 }
 
 func (factBase *MySqlFactBase) AddTableDescription(tableName string, columns []string) {

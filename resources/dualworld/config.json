@@ -14,12 +14,14 @@
         "name": "db1",
         "facts": "db1/db.relation",
         "entities": "entities.json",
+        "sharedIds": "db1/shared-id.json",
         "readMap": "db1/db.map"
       },
       {
         "name": "db2",
         "facts": "db2/db.relation",
         "entities": "entities.json",
+        "sharedIds": "db2/shared-id.json",
         "readMap": "db2/db.map"
       }
     ]

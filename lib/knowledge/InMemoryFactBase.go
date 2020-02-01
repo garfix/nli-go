@@ -7,13 +7,14 @@ import (
 
 type InMemoryFactBase struct {
 	KnowledgeBaseCore
-	facts   mentalese.RelationSet
-	ds2db   []mentalese.RelationTransformation
-	ds2dbWrite []mentalese.RelationTransformation
-	stats	mentalese.DbStats
-	entities 		  mentalese.Entities
-	matcher *mentalese.RelationMatcher
-	log     *common.SystemLog
+	facts   	mentalese.RelationSet
+	ds2db   	[]mentalese.RelationTransformation
+	ds2dbWrite 	[]mentalese.RelationTransformation
+	stats		mentalese.DbStats
+	entities 	mentalese.Entities
+	sharedIds 	SharedIds
+	matcher 	*mentalese.RelationMatcher
+	log     	*common.SystemLog
 }
 
 func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, ds2dbWrite []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
@@ -47,6 +48,10 @@ func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {
 
 func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
+}
+
+func (factBase *InMemoryFactBase) SetSharedIds(sharedIds SharedIds) {
+	factBase.sharedIds = sharedIds
 }
 
 func (factBase *InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {

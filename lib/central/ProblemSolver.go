@@ -200,7 +200,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	if isFactBase {
 
-		boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
+			boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
 
 		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
 

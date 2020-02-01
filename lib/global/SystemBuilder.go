@@ -266,7 +266,40 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 		return
 	}
 
-	solver.AddFactBase(knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, dbMapWrite, stats, entities, builder.log))
+	database := knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, dbMapWrite, stats, entities, builder.log)
+
+	if factBase.SharedIds != "" {
+		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)
+		if ok {
+			database.SetSharedIds(sharedIds)
+		}
+	}
+
+	solver.AddFactBase(database)
+}
+
+func (builder systemBuilder) LoadSharedIds(path string) (knowledge.SharedIds, bool) {
+
+	sharedIds := knowledge.SharedIds{}
+
+	if path != "" {
+
+		absolutePath := common.AbsolutePath(builder.baseDir, path)
+
+		content, err := common.ReadFile(absolutePath)
+		if err != nil {
+			builder.log.AddError("Error reading shared ids file " + absolutePath + " (" + err.Error() + ")")
+			return sharedIds, false
+		}
+
+		err = json.Unmarshal([]byte(content), &sharedIds)
+		if err != nil {
+			builder.log.AddError("Error parsing shared ids file " + absolutePath + " (" + err.Error() + ")")
+			return sharedIds, false
+		}
+	}
+
+	return sharedIds, true
 }
 
 func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase mysqlFactBase, matcher *mentalese.RelationMatcher) {
@@ -303,6 +336,13 @@ func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.Pr
 			columns = append(columns, column.Name)
 		}
 		database.AddTableDescription(table.Name, columns)
+	}
+
+	if factBase.SharedIds != "" {
+		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)
+		if ok {
+			database.SetSharedIds(sharedIds)
+		}
 	}
 
 	if factBase.Enabled {
@@ -344,6 +384,13 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 	doCache := factBase.DoCache
 
 	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, doCache, builder.log)
+
+	if factBase.SharedIds != "" {
+		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)
+		if ok {
+			database.SetSharedIds(sharedIds)
+		}
+	}
 
 	solver.AddFactBase(database)
 }

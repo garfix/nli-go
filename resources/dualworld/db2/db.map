@@ -1,3 +1,5 @@
 [
-
+    work_name(Id, Name) => work(Id, Name);
+    write(Author, Work) => author(Author, Work);
+    poem(Work) => work(Work, _);
 ]

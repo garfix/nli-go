@@ -1,13 +1,17 @@
 [
     {
-        condition: hello_world(),
+        condition: which(E1),
+        transformations: [
+            question(_) which(_) => ;
+        ],
         responses: [
             {
                 condition: exists(),
-                answer: canned('Welcome!')
+                preparation: work_name(E1, Name),
+                answer: canned(Name)
             }
             {
-                answer: canned('Not welcome')
+                answer: canned('I don\'t know')
             }
         ]
     }

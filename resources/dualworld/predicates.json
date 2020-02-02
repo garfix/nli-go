@@ -1,3 +1,5 @@
 {
-  "has_grandfather": {"entityTypes": ["person", "person"] }
+  "has_grandfather": {"entityTypes": ["person", "person"] },
+  "has_parent": {"entityTypes": ["person", "person"] },
+  "write": {"entityTypes": ["person", "work"] }
 }

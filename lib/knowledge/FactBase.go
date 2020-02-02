@@ -13,6 +13,8 @@ type FactBase interface {
 	GetWriteMappings() []mentalese.RelationTransformation
 	GetStatistics() mentalese.DbStats
 	GetEntities() mentalese.Entities
+	GetLocalId(sharedId string, entityType string) string
+	GetSharedId(localId string, entityType string) string
 }
 
 const worst_cost = 100000000.0
@@ -51,7 +53,7 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 
 				boundReplacement := mapping.Replacement.BindSingle(binding)
 
-				keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
+				keyBoundReplacement := boundReplacement//keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 				cost := CalculateCost(keyBoundReplacement, factBase.GetStatistics())
 

@@ -44,7 +44,9 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
 	system.dialogContext = central.NewDialogContext()
 
-	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
+	predicates, _ := builder.CreatePredicates(config.Predicates)
+
+	solver := central.NewProblemSolver(matcher, predicates, system.dialogContext, builder.log)
 
 	solver.AddFunctionBase(systemFunctionBase)
 
@@ -53,8 +55,6 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
-
-	predicates, _ := builder.CreatePredicates(config.Predicates)
 
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)

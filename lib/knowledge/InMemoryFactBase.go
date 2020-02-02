@@ -25,6 +25,7 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *ment
 		ds2dbWrite: ds2dbWrite,
 		stats: stats,
 		entities: entities,
+		sharedIds: SharedIds{},
 		matcher: matcher,
 		log: log,
 	}
@@ -52,6 +53,38 @@ func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {
 
 func (factBase *InMemoryFactBase) SetSharedIds(sharedIds SharedIds) {
 	factBase.sharedIds = sharedIds
+}
+
+func (factBase *InMemoryFactBase) GetLocalId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == sharedId {
+			outId = localId
+			break
+		}
+	}
+
+	return outId
+}
+
+func (factBase *InMemoryFactBase) GetSharedId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == localId {
+			outId = sharedId
+			break
+		}
+	}
+
+	return outId
 }
 
 func (factBase *InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {

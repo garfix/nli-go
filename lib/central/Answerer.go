@@ -34,11 +34,14 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	answerer.solutions = append(answerer.solutions, solutions...)
 }
 
-// goal e.g. [ question(Q) child(S, O) EntityId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
+// goal e.g. [ question(Q) child(S, O) SharedId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
 // return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
-func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) mentalese.RelationSet {
+func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.Bindings) mentalese.RelationSet {
 
 	answerer.log.StartDebug("Answer")
+
+// todo remove
+	keyCabinet := mentalese.NewKeyCabinet()
 
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
@@ -58,7 +61,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, keyCabinet *mentales
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, mentalese.Bindings{{}})
+			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, bindings)
 
 			// no results? try the next solution (if there is one)
 			if len(resultBindings) == 0 {

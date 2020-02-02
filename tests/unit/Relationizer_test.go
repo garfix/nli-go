@@ -46,8 +46,8 @@ func TestRelationizer(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	predicates := mentalese.Predicates{}
+	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 
 	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)

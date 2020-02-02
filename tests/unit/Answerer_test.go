@@ -100,9 +100,10 @@ func TestAnswerer(t *testing.T) {
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
+	predicates := mentalese.Predicates{}
 
 	dialogContext := central.NewDialogContext()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 	solver.AddFactBase(factBase)
 
@@ -127,7 +128,7 @@ func TestAnswerer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Answer(input, mentalese.NewKeyCabinet())
+		resultRelationSet := answerer.Answer(input, mentalese.Bindings{{}})
 
 		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
 			t.Errorf("Answerer(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)

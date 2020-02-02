@@ -1,3 +1,15 @@
+# 2020-02-01
+
+Implementing shared ids. The key cabinet now maps variables to shared ids. The fact bases store the shared ids.
+
+But where do I convert shared ids to db ids and the other way round? In the fact base or elsewhere?
+
+For now I will do it in the general area, not in the fact base.
+
+- Remove key cabinet altogether?
+- Place named entities' ids in a binding?
+- Add entity type to id term?
+
 # 2020-01-29
 
 I will interrupt my quest to answer question 5 to make a release that handles linked databases. I will make a new

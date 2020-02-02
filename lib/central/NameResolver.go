@@ -10,7 +10,7 @@ import (
 
 const defaultEntityType = "entity"
 
-// uses EntityId() relations to create new sense() relations, that hold the EntityId's of the entities of different knowledge bases
+// uses SharedId() relations to create new sense() relations, that hold the SharedId's of the entities of different knowledge bases
 type NameResolver struct {
 	solver 			*ProblemSolver
 	matcher 		*mentalese.RelationMatcher
@@ -134,24 +134,24 @@ func (resolver *NameResolver) composeOptions(nameInformations []NameInformation)
 	return options
 }
 
-func (resolver *NameResolver) createNameSensesFromNameInformations(nameInformations []NameInformation, variable string) mentalese.RelationSet {
-
-	senses := mentalese.RelationSet{}
-
-	for _, nameInformation := range nameInformations {
-
-		sense := mentalese.NewRelation(mentalese.PredicateSense, []mentalese.Term{
-			mentalese.NewVariable(variable),
-			mentalese.NewString(nameInformation.DatabaseName),
-			mentalese.NewId(nameInformation.EntityId),
-		})
-
-		senses = append(senses, sense)
-
-	}
-
-	return senses
-}
+//func (resolver *NameResolver) createNameSensesFromNameInformations(nameInformations []NameInformation, variable string) mentalese.RelationSet {
+//
+//	senses := mentalese.RelationSet{}
+//
+//	for _, nameInformation := range nameInformations {
+//
+//		sense := mentalese.NewRelation(mentalese.PredicateSense, []mentalese.Term{
+//			mentalese.NewVariable(variable),
+//			mentalese.NewString(nameInformation.DatabaseName),
+//			mentalese.NewId(nameInformation.SharedId),
+//		})
+//
+//		senses = append(senses, sense)
+//
+//	}
+//
+//	return senses
+//}
 
 func (resolver *NameResolver) SaveNameInformations(name string, nameInformations []NameInformation) {
 
@@ -176,7 +176,7 @@ type nameInfo struct {
 	entityType string
 }
 
-// in: EntityId(E1, "de", 1) EntityId(E1, "Boer", 2) EntityId(E1, "Jan", 0)
+// in: SharedId(E1, "de", 1) SharedId(E1, "Boer", 2) SharedId(E1, "Jan", 0)
 // out: E1: "Jan de Boer"
 func (resolver *NameResolver) collectNamesAndTypes(relations mentalese.RelationSet) map[string]nameInfo {
 
@@ -309,10 +309,12 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 				}
 			}
 
+			sharedId := factBase.GetSharedId(id.TermValue, entityType)
+
 			nameInformations = append(nameInformations, NameInformation{
-				Name: name,
+				Name:         name,
 				DatabaseName: factBase.GetName(),
-				EntityId:     id.TermValue,
+				SharedId:     sharedId,
 				Information:  information,
 			})
 		}

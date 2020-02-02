@@ -34,7 +34,7 @@ func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase know
 
 			boundReplacement := mapping.Replacement.BindSingle(binding)
 
-			keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
+			keyBoundReplacement := boundReplacement//keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 			for _, replacementRelation := range keyBoundReplacement {
 
@@ -62,7 +62,7 @@ func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase kno
 
 			boundReplacement := mapping.Replacement.BindSingle(binding)
 
-			keyBoundReplacement := keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
+			keyBoundReplacement := boundReplacement//keyCabinet.BindToRelationSet(boundReplacement, factBase.GetName())
 
 			for _, replacementRelation := range keyBoundReplacement {
 

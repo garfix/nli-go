@@ -1,6 +1,7 @@
 package central
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
@@ -22,6 +23,7 @@ type ProblemSolver struct {
 	aggregateBases      []knowledge.AggregateBase
 	nestedStructureBase []knowledge.NestedStructureBase
 	matcher             *mentalese.RelationMatcher
+	predicates 			mentalese.Predicates
 	optimizer           Optimizer
 	modifier            *FactBaseModifier
 	dialogContext 		*DialogContext
@@ -29,12 +31,13 @@ type ProblemSolver struct {
 	SolveDepth int
 }
 
-func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
+func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
 		factBases:      []knowledge.FactBase{},
 		ruleBases:      []knowledge.RuleBase{},
 		aggregateBases: []knowledge.AggregateBase{},
 		matcher:        matcher,
+		predicates:		predicates,
 		optimizer:      NewOptimizer(matcher),
 		modifier:       NewFactBaseModifier(log),
 		dialogContext:  dialogContext,
@@ -83,7 +86,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, keyCabin
 
 	head := strings.Repeat("  ", solver.SolveDepth)
 
-	solver.log.AddProduction(head + "Solve Set", set.String() + " " + keyCabinet.String() + " " + bindings.String())
+	solver.log.AddProduction(head + "Solve Set", set.String() + " " + bindings.String())
 
 	newBindings := mentalese.Bindings{}
 
@@ -128,7 +131,7 @@ func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRou
 
 	for _, relationGroup := range solutionRoute {
 
-		solver.log.AddProduction(head + "Solve RelationGroup", relationGroup.String() + " " + keyCabinet.String() + " " + bindings.String())
+		solver.log.AddProduction(head + "Solve RelationGroup", relationGroup.String() + " " + bindings.String())
 
 		newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, keyCabinet, newBindings)
 
@@ -194,22 +197,25 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
 	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
 
-	boundRelations := relationGroup.Relations.BindSingle(binding)
-
 	var newBindings mentalese.Bindings
 
 	if isFactBase {
 
-			boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
+		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
+		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
+
+			//boundRelations = keyCabinet.BindToRelationSet(boundRelations, factBase.GetName())
 
 		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
 
 			solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, keyCabinet)
+			binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
 			newBindings = append(newBindings, binding)
 
 		} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
 
 			solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase, keyCabinet)
+			binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
 			newBindings = append(newBindings, binding)
 
 		} else {
@@ -218,10 +224,18 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 			for _, sourceBinding := range sourceBindings {
 
-				combinedBinding := binding.Merge(sourceBinding)
+				sharedBinding := solver.replaceLocalIdBySharedId(relationGroup.Relations, sourceBinding, factBase)
+
+				combinedBinding := binding.Merge(sharedBinding)
 				newBindings = append(newBindings, combinedBinding)
 			}
 		}
+
+		//sharedIdBindings := []mentalese.Binding{}
+		//for _, newBinding := range newBindings {
+		//	sharedIdBindings = append(sharedIdBindings, solver.replaceLocalIdBySharedId(relationGroup.Relations, newBinding, factBase))
+		//}
+		//newBindings = sharedIdBindings
 
 	} else if isFunctionBase {
 
@@ -282,6 +296,8 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 
 			internalBinding := internalBindingsX[0]
 
+			//internalBinding = solver.replaceSharedIdsByLocalIds(goal, internalBinding, factBase)
+
 			// gender(14, G), gender(A, male) => externalBinding: G = male
 			externalBindings, match2 := solver.matcher.MatchSequenceToSet(goal, ds2db.Pattern, mentalese.Binding{})
 			if match2 {
@@ -296,7 +312,12 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentales
 
 				if match3 {
 					for _, binding := range internalBindings {
-						subgoalBindings = append(subgoalBindings, externalBinding.Intersection(binding))
+
+						intersectBinding := externalBinding.Intersection(binding)
+
+						//intersectBinding = solver.replaceLocalIdBySharedId(goal, intersectBinding, factBase)
+
+						subgoalBindings = append(subgoalBindings, intersectBinding)
 					}
 				}
 			}
@@ -365,6 +386,62 @@ func (solver ProblemSolver) solveMultipleRelationSingleFactBase(unboundSequence 
 	solver.log.EndDebug("solveMultipleRelationSingleFactBase", sequenceBindings, match)
 
 	return sequenceBindings, match
+}
+
+func (solver ProblemSolver) replaceSharedIdsByLocalIds(relationSet mentalese.RelationSet, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+
+	newBinding := mentalese.Binding{}
+
+	for key, value := range binding {
+		newValue := value
+
+		for _, relation := range relationSet {
+			for i, argument := range relation.Arguments {
+				if argument.IsVariable() && argument.TermValue == key {
+					entityType := solver.predicates.GetEntityType(relation.Predicate, i)
+					if entityType == "" { continue }
+					localId := factBase.GetLocalId(value.TermValue, entityType)
+					if localId == "" {
+						solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", value.TermValue, entityType, factBase.GetName()))
+						return mentalese.Binding{}
+					}
+					newValue = mentalese.NewId(localId)
+				}
+			}
+		}
+
+		newBinding[key] = newValue
+	}
+
+	return newBinding
+}
+
+func (solver ProblemSolver) replaceLocalIdBySharedId(relationSet mentalese.RelationSet, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+
+	newBinding := mentalese.Binding{}
+
+	for key, value := range binding {
+		newValue := value
+
+		for _, relation := range relationSet {
+			for i, argument := range relation.Arguments {
+				if argument.IsVariable() && argument.TermValue == key {
+					entityType := solver.predicates.GetEntityType(relation.Predicate, i)
+					if entityType == "" { continue }
+					sharedId := factBase.GetSharedId(value.TermValue, entityType)
+					if sharedId == "" {
+						solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", value.TermValue, entityType, factBase.GetName()))
+						return mentalese.Binding{}
+					}
+					newValue = mentalese.NewId(sharedId)
+				}
+			}
+		}
+
+		newBinding[key] = newValue
+	}
+
+	return newBinding
 }
 
 // goalRelation e.g. father('jack', Z)

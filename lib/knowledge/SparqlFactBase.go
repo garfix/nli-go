@@ -40,6 +40,7 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		names:             names,
 		stats:             stats,
 		entities:          entities,
+		sharedIds: 		   SharedIds{},
 		matcher:           matcher,
 		queryCount:        0,
 		doCache:           doCache,
@@ -69,6 +70,38 @@ func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
 
 func (factBase *SparqlFactBase) SetSharedIds(sharedIds SharedIds) {
 	factBase.sharedIds = sharedIds
+}
+
+func (factBase *SparqlFactBase) GetLocalId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == sharedId {
+			outId = localId
+			break
+		}
+	}
+
+	return outId
+}
+
+func (factBase *SparqlFactBase) GetSharedId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == localId {
+			outId = sharedId
+			break
+		}
+	}
+
+	return outId
 }
 
 // Matches needleRelation to all relations in the database

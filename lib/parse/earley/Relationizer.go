@@ -42,7 +42,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCab
 	if len(node.nameInformations) > 0 {
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			keyCabinet.AddName(antecedentVariable, nameInformation.DatabaseName, nameInformation.EntityId)
+			keyCabinet.AddMapping(antecedentVariable, nameInformation.SharedId)
 		}
 	}
 

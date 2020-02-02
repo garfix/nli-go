@@ -72,7 +72,8 @@ func TestQuantSolver(t *testing.T) {
 	entities := mentalese.Entities{}
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, stats, entities, log)
 	dialogContext := central.NewDialogContext()
-	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), dialogContext, log)
+	predicates := mentalese.Predicates{}
+	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), predicates, dialogContext, log)
 	solver.AddFactBase(factBase1)
 
 	nestedStructureBase := knowledge.NewSystemNestedStructureBase(log)

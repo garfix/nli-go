@@ -39,6 +39,7 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 		ds2db: ds2db,
 		stats: stats,
 		entities: entities,
+		sharedIds: SharedIds{},
 		matcher: matcher,
 		log: log,
 	}
@@ -66,6 +67,38 @@ func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {
 
 func (factBase *MySqlFactBase) SetSharedIds(sharedIds SharedIds) {
 	factBase.sharedIds = sharedIds
+}
+
+func (factBase *MySqlFactBase) GetLocalId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == sharedId {
+			outId = localId
+			break
+		}
+	}
+
+	return outId
+}
+
+func (factBase *MySqlFactBase) GetSharedId(inId string, entityType string) string {
+	outId := ""
+
+	_, found := factBase.sharedIds[entityType]
+	if !found { return inId }
+
+	for localId, sharedId := range factBase.sharedIds[entityType] {
+		if inId == localId {
+			outId = sharedId
+			break
+		}
+	}
+
+	return outId
 }
 
 func (factBase *MySqlFactBase) AddTableDescription(tableName string, columns []string) {

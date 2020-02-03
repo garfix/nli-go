@@ -29,6 +29,9 @@ A relative path in a config files has that config file as its base.
 ### factbases
  
  "factbases" is an array of databases of the following types
+
+Each fact base may have a `sharedIds` field that holds the path to a JSON file. This file holds a mapping of local
+database ids to shared database ids.
   
 #### relation
  

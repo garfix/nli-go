@@ -12,10 +12,6 @@ The arguments can be variables, values or even sets of relations.
 The variables in the relation can be bound by both a binding
 
     { A: 11, B: `b6`, C: 'Byron' }
-    
-and a key cabinet. The key cabinet contains per database a different value for each entity variable.
-
-    A { database-1: `18`, database-2: `r22` }; B { database-1: `19`, database-2: `r23` } 
 
 ## Fact
 

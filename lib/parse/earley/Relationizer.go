@@ -24,17 +24,19 @@ func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) *Relationize
 	}
 }
 
-func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, keyCabinet *mentalese.KeyCabinet, nameResolver *central.NameResolver) mentalese.RelationSet {
-	sense, _ := relationizer.extractSenseFromNode(rootNode, keyCabinet, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
-	return sense
+func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolver *central.NameResolver) (mentalese.RelationSet, mentalese.Binding) {
+	sense, nameBinding,_ := relationizer.extractSenseFromNode(rootNode, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
+	return sense, nameBinding
 }
 
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCabinet *mentalese.KeyCabinet, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, bool) {
+func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, mentalese.Binding, bool) {
 
 	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
+
+	nameBinding := mentalese.Binding{}
 
 	relationSet := mentalese.RelationSet{}
 	var makeConstant = false
@@ -42,7 +44,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCab
 	if len(node.nameInformations) > 0 {
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			keyCabinet.AddMapping(antecedentVariable, nameInformation.SharedId)
+			nameBinding[antecedentVariable] = mentalese.NewId(nameInformation.SharedId)
 		}
 	}
 
@@ -66,7 +68,8 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCab
 
 			entityVariable := node.rule.EntityVariables[i+1]
 			consequentVariable := variableMap[entityVariable]
-			childRelations, makeConstant := relationizer.extractSenseFromNode(childNode, keyCabinet, nameResolver, consequentVariable.TermValue)
+			childRelations, childNameBinding, makeConstant := relationizer.extractSenseFromNode(childNode, nameResolver, consequentVariable.TermValue)
+			nameBinding = nameBinding.Merge(childNameBinding)
 			boundChildSets = append(boundChildSets, childRelations)
 
 			if makeConstant {
@@ -85,7 +88,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, keyCab
 
 	relationizer.log.EndDebug("extractSenseFromNode", relationSet)
 
-	return relationSet, makeConstant
+	return relationSet, nameBinding, makeConstant
 }
 
 // Adds all childSets to parentSet

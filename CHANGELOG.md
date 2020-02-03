@@ -1,8 +1,9 @@
 # Changelog
 
-## ?
+## 1.6 Database linking and case-insensitive proper nouns - 03-02-2020
 
 * Support for case-insensitive proper nouns
+* Create queries that span multiple databases with different entity ids
 
 ## 1.5: Providing support for new DBpedia queries - 21-01-2019
 

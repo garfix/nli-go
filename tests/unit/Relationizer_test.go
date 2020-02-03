@@ -55,14 +55,14 @@ func TestRelationizer(t *testing.T) {
 	relationizer := earley.NewRelationizer(lexicon, log)
 
 	parseTree := parser.Parse([]string{"the", "book", "falls", "."})
-	result := relationizer.Relationize(parseTree, mentalese.NewKeyCabinet(), nameResolver)
+	result, _ := relationizer.Relationize(parseTree, nameResolver)
 
 	want := "[declaration(S5) subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, book) isa(S5, fall)]"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	result = relationizer.Relationize(parseTree, mentalese.NewKeyCabinet(), nameResolver)
+	result, _ = relationizer.Relationize(parseTree, nameResolver)
 
 	want = "[declaration(S6) subject(S6, E6) determiner(E6, D6) isa(D6, the) isa(E6, book) isa(S6, fall)]"
 	if result.String() != want {
@@ -70,7 +70,7 @@ func TestRelationizer(t *testing.T) {
 	}
 
 	parseTree2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."})
-	result2 := relationizer.Relationize(parseTree2, mentalese.NewKeyCabinet(), nameResolver)
+	result2, _ := relationizer.Relationize(parseTree2, nameResolver)
 
 	want2 := "[declaration(S7) subject(S7, E7) determiner(E7, D7) isa(D7, the) isa(E7, book) mod(S7, P5) isa(S7, fall) case(P5, P6) isa(P6, on) determiner(P5, D8) isa(D8, the) isa(P5, ground)]"
 	if result2.String() != want2 {

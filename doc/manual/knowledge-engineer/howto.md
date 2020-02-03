@@ -42,7 +42,7 @@ contains 2 proper_noun's, the parser will take the first proper noun under consi
 one ("Jackson") to create "Michael Jackson". It will learn from entities.json how to query the knowledge bases. If the
 name is ambiguous, the user will be asked to disambiguate. This is where the description is for. When the name is found,
 the proper_noun_group rule matches. The rule does not create any relations, but the variable-id pair will be stored in a
-structure called 'key cabinet'. This allows for different values in each of the knowledge bases.
+Binding. This allows for different values in each of the knowledge bases.
 
 ## Bidirectional relations
 

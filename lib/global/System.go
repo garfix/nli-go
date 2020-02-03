@@ -111,7 +111,6 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
-	keyCabinet := mentalese.NewKeyCabinet()
 	nameBinding := mentalese.Binding{}
 
 	if !system.log.IsDone() {
@@ -125,14 +124,8 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
-		requestRelations = system.relationizer.Relationize(parseTree, keyCabinet, system.nameResolver)
+		requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
 		system.log.AddProduction("Relationizer", requestRelations.String())
-		system.log.AddProduction("Key cabinet", keyCabinet.String())
-	}
-
-	if !system.log.IsDone() {
-		nameBinding = system.replaceNameVariables(requestRelations, keyCabinet)
-		system.log.AddProduction("Relationizer 2", requestRelations.String())
 	}
 
 	if !system.log.IsDone() {
@@ -156,50 +149,4 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	return answer, options
-}
-
-//func (system *system) replaceNameVariables(relations mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) ([]mentalese.Relation, *mentalese.KeyCabinet) {
-//
-//	newRelations := relations
-//	builder := parse.NewSenseBuilder()
-//	newData := map[string]map[string]string{}
-//
-//	for database, ids := range keyCabinet.Data {
-//		newData[database] = map[string]string{}
-//		for variable, id := range ids {
-//			c := mentalese.NewId("C" + variable)
-//			v := mentalese.NewVariable(variable)
-//			newRelations = builder.ReplaceTerm(newRelations, v, c)
-//			newData[database]["C" + variable] = id
-//		}
-//	}
-//
-//	keyCabinet.Data = newData
-//
-//	return newRelations, keyCabinet
-//}
-
-//func (system *system) replaceNameVariables(relations mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []mentalese.Relation {
-//
-//	newRelations := relations
-//	builder := parse.NewSenseBuilder()
-//
-//	for variable, id := range keyCabinet.Data {
-//		v := mentalese.NewVariable(variable)
-//		c := mentalese.NewId(id)
-//		newRelations = builder.ReplaceTerm(newRelations, v, c)
-//	}
-//
-//	return newRelations
-//}
-
-func (system *system) replaceNameVariables(relations mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) mentalese.Binding {
-
-	nameBinding := mentalese.Binding{}
-
-	for variable, id := range keyCabinet.Data {
-		nameBinding[variable] = mentalese.NewId(id)
-	}
-
-	return nameBinding
 }

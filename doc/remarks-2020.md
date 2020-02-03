@@ -1,3 +1,7 @@
+# 2020-02-03
+
+The key cabinet is gone. It is finally replaced by a simple Binding, but a Binding that holds shared ids.
+
 # 2020-02-01
 
 Implementing shared ids. The key cabinet now maps variables to shared ids. The fact bases store the shared ids.

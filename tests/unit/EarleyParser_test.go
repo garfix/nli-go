@@ -51,7 +51,7 @@ func TestEarleyParser(test *testing.T) {
 	wordArray := tokenizer.Process(rawInput)
 
 	tree := parser.Parse(wordArray)
-	relations := relationizer.Relationize(tree, &mentalese.KeyCabinet{}, nameResolver)
+	relations, _ := relationizer.Relationize(tree, nameResolver)
 
 	if relations.String() != "[subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, girl) predication(S5, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))

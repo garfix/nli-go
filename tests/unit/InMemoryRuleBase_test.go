@@ -37,7 +37,6 @@ func TestInMemoryRuleBase(t *testing.T) {
 		sibling(A, B) :- parent(A, C) parent(B, C);
 	]`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
-	keyCabinet := &mentalese.KeyCabinet{}
 
 	tests := []struct {
 		goal           string
@@ -54,7 +53,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := solver.SolveSingleRelationSingleBindingSingleRuleBase(goal, keyCabinet, binding, ruleBase).String()
+		resultBindings := solver.SolveSingleRelationSingleBindingSingleRuleBase(goal, binding, ruleBase).String()
 
 		if resultBindings != test.resultBindings {
 			t.Errorf("SolveRuleBase: got %v, want %v", resultBindings, test.resultBindings)

@@ -40,9 +40,6 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 	answerer.log.StartDebug("Answer")
 
-// todo remove
-	keyCabinet := mentalese.NewKeyCabinet()
-
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
 
@@ -61,7 +58,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, keyCabinet, bindings)
+			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, bindings)
 
 			// no results? try the next solution (if there is one)
 			if len(resultBindings) == 0 {
@@ -75,7 +72,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			var resultHandler *mentalese.ResultHandler
 			for _, response := range solution.Responses {
 				if !response.Condition.IsEmpty() {
-					conditionBindings := answerer.solver.SolveRelationSet(response.Condition, keyCabinet, resultBindings)
+					conditionBindings := answerer.solver.SolveRelationSet(response.Condition, resultBindings)
 					if len(conditionBindings) == 0 {
 						continue
 					} else {
@@ -96,7 +93,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, keyCabinet, condionedBindings)
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, condionedBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings

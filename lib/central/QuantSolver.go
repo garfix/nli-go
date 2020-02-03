@@ -15,9 +15,9 @@ import (
 //         ])
 //     ])
 
-func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *mentalese.KeyCabinet, binding mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	// solve the range
-	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{binding})
+	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
 
 	groupedScopeBindings := []mentalese.Bindings{}
 	scopeBindings := mentalese.Bindings{}
@@ -54,7 +54,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, keyCabinet *men
 	index := 0
 	for _, rangeBinding := range rangeBindings {
 
-		singleScopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantScopeIndex].TermValueRelationSet, keyCabinet, mentalese.Bindings{rangeBinding})
+		singleScopeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantScopeIndex].TermValueRelationSet, mentalese.Bindings{rangeBinding})
 
 		if len(singleScopeBindings) > 0 {
 			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)

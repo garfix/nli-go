@@ -21,11 +21,11 @@ func NewOptimizer(matcher *mentalese.RelationMatcher) Optimizer {
 
 // Groups set into relation groups based on knowledge base input
 // Relations that were not found are placed in the remaining set
-func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, keyCabinet *mentalese.KeyCabinet) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
+func (optimizer Optimizer) CreateSolutionRoutes(set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) (knowledge.SolutionRoutes, mentalese.RelationSet, bool) {
 
 	routes := knowledge.SolutionRoutes{}
 
-	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases, keyCabinet)
+	allRoutes := optimizer.findSolutionRoutes(knowledge.SolutionRoute{}, set, knowledgeBases)
 
 	remainingRelations := mentalese.RelationSet{}
 
@@ -74,12 +74,12 @@ func (optimizer Optimizer) isPresent(route knowledge.SolutionRoute, routes []kno
 	return false
 }
 
-func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase, keyCabinet *mentalese.KeyCabinet) knowledge.SolutionRoutes {
+func (optimizer Optimizer) findSolutionRoutes(baseRoute knowledge.SolutionRoute, set mentalese.RelationSet, knowledgeBases []knowledge.KnowledgeBase) knowledge.SolutionRoutes {
 
 	// find matching groups in all knowledge bases
 	matchingGroupSets := [][]knowledge.RelationGroup{}
 	for _, factBase := range knowledgeBases {
-		matchingGroupSets = append(matchingGroupSets, factBase.GetMatchingGroups(set, keyCabinet))
+		matchingGroupSets = append(matchingGroupSets, factBase.GetMatchingGroups(set))
 	}
 
 	// collect groups by relation (relation index => group set, group index)

@@ -18,7 +18,7 @@ func NewSystemNestedStructureBase(log *common.SystemLog) *SystemNestedStructureB
 	}
 }
 
-func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
+func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{mentalese.PredicateQuant, mentalese.PredicateSequence}

@@ -15,7 +15,7 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 	return &SystemFunctionBase{ KnowledgeBaseCore{ Name: name } }
 }
 
-func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
+func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
 	predicates := []string{"join", "split", "concat", "greater_than", "less_than", "equals", "add", "number", "date_today", "date_subtract_years"}

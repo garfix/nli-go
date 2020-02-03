@@ -7,5 +7,5 @@ import (
 type KnowledgeBase interface {
 
 	GetName() string
-	GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup
+	GetMatchingGroups(set mentalese.RelationSet) []RelationGroup
 }

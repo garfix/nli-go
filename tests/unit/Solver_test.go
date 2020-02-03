@@ -66,7 +66,7 @@ func TestSolver(t *testing.T) {
 	for _, test := range tests {
 
 		input := parser.CreateRelationSet(test.input)
-		resultBindings := solver.SolveRelationSet(input, nil, mentalese.Bindings{{}})
+		resultBindings := solver.SolveRelationSet(input, mentalese.Bindings{{}})
 		resultRelationSets := input.BindRelationSetMultipleBindings(resultBindings)
 
 		if fmt.Sprintf("%v", resultRelationSets) != test.wantRelationSets {
@@ -91,7 +91,7 @@ func TestSolver(t *testing.T) {
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := solver.SolveRelationSet([]mentalese.Relation{input}, nil, mentalese.Bindings{binding})
+		resultBindings := solver.SolveRelationSet([]mentalese.Relation{input}, mentalese.Bindings{binding})
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
@@ -132,7 +132,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := solver2.SolveSingleRelationSingleBindingSingleRuleBase(input, mentalese.NewKeyCabinet(), binding, ruleBase2)
+		resultBindings := solver2.SolveSingleRelationSingleBindingSingleRuleBase(input, binding, ruleBase2)
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)

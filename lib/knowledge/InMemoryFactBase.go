@@ -39,8 +39,8 @@ func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.RelationTransfo
 	return factBase.ds2dbWrite
 }
 
-func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet, keyCabinet *mentalese.KeyCabinet) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase, keyCabinet)
+func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
+	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
 }
 
 func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {

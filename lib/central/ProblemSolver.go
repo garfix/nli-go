@@ -226,24 +226,25 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relati
 
 	newBindings := mentalese.Bindings{}
 
-	localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
-	boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
+	if len(relationGroup.Relations) == 1 && relationGroup.Relations[0].Predicate == mentalese.PredicateAssert {
 
-	if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
-
+		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
+		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
 		solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
 		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
 		newBindings = append(newBindings, binding)
 
-	} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
+	} else if len(relationGroup.Relations) == 1 && relationGroup.Relations[0].Predicate == mentalese.PredicateRetract {
 
+		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
+		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
 		solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
 		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
 		newBindings = append(newBindings, binding)
 
 	} else {
 
-		sourceBindings := solver.FindFacts(factBase, boundRelations)
+		sourceBindings := solver.FindFacts(factBase, relationGroup.Relations, binding)
 
 		for _, sourceBinding := range sourceBindings {
 
@@ -279,9 +280,12 @@ func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, bindin
 }
 
 
-func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, goal mentalese.RelationSet) mentalese.Bindings {
+func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
 
-	solver.log.StartDebug("FindFacts", goal)
+	solver.log.StartDebug("FindFacts", relations)
+
+	localIdBinding := solver.replaceSharedIdsByLocalIds(relations, binding, factBase)
+	goal := relations.BindSingle(localIdBinding)
 
 	subgoalBindings := mentalese.Bindings{}
 

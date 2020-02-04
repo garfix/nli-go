@@ -61,7 +61,7 @@ func TestFactBase(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 
-		resultBindings := solver.FindFacts(factBase, mentalese.RelationSet{input})
+		resultBindings := solver.FindFacts(factBase, mentalese.RelationSet{input}, mentalese.Binding{})
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
 			t.Errorf("FactBase,BindSingle(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)

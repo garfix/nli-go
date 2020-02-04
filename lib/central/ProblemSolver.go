@@ -265,11 +265,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relati
 
 	} else {
 
-		sourceBindings := solver.FindFacts(factBase, relationGroup.Relations, binding)
-		for _, sourceBinding := range sourceBindings {
-			sharedBinding := solver.replaceLocalIdBySharedId(relationGroup.Relations, sourceBinding, factBase)
-			newBindings = append(newBindings, sharedBinding)
-		}
+		newBindings = solver.FindFacts(factBase, relationGroup.Relations, binding)
 	}
 
 	return newBindings
@@ -319,8 +315,9 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations men
 	newBindings := mentalese.Bindings{}
 
 	for _, subgoalBinding := range subgoalBindings {
-		combinedBinding := binding.Merge(subgoalBinding)
-		newBindings = append(newBindings, combinedBinding)
+		combinedBinding := localIdBinding.Merge(subgoalBinding)
+		sharedBinding := solver.replaceLocalIdBySharedId(relations, combinedBinding, factBase)
+		newBindings = append(newBindings, sharedBinding)
 	}
 
 	solver.log.EndDebug("FindFacts", newBindings)

@@ -222,6 +222,27 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	return newBindings
 }
 
+func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
+
+	var newBindings mentalese.Bindings
+
+	if goal.Predicate == mentalese.PredicateQuant {
+
+		newBindings = solver.SolveQuant(goal, binding)
+
+	} else if goal.Predicate == mentalese.PredicateSequence {
+
+		newBindings = solver.SolveSeq(goal, binding)
+
+	}
+
+	solver.log.EndDebug("NestedStructureBase BindChildStructures", newBindings)
+
+	return newBindings
+}
+
 func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relationGroup knowledge.RelationGroup, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
 
 	newBindings := mentalese.Bindings{}
@@ -245,40 +266,14 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relati
 	} else {
 
 		sourceBindings := solver.FindFacts(factBase, relationGroup.Relations, binding)
-
 		for _, sourceBinding := range sourceBindings {
-
 			sharedBinding := solver.replaceLocalIdBySharedId(relationGroup.Relations, sourceBinding, factBase)
-
-			combinedBinding := binding.Merge(sharedBinding)
-			newBindings = append(newBindings, combinedBinding)
+			newBindings = append(newBindings, sharedBinding)
 		}
 	}
 
 	return newBindings
 }
-
-func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
-
-	solver.log.StartDebug("NestedStructureBase BindChildStructures", goal, binding)
-
-	var newBindings mentalese.Bindings
-
-	if goal.Predicate == mentalese.PredicateQuant {
-
-		newBindings = solver.SolveQuant(goal, binding)
-
-	} else if goal.Predicate == mentalese.PredicateSequence {
-
-		newBindings = solver.SolveSeq(goal, binding)
-
-	}
-
-	solver.log.EndDebug("NestedStructureBase BindChildStructures", newBindings)
-
-	return newBindings
-}
-
 
 func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
 
@@ -321,9 +316,16 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations men
 		}
 	}
 
-	solver.log.EndDebug("FindFacts", subgoalBindings)
+	newBindings := mentalese.Bindings{}
 
-	return subgoalBindings
+	for _, subgoalBinding := range subgoalBindings {
+		combinedBinding := binding.Merge(subgoalBinding)
+		newBindings = append(newBindings, combinedBinding)
+	}
+
+	solver.log.EndDebug("FindFacts", newBindings)
+
+	return newBindings
 }
 
 func (solver ProblemSolver) solveMultipleRelationSingleFactBase(unboundSequence []mentalese.Relation, boundSequence []mentalese.Relation, factBase knowledge.FactBase) (mentalese.Bindings, bool) {

@@ -197,33 +197,7 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 
 	if isFactBase {
 
-		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
-		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
-
-		if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
-
-			solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
-			binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
-			newBindings = append(newBindings, binding)
-
-		} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
-
-			solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
-			binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
-			newBindings = append(newBindings, binding)
-
-		} else {
-
-			sourceBindings := solver.FindFacts(factBase, boundRelations)
-
-			for _, sourceBinding := range sourceBindings {
-
-				sharedBinding := solver.replaceLocalIdBySharedId(relationGroup.Relations, sourceBinding, factBase)
-
-				combinedBinding := binding.Merge(sharedBinding)
-				newBindings = append(newBindings, combinedBinding)
-			}
-		}
+		newBindings = solver.solveSingleRelationGroupSingleBindingFactBase(relationGroup, binding, factBase)
 
 	} else if isFunctionBase {
 
@@ -244,6 +218,41 @@ func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup 
 	}
 
 	solver.log.EndDebug("solveSingleRelationGroupSingleBinding", newBindings)
+
+	return newBindings
+}
+
+func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relationGroup knowledge.RelationGroup, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
+
+	newBindings := mentalese.Bindings{}
+
+	localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
+	boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
+
+	if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateAssert {
+
+		solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
+		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
+		newBindings = append(newBindings, binding)
+
+	} else if len(boundRelations) == 1 && boundRelations[0].Predicate == mentalese.PredicateRetract {
+
+		solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
+		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
+		newBindings = append(newBindings, binding)
+
+	} else {
+
+		sourceBindings := solver.FindFacts(factBase, boundRelations)
+
+		for _, sourceBinding := range sourceBindings {
+
+			sharedBinding := solver.replaceLocalIdBySharedId(relationGroup.Relations, sourceBinding, factBase)
+
+			combinedBinding := binding.Merge(sharedBinding)
+			newBindings = append(newBindings, combinedBinding)
+		}
+	}
 
 	return newBindings
 }

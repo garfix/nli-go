@@ -1,6 +1,9 @@
 package mentalese
 
-import "strconv"
+import (
+	"nli-go/lib/common"
+	"strconv"
+)
 
 // An array of relations
 type RelationSet []Relation
@@ -14,6 +17,17 @@ func (set RelationSet) Copy() RelationSet {
 	}
 
 	return copiedSet
+}
+
+func (set RelationSet) GetVariableNames() []string {
+
+	var names []string
+
+	for _, relation := range set {
+		names = append(names, relation.GetVariableNames()...)
+	}
+
+	return common.StringArrayDeduplicate(names)
 }
 
 func (set RelationSet) IsEmpty() bool {

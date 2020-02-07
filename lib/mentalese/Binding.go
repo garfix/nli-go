@@ -44,6 +44,20 @@ func (b Binding) Intersection(b2 Binding) Binding {
 	return result
 }
 
+// returns a binding with only given keys, if present
+func (b Binding) Select(keys []string) Binding {
+	newBinding := Binding{}
+
+	for _, key := range keys {
+		value, found := b[key]
+		if found {
+			newBinding[key] = value
+		}
+	}
+
+	return newBinding
+}
+
 // Returns a copy
 func (b Binding) Copy() Binding {
 

@@ -1,6 +1,7 @@
 # Shared ids
 
-Shared ids are an important concept. It requires some introduction.
+Shared ids allows you to combine the data from different databases in a single query. It is an important concept that
+requires some introduction.
 
 The system starts by turning a natural language question sentence into a relation set.
 Then this relation set is matched against a series of knowledge bases in order to find the answer to the question.

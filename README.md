@@ -10,11 +10,11 @@ A demo of this library can be found [here](http://patrickvanbergen.com/dbpedia/a
 
 This library helps a developer to create a system that allow end-users to use plain English / French / German to interface with a database. That means that an end user can type a question like
 
->  How many children had Lord Byron?
-
-and the library looks up the answer in a relational database, and formats the result, also in natural language:
-
-> He had 2 children.
+    > Q How many children had Lord Byron? 
+    > A: He had 2 children.
+    
+    > Q: Was Michael Jackson married to Elvis Presley's daughter?
+    > A: Yes
 
 Every part of the system is configurable.
 
@@ -22,14 +22,13 @@ Every part of the system is configurable.
 
 Some of the techniques used:
 
-* Stanford Universal Dependencies as syntactic relations
 * Earley parser to create a syntax tree from an input sentence, with semantic attachments
 * Mentalese, a based internal language, based on Predicate Logic, to process the user input
 * A Datalog implementation for rule based reasoning
 * Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
+* Linking data from multiple databases; using id-mapping
 * A dialog context to remember information earlier in the conversation
 * A quantifier scoper that allows "every" structures
-* A query optimiser that uses cost-per-relation to determine the best order of executing a query
 * A generator to produce human readable responses
 
 ## Docs

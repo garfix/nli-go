@@ -1,3 +1,7 @@
+# 2020-02-07
+
+I am making a release for the highlight that I am able to join the data of multiple databases.
+
 # 2020-02-03
 
 The key cabinet is gone. It is finally replaced by a simple Binding, but a Binding that holds shared ids.

@@ -163,7 +163,7 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 		var1 = relation.Arguments[0].String()
 		if relation.Arguments[0].TermType == mentalese.TermStringConstant {
 			var1 += "@en"
-		} else if relation.Arguments[0].TermType == mentalese.TermId {
+		} else if relation.Arguments[0].IsId() {
 			var1 = "<" + relation.Arguments[0].TermValue + ">"
 		}
 	}
@@ -190,7 +190,7 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 				escB := strings.Replace(arg1, "'", "\\'", -1)
 				extra += " . FILTER (LCASE(STR(?name)) = '" + strings.ToLower(escB) + "')"
 			}
-		} else if relation.Arguments[1].TermType == mentalese.TermId {
+		} else if relation.Arguments[1].IsId() {
 			var2 = "<" + relation.Arguments[1].TermValue + ">"
 		}
 	}
@@ -269,31 +269,28 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		if relation.Arguments[0].IsVariable() {
 
-			termType := mentalese.TermStringConstant
 			if resultBinding.Variable1.Type == "uri" {
-				termType = mentalese.TermId
+				binding[relation.Arguments[0].TermValue] = mentalese.NewId(resultBinding.Variable1.Value)
 			} else {
 				// skip non-english results
 				if resultBinding.Variable1.Lang != "" && resultBinding.Variable1.Lang != "en" {
 					continue
 				}
+				binding[relation.Arguments[0].TermValue] = mentalese.NewString(resultBinding.Variable1.Value)
 			}
-			binding[relation.Arguments[0].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable1.Value }
 		}
 
 		if relation.Arguments[1].IsVariable() {
 
-			termType := mentalese.TermStringConstant
 			if resultBinding.Variable2.Type == "uri" {
-				termType = mentalese.TermId
+				binding[relation.Arguments[1].TermValue] = mentalese.NewId(resultBinding.Variable2.Value)
 			} else {
 				// skip non-english results
 				if resultBinding.Variable2.Lang != "" && resultBinding.Variable2.Lang != "en" {
 					continue
 				}
+				binding[relation.Arguments[1].TermValue] = mentalese.NewString(resultBinding.Variable2.Value)
 			}
-
-			binding[relation.Arguments[1].TermValue] = mentalese.Term{ TermType: termType, TermValue: resultBinding.Variable2.Value }
 		}
 
 		bindings = append(bindings, binding)

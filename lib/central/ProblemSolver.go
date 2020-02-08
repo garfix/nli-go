@@ -367,18 +367,16 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(relationSet mentalese.Rel
 	for key, value := range binding {
 		newValue := value
 
-		for _, relation := range relationSet {
-			for i, argument := range relation.Arguments {
-				if argument.IsVariable() && argument.TermValue == key {
-					entityType := solver.predicates.GetEntityType(relation.Predicate, i)
-					if entityType == "" { continue }
-					localId := factBase.GetLocalId(value.TermValue, entityType)
-					if localId == "" {
-						solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", value.TermValue, entityType, factBase.GetName()))
-						return mentalese.Binding{}
-					}
-					newValue = mentalese.NewId(localId)
+		if value.IsId() {
+			sharedId := value.TermValue
+			entityType := value.TermEntityType
+			if entityType != "" {
+				localId := factBase.GetLocalId(sharedId, entityType)
+				if localId == "" {
+					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, entityType, factBase.GetName()))
+					return mentalese.Binding{}
 				}
+				newValue = mentalese.NewId(localId, entityType)
 			}
 		}
 
@@ -395,18 +393,16 @@ func (solver ProblemSolver) replaceLocalIdBySharedId(relationSet mentalese.Relat
 	for key, value := range binding {
 		newValue := value
 
-		for _, relation := range relationSet {
-			for i, argument := range relation.Arguments {
-				if argument.IsVariable() && argument.TermValue == key {
-					entityType := solver.predicates.GetEntityType(relation.Predicate, i)
-					if entityType == "" { continue }
-					sharedId := factBase.GetSharedId(value.TermValue, entityType)
-					if sharedId == "" {
-						solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", value.TermValue, entityType, factBase.GetName()))
-						return mentalese.Binding{}
-					}
-					newValue = mentalese.NewId(sharedId)
+		if value.IsId() {
+			localId := value.TermValue
+			entityType := value.TermEntityType
+			if entityType != "" {
+				sharedId := factBase.GetSharedId(localId, entityType)
+				if sharedId == "" {
+					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, entityType, factBase.GetName()))
+					return mentalese.Binding{}
 				}
+				newValue = mentalese.NewId(sharedId, entityType)
 			}
 		}
 

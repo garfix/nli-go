@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/generate"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
+	"strings"
 )
 
 func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
@@ -523,7 +524,8 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 
 				for _, patternRelation := range tailRelations {
 					if len(patternRelation.Arguments) == 0 {
-						patternRelation.Arguments = []mentalese.Term{{mentalese.TermVariable, "_", mentalese.RelationSet{}}}
+						variable := mentalese.NewVariable("_")
+						patternRelation.Arguments = []mentalese.Term{ variable }
 					} else if len(patternRelation.Arguments) != 1 {
 						ok = false
 					} else if !patternRelation.Arguments[0].IsVariable() {
@@ -559,7 +561,8 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, 
 
 				for _, consequent := range consequents {
 					if len(consequent.Arguments) == 0 {
-						consequent.Arguments = []mentalese.Term{{mentalese.TermVariable, "_", mentalese.RelationSet{}}}
+						variable := mentalese.NewVariable("_")
+						consequent.Arguments = []mentalese.Term{ variable }
 					} else if len(consequent.Arguments) != 1 {
 						ok = false
 					} else if !consequent.Arguments[0].IsVariable() {
@@ -708,6 +711,26 @@ func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex in
 	return bindings, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseId(tokens []Token, startIndex int) (string, string, int, bool) {
+
+	id := ""
+	entityType := ""
+
+	token, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_id)
+	if ok {
+		i := strings.Index(token, ":")
+		if i == -1 {
+			ok = false
+		} else {
+			startIndex = newStartIndex
+			entityType = token[0:i]
+			id = token[i+1:]
+		}
+	}
+
+	return id, entityType, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
 
 	relation := mentalese.Relation{}
@@ -747,10 +770,13 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 							term.TermType = mentalese.TermAnonymousVariable
 							term.TermValue = tokenValue
 						} else {
-							tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_id)
+							id := ""
+							entityType := ""
+							id, entityType, startIndex, ok = parser.parseId(tokens, startIndex)
 							if ok {
 								term.TermType = mentalese.TermId
-								term.TermValue = tokenValue
+								term.TermValue = id
+								term.TermEntityType = entityType
 							} else {
 								relationSet := mentalese.RelationSet{}
 								relationSet, newStartIndex, ok = parser.parseRelationSet(tokens, startIndex)

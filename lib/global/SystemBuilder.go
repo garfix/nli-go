@@ -90,7 +90,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 		builder.ImportMySqlDatabase(factBase.Database, solver, system.nameResolver, factBase, matcher)
 	}
 	for _, factBase := range config.Factbases.Sparql {
-		builder.ImportSparqlDatabase(factBase.Name, solver, system.nameResolver, factBase, matcher)
+		builder.ImportSparqlDatabase(factBase.Name, solver, predicates, factBase, matcher)
 	}
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
@@ -350,7 +350,7 @@ func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.Pr
 	}
 }
 
-func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.ProblemSolver, nameResolver *central.NameResolver, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
+func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.ProblemSolver, predicates mentalese.Predicates, factBase sparqlFactBase, matcher *mentalese.RelationMatcher) {
 
 	mapPath := common.AbsolutePath(builder.baseDir, factBase.Map)
 	mapString, err := common.ReadFile(mapPath)
@@ -383,7 +383,7 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 
 	doCache := factBase.DoCache
 
-	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, doCache, builder.log)
+	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, predicates, doCache, builder.log)
 
 	if factBase.SharedIds != "" {
 		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)

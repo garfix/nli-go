@@ -294,7 +294,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 
 				// create a relation set for each field that gives Information about this name
 				bindings2 := resolver.solver.FindFacts(factBase, relationSet, mentalese.Binding{
-					mentalese.IdVar: mentalese.NewId(id.TermValue),
+					mentalese.IdVar: mentalese.NewId(id.TermValue, entityType),
 				})
 
 				for _, binding2 := range bindings2 {
@@ -305,11 +305,12 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 				}
 			}
 
-			sharedId := factBase.GetSharedId(id.TermValue, entityType)
+			sharedId := id.TermValue
 
 			nameInformations = append(nameInformations, NameInformation{
 				Name:         name,
 				DatabaseName: factBase.GetName(),
+				EntityType:   entityType,
 				SharedId:     sharedId,
 				Information:  information,
 			})

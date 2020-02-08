@@ -7,10 +7,10 @@
     has_wife(A, B) => spouse(A, B);
     has_wife(A, B) => spouse(B, A);
 
-    person_name(A, N) => birth_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
-    person_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/ontology/Person`);
+    person_name(A, N) => birth_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
+    person_name(A, N) => foaf_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
 
-    country_name(A, N) => foaf_name(A, N) type(A, `http://dbpedia.org/class/yago/WikicatCountries`);
+    country_name(A, N) => foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
 
     name(A, N, canonical_name) => foaf_name(A, N) first(N);
 
@@ -36,8 +36,8 @@
     death_date(E, D) => death_date(E, D);
     birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);
 
-    person(E) => type(E, `http://dbpedia.org/ontology/Person`);
-    country(E) => type(E, `http://dbpedia.org/class/yago/WikicatCountries`);
+    person(E) => type(E, `:http://dbpedia.org/ontology/Person`);
+    country(E) => type(E, `:http://dbpedia.org/class/yago/WikicatCountries`);
 
     has_population(Country, Count) => population_total(Country, Count);
     has_population(Country, Count) => population_census(Country, Count);

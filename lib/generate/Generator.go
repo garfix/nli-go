@@ -30,7 +30,8 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 
 	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
 
-	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{{mentalese.TermVariable, "S1", mentalese.RelationSet{}}}}
+	s := mentalese.NewVariable("S1")
+	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{ s }}
 
 	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, boundSense)
 }

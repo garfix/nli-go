@@ -1,21 +1,18 @@
 # Todo
 
-* the number of proper noun words searched in the database can be deduced from the grammar rules 
 * remove solution routes altogether; rebuild the solver
-* isa(E1, the) -> the(E1)
 * map relations to database => not many-to-many, but 1-to-many
 * NewRelationizer: pointer, geen kopie maken
+* SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be
+    solve some other way
+* entity type (multiple) inheritance
 
 ## Misc
 
 * Provide common user queries
-* Allow lower case proper names
 * Separate interfaces (api) from implementations (model)
 * grouped relations in matcher and solver: (), and, or, not
-* name(A, F, firstName) !name(A, I, insertion) name(A, L, lastName) join(N, ' ', F, L) => name(A, N);
-* get rid of mappings in memory basis
 * Blocks World examples
-* Names with and without insertion
 * Solutions: do not just create cases for 0 or any results, but allow for arbitrary conditions (a relation set), for the response
 
 ## Rules

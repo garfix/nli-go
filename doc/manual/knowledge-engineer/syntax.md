@@ -5,7 +5,7 @@ For the semantic language holds:
  * atoms, like predicates
  * string constants: use single quotes: 'De Nachtwacht'
  * numbers: 25 1.5
- * id: anything between backticks: `38911` `http://dbpedia.org/page/Michael_Jackson_(actor)`
+* id: entity type and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
  * relation: a predicate, followed by an argument list of terms: kick(john, jake)
 
  A term can be any of these

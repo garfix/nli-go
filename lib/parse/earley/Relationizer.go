@@ -44,7 +44,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 	if len(node.nameInformations) > 0 {
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			nameBinding[antecedentVariable] = mentalese.NewId(nameInformation.SharedId)
+			nameBinding[antecedentVariable] = mentalese.NewId(nameInformation.SharedId, nameInformation.EntityType)
 		}
 	}
 

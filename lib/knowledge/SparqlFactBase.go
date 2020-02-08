@@ -23,6 +23,7 @@ type SparqlFactBase struct {
 	names           mentalese.ConfigMap
 	stats           mentalese.DbStats
 	entities        mentalese.Entities
+	predicates 		mentalese.Predicates
 	sharedIds 		SharedIds
 	matcher         *mentalese.RelationMatcher
 	queryCount      int
@@ -30,7 +31,7 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
@@ -40,6 +41,7 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		names:             names,
 		stats:             stats,
 		entities:          entities,
+		predicates:		   predicates,
 		sharedIds: 		   SharedIds{},
 		matcher:           matcher,
 		queryCount:        0,
@@ -270,7 +272,9 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 		if relation.Arguments[0].IsVariable() {
 
 			if resultBinding.Variable1.Type == "uri" {
-				binding[relation.Arguments[0].TermValue] = mentalese.NewId(resultBinding.Variable1.Value)
+// todo predicates does not contain database relations
+				entityType := factBase.predicates.GetEntityType(relation.Predicate, 0)
+				binding[relation.Arguments[0].TermValue] = mentalese.NewId(resultBinding.Variable1.Value, entityType)
 			} else {
 				// skip non-english results
 				if resultBinding.Variable1.Lang != "" && resultBinding.Variable1.Lang != "en" {
@@ -283,7 +287,9 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 		if relation.Arguments[1].IsVariable() {
 
 			if resultBinding.Variable2.Type == "uri" {
-				binding[relation.Arguments[1].TermValue] = mentalese.NewId(resultBinding.Variable2.Value)
+// todo predicates does not contain database relations
+				entityType := factBase.predicates.GetEntityType(relation.Predicate, 1)
+				binding[relation.Arguments[1].TermValue] = mentalese.NewId(resultBinding.Variable2.Value, entityType)
 			} else {
 				// skip non-english results
 				if resultBinding.Variable2.Lang != "" && resultBinding.Variable2.Lang != "en" {

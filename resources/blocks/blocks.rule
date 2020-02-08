@@ -9,15 +9,15 @@
     contain(P1, E1, E2) :- contain(E1, E2);
     you(E1) :- ;
     it(E1) :- dialog_subject(E1);
-    raise_hand() :- at(`hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
+    raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
     height(E, H) :- size(E, _, _, H);
     big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
     taller(A, B) :- height(A, Ha) height(B, Hb) greater_than(Ha, Hb);
 
     /* storage */
     make_containing(A, B) :- assert(contain(A, B));
-    move_hand(X, Y, Z) :- retract(at(`hand`, _, _, _)) assert(at(`hand`, X, Y, Z));
-    grasp(X) :- retract(grasping(_, _)) assert(grasping(`now`, X));
-    release(E1) :- retract(grasping(_, _)) at(`hand`, X, Y, Z) assert(at(E1, X, Y, Z));
+    move_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
+    grasp(X) :- retract(grasping(_, _)) assert(grasping(`:now`, X));
+    release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) assert(at(E1, X, Y, Z));
     set_dialog_subject(E1) :- retract(dialog_subject(_)) assert(dialog_subject(E1));
 ]

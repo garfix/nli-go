@@ -1,6 +1,33 @@
+# 2020-02-08
+
+I did. An id now looks like this:
+
+    `person:123`
+
+or when the entity type is not relevant:
+
+    `:123`
+
+I though about leaving out the : when there is no relevant entity type, but I decided not to because of the identifier:
+
+    `http://dbpedia.org/class/yago/WikicatCountries`
+
+this identifier happens to have a colon. I _could_ use another symbol as a separator, of course, but the problem would
+remain. Forcing the colon has the added benefit that it makes you think about the entity type you might need. The
+identifier now looks thus
+
+    `:http://dbpedia.org/class/yago/WikicatCountries`
+
 # 2020-02-07
 
 I am making a release for the highlight that I am able to join the data of multiple databases.
+
+---
+
+Anaphora resolution:
+
+It is a good idea to put the entity type in the `id`. That way I don't need to have relations present in order to
+determine the entity type.
 
 # 2020-02-03
 

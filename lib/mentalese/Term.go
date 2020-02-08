@@ -5,6 +5,7 @@ import "fmt"
 type Term struct {
 	TermType             int
 	TermValue            string
+	TermEntityType		 string
 	TermValueRelationSet RelationSet
 }
 
@@ -41,8 +42,8 @@ func NewRelationSet(value RelationSet) Term {
 	return Term{ TermType: TermRelationSet, TermValue: "", TermValueRelationSet: value}
 }
 
-func NewId(id string) Term {
-	return Term{ TermType: TermId, TermValue: id, TermValueRelationSet: nil}
+func NewId(id string, entityType string) Term {
+	return Term{ TermType: TermId, TermValue: id, TermEntityType: entityType, TermValueRelationSet: nil}
 }
 
 func (term Term) IsVariable() bool {
@@ -130,7 +131,7 @@ func (term Term) String() string {
 	case TermRelationSet:
 		s = term.TermValueRelationSet.String()
 	case TermId:
-		s = "`" + term.TermValue + "`"
+		s = "`" + term.TermEntityType + ":" + term.TermValue + "`"
 	default:
 		s = "<unknown>"
 	}

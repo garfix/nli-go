@@ -20,7 +20,7 @@
             {
                 condition: exists(),
                 preparation: name(B, N),
-                answer: name(B, N) make_and(B, R)
+                answer: name(B, N) make_and(B, R) root(R)
             }
             {
                 answer: dont_know()

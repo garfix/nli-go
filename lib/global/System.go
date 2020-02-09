@@ -113,6 +113,8 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	answerWords := []string{}
 	nameBinding := mentalese.Binding{}
 
+	system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
+
 	if !system.log.IsDone() {
 		tokens = system.tokenizer.Process(originalInput)
 		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
@@ -129,8 +131,15 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
-		answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{nameBinding})
+		answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{ nameBinding })
 		system.log.AddProduction("Answer", answerRelations.String())
+	}
+
+	if !system.log.IsDone() {
+		for _, id := range answerRelations.GetIds() {
+			system.dialogContext.AddEntityReference(central.CreateEntityReference(id.TermValue, id.TermEntityType))
+		}
+		system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 	}
 
 	if !system.log.IsDone() {

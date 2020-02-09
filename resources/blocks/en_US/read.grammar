@@ -5,7 +5,7 @@
     { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
     { rule: noun(E1) -> one(E1) }
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: it(E1) }
+    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [isa(_, the)], E1, sem(1), sem(parent)) }
     { rule: pronoun(E1) -> you(E1),                                         sense: you(E1) }
 
     { rule: adjp(E1) -> taller() than() np(E2),                             sense: taller(E1, E2) }
@@ -38,8 +38,8 @@
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
 
-    { rule: what_clause(E2) -> aux_do() np(E1) contain(P1),                sense: contain(P1, E1, E2) }
-    { rule: what_clause(E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E1, E2) }
+    { rule: what_clause(E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
+    { rule: what_clause(E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }
 
     { rule: interrogative_clause(P1) -> what() what_clause(E1),            sense: what(E1) }
 

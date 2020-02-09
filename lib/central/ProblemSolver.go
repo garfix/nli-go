@@ -330,6 +330,12 @@ func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []ment
 
 func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.Bindings, factBase knowledge.FactBase) mentalese.Bindings {
 
+	solver.SolveDepth++
+
+	head := strings.Repeat("  ", solver.SolveDepth)
+
+	solver.log.AddProduction(head + "Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
+
 	relationBindings := mentalese.Bindings{}
 
 	aggregateFunctionFound := false
@@ -356,6 +362,10 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 			}
 		}
 	}
+
+	solver.log.AddProduction(head + "Database" + " " + factBase.GetName(), relationBindings.String())
+
+	solver.SolveDepth--
 
 	return relationBindings
 }

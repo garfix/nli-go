@@ -74,6 +74,9 @@ func (term Term) Equals(otherTerm Term) bool {
 	if term.TermType != otherTerm.TermType {
 		return false
 	}
+	if term.TermEntityType != otherTerm.TermEntityType {
+		return false
+	}
 	if term.TermType == TermRelationSet {
 		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
 	} else {
@@ -82,13 +85,14 @@ func (term Term) Equals(otherTerm Term) bool {
 }
 
 func (term Term) AsKey() string {
-	return fmt.Sprintf("%d/%s", term.TermType, term.TermValue)
+	return fmt.Sprintf("%d/%s/%s", term.TermType, term.TermValue, term.TermEntityType)
 }
 
 func (term Term) Copy() Term {
 	newTerm := Term{}
 	newTerm.TermType = term.TermType
 	newTerm.TermValue = term.TermValue
+	newTerm.TermEntityType = term.TermEntityType
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	}

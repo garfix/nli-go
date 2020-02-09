@@ -109,7 +109,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	}
 
 	// collect children with sem(parent)
-	childrenWithParentReferenceIndexes := relationizer.collectChildrenWithParentReferences(parentSet, childSets)
+	childrenWithParentReferenceIndexes := relationizer.collectChildrenWithParentReferences(childSets)
 
 	combination := parentSet
 
@@ -141,11 +141,17 @@ func (relationizer Relationizer) bindParent(parentRelations mentalese.RelationSe
 				for _, argumentRelation := range argument.TermValueRelationSet {
 					if argumentRelation.Predicate == mentalese.PredicateSem && argumentRelation.Arguments[0].TermValue == mentalese.AtomParent {
 
-						prevParent := newParentRelations
-						// the the sem of P is replaced by this quant
-						newParentRelations = childSet.Copy()
-						// the argument 'scope' in the quant of C is replaced by the current sem of P
-						newParentRelations[r].Arguments[a] = mentalese.NewRelationSet(prevParent)
+						if len(parentRelations) == 0 {
+							// the quant should be raised above its "parent"; but in between may be empty-semantics nodes
+							// note! there may in theory also be non-empty semantic nodes in between; don't know how to deal with this
+							newParentRelations = childSet
+						} else {
+							prevParent := newParentRelations
+							// the the sem of P is replaced by this quant
+							newParentRelations = childSet.Copy()
+							// the argument 'scope' in the quant of C is replaced by the current sem of P
+							newParentRelations[r].Arguments[a] = mentalese.NewRelationSet(prevParent)
+						}
 					}
 				}
 			}
@@ -155,7 +161,7 @@ func (relationizer Relationizer) bindParent(parentRelations mentalese.RelationSe
 	return newParentRelations
 }
 
-func (relationizer Relationizer) collectChildrenWithParentReferences(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet) []int {
+func (relationizer Relationizer) collectChildrenWithParentReferences(childSets []mentalese.RelationSet) []int {
 
 	childIndexes := []int{}
 
@@ -189,15 +195,17 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 
 	for i, formalArgument := range ruleRelation.Arguments {
 		if formalArgument.IsRelationSet() {
-			firstRelation := formalArgument.TermValueRelationSet[0]
-			if firstRelation.Predicate == mentalese.PredicateSem {
-				index, err := strconv.Atoi(firstRelation.Arguments[0].TermValue)
-				if err == nil {
-					index = index - 1
-					childIndexes = append(childIndexes, index)
-					subSet := childSets[index]
-					relationSetArgument := mentalese.Term{TermType: mentalese.TermRelationSet, TermValueRelationSet: subSet}
-					parentRelation.Arguments[i] = relationSetArgument
+			if len(formalArgument.TermValueRelationSet) > 0 {
+				firstRelation := formalArgument.TermValueRelationSet[0]
+				if firstRelation.Predicate == mentalese.PredicateSem {
+					index, err := strconv.Atoi(firstRelation.Arguments[0].TermValue)
+					if err == nil {
+						index = index - 1
+						childIndexes = append(childIndexes, index)
+						subSet := childSets[index]
+						relationSetArgument := mentalese.Term{TermType: mentalese.TermRelationSet, TermValueRelationSet: subSet}
+						parentRelation.Arguments[i] = relationSetArgument
+					}
 				}
 			}
 		}

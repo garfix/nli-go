@@ -10,6 +10,7 @@
 
     name(`:b4`, 'the blue pyramid')
     name(`:b10`, 'the blue block')
+    name(`:box`, 'the box')
 
     is(red, color)
     is(blue, color)
@@ -63,6 +64,7 @@
     at(`:box`, 600, 600, 0)
     is(`:box`, box)
     is(`:table`, table)
+
     contain(`:box`, `:b4`)
 
     shape(`:b1`, rectangular)

@@ -134,25 +134,6 @@ func (resolver *NameResolver) composeOptions(nameInformations []NameInformation)
 	return options
 }
 
-//func (resolver *NameResolver) createNameSensesFromNameInformations(nameInformations []NameInformation, variable string) mentalese.RelationSet {
-//
-//	senses := mentalese.RelationSet{}
-//
-//	for _, nameInformation := range nameInformations {
-//
-//		sense := mentalese.NewRelation(mentalese.PredicateSense, []mentalese.Term{
-//			mentalese.NewVariable(variable),
-//			mentalese.NewString(nameInformation.DatabaseName),
-//			mentalese.NewId(nameInformation.SharedId),
-//		})
-//
-//		senses = append(senses, sense)
-//
-//	}
-//
-//	return senses
-//}
-
 func (resolver *NameResolver) SaveNameInformations(name string, nameInformations []NameInformation) {
 
 	resolver.dialogContext.AddNameInformations(nameInformations)
@@ -305,13 +286,11 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 				}
 			}
 
-			sharedId := id.TermValue
-
 			nameInformations = append(nameInformations, NameInformation{
 				Name:         name,
 				DatabaseName: factBase.GetName(),
-				EntityType:   entityType,
-				SharedId:     sharedId,
+				EntityType:   id.TermEntityType,
+				SharedId:     id.TermValue,
 				Information:  information,
 			})
 		}

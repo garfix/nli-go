@@ -1,5 +1,10 @@
 [
-    { rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: and(C, P1, P2) }
-    { rule: np(F) -> proper_noun(F),                                              condition: name(F, Name) }
     { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
+
+    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
+
+    { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
+    { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
 ]

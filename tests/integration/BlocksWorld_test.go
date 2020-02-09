@@ -35,28 +35,21 @@ func TestBlocksWorld(t *testing.T) {
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK", "", ""},
 			// todo: the names of the objects could be generated; now they are explicitly added
 			{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
+			{"What is the pyramid supported by?", "The box", "", ""},
 		},
 		{
-			//{"What is the pyramid supported by?", "The box", "", ""},
 		},
 	}
 
-	for _, session := range tests {
+	os.Remove(actualSessionPath)
 
-		os.Remove(actualSessionPath)
+	for _, session := range tests {
 
 		for _, test := range session {
 
 			log.Clear()
 
-			if test.inSessionName == "" {
-				system.ClearDialogContext()
-			} else {
-				inSessionPath := common.AbsolutePath(common.Dir(), "resources/" + test.inSessionName)
-				inSession, _ := common.ReadFile(inSessionPath)
-				common.WriteFile(actualSessionPath, inSession)
-				system.PopulateDialogContext(actualSessionPath)
-			}
+			system.PopulateDialogContext(actualSessionPath)
 
 			answer, options := system.Answer(test.question)
 
@@ -69,25 +62,6 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
 				t.Error(log.String())
-			}
-
-			if test.outSessionName != "" {
-				outSessionPath := common.AbsolutePath(common.Dir(), "resources/"+test.outSessionName)
-				expected, err := common.ReadFile(outSessionPath)
-
-				if err != nil {
-					t.Errorf("Test relationships: error reading %v", outSessionPath)
-				}
-
-				actual, err := common.ReadFile(actualSessionPath)
-
-				if err != nil {
-					t.Errorf("Test relationships: error reading %v", actualSessionPath)
-				}
-
-				if expected != actual {
-					t.Errorf("Test relationships: got %v, want %v", actual, expected)
-				}
 			}
 		}
 	}

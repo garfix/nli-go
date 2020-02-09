@@ -1,3 +1,11 @@
+# 2020-02-09
+
+I managed to do anaphora resolution on both the lines 5 and 3 of the blocks world. I add entries to the anaphora queue
+on completing the quant solving process and I attempt to select the entries from the anaphora queue first when in the
+quant solving process.
+
+It works, but it will need some work to make it work good. But it works. It actually works!
+
 # 2020-02-08
 
 I did. An id now looks like this:

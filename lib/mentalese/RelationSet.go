@@ -30,6 +30,29 @@ func (set RelationSet) GetVariableNames() []string {
 	return common.StringArrayDeduplicate(names)
 }
 
+func (set RelationSet) GetIds() []Term {
+
+	ids := []Term{}
+
+	for _, relation := range set {
+		for _, argument := range relation.Arguments {
+			if argument.IsId() {
+				exists := false
+				for _, id := range ids {
+					if id.Equals(argument) {
+						exists = true
+					}
+				}
+				if !exists {
+					ids = append(ids, argument)
+				}
+			}
+		}
+	}
+
+	return ids
+}
+
 func (set RelationSet) IsEmpty() bool {
 	return len(set) == 0
 }

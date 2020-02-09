@@ -16,8 +16,6 @@ import (
 //     ])
 
 func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
-	// solve the range
-	rangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
 
 	groupedScopeBindings := []mentalese.Bindings{}
 	scopeBindings := mentalese.Bindings{}
@@ -32,10 +30,39 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		count, _ = strconv.Atoi(numberRelation.Arguments[1].TermValue)
 	}
 
-	if quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateIsa &&
+	// solve the range
+	rangeBindings := []mentalese.Binding{}
+
+	isTheRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateIsa &&
 		quantifier.TermValueRelationSet[0].Arguments[1].TermType == mentalese.TermPredicateAtom &&
-		quantifier.TermValueRelationSet[0].Arguments[1].TermValue == mentalese.AtomThe {
+		quantifier.TermValueRelationSet[0].Arguments[1].TermValue == mentalese.AtomThe
+
+	if isTheRange {
 		count = 1
+
+		// try the anaphora queue first
+		refFound := false
+		refs := solver.dialogContext.AnaphoraQueue
+		for _, ref := range refs {
+			refBinding := binding.Merge(mentalese.Binding{ rangeVariable: mentalese.NewId(ref.Id, ref.EntityType)})
+			rangeSet := quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet
+// todo: is this ok? empty range set for "it"
+			if len(rangeSet) == 0 {
+				refFound = true
+				rangeBindings = mentalese.Bindings{ refBinding }
+				break
+			}
+			testRangeBindings := solver.SolveRelationSet(rangeSet, mentalese.Bindings{refBinding})
+			if len(testRangeBindings) == 1 {
+				refFound = true
+				rangeBindings = testRangeBindings
+				break
+			}
+		}
+
+		if !refFound {
+			rangeBindings = solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
+		}
 
 		if len(rangeBindings) != 1 {
 
@@ -46,6 +73,9 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 				return mentalese.Bindings{}
 			}
 		}
+
+	} else {
+		rangeBindings = solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
 	}
 
 	// this now works for EVERY and for NUMBER at the moment; check the quantifier from the quant!
@@ -59,6 +89,11 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		if len(singleScopeBindings) > 0 {
 			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)
 			scopeBindings = append(scopeBindings, singleScopeBindings...)
+		}
+
+		value, found := rangeBinding[rangeVariable]
+		if found && value.IsId() {
+			solver.dialogContext.AddEntityReference(CreateEntityReference(value.TermValue, value.TermEntityType))
 		}
 
 		index++

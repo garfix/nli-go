@@ -5,6 +5,4 @@
     have_child(P, C) => parent(P, C);
     gender(A, male) => person(A, _, 'M', _);
     gender(A, female) => person(A, _, 'F', _);
-    isa(P, parent) => parent(P, _);
-    isa(C, child) => parent(_, C);
 ]

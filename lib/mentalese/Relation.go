@@ -20,8 +20,8 @@ const PredicateAssert = "assert"
 const PredicateRetract = "retract"
 
 const PredicateNumber = "number"
-const PredicateIsa = "isa"
-const AtomThe = "the"
+const PredicateThe = "the"
+const PredicateAll = "all"
 const AtomAll = "all"
 const AtomParent = "parent"
 

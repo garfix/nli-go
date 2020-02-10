@@ -1,7 +1,7 @@
 [
     { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
 
-    { rule: qp(E1) -> the(),                                                sense: isa(E1, the) }
+    { rule: qp(E1) -> the(),                                                sense: the(E1) }
 
     { rule: np(E1) -> proper_noun_group(E1) }
     { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }

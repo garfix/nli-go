@@ -33,9 +33,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	// solve the range
 	rangeBindings := []mentalese.Binding{}
 
-	isTheRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateIsa &&
-		quantifier.TermValueRelationSet[0].Arguments[1].TermType == mentalese.TermPredicateAtom &&
-		quantifier.TermValueRelationSet[0].Arguments[1].TermValue == mentalese.AtomThe
+	isTheRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateThe
 
 	if isTheRange {
 		count = 1

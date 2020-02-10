@@ -3,7 +3,7 @@
     { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1)}
     { rule: proper_noun_group(N1) -> proper_noun(N1)}
 
-    { rule: qp(E1) -> every(E1),                                            sense: isa(E1, all) }
+    { rule: qp(E1) -> every(E1),                                            sense: all(E1) }
 
     { rule: nbar(E1) -> noun(E1) }
 

@@ -5,7 +5,7 @@
     { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
     { rule: noun(E1) -> one(E1) }
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [isa(_, the)], E1, sem(1), sem(parent)) }
+    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [the(_)], E1, [], sem(parent)) }
     { rule: pronoun(E1) -> you(E1),                                         sense: you(E1) }
 
     { rule: adjp(E1) -> taller() than() np(E2),                             sense: taller(E1, E2) }
@@ -19,7 +19,7 @@
     { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                      sense: put_into(P1, E1, E2) }
 
     { rule: qp(E1) -> a(E1),                                                sense: number(E1, 1) }
-    { rule: qp(E1) -> the(E1),                                              sense: isa(E1, the) }
+    { rule: qp(E1) -> the(E1),                                              sense: the(E1) }
 
     /* rules */
 

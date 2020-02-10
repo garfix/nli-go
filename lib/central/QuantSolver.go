@@ -40,15 +40,17 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 
 		// try the anaphora queue first
 		refFound := false
-		refs := *solver.dialogContext.AnaphoraQueue
-		for _, ref := range refs {
+		for _, ref := range *solver.dialogContext.AnaphoraQueue {
 			refBinding := binding.Merge(mentalese.Binding{ rangeVariable: mentalese.NewId(ref.Id, ref.EntityType)})
 			rangeSet := quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet
-// todo: is this ok? empty range set for "it"
+			//  empty range set for "it"
 			if len(rangeSet) == 0 {
 				refFound = true
 				rangeBindings = mentalese.Bindings{ refBinding }
 				break
+			}
+			if !solver.quickAcceptabilityCheck(rangeVariable, ref.EntityType, rangeSet) {
+				continue
 			}
 			testRangeBindings := solver.SolveRelationSet(rangeSet, mentalese.Bindings{refBinding})
 			if len(testRangeBindings) == 1 {
@@ -115,6 +117,24 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 			return mentalese.Bindings{}
 		}
 	}
+}
+
+func (solver ProblemSolver) quickAcceptabilityCheck(variable string, entityType string, relations mentalese.RelationSet) bool {
+
+	accepted := false
+
+	for _, relation := range relations {
+		for i, argument := range relation.Arguments {
+			if argument.IsVariable() && argument.TermValue == variable {
+				if solver.predicates.GetEntityType(relation.Predicate, i) == entityType {
+					accepted = true
+					break
+				}
+			}
+		}
+	}
+
+	return accepted
 }
 
 // ask the user which of the specified entities he/she means

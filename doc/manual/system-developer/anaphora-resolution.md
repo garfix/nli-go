@@ -52,3 +52,5 @@ If this does not return 1 result, it will continue to the next
 
 If this returns 1 result, person:13 is taken to be the range of the quant. If not, the rest of the ids in the queue are
 tried. Only when all fail, will the solver just use the range without id binding.
+
+The solver will skip entities whose type does not match the range. A book will not be tried in a person range.

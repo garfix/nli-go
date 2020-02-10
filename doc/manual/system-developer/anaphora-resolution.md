@@ -32,6 +32,9 @@ same sentence and to entities in previous input sentences.
 Any entity that is part of the result set of a question is added to the queue. This allows a user to refer to a previous
 response.
 
+If the entity had been part of the queue before, it would be removed from the queue before being added again at the
+front. Each entity can be in the queue only once.
+
 ## Handling anaphora
 
 Anaphora is handled in the quant solver. A quant has a range, such as "blue block" and a quantifier like "the".

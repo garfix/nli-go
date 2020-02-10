@@ -9,7 +9,7 @@ type DialogContext struct {
 	AnswerToOpenQuestion string
 	NameInformations []NameInformation
 	Options []string
-	AnaphoraQueue AnaphoraQueue
+	AnaphoraQueue *AnaphoraQueue
 }
 
 func NewDialogContext() *DialogContext {
@@ -23,35 +23,7 @@ func (dc *DialogContext) Initialize() {
 	dc.AnswerToOpenQuestion = ""
 	dc.NameInformations = []NameInformation{}
 	dc.Options = []string{}
-	dc.AnaphoraQueue = AnaphoraQueue{}
-}
-
-func (dc *DialogContext) AddEntityReference(entityReference EntityReference) {
-
-	// same element again? ignore
-	if len(dc.AnaphoraQueue) > 0 && dc.AnaphoraQueue[0].Equals(entityReference) {
-		return
-	}
-
-	// prepend the reference
-	dc.AnaphoraQueue = append([]EntityReference{entityReference}, dc.AnaphoraQueue...)
-
-	// queue too long: remove the last element
-	if len(dc.AnaphoraQueue) > MaxSizeAnaphoraQueue {
-		dc.AnaphoraQueue = dc.AnaphoraQueue[0:MaxSizeAnaphoraQueue]
-	}
-}
-
-func (dc *DialogContext) FindEntityReferences(entityType string) []EntityReference {
-	foundReferences := []EntityReference{}
-
-	for _, entityReference := range dc.AnaphoraQueue {
-		if entityReference.EntityType == entityType {
-			foundReferences = append(foundReferences, entityReference)
-		}
-	}
-
-	return foundReferences
+	dc.AnaphoraQueue = &AnaphoraQueue{}
 }
 
 func (dc *DialogContext) SetOriginalInput(originalInput string) {

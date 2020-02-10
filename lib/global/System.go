@@ -137,7 +137,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 
 	if !system.log.IsDone() {
 		for _, id := range answerRelations.GetIds() {
-			system.dialogContext.AddEntityReference(central.CreateEntityReference(id.TermValue, id.TermEntityType))
+			system.dialogContext.AnaphoraQueue.AddEntityReference(central.CreateEntityReference(id.TermValue, id.TermEntityType))
 		}
 		system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 	}

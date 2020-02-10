@@ -40,7 +40,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 
 		// try the anaphora queue first
 		refFound := false
-		refs := solver.dialogContext.AnaphoraQueue
+		refs := *solver.dialogContext.AnaphoraQueue
 		for _, ref := range refs {
 			refBinding := binding.Merge(mentalese.Binding{ rangeVariable: mentalese.NewId(ref.Id, ref.EntityType)})
 			rangeSet := quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet
@@ -91,7 +91,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 
 		value, found := rangeBinding[rangeVariable]
 		if found && value.IsId() {
-			solver.dialogContext.AddEntityReference(CreateEntityReference(value.TermValue, value.TermEntityType))
+			solver.dialogContext.AnaphoraQueue.AddEntityReference(CreateEntityReference(value.TermValue, value.TermEntityType))
 		}
 
 		index++

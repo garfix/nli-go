@@ -15,7 +15,7 @@ func NewDialogContextFileStorage(log *common.SystemLog) *DialogContextFileStorag
 	return &DialogContextFileStorage{ log: log }
 }
 
-func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogContext *central.DialogContext) {
+func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogContext *central.DialogContext, clearWhenCorrupt bool) {
 
 	if dialogContextPath == "" {
 		return
@@ -35,8 +35,10 @@ func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogCon
 
 	err = json.Unmarshal([]byte(dialogContextJson), &dialogContext)
 	if err != nil {
-		storage.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
-		return
+		if !clearWhenCorrupt {
+			storage.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
+			return
+		}
 	}
 }
 

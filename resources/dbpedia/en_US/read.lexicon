@@ -39,6 +39,7 @@
     { form: 'name', pos: name }
 
     { form: 'she', pos: she }
+    { form: 'he', pos: he }
 
     { form: /^[0-9]+/,            pos: number }
 

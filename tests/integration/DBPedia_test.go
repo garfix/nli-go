@@ -71,7 +71,7 @@ func TestDBPedia(t *testing.T) {
 
 			log.Clear()
 
-			system.PopulateDialogContext(actualSessionPath)
+			system.PopulateDialogContext(actualSessionPath, false)
 
 			answer, options := system.Answer(test.question)
 

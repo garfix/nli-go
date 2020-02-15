@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7 Anaphora resolution - 15-02-2020
+
+* Handles pronouns and other entity references
+* Extract all parse trees
+
 ## 1.6 Database linking and case-insensitive proper nouns - 07-02-2020
 
 * Support for queries that span multiple databases (with different entity ids)

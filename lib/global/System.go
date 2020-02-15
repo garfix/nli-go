@@ -74,8 +74,8 @@ func (system *system) ReadConfig(configPath string, log *common.SystemLog) (syst
 	return config
 }
 
-func (system *system) PopulateDialogContext(sessionDataPath string) {
-	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext)
+func (system *system) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {
+	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext, clearWhenCorrupt)
 }
 
 func (system *system) ClearDialogContext() {

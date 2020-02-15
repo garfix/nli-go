@@ -28,7 +28,7 @@ Some of the techniques used:
 * Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
 * Linking data from multiple databases; using id-mapping
 * A dialog context to remember information earlier in the conversation
-* A quantifier scoper that allows "every" structures
+* A quantifier scoper that allows quantification and anaphora resolution
 * A generator to produce human readable responses
 
 ## Docs

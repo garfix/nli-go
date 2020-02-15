@@ -55,7 +55,7 @@ func main() {
 		executablePath := filepath.Dir(executable)
 
 		absSessionPath = common.AbsolutePath(executablePath, "sessions/" + sessionId + ".json")
-		system.PopulateDialogContext(absSessionPath)
+		system.PopulateDialogContext(absSessionPath, true)
 	}
 
 	if !log.IsOk() {

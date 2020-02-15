@@ -33,20 +33,16 @@ func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *cen
 }
 
 // Parses words using Parser.grammar and Parser.lexicon
-// Returns a sense, a parse tree, and a success flag
-func (parser *Parser) Parse(words []string) ParseTreeNode {
+// Returns parse tree roots
+func (parser *Parser) Parse(words []string) []ParseTreeNode {
 
 	parser.log.StartDebug("Parse", words)
 
-	rootNode := ParseTreeNode{}
+	chart := parser.buildChart(words)
 
-	chart, ok := parser.buildChart(words)
+	rootNodes := extractTreeRoots(chart)
 
-	if ok {
-
-		rootNode = extractFirstTree(chart)
-
-	} else {
+	if len(rootNodes) == 0 {
 
 		lastParsedWordIndex, nextWord := findLastCompletedWordIndex(chart)
 
@@ -59,20 +55,21 @@ func (parser *Parser) Parse(words []string) ParseTreeNode {
 		}
 	}
 
-	parser.log.EndDebug("Parse", rootNode, ok)
+	parser.log.EndDebug("Parse", rootNodes)
 
-	return rootNode
+	return rootNodes
 }
 
 // The body of Earley's algorithm
-func (parser *Parser) buildChart(words []string) (*chart, bool) {
+func (parser *Parser) buildChart(words []string) (*chart) {
 
 	parser.log.StartDebug("createChart", words)
 
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(parse.NewGrammarRule([]string{"gamma", "s"}, []string{"g1", "s1"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
+	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, []string{"G", "S"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
+	parser.log.EndDebug("initial:", initialState.ToString(chart))
 	chart.enqueue(initialState, 0)
 
 	// go through all word positions in the sentence
@@ -83,6 +80,8 @@ func (parser *Parser) buildChart(words []string) (*chart, bool) {
 
 			// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 			state := chart.states[i][j]
+
+			parser.log.EndDebug("do:", state.ToString(chart))
 
 			// check if the entry is parsed completely
 			if state.isIncomplete() {
@@ -101,27 +100,18 @@ func (parser *Parser) buildChart(words []string) (*chart, bool) {
 			} else {
 
 				// proceed all other entries in the chart that have this entry's antecedent as their next consequent
-				treeComplete := parser.complete(chart, state)
-
-				if treeComplete {
-
-					parser.log.EndDebug("createChart", true)
-
-					return chart, true
-				}
+				parser.complete(chart, state)
 			}
 		}
 	}
 
-	parser.log.EndDebug("createChart", false)
+	parser.log.EndDebug("createChart")
 
-	return chart, false
+	return chart
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
 func (parser *Parser) predict(chart *chart, state chartState) {
-
-	parser.log.StartDebug("predict", state)
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
@@ -136,19 +126,17 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 			continue
 		}
 
-		predictedState := newChartState(rule, sSelection, 1, endWordIndex, endWordIndex)
+		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
-	}
 
-	parser.log.EndDebug("predict")
+		parser.log.EndDebug("predict:", predictedState.ToString(chart))
+	}
 }
 
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
 // of the parts of speech associated with the current word in the sentence,
 // then a new, completed, entry is added to the chart: (cat => word)
 func (parser *Parser) scan(chart *chart, state chartState) {
-
-	parser.log.StartDebug("scan", state)
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
@@ -158,18 +146,17 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
 	if !lexItemFound && nextConsequent == ProperNounCategory {
 		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
-		lexItemFound = lexItemFound
 	}
 	if lexItemFound {
 
 		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
-		scannedState := newChartState(rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
+		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
 		chart.enqueue(scannedState, endWordIndex+1)
-	}
 
-	parser.log.EndDebug("scan", endWord, lexItemFound)
+		parser.log.EndDebug("scanned:", scannedState.ToString(chart), endWord)
+	}
 }
 
 func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []central.NameInformation) {
@@ -206,11 +193,8 @@ func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []cent
 // For example:
 // - this state is NP -> noun, it has been completed
 // - now proceed all other states in the chart that are waiting for an NP at the current position
-func (parser *Parser) complete(chart *chart, completedState chartState) bool {
+func (parser *Parser) complete(chart *chart, completedState chartState) {
 
-	parser.log.StartDebug("complete", completedState)
-
-	treeComplete := false
 	completedAntecedent := completedState.rule.GetAntecedent()
 	for _, chartedState := range chart.states[completedState.startWordIndex] {
 
@@ -223,18 +207,13 @@ func (parser *Parser) complete(chart *chart, completedState chartState) bool {
 			continue
 		}
 
-		advancedState := newChartState(rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
+		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
+		advancedState.parentIds = append(common.IntArrayCopy(chartedState.parentIds), completedState.id)
 
-		// store extra information to make it easier to extract parse trees later
-		treeComplete, advancedState = chart.storeStateInfo(completedState, chartedState, advancedState)
-		if treeComplete {
-			break
-		}
+		parser.log.EndDebug("advanced:", advancedState.ToString(chart))
 
-		chart.enqueue(advancedState, completedState.endWordIndex)
+		f := chart.enqueue(advancedState, completedState.endWordIndex)
+
+		parser.log.EndDebug("found:", f)
 	}
-
-	parser.log.EndDebug("complete")
-
-	return treeComplete
 }

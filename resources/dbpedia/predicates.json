@@ -13,5 +13,7 @@
   "bear": { "entityTypes": ["event", "person", "person"] },
   "die": { "entityTypes": ["event", "person"] },
   "who": { "entityTypes": ["person"] },
-  "describe": { "entityTypes": ["person"] }
+  "describe": { "entityTypes": ["person"] },
+  "she": { "entityTypes": ["person"] },
+  "he": { "entityTypes": ["person"] }
 }

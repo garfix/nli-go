@@ -11,6 +11,7 @@ import (
 	"nli-go/lib/parse/earley"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 type system struct {
@@ -121,8 +122,14 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
-		parseTree = system.parser.Parse(tokens)
-		system.log.AddProduction("Parser", parseTree.String())
+		parseTrees := system.parser.Parse(tokens)
+		system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
+		if len(parseTrees) == 0 {
+			system.log.AddError("Parser returned no parse trees")
+		} else {
+			parseTree = parseTrees[0]
+			system.log.AddProduction("Parser", parseTree.String())
+		}
 	}
 
 	if !system.log.IsDone() {

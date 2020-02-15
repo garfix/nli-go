@@ -8,6 +8,12 @@ import (
 	"runtime"
 )
 
+func IntArrayCopy(original []int) []int {
+	copiedArray := make([]int, len(original))
+	copy(copiedArray, original)
+	return copiedArray
+}
+
 func IntArrayContains(haystack []int, needle int) bool {
 	for _, value := range haystack {
 		if needle == value {
@@ -15,6 +21,19 @@ func IntArrayContains(haystack []int, needle int) bool {
 		}
 	}
 	return false
+}
+
+func IntArrayEquals(haystack []int, needle []int) bool {
+	if len(haystack) != len(needle) {
+		return false
+	}
+
+	for i := range haystack {
+		if haystack[i] != needle[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func IntArrayDeduplicate(array []int) []int {

@@ -26,6 +26,9 @@ func TestDBPedia(t *testing.T) {
 		outSessionName string
 	}{
 		{
+			{"How many children has Madonna?", "She has 4 children", "", ""},
+			{"How old is she", "She is 61 years old ( born on August 16, 1958 )", "", ""},
+			//{"When is her birthday?", "August 16, 1958", "", ""},
 		},
 		{
 			{"How many children has Madonna?", "She has 4 children", "", ""},
@@ -68,14 +71,7 @@ func TestDBPedia(t *testing.T) {
 
 			log.Clear()
 
-			if test.inSessionName == "" {
-				system.ClearDialogContext()
-			} else {
-				inSessionPath := common.AbsolutePath(common.Dir(), "resources/" + test.inSessionName)
-				inSession, _ := common.ReadFile(inSessionPath)
-				common.WriteFile(actualSessionPath, inSession)
-				system.PopulateDialogContext(actualSessionPath)
-			}
+			system.PopulateDialogContext(actualSessionPath)
 
 			answer, options := system.Answer(test.question)
 
@@ -90,24 +86,6 @@ func TestDBPedia(t *testing.T) {
 				t.Error(log.String())
 			}
 
-			//if test.outSessionName != "" {
-			//	outSessionPath := common.AbsolutePath(common.Dir(), "resources/"+test.outSessionName)
-			//	expected, err := common.ReadFile(outSessionPath)
-			//
-			//	if err != nil {
-			//		t.Errorf("Test relationships: error reading %v", outSessionPath)
-			//	}
-			//
-			//	actual, err := common.ReadFile(actualSessionPath)
-			//
-			//	if err != nil {
-			//		t.Errorf("Test relationships: error reading %v", actualSessionPath)
-			//	}
-			//
-			//	if expected != actual {
-			//		t.Errorf("Test relationships: got %v, want %v", actual, expected)
-			//	}
-			//}
 		}
 	}
 }

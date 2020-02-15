@@ -50,14 +50,14 @@ func TestEarleyParser(test *testing.T) {
 
 	wordArray := tokenizer.Process(rawInput)
 
-	tree := parser.Parse(wordArray)
-	relations, _ := relationizer.Relationize(tree, nameResolver)
+	trees := parser.Parse(wordArray)
+	relations, _ := relationizer.Relationize(trees[0], nameResolver)
 
 	if relations.String() != "[subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, girl) predication(S5, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))
 	}
-	if tree.String() != "[s [np [det the] [nbar [adj small] [nbar [adj shy] [nbar [noun girl]]]]] [vp [verb sings]]]" {
-		test.Error(fmt.Sprintf("tree: %v", tree.String()))
+	if trees[0].String() != "[s [np [det the] [nbar [adj small] [nbar [adj shy] [nbar [noun girl]]]]] [vp [verb sings]]]" {
+		test.Error(fmt.Sprintf("tree: %v", trees[0].String()))
 	}
 }
 

@@ -1,3 +1,33 @@
+# 2020-02-15
+
+I wanted to finish the story in the previous entry with "Moving the grammar rule np() -> she() up a few lines did the
+trick", but in fact it didn't :/
+
+I have rewritten the Earley parser. It now extracts all trees, and does this correctly, and efficiently.
+
+Only now I completely understand the algorithm, and can I mentally reproduce a parsing process. It really is an awesome
+algorithm, it gets better every year.
+
+# 2020-02-11
+
+This morning I had the following interaction with my system:
+
+    Q: How many children has Madonna?
+    A: She has 4 children
+	Q: How old is she?
+	A: I don't know 
+
+This was my first attempt at anaphora resolution with DBpedia. I looked at what went wrong. I knew the system could
+calculate Madonna's birthday so that was not it.
+
+Turned out that the system did not use "she" as a pronoun, but first tried to use it as a name. "She" is the name of
+many things: a magazine, several songs and movies, but these are all not persons, so no match. Until it found
+
+    She: 7th century Chinese ruler of Qi  ( http://dbpedia.org/page/She_(Qi) )
+
+The system went on happily, looking up the birth date and death date of this young ancient ruler. Unfortunately his(!)
+birth date is unknown, and this lead to the result of "unknown".
+
 # 2020-02-09
 
 I managed to do anaphora resolution on both the lines 5 and 3 of the blocks world. I add entries to the anaphora queue

@@ -38,6 +38,8 @@
     { form: 'wife', pos: wife }
     { form: 'name', pos: name }
 
+    { form: 'she', pos: she }
+
     { form: /^[0-9]+/,            pos: number }
 
     { form: '\'',                   pos: possessive_marker_1 }

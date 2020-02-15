@@ -1,35 +1,46 @@
 package earley
 
 
-func extractFirstTree(chart *chart) ParseTreeNode {
+func extractTreeRoots(chart *chart) []ParseTreeNode {
 
-	tree := ParseTreeNode{}
+	rootStates := []chartState{}
+	stateIndex := map[int]chartState{}
+	rootNodes := []ParseTreeNode{}
 
-	if len(chart.sentenceStates) > 0 {
+	for _, states := range chart.states {
+		for _, state := range states {
 
-		rootStateId := chart.sentenceStates[0].childStateIds[0]
-		root := chart.indexedStates[rootStateId]
-		tree = extractParseTreeBranch(chart, root)
+			stateIndex[state.id] = state
+
+			if state.rule.SyntacticCategories[0] == "gamma" && !state.isIncomplete() && state.endWordIndex == len(chart.words) {
+				sentenceState := stateIndex[state.parentIds[0]]
+				rootStates = append(rootStates, sentenceState)
+			}
+		}
 	}
 
-	return tree
+	for _, rootState := range rootStates {
+		rootNodes = append(rootNodes, extractTreesForState(chart, rootState, &stateIndex))
+	}
+
+	return rootNodes
 }
 
-func extractParseTreeBranch(chart *chart, state chartState) ParseTreeNode {
+func extractTreesForState(chart *chart, state chartState, stateIndex *map[int]chartState) ParseTreeNode {
 
 	rule := state.rule
 	branch := ParseTreeNode{category: rule.GetAntecedent(), constituents: []ParseTreeNode{}, form: "", rule: state.rule, nameInformations: state.nameInformations}
 
-	if state.isLeafState() {
+	if len(state.parentIds) == 0 {
 
 		branch.form = rule.GetConsequent(0)
 
 	} else {
 
-		for _, childStateId := range state.childStateIds {
+		for _, childStateId := range state.parentIds {
 
-			childState := chart.indexedStates[childStateId]
-			branch.constituents = append(branch.constituents, extractParseTreeBranch(chart, childState))
+			childState := (*stateIndex)[childStateId]
+			branch.constituents = append(branch.constituents, extractTreesForState(chart, childState, stateIndex))
 		}
 	}
 

@@ -17,18 +17,40 @@ sudo mv nli /usr/local/bin
 
 ## Command-line use
 
-You can use the executable as you would use any command-line application. It has two sub-commands:
+You can use the executable as you would use any command-line application.
 
 Use nli to answer a question, based on a configuration stored in a JSON config file. It returns a JSON string with the answer and / or an error.
 
 ```
-./nli answer fox/config.json "Did the quick brown jump over the lazy dog?"
+./nli -c "../resources/blocks/config.json" "Pick up the box"
 ```
 
-Or use it to suggest the next words the user can type.
+the response could be:
 
-```
-./nli suggest fox/config.json "Did the quick"
-```
+~~~
+{
+    "Success":true,
+    "ErrorLines":[],
+    "Productions":[
+        "Anaphora queue: []",
+        "Tokenizer: [Pick up the box]",
+        ...
+        "Answer: OK"
+    ],
+    "Answer":"OK",
+    "OptionKeys":[],
+    "OptionValues":[]
+}
+~~~
 
-The config file is described [here](doc/manual/config.md).
+* Success: has the sentence been processed completely?
+* ErrorLines: in case of an error, tells you what went wrong
+* Productions: debug lines to help you debug
+* Answer: the actual answer to wanted
+
+If the system responds with a clarification question, it does this with a number of options the user can choose from
+
+* OptionKeys: the keys of these options
+* OptionValues: the values of these options
+
+The config file is described [here](doc/manual/knowledge-engineer/config.md).

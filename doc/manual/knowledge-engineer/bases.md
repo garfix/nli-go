@@ -43,7 +43,9 @@ In the function Bind, two things happen:
 
 A nested structure base passes control to the child relations of a relation.
 
-Currently there are two nested structures:
+Currently these are the nested structures:
 
     quant()
     sequence()
+    not()
+

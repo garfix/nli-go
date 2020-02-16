@@ -14,7 +14,6 @@ There may be different approaches of how to teach the program how to process a n
 * Add an automated test 
 * Extend the lexicon
 * Extend the grammar
-* Extend the transformations
 * Extend the solutions
 * Extend the generations
 * Repeat until done
@@ -66,13 +65,13 @@ There are a number of exceptions to this basic rule, however.
 
 Any derivative of a verb must have the infinitive as its sense:
 
-    finding     =>  isa(E, find)
-    found       =>  isa(E, find)
+    finding     =>  find(E)
+    found       =>  find(E)
     
 If the application needs it you can specify voice and aspect:
 
-    finding     =>  isa(E, find) aspect(E, progressive) 
-    found       =>  isa(E, find) tense(E, past)
+    finding     =>  find(E) aspect(E, progressive) 
+    found       =>  find(E) tense(E, past)
     
 But if the application does not need it, you can leave them out.
 
@@ -105,3 +104,51 @@ As you can see, P1 is used both on the left side and on the right side. This var
 
 The np() forms the subject of the sentence, and this is a meaningful part so its sense is declared. 
 The variable can be chosen at will, but I use P for predication, S for subject and O for object. 
+
+## Extend the solutions
+
+At some point the system will say
+
+    ERROR: There are no solutions for this problem
+
+Then you need to add a solution to the solutions file. Here is an example that contains all sections of a solution:
+
+~~~
+    {
+        condition: question(_) how_many(B) have_child(A, B),
+        transformations: [
+            have_child(A, B) => have_n_children(A, Number);
+        ],
+        responses: [
+            {
+                condition: exists(),
+                preparation: gender(A, Gender),
+                answer: gender(A, Gender) have_child(A, C) count(C, Number)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
+    }
+~~~
+
+The condition specifies what the input relations must look like for this solution to apply.
+
+The transformations transform some relations from the input to the set that will actually be processed. This is kind of
+"interpretation" on the part of the system. (When the user says A he actually means B). Transformations are optional.
+
+A solution can have several responses, that depend on certain conditions. So each response has an optional condition.
+
+Sometimes you need some extra information in the answer that was not retrieved in the question itself. For example you
+may want to to answer "He had 2 children", whereas the gender of the subject was not part of the question. "preparation"
+allows you to fetch this extra information.
+
+"answer" are just a passive set of relations passed to the generator. They are not processed in any way. All variable bindings must already be available at this point.
+
+A special function of "answer" is "make_and().
+
+    answer: root(R) name(A, N) make_and(A, R)
+
+This construction allows you to create a nested structure of AND's, so that you can respond with
+
+    John, Kale and Louis

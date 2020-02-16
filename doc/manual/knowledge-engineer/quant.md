@@ -38,3 +38,16 @@ First, the range relations are processed. This results in a set of bindings for 
 Then the scoped relations are processed. This is done in a loop for each of the bindings in the range. This results in a set of variable bindings.
 
 Finally, these scoped relations bindings are evaluated with respect to the quantifier. When the quantifier is 'at least two' and the number of variable bindings of the scoped variables is one or less, all bindings for the quant are dropped.
+
+## Quantifiers
+
+The quantifier is applied after the scope is processed. It validates the results of the scope evaluation.
+
+There are four built-in quantifiers:
+
+* the(_) : succeeds only if processing the scope yields 1 single result
+* all(_) : succeeds only when all range bindings are present in the scope result
+* some(_) : succeeds when there is at least one scope result
+* number(E1, N) : succeeds when E1 has N distinct values
+
+Quantifiers like "at least two" are not currently possible.

@@ -1,5 +1,9 @@
 # Changelog
 
+## ...
+
+* not()
+
 ## 1.7 Anaphora resolution - 15-02-2020
 
 * Handles pronouns and other entity references

@@ -1,5 +1,13 @@
 # A binding-processing function
 
+## Note
+
+A binding may be passed to a matching function. This binding should not contain variable-to-variable bindings.
+
+This is to prevent complexity from accumulating.
+
+## Intro
+
 The library contains many functions that have a relation set as input, together with a set of bindings.
 
 The relation set is part of the query that needs answering and many be some levels deep in the processing flow.

@@ -34,6 +34,8 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	rangeBindings := []mentalese.Binding{}
 
 	isTheRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateThe
+	isAllRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateAll
+	isSomeRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateSome
 
 	if isTheRange {
 		count = 1
@@ -102,20 +104,38 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		}
 	}
 
-	if count > 0 {
-		// NUMBER
+	if isTheRange {
+		// THE
+		if len(groupedScopeBindings) == 1 {
+			return scopeBindings
+		} else {
+			return mentalese.Bindings{}
+		}
+	} else if isAllRange {
+		// ALL
+		if len(groupedScopeBindings) == len(rangeBindings) {
+			return scopeBindings
+		} else {
+			return mentalese.Bindings{}
+		}
+	} else if isSomeRange {
+		// SOME
+		if len(groupedScopeBindings) > 0 {
+			return scopeBindings
+		} else {
+			return mentalese.Bindings{}
+		}
+	} else if count > 0 {
+		// A NUMBER
 		if len(groupedScopeBindings) == count {
 			return scopeBindings
 		} else {
 			return mentalese.Bindings{}
 		}
 	} else {
-		// EVERY
-		if len(groupedScopeBindings) == len(rangeBindings) {
-			return scopeBindings
-		} else {
-			return mentalese.Bindings{}
-		}
+		// NO SIMPLE QUANTIFIER
+		// todo
+		return scopeBindings
 	}
 }
 

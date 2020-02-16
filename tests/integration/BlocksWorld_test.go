@@ -36,6 +36,8 @@ func TestBlocksWorld(t *testing.T) {
 			// todo: the names of the objects could be generated; now they are explicitly added
 			{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
 			{"What is the pyramid supported by?", "The box", "", ""},
+			// todo: four of them
+			{"How many blocks are not in the box?", "4", "", ""},
 		},
 		{
 		},

@@ -32,16 +32,22 @@
     { rule: vp(P1) -> vgp(P1) }
 
     { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
+    { rule: np(E1) -> nbar(E1),                                             sense: quant(_, some(_), E1, sem(1), sem(parent)) }
     { rule: np(E1) -> pronoun(E1) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
 
+    { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
+
     { rule: what_clause(E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
     { rule: what_clause(E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }
 
+    { rule: how_many_clause(E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
+
     { rule: interrogative_clause(P1) -> what() what_clause(E1),            sense: what(E1) }
+    { rule: interrogative_clause(P1) -> how() many() how_many_clause(E1),  sense: how_many(E1) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) question_mark() }
 

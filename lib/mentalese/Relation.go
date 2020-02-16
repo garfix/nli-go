@@ -13,14 +13,15 @@ type Relation struct {
 const PredicateQuant = "quant"
 const PredicateSem = "sem"
 const PredicateSequence = "sequence"
+const PredicateNot = "not"
 const PredicateName = "name"
-const PredicateSense = "sense"
 
 const PredicateAssert = "assert"
 const PredicateRetract = "retract"
 
 const PredicateNumber = "number"
 const PredicateThe = "the"
+const PredicateSome = "some"
 const PredicateAll = "all"
 const AtomAll = "all"
 const AtomParent = "parent"
@@ -33,6 +34,8 @@ const QuantScopeIndex = 4
 
 const SeqFirstOperandIndex = 1
 const SeqSecondOperandIndex = 2
+
+const NotScopeIndex = 0
 
 func NewRelation(predicate string, arguments []Term) Relation {
 	return Relation{

@@ -27,4 +27,19 @@
             }
         ]
     }
+
+    /* How many? */
+    {
+        condition: question(_) how_many(E1),
+        responses: [
+            {
+                condition: exists(),
+                preparation: number_of(E1, N),
+                answer: canned(N)
+            }
+            {
+                answer: none()
+            }
+        ]
+    }
 ]

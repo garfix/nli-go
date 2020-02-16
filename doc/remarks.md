@@ -1,3 +1,7 @@
+# 2020-02-16
+
+With all the preparatory work, NOT was quite straightforward!
+
 # 2020-02-15
 
 I wanted to finish the story in the previous entry with "Moving the grammar rule np() -> she() up a few lines did the
@@ -7,6 +11,21 @@ I have rewritten the Earley parser. It now extracts all trees, and does this cor
 
 Only now I completely understand the algorithm, and can I mentally reproduce a parsing process. It really is an awesome
 algorithm, it gets better every year.
+
+--
+
+I made a new release: 1.7
+
+Next up: question number 6:
+
+    "How many blocks are not in the box?"
+
+Negation!
+
+Other sentences with "not":
+
+* 14: I own block which are not red, but I don't own anything which supports a pyramid
+* 35: is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?
 
 # 2020-02-11
 

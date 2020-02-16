@@ -1,8 +1,11 @@
 [
     { form: 'which',             pos: which }
     { form: 'what',              pos: what }
+    { form: 'how',               pos: how }
+    { form: 'many',              pos: many }
 
     { form: 'is',                pos: copula }
+    { form: 'are',               pos: copula }
 
     { form: 'by',                pos: by }
 
@@ -22,6 +25,7 @@
 
     { form: 'one',               pos: one }
     { form: 'block',             pos: block }
+    { form: 'blocks',            pos: block }
     { form: 'pyramid',           pos: pyramid }
     { form: 'box',               pos: box }
 
@@ -37,8 +41,10 @@
 
     { form: 'into',              pos: into }
     { form: 'up',                pos: up }
+    { form: 'in',                pos: in }
 
     { form: 'and',               pos: and }
+    { form: 'not',               pos: not }
 
     { form: 'you',               pos: you }
     { form: 'it',                pos: it }

@@ -23,21 +23,18 @@ func TestBlocksWorld(t *testing.T) {
 	var tests = [][]struct {
 		question      string
 		answer        string
-		inSessionName string
-		outSessionName string
 	}{
 		{
 			// todo: move the green block on top of it away
-			{"Pick up a big red block", "OK", "", ""},
+			{"Pick up a big red block", "OK"},
 			// todo "I don't understand which pyramid you mean"
-			{"Grasp the pyramid", "I don't understand which one you mean", "", ""},
+			{"Grasp the pyramid", "I don't understand which one you mean"},
 			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
-			{"Find a block which is taller than the one you are holding and put it into the box.", "OK", "", ""},
+			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
 			// todo: the names of the objects could be generated; now they are explicitly added
-			{"What does the box contain?", "The blue pyramid and the blue block", "", ""},
-			{"What is the pyramid supported by?", "The box", "", ""},
-			// todo: four of them
-			{"How many blocks are not in the box?", "4", "", ""},
+			{"What does the box contain?", "The blue pyramid and the blue block"},
+			{"What is the pyramid supported by?", "The box"},
+			{"How many blocks are not in the box?", "Four of them"},
 		},
 		{
 		},

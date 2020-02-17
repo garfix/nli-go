@@ -35,7 +35,7 @@
             {
                 condition: exists(),
                 preparation: number_of(E1, N),
-                answer: canned(N)
+                answer: a_number(N)
             }
             {
                 answer: none()

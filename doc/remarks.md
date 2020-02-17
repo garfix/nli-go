@@ -2,6 +2,33 @@
 
 With all the preparatory work, NOT was quite straightforward!
 
+Next up:
+
+    Q: "Is at least one of them narrower than the one which I told you to pick up?"
+    A: "Yes, the red cube"
+
+This one's quite a beast! A quick analysis:
+
+- a yes/no question that expects the found object(s) to be mentioned in the response
+- a complex quantifier "at least one of", which can however be rephrased as "some"
+- a reference to a group of entities mentioned before, which requires an adjustment to the anaphora queue
+- a new concept "narrower than" that needs to be defined
+- a reference to an object in an specific earlier event
+
+That last one, especially, is very hard. It requires a queue of past events that you can refer to by describing them.
+Then there is the "I told you" which is an implicit reference to the fact that the user (I) uttered a command.
+
+Other sentences referring to earlier events:
+
+    Had you touched any pyramid before you put the green one on the little cube?
+    When did you pick it up?
+    Why did you do that?
+    How did you do it?
+    How many objects did you touch while you were doing it?
+    What did the red cube support before you started to clean it off?
+    Have you picked up superblock since we began?
+    Why did you drop it?
+
 # 2020-02-15
 
 I wanted to finish the story in the previous entry with "Moving the grammar rule np() -> she() up a few lines did the

@@ -42,4 +42,19 @@
             }
         ]
     }
+
+    /* Is one? */
+    {
+        condition: question(_) select(B),
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N),
+                answer: name(B, N) make_and(B, R) select(R)
+            }
+            {
+                answer: none()
+            }
+        ]
+    }
 ]

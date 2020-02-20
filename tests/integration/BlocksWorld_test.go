@@ -35,6 +35,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"What does the box contain?", "The blue pyramid and the blue block"},
 			{"What is the pyramid supported by?", "The box"},
 			{"How many blocks are not in the box?", "Four of them"},
+			{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube"},
 		},
 		{
 		},

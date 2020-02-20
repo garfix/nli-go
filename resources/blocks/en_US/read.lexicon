@@ -21,6 +21,7 @@
     { form: 'big',               pos: big }
 
     { form: 'taller',            pos: taller }
+    { form: 'narrower',          pos: narrower }
     { form: 'than',              pos: than }
 
     { form: 'one',               pos: one }
@@ -38,16 +39,24 @@
     { form: 'pick',              pos: pick }
     { form: 'picks',             pos: pick }
     { form: 'picked',            pos: pick }
+    { form: 'told',              pos: tell }
+
+    { form: 'least',             pos: least }
 
     { form: 'into',              pos: into }
+    { form: 'to',                pos: to }
     { form: 'up',                pos: up }
     { form: 'in',                pos: in }
+    { form: 'at',                pos: at }
+    { form: 'of',                pos: of }
 
     { form: 'and',               pos: and }
     { form: 'not',               pos: not }
 
     { form: 'you',               pos: you }
+    { form: 'i',                 pos: i }
     { form: 'it',                pos: it }
+    { form: 'them',              pos: them }
 
     { form: '.',                 pos: period }
     { form: '?',                 pos: question_mark }

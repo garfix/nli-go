@@ -1,3 +1,54 @@
+# 2020-02-19
+
+Whenever the system performs one of a small set of actions (MOVE, GRASP, UNGRASP) it could assert this relation with its
+current timestamp. For example, at time 23 this relation could be added to a (which one?) database:
+
+    GRASP(event:22, :b1)
+    MOVE(event:23, 100, 50)
+    UNGRASP(event:24, :b1)
+
+    CAUSE_OF(event:22, event:18)
+
+For now I can add all relations-with-events to the list so that includes relations like
+
+    PICK_UP(event:415, :b6)
+
+I should be able to figure out which block was "the one I told you to pick up". But what if there were multiple blocks
+picked up?
+
+Note that this is not Long Term Memory. This is Short Term Memory. Maybe it is not important to take the latest instance
+of a picked up block.
+
+    quant(the, one O,
+        tell(:i, :you, pick_up(Ev, O))
+
+"the one THAT i told you to pick up"
+
+# 2020-02-18
+
+Winograd uses an EVENTLIST structure to hold events. For each event it stores an event id, the main relation, and the
+"reason": a reference to the event that caused it.
+
+Understanding Natural Language has a special section on this sentence: 8.1.12 (Using clauses as objects), but is quite
+obscure.
+
+How do I infer from these questions that they make use of this event list? Well for one, they have the word "you" in
+them and the sentence is in past tense.
+
+tell(E1, S2) tense(E1, past) pick_up(S1, O1)
+
+I might use inference
+
+    tell(A, B) tense(A, past) -> tense(B, past)
+
+This makes "pick up" into "picked up" (past tense)
+
+    pick_up(E1, O1)
+
+where E1 is not `:now` may be resolved from a data source containing action relations like this. This data source may be
+filled automatically by the system each time some action occurs. Basic actions named by Winograd are GRASP, UNGRASP, and
+MOVE.
+
 # 2020-02-16
 
 With all the preparatory work, NOT was quite straightforward!

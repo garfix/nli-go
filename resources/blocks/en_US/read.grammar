@@ -1,46 +1,43 @@
 [
-    /* words */
-    { rule: noun(E1) -> block(E1),                                          sense: block(E1) }
-    { rule: noun(E1) -> pyramid(E1),                                        sense: pyramid(E1) }
-    { rule: noun(E1) -> box(E1),                                            sense: box(E1) }
+    { rule: noun(E1) -> block(E1),                                         sense: block(E1) }
+    { rule: noun(E1) -> pyramid(E1),                                       sense: pyramid(E1) }
+    { rule: noun(E1) -> box(E1),                                           sense: box(E1) }
     { rule: noun(E1) -> one(E1) }
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [the(_)], E1, [], sem(parent)) }
-    { rule: pronoun(E1) -> you(E1),                                         sense: you(E1) }
-    { rule: pronoun(E1) -> i(E1),                                           sense: i(E1) }
+    { rule: pronoun(E1) -> it(E1),                                         sense: quant(_, [the(_)], E1, [], sem(parent)) }
+    { rule: pronoun(E1) -> you(E1),                                        sense: you(E1) }
+    { rule: pronoun(E1) -> i(E1),                                          sense: i(E1) }
 
-    { rule: adjp(E1) -> taller() than() np(E2),                             sense: taller(E1, E2) }
-    { rule: adjp(E1) -> narrower() than() np(E2),                           sense: narrower(E1, E2) }
+    { rule: adjp(E1) -> taller() than() np(E2),                            sense: taller(E1, E2) }
+    { rule: adjp(E1) -> narrower() than() np(E2),                          sense: narrower(E1, E2) }
 
-    { rule: adjective(E1) -> red(E1),                                       sense: red(E1) }
-    { rule: adjective(E1) -> big(E1),                                       sense: big(E1) }
+    { rule: adjective(E1) -> red(E1),                                      sense: red(E1) }
+    { rule: adjective(E1) -> big(E1),                                      sense: big(E1) }
 
-    { rule: vgp(P1) -> pick(P1) up(P1) np(E1),                              sense: pick_up(P1, E1) }
-    { rule: vgp(P1) -> grasp(P1) np(E1),                                    sense: grasp(P1, E1) }
-    { rule: vgp(P1) -> find(P1) np(E1),                                     sense: find(P1, E1) }
-    { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                      sense: put_into(P1, E1, E2) }
+    { rule: vgp(P1) -> pick(P1) up(P1) np(E1),                             sense: pick_up(P1, E1) }
+    { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
+    { rule: vgp(P1) -> find(P1) np(E1),                                    sense: find(P1, E1) }
+    { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                     sense: put_into(P1, E1, E2) }
 
-    { rule: qp(E1) -> a(E1),                                                sense: number(E1, 1) }
-    { rule: qp(E1) -> the(E1),                                              sense: the(E1) }
-    { rule: qp(E1) -> at() least() one(),                                   sense: some(E1) }
-
-    /* rules */
+    { rule: qp(E1) -> a(E1),                                               sense: number(E1, 1) }
+    { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
+    { rule: qp(E1) -> at() least() one(),                                  sense: some(E1) }
 
     { rule: adjp(E1) -> adjective(E1) }
 
-    { rule: hollow_non_finite_clause(E1) -> np(S1) to() pick(P1) up(),    sense: pick_up(P1, S1, E1) }
+    { rule: hollow_non_finite_clause(E1) -> np(S1) to() pick(P1) up(),     sense: pick_up(P1, S1, E1) }
+
+    { rule: special_declarative_clause(E1) -> np(S1) tell(P1) hollow_non_finite_clause(E1),     sense: tell(P1, S1) }
 
     { rule: relative_clause(E1) -> which(E1) copula(C1) adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1),           sense: hold(P1, E2, E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1),          sense: hold(P1, E2, E1) }
     { rule: relative_clause(E1) -> which(E1) special_declarative_clause(E1) }
-
-    { rule: special_declarative_clause(E1) -> np(S1) tell(P1) hollow_non_finite_clause(E1), sense: tell(P1, S1) }
 
     { rule: vp(P1) -> vp(P1) pp(P1) }
     { rule: vp(P1) -> vgp(P1) }
 
-    { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
-    { rule: np(E1) -> nbar(E1),                                             sense: quant(Q1, some(Q1), E1, sem(1), sem(parent)) }
+    { rule: np(R1) -> qp(Q1) nbar(R1),                                     sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(Q1, some(Q1), E1, sem(1), sem(parent)) }
     { rule: np(E1) -> pronoun(E1) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
@@ -57,7 +54,7 @@
 
     { rule: interrogative_clause(P1) -> what() what_clause(E1),            sense: what(E1) }
     { rule: interrogative_clause(P1) -> how() many() how_many_clause(E1),  sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula() np(E1) adjp(E1),          sense: select_one(E1) }
+    { rule: interrogative_clause(P1) -> copula() np(E1) adjp(E1),          sense: select(E1) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) question_mark() }
 

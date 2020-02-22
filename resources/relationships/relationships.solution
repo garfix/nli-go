@@ -1,6 +1,7 @@
 [
     {
         condition: question(_) who(A) marry(P1, A, B),
+        result: A,
         responses: [
             {
                 condition: exists(),
@@ -11,8 +12,10 @@
                 answer: dont_know()
             }
         ]
-    } {
+    }
+    {
         condition: question(_) yes_no(_) marry(P1, A, B),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -22,8 +25,10 @@
                 answer: result(false)
             }
         ]
-    } {
+    }
+    {
         condition: question(_) yes_no(_) siblings(A, B),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -33,8 +38,10 @@
                 answer: result(false)
             }
         ]
-    } {
+    }
+    {
         condition: question(_) how_many(A) have_child(B, A),
+        result: A,
         responses: [
             {
                 condition: exists(),
@@ -45,8 +52,10 @@
                 answer: none()
             }
         ]
-    } {
+    }
+    {
         condition: question(_) which(A) have_child(B, A),
+        result: A,
         responses: [
             {
                 condition: exists(),
@@ -57,8 +66,10 @@
                 answer: none()
             }
         ]
-    } {
+    }
+    {
         condition: question(_) yes_no(_) have_child(B, A) every(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -68,8 +79,10 @@
                 answer: none()
             }
         ]
-    } {
+    }
+    {
         condition: question(_) yes_no(_) have_child(B, A),
+        result: _,
         responses: [
             {
                 condition: exists(),

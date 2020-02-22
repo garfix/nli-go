@@ -3,6 +3,7 @@ package mentalese
 type Solution struct {
 	Condition   RelationSet
 	Transformations []RelationTransformation
+	Result Term
 	Responses   []ResultHandler
 }
 

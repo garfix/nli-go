@@ -3,6 +3,7 @@
 ## ...
 
 * not()
+* multiple entities per anaphora queue position
 
 ## 1.7 Anaphora resolution - 15-02-2020
 

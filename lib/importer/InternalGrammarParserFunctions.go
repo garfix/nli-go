@@ -188,7 +188,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 
 	solution := mentalese.Solution{}
 	solution.Transformations = []mentalese.RelationTransformation{}
-	conditionFound, responsesFound := false, false
+	conditionFound, responsesFound, resultFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -201,6 +201,11 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			conditionFound = true
 		case field_transformations:
 			solution.Transformations, startIndex, ok = parser.parseTransformations(tokens, startIndex)
+		case field_result:
+			solution.Result, startIndex, ok = parser.parseTerm(tokens, startIndex)
+			ok = ok && solution.Result.IsVariable() || solution.Result.IsAnonymousVariable()
+			ok = ok && !resultFound
+			resultFound = true
 		case field_responses:
 			solution.Responses, startIndex, ok = parser.parseResponses(tokens, startIndex)
 			ok = ok && !responsesFound
@@ -209,7 +214,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			ok = false
 		}
 
-		return startIndex, ok, conditionFound && responsesFound
+		return startIndex, ok, conditionFound && responsesFound && resultFound
 	}
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)

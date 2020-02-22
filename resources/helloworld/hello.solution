@@ -1,6 +1,7 @@
 [
     {
         condition: hello_world(),
+        result: _,
         responses: [
             {
                 condition: exists(),

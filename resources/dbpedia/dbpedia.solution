@@ -2,6 +2,7 @@
     /* Who married X? */
     {
         condition: question(_) who(A) marry(_, A, B),
+        result: A,
         responses: [
             {
                 condition: exists(),
@@ -17,6 +18,7 @@
     /* Was X married to Y? */
     {
         condition: question(_) yes_no(_) marry(_, A, B),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -31,6 +33,7 @@
     /* How many children had X? (counting the children) */
     {
         condition: question(_) how_many(B) have_child(A, B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -46,6 +49,7 @@
     /* How many? */
     {
         condition: question(_) how_many(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -64,6 +68,7 @@
         transformations: [
             have_child(A, B) => have_n_children(A, Number);
         ],
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -79,6 +84,7 @@
     /* Who was X's father? */
     {
         condition: question(_) who(B) has_father(A, B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -94,6 +100,7 @@
     /* Who was X's mother? */
     {
         condition: question(_) who(B) has_mother(A, B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -112,6 +119,7 @@
         transformations: [
             bear(P1, A, B) when(P1) => birth_date(B, Ymd);
         ],
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -130,6 +138,7 @@
         transformations: [
             die(P1, A) when(P1) => death_date(A, Ymd);
         ],
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -145,6 +154,7 @@
     /* When? */
     {
         condition: question(Ymd) when(Ymd),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -161,6 +171,7 @@
     /* Who is the wife of X? */
     {
         condition: question(_) who(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -176,6 +187,7 @@
     /* Who is X? */
     {
         condition: question(_) describe(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -191,6 +203,7 @@
     /* What is the population of X? */
     {
         condition: question(_) what(B) has_population(E1, B),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -205,6 +218,7 @@
     /* What is the capital of X? */
     {
         condition: question(_) what(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -223,6 +237,7 @@
         transformations: [
             how_old(E1) => birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
         ],
+        result: _,
         responses: [
             {
                 condition: death_date(E1, Death_date) date_today(Today) date_subtract_years(Death_date, Today, Years_since_death) less_than(Years_since_death, 0),

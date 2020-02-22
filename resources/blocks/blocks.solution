@@ -2,6 +2,7 @@
     /* Any command */
     {
         condition: command(_),
+        result: _,
         responses: [
             {
                 condition: exists(),
@@ -16,6 +17,7 @@
     /* What? */
     {
         condition: question(_) what(B),
+        result: B,
         responses: [
             {
                 condition: exists(),
@@ -31,6 +33,7 @@
     /* How many? */
     {
         condition: question(_) how_many(E1),
+        result: E1,
         responses: [
             {
                 condition: exists(),
@@ -46,6 +49,7 @@
     /* Is one? */
     {
         condition: question(_) select(B),
+        result: B,
         responses: [
             {
                 condition: exists(),

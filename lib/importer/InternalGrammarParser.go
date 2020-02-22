@@ -13,6 +13,7 @@ const (
 	field_pos             = "pos"
 	field_sense           = "sense"
 	field_condition       = "condition"
+	field_result		  = "result"
 	field_transformations = "transformations"
 	field_rule            = "rule"
 	field_preparation     = "preparation"

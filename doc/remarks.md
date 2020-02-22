@@ -1,3 +1,137 @@
+# 2020-02-22
+
+I "discovered" this brilliant Wikipedia article:
+
+    https://en.wikipedia.org/wiki/Discontinuity_(linguistics)
+
+It tells you everything about extraposition, wh-fronting and the way these are handled by grammars. For the first time I
+get a little bit the idea that I understand something about this topic.
+
+---
+
+I want to make a point about syntactic grammar. I use this sentence
+
+    "What book did your teacher ask you to read"
+    
+    S
+        what book (m)
+        did
+        your teacher
+        ask
+            you to read (t)
+            
+    s
+        your teacher
+        ask
+        you
+        to read
+            what book                 
+
+Here (t) is the trace of a missing object. The object is "fronted" to the wh-clause at the start.
+
+My point is that I always see "you to read" represented as a "sentence" or some such general name. This doesn't work. It
+is not a normal sentence, and it should be named differently, like "vp-passing-object". If you do that, it is
+possible to pass the marker to that structure. A normal sentence would not expect a marker. But a vp-passing-object would.
+
+Note: at present the rule antecedent only takes a single argument, but I plan to change that in a short while.
+
+    s(P1) -> what() np(E1) vp-passing-object(P1, E1)                                        // what-question(E1)
+        np(E1) -> noun(E1)
+            noun(E1) -> book(E1)                                                            // book(E1)          
+        vp-passing-object(P1, E1) -> did() np(E3) vp-passing-subject-object(P1, E3, E1)
+            np(E3) -> poss-pronoun(E3) noun(E3)
+                poss-pronoun(E3) -> your(E3)                                                // your(E3) 
+                noun(E3) -> teacher(E3)                                                     // teacher(E3) 
+            vp-passing-subject-object(P1, E3, E1) -> ask(P2) vp-passing-object(P2, E1)      // ask(P1, E3, P2) 
+                vp-passing-object(P3, E1) -> np(E2) to() read(P2)                           // read(P2, E2, E1)
+                    np(E2) -> pronoun(E2)
+                        pronoun(E2) -> you(E2)                                              // you(E2)  
+
+This will expand the number of funny syntactic structures necessary, but this pays off in the way that the rules can be
+written much simpler.
+
+    Look ma, no features!
+
+Principles
+
+    A variable denotes a domain/semantic entity like a person or an event. So not a syntactic entity like a phrase or a state. 
+    Relations connect entities.
+
+CLE (p. 72) gives an example of a complex gap-threading challenge that requires a stack. Let's just see what my system
+would do to this. Failing it does not completely disqualify it because this is a sought-for example.
+
+    "Which babies were the toys easiest to take _ from _ ?"
+    
+    variant: "It was easiest to take the toys from which babies?"
+    
+    (Which babies) were (the toys) easiest (to take _ from _) ?
+    
+    s(P1) -> which() np(E1) vp-passing-prep(P1, E1)                                                 // what-question(E1)
+        np(E1) -> baby(E1)                                                                          // baby(E1)
+        vp-passing-prep(P1, E1) -> were() NP(E2) advp(P1) vp-passing-prep-object(P1, E1, E2)
+            np(E2) -> toy(E2)                                                                       // toy(E2)
+            advp(P1) -> adverb(P1)
+                adverb(P1) -> easiest(P1)                                                           // easiest(P1)
+            vp-passing-prep-object(P1, E1, E2) -> to() take() from()                                // take(P1, E2, E1)
+
+So yes, it is possible, but indeed it introduces a "vp-passing-prep-object", and this makes you wonder how many
+syntactic variants this will require in a complete grammar.
+
+Can't I just replace "vp-passing-prep-object" by "vp-passing-2" to make this more general? The syntactic role of the
+arguments never mattered before. I think so, but I am not sure.
+
+    s(P1) -> which() np(E1) vp(P1, E1)                                                 // what-question(E1)
+        np(E1) -> baby(E1)                                                             // baby(E1)
+        vp(P1, E1) -> were() NP(E2) advp(P1) vp(P1, E1, E2)
+            np(E2) -> toy(E2)                                                          // toy(E2)
+            advp(P1) -> adverb(P1)
+                adverb(P1) -> easiest(P1)                                              // easiest(P1)
+            vp(P1, E1, E2) -> to() take() from()                                       // take(P1, E2, E1)
+
+The words and phrases of the consequents constrain the use of the rules.
+
+Perhaps it is possible that my system does not do well in restricting the possible sentences of a language. I.e. it's
+possible that it would accept sentences that are not part of the language. But that's ok. The system is not a language
+police. It presumes that the user just wants his job done and will create normal sentences. The job of the system is to
+understand these. For the same reason I don't attach much value to things like agreement of number etc.
+
+# 2020-02-21
+
+In 7.5 "Memory" we read:
+
+    To answer questions about past events, the BLOCKS programs remember selected parts of their subgoal tree. They do this by creating objects called events, and putting them on an EVENTLIST. The system does not remember the detailed series of specific steps like #MOVEHAND but keeps track of the larger goals like #PUTON and #STACKUP. The time of events is measured by a clock which starts at 0 and is incremented by 1 every time any motion occurs. ... MEMOREND puts information on the property list of the event name - the starting time, ending time, and reason for each event. The reason is the name of the event nearest up in the subgoal tree which is being remembered.
+    
+    A second kind of memory keeps track of the actual physical motions of objects, noting each time one is moved, and recording its name and the location it went to. This list can be used to establish where any object was at any time.    
+
+Winograd uses this second order predicate TELL only once, and it is explained nowhere. I think I can assume it has no
+special importance, and that I can ignore it here.
+
+# 2020-02-20
+
+    "Is at least one of them narrower than the one which I told you to pick up?"
+
+This sentence contains a "hollow_non_finite_clause"
+
+    "you to pick up"
+
+see https://en.wikipedia.org/wiki/Non-finite_clause
+
+This also means that this is the first sentence with a "gap": the entity "the one" is the object of the verb "pick up"
+which is nested two levels deeper.
+
+Is seems that my grammar is able to handle this sentence. That's very nice!
+
+    quant(
+        Q13, [some(Q13)], 
+	    E18, [they(E18)], [
+		    select_one(E18) 
+		    quant(
+		        Q14, [the(Q14)], 
+			    E19, [tell(P10, S12) i(S12) pick_up(P11, S13, E19) you(S13)], [
+			        narrower(E18, E19)])])]		
+
+But I am not happy with the way "tell()" is handled here, even though it doesn't really play a role in this application.
+
 # 2020-02-19
 
 Whenever the system performs one of a small set of actions (MOVE, GRASP, UNGRASP) it could assert this relation with its

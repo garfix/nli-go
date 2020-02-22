@@ -143,9 +143,14 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	if !system.log.IsDone() {
+		//for _, id := range answerRelations.GetIds() {
+		//	system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.CreateEntityReference(id.TermValue, id.TermEntityType))
+		//}
+		group := central.EntityReferenceGroup{}
 		for _, id := range answerRelations.GetIds() {
-			system.dialogContext.AnaphoraQueue.AddEntityReference(central.CreateEntityReference(id.TermValue, id.TermEntityType))
+			group = append(group, central.CreateEntityReference(id.TermValue, id.TermEntityType))
 		}
+		system.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 	}
 

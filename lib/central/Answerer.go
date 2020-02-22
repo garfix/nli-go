@@ -67,6 +67,12 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 				}
 			}
 
+			//group := EntityReferenceGroup{}
+			//for _, id := range resultBindings.GetIds() {
+			//	group = append(group, CreateEntityReference(id.TermValue, id.TermEntityType))
+			//}
+			//answerer.solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+
 			// find a handler
 			condionedBindings := resultBindings
 			var resultHandler *mentalese.ResultHandler

@@ -1,3 +1,75 @@
+# 2020-02-23
+
+CLE uses a stack to allow multiple gap-fillers to pass up and down the tree. My system, in the form I worked out
+yesterday, uses antecedents to store these fillers. So I might think of them as a stack. This would allow arbitrarily
+complex sentences, but they might take up a lot of syntactic variants eventually.
+
+My system is simpler for simple sentences, and most sentences are simple, and allows more complex ones. This, I think,
+is how it should be. The CLE system is complex from the start and does not get more complicated in complex ones.
+
+But I could make the stack idea more visible as in
+
+    vp-passing-fillers(P1, [E3, E1]) -> ask(P2) vp-passing-fillers(P2, [E1])      // ask(P1, E3, P2)
+
+I think I must make an extra syntactic construction like this to help the maintainer of a system see what's what.
+
+---
+
+I am beginning to understand the syntactically complicated system of CLE that combines feature unification with
+stack-based gap-threading. The concept is not that hard. It's the syntax that makes it hard. And the syntax is hard
+because it tries to create a stack in a feature structure, which pushes the unification technique beyond the limits for
+which it was originally designed. Feature unification is simply not meant to do that.
+
+Feature unification is a good technique for number and tense agreement. But it stops there. Adding semantics is
+stretching it. Adding gap-threading is step too far.
+
+The concept is simply that specific phrases use the filler-stack to push or pop constituents. It is not necessary to
+build all kinds of rules for different types of stack. The stack is not present in the rules. Just the top-elements of
+the stack are shown. So this rule below:
+
+    vp(P1) [E3] -> ask(P2) vp(P2)      // ask(P1, E3, P2)
+
+now means: this rule only applies when the filler-stack holds _at least_ 2 elements. It uses the topmost element, called
+E3.
+
+And this rule
+
+    s(P1) -> what() np(E1) vp(P1) [E1]                                        // what-question(E1)
+
+means that E1 is pushed to the stack. With this addition the system would just be a syntactic variant of the CLE system
+with the same power. It should be able to handle arbitrarily complex sentences. Let's see what this does to the sample
+sentence:
+
+    "Which babies were the toys easiest to take _ from _ ?"
+    
+    (Which babies) were (the toys) easiest (to take _ from _) ?
+    
+    s(P1) -> which() np(E1) vp(P) [E1]                                      // what-question(E1) -> pushes E1
+        np(E1) -> baby(E1)                                                  // baby(E1)
+        vp(P1) -> were() NP(E2) advp(P1) vp(P1) [E2]                        // -> pushed E2
+            np(E2) -> toy(E2)                                               // toy(E2)
+            advp(P1) -> adverb(P1)
+                adverb(P1) -> easiest(P1)                                   // easiest(P1)
+            vp(P1) [E1, E2] -> to() take() from()                           // take(P1, E2, E1) -> first pops E2, then E1  
+
+Nice :)
+
+At the end of the parse, the filler-stack must be empty for a sentence to be complete.
+
+---
+
+I could use this notation to denote the order in which the stack grows:
+
+    <E1, E2]
+
+This may or may not make it clearer that E2 is the topmost element on the stack. But it looks pretty ugly.
+
+---
+
+I could also say that the arguments I already used before can be part of the stack
+
+    s(P1) -> which() np(E1) vp(E1, P)                                      // what-question(E1) -> pops P1, pushes E1 and then P 
+
 # 2020-02-22
 
 I "discovered" this brilliant Wikipedia article:

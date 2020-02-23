@@ -99,6 +99,19 @@ func (term Term) Copy() Term {
 	return newTerm
 }
 
+func (term Term) Bind(binding Binding) Term {
+	arg := term
+	if term.IsVariable() {
+		newValue, found := binding[term.TermValue]
+		if found {
+			arg = newValue
+		}
+	} else if term.IsRelationSet() {
+		arg.TermValueRelationSet = term.TermValueRelationSet.BindSingle(binding)
+	}
+	return arg
+}
+
 // If term is a variable, and occurs in binding, returns its binding
 // Otherwise, return term
 func (term Term) Resolve(binding Binding) Term {

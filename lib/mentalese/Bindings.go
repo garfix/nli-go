@@ -14,12 +14,15 @@ func (bindings Bindings) String() string {
 	return "[" + str + "]"
 }
 
-func (bindings Bindings) GetIds() []Term {
+func (bindings Bindings) GetIds(variable string) []Term {
 	idMap := map[string]bool{}
 	ids := []Term{}
 
 	for _, binding := range bindings {
-		for _, value := range binding {
+		for key, value := range binding {
+			if key != variable {
+				continue
+			}
 			if value.IsId() {
 				found := idMap[value.String()]
 				if !found {

@@ -1,6 +1,6 @@
 # Anaphora resolution
 
-NLI-GO handles pronouns like "he", "she", "it", but also expressions like "the block" and "the red one". These
+NLI-GO handles pronouns like "he", "she", "it", "they", but also expressions like "the block" and "the red one". These
 expressions are called commonly called anaphora. Some refer to recent user input and some to a recent system response.
 It also handles references to entities mentioned earlier within the same sentence (intra-sentential).
 
@@ -11,6 +11,9 @@ dialog context and is stored on file.
 
 The queue is simply a queue (first in first out) of entity references (id + entity type). New entities are stored on
 front. When the queue becomes larger than 10 items, the ones at the end fall off.
+
+More precise, it is a queue of entity reference groups. Multiple entities can be added as a single group. The result of
+a query for example, that exists of 3 persons. So that you can later refer to these as "they".
 
 ## Pronoun grammar
 
@@ -24,13 +27,24 @@ and here's "she"
 
     { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [ the(_) ], E1, [ female(E1) ], sem(parent)) }
 
+## Solution
+
+The variable where the query results are stored must be specified in the field "result" of a solution:
+
+    result: E1
+
+This is how the system knows which entities to refer to later.
+
 ## Adding entities
+
+Any entity that is named in the input is added to the queue. This is allows a user to type the name just once and
+henceforth refer to him/her with a pronoun.
 
 Any entity that is part of the range of a quant is added to the queue. This allows a user to refer to entities in the
 same sentence and to entities in previous input sentences.
 
 Any entity that is part of the result set of a question is added to the queue. This allows a user to refer to a previous
-response.
+response. Only the entities designated by the variable named in the "result" field from the solution are added.
 
 If the entity had been part of the queue before, it would be removed from the queue before being added again at the
 front. Each entity can be in the queue only once.

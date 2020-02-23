@@ -43,7 +43,6 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 	answer := mentalese.RelationSet{}
 	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
 
-	// conditionBindings: map condition variables to goal variables
 	allSolutions := answerer.findSolutions(goal)
 
 	if len(allSolutions) == 0 {
@@ -67,14 +66,14 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 				}
 			}
 
-			//group := EntityReferenceGroup{}
-			//for _, id := range resultBindings.GetIds() {
-			//	group = append(group, CreateEntityReference(id.TermValue, id.TermEntityType))
-			//}
-			//answerer.solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+			group := EntityReferenceGroup{}
+			for _, id := range resultBindings.GetIds(solution.Result.TermValue) {
+				group = append(group, CreateEntityReference(id.TermValue, id.TermEntityType))
+			}
+			answerer.solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 
 			// find a handler
-			condionedBindings := resultBindings
+			conditionedBindings := resultBindings
 			var resultHandler *mentalese.ResultHandler
 			for _, response := range solution.Responses {
 				if !response.Condition.IsEmpty() {
@@ -82,7 +81,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 					if len(conditionBindings) == 0 {
 						continue
 					} else {
-						condionedBindings = conditionBindings
+						conditionedBindings = conditionBindings
 					}
 				}
 				resultHandler = &response
@@ -95,11 +94,11 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			}
 
 			// solutionBindings: map condition variables to results
-			var solutionBindings = condionedBindings
+			var solutionBindings = conditionedBindings
 
 			// extend solution bindings by executing the preparation
 			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, condionedBindings)
+				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, conditionedBindings)
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings

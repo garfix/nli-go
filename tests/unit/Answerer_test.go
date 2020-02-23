@@ -42,6 +42,7 @@ func TestAnswerer(t *testing.T) {
 	solutions := parser.CreateSolutions(`[
 		{
 			condition: write(Person_name, Book_name) publish(Pub_name, Book_name),
+			result: _,
 			responses: [
 				{
 					condition: exists(),
@@ -53,6 +54,7 @@ func TestAnswerer(t *testing.T) {
 			]
 		} {
 			condition: write(Person, Book) number_of(Book, N),
+			result: _,
 			responses: [
 				{
 					condition: exists(),
@@ -64,6 +66,7 @@ func TestAnswerer(t *testing.T) {
 			]
 		} {
 			condition: write(X, Y),
+			result: _,
 			responses: [
 				{
 					condition: exists(),
@@ -75,6 +78,7 @@ func TestAnswerer(t *testing.T) {
 			]
 		} {
 			condition: publish(A, B),
+			result: _,
 			responses: [
 				{
 					condition: exists(),

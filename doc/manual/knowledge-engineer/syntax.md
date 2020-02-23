@@ -134,6 +134,10 @@ this transforms 'parent' into 'father', if the relation 'male' is present. But i
     [
         {
             condition: relationSet,
+            transformations: [
+                transformation
+            ],
+            result: variable | anonymous variable,
             responses: [
                 {
                     condition: relationSet, 

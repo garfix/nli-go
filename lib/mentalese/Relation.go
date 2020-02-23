@@ -86,17 +86,7 @@ func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relati
 	boundRelation.Predicate = relation.Predicate
 
 	for _, argument := range relation.Arguments {
-
-		arg := argument
-		if argument.IsVariable() {
-			newValue, found := binding[argument.TermValue]
-			if found {
-				arg = newValue
-			}
-		} else if argument.IsRelationSet() {
-			arg.TermValueRelationSet = argument.TermValueRelationSet.BindSingle(binding)
-		}
-
+		arg := argument.Bind(binding)
 		boundRelation.Arguments = append(boundRelation.Arguments, arg)
 	}
 

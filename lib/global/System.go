@@ -123,34 +123,24 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 
 	if !system.log.IsDone() {
 		parseTrees := system.parser.Parse(tokens)
-		system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
 		if len(parseTrees) == 0 {
 			system.log.AddError("Parser returned no parse trees")
 		} else {
 			parseTree = parseTrees[0]
+			system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
 			system.log.AddProduction("Parser", parseTree.String())
 		}
 	}
 
 	if !system.log.IsDone() {
 		requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
+		system.storeNamedEntities(nameBinding)
 		system.log.AddProduction("Relationizer", requestRelations.String())
 	}
 
 	if !system.log.IsDone() {
 		answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{ nameBinding })
 		system.log.AddProduction("Answer", answerRelations.String())
-	}
-
-	if !system.log.IsDone() {
-		//for _, id := range answerRelations.GetIds() {
-		//	system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.CreateEntityReference(id.TermValue, id.TermEntityType))
-		//}
-		group := central.EntityReferenceGroup{}
-		for _, id := range answerRelations.GetIds() {
-			group = append(group, central.CreateEntityReference(id.TermValue, id.TermEntityType))
-		}
-		system.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 	}
 
@@ -170,4 +160,10 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	}
 
 	return answer, options
+}
+
+func (system system) storeNamedEntities(binding mentalese.Binding) {
+	 for _, value := range binding {
+		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermEntityType) })
+	 }
 }

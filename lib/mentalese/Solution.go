@@ -22,6 +22,7 @@ func (solution Solution) BindSingle(binding Binding) Solution {
 	return Solution{
 		Condition: solution.Condition.BindSingle(binding),
 		Transformations: boundTransformations,
+		Result: solution.Result.Bind(binding),
 		Responses: newResponses,
 	}
 }

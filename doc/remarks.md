@@ -1,3 +1,162 @@
+# 2020-02-29
+
+The last few days I have been going through every book I have on the subject of extraposition. Trying to find the
+optimal syntax to effectively parse several tough questions. I was willing to use some sort of stack scheme if that
+meant that I could parse them well. However, the stack technique has its own problems. The problem is mainly that you
+don't know in what order the entities can be found on the stack. And also, the stack does not allow you to pop entities
+multiples times. And sometimes that is what you need. An entity may be used several times in the same sentence.
+Interestingly, my own technique happens to doing be rather well in handling such sentences. Therefore I tend to leave
+the stack path again and continue with what I had, using the extension of allowing multiple arguments (dependencies) in
+the rule's antecedent.
+
+Let me show you some of the tough questions I found in my books and a quick scan of how I plan to handle them.
+
+    > ... the one I told you to pick up (SHRDLU)
+    
+    np(E1) -> np(E1) rel(E1)
+        np(E1) -> the one
+        rel(E1) -> np(E2) vp_dep(P2, E1)
+            np(E2) -> I
+            vp_dep(P2, E1) -> iv(P2, E2, P3) S2(P3, E1)       // pass E1 as dependency              
+                iv(P2, E2, P3) -> told                        // tell(P2, E2, P3)
+                s_dep(P3, E1) -> np(E3) inf(P3, E3, E1)
+                    np(E3) -> you
+                    inf(P3, E3, E1) -> to pick up             // pick_up(P3, E3, E1)
+
+The construct vp_dep(P2, E1), along with S_dep(P3, E1) is still tough, but it is necessary to pass E1 down to its user.
+The stack structure would not make it any easier, so this is as simple as I know how to make it.
+
+Notice that I am not using concrete verbs in the abstract phrases (vp does not say "tell", just the more abstract "iv").
+This should cut down the number of rules.
+
+vp_dep is just an arbitrary name for a strange vp. Maybe it has a proper name. I hope so.
+
+iv = intransitive verb (subject only); tv = transitive verb (subject + object)
+
+    > which babies were the toys easiest to take from (CLE)
+
+    s(P1) -> wh_np(E1) aux_be() s_dep(P1, E1)
+        wh_np(E1) -> which np(E1)
+            np(E1) -> baby(E1)                                  // baby(E1)
+        s_dep(P1, E1) -> np(E2) vp_dep(P2, E1, E2)
+            np(E2) -> the toys                                  // toy(E2)
+            vp_dep(P2, E1, E2) -> adv(P2) inf(P2, E2, E1)
+                adv(P2) -> easiest                              // easiest(P2)
+                inf(P2, E2, E1) -> to take from                 // take_from(P2, E2, E1)    
+
+Again, a tough question, with a double gap. On the one hand its a bit awkward to pass dependencies like this. On the
+other hand, there are simple to track down, and the syntactic burden is manageable.
+
+`vp_dep(P2, E2, E1)` simply means: this is a verb phrase that passes two extra entities / dependencies, without
+consuming them.
+
+To structure the order of the dependencies, let's say that the oldest dependency comes first. So if E1 is passed first,
+it comes left. So it's a little bit like a stack, but not really.
+
+    > the man who we saw cried
+    
+    s(P1) -> np(E1) iv(P1, E1)
+        np(E1) -> np(E1) rel(E1)
+            rel(E1) -> who s(P2, E1)
+                s(P2, E1) -> np(E2) tv(P2, E2, E1)
+                    np(E2) -> we
+                    tv(P2, E2, E1) -> saw                       // see(P2, E2, E1)
+        iv(P1, E1) -> cried                                     // cry(P1, E1) 
+
+This is not a difficult sentence. It just has a relative clause.
+
+    > what apple was assumed to be eaten by me?
+    
+    s(P1) -> wh_np(E1) aux_be() vp_dep(P1, E1)
+        wh_np(E1) -> what np(E1)
+            np(E1) -> apple                                     // apple(E1)
+        vp_dep(P1, E1) -> iv(P2, P3) partp(P3, E1)
+            iv(P2, P3) -> assumed to be                         // assume(P2, P3)
+            partp(P3, E1) -> partic(P3, E2, E1) by np(E2)
+                partic(P3, E2, E1) -> eaten                     // eat(P3, E2, E1)
+                np(E2) -> me     
+
+As you can see in the `assume(P2, P3)`, a predication can be an entity to be passed around as a dependency.
+
+    > which woman wanted john but chose mary?
+    
+    s(P1) -> wh_np(E1) vp(P1, E1)
+        wh_np(E1) -> which np(E1)
+            np(E1) -> woman                                     // woman(E1)
+        vp(P1, E1) -> vp(P1, E1) but() vp(P2, E1)    
+            vp(P1, E1) -> tv(P1, E1, E2) np(E2)
+                tv(P1, E1, E2) -> want                          // want(P1, E1, E2)
+            vp(P2, E1) -> tv(P2, E1, E3) np(E3)    
+                tv(P2, E1, E3) -> chose                         // chose(P2, E1, E3)
+
+The woman (a gap filler) serves as subject in two predications. This is problematic for a stack system, but simple for
+my system because semantic entities are its main (only) "features".
+
+    > john sold or gave the book to mary
+    
+    s(P1) -> np(E1) vp(P1, E1)
+        np(E1) -> john
+        vp(P1, E1) -> tv(P1, E1, E2) np(E2)
+            tv(P1, E1, E2) -> tv(P1, E1, E2) or() tv(P2, E1, E2)    // or(P1, P2)
+                tv(P1, E1, E2) -> sold                              // sell(P1, E1, E2)
+                tv(P2, E1, E2) -> gave                              // give(P2, E1, E2)     
+
+Again, problematic for a stack system, because the filler is wanted in two places.
+
+    > terry read every book that bertrand wrote (Prolog and natural language analysis)
+    
+    s(P1) -> np(E1) vp(P1, E1)
+        np(E1) -> terry
+    vp(P1, E1) -> tv(P1, E1, E2) np(E2)    
+        tv(P1, E1, E2) -> read                              // read(P1, E1, E2)
+        np(E2) -> np(E2) rel(E2)
+            np(E2) -> every book                            // book(E2)
+            rel(E2) -> that s(P2, E2)
+                s(P2, E2) -> np(E3) tv(P2, E3, E2)
+                    np(E3) -> bertrand
+                    tv(P2, E3, E2) -> wrote                 // write(P2, E3, E2)
+
+I think I'll have a beer now :P
+
+# 2020-02-25
+
+The filler stack that I worked out only works for left extra-position. Also the syntax I used doesn't work.
+
+    { rule: s(P1) -> which() np(E1) vp(P) [E1], 			sense: which(E1) }
+
+The `[E1]` must say after which consequent the variable is pushed. Like this for example
+
+    { rule: s(P1) -> which() np(E1)^ vp(P), 			sense: which(E1) }
+
+Does CLE have a right extra-position example? I didn't find one, but Wikipedia has
+
+https://en.wikipedia.org/wiki/Discontinuity_(linguistics)#Topicalization
+
+    It surprised us that it rained.     // surprise(E1, rain(Ev1))
+
+# 2020-02-24
+
+The cost function for the heaviness of using a relation to query a database (see Warren) becomes less important.
+
+Why? It becomes less important when all NP's are quantified. If that is the case then few relations remain anyway, and
+they are already highly constrained.
+
+I already suspected this and now I read in a CHAT-80 paper that they don't quantify for SOME (since it isn't strictly
+necessary to do so). It makes no difference for the results, but it does make a difference for the efficiency.
+
+---
+
+I read in Winograd's "Language as a cognitive process" (p. 367) about his divisions of syntactic systems. One that hit
+me was:
+
+    "Systematic non-syntactic structure": In many systems, there is no need to produce a complete syntactic sentence. Each constituent can be analyzed for its 'content' as it is parsed, and that content used to build up an overall semantic analysis. In systems like MARGIE, the structure is based on a semantic theory and each syntactic constituent simply contributes its part to the evolving semantic structure. In data base systems, the structure being built up may be a request in some query language associated with the data base. In general, systematic non-syntactic systems are organized to produce on overall structure that is determined by the syntactic pieces but is not organized along syntactic lines.  
+
+Not that this is not semantic grammar. Semantic grammar has domain concepts as constituents, and cannot be reused for
+other domains. The type of systems Winograd names don't care about syntactic formalism. It is subordinate to the easy
+retrieval of the semantic content. I can relate to that very much. He also says about MARGIE somewhere that it was only
+able to parse shallow syntactic structures, though. But I hope this is not essential to these kinds of systems. Because
+I need "deep".
+
 # 2020-02-23
 
 CLE uses a stack to allow multiple gap-fillers to pass up and down the tree. My system, in the form I worked out

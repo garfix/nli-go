@@ -15,18 +15,20 @@ type chartState struct {
 	endWordIndex   int
 
 	nameInformations []central.NameInformation
+	fillerLevel   int
 
 	id            int
 	parentIds	  []int
 }
 
-func newChartState(id int, rule parse.GrammarRule, sSelection parse.SSelection, dotPosition int, startWordIndex int, endWordIndex int) chartState {
+func newChartState(id int, rule parse.GrammarRule, sSelection parse.SSelection, dotPosition int, startWordIndex int, endWordIndex int, fillerLevel int) chartState {
 	return chartState{
 		rule:           rule,
 		sSelection:     sSelection,
 		dotPosition:    dotPosition,
 		startWordIndex: startWordIndex,
 		endWordIndex:   endWordIndex,
+		fillerLevel:	fillerLevel,
 
 		nameInformations: []central.NameInformation{},
 
@@ -45,7 +47,38 @@ func (state chartState) Equals(otherState chartState) bool {
 		state.dotPosition == otherState.dotPosition &&
 		state.startWordIndex == otherState.startWordIndex &&
 		state.endWordIndex == otherState.endWordIndex &&
-		common.IntArrayEquals(state.parentIds, otherState.parentIds)
+		common.IntArrayEquals(state.parentIds, otherState.parentIds) &&
+		(state.fillerLevel == otherState.fillerLevel)
+}
+
+func (state chartState) IsCompleteSentence(words []string) bool {
+	return state.rule.SyntacticCategories[0] == "gamma" &&
+		!state.isIncomplete() &&
+		state.endWordIndex == len(words) &&
+		state.fillerLevel == 0
+}
+
+func (state chartState) MustPushVariable() bool {
+
+	mustPush := false
+
+	for _, pushVariable := range state.rule.PushVariableList {
+
+		for i, variable := range state.rule.EntityVariables {
+			if i == 0 {
+				continue
+			}
+			if variable == pushVariable {
+				if i == state.dotPosition {
+					mustPush = true
+				} else {
+					break
+				}
+			}
+		}
+	}
+
+	return mustPush
 }
 
 func (state chartState) ToString(chart *chart) string {
@@ -72,10 +105,16 @@ func (state chartState) ToString(chart *chart) string {
 		}
 	}
 	s += " >"
+
+	if state.fillerLevel != 0 {
+		s += " ^" + strconv.Itoa(state.fillerLevel)
+	}
+
 	s += " ("
 	for _, parentId := range state.parentIds {
 		s += " " + strconv.Itoa(parentId)
 	}
 	s += " )"
+
 	return s
 }

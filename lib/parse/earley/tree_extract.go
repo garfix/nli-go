@@ -12,7 +12,7 @@ func extractTreeRoots(chart *chart) []ParseTreeNode {
 
 			stateIndex[state.id] = state
 
-			if state.rule.SyntacticCategories[0] == "gamma" && !state.isIncomplete() && state.endWordIndex == len(chart.words) {
+			if state.IsCompleteSentence(chart.words) {
 				sentenceState := stateIndex[state.parentIds[0]]
 				rootStates = append(rootStates, sentenceState)
 			}

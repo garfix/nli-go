@@ -68,7 +68,7 @@ func (parser *Parser) buildChart(words []string) (*chart) {
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, []string{"G", "S"}, mentalese.RelationSet{}, []string{}, []string{}), parse.SSelection{"", ""}, 1, 0, 0, 0)
+	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, []string{"G", "S"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
 	parser.log.EndDebug("initial:", initialState.ToString(chart))
 	chart.enqueue(initialState, 0)
 
@@ -126,8 +126,7 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 			continue
 		}
 
-		fillerLevel := state.fillerLevel - rule.PopVariableList.Length()
-		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex, fillerLevel)
+		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
 		parser.log.EndDebug("predict:", predictedState.ToString(chart))
@@ -150,9 +149,9 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	}
 	if lexItemFound {
 
-		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{}, []string{}, []string{})
+		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
-		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1, 0)
+		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
 		chart.enqueue(scannedState, endWordIndex+1)
 
@@ -208,12 +207,7 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 			continue
 		}
 
-		fillerLevel := chartedState.fillerLevel
-		if chartedState.MustPushVariable() {
-			fillerLevel += 1
-		}
-
-		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex, fillerLevel)
+		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 		advancedState.parentIds = append(common.IntArrayCopy(chartedState.parentIds), completedState.id)
 
 		parser.log.EndDebug("advanced:", advancedState.ToString(chart))

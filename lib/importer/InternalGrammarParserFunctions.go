@@ -458,7 +458,7 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 
 		switch key {
 			case field_rule:
-				rule.SyntacticCategories, rule.EntityVariables, rule.PopVariableList, rule.PushVariableList, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
+				rule.SyntacticCategories, rule.EntityVariables, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
 				ok = ok && !ruleFound
 				ruleFound = true
 			case field_sense:
@@ -507,12 +507,10 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 	return rule, startIndex,  ok
 }
 
-func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, []string, []string, []string, int, bool) {
+func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, []string, int, bool) {
 
 	syntacticCategories := []string{}
 	entityVariables := []string{}
-	popVariableList := []string{}
-	pushVariableList := []string{}
 	ok := true
 
 	headRelation := mentalese.Relation{}
@@ -523,12 +521,6 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 
 			syntacticCategories = append(syntacticCategories, headRelation.Predicate)
 			entityVariables = append(entityVariables, headRelation.Arguments[0].TermValue)
-
-			variableList, vListFound, newStartIndex := parser.parseVariableList(tokens, startIndex)
-			if vListFound {
-				popVariableList = variableList
-				startIndex = newStartIndex
-			}
 
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
 			if ok {
@@ -550,55 +542,11 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 					}
 				}
 
-				variableList, vListFound, newStartIndex = parser.parseVariableList(tokens, startIndex)
-				if vListFound {
-					pushVariableList = variableList
-					startIndex = newStartIndex
-				}
 			}
 		}
 	}
 
-	return syntacticCategories, entityVariables, popVariableList, pushVariableList, startIndex, ok
-}
-
-func (parser *InternalGrammarParser) parseVariableList(tokens []Token, startIndex int) ([]string, bool, int) {
-
-	ok := false
-	term := mentalese.Term{}
-	variableList := []string{}
-	newStartIndex := startIndex
-
-	_, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, t_opening_bracket)
-	if ok {
-		term, newStartIndex, ok = parser.parseTerm(tokens, newStartIndex)
-		ok = ok && term.IsVariable()
-		if ok {
-			variableList = append(variableList, term.TermValue)
-			for {
-				_, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, t_comma)
-				if !ok {
-					ok = true
-					break
-				}
-				term, newStartIndex, ok = parser.parseTerm(tokens, newStartIndex)
-				ok = ok && term.IsVariable()
-				if !ok {
-					break
-				}
-				variableList = append(variableList, term.TermValue)
-			}
-			if ok {
-				_, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, t_closing_bracket)
-			}
-		}
-	}
-
-	if ok {
-		startIndex = newStartIndex
-	}
-
-	return variableList, ok, startIndex
+	return syntacticCategories, entityVariables, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, startIndex int) (mentalese.Relation, []mentalese.Relation, int, bool) {

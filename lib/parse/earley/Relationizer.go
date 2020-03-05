@@ -25,19 +25,18 @@ func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) *Relationize
 }
 
 func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolver *central.NameResolver) (mentalese.RelationSet, mentalese.Binding) {
-	sense, nameBinding,_, _ := relationizer.extractSenseFromNode(rootNode, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
+	sense, nameBinding,_ := relationizer.extractSenseFromNode(rootNode, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
 	return sense, nameBinding
 }
 
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, mentalese.Binding, bool, parse.VariableList) {
+func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, mentalese.Binding, bool) {
 
 	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
 
 	nameBinding := mentalese.Binding{}
-	fillerStack := parse.VariableList{}
 
 	relationSet := mentalese.RelationSet{}
 	var makeConstant = false
@@ -55,7 +54,8 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 		// leaf state rule: category -> word
 		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
-		relationSet = relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		relationSet = lexItemRelations
 		makeConstant = isRegExp || isProperNoun
 
 	} else {
@@ -68,8 +68,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 			entityVariable := node.rule.EntityVariables[i+1]
 			consequentVariable := variableMap[entityVariable]
-			childRelations, childNameBinding, makeConstant, childFillerStack := relationizer.extractSenseFromNode(childNode, nameResolver, consequentVariable.TermValue)
-			fillerStack = fillerStack.Push(childFillerStack)
+			childRelations, childNameBinding, makeConstant := relationizer.extractSenseFromNode(childNode, nameResolver, consequentVariable.TermValue)
 			nameBinding = nameBinding.Merge(childNameBinding)
 			boundChildSets = append(boundChildSets, childRelations)
 
@@ -83,23 +82,13 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 			}
 		}
 
-		// add fillers to variable map
-		// { rule: vp(P1) [E1, E2] -> to() take() from(), 			sense: take_from(P1, E2, E1)  }
-		actualVariables, ok := fillerStack.Pop(node.rule.PopVariableList.Length())
-		if !ok {
-			panic("Popped beyond bottom")
-		}
-		for i, fillerVariable := range node.rule.PopVariableList {
-			variableMap[fillerVariable] = mentalese.NewVariable(actualVariables[i])
-		}
-
 		boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
 		relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 	}
 
 	relationizer.log.EndDebug("extractSenseFromNode", relationSet)
 
-	return relationSet, nameBinding, makeConstant, fillerStack
+	return relationSet, nameBinding, makeConstant
 }
 
 // Adds all childSets to parentSet

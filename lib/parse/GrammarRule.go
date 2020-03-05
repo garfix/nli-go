@@ -6,17 +6,13 @@ type GrammarRule struct {
 	SyntacticCategories []string
 	EntityVariables     []string
 	Sense               mentalese.RelationSet
-	PopVariableList		VariableList
-	PushVariableList	VariableList
 }
 
-func NewGrammarRule(syntacticCategories []string, entityVariables []string, sense mentalese.RelationSet, popVariableList []string, pushvariableList []string) GrammarRule {
+func NewGrammarRule(syntacticCategories []string, entityVariables []string, sense mentalese.RelationSet) GrammarRule {
 	return GrammarRule{
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
 		Sense:               sense,
-		PopVariableList:	 popVariableList,
-		PushVariableList:    pushvariableList,
 	}
 }
 
@@ -48,14 +44,6 @@ func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }
 
-func (rule GrammarRule) GetPopVariableList() VariableList {
-	return rule.PopVariableList
-}
-
-func (rule GrammarRule) GetPushVariableList() VariableList {
-	return rule.PushVariableList
-}
-
 func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 
 	if len(rule.SyntacticCategories) != len(otherRule.SyntacticCategories) {
@@ -66,14 +54,6 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 		if v != otherRule.SyntacticCategories[i] {
 			return false
 		}
-	}
-
-	if !rule.PopVariableList.Equals(otherRule.PopVariableList) {
-		return  false
-	}
-
-	if !rule.PushVariableList.Equals(otherRule.PushVariableList) {
-		return false
 	}
 
 	return true
@@ -94,8 +74,6 @@ func (rule GrammarRule) Copy() GrammarRule {
 		SyntacticCategories: rule.SyntacticCategories,
 		EntityVariables:     rule.EntityVariables,
 		Sense:               rule.Sense.Copy(),
-		PopVariableList:     rule.PopVariableList.Copy(),
-		PushVariableList:    rule.PushVariableList.Copy(),
 	}
 }
 
@@ -105,20 +83,12 @@ func (rule GrammarRule) String() string {
 
 	s += rule.SyntacticCategories[0] + "(" + rule.EntityVariables[0] + ")"
 
-	if !rule.PopVariableList.Empty() {
-		s += " " + rule.PopVariableList.String()
-	}
-
 	s += " :- "
 
 	sep := ""
 	for i := 1; i < len(rule.SyntacticCategories); i++ {
 		s += sep + rule.SyntacticCategories[i] + "(" + rule.EntityVariables[i] + ")"
 		sep = " "
-	}
-
-	if !rule.PushVariableList.Empty() {
-		s += " " + rule.PushVariableList.String()
 	}
 
 	s += " { "

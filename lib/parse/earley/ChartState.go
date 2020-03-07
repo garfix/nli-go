@@ -50,17 +50,14 @@ func (state chartState) Equals(otherState chartState) bool {
 
 func (state chartState) ToString(chart *chart) string {
 	s := strconv.Itoa(state.id) + " ["
-	for i, category := range state.rule.SyntacticCategories {
-		if i == 0 {
-			s += " " + category + " ->"
-		} else {
-			if i == state.dotPosition {
-				s += " *"
-			}
-			s += " " + category
+	s += " " + state.rule.GetAntecedent() + " ->"
+	for i, category := range state.rule.GetConsequents() {
+		if i + 1 == state.dotPosition {
+			s += " *"
 		}
+		s += " " + category
 	}
-	if len(state.rule.SyntacticCategories) == state.dotPosition {
+	if len(state.rule.GetConsequents()) + 1 == state.dotPosition {
 		s += " *"
 	}
 	s += " ] "

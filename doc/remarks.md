@@ -1,3 +1,34 @@
+# 2020-03-07
+
+It's now possible to provide multiple arguments to the grammar rewrite rules. I wrote a test "filler stack test" that
+tests if this works. It passes! :D
+
+# 2020-03-06
+
+When the rewrite rules get multiple arguments, these arguments have specific functions:
+
+The proper_noun must have only one argument. The name will be always be linked to the first argument.
+
+    proper_noun(N1)
+
+NP predicates must have one argument: the entity
+
+    np(E1)
+
+VP predicates have a predication argument (that represents the predication itself) and zero or more entity arguments. We
+keep them apart by giving them different letters
+
+    vp(P1, E1, E2)
+
+VP dependency passing dependencies have both the VP arguments, and also the dependency arguments. Let's give these
+long-term dependencies variable names like L1, L2. These dependencies can be thought of as a stack. L2 was added later,
+and should be removed first.
+
+    dep_vp(P1, E1, E2, L1, L2) 
+
+Dependencies must be passed _only_ via `dep_vp` relations, not via `vbar`, `verb` or other relations. Also: dependencies
+are not passed via `np` relations. At least not until I have a use case for it, in which case I will create `dep_np`.
+
 # 2020-02-29
 
 The last few days I have been going through every book I have on the subject of extraposition. Trying to find the

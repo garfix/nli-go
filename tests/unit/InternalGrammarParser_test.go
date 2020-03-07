@@ -27,22 +27,22 @@ func TestInternalGrammarParser(t *testing.T) {
 		"{ rule: s(P) -> np(E) vp(P),         sense: subject(P, E) }" +
 		"]")
 
-	rules := grammar.FindRules("s")
+	rules := grammar.FindRules("s", 1)
 	if len(rules) == 0 {
 		t.Error("No rules found")
 	}
 
-	if rules[0].SyntacticCategories[0] != "s" {
-		t.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[0]))
+	if rules[0].GetAntecedent() != "s" {
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].GetAntecedent()))
 	}
-	if rules[0].SyntacticCategories[1] != "np" {
-		t.Error(fmt.Printf("Error in rule: %s", rules[0].SyntacticCategories[1]))
+	if rules[0].GetConsequent(0) != "np" {
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].GetConsequent(0)))
 	}
-	if rules[0].EntityVariables[0] != "P" {
-		t.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[0]))
+	if rules[0].GetAntecedentVariables()[0] != "P" {
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].GetAntecedentVariables()))
 	}
-	if rules[0].EntityVariables[1] != "E" {
-		t.Error(fmt.Printf("Error in rule: %s", rules[0].EntityVariables[1]))
+	if rules[0].GetConsequentVariables(0)[0] != "E" {
+		t.Error(fmt.Printf("Error in rule: %s", rules[0].GetConsequentVariables(0)))
 	}
 	if len(rules[0].Sense) != 1 {
 		t.Error(fmt.Printf("Error in number of sense relations: %d", len(rules[0].Sense)))
@@ -53,11 +53,11 @@ func TestInternalGrammarParser(t *testing.T) {
 		"{ rule: np(P) -> nbar(E) }" +
 		"]")
 
-	rules = grammar.FindRules("s")
+	rules = grammar.FindRules("s", 1)
 	if len(rules) != 1 {
 		t.Error("No rules found")
 	}
-	rules = grammar.FindRules("np")
+	rules = grammar.FindRules("np", 1)
 	if len(rules) != 1 {
 		t.Error("No rules found")
 	}

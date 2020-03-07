@@ -1,23 +1,33 @@
 package parse
 
 type Grammar struct {
-	rules map[string][]GrammarRule
+	rules map[string]map[int][]GrammarRule
 }
 
 func NewGrammar() *Grammar {
-	return &Grammar{rules: map[string][]GrammarRule{}}
+	return &Grammar{rules: map[string]map[int][]GrammarRule{}}
 }
 
 func (grammar *Grammar) AddRule(rule GrammarRule) {
 
-	antecedent := rule.SyntacticCategories[0]
+	antecedent := rule.GetAntecedent()
+	argumentCount := len(rule.GetAntecedentVariables())
 
-	grammar.rules[antecedent] = append(grammar.rules[antecedent], rule)
+	_, found := grammar.rules[antecedent]
+	if !found {
+		grammar.rules[antecedent] = map[int][]GrammarRule{}
+	}
+	_, found = grammar.rules[antecedent][argumentCount]
+	if !found {
+		grammar.rules[antecedent][argumentCount] = []GrammarRule{}
+	}
+
+	grammar.rules[antecedent][argumentCount] = append(grammar.rules[antecedent][argumentCount], rule)
 }
 
 // returns rules, ok (where rules is an array of string-arrays)
-func (grammar *Grammar) FindRules(antecedent string) []GrammarRule {
-	rules, ok := grammar.rules[antecedent]
+func (grammar *Grammar) FindRules(antecedent string, argumentCount int) []GrammarRule {
+	rules, ok := grammar.rules[antecedent][argumentCount]
 
 	if ok {
 		return rules
@@ -27,9 +37,11 @@ func (grammar *Grammar) FindRules(antecedent string) []GrammarRule {
 }
 
 func (grammar *Grammar) ImportFrom(fromGrammar *Grammar) {
-	for _, rules := range fromGrammar.rules {
-		for _, rule := range rules {
-			grammar.AddRule(rule)
+	for _, rulesPerCategory := range fromGrammar.rules {
+		for _, rulesPerCount := range rulesPerCategory {
+			for _, rule := range rulesPerCount {
+				grammar.AddRule(rule)
+			}
 		}
 	}
 }

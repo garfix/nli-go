@@ -5,27 +5,40 @@ import (
 	"nli-go/lib/parse"
 )
 
-// Create a new child sense by applying a rule that contains a child sense template, and inherit the parent sense
-// Example:
-// 		parentSSelection: person
-// 		{ rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1),           sense: hold(P1, E2, E1) }
-// 		return E1 = person, E2 = object; or: false in case of conflict
-func combineSSelection(predicates mentalese.Predicates, parentType string, rule parse.GrammarRule) (parse.SSelection, bool) {
+// Create a new s-selection
+// Inherit the types that were bound to the antecedent
+// If not inherited, find a proper type from the sense
+func combineSSelection(predicates mentalese.Predicates, parentTypes []string, rule parse.GrammarRule) (parse.SSelection, bool) {
 
-	sSelection := parse.SSelection{parentType}
-	antecedent := rule.GetAntecedentVariable()
+	// start with the type of the antecedent
+	sSelection := parse.SSelection{ parentTypes }
 
-	for _, variable := range rule.GetConsequentVariables() {
+	// for each consequent
+	for _, singleConsequentVariables := range rule.GetAllConsequentVariables() {
 
-		sType := ""
+		// single consequent
+		consequentType := []string{}
 
-		if variable == antecedent {
-			sType = parentType
-		} else {
-			sType = getTypeFromSense(predicates, variable, rule.Sense)
+		// for each consequentVariable of a single consequent
+		for _, consequentVariable := range singleConsequentVariables {
+
+			singleArgumentType := ""
+
+			// compare with each antecedent variable
+			for a, antecedentVariable := range rule.GetAntecedentVariables() {
+				if consequentVariable == antecedentVariable {
+					singleArgumentType = parentTypes[a]
+					break
+				}
+			}
+
+			if singleArgumentType == "" {
+				singleArgumentType = getTypeFromSense(predicates, consequentVariable, rule.Sense)
+			}
+
+			consequentType = append(consequentType, singleArgumentType)
 		}
-
-		sSelection = append(sSelection, sType)
+		sSelection = append(sSelection, consequentType)
 	}
 
 	return sSelection, true

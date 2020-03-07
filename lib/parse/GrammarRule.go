@@ -3,12 +3,14 @@ package parse
 import "nli-go/lib/mentalese"
 
 type GrammarRule struct {
+	// vp -> np vbar
 	SyntacticCategories []string
-	EntityVariables     []string
+	// (P1, E1) -> (E1) (P1, E1)
+	EntityVariables     [][]string
 	Sense               mentalese.RelationSet
 }
 
-func NewGrammarRule(syntacticCategories []string, entityVariables []string, sense mentalese.RelationSet) GrammarRule {
+func NewGrammarRule(syntacticCategories []string, entityVariables [][]string, sense mentalese.RelationSet) GrammarRule {
 	return GrammarRule{
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
@@ -20,7 +22,7 @@ func (rule GrammarRule) GetAntecedent() string {
 	return rule.SyntacticCategories[0]
 }
 
-func (rule GrammarRule) GetAntecedentVariable() string {
+func (rule GrammarRule) GetAntecedentVariables() []string {
 	return rule.EntityVariables[0]
 }
 
@@ -32,11 +34,11 @@ func (rule GrammarRule) GetConsequent(i int) string {
 	return rule.SyntacticCategories[i+1]
 }
 
-func (rule GrammarRule) GetConsequentVariables() []string {
+func (rule GrammarRule) GetAllConsequentVariables() [][]string {
 	return rule.EntityVariables[1:]
 }
 
-func (rule GrammarRule) GetConsequentVariable(i int) string {
+func (rule GrammarRule) GetConsequentVariables(i int) []string {
 	return rule.EntityVariables[i+1]
 }
 
@@ -54,19 +56,17 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 		if v != otherRule.SyntacticCategories[i] {
 			return false
 		}
-	}
-
-	return true
-}
-
-func (rule GrammarRule) GetConsequentIndexByVariable(variable string) (int, bool) {
-	for i, entityVariable := range rule.EntityVariables[1:] {
-		if entityVariable == variable {
-			return i, true
+		if len(rule.EntityVariables[i]) != len(otherRule.EntityVariables[i]) {
+			return false
+		}
+		for j, w := range rule.EntityVariables[i] {
+			if w != otherRule.EntityVariables[i][j] {
+				return false
+			}
 		}
 	}
 
-	return 0, false
+	return true
 }
 
 func (rule GrammarRule) Copy() GrammarRule {
@@ -80,14 +80,27 @@ func (rule GrammarRule) Copy() GrammarRule {
 func (rule GrammarRule) String() string {
 
 	s := ""
+	sep2 := ""
 
-	s += rule.SyntacticCategories[0] + "(" + rule.EntityVariables[0] + ")"
+	s += rule.SyntacticCategories[0] + "("
+	sep2 = ""
+	for _, variable := range rule.EntityVariables[0] {
+		s += sep2 + variable
+		sep2 = ", "
+	}
+	s += ")"
 
-	s += " :- "
+	s += " -> "
 
 	sep := ""
 	for i := 1; i < len(rule.SyntacticCategories); i++ {
-		s += sep + rule.SyntacticCategories[i] + "(" + rule.EntityVariables[i] + ")"
+		s += sep + rule.SyntacticCategories[i] + "("
+		sep2 = ""
+		for _, variable := range rule.EntityVariables[i] {
+			s += sep2 + variable
+			sep2 = ", "
+		}
+		s += ")"
 		sep = " "
 	}
 

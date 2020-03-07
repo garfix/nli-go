@@ -68,7 +68,7 @@ func (parser *Parser) buildChart(words []string) (*chart) {
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, []string{"G", "S"}, mentalese.RelationSet{}), parse.SSelection{"", ""}, 1, 0, 0)
+	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{}), [][]string{{""}, {""}}, 1, 0, 0)
 	parser.log.EndDebug("initial:", initialState.ToString(chart))
 	chart.enqueue(initialState, 0)
 
@@ -115,10 +115,11 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
+	nextConsequentVariables := state.rule.GetConsequentVariables(consequentIndex)
 	endWordIndex := state.endWordIndex
 
 	// go through all rules that have the next consequent as their antecedent
-	for _, rule := range parser.grammar.FindRules(nextConsequent) {
+	for _, rule := range parser.grammar.FindRules(nextConsequent, len(nextConsequentVariables)) {
 
 		parentSSelection := state.sSelection[consequentIndex + 1]
 		sSelection, allowed := combineSSelection(parser.predicates, parentSSelection, rule)
@@ -149,7 +150,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	}
 	if lexItemFound {
 
-		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, []string{"a", "b"}, mentalese.RelationSet{})
+		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, [][]string{{"a"}, {"b"}}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
 		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
@@ -178,7 +179,7 @@ func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []cent
 	// first word in proper noun consequents?  try to match all words at once
 	words := chart.words[wordIndex:wordIndex + wordCount]
 	wordString := strings.Join(words, " ")
-	nameInformations := parser.nameResolver.ResolveName(wordString, sType)
+	nameInformations := parser.nameResolver.ResolveName(wordString, sType[0])
 
 	if len(nameInformations) > 0 {
 		return true, nameInformations

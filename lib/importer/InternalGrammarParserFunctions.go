@@ -507,41 +507,45 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 	return rule, startIndex,  ok
 }
 
-func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, []string, int, bool) {
+func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, [][]string, int, bool) {
 
 	syntacticCategories := []string{}
-	entityVariables := []string{}
+	entityVariables := [][]string{}
+	list := []string{}
 	ok := true
 
 	headRelation := mentalese.Relation{}
 	headRelation, startIndex, ok = parser.parseRelation(tokens, startIndex)
 	if ok {
-		ok = len(headRelation.Arguments) == 1
+		syntacticCategories = append(syntacticCategories, headRelation.Predicate)
+
+		list = []string{}
+		for _, argument := range headRelation.Arguments {
+			list = append(list, argument.TermValue)
+		}
+		entityVariables = append(entityVariables, list)
+
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
 		if ok {
+			tailRelations := []mentalese.Relation{}
+			tailRelations, startIndex, ok = parser.parseRelations(tokens, startIndex)
 
-			syntacticCategories = append(syntacticCategories, headRelation.Predicate)
-			entityVariables = append(entityVariables, headRelation.Arguments[0].TermValue)
-
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
-			if ok {
-				tailRelations := []mentalese.Relation{}
-				tailRelations, startIndex, ok = parser.parseRelations(tokens, startIndex)
-
-				for _, patternRelation := range tailRelations {
-					if len(patternRelation.Arguments) == 0 {
-						variable := mentalese.NewVariable("_")
-						patternRelation.Arguments = []mentalese.Term{ variable }
-					} else if len(patternRelation.Arguments) != 1 {
-						ok = false
-					} else if !patternRelation.Arguments[0].IsVariable() {
-						ok = false
-					}
-					if ok {
-						syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
-						entityVariables = append(entityVariables, patternRelation.Arguments[0].TermValue)
-					}
+			for _, patternRelation := range tailRelations {
+				if len(patternRelation.Arguments) == 0 {
+					variable := mentalese.NewVariable("_")
+					patternRelation.Arguments = []mentalese.Term{ variable }
+				} else if !patternRelation.Arguments[0].IsVariable() {
+					ok = false
 				}
+				if ok {
+					syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
 
+					list = []string{}
+					for _, argument := range patternRelation.Arguments {
+						list = append(list, argument.TermValue)
+					}
+					entityVariables = append(entityVariables, list)
+				}
 			}
 		}
 	}

@@ -30,25 +30,17 @@ func (builder SenseBuilder) GetNewVariable(formalVariable string) string {
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
-func (builder SenseBuilder) CreateVariableMap(actualAntecedent string, formalVariables []string) map[string]mentalese.Term {
+func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antecedentVariables []string, allConsequentVariables [][]string) map[string]mentalese.Term {
 
 	m := map[string]mentalese.Term{}
-	antecedentVariable := formalVariables[0]
 
-	m[antecedentVariable] = mentalese.NewVariable(actualAntecedent)
+	for i, antecedentVariable := range antecedentVariables {
+		m[antecedentVariable] = mentalese.NewVariable(actualAntecedents[i])
+	}
 
-	for i := 1; i < len(formalVariables); i++ {
+	for _, consequentVariables := range allConsequentVariables {
+		for _, consequentVariable := range consequentVariables {
 
-		consequentVariable := formalVariables[i]
-
-		if consequentVariable == antecedentVariable {
-
-			// the consequent variable matches the antecedent variable, inherit its actual variable
-			m[consequentVariable] = mentalese.NewVariable(actualAntecedent)
-
-		} else {
-
-			// we're going to add a new actual variable, unless we already have
 			_, present := m[consequentVariable]
 			if !present {
 				m[consequentVariable] = mentalese.NewVariable(builder.GetNewVariable(consequentVariable))

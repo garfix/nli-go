@@ -7,6 +7,7 @@
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be
     solve some other way
 * entity type (multiple) inheritance
+* remove cost function and everything related
 
 ## Misc
 

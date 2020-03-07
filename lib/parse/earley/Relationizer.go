@@ -25,26 +25,27 @@ func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) *Relationize
 }
 
 func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolver *central.NameResolver) (mentalese.RelationSet, mentalese.Binding) {
-	sense, nameBinding,_ := relationizer.extractSenseFromNode(rootNode, nameResolver, relationizer.senseBuilder.GetNewVariable("Sentence"))
+	rootEntityVariable := relationizer.senseBuilder.GetNewVariable("Sentence")
+	sense, nameBinding,_ := relationizer.extractSenseFromNode(rootNode, nameResolver, []string{ rootEntityVariable } )
 	return sense, nameBinding
 }
 
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariable string) (mentalese.RelationSet, mentalese.Binding, bool) {
+func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, bool) {
 
-	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariable, node.rule, node.rule.Sense)
+	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariables, node.rule, node.rule.Sense)
 
 	nameBinding := mentalese.Binding{}
-
 	relationSet := mentalese.RelationSet{}
 	var makeConstant = false
+	firstAntecedentVariable := antecedentVariables[0]
 
 	if len(node.nameInformations) > 0 {
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			nameBinding[antecedentVariable] = mentalese.NewId(nameInformation.SharedId, nameInformation.EntityType)
+			nameBinding[firstAntecedentVariable] = mentalese.NewId(nameInformation.SharedId, nameInformation.EntityType)
 		}
 	}
 
@@ -54,30 +55,37 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 		// leaf state rule: category -> word
 		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
-		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariable)
+		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, firstAntecedentVariable)
 		relationSet = lexItemRelations
 		makeConstant = isRegExp || isProperNoun
 
 	} else {
 
-		variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariable, node.rule.EntityVariables)
+		variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.rule.GetAntecedentVariables(), node.rule.GetAllConsequentVariables())
 
 		// create relations for each of the children
 		boundChildSets := []mentalese.RelationSet{}
 		for i, childNode := range node.constituents {
 
-			entityVariable := node.rule.EntityVariables[i+1]
-			consequentVariable := variableMap[entityVariable]
-			childRelations, childNameBinding, makeConstant := relationizer.extractSenseFromNode(childNode, nameResolver, consequentVariable.TermValue)
+			consequentVariables := node.rule.GetConsequentVariables(i)
+
+			mappedConsequentVariables := []string{}
+			for _, consequentVariable := range consequentVariables {
+				mappedConsequentVariables = append(mappedConsequentVariables, variableMap[consequentVariable].TermValue)
+			}
+
+			childRelations, childNameBinding, makeConstant := relationizer.extractSenseFromNode(childNode, nameResolver, mappedConsequentVariables)
 			nameBinding = nameBinding.Merge(childNameBinding)
 			boundChildSets = append(boundChildSets, childRelations)
+
+			firstConsequentVariable := consequentVariables[0]
 
 			if makeConstant {
 				_, err := strconv.Atoi(childNode.form)
 				if err == nil {
-					variableMap[entityVariable] = mentalese.NewNumber(childNode.form)
+					variableMap[firstConsequentVariable] = mentalese.NewNumber(childNode.form)
 				} else {
-					variableMap[entityVariable] = mentalese.NewString(childNode.form)
+					variableMap[firstConsequentVariable] = mentalese.NewString(childNode.form)
 				}
 			}
 		}

@@ -17,18 +17,20 @@
     { form: 'an',                pos: a }
     { form: 'the',               pos: the }
 
-    { form: 'red',               pos: red }
-    { form: 'big',               pos: big }
+    { form: 'red',               pos: adjective,    sense: red(E) }
+    { form: 'big',               pos: adjective,    sense: big(E) }
 
     { form: 'taller',            pos: taller }
     { form: 'narrower',          pos: narrower }
     { form: 'than',              pos: than }
 
     { form: 'one',               pos: one }
-    { form: 'block',             pos: block }
-    { form: 'blocks',            pos: block }
-    { form: 'pyramid',           pos: pyramid }
-    { form: 'box',               pos: box }
+    { form: 'one',               pos: noun }
+
+    { form: 'block',             pos: noun,     sense: block(E) }
+    { form: 'blocks',            pos: noun,     sense: block(E) }
+    { form: 'pyramid',           pos: noun,     sense: pyramid(E) }
+    { form: 'box',               pos: noun,     sense: box(E) }
 
     { form: 'grasp',             pos: grasp }
     { form: 'contain',           pos: contain }
@@ -53,8 +55,9 @@
     { form: 'and',               pos: and }
     { form: 'not',               pos: not }
 
-    { form: 'you',               pos: you }
-    { form: 'i',                 pos: i }
+    { form: 'you',               pos: pronoun,      sense: you(E) }
+    { form: 'i',                 pos: pronoun,      sense: i(E) }
+
     { form: 'it',                pos: it }
     { form: 'them',              pos: them }
 

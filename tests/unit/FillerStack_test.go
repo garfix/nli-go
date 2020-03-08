@@ -15,26 +15,22 @@ func TestFillerStack(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 
-		{ rule: s(P1) -> which() np(E1) vp(P1, E1),				sense: which(E1) }
+		{ rule: s(P1) -> which() np(E1) dep_vp(P1, E1),			sense: which(E1) }
 		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, sem(1), sem(parent)) }
 		{ rule: nbar(E) -> noun(E) }
-		{ rule: noun(E1) -> baby(E1), 							sense: baby(E1) }                
-		{ rule: vp(P1, E1) -> be() np(E2) advp(P1) vp(P1, E1, E2) }
+		{ rule: dep_vp(P1, E1) -> be() np(E2) advp(P1) vp(P1, E1, E2) }
 		{ rule: np(E1) -> qp(Q1) nbar(E1), 						sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
-		{ rule: qp(Q2) -> the(Q2), 								sense: the(Q2) }
-		{ rule: noun(E2) -> toy(E2), 							sense: toy(E2) }                            
 		{ rule: advp(P1) -> adverb(P1) }
-		{ rule: adverb(P1) -> easiest(P1), 						sense: easiest(P1) }                       
 		{ rule: vp(P1, E1, E2) -> to() take() from(), 			sense: take_from(P1, E2, E1)  }
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
 		{ form: 'which', pos: which }
-		{ form: 'babies', pos: noun, sense: baby(E) }
 		{ form: 'were', pos: be }
-		{ form: 'the', pos: the }
-		{ form: 'toys', pos: toy }
-		{ form: 'easiest', pos: easiest }
+		{ form: 'babies', pos: noun, 		sense: baby(E) }
+		{ form: 'toys', pos: noun, 			sense: toy(E) }
+		{ form: 'the', pos: qp, 			sense: the(E) }
+		{ form: 'easiest', pos: adverb, 	sense: easiest(E) }
 		{ form: 'to', pos: to }
 		{ form: 'take', pos: take }
 		{ form: 'from', pos: from }

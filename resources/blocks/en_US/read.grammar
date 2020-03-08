@@ -1,18 +1,6 @@
 [
-    { rule: noun(E1) -> block(E1),                                         sense: block(E1) }
-    { rule: noun(E1) -> pyramid(E1),                                       sense: pyramid(E1) }
-    { rule: noun(E1) -> box(E1),                                           sense: box(E1) }
-    { rule: noun(E1) -> one(E1) }
-
-    { rule: pronoun(E1) -> it(E1),                                         sense: quant(_, [the(_)], E1, [], sem(parent)) }
-    { rule: pronoun(E1) -> you(E1),                                        sense: you(E1) }
-    { rule: pronoun(E1) -> i(E1),                                          sense: i(E1) }
-
     { rule: adjp(E1) -> taller() than() np(E2),                            sense: taller(E1, E2) }
     { rule: adjp(E1) -> narrower() than() np(E2),                          sense: narrower(E1, E2) }
-
-    { rule: adjective(E1) -> red(E1),                                      sense: red(E1) }
-    { rule: adjective(E1) -> big(E1),                                      sense: big(E1) }
 
     { rule: vgp(P1) -> pick(P1) up(P1) np(E1),                             sense: pick_up(P1, E1) }
     { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
@@ -38,6 +26,7 @@
 
     { rule: np(R1) -> qp(Q1) nbar(R1),                                     sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
     { rule: np(E1) -> nbar(E1),                                            sense: quant(Q1, some(Q1), E1, sem(1), sem(parent)) }
+    { rule: np(E1) -> it(E1),                                              sense: quant(_, [the(_)], E1, [], sem(parent)) }
     { rule: np(E1) -> pronoun(E1) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
@@ -47,14 +36,14 @@
 
     { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
 
-    { rule: what_clause(E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
-    { rule: what_clause(E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }
+    { rule: what_clause(P1, E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
+    { rule: what_clause(P1, E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }
 
-    { rule: how_many_clause(E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
+    { rule: how_many_clause(P1, E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
 
-    { rule: interrogative_clause(P1) -> what() what_clause(E1),            sense: what(E1) }
-    { rule: interrogative_clause(P1) -> how() many() how_many_clause(E1),  sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula() np(E1) adjp(E1),          sense: select(E1) }
+    { rule: interrogative_clause(P1) -> what() what_clause(P1, E1),             sense: what(E1) }
+    { rule: interrogative_clause(P1) -> how() many() how_many_clause(P1, E1),   sense: how_many(E1) }
+    { rule: interrogative_clause(P1) -> copula() np(E1) adjp(E1),               sense: select(E1) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) question_mark() }
 

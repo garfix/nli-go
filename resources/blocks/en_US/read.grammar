@@ -3,11 +3,11 @@
 
     { rule: qp(E1) -> a(E1),                                               sense: number(E1, 1) }
     { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
-    { rule: qp(E1) -> at() least() one(),                                  sense: some(E1) }
+    { rule: qp(E1) -> at() least() one() of(),                             sense: some(E1) }
 
     /* verbs */
 
-    { rule: vgp(P1) -> pick(P1) up() np(E1),                             sense: pick_up(P1, E1) }
+    { rule: vgp(P1) -> pick(P1) up() np(E1),                               sense: pick_up(P1, E1) }
     { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
     { rule: vgp(P1) -> find(P1) np(E1),                                    sense: find(P1, E1) }
     { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                     sense: put_into(P1, E1, E2) }
@@ -34,12 +34,12 @@
     { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
     { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1), sem(parent)) }
     { rule: np(E1) -> it(E1),                                              sense: quant(_, the(_), E1, [], sem(parent)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, some(_), E1, sem(1), sem(parent)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, all(_), E1, sem(1), sem(parent)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> of() them(E1),                                     sense: they(E1) }
+    { rule: nbar(E1) -> them(E1),                                     sense: they(E1) }
 
     /* Sentences */
 

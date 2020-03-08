@@ -14,7 +14,7 @@
 
     { rule: vp(P1, E1) -> np(E2) to() pick(P1) up(),                       sense: pick_up(P1, E2, E1) }
 
-    { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, P2) }
+    { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, sem(3)) }
 
     { rule: vp(P1) -> vp(P1) pp(P1) }
     { rule: vp(P1) -> vgp(P1) }
@@ -31,10 +31,10 @@
     { rule: relative_clause(E1) -> np(E2) aux_be() holding(P1),            sense: hold(P1, E2, E1) }
     { rule: relative_clause(E1) -> which() vp_dep(P1, E1) }
 
-    { rule: np(R1) -> qp(Q1) nbar(R1),                                     sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(Q1, some(Q1), E1, sem(1), sem(parent)) }
-    { rule: np(E1) -> it(E1),                                              sense: quant(_, [the(_)], E1, [], sem(parent)) }
-    { rule: np(E1) -> pronoun(E1) }
+    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1), sem(parent)) }
+    { rule: np(E1) -> it(E1),                                              sense: quant(_, the(_), E1, [], sem(parent)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, some(_), E1, sem(1), sem(parent)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }

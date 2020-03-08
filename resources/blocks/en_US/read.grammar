@@ -1,28 +1,35 @@
 [
-    { rule: adjp(E1) -> taller() than() np(E2),                            sense: taller(E1, E2) }
-    { rule: adjp(E1) -> narrower() than() np(E2),                          sense: narrower(E1, E2) }
-
-    { rule: vgp(P1) -> pick(P1) up(P1) np(E1),                             sense: pick_up(P1, E1) }
-    { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
-    { rule: vgp(P1) -> find(P1) np(E1),                                    sense: find(P1, E1) }
-    { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                     sense: put_into(P1, E1, E2) }
+    /* quantifiers */
 
     { rule: qp(E1) -> a(E1),                                               sense: number(E1, 1) }
     { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
     { rule: qp(E1) -> at() least() one(),                                  sense: some(E1) }
 
-    { rule: adjp(E1) -> adjective(E1) }
+    /* verbs */
 
-    { rule: hollow_non_finite_clause(E1) -> np(S1) to() pick(P1) up(),     sense: pick_up(P1, S1, E1) }
+    { rule: vgp(P1) -> pick(P1) up() np(E1),                             sense: pick_up(P1, E1) }
+    { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
+    { rule: vgp(P1) -> find(P1) np(E1),                                    sense: find(P1, E1) }
+    { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                     sense: put_into(P1, E1, E2) }
 
-    { rule: special_declarative_clause(E1) -> np(S1) tell(P1) hollow_non_finite_clause(E1),     sense: tell(P1, S1) }
+    { rule: vp(P1, E1) -> np(E2) to() pick(P1) up(),                       sense: pick_up(P1, E2, E1) }
 
-    { rule: relative_clause(E1) -> which(E1) copula(C1) adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be(C1) holding(P1),          sense: hold(P1, E2, E1) }
-    { rule: relative_clause(E1) -> which(E1) special_declarative_clause(E1) }
+    { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, P2) }
 
     { rule: vp(P1) -> vp(P1) pp(P1) }
     { rule: vp(P1) -> vgp(P1) }
+
+    /* nouns */
+
+    { rule: adjp(E1) -> taller() than() np(E2),                            sense: taller(E1, E2) }
+    { rule: adjp(E1) -> narrower() than() np(E2),                          sense: narrower(E1, E2) }
+    { rule: adjp(E1) -> adjective(E1) }
+
+    { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
+
+    { rule: relative_clause(E1) -> which() copula() adjp(E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be() holding(P1),            sense: hold(P1, E2, E1) }
+    { rule: relative_clause(E1) -> which() vp_dep(P1, E1) }
 
     { rule: np(R1) -> qp(Q1) nbar(R1),                                     sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
     { rule: np(E1) -> nbar(E1),                                            sense: quant(Q1, some(Q1), E1, sem(1), sem(parent)) }
@@ -34,7 +41,7 @@
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E1) -> of() them(E1),                                     sense: they(E1) }
 
-    { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
+    /* Sentences */
 
     { rule: what_clause(P1, E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
     { rule: what_clause(P1, E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }

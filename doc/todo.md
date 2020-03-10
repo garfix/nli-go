@@ -1,6 +1,7 @@
 # Todo
 
-* the lexicon can go away completely
+* multiple entities in the lexicon
+* document explicit references
 * remove solution routes altogether; rebuild the solver
 * map relations to database => not many-to-many, but 1-to-many
 * NewRelationizer: pointer, geen kopie maken

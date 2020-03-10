@@ -8,7 +8,13 @@
     is(`:b7`, block)
     is(`:b10`, block)
 
+    name(`:b1`, 'the red cube')
+    name(`:b2`, 'the pyramid b2')
+    name(`:b3`, 'the block b3')
     name(`:b4`, 'the blue pyramid')
+    name(`:b5`, 'the pyramid b5')
+    name(`:b6`, 'the block b6')
+    name(`:b7`, 'the block b7')
     name(`:b10`, 'the blue block')
     name(`:box`, 'the box')
 

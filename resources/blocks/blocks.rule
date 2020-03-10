@@ -7,10 +7,14 @@
     /* inferences */
     hold(P1, E1, E2) :- grasping(E1, E2);
     you(E1) :- ;
+    i(E1) :- ;
+    tell(P1, P2) :- ;
     raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
     height(E, H) :- size(E, _, _, H);
+    width(E, W) :- size(E, W, _, _);
     big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
     taller(A, B) :- height(A, Ha) height(B, Hb) greater_than(Ha, Hb);
+    narrower(A, B) :- width(A, Wa) width(B, Wb) less_than(Wa, Wb);
 
     /* storage */
     make_containing(A, B) :- assert(do_contain(_, A, B));

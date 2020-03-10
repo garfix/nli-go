@@ -22,6 +22,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	quantifier := quant.Arguments[mentalese.QuantQuantifierIndex]
+	rangeSet := quant.Arguments[mentalese.QuantRangeIndex]
 	count := 0
 
 	// pick the number from the quantifier, if applicable
@@ -33,11 +34,13 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 	// solve the range
 	rangeBindings := []mentalese.Binding{}
 
-	isTheRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateThe
-	isAllRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateAll
-	isSomeRange := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateSome
+	isTheQuantifier := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateThe
+	isAllQuantifier := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateAll
+	isSomeQuantifier := quantifier.TermValueRelationSet[0].Predicate == mentalese.PredicateSome
 
-	if isTheRange {
+	isReference := len(rangeSet.TermValueRelationSet) > 0 && rangeSet.TermValueRelationSet[0].Predicate == mentalese.PredicateReference
+
+	if isTheQuantifier || isReference {
 		count = 1
 
 		// try the anaphora queue first
@@ -108,21 +111,21 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		}
 	}
 
-	if isTheRange {
+	if isTheQuantifier {
 		// THE
 		if len(groupedScopeBindings) == 1 {
 			return scopeBindings
 		} else {
 			return mentalese.Bindings{}
 		}
-	} else if isAllRange {
+	} else if isAllQuantifier {
 		// ALL
 		if len(groupedScopeBindings) == len(rangeBindings) {
 			return scopeBindings
 		} else {
 			return mentalese.Bindings{}
 		}
-	} else if isSomeRange {
+	} else if isSomeQuantifier {
 		// SOME
 		if len(groupedScopeBindings) > 0 {
 			return scopeBindings

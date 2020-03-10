@@ -33,13 +33,12 @@
 
     { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
     { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1), sem(parent)) }
-    { rule: np(E1) -> it(E1),                                              sense: quant(_, the(_), E1, [], sem(parent)) }
     { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, all(_), E1, sem(1), sem(parent)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> them(E1),                                     sense: they(E1) }
+    { rule: nbar(E1) -> them(E1) }
 
     /* Sentences */
 

@@ -7,4 +7,6 @@
     yes_no()
     command(_)
     number(_, _)
+    reference(_)
+    select(_)
 ]

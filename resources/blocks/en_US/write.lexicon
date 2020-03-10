@@ -3,6 +3,7 @@
     { form: 'none',	        pos: none }
     { form: 'of',	        pos: of }
     { form: 'them',	        pos: them }
+    { form: 'yes',	        pos: yes }
 
     { form: 'one', pos: named_number, condition: a_number(1) }
     { form: 'two', pos: named_number, condition: a_number(2) }
@@ -15,4 +16,5 @@
     { form: 'nine', pos: named_number, condition: a_number(9) }
     { form: 'ten', pos: named_number, condition: a_number(10) }
 
+    { form: ',',                 pos: comma }
 ]

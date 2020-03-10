@@ -1,3 +1,7 @@
+# 2020-03-10
+
+I started using explicit reference predicates. I need to document this.
+
 # 2020-03-07
 
 It's now possible to provide multiple arguments to the grammar rewrite rules. I wrote a test "filler stack test" that

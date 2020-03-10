@@ -59,7 +59,8 @@
     { form: 'i',                 pos: pronoun,      sense: i(E) }
 
     { form: 'it',                pos: it }
-    { form: 'them',              pos: them }
+    { form: 'it',                pos: pronoun,       sense: reference(E) }
+    { form: 'them',              pos: them,       sense: reference(E) }
 
     { form: '.',                 pos: period }
     { form: '?',                 pos: question_mark }

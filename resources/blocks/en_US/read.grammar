@@ -7,17 +7,16 @@
 
     /* verbs */
 
-    { rule: vgp(P1) -> pick(P1) up() np(E1),                               sense: pick_up(P1, E1) }
-    { rule: vgp(P1) -> grasp(P1) np(E1),                                   sense: grasp(P1, E1) }
-    { rule: vgp(P1) -> find(P1) np(E1),                                    sense: find(P1, E1) }
-    { rule: vgp(P1) -> put(P1) np(E1) into(P1) np(E2),                     sense: put_into(P1, E1, E2) }
+    { rule: tv(P1, E1, E2) -> pick() up(),                                 sense: pick_up(P1, E2) }
+    { rule: tv(P1, E1, E2) -> grasp(),                                     sense: grasp(P1, E2) }
+    { rule: tv(P1, E1, E2) -> find(),                                      sense: find(P1, E2) }
+    { rule: tv_gerund(P1, E1, E2) -> holding(),                            sense: hold(P1, E1, E2) }
 
-    { rule: vp(P1, E1) -> np(E2) to() pick(P1) up(),                       sense: pick_up(P1, E2, E1) }
+    { rule: vp(P1) -> tv(P1, _, E1) np(E1) }
+    { rule: vp(P1) -> put() np(E1) into() np(E2),                          sense: put_into(P1, E1, E2) }
+    { rule: vp(P1, E1) -> np(E2) to() tv(P1, _, E1) }
 
     { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, sem(3)) }
-
-    { rule: vp(P1) -> vp(P1) pp(P1) }
-    { rule: vp(P1) -> vgp(P1) }
 
     /* nouns */
 
@@ -28,7 +27,7 @@
     { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
 
     { rule: relative_clause(E1) -> which() copula() adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be() holding(P1),            sense: hold(P1, E2, E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be() tv_gerund(P1, E2, E1) }
     { rule: relative_clause(E1) -> which() vp_dep(P1, E1) }
 
     { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }

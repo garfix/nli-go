@@ -1,7 +1,9 @@
 # Todo
 
-* multiple entities in the lexicon
-* document explicit references
+* allow real zero-argument predications (do not implicitly insert '_' as argument)
+* earley parser optimization: do not "predict" rules with zero arguments
+* phase out the lexicon
+* document 'explicit references'
 * remove solution routes altogether; rebuild the solver
 * map relations to database => not many-to-many, but 1-to-many
 * NewRelationizer: pointer, geen kopie maken

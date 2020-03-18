@@ -25,15 +25,15 @@ func TestFillerStack(t *testing.T) {
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		{ form: 'which', pos: which }
-		{ form: 'were', pos: be }
-		{ form: 'babies', pos: noun, 		sense: baby(E) }
-		{ form: 'toys', pos: noun, 			sense: toy(E) }
-		{ form: 'the', pos: qp, 			sense: the(E) }
-		{ form: 'easiest', pos: adverb, 	sense: easiest(E) }
-		{ form: 'to', pos: to }
-		{ form: 'take', pos: take }
-		{ form: 'from', pos: from }
+		{ form: 'which', pos: which() }
+		{ form: 'were', pos: be() }
+		{ form: 'babies', pos: noun(R), 		sense: baby(R) }
+		{ form: 'toys', pos: noun(E), 			sense: toy(E) }
+		{ form: 'the', pos: qp(E), 				sense: the(E) }
+		{ form: 'easiest', pos: adverb(E), 		sense: easiest(E) }
+		{ form: 'to', pos: to() }
+		{ form: 'take', pos: take() }
+		{ form: 'from', pos: from() }
 	]`)
 	log := common.NewSystemLog(true)
 

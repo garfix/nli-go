@@ -148,6 +148,16 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	if !lexItemFound && nextConsequent == ProperNounCategory {
 		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 	}
+
+	if !lexItemFound {
+		if
+		(nextConsequent == strings.ToLower(endWord)) &&
+		(len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 1) &&
+		(state.rule.GetConsequentVariables(state.dotPosition - 1)[0] == "_") {
+			lexItemFound = true
+		}
+	}
+
 	if lexItemFound {
 
 		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, [][]string{{"a"}, {"b"}}, mentalese.RelationSet{})

@@ -240,6 +240,10 @@ func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, bindin
 
 		newBindings = solver.SolveNot(goal, binding)
 
+	} else if goal.Predicate == mentalese.PredicateCall {
+
+		newBindings = solver.Call(goal, binding)
+
 	}
 
 	solver.log.EndDebug("NestedStructureBase BindChildStructures", newBindings)

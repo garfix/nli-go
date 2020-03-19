@@ -1,3 +1,69 @@
+# 2020-03-19
+
+My problem is solved in Prolog by using the meta predicate `call`. So I can solve it this way:
+
+    tell(P1, P2) :- call(P2);
+
+I just implemented this.
+
+Now there is the thing with "to pick up". Up until now I interpreted this part as `pick_up()`, but now there's a
+problem. `pick_up()` is a command that is executed immediately. I don't want that in this case. In this case "pick up"
+must be interpreted declaratively. And the syntax helps here, in the form of the infinitive.
+
+https://en.wikipedia.org/wiki/Infinitive#Uses_of_the_infinitive
+
+So I must make another distinction between a declarative relation and a imperative relation.
+
+# 2020-03-18
+
+Is at least one of them narrower than the one which I told you to pick up ?
+
+    [
+        question(S11) 
+        quant(
+            Q13, [some(Q13)], 
+            E18, [reference(E18)], 
+            [
+                select(E18) 
+                quant(
+                    Q14, [the(Q14)], 
+                    E19, [quant(
+                        _, [all(_)], 
+                        P9, [i(P9)], 
+                        [
+                            tell(P8, [
+                                quant(
+                                    _, [all(_)], 
+                                    E20, [you(E20)], 
+                                    [
+                                        pick_up(P9, E19)
+                                    ]
+                                )
+                            ])
+                        ]
+                    )], 
+                    [
+                        narrower(E18, E19)
+                    ]
+                )
+            ]
+        )
+    ]
+
+Note the impressive "range" of this question. Where it is usually just "men" or something. Here it is "the one which I
+told you to pick up"
+
+Current problem: when executing
+
+    tell(me,
+        pick_up(P5, you, E3))
+
+I have the rule:
+
+    tell(P1, P2) :- ;
+
+I now must find a way to have the second argument of tell() executed.
+
 # 2020-03-10
 
 I started using explicit reference predicates. I need to document this.

@@ -48,4 +48,5 @@ Currently these are the nested structures:
     quant()
     sequence()
     not()
+    call()
 

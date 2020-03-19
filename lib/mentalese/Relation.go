@@ -14,6 +14,7 @@ const PredicateQuant = "quant"
 const PredicateSem = "sem"
 const PredicateSequence = "sequence"
 const PredicateNot = "not"
+const PredicateCall = "call"
 const PredicateName = "name"
 
 const PredicateAssert = "assert"

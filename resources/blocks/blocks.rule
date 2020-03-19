@@ -8,7 +8,7 @@
     hold(P1, E1, E2) :- grasping(E1, E2);
     you(E1) :- ;
     i(E1) :- ;
-    tell(P1, P2) :- ;
+    tell(P1, P2) :- call(P2);
     raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
     height(E, H) :- size(E, _, _, H);
     width(E, W) :- size(E, W, _, _);

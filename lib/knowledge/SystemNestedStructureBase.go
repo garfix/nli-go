@@ -21,12 +21,11 @@ func NewSystemNestedStructureBase(log *common.SystemLog) *SystemNestedStructureB
 func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
 
 	matchingGroups := []RelationGroup{}
-	predicates := []string{ mentalese.PredicateQuant, mentalese.PredicateSequence, mentalese.PredicateNot }
+	predicates := []string{ mentalese.PredicateQuant, mentalese.PredicateSequence, mentalese.PredicateNot, mentalese.PredicateCall }
 
 	for _, setRelation := range set {
-		for _, predicate:= range predicates {
+		for _, predicate := range predicates {
 			if predicate == setRelation.Predicate {
-// TODO calculate real cost
 				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, worst_cost})
 			}
 		}

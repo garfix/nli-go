@@ -1,8 +1,8 @@
 [
     /* commands */
-    pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
-    find(P1, E1) :- command(P1);
-    put_into(Ev, A, B) :- pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
+    do_pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
+    do_find(P1, E1) :- command(P1);
+    do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
 
     /* inferences */
     hold(P1, E1, E2) :- grasping(E1, E2);

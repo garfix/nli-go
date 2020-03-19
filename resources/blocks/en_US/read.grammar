@@ -7,14 +7,15 @@
 
     /* verbs */
 
-    { rule: tv(P1, E1, E2) -> pick() up(),                                 sense: pick_up(P1, E2) }
+    { rule: tv(P1, E1, E2) -> pick() up(),                                 sense: do_pick_up(P1, E2) }
     { rule: tv(P1, E1, E2) -> grasp(),                                     sense: grasp(P1, E2) }
-    { rule: tv(P1, E1, E2) -> find(),                                      sense: find(P1, E2) }
+    { rule: tv(P1, E1, E2) -> find(),                                      sense: do_find(P1, E2) }
     { rule: tv_gerund(P1, E1, E2) -> holding(),                            sense: hold(P1, E1, E2) }
+    { rule: tv_infinitive(P1, E1, E2) -> pick() up(),                      sense: pick_up(P1, E2) }
 
     { rule: vp(P1) -> tv(P1, _, E1) np(E1) }
-    { rule: vp(P1) -> put() np(E1) into() np(E2),                          sense: put_into(P1, E1, E2) }
-    { rule: vp(P1, E1) -> np(E2) to() tv(P1, _, E1) }
+    { rule: vp(P1) -> put() np(E1) into() np(E2),                          sense: do_put_into(P1, E1, E2) }
+    { rule: vp(P1, E1) -> np(E2) to() tv_infinitive(P1, _, E1) }
 
     { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, sem(3)) }
 

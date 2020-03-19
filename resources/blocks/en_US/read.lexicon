@@ -38,7 +38,6 @@
     { form: 'put',               pos: put }
     { form: 'find',              pos: find }
     { form: 'holding',           pos: holding }
-    { form: 'pick',              pos: pick }
     { form: 'picks',             pos: pick }
     { form: 'picked',            pos: pick }
     { form: 'told',              pos: tell }

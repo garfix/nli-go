@@ -10,6 +10,5 @@
     do_contain(P, A, B) => contain(A, B);
     grasping(P1, E1) => grasping(P1, E1);
     size(E, Width, Length, Height) => size(E, Width, Length, Height);
-    dialog_subject(E) => dialog_subject(E);
     name(A, N) => name(A, N);
 ]

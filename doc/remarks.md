@@ -11,6 +11,20 @@ problem that object will (eventually) find all objects in the (restricted) unive
 I could also use "reference()" as a sense for "one" but than the block must still be in the anaphora queue, and that is
 not always acceptable.
 
+===
+
+It is not funny in the real world, but you can grin about it in the blocks world. It works. When the system handles
+"one", it reads `object()` and it matches this to all blocks and pyramids in the microworld. There are only 8 of them so
+going through them all is acceptable practise here. The process stops at the second block, so we're lucky. As I said
+this would be too slow in a real database, but remember this:
+
+    Simply questions should be answered fast; it should be possible (but not necessarily fast) to ask complicated questions.
+
+And this question is undeniably complicated.
+
+Anyway, my system would be almost equally slow had the question been about "block" in stead of "one"; the difference is
+just two pyramids. That's why I decided to accept this (simple!) solution.
+
 # 2020-03-22
 
 To solve yesterday's problem, lacking a better solution, I will introduce "primed variables". These are variables whose

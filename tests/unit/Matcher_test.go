@@ -43,10 +43,6 @@ func TestMatchTwoTerms(t *testing.T) {
 		{"E1", "atom1", "{E1: atom1}", "{E1: atom1}", true},
 		{"E1", "atom2", "{E1: X1}", "{E1: X1}", false},
 
-		// special case: a "primed" variable, that has a "null value" that may be filled later
-		{"E1", "atom1", "{E1: _}", "{E1: atom1}", true},
-		{"E1", "X1", "{E1: _}", "{E1: _}", true},
-
 		// bind anonymous variable to anything
 		{"_", "X1", "{E1: atom1}", "{E1: atom1}", true},
 		{"_", "_", "{E1: atom1}", "{E1: atom1}", true},

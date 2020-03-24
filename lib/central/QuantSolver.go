@@ -69,14 +69,7 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		}
 
 		if !refFound {
-			primedBinding := mentalese.Binding{ rangeVariable: mentalese.NewAnonymousVariable() }.Merge(binding)
-			tempRangeBindings := solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{ primedBinding })
-			rangeBindings = []mentalese.Binding{}
-			for _, b := range tempRangeBindings {
-				if !b[rangeVariable].IsAnonymousVariable() {
-					rangeBindings = append(rangeBindings, b)
-				}
-			}
+			rangeBindings = solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
 		}
 
 		if len(rangeBindings) != 1 {
@@ -90,7 +83,6 @@ func (solver ProblemSolver) SolveQuant(quant mentalese.Relation, binding mentale
 		}
 
 	} else {
-		// todo: prime here too?
 		rangeBindings = solver.SolveRelationSet(quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet, mentalese.Bindings{binding})
 	}
 

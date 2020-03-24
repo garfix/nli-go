@@ -6,6 +6,7 @@
 
     /* inferences */
     object(E1) :- block(E1);
+    object(E1) :- pyramid(E1);
     hold(P1, E1, E2) :- grasping(E1, E2);
     you(E1) :- ;
     i(E1) :- ;

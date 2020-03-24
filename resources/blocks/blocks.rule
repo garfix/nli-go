@@ -1,10 +1,11 @@
 [
     /* commands */
-    do_pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand();
+    do_pick_up(P1, E1) :- command(P1) at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand() memo(pick_up(123, E1));
     do_find(P1, E1) :- command(P1);
     do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
 
     /* inferences */
+    object(E1) :- block(E1);
     hold(P1, E1, E2) :- grasping(E1, E2);
     you(E1) :- ;
     i(E1) :- ;
@@ -17,6 +18,7 @@
     narrower(A, B) :- width(A, Wa) width(B, Wb) less_than(Wa, Wb);
 
     /* storage */
+    memo(P1) :- assert(P1);
     make_containing(A, B) :- assert(do_contain(_, A, B));
     move_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
     grasp(X) :- retract(grasping(_, _)) assert(grasping(`:now`, X));

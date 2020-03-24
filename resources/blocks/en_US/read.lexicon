@@ -25,7 +25,7 @@
     { form: 'than',              pos: than }
 
     { form: 'one',               pos: one }
-    { form: 'one',               pos: noun }
+    { form: 'one',               pos: noun,     sense: object(E) }
 
     { form: 'block',             pos: noun,     sense: block(E) }
     { form: 'blocks',            pos: noun,     sense: block(E) }

@@ -108,9 +108,11 @@ func (factBase *SparqlFactBase) GetSharedId(inId string, entityType string) stri
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation) mentalese.Bindings {
+func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
+
+	relation = relation.BindSingleRelationSingleBinding(binding)
 
 	bindings := mentalese.Bindings{}
 

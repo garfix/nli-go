@@ -194,6 +194,15 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 				// A, B {A:C}
 				// A, B {A:13}
 				success = true
+
+			} else if value.IsAnonymousVariable() {
+				// the "primed variable"
+				// A, B {A:_} => {A: B}
+				success = true
+				newBinding := subjectBinding.Copy()
+				newBinding[subjectArgument.String()] = patternArgument
+				return newBinding, true
+
 			} else {
 				// A, 13 {A:B}
 				// A, 13 {A:15}

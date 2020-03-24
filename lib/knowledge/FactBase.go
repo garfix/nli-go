@@ -6,7 +6,7 @@ import (
 
 type FactBase interface {
 	KnowledgeBase
-	MatchRelationToDatabase(needleRelation mentalese.Relation) mentalese.Bindings
+	MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings
 	Assert(relation mentalese.Relation)
 	Retract(relation mentalese.Relation)
 	GetMappings() []mentalese.RelationTransformation

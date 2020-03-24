@@ -7,6 +7,75 @@ import (
 	"testing"
 )
 
+func TestMatchTwoTerms(t *testing.T) {
+
+	parser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
+	tests := []struct {
+		needle      string
+		haystack    string
+		binding     string
+		wantBinding string
+		wantMatch   bool
+	}{
+		// keep extra bindings
+		{"E1", "X1", "{F1: 12}", "{E1: X1, F1: 12}", true},
+
+		// check if type is checked
+		{"E1", "'atom1'", "{E1: atom1}", "{E1: atom1}", false},
+
+		// bind variable to anything, no bindings
+		// only this time we use all non-variable types (from here we use only atom)
+		{"E1", "X1", "{}", "{E1: X1}", true},
+		{"E1", "E1", "{}", "{E1: E1}", true},
+		{"E1", "uncle", "{}", "{E1: uncle}", true},
+		{"E1", "123", "{}", "{E1: 123}", true},
+		{"E1", "`:id11`", "{}", "{E1: `:id11`}", true},
+		{"E1", "/deer/", "{}", "{E1: /deer/}", true},
+		{"E1", "'grass'", "{}", "{E1: 'grass'}", true},
+		{"E1", "[son_of(blagger)]", "{}", "{E1: [son_of(blagger)]}", true},
+		{"E1", "_", "{}", "{}", true},
+
+		// bind variable to anything, with bindings
+		{"E1", "X1", "{E1: atom1}", "{E1: atom1}", true},
+		{"E1", "_", "{E1: atom1}", "{E1: atom1}", true},
+		{"E1", "atom1", "{E1: atom1}", "{E1: atom1}", true},
+		{"E1", "atom2", "{E1: X1}", "{E1: X1}", false},
+
+		// special case: a "primed" variable, that has a "null value" that may be filled later
+		{"E1", "atom1", "{E1: _}", "{E1: atom1}", true},
+		{"E1", "X1", "{E1: _}", "{E1: _}", true},
+
+		// bind anonymous variable to anything
+		{"_", "X1", "{E1: atom1}", "{E1: atom1}", true},
+		{"_", "_", "{E1: atom1}", "{E1: atom1}", true},
+		{"_", "atom1", "{E1: atom1}", "{E1: atom1}", true},
+		{"_", "atom2", "{E1: atom1}", "{E1: atom1}", true},
+
+		// bind constant to anything
+		{"atom1", "atom1", "{E1: 123}", "{E1: 123}", true},
+		{"atom1", "atom2", "{E1: 123}", "{E1: 123}", false},
+		{"atom1", "X1", "{E1: 123}", "{E1: 123}", true},
+		{"atom1", "_", "{E1: 123}", "{E1: 123}", true},
+	}
+
+	for _, test := range tests {
+
+		needle := parser.CreateTerm(test.needle)
+		haystack := parser.CreateTerm(test.haystack)
+		binding := parser.CreateBinding(test.binding)
+		wantBinding := parser.CreateBinding(test.wantBinding)
+		wantMatch := test.wantMatch
+
+		resultBinding, resultMatch := matcher.MatchTerm(needle, haystack, binding)
+
+		if !resultBinding.Equals(wantBinding) || resultMatch != wantMatch {
+			t.Errorf("MatchTwoTerms(%v %v %v): got %v %v, want %v %v", needle, haystack, binding, resultBinding, resultMatch, wantBinding, wantMatch)
+		}
+	}
+}
+
 func TestMatchTwoRelations(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()

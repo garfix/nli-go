@@ -101,7 +101,7 @@ func (term Term) Copy() Term {
 
 func (term Term) Bind(binding Binding) Term {
 	arg := term
-	if term.IsVariable() {
+	if term.IsVariable() || term.IsAnonymousVariable() {
 		newValue, found := binding[term.TermValue]
 		if found {
 			arg = newValue

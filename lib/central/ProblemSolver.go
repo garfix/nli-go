@@ -360,8 +360,8 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 
 		for _, binding := range bindings {
 
-			boundRelation := relation.BindSingleRelationSingleBinding(binding)
-			resultBindings := factBase.MatchRelationToDatabase(boundRelation)
+			//boundRelation := relation.BindSingleRelationSingleBinding(binding)
+			resultBindings := factBase.MatchRelationToDatabase(relation, binding)
 
 			// found bindings must be extended with the bindings already present
 			for _, resultBinding := range resultBindings {
@@ -440,7 +440,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	solver.log.StartDebug("SolveSingleRelationSingleBindingSingleRuleBase", goalRelation, binding)
 
-	inputVariables := goalRelation.GetVariableNames()
+	//inputVariables := goalRelation.GetVariableNames()
 
 	goalBindings := mentalese.Bindings{}
 
@@ -459,7 +459,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		for _, subgoalResultBinding := range subgoalResultBindings {
 
 			// filter out the input variables
-			filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
+			filteredBinding := subgoalResultBinding//.FilterVariablesByName(inputVariables)
 
 			// make sure all variables of the original binding are present
 			goalBinding := binding.Merge(filteredBinding)

@@ -107,9 +107,11 @@ func (factBase *MySqlFactBase) AddTableDescription(tableName string, columns []s
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) mentalese.Bindings {
+func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", needleRelation)
+
+	needleRelation = needleRelation.BindSingleRelationSingleBinding(binding)
 
 	dbBindings := mentalese.Bindings{}
 

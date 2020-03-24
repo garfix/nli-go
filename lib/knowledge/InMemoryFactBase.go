@@ -129,8 +129,8 @@ func (factBase *InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
 	factBase.facts = newFacts
 }
 
-func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation) mentalese.Bindings {
+func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
-	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, mentalese.Binding{})
+	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, binding)
 	return bindings
 }

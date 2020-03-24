@@ -1,3 +1,60 @@
+# 2020-03-24
+
+Replacing "the one" with "the block" solves the problem completely! This is because "the block" creates a normal range
+that results in a bounded range variable _before_ the dive into the relative clause.
+
+But I can't do that of course. What I can do is create the sense "object()" for "one". But that still leaves me the
+problem that object will (eventually) find all objects in the (restricted) universe. That is not funny!
+
+    object(E1) :- block(E1); 
+
+I could also use "reference()" as a sense for "one" but than the block must still be in the anaphora queue, and that is
+not always acceptable.
+
+# 2020-03-22
+
+To solve yesterday's problem, lacking a better solution, I will introduce "primed variables". These are variables whose
+variable was primed (pre-activated) with a null-value (the anonymous variable):
+
+    E1 { E1: _ }
+
+When this variable is bound to anything else, the binding will _change_ to the new value:
+
+    E1 { E1: `:id9755` }
+
+This way, I can introduce a variable early and it will be active during the whole process of problem solving.
+
+In this case, it will make sure that range variable will hold its binding.
+
+===
+
+I tried this, but it doesn't work very well. Now a matching with a primed variable always produces results, so I would
+have to make changes in a large number of places.
+
+# 2020-03-21
+
+Next problem: in the semantic structure there is a range
+
+    E19, [quant(
+        _, [all(_)], 
+        P9, [i(P9)], 
+        [
+            tell(P8, [
+                quant(
+                    _, [all(_)], 
+                    E20, [you(E20)], 
+                    [
+                        pick_up(P9, E19)
+                    ]
+                )
+            ])
+        ]
+    )]
+
+And this range does not deliver the right E19's. This is because E19 only occurs first at a deep level (`pick_up(P9,
+E19)`), and it doesn't make it all the way up to the root of the range. I think I should solve this by adding E19 to the
+binding from the start, giving it an "empty binding", or something. But I don't like it.
+
 # 2020-03-19
 
 My problem is solved in Prolog by using the meta predicate `call`. So I can solve it this way:

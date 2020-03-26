@@ -35,7 +35,7 @@ func (chart *chart) isStateInChart(state chartState, position int) bool {
 
 	for _, presentState := range chart.states[position] {
 		if presentState.Equals(state) {
-			return presentState.Equals(state)
+			return true
 		}
 	}
 

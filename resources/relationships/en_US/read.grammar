@@ -23,7 +23,7 @@
     { rule: interrogative(P1) -> which(E1) which_clause(E1),                    sense: which(E1) }
     { rule: interrogative(P1) -> how() many() how_many_clause(E1),              sense: how_many(E1) }
     { rule: interrogative(P1) -> aux_do() subject_complement_clause2(P1), sense: yes_no(_) }
-    { rule: interrogative(P1) -> copula() copula_clause(),                      sense: yes_no(_) }
+    { rule: interrogative(P1) -> copula() copula_clause(P1),                    sense: yes_no(_) }
 
     { rule: interrogative(S1) -> interrogative(S1) question_mark() }
     { rule: s(S1) -> interrogative(S1),                              sense: question(S1) }

@@ -40,9 +40,10 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 	nameBinding := mentalese.Binding{}
 	relationSet := mentalese.RelationSet{}
 	var makeConstant = false
-	firstAntecedentVariable := antecedentVariables[0]
+
 
 	if len(node.nameInformations) > 0 {
+		firstAntecedentVariable := antecedentVariables[0]
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
 			nameBinding[firstAntecedentVariable] = mentalese.NewId(nameInformation.SharedId, nameInformation.EntityType)
@@ -55,8 +56,12 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 		// leaf state rule: category -> word
 		lexItem, _, isRegExp := relationizer.lexicon.GetLexItem(node.form, node.category)
-		lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, firstAntecedentVariable)
-		relationSet = lexItemRelations
+		if len(antecedentVariables) > 0 {
+			lexItemRelations := relationizer.senseBuilder.CreateLexItemRelations(lexItem.RelationTemplates, antecedentVariables[0])
+			relationSet = lexItemRelations
+		} else {
+			relationSet = mentalese.RelationSet{}
+		}
 		makeConstant = isRegExp || isProperNoun
 
 	} else {
@@ -78,14 +83,17 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 			nameBinding = nameBinding.Merge(childNameBinding)
 			boundChildSets = append(boundChildSets, childRelations)
 
-			firstConsequentVariable := consequentVariables[0]
+			if len(consequentVariables) > 0 {
 
-			if makeConstant {
-				_, err := strconv.Atoi(childNode.form)
-				if err == nil {
-					variableMap[firstConsequentVariable] = mentalese.NewNumber(childNode.form)
-				} else {
-					variableMap[firstConsequentVariable] = mentalese.NewString(childNode.form)
+				firstConsequentVariable := consequentVariables[0]
+
+				if makeConstant {
+					_, err := strconv.Atoi(childNode.form)
+					if err == nil {
+						variableMap[firstConsequentVariable] = mentalese.NewNumber(childNode.form)
+					} else {
+						variableMap[firstConsequentVariable] = mentalese.NewString(childNode.form)
+					}
 				}
 			}
 		}

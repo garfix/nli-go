@@ -2,7 +2,6 @@ package earley
 
 import (
 	"nli-go/lib/central"
-	"nli-go/lib/common"
 	"nli-go/lib/parse"
 	"strconv"
 )
@@ -45,7 +44,7 @@ func (state chartState) Equals(otherState chartState) bool {
 		state.dotPosition == otherState.dotPosition &&
 		state.startWordIndex == otherState.startWordIndex &&
 		state.endWordIndex == otherState.endWordIndex &&
-		common.IntArrayEquals(state.parentIds, otherState.parentIds)
+		true
 }
 
 func (state chartState) ToString(chart *chart) string {

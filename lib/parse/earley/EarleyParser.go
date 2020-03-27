@@ -152,8 +152,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	if !lexItemFound {
 		if
 		(nextConsequent == strings.ToLower(endWord)) &&
-		(len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 1) &&
-		(state.rule.GetConsequentVariables(state.dotPosition - 1)[0] == "_") {
+		(len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
 			lexItemFound = true
 		}
 	}

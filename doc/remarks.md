@@ -1,3 +1,12 @@
+# 2020-03-25
+
+Question 8:
+
+    Is it supported?
+    Yes, by the table
+
+Looks pretty easy. We'll see.
+
 # 2020-03-24
 
 Replacing "the one" with "the block" solves the problem completely! This is because "the block" creates a normal range

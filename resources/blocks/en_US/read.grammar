@@ -1,9 +1,13 @@
 [
     /* quantifiers */
 
-    { rule: qp(E1) -> a(E1),                                               sense: number(E1, 1) }
+    { rule: qp(E1) -> an(E1),                                              sense: number(E1, 1) }
     { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
     { rule: qp(E1) -> at() least() one() of(),                             sense: some(E1) }
+
+    { rule: an(E1) -> a() }
+    { rule: an(E1) -> an() }
+    { rule: the(E1) -> the() }
 
     /* verbs */
 
@@ -19,16 +23,31 @@
 
     { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, sem(3)) }
 
+    { rule: copula(C1) -> is() }
+    { rule: copula(C1) -> are() }
+
+    { rule: aux_be(A1) -> is() }
+    { rule: aux_be(A1) -> are() }
+
+    { rule: aux_do(A1) -> does() }
+
+    { rule: tell(P1) -> told() }
+    { rule: contain(P1) -> contain() }
+    { rule: support(P1) -> supported() }
+
     /* nouns */
 
     { rule: adjp(E1) -> taller() than() np(E2),                            sense: taller(E1, E2) }
     { rule: adjp(E1) -> narrower() than() np(E2),                          sense: narrower(E1, E2) }
     { rule: adjp(E1) -> adjective(E1) }
 
-    { rule: pp(E1) -> in() np(E2),                                         sense: do_contain(_, E2, E1) }
+    { rule: adjective(E1) -> red(), sense: red(E1) }
+    { rule: adjective(E1) -> big(), sense: big(E1) }
 
-    { rule: relative_clause(E1) -> which() copula() adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be() tv_gerund(P1, E2, E1) }
+    { rule: pp(E1) -> in() np(E2),                                         sense: contain(_, E2, E1) }
+
+    { rule: relative_clause(E1) -> which() copula(C1) adjp(E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1) }
     { rule: relative_clause(E1) -> which() vp_dep(P1, E1) }
 
     { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
@@ -38,18 +57,32 @@
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> them(E1) }
+    { rule: nbar(E1) -> them(),                                            sense: reference(E1) }
+
+    { rule: noun(E1) -> one(),                                             sense: object(E1) }
+    { rule: noun(E1) -> block(),                                           sense: block(E1) }
+    { rule: noun(E1) -> blocks(),                                          sense: block(E1) }
+    { rule: noun(E1) -> pyramid(),                                         sense: pyramid(E1) }
+    { rule: noun(E1) -> box(),                                             sense: box(E1) }
+
+    { rule: pronoun(E1) -> you(),                                          sense: you(E1) }
+    { rule: pronoun(E1) -> i(),                                            sense: i(E1) }
+    { rule: pronoun(E1) -> it(),                                           sense: reference(E1) }
+
+    /* Misc */
+
+    { rule: and(C1) -> and() }
 
     /* Sentences */
 
-    { rule: what_clause(P1, E2) -> aux_do() np(E1) contain(P1),                sense: do_contain(P1, E1, E2) }
-    { rule: what_clause(P1, E2) -> aux_be() np(E1) support(P1) by(),           sense: support(P1, E2, E1) }
+    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),          sense: contain(P1, E1, E2) }
+    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) support(P1) by(),     sense: support(P1, E2, E1) }
 
-    { rule: how_many_clause(P1, E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
+    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) not() pp(E1),     sense: not(sem(4)) }
 
     { rule: interrogative_clause(P1) -> what() what_clause(P1, E1),             sense: what(E1) }
     { rule: interrogative_clause(P1) -> how() many() how_many_clause(P1, E1),   sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula() np(E1) adjp(E1),               sense: select(E1) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),             sense: select(E1) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) question_mark() }
 

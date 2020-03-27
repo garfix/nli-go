@@ -20,7 +20,7 @@
 
     /* storage */
     memo(P1) :- assert(P1);
-    make_containing(A, B) :- assert(do_contain(_, A, B));
+    make_containing(A, B) :- assert(contain(_, A, B));
     move_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
     grasp(X) :- retract(grasping(_, _)) assert(grasping(`:now`, X));
     release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) assert(at(E1, X, Y, Z));

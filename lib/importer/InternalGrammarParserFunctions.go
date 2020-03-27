@@ -531,21 +531,13 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 			tailRelations, startIndex, ok = parser.parseRelations(tokens, startIndex)
 
 			for _, patternRelation := range tailRelations {
-				if len(patternRelation.Arguments) == 0 {
-					variable := mentalese.NewVariable("_")
-					patternRelation.Arguments = []mentalese.Term{ variable }
-				} else if !patternRelation.Arguments[0].IsVariable() {
-					ok = false
-				}
-				if ok {
-					syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
+				syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
 
-					list = []string{}
-					for _, argument := range patternRelation.Arguments {
-						list = append(list, argument.TermValue)
-					}
-					entityVariables = append(entityVariables, list)
+				list = []string{}
+				for _, argument := range patternRelation.Arguments {
+					list = append(list, argument.TermValue)
 				}
+				entityVariables = append(entityVariables, list)
 			}
 		}
 	}

@@ -73,6 +73,8 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 		}
 	}
 
+	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.rule.Sense, variableMap)
+
 	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 

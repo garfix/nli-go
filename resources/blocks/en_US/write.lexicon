@@ -4,6 +4,7 @@
     { form: 'of',	        pos: of }
     { form: 'them',	        pos: them }
     { form: 'yes',	        pos: yes }
+    { form: 'by',	        pos: by }
 
     { form: 'one', pos: named_number, condition: a_number(1) }
     { form: 'two', pos: named_number, condition: a_number(2) }

@@ -55,6 +55,23 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antece
 	return m
 }
 
+func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, variableMap map[string]mentalese.Term) map[string]mentalese.Term {
+
+	for _, relation := range sense {
+		for _, argument := range relation.Arguments {
+			if argument.IsVariable() {
+				variable := argument.TermValue
+				_, present := variableMap[variable]
+				if !present {
+					variableMap[variable] = mentalese.NewVariable(builder.GetNewVariable(variable))
+				}
+			}
+		}
+	}
+
+	return variableMap
+}
+
 // Create actual relations given a set of templates and a variable map (formal to actual variables)
 func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet, variableMap map[string]mentalese.Term) mentalese.RelationSet {
 

@@ -10,6 +10,14 @@ I can now do without the lexicon. Reasons for abandoning the lexicon were:
 - The 'part of speech' that was important in a lexicon was often used for semantic grammar purposes, and rightly so, so
     the concept turned into that was more naturally performed by the grammar
 
+===
+
+I solved question 8. I added the fact in the grammar that
+
+    passive form uses the past participle verb form (supported)
+
+It is different from the past tense form for irregular verbs.
+
 # 2020-03-25
 
 Question 8:

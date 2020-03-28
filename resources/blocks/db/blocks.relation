@@ -17,6 +17,7 @@
     name(`:b7`, 'the block b7')
     name(`:b10`, 'the blue block')
     name(`:box`, 'the box')
+    name(`:table`, 'the table')
 
     is(red, color)
     is(blue, color)

@@ -1,8 +1,8 @@
 # Todo
 
-* allow real zero-argument predications (do not implicitly insert '_' as argument)
-* earley parser optimization: do not "predict" rules with zero arguments
 * phase out the lexicon
+* remove the lexicon from the generation phase
+* remove cost function and everything related
 * document 'explicit references'
 * remove solution routes altogether; rebuild the solver
 * map relations to database => not many-to-many, but 1-to-many
@@ -10,7 +10,6 @@
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be
     solve some other way
 * entity type (multiple) inheritance
-* remove cost function and everything related
 
 ## Misc
 

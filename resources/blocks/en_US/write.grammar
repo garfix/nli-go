@@ -6,6 +6,7 @@
 
     { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
     { rule: s(S1) -> yes(S1) comma(S1) multiple_proper_noun(S1),                  condition: select(S1) and(S1, C1, C2) }
+    { rule: s(S1) -> yes(S1) comma(S1) by(P) multiple_proper_noun(S1),            condition: select_subject(S1) and(S1, C1, C2) }
     { rule: s(S1) -> none(S1),                                                    condition: none() }
 
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }

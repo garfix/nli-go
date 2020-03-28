@@ -61,4 +61,23 @@
             }
         ]
     }
+
+    /* Is supported? Yes, by ... */
+    {
+        condition: question(_) select_subject(B),
+        transformations: [
+            select_subject(B) => ;
+        ],
+        result: B,
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N),
+                answer: name(B, N) make_and(B, R) select_subject(R)
+            }
+            {
+                answer: none()
+            }
+        ]
+    }
 ]

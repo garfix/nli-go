@@ -33,7 +33,8 @@
 
     { rule: tell(P1) -> 'told' }
     { rule: contain(P1) -> 'contain' }
-    { rule: support(P1) -> 'supported' }
+
+    { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: support(P1, E2, E1) }
 
     /* nouns */
 
@@ -75,19 +76,20 @@
 
     /* Sentences */
 
-    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),          sense: contain(P1, E1, E2) }
-    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) support(P1) 'by',     sense: support(P1, E2, E1) }
+    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: contain(P1, E1, E2) }
+    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by' }
 
-    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),     sense: not(sem(4)) }
+    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: not(sem(4)) }
 
-    { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),             sense: what(E1) }
-    { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),   sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),             sense: select(E1) }
+    { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: what(E1) }
+    { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: how_many(E1) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: select(E1) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: select_subject(E2) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
-    { rule: imperative_clause(P1) -> vp(P1),                                sense: command(P1) }
-    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),  sense: sequence(C, sem(1), sem(3)) }
+    { rule: imperative_clause(P1) -> vp(P1),                                            sense: command(P1) }
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2), sense: sequence(C, sem(1), sem(3)) }
 
     { rule: imperative(P1) -> imperative_clause(P1) '.' }
     { rule: imperative(P1) -> imperative_clause(P1) }

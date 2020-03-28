@@ -1,4 +1,2 @@
 [
-    { form: '.',                 pos: period }
-    { form: '?',                 pos: question_mark }
 ]

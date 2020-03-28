@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
+	"regexp"
 	"strings"
 )
 
@@ -143,10 +144,22 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 	nameInformations := []central.NameInformation{}
+	lexItemFound := false
 
-	_, lexItemFound, _ := parser.lexicon.GetLexItem(endWord, nextConsequent)
-	if !lexItemFound && nextConsequent == ProperNounCategory {
-		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
+	if state.rule.GetConsequentPositionType(state.dotPosition - 1) == parse.PosTypeRegExp {
+		expression, err := regexp.Compile(nextConsequent)
+		if err == nil {
+			if expression.FindString(endWord) != "" {
+				lexItemFound = true
+			}
+		}
+	}
+
+	if !lexItemFound {
+		_, lexItemFound, _ = parser.lexicon.GetLexItem(endWord, nextConsequent)
+		if !lexItemFound && nextConsequent == ProperNounCategory {
+			lexItemFound, nameInformations = parser.isProperNoun(chart, state)
+		}
 	}
 
 	if !lexItemFound {

@@ -21,17 +21,17 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: nbar(E) -> noun(E) }
 		{ rule: nbar(E) -> adj(E) nbar(E) }
 		{ rule: vp(P) -> verb(P) }
+		{ rule: det(E1) -> 'the', sense: isa(E1, the) }
+		{ rule: det(E1) -> 'a' }
+		{ rule: adj(E1) -> 'shy' }
+		{ rule: adj(E1) -> 'small' }
+		{ rule: noun(E1) -> 'boy', sense: isa(E1, boy) }
+		{ rule: noun(E1) -> 'girl', sense: isa(E1, girl) }
+		{ rule: verb(P1) -> 'cries', sense: predication(P1, cry) }
+		{ rule: verb(P1) -> 'sings', sense: predication(P1, sing) }
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		{ form: 'the',			pos: det,            sense: isa(E, the) }
-		{ form: 'a',  			pos: det }
-		{ form: 'shy',			pos: adj }
-		{ form: 'small',		pos: adj }
-		{ form: 'boy',			pos: noun,			sense: isa(E, boy) }
-		{ form: 'girl',			pos: noun,			sense: isa(E, girl) }
-		{ form: 'cries',  		pos: verb,  		sense: predication(E, cry) }
-		{ form: 'sings',		pos: verb,			sense: predication(E, sing) }
 	]`)
 
 	log := common.NewSystemLog(false)
@@ -56,7 +56,7 @@ func TestEarleyParser(test *testing.T) {
 	if relations.String() != "[subject(S5, E5) determiner(E5, D5) isa(D5, the) isa(E5, girl) predication(S5, sing)]" {
 		test.Error(fmt.Sprintf("Relations: %v", relations))
 	}
-	if trees[0].String() != "[s [np [det the] [nbar [adj small] [nbar [adj shy] [nbar [noun girl]]]]] [vp [verb sings]]]" {
+	if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [sings sings]]]]" {
 		test.Error(fmt.Sprintf("tree: %v", trees[0].String()))
 	}
 }

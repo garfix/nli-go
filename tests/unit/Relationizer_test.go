@@ -28,19 +28,19 @@ func TestRelationizer(t *testing.T) {
 		{ rule: pp(E1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 	
 		{ rule: s_declarative(P1) -> np(E1) vp(P1),									 sense: subject(P1, E1) }
-		{ rule: s_declarative(P1) -> s_declarative(P1) period() }
+		{ rule: s_declarative(P1) -> s_declarative(P1) '.' }
 	
 		{ rule: s(S1) -> s_declarative(S1),											 sense: declaration(S1) }
+
+		{ rule: determiner(Q1) -> 'the', sense: isa(Q1, the) }
+		{ rule: noun(E1) -> 'book', sense: isa(E1, book) }
+		{ rule: verb(P1) -> 'falls', sense: isa(P1, fall) }
+		{ rule: preposition(P1) -> 'on', sense: isa(P1, on) }
+	    { rule: noun(E1) -> 'ground', sense: isa(E1, ground) }
 	
 	]`)
 
 	lexicon := internalGrammarParser.CreateLexicon(`[
-		{ form: 'the',        pos: determiner,        sense: isa(E, the) }
-		{ form: 'book',       pos: noun,              sense: isa(E, book) }
-		{ form: 'falls',      pos: verb,              sense: isa(E, fall) }
-		{ form: 'on',         pos: preposition,       sense: isa(E, on) }
-	    { form: 'ground',     pos: noun,       		  sense: isa(E, ground) }
-		{ form: '.',          pos: period }
 	]`)
 	log := common.NewSystemLog(false)
 

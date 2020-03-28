@@ -1,6 +1,9 @@
 package mentalese
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Term struct {
 	TermType             int
@@ -51,7 +54,11 @@ func (term Term) IsVariable() bool {
 }
 
 func (term Term) IsNumber() bool {
-	return term.TermType == TermNumber
+	if term.TermType == TermNumber {
+		return true
+	}
+	_, err := strconv.Atoi(term.TermValue)
+	return err == nil
 }
 
 func (term Term) IsId() bool {

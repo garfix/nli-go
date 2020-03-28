@@ -548,7 +548,15 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 					positionTypes = append(positionTypes, parse.PosTypeWordForm)
 					entityVariables = append(entityVariables, []string{})
 				} else {
-					break
+					tailRegExp, newStartIndex, isRegExp := parser.parseSingleToken(tokens, startIndex, t_regExp)
+					if isRegExp {
+						startIndex = newStartIndex
+						syntacticCategories = append(syntacticCategories, tailRegExp)
+						positionTypes = append(positionTypes, parse.PosTypeRegExp)
+						entityVariables = append(entityVariables, []string{})
+					} else {
+						break
+					}
 				}
 			}
 		}

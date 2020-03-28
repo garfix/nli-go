@@ -34,6 +34,10 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antece
 
 	m := map[string]mentalese.Term{}
 
+	if len(actualAntecedents) == 0 {
+		return m
+	}
+
 	for i, antecedentVariable := range antecedentVariables {
 		m[antecedentVariable] = mentalese.NewVariable(actualAntecedents[i])
 	}

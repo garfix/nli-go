@@ -14,6 +14,7 @@ type GrammarRule struct {
 
 const PosTypeRelation = "relation"
 const PosTypeWordForm = "word-form"
+const PosTypeRegExp = "reg-exp"
 
 func NewGrammarRule(positionTypes []string, syntacticCategories []string, entityVariables [][]string, sense mentalese.RelationSet) GrammarRule {
 	return GrammarRule{
@@ -116,8 +117,10 @@ func (rule GrammarRule) String() string {
 				sep2 = ", "
 			}
 			s += ")"
-		} else {
+		} else if rule.PositionTypes[i] == PosTypeWordForm {
 			s += sep + "'" + rule.SyntacticCategories[i] + "'"
+		} else {
+			s += sep + "/" + rule.SyntacticCategories[i] + "/"
 		}
 		sep = " "
 	}

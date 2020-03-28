@@ -4,6 +4,7 @@
 
 * not()
 * multiple entities per anaphora queue position
+* allow string constants in grammar rewrite rules
 
 ## 1.7 Anaphora resolution - 15-02-2020
 

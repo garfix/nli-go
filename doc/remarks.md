@@ -1,3 +1,15 @@
+# 2020-03-28
+
+I made it possible to use strings in the grammar:
+
+    vp(P1) -> 'put' np(E1) 'into' np(E2)
+
+I can now do without the lexicon. Reasons for abandoning the lexicon were:
+
+- I could place 'put' into the lexicon, but not 'put in', which is a verb as well; 'put in' needed to be in the grammar
+- The 'part of speech' that was important in a lexicon was often used for semantic grammar purposes, and rightly so, so
+    the concept turned into that was more naturally performed by the grammar
+
 # 2020-03-25
 
 Question 8:

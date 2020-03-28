@@ -68,7 +68,7 @@ func (parser *Parser) buildChart(words []string) (*chart) {
 	chart := newChart(words)
 	wordCount := len(words)
 
-	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{}), [][]string{{""}, {""}}, 1, 0, 0)
+	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeRelation }, []string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{}), [][]string{{""}, {""}}, 1, 0, 0)
 	parser.log.EndDebug("initial:", initialState.ToString(chart))
 	chart.enqueue(initialState, 0)
 
@@ -159,7 +159,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 
 	if lexItemFound {
 
-		rule := parse.NewGrammarRule([]string{nextConsequent, endWord}, [][]string{{"a"}, {"b"}}, mentalese.RelationSet{})
+		rule := parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeWordForm }, []string{nextConsequent, endWord}, [][]string{{"a"}, {"b"}}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
 		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations

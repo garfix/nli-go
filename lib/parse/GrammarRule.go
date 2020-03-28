@@ -3,6 +3,8 @@ package parse
 import "nli-go/lib/mentalese"
 
 type GrammarRule struct {
+	// relation -> relation word-form
+	PositionTypes 		[]string
 	// vp -> np vbar
 	SyntacticCategories []string
 	// (P1, E1) -> (E1) (P1, E1)
@@ -10,8 +12,12 @@ type GrammarRule struct {
 	Sense               mentalese.RelationSet
 }
 
-func NewGrammarRule(syntacticCategories []string, entityVariables [][]string, sense mentalese.RelationSet) GrammarRule {
+const PosTypeRelation = "relation"
+const PosTypeWordForm = "word-form"
+
+func NewGrammarRule(positionTypes []string, syntacticCategories []string, entityVariables [][]string, sense mentalese.RelationSet) GrammarRule {
 	return GrammarRule{
+		PositionTypes: 		 positionTypes,
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
 		Sense:               sense,
@@ -42,6 +48,10 @@ func (rule GrammarRule) GetConsequentVariables(i int) []string {
 	return rule.EntityVariables[i+1]
 }
 
+func (rule GrammarRule) GetConsequentPositionType(i int) string {
+	return rule.PositionTypes[i+1]
+}
+
 func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }
@@ -54,6 +64,9 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 
 	for i, v := range rule.SyntacticCategories {
 		if v != otherRule.SyntacticCategories[i] {
+			return false
+		}
+		if rule.PositionTypes[i] != otherRule.PositionTypes[i] {
 			return false
 		}
 		if len(rule.EntityVariables[i]) != len(otherRule.EntityVariables[i]) {
@@ -71,6 +84,7 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 
 func (rule GrammarRule) Copy() GrammarRule {
 	return GrammarRule{
+		PositionTypes:		 rule.PositionTypes,
 		SyntacticCategories: rule.SyntacticCategories,
 		EntityVariables:     rule.EntityVariables,
 		Sense:               rule.Sense.Copy(),
@@ -94,13 +108,17 @@ func (rule GrammarRule) String() string {
 
 	sep := ""
 	for i := 1; i < len(rule.SyntacticCategories); i++ {
-		s += sep + rule.SyntacticCategories[i] + "("
-		sep2 = ""
-		for _, variable := range rule.EntityVariables[i] {
-			s += sep2 + variable
-			sep2 = ", "
+		if rule.PositionTypes[i] == PosTypeRelation {
+			s += sep + rule.SyntacticCategories[i] + "("
+			sep2 = ""
+			for _, variable := range rule.EntityVariables[i] {
+				s += sep2 + variable
+				sep2 = ", "
+			}
+			s += ")"
+		} else {
+			s += sep + "'" + rule.SyntacticCategories[i] + "'"
 		}
-		s += ")"
 		sep = " "
 	}
 

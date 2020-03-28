@@ -458,7 +458,7 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 
 		switch key {
 			case field_rule:
-				rule.SyntacticCategories, rule.EntityVariables, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
+				rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
 				ok = ok && !ruleFound
 				ruleFound = true
 			case field_sense:
@@ -507,10 +507,11 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 	return rule, startIndex,  ok
 }
 
-func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, [][]string, int, bool) {
+func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, [][]string, []string, int, bool) {
 
 	syntacticCategories := []string{}
 	entityVariables := [][]string{}
+	positionTypes := []string{}
 	list := []string{}
 	ok := true
 
@@ -518,6 +519,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	headRelation, startIndex, ok = parser.parseRelation(tokens, startIndex)
 	if ok {
 		syntacticCategories = append(syntacticCategories, headRelation.Predicate)
+		positionTypes = append(positionTypes, parse.PosTypeRelation)
 
 		list = []string{}
 		for _, argument := range headRelation.Arguments {
@@ -526,23 +528,35 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 		entityVariables = append(entityVariables, list)
 
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
-		if ok {
-			tailRelations := []mentalese.Relation{}
-			tailRelations, startIndex, ok = parser.parseRelations(tokens, startIndex)
-
-			for _, patternRelation := range tailRelations {
-				syntacticCategories = append(syntacticCategories, patternRelation.Predicate)
+		for ok {
+			tailRelation, newStartIndex, isRelation := parser.parseRelation(tokens, startIndex)
+			if isRelation {
+				startIndex = newStartIndex
+				syntacticCategories = append(syntacticCategories, tailRelation.Predicate)
+				positionTypes = append(positionTypes, parse.PosTypeRelation)
 
 				list = []string{}
-				for _, argument := range patternRelation.Arguments {
+				for _, argument := range tailRelation.Arguments {
 					list = append(list, argument.TermValue)
 				}
 				entityVariables = append(entityVariables, list)
+			} else {
+				tailString, newStartIndex, isString := parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+				if isString {
+					startIndex = newStartIndex
+					syntacticCategories = append(syntacticCategories, tailString)
+					positionTypes = append(positionTypes, parse.PosTypeWordForm)
+					entityVariables = append(entityVariables, []string{})
+				} else {
+					break
+				}
 			}
 		}
+
+		ok = ok && len(syntacticCategories) > 1
 	}
 
-	return syntacticCategories, entityVariables, startIndex, ok
+	return syntacticCategories, entityVariables, positionTypes, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, startIndex int) (mentalese.Relation, []mentalese.Relation, int, bool) {

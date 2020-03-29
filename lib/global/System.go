@@ -22,7 +22,7 @@ type system struct {
 	lexicon           *parse.Lexicon
 	grammar           *parse.Grammar
 	generationLexicon *generate.GenerationLexicon
-	generationGrammar *generate.GenerationGrammar
+	generationGrammar *parse.Grammar
 	tokenizer         *parse.Tokenizer
 	parser            *earley.Parser
 	relationizer      *earley.Relationizer

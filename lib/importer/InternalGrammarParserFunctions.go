@@ -425,9 +425,9 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 	return grammar, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*generate.GenerationGrammar, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*parse.Grammar, int, bool) {
 
-	grammar := generate.NewGenerationGrammar()
+	grammar := parse.NewGrammar()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -477,9 +477,9 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 	return rule, startIndex,  ok
 }
 
-func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (generate.GenerationGrammarRule, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (parse.GrammarRule, int, bool) {
 
-	rule := generate.GenerationGrammarRule{}
+	rule := parse.GrammarRule{}
 	ruleFound, conditionFound := false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
@@ -488,11 +488,11 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 
 		switch key {
 			case field_rule:
-				rule.Antecedent, rule.Consequents, startIndex, ok = parser.parseSyntacticRewriteRule2(tokens, startIndex)
+				rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
 				ok = ok && !ruleFound
 				ruleFound = true
 			case field_condition:
-				rule.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
 				ok = ok && !conditionFound
 				conditionFound = true
 			default:

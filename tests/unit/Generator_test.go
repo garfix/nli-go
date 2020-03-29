@@ -18,14 +18,15 @@ func TestGenerator(t *testing.T) {
 	grammar := internalGrammarParser.CreateGenerationGrammar(`[
         { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }
         { rule: np(E) -> proper_noun(E),          condition: name(E, Name) }
-		{ rule: proper_noun(E) -> text(Name),          condition: name(E, Name) }
+		{ rule: proper_noun(E) -> text(Name),     condition: name(E, Name) }
         { rule: np(E) -> det(E) noun(E) }
         { rule: vp(V) -> verb(V) np(E),           condition: object(V, E) }
+		{ rule: noun(E) -> 'book',                condition: instance_of(E, book) }
+		{ rule: verb(E) -> 'kissed',		      condition: predication(E, kiss) }
+		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
 	]`)
 	lexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		{ form: 'book',       pos: noun,          condition: instance_of(E, book) }
-		{ form: 'kissed',     pos: verb,		    condition: predication(E, kiss) }
-		{ form: 'married',	pos: verb,		    condition: predication(E, marry) }
+		
 	]`, log)
 	matcher := mentalese.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function"))

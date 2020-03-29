@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"nli-go/lib/parse"
 )
 
 type Generator struct {
-	Grammar *GenerationGrammar
+	Grammar *parse.Grammar
 	Lexicon *GenerationLexicon
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewGenerator(Grammar *GenerationGrammar, Lexicon *GenerationLexicon, log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
+func NewGenerator(Grammar *parse.Grammar, Lexicon *GenerationLexicon, log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
 	return &Generator{Grammar: Grammar, Lexicon: Lexicon, matcher: matcher, log: log}
 }
 
@@ -30,39 +31,31 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 
 	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
 
-	s := mentalese.NewVariable("S1")
-	rootAntecedent := mentalese.Relation{Predicate: "s", Arguments: []mentalese.Term{ s }}
-
-	return generator.GenerateNode(rootAntecedent, mentalese.Binding{}, boundSense)
+	return generator.GenerateNode("s", []string{"S1"}, mentalese.Binding{}, boundSense)
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) GenerateNode(predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
-	generator.log.StartDebug("GenerateNode", antecedent, antecedentBinding)
+	generator.log.StartDebug("GenerateNode", predicate, arguments, antecedentBinding)
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
-	rule, conditionBinding, ok := generator.findMatchingRule(antecedent, antecedentBinding, sentenceSense)
+	rule, conditionBinding, ok := generator.findMatchingRule(predicate, arguments, antecedentBinding, sentenceSense)
 
 	if ok {
 
-		for _, consequent := range rule.Consequents {
+		for i, consequentPredicate := range rule.GetConsequents() {
 
-			if len(consequent.Arguments) == 0 {
-				generator.log.AddError("Predicate has zero arguments: " + consequent.String())
-				continue
-			}
-
-			consequentBinding := conditionBinding.Extract(consequent.Arguments[0].TermValue)
-			words = append(words, generator.generateSingleConsequent(consequent, consequentBinding, sentenceSense)...)
+			consequentArguments := rule.GetConsequentVariables(i)
+			words = append(words, generator.generateSingleConsequent(consequentPredicate, consequentArguments, rule.GetConsequentPositionType(i), conditionBinding, sentenceSense)...)
 		}
 	} else {
-		generator.log.AddError("Cannot generate response for syntax node " + antecedent.String())
+		generator.log.AddError("Cannot generate response for syntax node " + predicate)
 	}
 
 	generator.log.EndDebug("GenerateNode", words)
@@ -73,27 +66,29 @@ func (generator *Generator) GenerateNode(antecedent mentalese.Relation, antecede
 // From a set of rules (with a shared antecedent), find the first one whose conditions match
 // antecedent: i.e. np(E1)
 // bindingL i.e { E1: 3 }
-func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) (GenerationGrammarRule, mentalese.Binding, bool) {
+func (generator *Generator) findMatchingRule(predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) (parse.GrammarRule, mentalese.Binding, bool) {
 
 	found := false
-	resultRule := GenerationGrammarRule{}
+	resultRule := parse.GrammarRule{}
 	conditionBinding := mentalese.Binding{}
 
-	generator.log.StartDebug("findMatchingRule", antecedent, antecedentBinding)
+	generator.log.StartDebug("findMatchingRule", predicate, antecedentBinding)
 
-	rules := generator.Grammar.FindRules(antecedent)
+	rules := generator.Grammar.FindRules(predicate, len(arguments))
 
 	for _, rule := range rules {
 
-		// copy the value of the antecedent
+		// copy the value of the predicate
 		conditionBinding = mentalese.Binding{}
-		if len(antecedentBinding) > 0 {
-			parentAntecedentVariable := antecedent.Arguments[0].TermValue
-			ruleAntecedentVariable := rule.Antecedent.Arguments[0].TermValue
-			conditionBinding[ruleAntecedentVariable] = antecedentBinding[parentAntecedentVariable]
+		for i, argument := range arguments {
+			ruleAntecedentVariable := rule.GetAntecedentVariables()[i]
+			val, found := antecedentBinding[argument]
+			if found {
+				conditionBinding[ruleAntecedentVariable] = val
+			}
 		}
 
-		if len(rule.Condition) == 0 {
+		if len(rule.Sense) == 0 {
 
 			// no condition
 			resultRule = rule
@@ -103,7 +98,7 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 		} else {
 
 			// match the condition
-			matchBindings, match := generator.matcher.MatchSequenceToSet(rule.Condition, sentenceSense, conditionBinding)
+			matchBindings, match := generator.matcher.MatchSequenceToSet(rule.Sense, sentenceSense, conditionBinding)
 
 			if match {
 				conditionBinding = matchBindings[0]
@@ -121,20 +116,20 @@ func (generator *Generator) findMatchingRule(antecedent mentalese.Relation, ante
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(consequent mentalese.Relation, consequentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(predicate string, arguments []string, positionType string, consequentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
-	found := false
 
-	generator.log.StartDebug("generateSingleConsequent", consequent, consequentBinding)
+	generator.log.StartDebug("generateSingleConsequent", predicate, consequentBinding)
 
-	boundConsequent := consequent.BindSingleRelationSingleBinding(consequentBinding)
-
-	lexItem, found := generator.Lexicon.GetLexemeForGeneration(boundConsequent, sentenceSense)
-	if found {
-		words = append(words, lexItem.Form)
+	if positionType == parse.PosTypeWordForm {
+		words = append(words, predicate)
+	} else if predicate == mentalese.PredicateText {
+		variable := arguments[0]
+		text := consequentBinding[variable]
+		words = append(words, text.TermValue)
 	} else {
-		words = generator.GenerateNode(consequent, consequentBinding, sentenceSense)
+		words = generator.GenerateNode(predicate, arguments, consequentBinding, sentenceSense)
 	}
 
 	generator.log.EndDebug("generateSingleConsequent", words)

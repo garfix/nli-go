@@ -150,9 +150,9 @@ func (parser *InternalGrammarParser) CreateGrammar(source string) *parse.Grammar
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *generate.GenerationGrammar {
+func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *parse.Grammar {
 
-	grammar := generate.NewGenerationGrammar()
+	grammar := parse.NewGrammar()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0

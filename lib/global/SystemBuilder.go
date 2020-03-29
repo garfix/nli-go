@@ -39,7 +39,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.lexicon = parse.NewLexicon()
 	system.grammar = parse.NewGrammar()
 	system.generationLexicon = generate.NewGenerationLexicon(builder.log, matcher)
-	system.generationGrammar = generate.NewGenerationGrammar()
+	system.generationGrammar = parse.NewGrammar()
 	system.tokenizer = parse.NewTokenizer(builder.log)
 	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
 	system.dialogContext = central.NewDialogContext()

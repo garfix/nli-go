@@ -16,6 +16,7 @@ const PredicateSequence = "sequence"
 const PredicateNot = "not"
 const PredicateCall = "call"
 const PredicateName = "name"
+const PredicateText = "text"
 
 const PredicateAssert = "assert"
 const PredicateRetract = "retract"

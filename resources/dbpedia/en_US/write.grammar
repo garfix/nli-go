@@ -3,18 +3,18 @@
     { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: married_to(E1, E2) }
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2), condition: has_father(E1, E2) }
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2), condition: has_mother(E1, E2) }
-    { rule: s(S1) -> subject(E1) have(S1) number(N) child(E2),                    condition: have_child(E1, E2) count(E2, N) }
+    { rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                    condition: have_child(E1, E2) count(E2, N) }
     { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) on(D1) date_formatted(D2),   condition: birth_date(D1, D2) }
     { rule: s(S1) -> subject(E1) die(S1) on(D1) date_formatted(D2),               condition: death_date(D1, D2) }
     { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
     { rule: s(S1) -> date_formatted(D2),                                          condition: root(D1) date(D1, Y, M, D) }
 
-    { rule: s(S1) -> subject(E1) is(S1) number(Age) year(Age) old(E1) paren_open(E1) bear(S1) on(E1) date_formatted(Birth_date) paren_close(E1),
+    { rule: s(S1) -> subject(E1) is(S1) text(Age) year(Age) old(E1) '(' bear(S1) on(E1) date_formatted(Birth_date) ')',
                                                                                   condition: report_age_alive(E1, Age, Birth_date) }
 
-    { rule: s(S1) -> subject(E1) was(S1) number(Age) year(Age) old(E1)
-        paren_open(E1) bear(S1) on(E1) date_formatted(Birth_date) semicolon(E1)
-        die(S1) on(E1) date_formatted(Death_date) paren_close(E1),
+    { rule: s(S1) -> subject(E1) was(S1) text(Age) year(Age) old(E1)
+        '(' bear(S1) on(E1) date_formatted(Birth_date) ';'
+        die(S1) on(E1) date_formatted(Death_date) ')',
                                                                                   condition: report_age_deceased(E1, Age, Birth_date, Death_date) }
 
     { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
@@ -23,12 +23,56 @@
     { rule: object(E) -> objective_personal_pronoun(E),                           condition: gender(E, _) }
     { rule: object(E) -> multiple_proper_noun(E) }
 
-    { rule: date_formatted(Date) -> month_name(M) number(D) comma(C) number(Y),   condition: date(Date, D, M, Y) }
+    { rule: date_formatted(Date) -> month_name(M) text(D) ',' text(Y),   condition: date(Date, D, M, Y) }
 
     { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
 
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) ',' multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) 'and' multiple_proper_noun(P2),             condition: and(C, P1, P2) }
+    
+    
+    { rule: boolean(B1) -> 'yes',                           condition: result(true) }
+    { rule: boolean(B1) -> 'no',                           condition: result(false) }
+
+    { rule: have(P1) -> 'has' }
+    { rule: marry(P1) -> 'married' }
+    { rule: bear(P1) -> 'born' }
+    { rule: die(P1) -> 'died' }
+
+    { rule: aux_be(P1) -> 'was' }
+    { rule: is(P1) -> 'is' }
+    { rule: was(P1) -> 'was' }
+
+    { rule: father(E1) -> 'father' }
+    { rule: mother(E1) -> 'mother' }
+    { rule: child(E1) -> 'children' }
+    { rule: year(E1) -> 'year',                              condition: equals(E1, 1) }
+    { rule: year(E1) -> 'years' }
+    { rule: old(E1) -> 'old' }
+
+    { rule: on(P1) -> 'on' }
+
+    { rule: possessive_personal_pronoun(E) -> 'his',	    condition: gender(E, male) }
+    { rule: possessive_personal_pronoun(E) -> 'her',	    condition: gender(E, female) }
+
+    { rule: objective_personal_pronoun(E) -> 'him',	    condition: gender(E, male) }
+    { rule: objective_personal_pronoun(E) -> 'her',	    condition: gender(E, female) }
+
+    { rule: subjective_personal_pronoun(E) -> 'he',	        condition: gender(E, male) }
+    { rule: subjective_personal_pronoun(E) -> 'she',	    condition: gender(E, female) }
+
+    { rule: month_name(E) -> 'January',      condition: date(_, _, '01', _) }
+    { rule: month_name(E) -> 'February',     condition: date(_, _, '02', _) }
+    { rule: month_name(E) -> 'March',        condition: date(_, _, '03', _) }
+    { rule: month_name(E) -> 'April',        condition: date(_, _, '04', _) }
+    { rule: month_name(E) -> 'May',          condition: date(_, _, '05', _) }
+    { rule: month_name(E) -> 'June',         condition: date(_, _, '06', _) }
+    { rule: month_name(E) -> 'July',         condition: date(_, _, '07', _) }
+    { rule: month_name(E) -> 'August',       condition: date(_, _, '08', _) }
+    { rule: month_name(E) -> 'September',    condition: date(_, _, '09', _) }
+    { rule: month_name(E) -> 'October',      condition: date(_, _, '10', _) }
+    { rule: month_name(E) -> 'November',     condition: date(_, _, '11', _) }
+    { rule: month_name(E) -> 'December',     condition: date(_, _, '12', _) }
 ]

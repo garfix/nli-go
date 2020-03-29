@@ -5,12 +5,31 @@
     { rule: s(N) -> text(N) of(N) them(N),                                        condition: a_number(N) }
 
     { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
-    { rule: s(S1) -> yes(S1) comma(S1) multiple_proper_noun(S1),                  condition: select(S1) and(S1, C1, C2) }
-    { rule: s(S1) -> yes(S1) comma(S1) by(P) multiple_proper_noun(S1),            condition: select_subject(S1) and(S1, C1, C2) }
+    { rule: s(S1) -> yes(S1) ',' multiple_proper_noun(S1),                  condition: select(S1) and(S1, C1, C2) }
+    { rule: s(S1) -> yes(S1) ',' by(P) multiple_proper_noun(S1),            condition: select_subject(S1) and(S1, C1, C2) }
     { rule: s(S1) -> none(S1),                                                    condition: none() }
 
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
     { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
     { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
+
+    { rule: and(C) -> 'and' }
+    { rule: none(C) -> 'none' }
+    { rule: of(C) -> 'of' }
+    { rule: them(C) -> 'them' }
+    { rule: yes(C) -> 'yes' }
+    { rule: by(C) -> 'by' }
+    { rule: comma(C) -> ',' }
+
+    { rule: named_number(C) -> 'one', condition: a_number(1) }
+    { rule: named_number(C) -> 'two', condition: a_number(2) }
+    { rule: named_number(C) -> 'three', condition: a_number(3) }
+    { rule: named_number(C) -> 'four', condition: a_number(4) }
+    { rule: named_number(C) -> 'five', condition: a_number(5) }
+    { rule: named_number(C) -> 'six', condition: a_number(6) }
+    { rule: named_number(C) -> 'seven', condition: a_number(7) }
+    { rule: named_number(C) -> 'eight', condition: a_number(8) }
+    { rule: named_number(C) -> 'nine', condition: a_number(9) }
+    { rule: named_number(C) -> 'ten', condition: a_number(10) }
 ]

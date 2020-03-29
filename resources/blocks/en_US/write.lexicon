@@ -1,21 +1,3 @@
 [
-    { form: 'and',	        pos: and }
-    { form: 'none',	        pos: none }
-    { form: 'of',	        pos: of }
-    { form: 'them',	        pos: them }
-    { form: 'yes',	        pos: yes }
-    { form: 'by',	        pos: by }
 
-    { form: 'one', pos: named_number, condition: a_number(1) }
-    { form: 'two', pos: named_number, condition: a_number(2) }
-    { form: 'three', pos: named_number, condition: a_number(3) }
-    { form: 'four', pos: named_number, condition: a_number(4) }
-    { form: 'five', pos: named_number, condition: a_number(5) }
-    { form: 'six', pos: named_number, condition: a_number(6) }
-    { form: 'seven', pos: named_number, condition: a_number(7) }
-    { form: 'eight', pos: named_number, condition: a_number(8) }
-    { form: 'nine', pos: named_number, condition: a_number(9) }
-    { form: 'ten', pos: named_number, condition: a_number(10) }
-
-    { form: ',',                 pos: comma }
 ]

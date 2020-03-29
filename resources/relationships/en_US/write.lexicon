@@ -1,20 +1,2 @@
 [
-    { form: 'yes',          pos: boolean,                           condition: result(true) }
-    { form: 'no',           pos: boolean,                           condition: result(false) }
-
-    { form: 'married',	    pos: marry }
-    { form: 'has',	        pos: have }
-
-    { form: 'children',	    pos: child }
-
-    { form: 'him',	        pos: objective_personal_pronoun,	    condition: gender(E, male) }
-    { form: 'her',	        pos: objective_personal_pronoun,	    condition: gender(E, female) }
-
-    { form: 'he',	        pos: subjective_personal_pronoun,	    condition: gender(E, male) }
-    { form: 'she',	        pos: subjective_personal_pronoun,	    condition: gender(E, female) }
-
-    { form: 'and',	        pos: and }
-
-    { form: ',',	        pos: comma,                             condition: and(E) }
-    { form: ',',            pos: comma }
 ]

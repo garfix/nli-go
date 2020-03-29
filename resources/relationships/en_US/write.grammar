@@ -14,23 +14,20 @@
 
     { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: and(C, P1, P1) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) comma(C) multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) and(C) multiple_proper_noun(P2),             condition: and(C, P1, P2) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) ',' multiple_proper_noun(P2),           condition: and(C, P1, P2) and(P2, _, _) }
+    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) 'and' multiple_proper_noun(P2),         condition: and(C, P1, P2) }
 
     { rule: boolean(B1) -> 'yes', condition: result(true) }
     { rule: boolean(B1) -> 'no', condition: result(false) }
+
     { rule: marry(P1) -> 'married' }
     { rule: have(P1) -> 'has' }
+
     { rule: child(P1) -> 'children' }
+
     { rule: objective_personal_pronoun(E) -> 'him',	    condition: gender(E, male)  }
     { rule: objective_personal_pronoun(E) -> 'her',	    condition: gender(E, female)  }
+
     { rule: subjective_personal_pronoun(E) -> 'he',	    condition: gender(E, male)  }
-    { rule: subjective_personal_pronoun(E) -> 'she',	    condition: gender(E, female)  }
-    { rule: and(C1) -> 'and' }
-    { rule: comma(C1) -> ',', condition: and(C1) }
-    { rule: comma(C1) -> ',' }
-
-
-
-
+    { rule: subjective_personal_pronoun(E) -> 'she',	condition: gender(E, female)  }
 ]

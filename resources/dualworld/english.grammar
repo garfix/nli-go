@@ -10,14 +10,11 @@
     { rule: noun(E1) -> 'poem', sense: poem(E1) }
 
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                        sense: has_grandfather(E2, E1) }
+    { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: has_grandfather(E2, E1) }
 
-    { rule: np_comp(E1) -> np(E1) write(_) np(E2),                           sense: write(E2, E1) }
-
-    { rule: write(P1) -> 'wrote' }
+    { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: write(E2, E1) }
 
     { rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: which(E1) }
 
-    { rule: interrogative(S1) -> interrogative(S1) '?' }
-    { rule: s(S1) -> interrogative(S1),                                     sense: question(S1) }
+    { rule: s(S1) -> interrogative(S1) '?',                                 sense: question(S1) }
 ]

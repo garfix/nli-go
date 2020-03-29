@@ -3,18 +3,18 @@
     { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: married_to(E1, E2) }
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2), condition: has_father(E1, E2) }
     { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2), condition: has_mother(E1, E2) }
-    { rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                    condition: have_child(E1, E2) count(E2, N) }
-    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) on(D1) date_formatted(D2),   condition: birth_date(D1, D2) }
-    { rule: s(S1) -> subject(E1) die(S1) on(D1) date_formatted(D2),               condition: death_date(D1, D2) }
+    { rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                      condition: have_child(E1, E2) count(E2, N) }
+    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) 'on' date_formatted(D2),     condition: birth_date(D1, D2) }
+    { rule: s(S1) -> subject(E1) die(S1) 'on' date_formatted(D2),                 condition: death_date(D1, D2) }
     { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: root(S1) and(S1, C1, C2) }
     { rule: s(S1) -> date_formatted(D2),                                          condition: root(D1) date(D1, Y, M, D) }
 
-    { rule: s(S1) -> subject(E1) is(S1) text(Age) year(Age) old(E1) '(' bear(S1) on(E1) date_formatted(Birth_date) ')',
+    { rule: s(S1) -> subject(E1) 'is' text(Age) year(Age) old(E1) '(' bear(S1) 'on' date_formatted(Birth_date) ')',
                                                                                   condition: report_age_alive(E1, Age, Birth_date) }
 
-    { rule: s(S1) -> subject(E1) was(S1) text(Age) year(Age) old(E1)
-        '(' bear(S1) on(E1) date_formatted(Birth_date) ';'
-        die(S1) on(E1) date_formatted(Death_date) ')',
+    { rule: s(S1) -> subject(E1) 'was' text(Age) year(Age) old(E1)
+        '(' bear(S1) 'on' date_formatted(Birth_date) ';'
+        die(S1) 'on' date_formatted(Death_date) ')',
                                                                                   condition: report_age_deceased(E1, Age, Birth_date, Death_date) }
 
     { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: gender(E, _) }
@@ -42,8 +42,6 @@
     { rule: die(P1) -> 'died' }
 
     { rule: aux_be(P1) -> 'was' }
-    { rule: is(P1) -> 'is' }
-    { rule: was(P1) -> 'was' }
 
     { rule: father(E1) -> 'father' }
     { rule: mother(E1) -> 'mother' }
@@ -51,8 +49,6 @@
     { rule: year(E1) -> 'year',                              condition: equals(E1, 1) }
     { rule: year(E1) -> 'years' }
     { rule: old(E1) -> 'old' }
-
-    { rule: on(P1) -> 'on' }
 
     { rule: possessive_personal_pronoun(E) -> 'his',	    condition: gender(E, male) }
     { rule: possessive_personal_pronoun(E) -> 'her',	    condition: gender(E, female) }

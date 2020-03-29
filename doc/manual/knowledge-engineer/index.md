@@ -4,7 +4,8 @@ A knowledge engineer does not develop an application but writes the grammar, the
 
 ## Before you start
 
-Make sure you have a working resource directory with the basic configuration files (lexicon, grammar, etc) that you can extend. 
+Make sure you have a working resource directory with the basic configuration files (grammar, solution, etc) that you can
+extend.
 
 ## The content writing process
 
@@ -12,7 +13,6 @@ There may be different approaches of how to teach the program how to process a n
 
 * Collect a sentence from an end user
 * Add an automated test 
-* Extend the lexicon
 * Extend the grammar
 * Extend the solutions
 * Extend the generations
@@ -34,7 +34,7 @@ This allows you to go through the following phases quickly without having to ent
 
 When you try to add a new question, it is possible that you break earlier question / answers. So you need to run the previous tests as well.   
 
-## Extend the lexicon
+## Extend the grammar
 
 Now run the test. NLI-GO will tell you what words can't be parsed:
 

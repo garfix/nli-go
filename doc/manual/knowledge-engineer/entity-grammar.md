@@ -39,16 +39,13 @@ The "sense" provides the meaning of the rule. It is a "semantic attachment" to t
 complete sentence is composed of these senses.
 
 Each category in the rule is a syntactic or semantic category, and it is bound to argument variables. `noun(E1)` for
-example is binds an entity to the variable `E1`. Categories without variables, on the other hand, represent actual
-words:
+example is binds an entity to the variable `E1`.
 
-    pick()
+The terminal rewrite rules have words in their right-hand side:
 
-represents the word
+    pick(P1, E1, E2) -> 'pick'
 
-    "pick"
-
-in the sentence. There is no separate lexicon.
+There is no separate lexicon.
 
 ## An imperative sentence
 
@@ -59,12 +56,12 @@ An imperative sentence instructs the system to do something, like play music:
 
 The grammar for this sentence could be
 
-     { rule: s(P1) -> play() some() music(E1),      sense: command_play(P1, E1) }
-     { rule: music(E1) -> jazz(),                   sense: type(E1, jazz) }
-     { rule: music(E1) -> folk() music(),           sense: type(E1, folk_music) }
+     { rule: s(P1) -> 'play' 'some' music(E1),      sense: command_play(P1, E1) }
+     { rule: music(E1) -> 'jazz',                   sense: type(E1, jazz) }
+     { rule: music(E1) -> 'folk' 'music',           sense: type(E1, folk_music) }
 
-`s` is the syntactic category for sentence. `play()` and `some()` are words. `music(E1)` (with variable) is a semantic
-category. `jazz()`, `folk()` and `music()` (without variable) match words in the sentence.
+`s` is the syntactic category for sentence. `'play'` and `'some'` are words. `music(E1)` (with variable) is a semantic
+category. `'jazz'`, `'folk'` and `'music'` match words in the sentence.
 
 The senses of the rules are application specific. This means that it's up to you to determine what works best for your
 application.
@@ -83,9 +80,9 @@ Mary likes Jim
     { rule: vp(P1, E1) -> tv(P1, E1, E2) np(E2) }
     
     { rule: tv(P1, E1, E2) -> like(P1, E1, E2),         sense: like(P1, E1, E2) }
-    { rule: like(P1, E1, E2) -> like() }
-    { rule: like(P1, E1, E2) -> likes() }
-    { rule: like(P1, E1, E2) -> liked() }
+    { rule: like(P1, E1, E2) -> 'like' }
+    { rule: like(P1, E1, E2) -> 'likes' }
+    { rule: like(P1, E1, E2) -> 'liked' }
     
     { rule: np(E1) -> proper_noun(E1) }
 
@@ -109,3 +106,14 @@ and the following sense
 
     declare(P1) like(P1, E1, E2)
 
+## Open-ended categories
+
+If you need numbers, email addresses or other forms of open-ended categories, you can specify them like this
+
+    number(N1) -> /^[0-9]+$/ 
+    email_address(E1) -> /^[a-z]+@[a-z]+\.[a-z]+$/          
+
+The expression for email is very much incomplete. More importantly, you would need to change the tokenizer if an email
+address is to be recognized as a single word by the parser.
+
+Regular expressions can only be used as the single right hand position of a rewrite rule. The system will replace the variable of rewrite rule with a constant string that holds the word that was matched.

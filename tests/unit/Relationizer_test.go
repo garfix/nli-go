@@ -40,8 +40,6 @@ func TestRelationizer(t *testing.T) {
 	
 	]`)
 
-	lexicon := internalGrammarParser.CreateLexicon(`[
-	]`)
 	log := common.NewSystemLog(false)
 
 	matcher := mentalese.NewRelationMatcher(log)
@@ -50,9 +48,9 @@ func TestRelationizer(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 
-	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
+	parser := earley.NewParser(grammar, nameResolver, predicates, log)
 
-	relationizer := earley.NewRelationizer(lexicon, log)
+	relationizer := earley.NewRelationizer(log)
 
 	parseTrees := parser.Parse([]string{"the", "book", "falls", "."})
 	result, _ := relationizer.Relationize(parseTrees[0], nameResolver)

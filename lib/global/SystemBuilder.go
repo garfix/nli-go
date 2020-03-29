@@ -36,12 +36,10 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	matcher := mentalese.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 
-	system.lexicon = parse.NewLexicon()
 	system.grammar = parse.NewGrammar()
-	system.generationLexicon = generate.NewGenerationLexicon(builder.log, matcher)
 	system.generationGrammar = parse.NewGrammar()
 	system.tokenizer = parse.NewTokenizer(builder.log)
-	system.relationizer = earley.NewRelationizer(system.lexicon, builder.log)
+	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
 
 	predicates, _ := builder.CreatePredicates(config.Predicates)
@@ -58,22 +56,14 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.grammar, system.lexicon, system.nameResolver, predicates, builder.log)
+	system.parser = earley.NewParser(system.grammar, system.nameResolver, predicates, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
-	system.generator = generate.NewGenerator(system.generationGrammar, system.generationLexicon, builder.log, matcher)
+	system.generator = generate.NewGenerator(system.generationGrammar, builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
-	for _, lexiconPath := range config.Lexicons {
-		path := common.AbsolutePath(builder.baseDir, lexiconPath)
-		builder.ImportLexiconFromPath(system, path)
-	}
 	for _, grammarPath := range config.Grammars {
 		path := common.AbsolutePath(builder.baseDir, grammarPath)
 		builder.ImportGrammarFromPath(system, path)
-	}
-	for _, lexiconPath := range config.Generationlexicons {
-		path := common.AbsolutePath(builder.baseDir, lexiconPath)
-		builder.ImportGenerationLexiconFromPath(system, path)
 	}
 	for _, grammarPath := range config.Generationgrammars {
 		path := common.AbsolutePath(builder.baseDir, grammarPath)
@@ -121,24 +111,6 @@ func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates
 	return predicates, true
 }
 
-func (builder systemBuilder) ImportLexiconFromPath(system *system, lexiconPath string) {
-
-	lexiconString, err := common.ReadFile(lexiconPath)
-	if err != nil {
-		builder.log.AddError(err.Error())
-		return
-	}
-
-	lexicon := builder.parser.CreateLexicon(lexiconString)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
-		return
-	}
-
-	system.lexicon.ImportFrom(lexicon)
-}
-
 func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath string) {
 
 	grammarString, err := common.ReadFile(grammarPath)
@@ -155,24 +127,6 @@ func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath s
 	}
 
 	system.grammar.ImportFrom(grammar)
-}
-
-func (builder systemBuilder) ImportGenerationLexiconFromPath(system *system, lexiconPath string) {
-
-	lexiconString, err := common.ReadFile(lexiconPath)
-	if err != nil {
-		builder.log.AddError(err.Error())
-		return
-	}
-
-	lexicon := builder.parser.CreateGenerationLexicon(lexiconString, builder.log)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing lexicon file " + lexiconPath + " (" + lastResult.String() + ")")
-		return
-	}
-
-	system.generationLexicon.ImportFrom(lexicon)
 }
 
 func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, grammarPath string) {

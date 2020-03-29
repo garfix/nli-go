@@ -40,9 +40,7 @@ Now run the test. NLI-GO will tell you what words can't be parsed:
 
     ERROR: Incomplete. Could not parse word: What
     
-Add the word ('form'), with its part-of-speech ('pos') and meaning ('sense') to the lexicon.
-
-The form of the word is the "surface form" of the word itself, in lowercase. 
+The form of the word is the "surface form" of the word itself, in lowercase.
 
 The part-of-speech is the syntactic category of a word. If you don't know the part-of-speech run it in the online parser of CoreNLP:
 
@@ -77,7 +75,7 @@ But if the application does not need it, you can leave them out.
 
 ## Extend the grammar
 
-Once the word is in the lexicon, you may still get the error
+You may get the error
 
     ERROR: Incomplete. Could not parse word: What
 

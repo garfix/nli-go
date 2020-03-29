@@ -1,3 +1,7 @@
+# 2020-03-29
+
+Removed lexicons altogether; both from the parse and the generation side.
+
 # 2020-03-28
 
 I made it possible to use strings in the grammar:

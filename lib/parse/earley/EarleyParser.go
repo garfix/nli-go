@@ -17,23 +17,21 @@ const ProperNounCategory = "proper_noun"
 
 type Parser struct {
 	grammar      *parse.Grammar
-	lexicon      *parse.Lexicon
 	nameResolver *central.NameResolver
 	predicates   mentalese.Predicates
 	log          *common.SystemLog
 }
 
-func NewParser(grammar *parse.Grammar, lexicon *parse.Lexicon, nameResolver *central.NameResolver, predicates mentalese.Predicates, log *common.SystemLog) *Parser {
+func NewParser(grammar *parse.Grammar, nameResolver *central.NameResolver, predicates mentalese.Predicates, log *common.SystemLog) *Parser {
 	return &Parser{
 		grammar:      grammar,
-		lexicon:      lexicon,
 		nameResolver: nameResolver,
 		predicates:   predicates,
 		log:          log,
 	}
 }
 
-// Parses words using Parser.grammar and Parser.lexicon
+// Parses words using Parser.grammar
 // Returns parse tree roots
 func (parser *Parser) Parse(words []string) []ParseTreeNode {
 
@@ -155,11 +153,8 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		}
 	}
 
-	if !lexItemFound {
-		_, lexItemFound, _ = parser.lexicon.GetLexItem(endWord, nextConsequent)
-		if !lexItemFound && nextConsequent == ProperNounCategory {
-			lexItemFound, nameInformations = parser.isProperNoun(chart, state)
-		}
+	if !lexItemFound && nextConsequent == ProperNounCategory {
+		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 	}
 
 	if !lexItemFound {

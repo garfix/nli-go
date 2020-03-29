@@ -25,12 +25,9 @@ func TestGenerator(t *testing.T) {
 		{ rule: verb(E) -> 'kissed',		      condition: predication(E, kiss) }
 		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
 	]`)
-	lexicon := internalGrammarParser.CreateGenerationLexicon(`[
-		
-	]`, log)
 	matcher := mentalese.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function"))
-	generator := generate.NewGenerator(grammar, lexicon, log, matcher)
+	generator := generate.NewGenerator(grammar, log, matcher)
 
 	tests := []struct {
 		input string

@@ -1,8 +1,6 @@
 # Todo
 
 * do not allow zero valued predicates in the grammar
-* phase out the lexicon
-* remove the lexicon from the generation phase
 * remove cost function and everything related
 * document 'explicit references'
 * remove solution routes altogether; rebuild the solver

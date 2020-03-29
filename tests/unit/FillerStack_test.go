@@ -29,8 +29,6 @@ func TestFillerStack(t *testing.T) {
 		{ rule: noun(E1) -> 'toys', sense: toy(E1) }
 	]`)
 
-	lexicon := internalGrammarParser.CreateLexicon(`[
-	]`)
 	log := common.NewSystemLog(true)
 
 	matcher := mentalese.NewRelationMatcher(log)
@@ -39,9 +37,9 @@ func TestFillerStack(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 
-	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
+	parser := earley.NewParser(grammar, nameResolver, predicates, log)
 
-	relationizer := earley.NewRelationizer(lexicon, log)
+	relationizer := earley.NewRelationizer(log)
 
 	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
 

@@ -11,14 +11,12 @@ import (
 // The relationizer turns a parse tree into a relation set
 // It also subsumes the range and quantifier relation sets inside its quantification relation
 type Relationizer struct {
-	lexicon      *parse.Lexicon
 	senseBuilder parse.SenseBuilder
 	log          *common.SystemLog
 }
 
-func NewRelationizer(lexicon *parse.Lexicon, log *common.SystemLog) *Relationizer {
+func NewRelationizer(log *common.SystemLog) *Relationizer {
 	return &Relationizer{
-		lexicon:      lexicon,
 		senseBuilder: parse.NewSenseBuilder(),
 		log:          log,
 	}

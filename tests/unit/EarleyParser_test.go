@@ -31,9 +31,6 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: verb(P1) -> 'sings', sense: predication(P1, sing) }
 	]`)
 
-	lexicon := internalGrammarParser.CreateLexicon(`[
-	]`)
-
 	log := common.NewSystemLog(false)
 
 	rawInput := "the small shy girl sings"
@@ -45,8 +42,8 @@ func TestEarleyParser(test *testing.T) {
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 
-	parser := earley.NewParser(grammar, lexicon, nameResolver, predicates, log)
-	relationizer := earley.NewRelationizer(lexicon, log)
+	parser := earley.NewParser(grammar, nameResolver, predicates, log)
+	relationizer := earley.NewRelationizer(log)
 
 	wordArray := tokenizer.Process(rawInput)
 

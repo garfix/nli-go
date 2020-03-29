@@ -9,13 +9,12 @@ import (
 
 type Generator struct {
 	Grammar *parse.Grammar
-	Lexicon *GenerationLexicon
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewGenerator(Grammar *parse.Grammar, Lexicon *GenerationLexicon, log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
-	return &Generator{Grammar: Grammar, Lexicon: Lexicon, matcher: matcher, log: log}
+func NewGenerator(Grammar *parse.Grammar, log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
+	return &Generator{Grammar: Grammar, matcher: matcher, log: log}
 }
 
 // Creates an array of words that forms the surface representation of a mentalese sense

@@ -1,7 +1,4 @@
 {
-  "lexicons": [
-    "english.lexicon"
-  ],
   "grammars": [
     "english.grammar"
   ],

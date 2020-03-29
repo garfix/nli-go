@@ -7,20 +7,11 @@ Check the _resources_ directory for example config.json files.
 A relative path in a config files has that config file as its base.
  
 ## Sections
- 
-### lexicons
- 
- "lexicons" is an array of file paths of lexicons. 
- A lexicon is a set of lexical items: words, with their parts-of-speech (pos) and relational meaning representation (sense).
- 
+
 ### grammars
  
  "grammars" is an array of file paths of grammars.
  A grammar is a set of grammar rules: rewrite rules, with their relational meaning representation (sense).
- 
-### generationlexicons
- 
- "generationlexicons" is an array of file paths of lexicons meant to create (generate) responses.
  
 ### generationgrammars
  

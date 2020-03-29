@@ -3,7 +3,6 @@ package importer
 import (
 	"fmt"
 	"nli-go/lib/common"
-	"nli-go/lib/generate"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 )
@@ -42,48 +41,6 @@ func (parser *InternalGrammarParser) SetPanicOnParseFail(doPanic bool) {
 
 func (parser *InternalGrammarParser) GetLastParseResult() ParseResult {
 	return parser.lastParsedResult
-}
-
-// Parses source into a lexicon
-func (parser *InternalGrammarParser) CreateLexicon(source string) *parse.Lexicon {
-
-	lexicon := parse.NewLexicon()
-
-	// tokenize
-	parser.lastParsedResult.LineNumber = 0
-	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
-	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
-	if !tokensOk {
-		return lexicon
-	}
-
-	// parse
-	parser.lastParsedResult.LineNumber = 0
-	lexicon, _, parseOk := parser.parseLexicon(tokens, 0)
-	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
-
-	return lexicon
-}
-
-// Parses source into a lexicon
-func (parser *InternalGrammarParser) CreateGenerationLexicon(source string, log *common.SystemLog) *generate.GenerationLexicon {
-
-	lexicon := generate.NewGenerationLexicon(log, mentalese.NewRelationMatcher(log))
-
-	// tokenize
-	parser.lastParsedResult.LineNumber = 0
-	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
-	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
-	if !tokensOk {
-		return lexicon
-	}
-
-	// parse
-	parser.lastParsedResult.LineNumber = 0
-	lexicon, _, parseOk := parser.parseGenerationLexicon(tokens, 0, log)
-	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
-
-	return lexicon
 }
 
 // Parses source into transformations

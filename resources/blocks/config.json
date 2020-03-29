@@ -1,12 +1,6 @@
 {
-  "lexicons": [
-    "en_US/read.lexicon"
-  ],
   "grammars": [
     "en_US/read.grammar"
-  ],
-  "generationlexicons": [
-    "en_US/write.lexicon"
   ],
   "generationgrammars": [
     "en_US/write.grammar"

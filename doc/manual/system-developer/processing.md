@@ -241,7 +241,7 @@ The resulting bindings are then bound to the relations of the answer part of the
 
 ### Generator
 
-The generator generates a sequence of words based on the generic relations, using a generation grammar and generation lexicon. These are different from the ones used for parsing, because there are some differences between parsing and generating sentences.
+The generator generates a sequence of words based on the generic relations, using a generation grammar. These are different from the ones used for parsing, because there are some differences between parsing and generating sentences.
 
 Here's part of the generation grammar
 
@@ -249,13 +249,8 @@ Here's part of the generation grammar
     rule: s(C) -> np(P1) comma(C) s(P2),                                        condition: conjunction(C, P1, P2) conjunction(P2, _, _);
     rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: conjunction(C, P1, P2);
 
-and part of the generation lexicon
-
-    form: 'married',	pos: verb,		    condition: isa(E, marry);
-    form: 'children',	pos: noun,		    condition: isa(E, child);
-    form: 'has',	    pos: verb,		    condition: isa(E, have);
-
-Generation starts from an s() clause. The first rule that matches condition is used. Next, the consequent of the rule are used to generate the rest, all the way down, until words in the lexicon can be matched that have the required part of speech (pos) and condition.
+Generation starts from an s() clause. The first rule that matches condition is used. Next, the consequent of the rule
+are used to generate the rest, all the way down, until words can be matched.
 
 ### Surface Representation
 

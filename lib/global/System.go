@@ -19,9 +19,7 @@ type system struct {
 	dialogContext     *central.DialogContext
 	dialogContextStorage *DialogContextFileStorage
 	nameResolver      *central.NameResolver
-	lexicon           *parse.Lexicon
 	grammar           *parse.Grammar
-	generationLexicon *generate.GenerationLexicon
 	generationGrammar *parse.Grammar
 	tokenizer         *parse.Tokenizer
 	parser            *earley.Parser

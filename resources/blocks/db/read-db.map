@@ -1,6 +1,7 @@
 [
     block(E) => is(E, block);
     pyramid(E) => is(E, pyramid);
+    table(E) => is(E, table);
     box(E) => is(E, box);
 
     red(E) => color(E, red);
@@ -11,5 +12,5 @@
     grasping(P1, E1) => grasping(P1, E1);
     size(E, Width, Length, Height) => size(E, Width, Length, Height);
     name(A, N) => name(A, N);
-    pick_up(P1, E1) => pick_up(P1, E1);
+    pick_up(P1, E1, E2) => pick_up(P1, E1, E2);
 ]

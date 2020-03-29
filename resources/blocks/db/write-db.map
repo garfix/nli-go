@@ -2,5 +2,5 @@
     at(E, X, Y, Z) => at(E, X, Y, Z);
     grasping(P1, E1) => grasping(P1, E1);
     contain(P, A, B) => contain(A, B);
-    pick_up(P1, E1) => pick_up(P1, E1);
+    pick_up(P1, E1, E2) => pick_up(P1, E1, E2);
 ]

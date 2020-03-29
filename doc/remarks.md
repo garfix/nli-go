@@ -2,6 +2,44 @@
 
 Removed lexicons altogether; both from the parse and the generation side.
 
+===
+
+Question 9:
+
+    Can the table pick up blocks?
+    No
+
+Winograd notes: The semantic rules make this a nonsensical question which therefore must be false.
+
+This is a strange reaction, because the question, which starts with "can", is clearly about capabilities. These
+capabilities could be explicitly modelled.
+
+The following questions also use capabilities:
+
+- 10. can a pyramid be supported by a block? --- yes
+- 11. can a pyramid support a pyramid --- i don't know
+- 12. stack up two pyramids --- i can't
+
+The few lines Winograd adds to these questions suggest that there is no explicit capability model, no meta-knowledge
+model, present. Questions 10 and 11 use induction based on the situation in the scene to come to a conclusion. Question
+12, however, still requires some sort of knowledge about what each object can or cannot hold. Winograd offers _no_
+explanation for 12: "the robot tries and fails".
+
+The information for 12 can be built into the S-Selection constraints of `stack_up`: `stack_up(block, block)`. This will
+cause the attempt to fail.
+
+So I am going to implement "can" as "does the scene have an example of". This is quite easy. I just did number 9.
+
+Fun fact: the system did actually find an instance of "pick_up(`:table`, X)", namely the memory of picking up the big
+red block. Since I did not store _who_ picked up that block, but only that it was picked up, it matched. I made the
+memory of picking up more explicit: "shrdlu picked up the big red block".
+
+So 9 and 10 were no problem. 11 is a problem because of the subtle difference between "semantic rules" disallowing an
+action and not finding an actual example. Have to work on this.
+
+Number 12 is tough because of the expression "two pyramids". This actually means "a pyramid A and a pyramid B which is
+not A". But "two pyramids" does not always mean that, of course. Just in this sentence.
+
 # 2020-03-28
 
 I made it possible to use strings in the grammar:

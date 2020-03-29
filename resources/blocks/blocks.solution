@@ -80,4 +80,17 @@
             }
         ]
     }
+    {
+        condition: question(_) yes_no(),
+        result: _,
+        responses: [
+            {
+                condition: exists(),
+                answer: result(true)
+            }
+            {
+                answer: result(false)
+            }
+        ]
+    }
 ]

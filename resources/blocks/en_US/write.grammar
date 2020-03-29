@@ -1,6 +1,10 @@
 [
     { rule: proper_noun(E1) -> text(Name),                                      condition: name(E1, Name) }
 
+    { rule: s(S1) -> boolean(S1),                                               condition: result(S1) }
+    { rule: boolean(B1) -> 'yes', condition: result(true) }
+    { rule: boolean(B1) -> 'no', condition: result(false) }
+
     { rule: s(N) -> named_number(N) 'of' 'them',                                condition: a_number(N) less_than(N, 11) }
     { rule: s(N) -> text(N) 'of' them(N),                                       condition: a_number(N) }
 

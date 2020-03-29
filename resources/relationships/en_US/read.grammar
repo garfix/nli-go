@@ -22,13 +22,13 @@
 
     /* verb */
 
-    { rule: aux_do(E1) -> 'did' }
-    { rule: aux_do(E1) -> 'does' }
-    { rule: have(E1) -> 'have' }
-    { rule: have(E1) -> 'has' }
-    { rule: copula(E1) -> 'are' }
-    { rule: marry(E1) -> 'marry' }
-    { rule: marry(E1) -> 'married' }
+    { rule: aux_do(P1) -> 'did' }
+    { rule: aux_do(P1) -> 'does' }
+    { rule: have(P1) -> 'have' }
+    { rule: have(P1) -> 'has' }
+    { rule: copula(P1) -> 'are' }
+    { rule: marry(P1) -> 'marry' }
+    { rule: marry(P1) -> 'married' }
 
     /* misc */
 

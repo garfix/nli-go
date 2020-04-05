@@ -11,20 +11,15 @@ import (
 // The problem solver takes a relation set and a set of bindings
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
-//
-// Structures used:
-// RelationSet: describes the query
-// SolutionRoute: describes a single path through a series of knowledge base calls
-// RelationGroup: a single step in a solution route; it is the input for a specified knowledge base
 type ProblemSolver struct {
 	allKnowledgeBases   []knowledge.KnowledgeBase
 	factBases           []knowledge.FactBase
 	ruleBases           []knowledge.RuleBase
+	functionBases		[]knowledge.FunctionBase
 	aggregateBases      []knowledge.AggregateBase
 	nestedStructureBase []knowledge.NestedStructureBase
 	matcher             *mentalese.RelationMatcher
 	predicates 			mentalese.Predicates
-	optimizer           Optimizer
 	modifier            *FactBaseModifier
 	dialogContext 		*DialogContext
 	log                 *common.SystemLog
@@ -35,10 +30,10 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.P
 	return &ProblemSolver{
 		factBases:      []knowledge.FactBase{},
 		ruleBases:      []knowledge.RuleBase{},
+		functionBases:  []knowledge.FunctionBase{},
 		aggregateBases: []knowledge.AggregateBase{},
 		matcher:        matcher,
 		predicates:		predicates,
-		optimizer:      NewOptimizer(matcher),
 		modifier:       NewFactBaseModifier(log),
 		dialogContext:  dialogContext,
 		log:            log,
@@ -52,6 +47,7 @@ func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
 }
 
 func (solver *ProblemSolver) AddFunctionBase(functionBase knowledge.FunctionBase) {
+	solver.functionBases = append(solver.functionBases, functionBase)
 	solver.allKnowledgeBases = append(solver.allKnowledgeBases, functionBase)
 }
 
@@ -84,140 +80,98 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 
 	solver.log.AddProduction(head + "Solve Set", set.String() + " " + bindings.String())
 
-	newBindings := mentalese.Bindings{}
-
-	// remove duplicates because they cause unnecessary work and the optimizer can't deal with them
-	set = set.RemoveDuplicates()
-
-	// sort the relations to reduce the number of tuples retrieved from the fact bases
-	solutionRoutes, remainingRelations, ok := solver.optimizer.CreateSolutionRoutes(set, solver.allKnowledgeBases)
-
-	solver.log.AddProduction(head + "Solution Routes", solutionRoutes.String())
-
-	if !ok {
-
-		solver.log.AddError("Cannot find these relations in any knowledge base: " + remainingRelations.String())
-
-	} else {
-
-		for _, solutionRoute := range solutionRoutes {
-			newBindings = append(newBindings, solver.solveSingleSolutionRouteMultipleBindings(solutionRoute, bindings)...)
-		}
-	}
-
-	// remove duplicates because they cause unnecessary work and they cause problems for the generator
-	newBindings = mentalese.UniqueBindings(newBindings)
-
-	solver.log.AddProduction(head + "Solution Routes Result", newBindings.String())
-
-	solver.SolveDepth--
-
-	solver.log.EndDebug("SolveRelationSet", newBindings)
-
-	return newBindings
-}
-
-func (solver ProblemSolver) solveSingleSolutionRouteMultipleBindings(solutionRoute knowledge.SolutionRoute, bindings mentalese.Bindings) mentalese.Bindings {
-
 	newBindings := bindings
-
-	solver.SolveDepth++
-
-	head := strings.Repeat("  ", solver.SolveDepth)
-
-	for _, relationGroup := range solutionRoute {
-
-		solver.log.AddProduction(head + "Solve RelationGroup", relationGroup.String() + " " + bindings.String())
-
-		newBindings = solver.solveSingleRelationGroupMultipleBindings(relationGroup, newBindings)
-
-		solver.log.AddProduction(head + "Solve RelationGroup Result", newBindings.String())
+	for _, relation := range set {
+		newBindings = solver.SolveSingleRelationMultipleBindings(relation, newBindings)
 
 		if len(newBindings) == 0 {
 			break
 		}
 	}
 
+	// remove duplicates because they cause unnecessary work and they cause problems for the generator
+	newBindings = mentalese.UniqueBindings(newBindings)
+
+	solver.log.AddProduction(head + "Solve Set", newBindings.String())
+
 	solver.SolveDepth--
 
 	return newBindings
 }
 
-func (solver ProblemSolver) findKnowledgeBaseByName(name string) knowledge.KnowledgeBase {
-	for _, knowledgeBase := range solver.allKnowledgeBases {
-		if knowledgeBase.GetName() == name {
-			return knowledgeBase
+// goal e.g. father(Y, Z)
+// bindings e.g. {
+//  { {X='john', Y='jack'} }
+//  { {X='bob', Y='jonathan'} }
+// }
+// return e.g. {
+//  { {X='john', Y='jack', Z='joe'} }
+//  { {X='bob', Y='jonathan', Z='bill'} }
+// }
+func (solver ProblemSolver) SolveSingleRelationMultipleBindings(relation mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
+
+	solver.log.StartDebug("SolveSingleRelationMultipleBindings", relation, bindings)
+
+	newBindings := []mentalese.Binding{}
+	multiFound := false
+
+	for _, aggregateBase := range solver.aggregateBases {
+		newBindings, multiFound = aggregateBase.Bind(relation, bindings)
+		if multiFound {
+			break
 		}
 	}
 
-	return nil
-}
+	if !multiFound {
 
-func (solver ProblemSolver) solveSingleRelationGroupMultipleBindings(relationGroup knowledge.RelationGroup, bindings mentalese.Bindings) mentalese.Bindings {
-
-	solver.log.StartDebug("solveSingleRelationGroupMultipleBindings", relationGroup, bindings)
-
-	newBindings := mentalese.Bindings{}
-
-	knowledgeBase := solver.findKnowledgeBaseByName(relationGroup.KnowledgeBaseName)
-	aggregateBase, isAggregateBase := knowledgeBase.(knowledge.AggregateBase)
-
-	if isAggregateBase {
-
-		mbBindings, ok := aggregateBase.Bind(relationGroup.Relations[0], bindings)
-
-		if ok {
-			newBindings = append(newBindings, mbBindings...)
-		}
-
-	} else {
-
-		for _, binding := range bindings {
-			groupBindings := solver.solveSingleRelationGroupSingleBinding(relationGroup, binding)
-			newBindings = append(newBindings, groupBindings...)
+		if len(bindings) == 0 {
+			newBindings = solver.SolveSingleRelationSingleBinding(relation, mentalese.Binding{})
+		} else {
+			for _, binding := range bindings {
+				newBindings = append(newBindings, solver.SolveSingleRelationSingleBinding(relation, binding)...)
+			}
 		}
 	}
 
-	solver.log.EndDebug("solveSingleRelationGroupMultipleBindings", newBindings)
+	solver.log.EndDebug("SolveSingleRelationMultipleBindings", newBindings)
 
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupSingleBinding(relationGroup knowledge.RelationGroup, binding mentalese.Binding) mentalese.Bindings {
+// goalRelation e.g. father(Y, Z)
+// binding e.g. { X='john', Y='jack' }
+// return e.g. {
+//  { {X='john', Y='jack', Z='joe'} }
+//  { {X='bob', Y='jonathan', Z='bill'} }
+// }
+func (solver ProblemSolver) SolveSingleRelationSingleBinding(relation mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
 
-	solver.log.StartDebug("solveSingleRelationGroupSingleBinding", relationGroup, binding)
+	solver.log.StartDebug("SolveSingleRelationSingleBinding", relation, binding)
 
-	knowledgeBase := solver.findKnowledgeBaseByName(relationGroup.KnowledgeBaseName)
-	factBase, isFactBase := knowledgeBase.(knowledge.FactBase)
-	ruleBase, isRuleBase := knowledgeBase.(knowledge.RuleBase)
-	functionBase, isFunctionBase := knowledgeBase.(knowledge.FunctionBase)
-	_, isNestedStructureBase := knowledgeBase.(knowledge.NestedStructureBase)
+	newBindings := []mentalese.Binding{}
 
-	var newBindings mentalese.Bindings
+	// go through all fact bases
+	for _, factBase := range solver.factBases {
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleFactBase(relation, binding, factBase)...)
+	}
 
-	if isFactBase {
+	// go through all rule bases
+	for _, ruleBase := range solver.ruleBases {
+		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(relation, binding, ruleBase)...)
+	}
 
-		newBindings = solver.solveSingleRelationGroupSingleBindingFactBase(relationGroup, binding, factBase)
-
-	} else if isFunctionBase {
-
-		var relation = relationGroup.Relations[0]
+	// go through all function bases
+	for _, functionBase := range solver.functionBases {
 		resultBinding, functionFound := functionBase.Execute(relation, binding)
 		if functionFound {
 			newBindings = append(newBindings, resultBinding)
 		}
-
-	} else if isRuleBase {
-
-		newBindings = append(newBindings, solver.SolveSingleRelationSingleBindingSingleRuleBase(relationGroup.Relations[0], binding, ruleBase)...)
-
-	} else if isNestedStructureBase {
-
-		newBindings = solver.solveChildStructures(relationGroup.Relations[0], binding)
-
 	}
 
-	solver.log.EndDebug("solveSingleRelationGroupSingleBinding", newBindings)
+	// go through all nested structure bases
+	newBindings = append(newBindings, solver.solveChildStructures(relation, binding)...)
+
+	solver.log.EndDebug("SolveSingleRelationSingleBinding", newBindings)
 
 	return newBindings
 }
@@ -251,41 +205,10 @@ func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, bindin
 	return newBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationGroupSingleBindingFactBase(relationGroup knowledge.RelationGroup, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
-
-	newBindings := mentalese.Bindings{}
-
-	if len(relationGroup.Relations) == 1 && relationGroup.Relations[0].Predicate == mentalese.PredicateAssert {
-
-		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
-		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
-		solver.modifier.Assert(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
-		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
-		newBindings = append(newBindings, binding)
-
-	} else if len(relationGroup.Relations) == 1 && relationGroup.Relations[0].Predicate == mentalese.PredicateRetract {
-
-		localIdBinding := solver.replaceSharedIdsByLocalIds(relationGroup.Relations, binding, factBase)
-		boundRelations := relationGroup.Relations.BindSingle(localIdBinding)
-		solver.modifier.Retract(boundRelations[0].Arguments[0].TermValueRelationSet, factBase)
-		binding = solver.replaceLocalIdBySharedId(relationGroup.Relations, binding, factBase)
-		newBindings = append(newBindings, binding)
-
-	} else {
-
-		newBindings = solver.FindFacts(factBase, relationGroup.Relations, binding)
-	}
-
-	return newBindings
-}
-
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
 func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
 
 	solver.log.StartDebug("FindFacts", relations, binding)
-
-	// shared ids to local ids
-	localIdBinding := solver.replaceSharedIdsByLocalIds(relations, binding, factBase)
 
 	dbBindings := mentalese.Bindings{}
 
@@ -301,29 +224,25 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations men
 
 		dbRelations := ds2db.Replacement.ImportBinding(activeBinding2)
 
+		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
+
 		relevantBinding := localIdBinding.Select(dbRelations.GetVariableNames())
 		newDbBindings := solver.solveMultipleRelationSingleFactBase(dbRelations, relevantBinding, factBase)
 
 		for _, newDbBinding := range newDbBindings {
-			dbBindings = append(dbBindings, activeBinding.Merge(newDbBinding))
+
+			dbBinding := activeBinding.Merge(newDbBinding)
+
+			combinedBinding := localIdBinding.Merge(dbBinding.Select(relations.GetVariableNames()))
+			sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
+			dbBindings = append(dbBindings, sharedBinding)
 		}
 	}
 
-	// adapt bindings for outer world
-	newBindings := mentalese.Bindings{}
-	for _, dbBinding := range dbBindings {
-		// extend the original binding with the db binding
-		combinedBinding := localIdBinding.Merge(dbBinding.Select(relations.GetVariableNames()))
-		// local ids to shared ids
-		sharedBinding := solver.replaceLocalIdBySharedId(relations, combinedBinding, factBase)
-		newBindings = append(newBindings, sharedBinding)
-	}
+	solver.log.EndDebug("FindFacts", dbBindings)
 
-	solver.log.EndDebug("FindFacts", newBindings)
-
-	return newBindings
+	return dbBindings
 }
-
 
 func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
 
@@ -377,7 +296,7 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 	return relationBindings
 }
 
-func (solver ProblemSolver) replaceSharedIdsByLocalIds(relationSet mentalese.RelationSet, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.Binding{}
 
@@ -403,7 +322,7 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(relationSet mentalese.Rel
 	return newBinding
 }
 
-func (solver ProblemSolver) replaceLocalIdBySharedId(relationSet mentalese.RelationSet, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.Binding{}
 
@@ -427,6 +346,34 @@ func (solver ProblemSolver) replaceLocalIdBySharedId(relationSet mentalese.Relat
 	}
 
 	return newBinding
+}
+
+func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(relation mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
+
+	newBindings := mentalese.Bindings{}
+
+	if relation.Predicate == mentalese.PredicateAssert {
+
+		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
+		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
+		solver.modifier.Assert(boundRelation.Arguments[0].TermValueRelationSet, factBase)
+		binding = solver.replaceLocalIdBySharedId(binding, factBase)
+		newBindings = append(newBindings, binding)
+
+	} else if relation.Predicate == mentalese.PredicateRetract {
+
+		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
+		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
+		solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet, factBase)
+		binding = solver.replaceLocalIdBySharedId(binding, factBase)
+		newBindings = append(newBindings, binding)
+
+	} else {
+
+		newBindings = solver.FindFacts(factBase, mentalese.RelationSet{ relation }, binding)
+	}
+
+	return newBindings
 }
 
 // goalRelation e.g. father('jack', Z)
@@ -453,6 +400,9 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleRuleBase(goalR
 		for _, subGoal := range sourceSubgoalSet {
 
 			subgoalResultBindings = solver.SolveRelationSet([]mentalese.Relation{subGoal}, subgoalResultBindings)
+			if len(subgoalResultBindings) == 0 {
+				break
+			}
 		}
 
 		for _, subgoalResultBinding := range subgoalResultBindings {

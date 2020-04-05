@@ -134,6 +134,7 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 		requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
 		system.storeNamedEntities(nameBinding)
 		system.log.AddProduction("Relationizer", requestRelations.String())
+		system.log.AddProduction("Named entities", nameBinding.String())
 	}
 
 	if !system.log.IsDone() {

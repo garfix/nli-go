@@ -4,7 +4,10 @@
     { rule: qp(E1) -> an(E1),                                              sense: number(E1, 1) }
     { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
     { rule: qp(E1) -> 'at' 'least' 'one' 'of',                             sense: some(E1) }
-    { rule: qp(E1) -> 'two',                                               sense: number(E1, 2) }
+    { rule: qp(E1) -> number(E1) }
+
+    { rule: number(E1) -> 'two',                                           sense: number(E1, 2) }
+    { rule: number(N1) -> /^[0-9]+/ }
 
     { rule: an(E1) -> 'a' }
     { rule: an(E1) -> 'an' }
@@ -21,7 +24,8 @@
 
     { rule: vp(P1) -> tv(P1, _, E1) np(E1) }
     { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: do_put_into(P1, E1, E2) }
-    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_stack_up(P1, E1) }
+    { rule: vp(P1) -> 'stack' 'up' number(N1) block(E1),                   sense: do_create_stack(P1, N1) }
+    { rule: vp(P1) -> 'stack' 'up' qp(Q1) nbar(E1),                        sense: do_create_stack(P1, sem(3), sem(4)) }
     { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, _, E1) }
     { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2) }
     { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1) }

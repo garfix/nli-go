@@ -19,22 +19,6 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
-func (ruleBase *InMemoryRuleBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
-
-	matchingGroups := []RelationGroup{}
-
-	for _, rule := range ruleBase.rules {
-		for _, setRelation := range set {
-			if rule.Goal.Predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, ruleBase.Name})
-				break
-			}
-		}
-	}
-
-	return matchingGroups
-}
-
 func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.Bindings) {
 
 	ruleBase.log.StartDebug("RuleBase BindSingle", goal)

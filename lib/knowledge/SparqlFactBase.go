@@ -56,10 +56,6 @@ func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.RelationTransform
 	return []mentalese.RelationTransformation{}
 }
 
-func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
-	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
-}
-
 func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
 	return factBase.entities
 }

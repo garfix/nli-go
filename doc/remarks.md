@@ -11,6 +11,24 @@ order the relations have.
 
 So I will remove the cost function.
 
+===
+
+Relation groups and solution routes were introduced in order to combine relations, which was needed for complex mappings
+of generic semantics to domain specific semantics. A concept that I let go. Also it was used in combination with the
+cost function. I just removed that as well. Now these solution routes are just a complex construct that serves no
+purpose.
+
+The only thing I need to resolve is this: can it be necessary to map 2 semantic relations to 1 database relation? Like
+this:
+
+    firstname(N1) lastname(N2) -> database_fullname(N)
+
+or is it always possible to create a single semantic relation for this situation? I think so, because the programmer can
+both influence the semantic language and the database language. Now the example with the names given here is a bad one,
+which was the original reason, but has become obsolete. I have no better example.
+
+I removed the optimizer, relation groups and solution routes.
+
 # 2020-03-31
 
     Stack up two pyramids.

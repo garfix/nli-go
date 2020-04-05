@@ -1,7 +1,6 @@
 # Todo
 
 * do not allow zero valued predicates in the grammar
-* remove solution routes altogether; rebuild the solver
 * document 'explicit references'
 * map relations to database => not many-to-many, but 1-to-many
 * NewRelationizer: pointer, geen kopie maken
@@ -59,12 +58,6 @@ Find a way to ensure completeness of information about all relations used in a s
 
 - Make "more than" "less than" work
 - A range itself can contain quantified nouns (the oldest child in every family). The algorithm is not up to it. (See CLE)
-
-## Optimizer
-
-Check out the optimizer. It can probably be improved beyond the level of using table sizes to calculate cost.
-
-write(A, B) number_of(B, N) => number_of() should come later based on a dependency. This is not worked out at all.
 
 ## Domains
 

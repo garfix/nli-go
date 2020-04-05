@@ -15,23 +15,6 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 	return &SystemFunctionBase{ KnowledgeBaseCore{ Name: name } }
 }
 
-func (base *SystemFunctionBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
-
-	matchingGroups := []RelationGroup{}
-	predicates := []string{"join", "split", "concat", "greater_than", "less_than", "equals", "add", "number", "date_today", "date_subtract_years"}
-
-	for _, setRelation := range set {
-		for _, predicate:= range predicates {
-			if predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name})
-				break
-			}
-		}
-	}
-
-	return matchingGroups
-}
-
 func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	newBinding := binding

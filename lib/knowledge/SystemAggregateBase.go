@@ -16,23 +16,6 @@ func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregate
 	return &SystemAggregateBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (ruleBase *SystemAggregateBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
-
-	matchingGroups := []RelationGroup{}
-	predicates := []string{"number_of", "exists", "first"}
-
-	for _, setRelation := range set {
-		for _, predicate:= range predicates {
-			if predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, ruleBase.Name})
-				break
-			}
-		}
-	}
-
-	return matchingGroups
-}
-
 func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
 
 	base.log.StartDebug("SystemAggregateBase BindSingle", goal, bindings)

@@ -52,6 +52,7 @@ func (log *SystemLog) AddProduction(name string, production string) {
 func (log *SystemLog) AddError(error string) {
 	log.ok = false
 	log.errors = append(log.errors, error)
+	log.AddProduction("ERROR", error)
 }
 
 func (log *SystemLog) SetClarificationRequest(question string, options *Options) {

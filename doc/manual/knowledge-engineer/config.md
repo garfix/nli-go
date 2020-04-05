@@ -90,7 +90,6 @@ database ids to shared database ids.
         "defaultgraphuri": "http://dbpedia.org",
         "map": "dbpedia/ds2db.map",
         "names": "dbpedia/names.json",
-        "stats": "dbpedia/stats.json",
         "entities": "dbpedia/entities.json",
       }
 
@@ -109,7 +108,7 @@ Sparql has the property 'names', which is for example:
 This structure maps database names to URI's. This way we can talk to Sparql just like a relational database, with relations like 'spouse' ans 'description'. But when the actual Sparql query is created, these relations are turned into URI's.
 
 
-Each of the fact bases can have the properties 'map', 'names', 'stats', 'entities':
+Each of the fact bases can have the properties 'map', 'names', 'entities':
 
 #### map
 
@@ -132,25 +131,6 @@ On the left side of the arrow you find the domain specific relations, and on the
     ]
 
 This map is used to create the database relations. It is also used to determine 'relation groups': groups of relations that need to stay together when used with a database. The left hand side of a mapping forms such a relation group.
-
-#### stats
-
-Stats provides information about the size of the relations in the fact base. For example:
-
-    {
-      "spouse": {"size": 40000, "distinctValues": [35000, 35000] },
-      "birth_name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
-      "foaf_name": {"size": 4100000, "distinctValues": [3500000, 3400000] },
-      "gender": {"size": 14000000, "distinctValues": [14000000, 11] }
-    }
-
-Here the key (i.e. "spouse") is a database relation.
-
-'size' is the number of rows in the fact base, and 'distinctValues' contains the number of distinct values per column.
-
-The numbers do not have to be exact!
-Stats are used to calculate the cost of a relation group in a solution route. Smaller relations are placed at the start of the route, because they are more restrictive, yield less results and thus decrease processing time.
-For a small fact base this is irrelevant, but for large fact bases this is very important.
 
 #### entities
 

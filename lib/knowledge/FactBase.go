@@ -11,13 +11,10 @@ type FactBase interface {
 	Retract(relation mentalese.Relation)
 	GetMappings() []mentalese.RelationTransformation
 	GetWriteMappings() []mentalese.RelationTransformation
-	GetStatistics() mentalese.DbStats
 	GetEntities() mentalese.Entities
 	GetLocalId(sharedId string, entityType string) string
 	GetSharedId(localId string, entityType string) string
 }
-
-const worst_cost = 100000000.0
 
 func getFactBaseMatchingGroups(matcher *mentalese.RelationMatcher, set mentalese.RelationSet, factBase FactBase) []RelationGroup {
 
@@ -43,7 +40,6 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 
 			for i := range bindings {
 
-				binding := bindings[i]
 				indexes := indexesPerNode[i].Indexes
 
 				matchingRelations := mentalese.RelationSet{}
@@ -51,11 +47,7 @@ func getFactBaseReadGroups(matcher *mentalese.RelationMatcher, set mentalese.Rel
 					matchingRelations = append(matchingRelations, set[i])
 				}
 
-				boundReplacement := mapping.Replacement.BindSingle(binding)
-
-				cost := CalculateCost(boundReplacement, factBase.GetStatistics())
-
-				matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
+				matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName()})
 			}
 		}
 	}
@@ -84,46 +76,11 @@ func getFactBaseWriteGroups(matcher *mentalese.RelationMatcher, set mentalese.Re
 						matchingRelations = append(matchingRelations, set[i])
 					}
 
-					cost := worst_cost
-
-					matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName(), cost})
+					matchingGroups = append(matchingGroups, RelationGroup{matchingRelations, factBase.GetName()})
 				}
 			}
 		}
 	}
 
 	return matchingGroups
-}
-
-// The cost of a relation set that is to be resolved by a fact base. The fact base brings in the stats.
-// The higher the cost, the later it should be executed. Lower cost is better.
-// If no cost can be calculated, the cost is assumed to be high.
-// The function was found in "Efficient processing of interactive relational database queries expressed in logic" by David Warren
-func CalculateCost(boundReplacement mentalese.RelationSet, stats mentalese.DbStats) float64 {
-
-	cost := float64(0.0)
-
-	for _, replacementRelation := range boundReplacement {
-
-		relationStats, usedInFactBase := stats[replacementRelation.Predicate]
-
-		if usedInFactBase {
-			product := 1
-			for columnIndex, distinctValues := range relationStats.DistinctValues {
-
-				if !replacementRelation.Arguments[columnIndex].IsVariable() && !replacementRelation.Arguments[columnIndex].IsAnonymousVariable() {
-					product *= distinctValues
-				}
-			}
-
-			// the cost of a single relation is its domain size divided ("softened") by the product
-			// of the domain sizes of its instantiated arguments.
-			cost += float64(relationStats.Size) / float64(product)
-		} else {
-			// no cost available: presume high cost
-			cost += worst_cost
-		}
-	}
-
-	return cost
 }

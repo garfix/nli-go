@@ -8,7 +8,6 @@
         "defaultgraphuri": "http://dbpedia.org",
         "map": "db/ds2db.map",
         "names": "db/names.json",
-        "stats": "db/stats.json",
         "entities": "entities.json",
         "doCache": true
       }

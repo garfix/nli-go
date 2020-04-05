@@ -18,14 +18,13 @@ type MySqlFactBase struct {
 	db                *sql.DB
 	tableDescriptions map[string][]string
 	ds2db             []mentalese.RelationTransformation
-	stats			  mentalese.DbStats
 	entities 		  mentalese.Entities
 	sharedIds 		  SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
 
 	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
@@ -37,7 +36,6 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 		db: db,
 		tableDescriptions: map[string][]string{},
 		ds2db: ds2db,
-		stats: stats,
 		entities: entities,
 		sharedIds: SharedIds{},
 		matcher: matcher,
@@ -55,10 +53,6 @@ func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation 
 
 func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.RelationTransformation {
 	return []mentalese.RelationTransformation{}
-}
-
-func (factBase *MySqlFactBase) GetStatistics() mentalese.DbStats {
-	return factBase.stats
 }
 
 func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {

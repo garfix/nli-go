@@ -42,9 +42,8 @@ func TestSolver(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 
 	dialogContext := central.NewDialogContext()
 	predicates := mentalese.Predicates{}
@@ -112,7 +111,7 @@ func TestSolver(t *testing.T) {
 		link(A, B) => link(A, B);
 	]`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, stats, entities, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, entities, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, predicates, dialogContext, log)

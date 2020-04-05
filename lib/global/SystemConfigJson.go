@@ -5,7 +5,6 @@ type relationSetFactBase struct {
 	Facts    string
 	ReadMap  string
 	WriteMap string
-	Stats    string
 	Entities string
 	SharedIds string
 }
@@ -25,7 +24,6 @@ type mysqlFactBase struct {
 	Password string
 	Database string
 	Map      string
-	Stats	 string
 	Entities string
 	SharedIds string
 	Tables   []mysqlTable
@@ -38,7 +36,6 @@ type sparqlFactBase struct {
 	Defaultgraphuri string
 	Map             string
 	Names           string
-	Stats           string
 	Entities        string
 	SharedIds 		string
 	DoCache         bool

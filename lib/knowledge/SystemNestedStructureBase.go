@@ -26,7 +26,7 @@ func (base *SystemNestedStructureBase) GetMatchingGroups(set mentalese.RelationS
 	for _, setRelation := range set {
 		for _, predicate := range predicates {
 			if predicate == setRelation.Predicate {
-				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name, worst_cost})
+				matchingGroups = append(matchingGroups, RelationGroup{mentalese.RelationSet{setRelation}, base.Name})
 			}
 		}
 	}

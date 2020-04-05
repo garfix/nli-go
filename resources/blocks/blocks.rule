@@ -3,7 +3,27 @@
     do_pick_up(P1, E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand() memo(pick_up(123, `:shrdlu`, E1));
     do_find(P1, E1) :- ;
     do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
-    do_stack_up(P1, E1) :- ;
+    do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) move_hand(X, Y, New_z) release(A) make_support(B, A);
+
+    do_create_stack(P1, N) :-
+        do_find_free_space(X, Y)
+        do_move(`:pyramid`, X, Y, 0)
+        subtract(N, 1, New_n)
+        do_create_rest_of_stack(`:pyramid`, Type, New_n, X, Y);
+
+    do_create_rest_of_stack(Base, N, X, Y) :-
+        equals(N, 0);
+    do_create_rest_of_stack(Base, N, X, Y) :-
+        greater_then(N, 0)
+        is(E1, block)
+        at(E1, X1, Y1, _) not_equals(X, X1) not_equals(Y, Y1)
+        do_clear(E1)
+        do_put_on(E1, Base)
+        subtract(N, 1, New_n)
+        do_create_rest_of_stack(E1, Type, New_n, X, Y);
+
+    do_find_free_space(X, Y) :- assign(X, 0) assign(Y, 0);
+    do_clear(E1) :- ;
 
     /* inferences */
     object(E1) :- block(E1);

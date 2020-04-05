@@ -68,9 +68,8 @@ func TestQuantSolver(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	stats := mentalese.DbStats{}
 	entities := mentalese.Entities{}
-	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, stats, entities, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, entities, log)
 	dialogContext := central.NewDialogContext()
 	predicates := mentalese.Predicates{}
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), predicates, dialogContext, log)

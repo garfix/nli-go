@@ -31,31 +31,12 @@ func (s SolutionRoute) Swap(i, j int) {
 }
 
 func (s SolutionRoute) Less(i, j int) bool {
-	if s[i].Cost < s[j].Cost {
+
+	// arbitrary comparison to disallow all meaningless permutations
+	if strings.Compare(s[i].Relations.String(), s[j].Relations.String()) < 0 {
 		return true
-	} else if s[i].Cost > s[j].Cost {
-		return false
 	} else {
-
-		//return true
-
-		// arbitrary comparison to disallow all meaningless permutations
-		if strings.Compare(s[i].Relations.String(), s[j].Relations.String()) < 0 {
-			return true
-		} else {
-			return false
-		}
-
-		//if s[i].KnowledgeBaseIndex < s[j].KnowledgeBaseIndex {
-		//	return true
-		//} else if s[i].KnowledgeBaseIndex > s[j].KnowledgeBaseIndex {
-		//	return false
-		//} else {
-		//
-		//	return s[i].Relations.String() < s[j].Relations.String()
-		//
-		//}
-
+		return false
 	}
 }
 

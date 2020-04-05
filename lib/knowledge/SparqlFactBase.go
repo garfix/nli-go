@@ -21,7 +21,6 @@ type SparqlFactBase struct {
 	defaultGraphUri string
 	ds2db           []mentalese.RelationTransformation
 	names           mentalese.ConfigMap
-	stats           mentalese.DbStats
 	entities        mentalese.Entities
 	predicates 		mentalese.Predicates
 	sharedIds 		SharedIds
@@ -31,7 +30,7 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, stats mentalese.DbStats, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
@@ -39,7 +38,6 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		defaultGraphUri:   defaultGraphUri,
 		ds2db:             ds2db,
 		names:             names,
-		stats:             stats,
 		entities:          entities,
 		predicates:		   predicates,
 		sharedIds: 		   SharedIds{},
@@ -60,10 +58,6 @@ func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.RelationTransform
 
 func (factBase *SparqlFactBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
-}
-
-func (factBase *SparqlFactBase) GetStatistics() mentalese.DbStats {
-	return factBase.stats
 }
 
 func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {

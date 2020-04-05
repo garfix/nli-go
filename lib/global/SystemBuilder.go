@@ -213,14 +213,12 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 		}
 	}
 
-	stats, _ := builder.CreateDbStats(factBase.Stats)
-
 	entities, ok := builder.CreateEntities(factBase.Entities)
 	if !ok {
 		return
 	}
 
-	database := knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, dbMapWrite, stats, entities, builder.log)
+	database := knowledge.NewInMemoryFactBase(name, facts, matcher, dbMap, dbMapWrite, entities, builder.log)
 
 	if factBase.SharedIds != "" {
 		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)
@@ -272,17 +270,12 @@ func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.Pr
 		return
 	}
 
-	stats, ok := builder.CreateDbStats(factBase.Stats)
-	if !ok {
-		return
-	}
-
 	entities, ok := builder.CreateEntities(factBase.Entities)
 	if !ok {
 		return
 	}
 
-	database := knowledge.NewMySqlFactBase(name, factBase.Domain, factBase.Username, factBase.Password, factBase.Database, matcher, dbMap, stats, entities, builder.log)
+	database := knowledge.NewMySqlFactBase(name, factBase.Domain, factBase.Username, factBase.Password, factBase.Database, matcher, dbMap, entities, builder.log)
 
 	for _, table := range factBase.Tables {
 		columns := []string{}
@@ -325,11 +318,6 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 		return
 	}
 
-	stats, ok := builder.CreateDbStats(factBase.Stats)
-	if !ok {
-		return
-	}
-
 	entities, ok := builder.CreateEntities(factBase.Entities)
 	if !ok {
 		return
@@ -337,7 +325,7 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 
 	doCache := factBase.DoCache
 
-	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, stats, entities, predicates, doCache, builder.log)
+	database := knowledge.NewSparqlFactBase(name, factBase.Baseurl, factBase.Defaultgraphuri, matcher, dbMap, names, entities, predicates, doCache, builder.log)
 
 	if factBase.SharedIds != "" {
 		sharedIds, ok := builder.LoadSharedIds(factBase.SharedIds)
@@ -367,30 +355,6 @@ func (builder systemBuilder) CreateConfigMap(path string) (mentalese.ConfigMap, 
 	}
 
 	return configMap, true
-}
-
-func (builder systemBuilder) CreateDbStats(path string) (mentalese.DbStats, bool) {
-
-	stats := mentalese.DbStats{}
-
-	if path != "" {
-
-		absolutePath := common.AbsolutePath(builder.baseDir, path)
-
-		content, err := common.ReadFile(absolutePath)
-		if err != nil {
-			builder.log.AddError("Error reading db stats file " + absolutePath + " (" + err.Error() + ")")
-			return stats, false
-		}
-
-		err = json.Unmarshal([]byte(content), &stats)
-		if err != nil {
-			builder.log.AddError("Error parsing db stats file " + absolutePath + " (" + err.Error() + ")")
-			return stats, false
-		}
-	}
-
-	return stats, true
 }
 
 func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bool) {

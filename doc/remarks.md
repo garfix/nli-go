@@ -1,3 +1,16 @@
+# 2020-04-05
+
+I wrote about calculating the cost of executing relations. This technique actually has a very limited advantage in
+certain circumstances. But it also has a disadvantage. Relations are no longer executed in the order that the programmer
+intended. And the programmer can actually use this order for performance reasons, and this is quite common an natural.
+
+The use of the cost function lost most of its worth already when I started nesting queries (quants). That reduced the
+scope of the ordering to the relations in a very restricted area: that of a range, for example. Turns out that the
+number of relations in such a scope is very small, and that it is very important that the programmer can decide which
+order the relations have.
+
+So I will remove the cost function.
+
 # 2020-03-31
 
     Stack up two pyramids.

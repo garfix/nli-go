@@ -15,7 +15,7 @@ import (
 // Structures used:
 // RelationSet: describes the query
 // SolutionRoute: describes a single path through a series of knowledge base calls
-// RelationGroup: a single step in a solution route; it is the input for a specified knowledge base, having a calculation cost
+// RelationGroup: a single step in a solution route; it is the input for a specified knowledge base
 type ProblemSolver struct {
 	allKnowledgeBases   []knowledge.KnowledgeBase
 	factBases           []knowledge.FactBase

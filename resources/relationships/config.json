@@ -16,7 +16,6 @@
         "name": "relations",
         "facts": "db/relationships.relation",
         "readMap": "db/relationships-db.map",
-        "stats": "db/relationships-db-stats.json",
         "entities": "entities.json"
       }
     ],

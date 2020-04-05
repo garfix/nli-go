@@ -10,20 +10,18 @@ type InMemoryFactBase struct {
 	facts   	mentalese.RelationSet
 	ds2db   	[]mentalese.RelationTransformation
 	ds2dbWrite 	[]mentalese.RelationTransformation
-	stats		mentalese.DbStats
 	entities 	mentalese.Entities
 	sharedIds 	SharedIds
 	matcher 	*mentalese.RelationMatcher
 	log     	*common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, ds2dbWrite []mentalese.RelationTransformation, stats mentalese.DbStats, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, ds2dbWrite []mentalese.RelationTransformation, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts: facts,
 		ds2db: ds2db,
 		ds2dbWrite: ds2dbWrite,
-		stats: stats,
 		entities: entities,
 		sharedIds: SharedIds{},
 		matcher: matcher,
@@ -41,10 +39,6 @@ func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.RelationTransfo
 
 func (factBase *InMemoryFactBase) GetMatchingGroups(set mentalese.RelationSet) []RelationGroup {
 	return getFactBaseMatchingGroups(factBase.matcher, set, factBase)
-}
-
-func (factBase *InMemoryFactBase) GetStatistics() mentalese.DbStats {
-	return factBase.stats
 }
 
 func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {

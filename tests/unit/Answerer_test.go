@@ -94,15 +94,9 @@ func TestAnswerer(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	stats := mentalese.DbStats{
-		"book": {Size: 100, DistinctValues: []int{100, 100}},
-		"author": {Size: 100, DistinctValues: []int{100, 200}},
-		"person": {Size: 100, DistinctValues: []int{100, 100}},
-	}
-
 	entities := mentalese.Entities{}
 
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, stats, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
 	predicates := mentalese.Predicates{}
 

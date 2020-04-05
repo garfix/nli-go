@@ -1,9 +1,8 @@
 # Todo
 
 * do not allow zero valued predicates in the grammar
-* remove cost function and everything related
-* document 'explicit references'
 * remove solution routes altogether; rebuild the solver
+* document 'explicit references'
 * map relations to database => not many-to-many, but 1-to-many
 * NewRelationizer: pointer, geen kopie maken
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be

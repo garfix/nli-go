@@ -28,9 +28,9 @@ arguments).
 You also need to tell the system how to find the name of such an entity type. This is done in entities.json:
 
     "person": {
-        "name": "[person_name(Id, Name)]",
+        "name": "person_name(Id, Name)",
         "knownby": {
-          "description": "[description(Id, Value)]"
+          "description": "description(Id, Value)"
         }
     },
 
@@ -50,8 +50,8 @@ Binding. This allows for different values in each of the knowledge bases.
 
 You can add two lines to a .map file for a knowledge base:
 
-    married_to(A, B) => spouse(A, B);
-    married_to(A, B) => spouse(B, A);
+    married_to(A, B) :- spouse(A, B);
+    married_to(A, B) :- spouse(B, A);
 
 or you can add a line to a rules file:
 

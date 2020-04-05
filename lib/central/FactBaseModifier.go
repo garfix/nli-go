@@ -16,54 +16,34 @@ func NewFactBaseModifier(log *common.SystemLog) *FactBaseModifier {
 	}
 }
 
-func (modifier FactBaseModifier) Assert(set mentalese.RelationSet, factBase knowledge.FactBase) {
+func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase knowledge.FactBase) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
-		bindings, _, indexesPerNode, match := modifier.matcher.MatchSequenceToSetWithIndexes(mapping.Pattern, set, mentalese.Binding{})
+		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.Binding{})
+		if !match2 { continue }
 
-		if match {
+		dbRelations := mapping.Pattern.ImportBinding(activeBinding2)
 
-			binding := bindings[0]
-			indexes := indexesPerNode[0].Indexes
+		for _, replacementRelation := range dbRelations {
 
-			matchingRelations := mentalese.RelationSet{}
-			for _, i := range indexes {
-				matchingRelations = append(matchingRelations, set[i])
-			}
-
-			boundReplacement := mapping.Replacement.BindSingle(binding)
-
-			for _, replacementRelation := range boundReplacement {
-
-				factBase.Assert(replacementRelation)
-			}
+			factBase.Assert(replacementRelation)
 		}
 	}
 }
 
-func (modifier FactBaseModifier) Retract(set mentalese.RelationSet, factBase knowledge.FactBase) {
+func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase knowledge.FactBase) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
-		bindings, _, indexesPerNode, match := modifier.matcher.MatchSequenceToSetWithIndexes(mapping.Pattern, set, mentalese.Binding{})
+		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.Binding{})
+		if !match2 { continue }
 
-		if match {
+		dbRelations := mapping.Pattern.ImportBinding(activeBinding2)
 
-			binding := bindings[0]
-			indexes := indexesPerNode[0].Indexes
+		for _, replacementRelation := range dbRelations {
 
-			matchingRelations := mentalese.RelationSet{}
-			for _, i := range indexes {
-				matchingRelations = append(matchingRelations, set[i])
-			}
-
-			boundReplacement := mapping.Replacement.BindSingle(binding)
-
-			for _, replacementRelation := range boundReplacement {
-
-				factBase.Retract(replacementRelation)
-			}
+			factBase.Retract(replacementRelation)
 		}
 	}
 }

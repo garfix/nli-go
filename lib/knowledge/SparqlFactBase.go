@@ -19,7 +19,7 @@ type SparqlFactBase struct {
 	KnowledgeBaseCore
 	baseUrl         string
 	defaultGraphUri string
-	ds2db           []mentalese.RelationTransformation
+	ds2db           []mentalese.Rule
 	names           mentalese.ConfigMap
 	entities        mentalese.Entities
 	predicates 		mentalese.Predicates
@@ -30,7 +30,7 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, names mentalese.ConfigMap, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
@@ -48,12 +48,12 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 	}
 }
 
-func (factBase *SparqlFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *SparqlFactBase) GetMappings() []mentalese.Rule {
 	return factBase.ds2db
 }
 
-func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.RelationTransformation {
-	return []mentalese.RelationTransformation{}
+func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.Rule {
+	return []mentalese.Rule{}
 }
 
 func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {

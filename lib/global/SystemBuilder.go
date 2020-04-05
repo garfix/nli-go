@@ -189,14 +189,14 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 		return
 	}
 
-	dbMap := builder.parser.CreateTransformations(readMapString)
+	dbMap := builder.parser.CreateRules(readMapString)
 	lastResult = builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing read map file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
-	dbMapWrite := []mentalese.RelationTransformation{}
+	dbMapWrite := []mentalese.Rule{}
 	path = common.AbsolutePath(builder.baseDir, factBase.WriteMap)
 	if path != "" {
 		writeMapString, err := common.ReadFile(path)
@@ -205,7 +205,7 @@ func (builder systemBuilder) ImportInMemoryFactBase(name string, solver *central
 			return
 		}
 
-		dbMapWrite = builder.parser.CreateTransformations(writeMapString)
+		dbMapWrite = builder.parser.CreateRules(writeMapString)
 		lastResult = builder.parser.GetLastParseResult()
 		if !lastResult.Ok {
 			builder.log.AddError("Error parsing write map file " + path + " (" + lastResult.String() + ")")
@@ -263,7 +263,7 @@ func (builder systemBuilder) ImportMySqlDatabase(name string, solver *central.Pr
 		return
 	}
 
-	dbMap := builder.parser.CreateTransformations(mapString)
+	dbMap := builder.parser.CreateRules(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing map file " + path + " (" + lastResult.String() + ")")
@@ -306,7 +306,7 @@ func (builder systemBuilder) ImportSparqlDatabase(name string, solver *central.P
 		return
 	}
 
-	dbMap := builder.parser.CreateTransformations(mapString)
+	dbMap := builder.parser.CreateRules(mapString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing map file " + mapPath + " (" + lastResult.String() + ")")
@@ -381,7 +381,7 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 		for key, entityInfo := range entityStructure {
 
-			nameRelationSet := builder.parser.CreateRelationSet(entityInfo.Name)
+			nameRelationSet := builder.parser.CreateRelation(entityInfo.Name)
 
 			parseResult := builder.parser.GetLastParseResult()
 			if !parseResult.Ok {
@@ -389,9 +389,9 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 				return entities, false
 			}
 
-			knownBy := map[string]mentalese.RelationSet{}
+			knownBy := map[string]mentalese.Relation{}
 			for knownByKey, knownByValue := range entityInfo.Knownby {
-				knownBy[knownByKey] = builder.parser.CreateRelationSet(knownByValue)
+				knownBy[knownByKey] = builder.parser.CreateRelation(knownByValue)
 
 				parseResult := builder.parser.GetLastParseResult()
 				if !parseResult.Ok {

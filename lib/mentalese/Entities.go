@@ -3,8 +3,8 @@ package mentalese
 type Entities map[string]EntityInfo
 
 type EntityInfo struct {
-	Name RelationSet
-	Knownby map[string]RelationSet
+	Name Relation
+	Knownby map[string]Relation
 }
 
 const NameVar = "Name"

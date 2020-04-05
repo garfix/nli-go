@@ -206,23 +206,21 @@ func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, bindin
 }
 
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
-func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
-	solver.log.StartDebug("FindFacts", relations, binding)
+	solver.log.StartDebug("FindFacts", relation, binding)
 
 	dbBindings := mentalese.Bindings{}
 
 	for _, ds2db := range factBase.GetMappings() {
 
-		activeBindings, match := solver.matcher.MatchSequenceToSet(relations, ds2db.Pattern, mentalese.Binding{})
+		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.Binding{})
 		if !match { continue }
-		activeBinding := activeBindings[0]
 
-		activeBindings2, match2 := solver.matcher.MatchSequenceToSet(ds2db.Pattern, relations, mentalese.Binding{})
+		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.Binding{})
 		if !match2 { continue }
-		activeBinding2 := activeBindings2[0]
 
-		dbRelations := ds2db.Replacement.ImportBinding(activeBinding2)
+		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2)
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 
@@ -233,7 +231,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relations men
 
 			dbBinding := activeBinding.Merge(newDbBinding)
 
-			combinedBinding := localIdBinding.Merge(dbBinding.Select(relations.GetVariableNames()))
+			combinedBinding := localIdBinding.Merge(dbBinding.Select(relation.GetVariableNames()))
 			sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
 			dbBindings = append(dbBindings, sharedBinding)
 		}
@@ -356,7 +354,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(relat
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
-		solver.modifier.Assert(boundRelation.Arguments[0].TermValueRelationSet, factBase)
+		solver.modifier.Assert(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
 		binding = solver.replaceLocalIdBySharedId(binding, factBase)
 		newBindings = append(newBindings, binding)
 
@@ -364,13 +362,13 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(relat
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
-		solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet, factBase)
+		solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
 		binding = solver.replaceLocalIdBySharedId(binding, factBase)
 		newBindings = append(newBindings, binding)
 
 	} else {
 
-		newBindings = solver.FindFacts(factBase, mentalese.RelationSet{ relation }, binding)
+		newBindings = solver.FindFacts(factBase, relation, binding)
 	}
 
 	return newBindings

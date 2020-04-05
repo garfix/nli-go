@@ -1,8 +1,8 @@
 {
   "person": {
-    "name": "[person_name(Id, Name)]",
+    "name": "person_name(Id, Name)",
     "knownby": {
-      "description": "[description(Id, Value)]"
+      "description": "description(Id, Value)"
     }
   }
 }

@@ -1,44 +1,44 @@
 [
-    marry(_, A, B) => spouse(A, B);
-    marry(_, A, B) => spouse(B, A);
+    marry(_, A, B) :- spouse(A, B);
+    marry(_, A, B) :- spouse(B, A);
 
-    has_husband(A, B) => spouse(A, B);
-    has_husband(A, B) => spouse(B, A);
-    has_wife(A, B) => spouse(A, B);
-    has_wife(A, B) => spouse(B, A);
+    has_husband(A, B) :- spouse(A, B);
+    has_husband(A, B) :- spouse(B, A);
+    has_wife(A, B) :- spouse(A, B);
+    has_wife(A, B) :- spouse(B, A);
 
-    person_name(A, N) => birth_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
-    person_name(A, N) => foaf_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
+    person_name(A, N) :- birth_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
+    person_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
 
-    country_name(A, N) => foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
+    country_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
 
-    name(A, N, canonical_name) => foaf_name(A, N) first(N);
+    name(A, N, canonical_name) :- foaf_name(A, N) first(N);
 
-    description(A, D) => description(A, D);
-    long_description(A, D) => abstract(A, D);
-    label(A, D) => label(A, D);
+    description(A, D) :- description(A, D);
+    long_description(A, D) :- abstract(A, D);
+    label(A, D) :- label(A, D);
 
-    gender(A, male) => gender(A, 'male');
-    gender(A, female) => gender(A, 'female');
+    gender(A, male) :- gender(A, 'male');
+    gender(A, female) :- gender(A, 'female');
 
-    have_child(A, B) => child(A, B);
-    have_n_children(A, N) => children(A, N);
+    have_child(A, B) :- child(A, B);
+    have_n_children(A, N) :- children(A, N);
 
-    has_father(A, B) => parent(A, B) gender(B, 'male');
-    has_mother(A, B) => parent(A, B) gender(B, 'female');
-    has_daughter(A, B) => parent(B, A) gender(B, 'female');
-    has_son(A, B) => parent(B, A) gender(B, 'male');
+    has_father(A, B) :- parent(A, B) gender(B, 'male');
+    has_mother(A, B) :- parent(A, B) gender(B, 'female');
+    has_daughter(A, B) :- parent(B, A) gender(B, 'female');
+    has_son(A, B) :- parent(B, A) gender(B, 'male');
 
-    founding_date(E, D) => founding_date(E, D);
-    has_capital(A, B) => has_capital(A, B);
+    founding_date(E, D) :- founding_date(E, D);
+    has_capital(A, B) :- has_capital(A, B);
 
-    birth_date(E, D) => birth_date(E, D);
-    death_date(E, D) => death_date(E, D);
-    birth_place(E, P) => birth_place(E, Id) foaf_name(Id, P);
+    birth_date(E, D) :- birth_date(E, D);
+    death_date(E, D) :- death_date(E, D);
+    birth_place(E, P) :- birth_place(E, Id) foaf_name(Id, P);
 
-    person(E) => type(E, `:http://dbpedia.org/ontology/Person`);
-    country(E) => type(E, `:http://dbpedia.org/class/yago/WikicatCountries`);
+    person(E) :- type(E, `:http://dbpedia.org/ontology/Person`);
+    country(E) :- type(E, `:http://dbpedia.org/class/yago/WikicatCountries`);
 
-    has_population(Country, Count) => population_total(Country, Count);
-    has_population(Country, Count) => population_census(Country, Count);
+    has_population(Country, Count) :- population_total(Country, Count);
+    has_population(Country, Count) :- population_census(Country, Count);
 ]

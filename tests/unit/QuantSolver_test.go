@@ -31,13 +31,13 @@ func TestQuantSolver(t *testing.T) {
 		have_child(1, 8)
 	]`)
 
-	ds2db := internalGrammarParser.CreateTransformations(`[
-		have_child(A, B) => have_child(A, B);
-		isa(A, parent) => have_child(A, _);
-		isa(A, child) => have_child(_, A);
+	ds2db := internalGrammarParser.CreateRules(`[
+		have_child(A, B) :- have_child(A, B);
+		isa(A, parent) :- have_child(A, _);
+		isa(A, child) :- have_child(_, A);
 	]`)
 
-	ds2dbWrite := internalGrammarParser.CreateTransformations(`[]`)
+	ds2dbWrite := internalGrammarParser.CreateRules(`[]`)
 
 	tests := []struct {
 		quant   string

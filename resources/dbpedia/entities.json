@@ -1,15 +1,15 @@
 {
   "person": {
-    "name": "[person_name(Id, Name)]",
+    "name": "person_name(Id, Name)",
     "knownby": {
-      "description": "[description(Id, Value)]"
+      "description": "description(Id, Value)"
     }
   },
   "country": {
-    "name": "[country_name(Id, Name)]",
+    "name": "country_name(Id, Name)",
     "knownby": {
-      "label": "[label(Id, Value)]",
-      "founding_date": "[founding_date(Id, Value)]"
+      "label": "label(Id, Value)",
+      "founding_date": "founding_date(Id, Value)"
     }
   }
 }

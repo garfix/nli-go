@@ -2,8 +2,6 @@
 
 * do not allow zero valued predicates in the grammar
 * document 'explicit references'
-* map relations to database => not many-to-many, but 1-to-many
-* NewRelationizer: pointer, geen kopie maken
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be
     solve some other way
 * entity type (multiple) inheritance

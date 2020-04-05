@@ -206,12 +206,12 @@ Rule bases can be used to make inferences on the information of the database.
 
 To use a database, you must tell the engine how a relation maps to one or more relations in the database. Here's an example
 
-    married_to(A, B) => marriages(A, B, _);
-    name(A, N) => person(A, N, _, _);
-    parent(P, C) => parent(P, C);
-    child(C, P) => parent(P, C);
-    gender(A, male) => person(A, _, 'M', _);
-    gender(A, female) => person(A, _, 'F', _);
+    married_to(A, B) :- marriages(A, B, _);
+    name(A, N) :- person(A, N, _, _);
+    parent(P, C) :- parent(P, C);
+    child(C, P) :- parent(P, C);
+    gender(A, male) :- person(A, _, 'M', _);
+    gender(A, female) :- person(A, _, 'F', _);
 
 In this example there's just a single relation at both the left (domain) and the right (database) side of the =>, but there could be more. It's a n:m mapping.
 

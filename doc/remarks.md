@@ -29,6 +29,10 @@ which was the original reason, but has become obsolete. I have no better example
 
 I removed the optimizer, relation groups and solution routes.
 
+===
+
+Being busy, I also changed the many-to-many mapping of semantics to database to 1-to-many, as planned for a long time.
+
 # 2020-03-31
 
     Stack up two pyramids.

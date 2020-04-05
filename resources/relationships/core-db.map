@@ -1,7 +1,7 @@
 [
-    question(_) => question(_);
-    who(_) => who(_);
-    which(_) => which(_);
-    how_many(_) => how_many(_);
-    yes_no(_) => yes_no(_);
+    question(_) :- question(_);
+    who(_) :- who(_);
+    which(_) :- which(_);
+    how_many(_) :- how_many(_);
+    yes_no(_) :- yes_no(_);
 ]

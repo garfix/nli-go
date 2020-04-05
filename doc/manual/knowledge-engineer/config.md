@@ -117,17 +117,13 @@ Map maps domain specific relations to database relations.
 On the left side of the arrow you find the domain specific relations, and on the right side the domain specific relations. Example:
 
     [
-        married_to(A, B) => spouse(A, B);
-        married_to(A, B) => spouse(B, A);
+        married_to(A, B) :- spouse(A, B);
+        married_to(A, B) :- spouse(B, A);
 
-        name(A, F, first_name) name(A, L, last_name) join(N, ' ', F, L) => birth_name(A, N);
+        gender(A, male) :- gender(A, 'male');
+        gender(A, female) :- gender(A, 'female');
 
-        description(A, D) => description(A, D);
-
-        gender(A, male) => gender(A, 'male');
-        gender(A, female) => gender(A, 'female');
-
-        person(E) => type(E, `http://dbpedia.org/ontology/Person`);
+        person(E) :- type(E, `http://dbpedia.org/ontology/Person`);
     ]
 
 This map is used to create the database relations. It is also used to determine 'relation groups': groups of relations that need to stay together when used with a database. The left hand side of a mapping forms such a relation group.
@@ -138,19 +134,19 @@ Entities are used to resolve proper names into database specific identifiers. He
 
     {
       "person": {
-        "name": "[name(Id, Name, full_name) person(Id)]",
+        "name": "name(Id, Name, full_name) person(Id)",
         "knownby": {
-          "description": "[description(Id, Value)]"
+          "description": "description(Id, Value)"
         }
       }
     }
 
 Here "person" is a random identifier that will be shown to the end user if he/she needs to disambiguate the name. Next to "person" you can specify other entities.
 
-"name" specifies a domain specific relation set. When used, the system will fill variable Name, query the relation set in the factbase. The bound Id variable will be stored as the id of the named entity.
+"name" specifies a relation. When used, the system will fill variable Name, query the relation set in the factbase. The bound Id variable will be stored as the id of the named entity.
 
 "knownby" specifies some means to help a human user to disambiguate an entity. Here "description" is, like "person" a random identifier to be shown to the user.
-Id is the variable that is entered by the system, just before the relation set is queried in the fact base. The Value variable is filled with data from the fact base.
+Id is the variable that is entered by the system, just before the relation is queried in the fact base. The Value variable is filled with data from the fact base.
 
 
 In this example the fact base contained a relation "description(Id, Value)" that holds a proper description of a person. In other cases, multiple entity attributes may be needed to specify a person / entity to a user.

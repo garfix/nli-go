@@ -17,14 +17,14 @@ type MySqlFactBase struct {
 	KnowledgeBaseCore
 	db                *sql.DB
 	tableDescriptions map[string][]string
-	ds2db             []mentalese.RelationTransformation
+	ds2db             []mentalese.Rule
 	entities 		  mentalese.Entities
 	sharedIds 		  SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
 
-func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
 
 	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
 	if err != nil {
@@ -43,12 +43,12 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 	}
 }
 
-func (factBase *MySqlFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *MySqlFactBase) GetMappings() []mentalese.Rule {
 	return factBase.ds2db
 }
 
-func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.RelationTransformation {
-	return []mentalese.RelationTransformation{}
+func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.Rule {
+	return []mentalese.Rule{}
 }
 
 func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {

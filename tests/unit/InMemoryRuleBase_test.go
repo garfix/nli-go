@@ -25,11 +25,10 @@ func TestInMemoryRuleBase(t *testing.T) {
 		parent(sue, cyrill)
 	]`)
 	entities := mentalese.Entities{}
-	ds2db := parser.CreateTransformations(`[
-		parent(A, B) => parent(A, B);
+	ds2db := parser.CreateRules(`[
+		parent(A, B) :- parent(A, B);
 	]`)
-	ds2dbWrite := parser.CreateTransformations(`[
-	]`)
+	ds2dbWrite := parser.CreateRules(`[]`)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 	solver.AddFactBase(factBase)
 	rules := parser.CreateRules(`[

@@ -32,12 +32,12 @@ func TestFactBase(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	]`)
 
-	ds2db := parser.CreateTransformations(`[
-		write(Person_name, Book_name) => book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
-		publish(Pub_name, Book_name) => book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
+	ds2db := parser.CreateRules(`[
+		write(Person_name, Book_name) :- book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
+		publish(Pub_name, Book_name) :- book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
 	]`)
 
-	ds2dbWrite := parser.CreateTransformations(`[]`)
+	ds2dbWrite := parser.CreateRules(`[]`)
 
 	entities := mentalese.Entities{}
 	matcher := mentalese.NewRelationMatcher(log)
@@ -60,7 +60,7 @@ func TestFactBase(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 
-		resultBindings := solver.FindFacts(factBase, mentalese.RelationSet{input}, mentalese.Binding{})
+		resultBindings := solver.FindFacts(factBase, input, mentalese.Binding{})
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantBindings {
 			t.Errorf("FactBase,BindSingle(%v): got %v, want %s", test.input, resultBindings, test.wantBindings)

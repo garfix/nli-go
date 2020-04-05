@@ -1,3 +1,3 @@
 [
-    hello_world() => hello_world_db();
+    hello_world() :- hello_world_db();
 ]

@@ -9,8 +9,8 @@ type FactBase interface {
 	MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings
 	Assert(relation mentalese.Relation)
 	Retract(relation mentalese.Relation)
-	GetMappings() []mentalese.RelationTransformation
-	GetWriteMappings() []mentalese.RelationTransformation
+	GetMappings() []mentalese.Rule
+	GetWriteMappings() []mentalese.Rule
 	GetEntities() mentalese.Entities
 	GetLocalId(sharedId string, entityType string) string
 	GetSharedId(localId string, entityType string) string

@@ -1,12 +1,12 @@
 [
-    question(_) => question(_);
-    who(_) => who(_);
-    which(_) => which(_);
-    what(_) => what(_);
-    how_many(_) => how_many(_);
-    yes_no() => yes_no();
-    command(E1) => command(E1);
-    number(E1, N1) => number(E1, N1);
-    reference(E1) => reference(E1);
-    select(E1) => select(E1);
+    question(_) :- question(_);
+    who(_) :- who(_);
+    which(_) :- which(_);
+    what(_) :- what(_);
+    how_many(_) :- how_many(_);
+    yes_no() :- yes_no();
+    command(E1) :- command(E1);
+    number(E1, N1) :- number(E1, N1);
+    reference(E1) :- reference(E1);
+    select(E1) :- select(E1);
 ]

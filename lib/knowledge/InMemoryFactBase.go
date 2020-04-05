@@ -8,15 +8,15 @@ import (
 type InMemoryFactBase struct {
 	KnowledgeBaseCore
 	facts   	mentalese.RelationSet
-	ds2db   	[]mentalese.RelationTransformation
-	ds2dbWrite 	[]mentalese.RelationTransformation
+	ds2db   	[]mentalese.Rule
+	ds2dbWrite 	[]mentalese.Rule
 	entities 	mentalese.Entities
 	sharedIds 	SharedIds
 	matcher 	*mentalese.RelationMatcher
 	log     	*common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.RelationTransformation, ds2dbWrite []mentalese.RelationTransformation, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, ds2dbWrite []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts: facts,
@@ -29,11 +29,11 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *ment
 	}
 }
 
-func (factBase *InMemoryFactBase) GetMappings() []mentalese.RelationTransformation {
+func (factBase *InMemoryFactBase) GetMappings() []mentalese.Rule {
 	return factBase.ds2db
 }
 
-func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.RelationTransformation {
+func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.Rule {
 	return factBase.ds2dbWrite
 }
 

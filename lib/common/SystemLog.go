@@ -14,10 +14,11 @@ type SystemLog struct {
 	clarificationQuestion string
 	clarificationOptions *Options
 	ok          bool
+	depth		int
 }
 
 func NewSystemLog(debugOn bool) *SystemLog {
-	log := SystemLog{debugOn: debugOn}
+	log := SystemLog{ debugOn: debugOn }
 	log.Clear()
 
 	return &log
@@ -46,7 +47,18 @@ func (log *SystemLog) ToggleDebug() {
 }
 
 func (log *SystemLog) AddProduction(name string, production string) {
-	log.productions = append(log.productions, name + ": " + production)
+	stmt := strings.Repeat("  ", log.debugDepth) + name + ": " + production + " "
+	log.productions = append(log.productions, stmt)
+}
+
+func (log *SystemLog) StartProduction(name string, production string) {
+	log.AddProduction(name, production)
+	log.debugDepth++
+}
+
+func (log *SystemLog) EndProduction(name string, production string) {
+	log.debugDepth--
+	log.AddProduction(name, production)
 }
 
 func (log *SystemLog) AddError(error string) {

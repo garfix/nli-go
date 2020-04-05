@@ -5,7 +5,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
-	"strings"
 )
 
 // The problem solver takes a relation set and a set of bindings
@@ -37,7 +36,6 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.P
 		modifier:       NewFactBaseModifier(log),
 		dialogContext:  dialogContext,
 		log:            log,
-		SolveDepth:     0,
 	}
 }
 
@@ -74,11 +72,7 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 // ]
 func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.Bindings) mentalese.Bindings {
 
-	solver.SolveDepth++
-
-	head := strings.Repeat("  ", solver.SolveDepth)
-
-	solver.log.AddProduction(head + "Solve Set", set.String() + " " + bindings.String())
+	solver.log.StartProduction("Solve Set", set.String() + " " + bindings.String())
 
 	newBindings := bindings
 	for _, relation := range set {
@@ -92,9 +86,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 	// remove duplicates because they cause unnecessary work and they cause problems for the generator
 	newBindings = mentalese.UniqueBindings(newBindings)
 
-	solver.log.AddProduction(head + "Solve Set", newBindings.String())
-
-	solver.SolveDepth--
+	solver.log.EndProduction("Solve Set", newBindings.String())
 
 	return newBindings
 }
@@ -255,11 +247,7 @@ func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []ment
 
 func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.Bindings, factBase knowledge.FactBase) mentalese.Bindings {
 
-	solver.SolveDepth++
-
-	head := strings.Repeat("  ", solver.SolveDepth)
-
-	solver.log.AddProduction(head + "Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
+	solver.log.StartProduction("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
 
 	relationBindings := mentalese.Bindings{}
 
@@ -287,9 +275,7 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 		}
 	}
 
-	solver.log.AddProduction(head + "Database" + " " + factBase.GetName(), relationBindings.String())
-
-	solver.SolveDepth--
+	solver.log.EndProduction("Database" + " " + factBase.GetName(), relationBindings.String())
 
 	return relationBindings
 }

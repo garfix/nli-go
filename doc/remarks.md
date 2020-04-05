@@ -1,3 +1,28 @@
+# 2020-03-31
+
+    Stack up two pyramids.
+
+When I would keep my routine this sentence would be interpreted as:
+
+    Find all pyramids, stack each of them up (?) and check if you have stacked up 2
+
+This will actually succeed, since there are only two pyramids.
+
+But what the sentence actually means is more like:
+
+    Create a new stack of 2 (distinct) pyramids.
+
+or
+
+    do_create_stack(2, pyramids)
+
+and this can be subgoaled as something like:
+
+    place 1 ObjectType on the :table
+    while N != 0 {
+        select a topmost ObjectType that is not the topmost object on our stack and put it on top of the stack
+    }
+
 # 2020-03-29
 
 Removed lexicons altogether; both from the parse and the generation side.

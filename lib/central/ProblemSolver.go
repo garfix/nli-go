@@ -11,18 +11,17 @@ import (
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
-	allKnowledgeBases   []knowledge.KnowledgeBase
-	factBases           []knowledge.FactBase
-	ruleBases           []knowledge.RuleBase
-	functionBases		[]knowledge.FunctionBase
-	aggregateBases      []knowledge.AggregateBase
-	nestedStructureBase []knowledge.NestedStructureBase
-	matcher             *mentalese.RelationMatcher
-	predicates 			mentalese.Predicates
-	modifier            *FactBaseModifier
-	dialogContext 		*DialogContext
-	log                 *common.SystemLog
-	SolveDepth int
+	factBases            []knowledge.FactBase
+	ruleBases            []knowledge.RuleBase
+	functionBases        []knowledge.FunctionBase
+	aggregateBases       []knowledge.AggregateBase
+	nestedStructureBases []knowledge.NestedStructureBase
+	matcher              *mentalese.RelationMatcher
+	predicates           mentalese.Predicates
+	modifier             *FactBaseModifier
+	dialogContext        *DialogContext
+	log                  *common.SystemLog
+	SolveDepth           int
 }
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
@@ -41,27 +40,22 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.P
 
 func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
 	solver.factBases = append(solver.factBases, factBase)
-	solver.allKnowledgeBases = append(solver.allKnowledgeBases, factBase)
 }
 
 func (solver *ProblemSolver) AddFunctionBase(functionBase knowledge.FunctionBase) {
 	solver.functionBases = append(solver.functionBases, functionBase)
-	solver.allKnowledgeBases = append(solver.allKnowledgeBases, functionBase)
 }
 
 func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, ruleBase)
-	solver.allKnowledgeBases = append(solver.allKnowledgeBases, ruleBase)
 }
 
 func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.AggregateBase) {
 	solver.aggregateBases = append(solver.aggregateBases, source)
-	solver.allKnowledgeBases = append(solver.allKnowledgeBases, source)
 }
 
 func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructureBase) {
-	solver.nestedStructureBase = append(solver.nestedStructureBase, base)
-	solver.allKnowledgeBases = append(solver.allKnowledgeBases, base)
+	solver.nestedStructureBases = append(solver.nestedStructureBases, base)
 }
 
 // set e.g. [ father(X, Y) father(Y, Z) ]

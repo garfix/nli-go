@@ -33,6 +33,28 @@ I removed the optimizer, relation groups and solution routes.
 
 Being busy, I also changed the many-to-many mapping of semantics to database to 1-to-many, as planned for a long time.
 
+===
+
+Another thing: the difference in meaning of number-quantifiers in questions and commands:
+
+If I ask you:
+
+    How many candy bars did you have?
+
+You will mentally select all the bars you had, count them and reply: 2.
+
+But when I say:
+
+    You can have 2 candy bars.
+
+You select 2 bars and eat them. You can't select them all, eat them and then find out you ate the whole cookie jar.
+
+This difference is important for the QuantSolver. In questions, the quantifier operates after the scope was executed. In
+commands, the quantifier operates during the processing of the scope. It continues trying the next entity in the range
+until n scope executions have succeeded.
+
+I could introduce a quant modifier.
+
 # 2020-03-31
 
     Stack up two pyramids.

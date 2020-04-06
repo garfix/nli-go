@@ -96,7 +96,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 // }
 func (solver ProblemSolver) SolveSingleRelationMultipleBindings(relation mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
 
-	solver.log.StartDebug("SolveSingleRelationMultipleBindings", relation, bindings)
+	solver.log.StartProduction("Solve Relation", relation.String() + " " + fmt.Sprint(bindings))
 
 	newBindings := []mentalese.Binding{}
 	multiFound := false
@@ -119,7 +119,7 @@ func (solver ProblemSolver) SolveSingleRelationMultipleBindings(relation mentale
 		}
 	}
 
-	solver.log.EndDebug("SolveSingleRelationMultipleBindings", newBindings)
+	solver.log.EndProduction("Solve Relation", fmt.Sprint(newBindings))
 
 	return newBindings
 }

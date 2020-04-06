@@ -153,7 +153,8 @@ func (solver ProblemSolver) quickAcceptabilityCheck(variable string, entityType 
 	for _, relation := range relations {
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
-				if solver.predicates.GetEntityType(relation.Predicate, i) == entityType {
+				argumentEntityType := solver.predicates.GetEntityType(relation.Predicate, i)
+				if  argumentEntityType == "" || argumentEntityType == entityType {
 					accepted = true
 					break
 				}

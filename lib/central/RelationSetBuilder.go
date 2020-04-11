@@ -37,7 +37,7 @@ func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, binding
 			if len(bindings) == 0 {
 				newSet = append(newSet, templateRelation)
 			} else {
-				relations := templateRelation.BindSingleRelationMultipleBindings(bindings)
+				relations := templateRelation.BindMultiple(bindings)
 				newSet = newSet.Merge(relations)
 			}
 

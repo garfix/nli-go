@@ -8,8 +8,6 @@ import (
 )
 
 const (
-	field_form            = "form"
-	field_pos             = "pos"
 	field_sense           = "sense"
 	field_condition       = "condition"
 	field_result		  = "result"
@@ -41,27 +39,6 @@ func (parser *InternalGrammarParser) SetPanicOnParseFail(doPanic bool) {
 
 func (parser *InternalGrammarParser) GetLastParseResult() ParseResult {
 	return parser.lastParsedResult
-}
-
-// Parses source into transformations
-func (parser *InternalGrammarParser) CreateTransformations(source string) []mentalese.RelationTransformation {
-
-	transformations := []mentalese.RelationTransformation{}
-
-	// tokenize
-	parser.lastParsedResult.LineNumber = 0
-	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
-	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
-	if !tokensOk {
-		return transformations
-	}
-
-	// parse
-	parser.lastParsedResult.LineNumber = 0
-	transformations, _, parseOk := parser.parseTransformations(tokens, 0)
-	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
-
-	return transformations
 }
 
 // Parses source into rules

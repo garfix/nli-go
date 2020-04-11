@@ -2,7 +2,8 @@
     {
         condition: which(E1),
         transformations: [
-            question(_) which(_) => ;
+            question(_) :- ;
+            which(_) :- ;
         ],
         result: E1,
         responses: [

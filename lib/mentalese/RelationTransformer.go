@@ -18,135 +18,125 @@ func NewRelationTransformer(matcher *RelationMatcher, log *common.SystemLog) *Re
 }
 
 // return the original relations, but replace the ones that have matched with their replacements
-func (transformer *RelationTransformer) Replace(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
-
-	// prepare flat set of relations where all scopes are removed
-	unScopedRelationSet := relationSet.UnScope()
+func (transformer *RelationTransformer) Replace(rules []Rule, relationSet RelationSet) RelationSet {
 
 	// replace the relations embedded in quants
-	replacedSet := transformer.replaceEmbeddedRelations(transformations, relationSet)
-
-	matchedIndexes, replacements := transformer.matchAllTransformations(transformations, replacedSet, unScopedRelationSet)
-	newRelations := RelationSet{}
-
-	for i, oldRelation := range replacedSet {
-		if !common.IntArrayContains(matchedIndexes, i) {
-			newRelations = append(newRelations, oldRelation)
-		}
-	}
-
-	newRelations = append(newRelations, replacements...)
-
-	return newRelations
-}
-
-func (transformer *RelationTransformer) replaceEmbeddedRelations(transformations []RelationTransformation, relationSet RelationSet) RelationSet {
-
-	// replace inside hierarchical relations
-	replacedSet := RelationSet{}
-	for _, relation := range relationSet {
-
-		if relation.Predicate == PredicateQuant {
-			replacedRelation := relation.Copy()
-			replacedRelation.Arguments[QuantRangeIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[QuantRangeIndex].TermValueRelationSet)
-			replacedRelation.Arguments[QuantQuantifierIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[QuantQuantifierIndex].TermValueRelationSet)
-			replacedRelation.Arguments[QuantScopeIndex].TermValueRelationSet =
-				transformer.Replace(transformations, relation.Arguments[QuantScopeIndex].TermValueRelationSet)
-			replacedSet = append(replacedSet, replacedRelation)
-		} else {
-			replacedSet = append(replacedSet, relation)
-		}
-	}
+	replacedSet := transformer.replaceRelations(rules, relationSet, Binding{})
 
 	return replacedSet
 }
 
-// Attempts all transformations on all relations
-// Returns the Indexes of the matched relations, and the replacements that were created, each in a single set
-func (transformer *RelationTransformer) matchAllTransformations(transformations []RelationTransformation, haystackSet RelationSet, unScopedRelations RelationSet) ([]int, RelationSet) {
+func (transformer *RelationTransformer) replaceRelations(transformations []Rule, relationSet RelationSet, binding Binding) RelationSet {
 
-	transformer.log.StartDebug("matchAllTransformations", transformations)
+	replacedSet := RelationSet{}
+	for _, relation := range relationSet {
 
-	var matchedIndexes []int
-	var replacements RelationSet
+		// replace inside hierarchical relations
+		deepRelation := NewRelation(relation.Predicate, relation.Arguments)
 
-	for _, transformation := range transformations {
-
-		conditionBindings, ok := transformer.bindCondition(transformation, unScopedRelations)
-
-		if ok {
-			for _, conditionBinding := range conditionBindings {
-
-				// each transformation application is completely independent from the others
-				bindings, newIndexes, _, match := transformer.matcher.MatchSequenceToSetWithIndexes(transformation.Pattern, haystackSet, conditionBinding)
-				if match {
-					matchedIndexes = append(matchedIndexes, newIndexes...)
-					for _, binding := range bindings {
-						replacements = append(replacements, transformer.createReplacements(transformation.Replacement, binding)...)
-					}
-				}
-			}
-		}
-	}
-
-	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
-
-	transformer.log.EndDebug("matchAllTransformations", matchedIndexes, replacements)
-
-	return matchedIndexes, replacements
-}
-
-func (transformer *RelationTransformer) bindCondition(transformation RelationTransformation, unScopedRelations RelationSet) (Bindings, bool) {
-
-	bindings := Bindings{{}}
-
-	ok := true
-
-	if len(transformation.Condition) > 0 {
-
-		bindings, ok = transformer.matcher.MatchSequenceToSet(transformation.Condition, unScopedRelations, Binding{})
-	}
-
-	return bindings, ok
-}
-
-func (transformer *RelationTransformer) createReplacements(relations RelationSet, bindings Binding) RelationSet {
-
-	replacements := RelationSet{}
-
-	transformer.log.StartDebug("createReplacements", relations, bindings)
-
-	for _, relation := range relations {
-
-		newRelation := Relation{}
-		newRelation.Predicate = relation.Predicate
-
-		for _, argument := range relation.Arguments {
-
-			arg := argument.Copy()
-
+		for i, argument := range deepRelation.Arguments {
 			if argument.IsRelationSet() {
-
-				arg.TermValueRelationSet = transformer.createReplacements(argument.TermValueRelationSet, bindings)
-
-			} else if argument.IsVariable() {
-				value, found := bindings[argument.String()]
-				if found {
-					arg = value
-				} else {
-					// replacement could not be bound, leave variable unchanged
-				}
+				deepRelation.Arguments[i] = NewRelationSet(transformer.replaceRelations(transformations, argument.TermValueRelationSet, binding))
 			}
-
-			newRelation.Arguments = append(newRelation.Arguments, arg)
 		}
 
-		replacements = append(replacements, newRelation)
+		// replace according to rules
+		newRelations := RelationSet{ }
+
+		found := false
+		for _, rule := range transformations {
+			aBinding, ok := transformer.matcher.MatchTwoRelations(rule.Goal, deepRelation, Binding{})
+			if  ok {
+				boundRelations := rule.Pattern.BindSingle(aBinding)
+				newRelations = append(newRelations, boundRelations...)
+				found = true
+			}
+		}
+
+		if !found {
+			newRelations = append(newRelations, deepRelation)
+		}
+
+		replacedSet = append(replacedSet, newRelations...)
 	}
 
-	transformer.log.EndDebug("createReplacements", replacements)
-
-	return replacements
+	return replacedSet
 }
+//
+//// Attempts all transformations on all relations
+//// Returns the Indexes of the matched relations, and the replacements that were created, each in a single set
+//func (transformer *RelationTransformer) matchAllTransformations(transformations []Rule, haystackSet RelationSet, unScopedRelations RelationSet) ([]int, RelationSet) {
+//
+//	transformer.log.StartDebug("matchAllTransformations", transformations)
+//
+//	var matchedIndexes []int
+//	var replacements RelationSet
+//
+//	for _, transformation := range transformations {
+//
+//		conditionBindings := transformer.bindCondition(transformation, unScopedRelations)
+//
+//		if len(conditionBindings) > 0 {
+//			for _, conditionBinding := range conditionBindings {
+//
+//				// each transformation application is completely independent from the others
+//				bindings, newIndexes, _, match := transformer.matcher.MatchSequenceToSetWithIndexes(transformation.Pattern, haystackSet, conditionBinding)
+//				if match {
+//					matchedIndexes = append(matchedIndexes, newIndexes...)
+//					for _, binding := range bindings {
+//						replacements = append(replacements, transformer.createReplacements(transformation.Pattern, binding)...)
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
+//
+//	transformer.log.EndDebug("matchAllTransformations", matchedIndexes, replacements)
+//
+//	return matchedIndexes, replacements
+//}
+//
+//func (transformer *RelationTransformer) bindCondition(transformation Rule, unScopedRelations RelationSet) Bindings {
+//
+//	bindings, _ := transformer.matcher.MatchRelationToSet(transformation.Goal, unScopedRelations, Binding{})
+//
+//	return bindings
+//}
+//
+//func (transformer *RelationTransformer) createReplacements(relation Relation, binding Binding) RelationSet {
+//
+//	replacements := RelationSet{}
+//
+//	transformer.log.StartDebug("createReplacements", relation, binding)
+//
+//	newRelation := Relation{}
+//	newRelation.Predicate = relation.Predicate
+//
+//	for _, argument := range relation.Arguments {
+//
+//		arg := argument.Copy()
+//
+//		if argument.IsRelationSet() {
+//
+//			arg.TermValueRelationSet = transformer.createReplacements(argument.TermValueRelationSet, binding)
+//
+//		} else if argument.IsVariable() {
+//			value, found := binding[argument.String()]
+//			if found {
+//				arg = value
+//			} else {
+//				// replacement could not be bound, leave variable unchanged
+//			}
+//		}
+//
+//		newRelation.Arguments = append(newRelation.Arguments, arg)
+//	}
+//
+//	replacements = append(replacements, newRelation)
+//
+//	transformer.log.EndDebug("createReplacements", replacements)
+//
+//	return replacements
+//}

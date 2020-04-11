@@ -333,7 +333,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(relat
 	if relation.Predicate == mentalese.PredicateAssert {
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
-		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
+		boundRelation := relation.BindSingle(localIdBinding)
 		solver.modifier.Assert(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
 		binding = solver.replaceLocalIdBySharedId(binding, factBase)
 		newBindings = append(newBindings, binding)
@@ -341,7 +341,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBindingSingleFactBase(relat
 	} else if relation.Predicate == mentalese.PredicateRetract {
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
-		boundRelation := relation.BindSingleRelationSingleBinding(localIdBinding)
+		boundRelation := relation.BindSingle(localIdBinding)
 		solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
 		binding = solver.replaceLocalIdBySharedId(binding, factBase)
 		newBindings = append(newBindings, binding)

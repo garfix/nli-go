@@ -2,14 +2,14 @@ package mentalese
 
 type Solution struct {
 	Condition   RelationSet
-	Transformations []RelationTransformation
+	Transformations []Rule
 	Result Term
 	Responses   []ResultHandler
 }
 
 func (solution Solution) BindSingle(binding Binding) Solution {
 
-	boundTransformations := []RelationTransformation{}
+	boundTransformations := []Rule{}
 	for _, transformation := range solution.Transformations {
 		boundTransformations = append(boundTransformations, transformation.BindSingle(binding))
 	}

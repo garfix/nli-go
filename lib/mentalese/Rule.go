@@ -5,9 +5,9 @@ type Rule struct {
 	Pattern RelationSet
 }
 
-func (rule Rule) ImportBinding(binding Binding) Rule {
+func (rule Rule) BindSingle(binding Binding) Rule {
 	return Rule{
-		Goal: rule.Goal.BindSingleRelationSingleBinding(binding),
-		Pattern: rule.Pattern.ImportBinding(binding),
+		Goal: rule.Goal.BindSingle(binding),
+		Pattern: rule.Pattern.BindSingle(binding),
 	}
 }

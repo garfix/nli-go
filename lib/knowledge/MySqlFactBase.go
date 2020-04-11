@@ -101,7 +101,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 	factBase.log.StartDebug("MatchRelationToDatabase", needleRelation)
 
-	needleRelation = needleRelation.BindSingleRelationSingleBinding(binding)
+	needleRelation = needleRelation.BindSingle(binding)
 
 	dbBindings := mentalese.Bindings{}
 

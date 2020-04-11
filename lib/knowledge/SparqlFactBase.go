@@ -102,7 +102,7 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
-	relation = relation.BindSingleRelationSingleBinding(binding)
+	relation = relation.BindSingle(binding)
 
 	bindings := mentalese.Bindings{}
 

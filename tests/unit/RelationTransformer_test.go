@@ -20,7 +20,6 @@ func TestRelationTransformer(t *testing.T) {
 		predicate(S1, name)
 		object(S1, E1)
 		instance_of(E1, customer)
-		determiner(E1, D1)
 		instance_of(D1, all)
 	]`)
 
@@ -30,22 +29,28 @@ func TestRelationTransformer(t *testing.T) {
 	}{
 		{
 			`[
-				predicate(A, X) object(A, Y) determiner(Y, Z) instance_of(Z, B) => task(A, B);
-				predicate(A, X) predicate(X, A) => magic(A, X);
-				IF object(A, O) THEN predicate(A, X) => label(A, O);
+				instance_of(Z, B) :- task(A, B);
+				predicate(A, X) :- magic(A, X);
+				predicate(A, X) :- label(A, O);
 			]`,
-			"[instance_of(E2, name) instance_of(E1, customer) task(S1, name) task(S1, customer) task(S1, all) label(S1, E1)]",
+			"[task(A, name) magic(S1, name) label(S1, O) object(S1, E1) task(A, customer) task(A, all)]",
 		},
 		{
 			`[
-				instance_of(Z, B) => isa(Z, B);
+				instance_of(Z, B) :- isa(Z, B);
 			]`,
-			"[predicate(S1, name) object(S1, E1) determiner(E1, D1) isa(E2, name) isa(E1, customer) isa(D1, all)]",
+			"[isa(E2, name) predicate(S1, name) object(S1, E1) isa(E1, customer) isa(D1, all)]",
+		},
+		{
+			`[
+				instance_of(Z, B) :- first(Z, C) second(C, B);
+			]`,
+			"[first(E2, C) second(C, name) predicate(S1, name) object(S1, E1) first(E1, C) second(C, customer) first(D1, C) second(C, all)]",
 		},
 	}
 	for _, test := range tests {
 
-		transformations := parser.CreateTransformations(test.transformations)
+		transformations := parser.CreateRules(test.transformations)
 
 		wantReplaced := parser.CreateRelationSet(test.wantReplaced)
 
@@ -68,8 +73,8 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 		quant(E1, [ isa(E1, ball) ], D1, [ isa(D1, every) ], [])
 	]`)
 
-	transformations := parser.CreateTransformations(`[
-		quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) => quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) ok(E2, D2);
+	transformations := parser.CreateRules(`[
+		quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) :- quant(E2, [ isa(E2, ball) ], D2, [ isa(D2, every) ], []) ok(E2, D2);
 	]`)
 
 	replacedResult := transformer.Replace(transformations, relationSet)
@@ -77,28 +82,5 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 
 	if replacedResult.String() != wantReplaced {
 		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", replacedResult, wantReplaced)
-	}
-}
-
-func TestRelationTransformerWithQuant(t *testing.T) {
-
-	log := common.NewSystemLog(false)
-	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher(log)
-	transformer := mentalese.NewRelationTransformer(matcher, log)
-
-	input := parser.CreateRelationSet(`[
-		quant(E1, [ isa(E1, how) isa(E1, many)], D1, [ isa(D1, how) isa(D1, many) ], [])
-	]`)
-
-	transformations := parser.CreateTransformations(`[
-		isa(A, how) isa(A, many) => how_many(A);
-	]`)
-
-	result := transformer.Replace(transformations, input)
-	want := "[quant(E1, [how_many(E1)], D1, [how_many(D1)], [])]"
-
-	if result.String() != want {
-		t.Errorf("RelationTransformer:\ngot\n%v,\nwant\n%v", result, want)
 	}
 }

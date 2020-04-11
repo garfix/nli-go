@@ -218,7 +218,7 @@ func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 	boundRelations := RelationSet{}
 
 	for _, relation := range relations {
-		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
+		boundRelations = append(boundRelations, relation.BindSingle(binding))
 	}
 
 	return boundRelations

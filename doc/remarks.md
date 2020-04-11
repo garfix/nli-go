@@ -28,6 +28,15 @@ this scheme breaks down.
 Nevertheless generative semantics is the area of linguistics that is most connected to semantics; and it is interesting
 to read more about it.
 
+===
+
+I removed all transformations. They were only used in the solutions, and there I replaced them with rules.
+
+Transformations are n-to-m replacements; they are _too_ powerful, they can break stuff easily and are hard to debug.
+Since I introduced nested structures they have been trouble.
+
+Now I am writing documentation, it is time for them to go.
+
 # 2020-04-06
 
 It is the verb that must be able to modify the quantifications of its np's.

@@ -83,7 +83,7 @@ func (relation Relation) Copy() Relation {
 }
 
 // Returns a new relation, that has all variables bound to bindings
-func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relation {
+func (relation Relation) BindSingle(binding Binding) Relation {
 
 	boundRelation := Relation{}
 	boundRelation.Predicate = relation.Predicate
@@ -97,12 +97,12 @@ func (relation Relation) BindSingleRelationSingleBinding(binding Binding) Relati
 }
 
 // Returns multiple relations, that has all variables bound to bindings
-func (relation Relation) BindSingleRelationMultipleBindings(bindings Bindings) []Relation {
+func (relation Relation) BindMultiple(bindings Bindings) []Relation {
 
 	boundRelations := []Relation{}
 
 	for _, binding := range bindings {
-		boundRelations = append(boundRelations, relation.BindSingleRelationSingleBinding(binding))
+		boundRelations = append(boundRelations, relation.BindSingle(binding))
 	}
 
 	return boundRelations

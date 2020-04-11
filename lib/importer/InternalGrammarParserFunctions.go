@@ -29,62 +29,6 @@ func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex
 	return relationSet, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseTransformations(tokens []Token, startIndex int) ([]mentalese.RelationTransformation, int, bool) {
-
-	transformations := []mentalese.RelationTransformation{}
-	ok := true
-
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
-	for startIndex < len(tokens) {
-		transformation := mentalese.RelationTransformation{}
-		transformation, startIndex, ok = parser.parseTransformation(tokens, startIndex)
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
-
-		if ok {
-			transformations = append(transformations, transformation)
-		} else {
-			break
-		}
-	}
-
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return transformations, startIndex, ok
-}
-
-// a(A) b(B) => c(A) d(B)
-// IF d(A) THEN a(A) b(B) => c(A) d(B)
-func (parser *InternalGrammarParser) parseTransformation(tokens []Token, startIndex int) (mentalese.RelationTransformation, int, bool) {
-
-	transformation := mentalese.RelationTransformation{}
-	ok := true
-	newStartIndex := 0
-
-	_, newStartIndex, ifFound := parser.parseSingleToken(tokens, startIndex, t_if)
-	if ifFound {
-		startIndex = newStartIndex
-		transformation.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
-		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_then)
-		}
-	} else {
-		transformation.Condition = mentalese.RelationSet{}
-	}
-
-	if ok {
-		transformation.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
-		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_transform)
-			if ok {
-				transformation.Replacement, startIndex, ok = parser.parseRelations(tokens, startIndex)
-			}
-		}
-	}
-
-	return transformation, startIndex, ok
-}
-
 func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) ([]mentalese.Rule, int, bool) {
 
 	rules := []mentalese.Rule{}
@@ -185,7 +129,7 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex int) (mentalese.Solution, int, bool) {
 
 	solution := mentalese.Solution{}
-	solution.Transformations = []mentalese.RelationTransformation{}
+	solution.Transformations = []mentalese.Rule{}
 	conditionFound, responsesFound, resultFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
@@ -198,7 +142,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			ok = ok && !conditionFound
 			conditionFound = true
 		case field_transformations:
-			solution.Transformations, startIndex, ok = parser.parseTransformations(tokens, startIndex)
+			solution.Transformations, startIndex, ok = parser.parseRules(tokens, startIndex)
 		case field_result:
 			solution.Result, startIndex, ok = parser.parseTerm(tokens, startIndex)
 			ok = ok && solution.Result.IsVariable() || solution.Result.IsAnonymousVariable()
@@ -435,39 +379,6 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	}
 
 	return syntacticCategories, entityVariables, positionTypes, startIndex, ok
-}
-
-func (parser *InternalGrammarParser) parseSyntacticRewriteRule2(tokens []Token, startIndex int) (mentalese.Relation, []mentalese.Relation, int, bool) {
-
-	ok := false
-	antecedent := mentalese.Relation{}
-	consequents := mentalese.RelationSet{}
-
-	antecedent, startIndex, ok = parser.parseRelation(tokens, startIndex)
-	if ok {
-		ok = len(antecedent.Arguments) == 1
-		if ok {
-
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
-			if ok {
-				consequents, startIndex, ok = parser.parseRelations(tokens, startIndex)
-
-				for _, consequent := range consequents {
-					if len(consequent.Arguments) == 0 {
-						variable := mentalese.NewVariable("_")
-						consequent.Arguments = []mentalese.Term{ variable }
-					} else if len(consequent.Arguments) != 1 {
-						ok = false
-					} else if !consequent.Arguments[0].IsVariable() {
-						ok = false
-					}
-				}
-
-			}
-		}
-	}
-
-	return antecedent, consequents, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int) ([]mentalese.Relation, int, bool) {

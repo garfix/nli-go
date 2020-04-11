@@ -28,21 +28,6 @@
 
     /* much ado about nothing! */
 
-## Transformation rules
-
-    [
-        parent(A, B) male(A) => father(A, B);
-        parent(A, B) female(A) => mother(A, B) child(B, A);
-    ]
-
-It is possible to add a condition that applies to all relation of the question
-
-    [
-        IF male(A) THEN parent(A, B) => father(A, B);
-    ]
-
-this transforms 'parent' into 'father', if the relation 'male' is present. But it does not affect 'male'. It is not removed.
-
 ## Grammar
 
     [

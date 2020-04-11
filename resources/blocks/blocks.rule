@@ -5,7 +5,7 @@
     do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
     do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) move_hand(X, Y, New_z) release(A) make_support(B, A);
 
-    do_create_stack(P1, N) :-
+    do_create_stack(P1, N, Type) :-
         do_find_free_space(X, Y)
         do_move(`:pyramid`, X, Y, 0)
         subtract(N, 1, New_n)

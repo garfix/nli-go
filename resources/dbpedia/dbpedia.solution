@@ -66,7 +66,7 @@
     {
         condition: question(_) how_many(B) have_child(A, B),
         transformations: [
-            have_child(A, B) => have_n_children(A, Number);
+            have_child(A, B) :- have_n_children(A, Number);
         ],
         result: B,
         responses: [
@@ -117,7 +117,7 @@
     {
         condition: question(P1) when(P1) bear(P1, A, B),
         transformations: [
-            bear(P1, A, B) when(P1) => birth_date(B, Ymd);
+            bear(P1, A, B) :- birth_date(B, Ymd);
         ],
         result: _,
         responses: [
@@ -136,7 +136,7 @@
     {
         condition: question(P1) when(P1) die(P1, A),
         transformations: [
-            die(P1, A) when(P1) => death_date(A, Ymd);
+            die(P1, A) :- death_date(A, Ymd);
         ],
         result: _,
         responses: [
@@ -235,7 +235,7 @@
     {
         condition: question(_) how_old(E1),
         transformations: [
-            how_old(E1) => birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
+            how_old(E1) :- birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
         ],
         result: _,
         responses: [

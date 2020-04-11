@@ -1,3 +1,3 @@
 {
-  "do_pick_up": {"entityTypes": ["", "", ""] }
+  "do_create_stack": {"entityTypes": ["", "", "block"] }
 }

@@ -62,16 +62,13 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
 	for _, grammarPath := range config.Grammars {
-		path := common.AbsolutePath(builder.baseDir, grammarPath)
-		builder.ImportGrammarFromPath(system, path)
+		builder.ImportGrammarFromPath(system, grammarPath)
 	}
 	for _, grammarPath := range config.Generationgrammars {
-		path := common.AbsolutePath(builder.baseDir, grammarPath)
-		builder.ImportGenerationGrammarFromPath(system, path)
+		builder.ImportGenerationGrammarFromPath(system, grammarPath)
 	}
 	for _, ruleBasePath := range config.Rulebases {
-		path := common.AbsolutePath(builder.baseDir, ruleBasePath)
-		builder.ImportRuleBaseFromPath(solver, path)
+		builder.ImportRuleBaseFromPath(solver, ruleBasePath)
 	}
 	for _, factBase := range config.Factbases.Relation {
 		builder.ImportInMemoryFactBase(factBase.Name, solver, factBase, matcher)
@@ -113,7 +110,8 @@ func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates
 
 func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath string) {
 
-	grammarString, err := common.ReadFile(grammarPath)
+	path := common.AbsolutePath(builder.baseDir, grammarPath)
+	grammarString, err := common.ReadFile(path)
 	if err != nil {
 		builder.log.AddError(err.Error())
 		return
@@ -122,7 +120,7 @@ func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath s
 	grammar := builder.parser.CreateGrammar(grammarString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.AddError("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -131,7 +129,8 @@ func (builder systemBuilder) ImportGrammarFromPath(system *system, grammarPath s
 
 func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, grammarPath string) {
 
-	grammarString, err := common.ReadFile(grammarPath)
+	path := common.AbsolutePath(builder.baseDir, grammarPath)
+	grammarString, err := common.ReadFile(path)
 	if err != nil {
 		builder.log.AddError(err.Error())
 		return
@@ -140,7 +139,7 @@ func (builder systemBuilder) ImportGenerationGrammarFromPath(system *system, gra
 	grammar := builder.parser.CreateGenerationGrammar(grammarString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.AddError("Error parsing grammar file " + grammarPath + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
@@ -401,7 +400,7 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 			}
 
 			entities[key] = mentalese.EntityInfo{
-				Name: nameRelationSet,
+				Name:    nameRelationSet,
 				Knownby: knownBy,
 			}
 		}
@@ -428,4 +427,3 @@ func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, solution
 
 	system.answerer.AddSolutions(solutions)
 }
-

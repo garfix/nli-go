@@ -1,3 +1,74 @@
+# 2020-04-11
+
+I am now reading "Semantic Syntax" which is written by my former Language Philosophy teacher Pieter Seuren. Semantic
+syntax is part of the field of generative semantics https://en.wikipedia.org/wiki/Generative_semantics
+
+I am too new here to say anything useful about it, but he mentions one thing that is interesting for the present
+purpose. He proposes to use predicates for quantifiers. The sentence
+
+    Nobody here speaks two languages
+
+can be represented like this
+
+    not(
+        some(
+            person(x)
+            two(
+                language(y)
+                present(
+                    speak(X, y)
+                )
+            )
+        )
+    )
+
+While this is an interesting take, the problem is that quantifiers can be complex (at least two, two or three), and then
+this scheme breaks down.
+
+Nevertheless generative semantics is the area of linguistics that is most connected to semantics; and it is interesting
+to read more about it.
+
+# 2020-04-06
+
+It is the verb that must be able to modify the quantifications of its np's.
+
+Presently this is not possible. I want to change
+
+    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
+
+to
+
+    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2)) }
+
+and define verbs as such
+
+    { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: support(P1, sem(E1), sem(E2)) }
+
+and so the semantics will be
+
+    support(
+        P1,
+        quant(Q1, quantification, R1, range),
+        quant(Q2, quantification, R2, range)
+    )
+
+a nice side effect is that I will loose the unintuitive sem(parent)
+
+This will mean that when `support` is processed, it will have to go through all its quants and create nested loops for
+them:
+
+    foreach Rx in range R1
+        foreach Ry in range R2
+            support(P1, Rx, Ry)
+        do quantification for R2    
+    do quantification for R1
+
+As a consequence, `support` can add a modifier to _its_ quants:
+
+    do_quantification(command)
+    do_quantification(declare)
+    do_quantification(interrogate)
+
 # 2020-04-05
 
 I wrote about calculating the cost of executing relations. This technique actually has a very limited advantage in

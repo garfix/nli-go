@@ -19,13 +19,14 @@ sudo mv nli /usr/local/bin
 
 You can use the executable as you would use any command-line application.
 
-Use nli to answer a question, based on a configuration stored in a JSON config file. It returns a JSON string with the answer and / or an error.
+The following call uses `nli` to answer the question "What does the box contain?", based on a configuration stored in a
+JSON config file and storing its dialog context (spanning multiple sentences) in a session file in `./sessions/123.json`
 
 ```
-./nli -c "../resources/blocks/config.json" "Pick up the box"
+./nli -s 123 -c "../resources/blocks/config.json" "What does the box contain?"
 ```
 
-the response could be:
+the response is a JSON string, that looks like this:
 
 ~~~
 {
@@ -45,7 +46,7 @@ the response could be:
 
 * Success: has the sentence been processed completely?
 * ErrorLines: in case of an error, tells you what went wrong
-* Productions: debug lines to help you debug
+* Productions: progress information to help you debug
 * Answer: the actual answer to wanted
 
 If the system responds with a clarification question, it does this with a number of options the user can choose from
@@ -53,4 +54,6 @@ If the system responds with a clarification question, it does this with a number
 * OptionKeys: the keys of these options
 * OptionValues: the values of these options
 
-The config file is described [here](doc/manual/knowledge-engineer/config.md).
+The application writes its log files in the directory `./logs`
+
+The config file is described [here](../knowledge-engineer/config.md).

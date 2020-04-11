@@ -1,6 +1,7 @@
 # NLI-GO
 
-nli-go is a library, written in Go, that provides a natural language interface to databases. I use it to experiment with nli techniques.
+nli-go is a library, written in Go, that provides a Natural Language Interface to databases. I use it to experiment with
+nli techniques. It is not stable yet and backward-incompatible changes can be made at any time.
 
 ## Demo
 
@@ -22,13 +23,13 @@ Every part of the system is configurable.
 
 Some of the techniques used:
 
-* Earley parser to create a syntax tree from an input sentence, with semantic attachments
+* An Earley parser to create a syntax tree from an input sentence, with semantic attachments
 * Mentalese, a based internal language, based on Predicate Logic, to process the user input
-* A Datalog implementation for rule based reasoning
+* A Datalog (a very basic Prolog) implementation for rule based reasoning
 * Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
-* Linking data from multiple databases; using id-mapping
-* A dialog context to remember information earlier in the conversation
-* A quantifier scoper that allows quantification and anaphora resolution
+* Linking data from multiple databases in a single request
+* A dialog context to remember information from earlier in the conversation
+* Anaphora resolution: the use of pronouns and other references to earlier entities
 * A generator to produce human readable responses
 
 ## Docs

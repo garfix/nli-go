@@ -74,7 +74,7 @@ The following relations are created
 
 > subject(S1, E1) modality(S1, M)
 
-The example sentence yields the following parse tree:
+The example sentence (from Tokenizer paragraph) yields the following parse tree:
 
     [s 
         [sInterrogative 
@@ -83,12 +83,11 @@ The example sentence yields the following parse tree:
             [nbar 
                 [noun children]
             ] 
-            [auxVerb has] 
+            [auxVerb had]
             [np 
                 [properNoun 
-                    [firstName John] 
-                    [insertion van] 
-                    [lastName Dongen]
+                    [firstName Lord]
+                    [lastName Byron]
                 ]
             ] 
             [questionMark ?]
@@ -100,7 +99,7 @@ The example sentence yields the following parse tree:
 Because subject and modality use the same variable, S1, these relations are connected. When the whole tree is parsed all relations will be connected in a relational model. I just call this a relation set.
  Here's the relation set for our sample sentence:
 
-> [question(S1, whQuestion) focus(E1) determiner(E1, A1) specifier(A1, W1) subject(S1, E1) object(S1, E2) isa(W1, how) isa(A1, many) isa(E1, child) isa(S1, have) name(E2, 'Lord', firstName)  name(E2, 'Byron', lastName)]
+> [question(S1, whQuestion) focus(E1) determiner(E1, A1) specifier(A1, W1) subject(S1, E1) object(S1, E2) isa(W1, how) isa(A1, many) isa(E1, child) isa(S1, had) name(E2, 'Lord', firstName)  name(E2, 'Byron', lastName)]
 
 ### Answerer
 

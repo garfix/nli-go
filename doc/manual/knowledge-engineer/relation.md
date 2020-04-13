@@ -65,7 +65,7 @@ Some functions can have any number of arguments
     
 ## Dependencies
 
-A argument that consists of a relation set creates a dependency on these other relations
+An argument that consists of a relation set creates a dependency on these other relations
 
     c(argument1, [a() b()])
     
@@ -84,8 +84,8 @@ the database.
 This relation expresses the sentence "all children have a father":
 
     quant(
-        R5, [child(R5)], 
         Q5, [all(Q5)],
+        R5, [child(R5)], 
         [have_father(R5, P1)]
     )
 
@@ -94,3 +94,20 @@ The `quant` relation has 5 parameters. These form the `range`, the `quantifier` 
 When processing the quant, first all values for the range `R5` are collected. Then for each value, the scope
 `[have_father(R5, P1)]` is processed. Finally the results are compared to the quantifier `Q5`. In the case of "all" this
 means that the number of R5 values is compared to the number of scope values. It should match.
+
+## Negation
+
+It is possible to use "not" in a simple case.
+
+Here's an example from the blocks world: "How many blocks are not in the box?"
+
+"not" is modelled in the grammar:
+
+    { rule: how_many_clause(E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
+
+not() is a "nested structure" that wraps a relation set.
+
+This set is specified in the example as "sem(4)". This means: the combined senses of all syntactic structures that were
+linked to the fourth consequent (which is "pp(E1)").
+
+A not() predicate can only be evaluated correctly when it is evaluated as part of a quant scope.

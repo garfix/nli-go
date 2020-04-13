@@ -44,3 +44,24 @@ A special function of "answer" is "make_and().
 This construction allows you to create a nested structure of AND's, so that you can respond with
 
     John, Kale and Louis
+
+## Canned responses
+
+A canned response is just a literal text that may be used as an answer.
+
+To use a canned response, use "canned()" in the answer of a solution, like this:
+
+    {
+        condition: question() who(B),
+        responses: [
+            {
+                condition: exists(),
+                answer: canned(D)
+            }
+            {
+                answer: dont_know()
+            }
+        ]
+    }
+
+As you see the "answer" in the solution contains the single relation "canned()". When that happens, the contents of its variable will be used as the response.

@@ -179,3 +179,23 @@ These entity types are used for name resolution. If a name is used in the senten
 From this it will find out what entity type belongs to the name. It will then only look for names that belong to this entity type.
 
 It is optional to specify the predicates in this file. If there is no need to specify the entity types, they may be omitted.
+
+## Specify entity-types for predicate arguments
+
+Create a file predicates.json, for example like this
+
+    {
+      "has_capital": {"entityTypes": ["country", "city"] }
+    }
+
+This file specifies the entity types of the arguments of the domain specific predicate "has_capital".
+
+The entity types used here are the same as in the entities file.
+
+Add the file to the config file.
+
+    {
+      "predicates": [
+        "predicates.json"
+      ]
+    }

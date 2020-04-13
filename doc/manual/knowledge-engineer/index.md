@@ -5,7 +5,11 @@ The knowledge engineer writes the grammar, the rules, the solutions, and the map
 ## Before you start
 
 Make sure you have a working resource directory with the basic configuration files (grammar, solution, etc) that you can
-extend.
+extend. Copy the directory `helloworld` for instance. Look at [this page](config.md) for the contents of the `config.json` file.
+
+## Relations
+
+In this system you convert sentences in natural language to a semantic representation in the form of relations. Relations, "senses", or "predications" are extremely versatile. To get a feeling for this concept, check [this](relation.md).
 
 ## The content writing process
 
@@ -15,6 +19,7 @@ There may be different approaches of how to teach the program how to process a n
 * Add an automated test 
 * Extend the grammar
 * Extend the solutions
+* Create the database mappings
 * Extend the generations
 * Repeat until done
 
@@ -44,6 +49,8 @@ This means you will have to add rewrite rules to the grammar. Check the other gr
 grammar. Do not copy complete grammars. Copy just the single lines you need. This way you will be able to comprehend
 your grammar.
 
+Each grammar rule turns a phrase structure into a single word, or some other phrase structures. It may also create a semantic attachment, called "sense". The system will combine these senses to create the meaning of the sentence.  
+
 More on the grammar you can find [here](entity-grammar.md)
 
 ## Extend the solutions
@@ -55,3 +62,26 @@ At some point the system will say
 This means that the system does not not how to handle the input. For each type of sentence there is a separate solution.
 
 More on solutions you can find [here](solution.md)
+
+## Create a database mapping
+
+Some relations are resolved by the database. A relation like `parent(X, :18)` will be transformed by the system to a query like `SELECT parent_id FROM person WHERE child_id = 18`. Each relation is converted to a simple query. The system does not create complex queries.   
+
+To use this you must
+
+* Configure the database and the tables you need in `config.json`
+* Create a `.map` file
+
+A database can be just a `.relation` file, or it can be a MySQL or Sparql database. In most cases you will just want to read from the database. If you also want to write to the database, you will need to create a separate `write` map-file.
+
+See [knowledge bases](knowledge-bases.md) for the different types of databases and other knowledge bases available.
+
+The map file defines how a relation in your application is mapped to one or more relations in the database. 
+
+For Sparql databases you will also need to specify how a relation's predicate is mapped to a uri. See names.json for example in dbpedia/db.
+
+## Generate a response
+
+There is a separate grammar ("write grammar") for responses, because answers are very different in structure from questions. And where read-grammars produce semantic attachments ("sense"), write grammars take existing semantics as conditions for the sentence to be generated.
+
+More about response generation [here](generation.md).

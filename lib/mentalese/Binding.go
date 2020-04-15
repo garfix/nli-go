@@ -105,7 +105,7 @@ func (b Binding) RemoveVariables() Binding {
 	result := Binding{}
 
 	for key, value := range b {
-		if value.TermType != TermVariable {
+		if !value.IsVariable() {
 			result[key] = value
 		}
 	}

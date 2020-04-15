@@ -89,10 +89,9 @@ func (b Binding) Bind(c Binding) Binding {
 		result[bKey] = bVal
 
 		if bVal.IsVariable() {
-			for cKey, cVal := range c {
-				if bVal.TermValue == cKey {
-					result[bKey] = cVal
-				}
+			value, found := c[bVal.TermValue]
+			if found {
+				result[bKey] = value
 			}
 		}
 	}

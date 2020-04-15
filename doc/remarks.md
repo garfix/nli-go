@@ -1,3 +1,19 @@
+# 2020-04-15
+
+There is a user! Vladyslav Nesterovskyi has taken an interest in the library. He asks the right questions and I hope I can help him out. The library is now conceptually rather stable, but it lacks many features and it easiliy cracks with the wrong input. I bid him to be patient and offered to assist him if I can (and the requests are in line with the intent of the library). 
+
+===
+
+Still thinking about quantification (handling words like "all", "some", "a", "2") for commands. It is interesting what Winograd has to say about this (possibly Winograd is the _only_ one who has something to say about this). NLU (p141)
+
+> The system can accept commands in the form of IMPERATIVE sentences. These are handled somewhat different from questions. If they contain only definite objects, they can be treated in the way mentioned above for questions with no focus. The command "Pick up the red ball" is translated into the relationshop (#PICKUP :B7).
+>
+> However if we say "Pick up _a_ red ball", the situation is different. We could first use THFIND to find a red ball then put this object in a simple goal statement as we did with "_the_ red ball". This, however, might be a bad idea. In choosing a red ball arbitrarily, we may choose one which is out of reach or which is supporting a tower. The robot might fail or be forced to do a lot of work which it could have avoided with a little thought.
+>
+> Instead, we send the theorem which works on the goal a description rather than an object name, and let the theorem choose the specific object to be used, according to the criteria which best suit it. Remember that each OSS (Object Semantic Structure) has a name like "NG45". Before a clause is related to its objects, these are the symbols used in the relationship.
+>
+> When we analyze "Pick up a red ball", it will actually procedure (#PICKUP N45), where NG45 names an OSS describing "a red ball". We use this directly as a goal statement, calling a special theorem named TC-FINDCHOOSE, which uses the descriptions of the object, along with a set of "desirable properties" associated with objects used for trying to achieve that goal. #PICKUP may specify that it would prefer picking upsomething which doesn't support anything, or something near the hand's current location. Each theorem can ask for whatever it wants. Of course it may be impossible to find an object which fits all of the requirements, and the theorem has to be satisfied with what it can get. TC-FINDCHOOSE tries to meet the full specifications first, but if it can't find an object (or enough objects in the case of plural), it gradually removes the restrictions in the order they were listed in the theorem. It must always keep the full requirements of the description input in English in order to carry out the specified command. The robot simply tries to choose those objects which fit the command but are also the easiest to use.
+
 # 2020-04-11
 
 I am now reading "Semantic Syntax" which is written by my former Language Philosophy teacher Pieter Seuren. Semantic

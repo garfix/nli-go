@@ -133,36 +133,6 @@ If the condition returns no results, the relation set from "no_results" will be 
 
 "answer" does not connect to any knowledge base. It just formats resulting bindings.
 
-#### Quantifier Scoper
-
-The quantifier scoper creates a scope hierarchy by turning quantification() relations into quant() relations. When this query is executed,
-the inner quant() will be bound to different variable quantifier values from its outer quant()'s.
-
-Before:
-
-    quantification(S1, [ isa(S1, parent) ], D1, [ isa(D1, every) ])
-    quantification(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ])
-    have_child(S1, O1)
-
-After:
-
-    quant(S1, [ isa(S1, parent) ], D1, [ isa(D1, every) ], [
-        quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 2) ], [
-             have_child(S1, O1)
-         ])
-    ])
-
-After quantifier the current example looks like this:
-
-     [
-        quant(E5, [isa(E5, child)], A5, [specification(A5, W5) isa(A5, many)], [
-            have_child(E6, E5) focus(E5)])
-         name(E6, 'Lord', firstName)  name(E6, 'Byron', lastName)
-        act(question, howMany)
-     ]
-
-Unquantified variables have an implicit existential quantifier (exists).
-
 #### Execute the question
 
 Now the question is "executed" as if it were a program. The result of this execution are variable bindings, like this:

@@ -1,3 +1,29 @@
+# 2020-04-17
+
+So there are multiple forms of quantification. And I think I have found a way to represent them. I created a page `shrdlu-theorems.md` that describes the important PLANNER functions. SHRDLU's `THFIND` is particularly interesting here.
+
+First off, the `np` will always produce a `quant`, but this quant will only have a quantifier and a scope:
+
+    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2)) }
+    
+Note that the `sem(parent)` has gone. Such a quant will then serve as an argument in a second order relation. 
+
+Next, it is necessary to make a distinction between `too little`, `enough`, and `too many` matches. The quantifier determines this. The quantification relations are iterators. They try every permutation of the ranges of elements. As long as too little matches are found, keep looking. The first match that makes the result enough will do. When the system finds too many results, it fails. 
+
+Now, this is the relation for commands; it says: go through all permutations of the ranges and for each of them do `do_pick_up()` until `enough` matches are found. `do` only fails if `not enough` permutations could be found. 
+
+    'pick' 'up' np(E1) -> do(sem(3), do_pick_up(e1))
+    
+For example: "pick up 2 or 3 boxes" will iterate over all boxes, tries to pick up each of them, but stop as soon as 2 is reached. "pick up a red block" will iterate over all red boxes, try to pick up each of them and stops if one succeeds.  
+    
+This is the relation for questions; it says: go through all permutations of the ranges and for of them do `support()` until `too many` matches are found. It fails both if `too little` or `too many` matches were found. 
+
+    np(E1) support() np(E2) -> find(sem(1) sem(3), support(E1, E2))
+    
+For example: "does every parent have 2 children" will go through all parents, and for each parent, go through all children; it stops when 3 children were found for a parent; then fails immediately. Also fails if some parents had less then 2 children.    
+    
+As for declarations, this is a whole different ball-game. I will deal with that later on.
+
 # 2020-04-15
 
 There is a user! Vladyslav Nesterovskyi has taken an interest in the library. He asks the right questions and I hope I can help him out. The library is now conceptually rather stable, but it lacks many features and it easiliy cracks with the wrong input. I bid him to be patient and offered to assist him if I can (and the requests are in line with the intent of the library). 

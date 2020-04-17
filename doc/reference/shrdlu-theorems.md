@@ -59,7 +59,7 @@ THAMONG
 : chooses its variable bindings from "among" a given list (136)
 
     (THFIND 3 $?X1 (X1) (THAMONG X1 (QUOTE(:B1 :B4 :B6 :B7))))
-
+    
 THFAIL
 : causes not just that theorem but the entire goal to fail, regardless of what other theorems there are (143)
 
@@ -69,6 +69,12 @@ THFAIL
         (THGOAL (#COLOR $?X1 #RED))
         )
             (THFAIL THGOAL))
+
+THCOND
+: conditional? if-then? (122)
+
+THPUTPROP
+: ? (160)    
 
 THAND
 : logical AND (109)

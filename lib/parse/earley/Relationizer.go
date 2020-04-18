@@ -92,13 +92,11 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	compoundRelation := mentalese.Relation{}
 
 	// process sem(1) sem(2)
-	newSet1 := mentalese.RelationSet{}
+	combination := mentalese.RelationSet{}
 	for _, parentRelation := range parentSet {
 		compoundRelation, referencedChildrenIndexes = relationizer.includeChildSenses(parentRelation, childSets, referencedChildrenIndexes)
-		newSet1 = append(newSet1, compoundRelation)
+		combination = append(combination, compoundRelation)
 	}
-
-	combination := newSet1
 
 	// add simple children
 	for i, childSet := range childSets {
@@ -128,7 +126,7 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 						subSet := childSets[index]
 						newSet = append(newSet, subSet...)
 					} else {
-						panic("error!")
+						panic("sem(N) must contain a number")
 					}
 				} else {
 					replacedDhild, newChildIndexes := relationizer.includeChildSenses(relation, childSets, childIndexes)

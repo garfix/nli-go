@@ -168,9 +168,13 @@ func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, bindin
 
 	var newBindings mentalese.Bindings
 
-	if goal.Predicate == mentalese.PredicateQuant {
+	if goal.Predicate == mentalese.PredicateFind {
 
-		newBindings = solver.SolveQuant(goal, binding)
+		newBindings = solver.SolveFind(goal, binding)
+
+	} else if goal.Predicate == mentalese.PredicateDo {
+
+		newBindings = solver.SolveDo(goal, binding)
 
 	} else if goal.Predicate == mentalese.PredicateSequence {
 

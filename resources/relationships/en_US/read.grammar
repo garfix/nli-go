@@ -13,11 +13,11 @@
 
     { rule: noun(E1) -> parent(E1),                                 sense: parent(E1, _) }
 
-    { rule: np(R1) -> qp(Q1) nbar(R1),                              sense: quant(Q1, sem(1), R1, sem(2), sem(parent)) }
+    { rule: np(R1) -> qp(Q1) nbar(R1),                              sense: quant(Q1, sem(1), R1, sem(2)) }
     { rule: np(E1) -> proper_noun_group(E1) }
 
     { rule: sibling(E1) -> 'siblings' }
-    { rule: child(E1) -> 'children' }
+    { rule: child(E1) -> 'children',                                sense: parent(_, E1) }
     { rule: parent(E1) -> 'parent' }
 
     /* verb */
@@ -40,8 +40,11 @@
     { rule: how_many_clause(E1) -> child(E1) have(P1) np(E2),                 sense: have_child(E2, E1) }
     { rule: subject_complement_clause(E1) -> marry(P1) np(E2),                sense: marry(P1, E1, E2) }
     { rule: subject_complement_clause2(P1) -> np(E1) marry(P1) np(E2),        sense: marry(P1, E1, E2) }
-    { rule: subject_complement_clause2(P1) -> np(E1) have(_) number(N2) child(E2),      sense: have_child(E1, E2) number_of(E2, N2) }
     { rule: copula_clause(P1) -> np(E1) 'and' np(E2) sibling(_),              sense: siblings(E1, E2) }
+
+    { rule: subject_complement_clause2(P1) -> np(E1) have(_) number(N2) child(E2),
+                                                                              sense: find([ sem(1) quant(_, number(N2), E2, sem(4)) ],
+                                                                                have_child(E1, E2)) }
 
     { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: who(E1) }
     { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: which(E1) }

@@ -27,6 +27,7 @@ func TestRelationships(t *testing.T) {
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
 		{"How many children has John van Dongen?", "He has 4 children"},
+
 		{"Does every parent have 4 children?", "Yes"},
 		{"Does every parent have 3 children?", "No"},
 	}

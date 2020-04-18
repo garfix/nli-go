@@ -1,3 +1,25 @@
+# 2020-04-18
+
+For "Do all parents have 2 children", why use
+
+    find(
+        [
+            quant(Q5, [all(Q5)], E5, [parent(E5, _)]) 
+            quant(_, [sem(3)], E2, [sem(4)])
+        ], 
+        [
+            have_child(E1, E2)
+        ]
+        
+and why not 
+
+    for([quant(Q5, [all(Q5)], E5, [parent(E5, _)])], [
+        for([quant(_, [sem(3)], E2, [sem(4)])], [
+            have_child(E1, E2)])])
+    
+i.e. why not a single relation for each quant? because the scope of variables of the the innermost `for` does not break out to the top level.
+          
+
 # 2020-04-17
 
 So there are multiple forms of quantification. And I think I have found a way to represent them. I created a page `shrdlu-theorems.md` that describes the important PLANNER functions. SHRDLU's `THFIND` is particularly interesting here.

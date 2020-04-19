@@ -57,6 +57,12 @@ func getTypeFromSense(predicates mentalese.Predicates, variable string, sense me
 					sType = sTypes.EntityTypes[i]
 					goto end
 				}
+			} else if argument.IsRelationSet() {
+				sTypeRecursive := getTypeFromSense(predicates, variable, argument.TermValueRelationSet)
+				if sTypeRecursive != "" {
+					sType = sTypeRecursive
+					goto end
+				}
 			}
 		}
 	}

@@ -15,11 +15,11 @@ func TestFillerStack(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 
-		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),			sense: which(E1) }
-		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, sem(1), sem(parent)) }
+		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),			sense: which(E1) find(sem(2), sem(3)) }
+		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, sem(1)) }
 		{ rule: nbar(E) -> noun(E) }
-		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2) }
-		{ rule: np(E1) -> qp(Q1) nbar(E1), 						sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
+		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2), 	sense: find(sem(2), [sem(3) sem(4)]) }
+		{ rule: np(E1) -> qp(Q1) nbar(E1), 						sense: quant(Q1, sem(1), E1, sem(2)) }
 		{ rule: advp(P1) -> adverb(P1) }
 		{ rule: vp(P1, E1, E2) -> 'to' 'take' 'from', 			sense: take_from(P1, E2, E1)  }
 		{ rule: be(P1) -> 'were' }
@@ -50,7 +50,7 @@ func TestFillerStack(t *testing.T) {
 
 	result, _ := relationizer.Relationize(parseTrees[0], nameResolver)
 
-	want := "[quant(_, [some(_)], E5, [baby(E5)], [which(E5) quant(Q5, [the(Q5)], E6, [toy(E6)], [easiest(S5) take_from(S5, E6, E5)])])]"
+	want := "[which(E5) find([quant(_, [some(_)], E5, [baby(E5)])], [find([quant(Q5, [the(Q5)], E6, [toy(E6)])], [easiest(S5) take_from(S5, E6, E5)])])]"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}

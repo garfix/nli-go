@@ -57,11 +57,16 @@ func (solver ProblemSolver) solveQuants(quants mentalese.RelationSet, scopeSet m
 		}
 	}
 
-	success := solver.tryQuantifier(quantifierSet, resultCount, rangeBindings, isReference)
+	success := solver.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference)
 
 	if success {
 		return scopeBindings
 	} else {
+		solver.log.AddProduction("Do/Find", "Quantifier mismatch")
+		solver.log.AddProduction("Do/Find", "  Quantifier:" + quantifierSet.String())
+		solver.log.AddProduction("Do/Find", "  Range:" + rangeVariable + " " + rangeSet.String())
+		solver.log.AddProduction("Do/Find", "  Range:" + rangeBindings.String())
+		solver.log.AddProduction("Do/Find", "  Scope:" + scopeBindings.String())
 		return mentalese.Bindings{}
 	}
 }
@@ -92,7 +97,7 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 		//	break
 		//}
 
-		if solver.tryQuantifier(quantifierSet, len(groupedScopeBindings), rangeBindings, isReference) {
+		if solver.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference) {
 			if !continueAfterEnough {
 				break
 			}
@@ -102,11 +107,13 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 	return scopeBindings
 }
 
-func (solver ProblemSolver) tryQuantifier(quantifier mentalese.RelationSet, resultCount int, rangeBindings mentalese.Bindings, isReference bool) bool {
+func (solver ProblemSolver) tryQuantifier(quantifier mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, resultBindings mentalese.Bindings, isReference bool) bool {
 
 	isTheQuantifier := quantifier[0].Predicate == mentalese.PredicateThe
 	isAllQuantifier := quantifier[0].Predicate == mentalese.PredicateAll
 	isSomeQuantifier := quantifier[0].Predicate == mentalese.PredicateSome
+
+	resultCount := resultBindings.GetDistinctValueCount(rangeVariable)
 
 	count := 0
 

@@ -34,3 +34,23 @@ func (bindings Bindings) GetIds(variable string) []Term {
 
 	return ids
 }
+
+func (bindings Bindings) GetDistinctValueCount(variable string) int {
+	idMap := map[string]bool{}
+	count := 0
+
+	for _, binding := range bindings {
+		for key, value := range binding {
+			if key != variable {
+				continue
+			}
+			found := idMap[value.String()]
+			if !found {
+				count++
+				idMap[value.String()] = true
+			}
+		}
+	}
+
+	return count
+}

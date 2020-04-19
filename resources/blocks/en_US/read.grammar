@@ -22,16 +22,14 @@
     { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: pick_up(P1, E1, E2) }
     { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: support(P1, E1, E2) }
 
-    { rule: vp(P1) -> tv(P1, _, E1) np(E1) }
-    { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: do_put_into(P1, E1, E2) }
-    /*{ rule: vp(P1) -> 'stack' 'up' number(N1) noun(E1),                     sense: do_create_stack(P1, N1, E1) }*/
-    /*{ rule: vp(P1) -> 'stack' 'up' qp(Q1) nbar(E1),                        sense: do_create_stack(P1, sem(3), sem(4)) }*/
-    { rule: vp(P1) -> 'stack' 'up' np(E1),                                  sense: do_create_stack(E1) }
-    { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, _, E1) }
-    { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2) }
-    { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1) }
+    { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: do(sem(2), sem(1)) }
+    { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: do([sem(2) sem(4)], do_put_into(P1, E1, E2)) }
+    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do(sem(3), do_create_stack(E1)) }
+    { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: find(sem(1), sem(3)) }
+    { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: find([sem(1) sem(3)], sem(2))  }
+    { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: find([sem(1) sem(5)], sem(3)) }
 
-    { rule: vp_dep(P1, L1) -> np(P2) tell(P1) vp(P2, L1),                  sense: tell(P1, sem(3)) }
+    { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: find(sem(1), tell(P1, sem(3))) }
 
     { rule: copula(C1) -> 'is' }
     { rule: copula(C1) -> 'are' }
@@ -49,22 +47,22 @@
 
     /* nouns */
 
-    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: taller(E1, E2) }
-    { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: narrower(E1, E2) }
+    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: find(sem(3), taller(E1, E2)) }
+    { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: find(sem(3), narrower(E1, E2)) }
     { rule: adjp(E1) -> adjective(E1) }
 
     { rule: adjective(E1) -> 'red',                                        sense: red(E1) }
     { rule: adjective(E1) -> 'big',                                        sense: big(E1) }
 
-    { rule: pp(E1) -> 'in' np(E2),                                         sense: contain(_, E2, E1) }
+    { rule: pp(E1) -> 'in' np(E2),                                         sense: find(sem(2), contain(_, E2, E1)) }
 
     { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1) }
+    { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: find(sem(1), sem(3)) }
     { rule: relative_clause(E1) -> 'which' vp_dep(P1, E1) }
 
-    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2), sem(parent)) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1), sem(parent)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, all(_), E1, sem(1), sem(parent)) }
+    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2)) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, all(_), E1, sem(1)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
@@ -89,15 +87,15 @@
 
     /* Sentences */
 
-    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: contain(P1, E1, E2) }
-    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by' }
+    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: find(sem(2), contain(P1, E1, E2)) }
+    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: find(sem(2), sem(3)) }
 
-    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: not(sem(4)) }
+    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: find(sem(1), not(sem(4))) }
 
     { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: what(E1) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: select(E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: select_subject(E2) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: find(sem(2), [sem(3) select(E1)]) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: find(sem(2), select_subject(E2)) }
     { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: yes_no() }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) '?' }

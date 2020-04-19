@@ -29,8 +29,8 @@
     object(E1) :- block(E1);
     object(E1) :- pyramid(E1);
     hold(P1, E1, E2) :- grasping(E1, E2);
-    you(E1) :- ;
-    i(E1) :- ;
+    you(E1) :- named(E1, 'SHRDLU');
+    i(E1) :- named(E1, 'YOU');
     tell(P1, P2) :- call(P2);
     raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
     height(E, H) :- size(E, _, _, H);
@@ -43,6 +43,6 @@
     memo(P1) :- assert(P1);
     make_containing(A, B) :- assert(contain(_, A, B));
     move_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
-    grasp(X) :- retract(grasping(_, _)) assert(grasping(`:now`, X));
+    grasp(X) :- retract(grasping(_, _)) assert(grasping(`:shrdlu`, X));
     release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) assert(at(E1, X, Y, Z));
 ]

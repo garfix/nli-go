@@ -3,7 +3,7 @@
     pyramid(E) :- is(E, pyramid);
     table(E) :- is(E, table);
     box(E) :- is(E, box);
-
+    named(E, Name) :- call(E, Name);
     red(E) :- color(E, red);
 
     at(E, X, Y, Z) :- at(E, X, Y, Z);

@@ -137,5 +137,38 @@ func TestSolver(t *testing.T) {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
 		}
 	}
+}
 
+func TestMissingHanlerError(t *testing.T) {
+
+	parser := importer.NewInternalGrammarParser()
+	log := common.NewSystemLog(false)
+
+	facts := parser.CreateRelationSet(`[]`)
+	ds2db := parser.CreateRules(`[]`)
+	ds2dbWrite := parser.CreateRules(`[]`)
+	matcher := mentalese.NewRelationMatcher(log)
+	entities := mentalese.Entities{}
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
+
+	dialogContext := central.NewDialogContext()
+	predicates := mentalese.Predicates{}
+
+	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver.AddFactBase(factBase)
+
+	input := parser.CreateRelationSet("[ not_a_relation() ]")
+	bindings := parser.CreateBindings("[{}]")
+	resultBindings := solver.SolveRelationSet(input, bindings)
+
+	if fmt.Sprintf("%v", resultBindings) != "[]" {
+		t.Errorf("SolverTest: got %v, want []", resultBindings)
+	}
+
+	errors := log.GetErrors()
+	if len(errors) == 0 {
+		t.Errorf("Expected error message")
+	} else if errors[0] != "Predicate not supported by any knowledge base: not_a_relation" {
+		t.Errorf("Unexpected message: " + errors[0])
+	}
 }

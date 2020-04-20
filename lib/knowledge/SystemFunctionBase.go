@@ -15,6 +15,17 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 	return &SystemFunctionBase{ KnowledgeBaseCore{ Name: name } }
 }
 
+func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "add", "date_today", "date_subtract_years"}
+
+	for _, p := range predicates {
+		if p == predicate {
+			return true
+		}
+	}
+	return false
+}
+
 func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	newBinding := binding

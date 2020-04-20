@@ -16,6 +16,17 @@ func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregate
 	return &SystemAggregateBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
+func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
+	predicates := []string{"number_of", "first", "exists"}
+
+	for _, p := range predicates {
+		if p == predicate {
+			return true
+		}
+	}
+	return false
+}
+
 func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
 
 	base.log.StartDebug("SystemAggregateBase BindSingle", goal, bindings)

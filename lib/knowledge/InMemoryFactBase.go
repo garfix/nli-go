@@ -29,6 +29,18 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *ment
 	}
 }
 
+func (factBase *InMemoryFactBase) HandlesPredicate(predicate string) bool {
+	for _, rule := range factBase.ds2db {
+		if rule.Goal.Predicate == predicate {
+			return true
+		}
+	}
+	if len(factBase.ds2dbWrite) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
+		return true
+	}
+	return false
+}
+
 func (factBase *InMemoryFactBase) GetMappings() []mentalese.Rule {
 	return factBase.ds2db
 }

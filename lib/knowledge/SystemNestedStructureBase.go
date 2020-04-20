@@ -2,6 +2,7 @@ package knowledge
 
 import (
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 // nested query structures (quant, or)
@@ -15,4 +16,15 @@ func NewSystemNestedStructureBase(log *common.SystemLog) *SystemNestedStructureB
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: "nested-structure" },
 		log: log,
 	}
+}
+
+func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
+	predicates := []string{mentalese.PredicateDo, mentalese.PredicateFind, mentalese.PredicateCall, mentalese.PredicateSequence, mentalese.PredicateNot}
+
+	for _, p := range predicates {
+		if p == predicate {
+			return true
+		}
+	}
+	return false
 }

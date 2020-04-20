@@ -11,6 +11,7 @@ import (
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
+	knowledgeBases		 []knowledge.KnowledgeBase
 	factBases            []knowledge.FactBase
 	ruleBases            []knowledge.RuleBase
 	functionBases        []knowledge.FunctionBase
@@ -26,6 +27,7 @@ type ProblemSolver struct {
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
+		knowledgeBases: []knowledge.KnowledgeBase{},
 		factBases:      []knowledge.FactBase{},
 		ruleBases:      []knowledge.RuleBase{},
 		functionBases:  []knowledge.FunctionBase{},
@@ -40,22 +42,27 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.P
 
 func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
 	solver.factBases = append(solver.factBases, factBase)
+	solver.knowledgeBases = append(solver.knowledgeBases, factBase)
 }
 
 func (solver *ProblemSolver) AddFunctionBase(functionBase knowledge.FunctionBase) {
 	solver.functionBases = append(solver.functionBases, functionBase)
+	solver.knowledgeBases = append(solver.knowledgeBases, functionBase)
 }
 
 func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, ruleBase)
+	solver.knowledgeBases = append(solver.knowledgeBases, ruleBase)
 }
 
 func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.AggregateBase) {
 	solver.aggregateBases = append(solver.aggregateBases, source)
+	solver.knowledgeBases = append(solver.knowledgeBases, source)
 }
 
 func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructureBase) {
 	solver.nestedStructureBases = append(solver.nestedStructureBases, base)
+	solver.knowledgeBases = append(solver.knowledgeBases, base)
 }
 
 // set e.g. [ father(X, Y) father(Y, Z) ]
@@ -67,6 +74,13 @@ func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructu
 func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.Bindings) mentalese.Bindings {
 
 	solver.log.StartProduction("Solve Set", set.String() + " " + bindings.String())
+
+	for _, relation := range set {
+		if !solver.isPredicateSupported(relation.Predicate) {
+			solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
+			return mentalese.Bindings{}
+		}
+	}
 
 	newBindings := bindings
 	for _, relation := range set {
@@ -83,6 +97,15 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 	solver.log.EndProduction("Solve Set", newBindings.String())
 
 	return newBindings
+}
+
+func (solver ProblemSolver) isPredicateSupported(predicate string) bool {
+	for _, knowledgeBase := range solver.knowledgeBases {
+		if knowledgeBase.HandlesPredicate(predicate) {
+			return true
+		}
+	}
+	return false
 }
 
 // goal e.g. father(Y, Z)

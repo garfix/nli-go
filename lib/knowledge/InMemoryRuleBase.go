@@ -19,6 +19,15 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
+func (ruleBase *InMemoryRuleBase) HandlesPredicate(predicate string) bool {
+	for _, rule := range ruleBase.rules {
+		if rule.Goal.Predicate == predicate {
+			return true
+		}
+	}
+	return false
+}
+
 func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.Bindings) {
 
 	ruleBase.log.StartDebug("RuleBase BindSingle", goal)

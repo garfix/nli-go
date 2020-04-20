@@ -81,19 +81,7 @@ the database.
 
 ## Quantification
 
-This relation expresses the sentence "all children have a father":
-
-    quant(
-        Q5, [all(Q5)],
-        R5, [child(R5)], 
-        [have_father(R5, P1)]
-    )
-
-The `quant` relation has 5 parameters. These form the `range`, the `quantifier` and the `scope` of the quantification.
-
-When processing the quant, first all values for the range `R5` are collected. Then for each value, the scope
-`[have_father(R5, P1)]` is processed. Finally the results are compared to the quantifier `Q5`. In the case of "all" this
-means that the number of R5 values is compared to the number of scope values. It should match.
+The relations `find()`, `do()` and `quant()` apply here. Check [quantification](quantification.md) for more information.
 
 ## Negation
 
@@ -111,3 +99,4 @@ This set is specified in the example as "sem(4)". This means: the combined sense
 linked to the fourth consequent (which is "pp(E1)").
 
 A not() predicate can only be evaluated correctly when it is evaluated as part of a quant scope.
+

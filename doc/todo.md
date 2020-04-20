@@ -20,12 +20,6 @@ Test if this works or make it work:
 
     married_to(A, B) :- married_to(B, A);
 
-## Aggregation
-
-My system works with a mix of breadth-first and depth first. I have not thought this through well enough.
-
-Want to have aggregation functions that work reliably.
-
 ## Syntax
 
 - Perhaps replace the syntax of functions like number_of(N, X) to
@@ -60,7 +54,3 @@ Find a way to ensure completeness of information about all relations used in a s
 ## Domains
 
 The domain tests are not a goal in themselves, but only help to make up test cases.
-
-## Long term goals
-
-- Permanent goal: improve the grammar; extend it with new phrases, make it more precise. I think there's such a thing as an NLI-English grammar that exists of grammar rules commonly used when talking to a computer. It's a small subset of full English grammar, with an emphasis on questions.

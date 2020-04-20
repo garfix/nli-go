@@ -1,7 +1,8 @@
 # Changelog
 
-## ...
+## 1.8 do/find
 
+* do / find for different kinds of iterating over entities
 * not()
 * multiple entities per anaphora queue position
 * allow string constants in grammar rewrite rules

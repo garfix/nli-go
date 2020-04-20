@@ -1,9 +1,9 @@
 [
     /* commands */
-    do_pick_up(P1, E1) :- at(E1, X, Y, Z) move_hand(X, Y, Z) grasp(E1) raise_hand() memo(pick_up(123, `:shrdlu`, E1));
+    do_pick_up(P1, E1) :- at(E1, X, Y, Z) db_hand(X, Y, Z) db_grasp(E1) raise_hand() db_memo(pick_up(123, `:shrdlu`, E1));
     do_find(P1, E1) :- ;
-    do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) move_hand(X, Y, Z) release(A) make_containing(B, A);
-    do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) move_hand(X, Y, New_z) release(A) make_support(B, A);
+    do_put_into(Ev, A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) db_hand(X, Y, Z) db_release(A) db_contain(B, A);
+    do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) db_hand(X, Y, New_z) db_release(A) make_support(B, A);
 
     do_create_stack(P1, N, Type) :-
         do_find_free_space(X, Y)
@@ -32,7 +32,7 @@
     you(E1) :- named(E1, 'SHRDLU');
     i(E1) :- named(E1, 'YOU');
     tell(P1, P2) :- call(P2);
-    raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) move_hand(X, Y, Z2);
+    raise_hand() :- at(`:hand`, X, Y, Z1) add(Z1, 1000, Z2) db_hand(X, Y, Z2);
     height(E, H) :- size(E, _, _, H);
     width(E, W) :- size(E, W, _, _);
     big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
@@ -40,9 +40,9 @@
     narrower(A, B) :- width(A, Wa) width(B, Wb) less_than(Wa, Wb);
 
     /* storage */
-    memo(P1) :- assert(P1);
-    make_containing(A, B) :- assert(contain(_, A, B));
-    move_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
-    grasp(X) :- retract(grasping(_, _)) assert(grasping(`:shrdlu`, X));
-    release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) assert(at(E1, X, Y, Z));
+    db_memo(P1) :- assert(P1);
+    db_contain(A, B) :- assert(contain(_, A, B));
+    db_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
+    db_grasp(X) :- retract(grasping(_, _)) assert(grasping(`:shrdlu`, X));
+    db_release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) assert(at(E1, X, Y, Z));
 ]

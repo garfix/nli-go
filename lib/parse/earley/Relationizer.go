@@ -74,6 +74,19 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.rule.Sense, variableMap)
 
 	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
+
+	//if len(boundParentSet) > 0 {
+	//	firstRelation := boundParentSet[0]
+	//	if firstRelation.Predicate == "const" {
+	//		value := firstRelation.Arguments[0].TermValue
+	//		if value == "token" {
+	//			value = node.form
+	//		}
+	//		constantBinding[antecedentVariables[0]] = mentalese.NewString(value)
+	//		boundParentSet = boundParentSet[1:]
+	//	}
+	//}
+
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 
 	relationizer.log.EndDebug("extractSenseFromNode", relationSet)

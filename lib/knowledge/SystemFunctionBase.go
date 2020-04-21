@@ -16,7 +16,7 @@ func NewSystemFunctionBase(name string) *SystemFunctionBase {
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "add", "date_today", "date_subtract_years"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "add", "subtract", "date_today", "date_subtract_years"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -175,6 +175,40 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		} else {
 			found = false
 		}
+
+		if arg1.IsVariable() && !arg2.IsVariable() {
+			_, foundInBinding := binding[input.Arguments[0].TermValue]
+			if !foundInBinding {
+				newBinding[arg1.TermValue] = mentalese.NewString(arg2.TermValue)
+			}
+		}
+	}
+
+	// not_equals(arg1, arg2)
+	if input.Predicate == "not_equals" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		if int1 != int2 {
+			found = true
+		} else {
+			found = false
+		}
+
 	}
 
 	// add(arg1, arg2, sum)
@@ -199,6 +233,32 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		sum := int1 + int2
 
 		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(sum))
+
+		found = true
+	}
+
+	// sutract(arg1, arg2, sum)
+	if input.Predicate == "subtract" {
+
+		arg1 := input.Arguments[0]
+		arg2 := input.Arguments[1]
+
+		int1, _ := strconv.Atoi(arg1.TermValue)
+		int2, _ := strconv.Atoi(arg2.TermValue)
+
+		value, foundInBinding := binding[input.Arguments[0].TermValue]
+		if foundInBinding {
+			int1, _ = strconv.Atoi(value.TermValue)
+		}
+
+		value, foundInBinding = binding[input.Arguments[1].TermValue]
+		if foundInBinding {
+			int2, _ = strconv.Atoi(value.TermValue)
+		}
+
+		diff := int1 - int2
+
+		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(diff))
 
 		found = true
 	}

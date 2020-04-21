@@ -6,8 +6,8 @@
     { rule: qp(E1) -> 'at' 'least' 'one' 'of',                             sense: some(E1) }
     { rule: qp(E1) -> number(E1) }
 
-    { rule: number(E1) -> 'two',                                           sense: number(E1, 2) }
-    { rule: number(N1) -> /^[0-9]+/ }
+    { rule: number(E1) -> 'two',                                           sense: equals(E1, 2) }
+    { rule: number(N1) -> /^[0-9]+/,                                       sense: equals(N1, token) } /* not implemented yet */
 
     { rule: an(E1) -> 'a' }
     { rule: an(E1) -> 'an' }
@@ -24,7 +24,7 @@
 
     { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: do(sem(2), sem(1)) }
     { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: do([sem(2) sem(4)], do_put_into(P1, E1, E2)) }
-    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do(sem(3), do_create_stack(E1)) }
+    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_create_stack(sem(3)) }
     { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: find(sem(1), sem(3)) }
     { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: find([sem(1) sem(3)], sem(2))  }
     { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: find([sem(1) sem(5)], sem(3)) }

@@ -1,11 +1,12 @@
 # Changelog
 
-## 1.8 do/find
+## 1.8 do/find - 21-04-2020
 
 * do / find for different kinds of iterating over entities
 * not()
 * multiple entities per anaphora queue position
 * allow string constants in grammar rewrite rules
+* merged lexicon into grammar
 
 ## 1.7 Anaphora resolution - 15-02-2020
 

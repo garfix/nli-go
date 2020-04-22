@@ -88,4 +88,4 @@ Imagine now this sentence: "pick up two blocks".
 
 Handling this question with `find` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `do` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
 
-The difference between `find` and `do` is that `do` stops when it has enough, while `find` contines. Use `find` with interrogative relations and `do` with imperative relations. 
+The difference between `find` and `do` is that `do` stops when it has enough, while `find` continues. Use `find` with interrogative relations and `do` with imperative relations. 

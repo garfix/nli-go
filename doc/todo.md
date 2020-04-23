@@ -1,5 +1,6 @@
 # Todo
 
+* actually evaluate the quantifier
 * do not allow zero valued predicates in the grammar
 * document 'explicit references'
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be

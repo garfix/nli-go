@@ -52,7 +52,7 @@ func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentales
 		sourceVariable := goal.Arguments[0].TermValue
 
 		differentValues := base.getDifferentValues(bindings, sourceVariable)
-		aggregate = mentalese.Term{TermType: mentalese.TermNumber, TermValue: strconv.Itoa(len(differentValues))}
+		aggregate = mentalese.NewString(strconv.Itoa(len(differentValues)))
 
 	} else if goal.Predicate == "first" {
 

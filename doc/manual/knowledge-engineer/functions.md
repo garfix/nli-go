@@ -1,6 +1,6 @@
 # Functions
 
-These are some built-in functions for use in rule bases.
+These are some built-in functions from `SystemFunctionBase` for use in rule bases.
 
 Each function takes in a single binding, and returns either an extended binding when it succeeds, or no binding when it fails.  
 
@@ -128,3 +128,6 @@ Age calculation. If `D1` and `D2` contain dates, `Years` will be assigned the di
 
     date_subtract_years(D1, D2, Years)
     
+* `D1`: a variable, to contain a date
+* `D2`: a variable, to contain a date
+* `Years`: a variable, to contain a date

@@ -240,7 +240,7 @@
         result: _,
         responses: [
             {
-                condition: death_date(E1, Death_date) date_today(Today) date_subtract_years(Death_date, Today, Years_since_death) less_than(Years_since_death, 0),
+                condition: death_date(E1, Death_date) date_subtract_years(Death_date, Today, Years_since_death) less_than(Years_since_death, 0),
                 preparation: gender(E1, Gender) date_subtract_years(Death_date, Birth_date, Age) split(Birth_date, '-', Year1, Month1, Day1) split(Death_date, '-', Year2, Month2, Day2),
                 answer: report_age_deceased(E1, Age, Birth_date, Death_date) gender(E1, Gender) date(Birth_date, Day1, Month1, Year1) date(Death_date, Day2, Month2, Year2)
             }

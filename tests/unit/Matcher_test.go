@@ -208,19 +208,14 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantBindings := parser.CreateBindings(test.wantBindings)
 		wantIndexes := test.wantIndexes
 		wantMatch := test.wantMatch
-		resultBindings, resultIndexes, _, resultMatch := matcher.MatchSequenceToSetWithIndexes(needle, haystack, binding)
+		resultBindings, resultMatch := matcher.MatchSequenceToSetWithIndexes(needle, haystack, binding)
 
 		bindingsOk := len(wantBindings) == len(resultBindings)
 		for i, resultBinding := range resultBindings {
 			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings[i])
 		}
 
-		indexesOk := len(wantIndexes) == len(resultIndexes)
-		for i, resultIndex := range resultIndexes {
-			indexesOk = indexesOk && resultIndex == wantIndexes[i]
-		}
-
-		if !bindingsOk || !indexesOk || wantMatch != resultMatch {
+		if !bindingsOk || wantMatch != resultMatch {
 			t.Errorf("MatchSequenceToSet(%v %v %v): got %v %v %v, want %v %v %v", needle, haystack, binding, resultBindings, resultIndexes, resultMatch, wantBindings, wantIndexes, wantMatch)
 		}
 	}

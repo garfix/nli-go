@@ -561,7 +561,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 			} else {
 				tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_number)
 				if ok {
-					term.TermType = mentalese.TermNumber
+					term.TermType = mentalese.TermStringConstant
 					term.TermValue = tokenValue
 				} else {
 					tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)

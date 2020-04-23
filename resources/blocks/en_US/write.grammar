@@ -6,7 +6,7 @@
     { rule: boolean(B1) -> 'no', condition: result(false) }
 
     { rule: s(N) -> named_number(N) 'of' 'them',                                condition: a_number(N) less_than(N, 11) }
-    { rule: s(N) -> text(N) 'of' them(N),                                       condition: a_number(N) }
+    { rule: s(N) -> text(N) 'of' 'them',                                        condition: a_number(N) }
 
     { rule: s(S1) -> multiple_proper_noun(S1),                                  condition: root(S1) and(S1, C1, C2) }
     { rule: s(S1) -> 'yes' ',' multiple_proper_noun(S1),                        condition: select(S1) and(S1, C1, C2) }

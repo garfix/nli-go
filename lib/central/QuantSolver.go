@@ -76,10 +76,8 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 	scopeBindings := mentalese.Bindings{}
 	groupedScopeBindings := []mentalese.Bindings{}
 
-	//index := 0
 	for _, rangeBinding := range rangeBindings {
 		singleScopeBindings := solver.SolveRelationSet(scopeSet, mentalese.Bindings{ rangeBinding })
-		//newBindings = append(newBindings, scopedBindings...)
 
 		if len(singleScopeBindings) > 0 {
 			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)
@@ -91,11 +89,6 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 			group := EntityReferenceGroup{ CreateEntityReference(value.TermValue, value.TermEntityType) }
 			solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
-
-		//index++
-		//if count > 0 && index == count {
-		//	break
-		//}
 
 		if solver.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference) {
 			if !continueAfterEnough {

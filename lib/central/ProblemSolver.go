@@ -172,7 +172,7 @@ func (solver ProblemSolver) SolveSingleRelationSingleBinding(relation mentalese.
 	// go through all function bases
 	for _, functionBase := range solver.functionBases {
 		resultBinding, functionFound := functionBase.Execute(relation, binding)
-		if functionFound {
+		if functionFound && !resultBinding.Empty() {
 			newBindings = append(newBindings, resultBinding)
 		}
 	}

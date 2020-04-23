@@ -6,11 +6,12 @@
     do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) db_hand(X, Y, New_z) db_release(A) make_support(B, A);
 
     do_create_stack(Q1) :-
+        equals(Q1, quant(_, _, E1, _))
         do_find_free_space(X, Y)
         do(Q1, [
-            do_stack_1(X, Y)]);
+            do_stack_1(E1, X, Y)]);
 
-    do_stack_1(X, Y) :-
+    do_stack_1(E1, X, Y) :-
         block(E1)
         at(E1, X1, Y1, _) not_equals(X, X1) not_equals(Y, Y1)
         do_clear(E1)

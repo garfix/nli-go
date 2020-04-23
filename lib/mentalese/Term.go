@@ -15,7 +15,6 @@ type Term struct {
 const TermVariable = 1
 const TermPredicateAtom = 2
 const TermStringConstant = 3
-const TermNumber = 4
 const TermAnonymousVariable = 5
 const TermRegExp = 6
 const TermRelationSet = 7
@@ -27,10 +26,6 @@ func NewVariable(name string) Term {
 
 func NewAnonymousVariable() Term {
 	return Term{ TermType: TermAnonymousVariable, TermValue: "", TermValueRelationSet: nil}
-}
-
-func NewNumber(number string) Term {
-	return Term{ TermType: TermNumber, TermValue: number, TermValueRelationSet: nil}
 }
 
 func NewString(value string) Term {
@@ -54,11 +49,15 @@ func (term Term) IsVariable() bool {
 }
 
 func (term Term) IsNumber() bool {
-	if term.TermType == TermNumber {
-		return true
+	if term.TermType != TermStringConstant {
+		return false
 	}
 	_, err := strconv.Atoi(term.TermValue)
 	return err == nil
+}
+
+func (term Term) IsString() bool {
+	return term.TermType == TermStringConstant
 }
 
 func (term Term) IsId() bool {
@@ -145,11 +144,14 @@ func (term Term) String() string {
 	case TermPredicateAtom:
 		s = term.TermValue
 	case TermStringConstant:
-		s = "'" + term.TermValue + "'"
+		_, err := strconv.Atoi(term.TermValue)
+		if err == nil {
+			s = term.TermValue
+		} else {
+			s = "'" + term.TermValue + "'"
+		}
 	case TermRegExp:
 		s = "/" + term.TermValue + "/"
-	case TermNumber:
-		s = term.TermValue
 	case TermAnonymousVariable:
 		s = "_"
 	case TermRelationSet:

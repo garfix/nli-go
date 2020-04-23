@@ -33,18 +33,17 @@ type solutionNode struct {
 
 func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, bool) {
 
-	bindings, _, _, match := matcher.MatchSequenceToSetWithIndexes(needleSequence, haystackSet, binding)
+	bindings, match := matcher.MatchSequenceToSetWithIndexes(needleSequence, haystackSet, binding)
 	return bindings, match
 }
 
 // Matches a relation sequence to a set
 // Returns multiple bindings for variables in needleSequence
-func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, []int, []solutionNode, bool) {
+func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, bool) {
 
 	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
 	var newBindings Bindings
-	var matchedIndexes []int
 
 	match := true
 
@@ -62,9 +61,10 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 			// functions like join(N, ' ', F, I, L)
 			functionBinding, functionFound := matcher.MatchRelationToFunction(needleRelation, node.Binding)
-			if functionFound {
+			if functionFound  && !functionBinding.Empty() {
 				newIndexes := node.Indexes
 				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
+				nodeMatches = true
 			}
 
 			someBindings, someIndexes := matcher.MatchRelationToSet(needleRelation, haystackSet, node.Binding)
@@ -73,8 +73,7 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 				newIndexes := append(node.Indexes, someIndex)
 				newNodes = append(newNodes, solutionNode{someBinding, newIndexes})
 			}
-
-			if functionFound || len(someBindings) > 0 {
+			if len(someBindings) > 0 {
 				nodeMatches = true
 			}
 		}
@@ -88,14 +87,11 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 	for _, node := range nodes {
 		newBindings = append(newBindings, node.Binding)
-		matchedIndexes = append(matchedIndexes, node.Indexes...)
 	}
 
-	matchedIndexes = common.IntArrayDeduplicate(matchedIndexes)
+	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, match)
 
-	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, matchedIndexes, match)
-
-	return newBindings, matchedIndexes, nodes, match
+	return newBindings, match
 }
 
 // functions like join(N, ' ', F, I, L)

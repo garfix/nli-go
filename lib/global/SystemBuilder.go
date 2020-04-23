@@ -32,7 +32,7 @@ func NewSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
 
 func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig) {
 
-	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function")
+	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", builder.log)
 	matcher := mentalese.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 

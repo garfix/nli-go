@@ -216,7 +216,7 @@ func TestMatchSequenceToSet(t *testing.T) {
 		}
 
 		if !bindingsOk || wantMatch != resultMatch {
-			t.Errorf("MatchSequenceToSet(%v %v %v): got %v %v %v, want %v %v %v", needle, haystack, binding, resultBindings, resultIndexes, resultMatch, wantBindings, wantIndexes, wantMatch)
+			t.Errorf("MatchSequenceToSet(%v %v %v): got %v %v %v, want %v %v", needle, haystack, binding, resultBindings, resultMatch, wantBindings, wantIndexes, wantMatch)
 		}
 	}
 }

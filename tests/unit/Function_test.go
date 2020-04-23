@@ -1,5 +1,6 @@
 package tests
 import (
+	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
 	"testing"
@@ -7,7 +8,8 @@ import (
 
 func TestFunctions(t *testing.T) {
 
-	functionBase := knowledge.NewSystemFunctionBase("name")
+	log := common.NewSystemLog(false)
+	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -27,6 +29,7 @@ func TestFunctions(t *testing.T) {
 		{"not_equals(E1, E2)", "{E1:2, E2:2}", "{}"},
 		{"equals(E1, E2)", "{E1:1, E2:2}", "{}"},
 		{"equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
+		{"equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
 		{"date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},
 	}
 
@@ -41,5 +44,9 @@ func TestFunctions(t *testing.T) {
 		if !resultBinding.Equals(wantBinding) {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBinding, wantBinding)
 		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
 	}
 }

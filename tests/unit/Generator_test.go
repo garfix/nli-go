@@ -26,7 +26,7 @@ func TestGenerator(t *testing.T) {
 		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
 	]`)
 	matcher := mentalese.NewRelationMatcher(log)
-	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function"))
+	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
 	generator := generate.NewGenerator(grammar, log, matcher)
 
 	tests := []struct {

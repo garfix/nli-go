@@ -270,7 +270,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		binding := mentalese.Binding{}
 
-		for i, variable := range []sparqlResponseVariable{ resultBinding.Variable1, resultBinding.Variable2} {
+		for i, variable := range []sparqlResponseVariable{ resultBinding.Variable1, resultBinding.Variable2 } {
 
 			if relation.Arguments[i].IsVariable() {
 

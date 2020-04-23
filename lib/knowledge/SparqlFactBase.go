@@ -270,37 +270,27 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		binding := mentalese.Binding{}
 
-		if relation.Arguments[0].IsVariable() {
+		for i, variable := range []sparqlResponseVariable{ resultBinding.Variable1, resultBinding.Variable2} {
 
-			if resultBinding.Variable1.Type == "uri" {
-// todo predicates does not contain database relations
-				entityType := factBase.predicates.GetEntityType(relation.Predicate, 0)
-				binding[relation.Arguments[0].TermValue] = mentalese.NewId(resultBinding.Variable1.Value, entityType)
-			} else {
-				// skip non-english results
-				if resultBinding.Variable1.Lang != "" && resultBinding.Variable1.Lang != "en" {
-					continue
+			if relation.Arguments[i].IsVariable() {
+
+				if variable.Type == "uri" {
+					// todo predicates does not contain database relations
+					entityType := factBase.predicates.GetEntityType(relation.Predicate, i)
+					binding[relation.Arguments[i].TermValue] = mentalese.NewId(variable.Value, entityType)
+				} else {
+					// skip non-english results
+					if variable.Lang != "" && variable.Lang != "en" {
+						goto next
+					}
+					binding[relation.Arguments[i].TermValue] = mentalese.NewString(variable.Value)
 				}
-				binding[relation.Arguments[0].TermValue] = mentalese.NewString(resultBinding.Variable1.Value)
-			}
-		}
-
-		if relation.Arguments[1].IsVariable() {
-
-			if resultBinding.Variable2.Type == "uri" {
-// todo predicates does not contain database relations
-				entityType := factBase.predicates.GetEntityType(relation.Predicate, 1)
-				binding[relation.Arguments[1].TermValue] = mentalese.NewId(resultBinding.Variable2.Value, entityType)
-			} else {
-				// skip non-english results
-				if resultBinding.Variable2.Lang != "" && resultBinding.Variable2.Lang != "en" {
-					continue
-				}
-				binding[relation.Arguments[1].TermValue] = mentalese.NewString(resultBinding.Variable2.Value)
 			}
 		}
 
 		bindings = append(bindings, binding)
+
+		next:
 	}
 
 	return bindings

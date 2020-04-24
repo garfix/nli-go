@@ -10,15 +10,16 @@ import (
 
 type SystemFunctionBase struct {
 	KnowledgeBaseCore
+	matcher *mentalese.RelationMatcher
 	log *common.SystemLog
 }
 
 func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBase {
-	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name } }
+	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: mentalese.NewRelationMatcher(log) }
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "add", "subtract", "date_today", "date_subtract_years"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -228,6 +229,26 @@ func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentale
 	}
 }
 
+func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	if !base.validate(input, "--") {
+		return nil
+	}
+
+	bound := input.BindSingle(binding)
+
+	firstBinding, match1 := base.matcher.MatchTerm(bound.Arguments[0], bound.Arguments[1], mentalese.Binding{})
+	secondBinding, match2 := base.matcher.MatchTerm(bound.Arguments[1], bound.Arguments[0], mentalese.Binding{})
+	combinedBinding := firstBinding.Merge(secondBinding).RemoveVariables()
+	newBinding := binding.Merge(combinedBinding)
+
+	if !match1 || !match2 {
+		return nil
+	} else {
+		return newBinding
+	}
+}
+
 func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 
 	bound := input.BindSingle(binding)
@@ -310,6 +331,8 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.equals(input, binding)
 	case "not_equals":
 		newBinding = base.notEquals(input, binding)
+	case "unify":
+		newBinding = base.unify(input, binding)
 	case "date_today":
 		newBinding = base.dateToday(input, binding)
 	case "date_subtract_years":

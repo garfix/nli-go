@@ -1,3 +1,30 @@
+# 2020-04-24
+
+I rewrote the functions library and added documentation. The use of the arguments is now more strict and I added error messages for wrong use.
+
+One of those messages was that `greater_than(A, B)` requires two integer numbers. But when I ran that against the DBPedia tests I got an error because the dbp:populationCensus field of http://dbpedia.org/page/Republika_Srpska is not a simple integer, but is in scientific notation: `1.146520224E11` (!) So I left this type check out for now.
+
+I noted that `quant()` is an iterator(!). It can be passed as an object (or predication) to other functions, and this brings interesting new possibilities!
+
+Now I want to make the following possible, for the problem "stack up N blocks":
+
+    equals(Q, quant(Q1, [], R1, []))
+    
+Which means: make sure that Q identifies with the quant on the right, and _bind_ the variables to values within the quant. This is a form of destructuring. It is also available in Prolog, and I found that there are two equals operators: `=` and `==`.   
+
+https://www.swi-prolog.org/pldoc/man?section=compare
+
+https://stackoverflow.com/questions/8219555/what-is-the-difference-between-and-in-prolog
+
+`=` means "unify", while `==` means check identity. 
+
+It is a good idea to make this difference already. So I will use `equals` for `==` and `unify` for `=`. So then this becomes:
+
+    equals(A, B)
+    unify(Q, quant(Q1, [], R1, []))
+
+Note that unify is different from assignment, because assignment allows one to assign a new value to a variable that already has one. I am not sure that I want to enable that. Not now at least.
+
 # 2020-04-18
 
 For "Do all parents have 2 children", why use

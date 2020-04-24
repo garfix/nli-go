@@ -6,20 +6,21 @@
     do_put_on(A, B) :- do_pick_up(Ev1, A) at(B, X, Y, Z) height(B, H) add(B, H, New_z) db_hand(X, Y, New_z) db_release(A) make_support(B, A);
 
     do_create_stack(Q1) :-
-        equals(Q1, quant(_, _, E1, _))
         do_find_free_space(X, Y)
+        assign(Base, `:table`)
         do(Q1, [
-            do_stack_1(E1, X, Y)]);
+            unify(Q1, quant(_, _, E1, _))
+            do_stack_1(Base, E1, X, Y)]
+            assign(Base, E1)
+        );
 
-    do_stack_1(E1, X, Y) :-
+    do_stack_1(Base, E1, X, Y) :-
         block(E1)
         at(E1, X1, Y1, _) not_equals(X, X1) not_equals(Y, Y1)
         do_clear(E1)
-        do_put_on(E1, Base)
-        subtract(N, 1, New_n)
-        do_create_rest_of_stack(E1, Type, New_n, X, Y);
+        do_put_on(E1, Base);
 
-    do_find_free_space(X, Y) :- equals(X, 0) equals(Y, 0);
+    do_find_free_space(X, Y) :- unify(X, 0) unify(Y, 0);
     do_clear(E1) :- ;
 
     /* inferences */

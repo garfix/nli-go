@@ -84,6 +84,26 @@ If N1 is a bound variable, this function checks if both the type and the value a
 Destructuring. If Q1 holds a quant() relation, this equals, binds its arguments to new variables (`R1`).
     
     equals(Q1, quant(_, _, R1, _)        
+    
+# unify
+    
+This function unifies two terms. This can be used for assignment and destructuring. Assignment only works for variables that had not been previously assigned.
+
+    unify(T1, T2)
+    
+* `T1`: a free variable, or any other term
+* `T2`: a free variable, or any other term
+
+Examples:
+
+If N1 is an unbound variable, this function is an assignment (N1 becomes 2).
+If N1 is a bound variable, this function checks if both the type and the value are identical.
+
+    unify(N1, 2)
+    
+Destructuring. If Q1 holds a quant() relation, this equals, binds its arguments to new variables (`R1`).
+    
+    unify(Q1, quant(_, _, R1, _)
 
 ## not_equals
 

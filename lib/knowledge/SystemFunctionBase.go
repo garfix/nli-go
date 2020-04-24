@@ -87,7 +87,7 @@ func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentales
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "ssV") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	newBinding := binding.Copy()
@@ -105,7 +105,7 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "vsS") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	newBinding := binding.Copy()
@@ -126,7 +126,7 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "vS") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	newBinding := binding.Copy()
@@ -145,7 +145,7 @@ func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding me
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "ii") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -154,7 +154,7 @@ func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding me
 	if int1 > int2 {
 		return binding
 	} else {
-		return mentalese.Binding{}
+		return nil
 	}
 }
 
@@ -163,7 +163,7 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "ii") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -172,7 +172,7 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 	if int1 < int2 {
 		return binding
 	} else {
-		return mentalese.Binding{}
+		return nil
 	}
 }
 
@@ -181,7 +181,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "iiv") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -200,7 +200,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "iiv") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -218,11 +218,11 @@ func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentale
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "--") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	if !bound.Arguments[0].Equals(bound.Arguments[1]) {
-		return mentalese.Binding{}
+		return nil
 	} else {
 		return binding
 	}
@@ -233,11 +233,11 @@ func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding ment
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "--") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	if bound.Arguments[0].Equals(bound.Arguments[1]) {
-		return mentalese.Binding{}
+		return nil
 	} else {
 		return binding
 	}
@@ -248,7 +248,7 @@ func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding ment
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "v") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	now := time.Now()
@@ -265,7 +265,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 	bound := input.BindSingle(binding)
 
 	if !base.validate(bound, "ssv") {
-		return mentalese.Binding{}
+		return nil
 	}
 
 	date1, err1 := time.Parse("2006-01-02", bound.Arguments[0].TermValue)
@@ -274,7 +274,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 
 	newBinding := binding.Copy()
 	if err1 != nil || err2 != nil {
-		newBinding = mentalese.Binding{}
+		newBinding = nil
 	} else {
 		duration := date1.Sub(date2)
 		hours := duration.Hours()

@@ -208,7 +208,7 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantBindings := parser.CreateBindings(test.wantBindings)
 		wantIndexes := test.wantIndexes
 		wantMatch := test.wantMatch
-		resultBindings, resultMatch := matcher.MatchSequenceToSetWithIndexes(needle, haystack, binding)
+		resultBindings, resultMatch := matcher.MatchSequenceToSet(needle, haystack, binding)
 
 		bindingsOk := len(wantBindings) == len(resultBindings)
 		for i, resultBinding := range resultBindings {

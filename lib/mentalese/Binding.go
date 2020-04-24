@@ -4,10 +4,6 @@ import "sort"
 
 type Binding map[string]Term
 
-func (b Binding) Empty() bool {
-	return len(b) == 0
-}
-
 func (b Binding) ContainsVariable(variable string) bool {
 	_, found := b[variable]
 	return found

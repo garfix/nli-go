@@ -33,14 +33,6 @@ type solutionNode struct {
 
 func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, bool) {
 
-	bindings, match := matcher.MatchSequenceToSetWithIndexes(needleSequence, haystackSet, binding)
-	return bindings, match
-}
-
-// Matches a relation sequence to a set
-// Returns multiple bindings for variables in needleSequence
-func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (Bindings, bool) {
-
 	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
 	var newBindings Bindings
@@ -61,7 +53,7 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 			// functions like join(N, ' ', F, I, L)
 			functionBinding, functionFound := matcher.MatchRelationToFunction(needleRelation, node.Binding)
-			if functionFound  && !functionBinding.Empty() {
+			if functionFound  && functionBinding != nil {
 				newIndexes := node.Indexes
 				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 				nodeMatches = true
@@ -93,6 +85,7 @@ func (matcher *RelationMatcher) MatchSequenceToSetWithIndexes(needleSequence Rel
 
 	return newBindings, match
 }
+
 
 // functions like join(N, ' ', F, I, L)
 // returns a binding with only one variable

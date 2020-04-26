@@ -7,6 +7,7 @@ import (
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
+	"nli-go/lib/knowledge/nested"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
@@ -51,7 +52,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
-	nestedStructureBase := knowledge.NewSystemNestedStructureBase(builder.log)
+	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, predicates, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)

@@ -1,14 +1,14 @@
-package central
+package nested
 
 import (
 	"nli-go/lib/mentalese"
 )
 
-func (solver ProblemSolver) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
 	scope := notRelation.Arguments[mentalese.NotScopeIndex].TermValueRelationSet
 
-	newBindings := solver.SolveRelationSet(scope, mentalese.Bindings{ binding })
+	newBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ binding })
 	resultBindings := mentalese.Bindings{}
 
 	if len(newBindings) > 0 {

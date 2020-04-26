@@ -1,54 +1,55 @@
-package central
+package nested
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
 )
 
 // find(quant() quant(), relationset)
-func (solver ProblemSolver) SolveFind(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveFind(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	if len(find.Arguments) != 2 {
 		panic("find(quants, scope) needs two arguments")
 	}
-	return solver.solveQuantifiedRelations(find, binding, true)
+	return base.solveQuantifiedRelations(find, binding, true)
 }
 
 // do(quant() quant(), relationset)
-func (solver ProblemSolver) SolveDo(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveDo(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	if len(find.Arguments) != 2 {
 		panic("do(quants, scope) needs two arguments")
 	}
-	return solver.solveQuantifiedRelations(find, binding, false)
+	return base.solveQuantifiedRelations(find, binding, false)
 }
 
-func (solver ProblemSolver) solveQuantifiedRelations(find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	quants := find.Arguments[0].TermValueRelationSet
 	scope := find.Arguments[1].TermValueRelationSet
 
-	return solver.solveQuants(quants, scope, binding, continueAfterEnough)
+	return base.solveQuants(quants, scope, binding, continueAfterEnough)
 }
 
-func (solver ProblemSolver) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	quant := quants[0]
 	quantifierSet := quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	rangeSet := quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet
 
-	rangeBindings := solver.collectRangeBindings(quantifierSet, rangeVariable, rangeSet, binding)
+	rangeBindings := base.collectRangeBindings(quantifierSet, rangeVariable, rangeSet, binding)
 	isReference := len(rangeSet) > 0 && rangeSet[0].Predicate == mentalese.PredicateReference
 
 	scopeBindings := mentalese.Bindings{}
 	resultCount := 0
 
 	if len(quants) == 1 {
-		scopeBindings = solver.solveScope(scopeSet, quantifierSet, rangeVariable, rangeBindings, isReference, continueAfterEnough)
+		scopeBindings = base.solveScope(scopeSet, quantifierSet, rangeVariable, rangeBindings, isReference, continueAfterEnough)
 		resultCount = len(scopeBindings)
 	} else {
 		for _, rangeBinding := range rangeBindings {
-			singleScopeBindings := solver.solveQuants(quants[1:], scopeSet, rangeBinding, continueAfterEnough)
+			singleScopeBindings := base.solveQuants(quants[1:], scopeSet, rangeBinding, continueAfterEnough)
 
 			if len(singleScopeBindings) > 0 {
 				scopeBindings = append(scopeBindings, singleScopeBindings...)
@@ -57,27 +58,27 @@ func (solver ProblemSolver) solveQuants(quants mentalese.RelationSet, scopeSet m
 		}
 	}
 
-	success := solver.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference)
+	success := base.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference)
 
 	if success {
 		return scopeBindings
 	} else {
-		solver.log.AddProduction("Do/Find", "Quantifier mismatch")
-		solver.log.AddProduction("Do/Find", "  Quantifier:" + quantifierSet.String())
-		solver.log.AddProduction("Do/Find", "  Range:" + rangeVariable + " " + rangeSet.String())
-		solver.log.AddProduction("Do/Find", "  Range:" + rangeBindings.String())
-		solver.log.AddProduction("Do/Find", "  Scope:" + scopeBindings.String())
+		base.log.AddProduction("Do/Find", "Quantifier mismatch")
+		base.log.AddProduction("Do/Find", "  Quantifier:" + quantifierSet.String())
+		base.log.AddProduction("Do/Find", "  Range:" + rangeVariable + " " + rangeSet.String())
+		base.log.AddProduction("Do/Find", "  Range:" + rangeBindings.String())
+		base.log.AddProduction("Do/Find", "  Scope:" + scopeBindings.String())
 		return mentalese.Bindings{}
 	}
 }
 
-func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifierSet mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, isReference bool, continueAfterEnough bool)  mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveScope(scopeSet mentalese.RelationSet, quantifierSet mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, isReference bool, continueAfterEnough bool)  mentalese.Bindings {
 
 	scopeBindings := mentalese.Bindings{}
 	groupedScopeBindings := []mentalese.Bindings{}
 
 	for _, rangeBinding := range rangeBindings {
-		singleScopeBindings := solver.SolveRelationSet(scopeSet, mentalese.Bindings{ rangeBinding })
+		singleScopeBindings := base.solver.SolveRelationSet(scopeSet, mentalese.Bindings{ rangeBinding })
 
 		if len(singleScopeBindings) > 0 {
 			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)
@@ -86,11 +87,11 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 
 		value, found := rangeBinding[rangeVariable]
 		if found && value.IsId() {
-			group := EntityReferenceGroup{ CreateEntityReference(value.TermValue, value.TermEntityType) }
-			solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermEntityType) }
+			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
-		if solver.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference) {
+		if base.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference) {
 			if !continueAfterEnough {
 				break
 			}
@@ -100,7 +101,7 @@ func (solver ProblemSolver) solveScope(scopeSet mentalese.RelationSet, quantifie
 	return scopeBindings
 }
 
-func (solver ProblemSolver) tryQuantifier(quantifier mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, resultBindings mentalese.Bindings, isReference bool) bool {
+func (base *SystemNestedStructureBase) tryQuantifier(quantifier mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, resultBindings mentalese.Bindings, isReference bool) bool {
 
 	isTheQuantifier := quantifier[0].Predicate == mentalese.PredicateThe
 	isAllQuantifier := quantifier[0].Predicate == mentalese.PredicateAll
@@ -155,7 +156,7 @@ func (solver ProblemSolver) tryQuantifier(quantifier mentalese.RelationSet, rang
 	}
 }
 
-func (solver ProblemSolver) collectRangeBindings(quantifier mentalese.RelationSet, rangeVariable string, rangeSet mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) collectRangeBindings(quantifier mentalese.RelationSet, rangeVariable string, rangeSet mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
 	rangeBindings := []mentalese.Binding{}
 
 	isTheQuantifier := quantifier[0].Predicate == mentalese.PredicateThe
@@ -165,7 +166,7 @@ func (solver ProblemSolver) collectRangeBindings(quantifier mentalese.RelationSe
 
 		// try the anaphora queue first
 		refFound := false
-		for _, group := range *solver.dialogContext.AnaphoraQueue {
+		for _, group := range *base.dialogContext.AnaphoraQueue {
 
 			ref := group[0]
 
@@ -176,10 +177,10 @@ func (solver ProblemSolver) collectRangeBindings(quantifier mentalese.RelationSe
 				rangeBindings = mentalese.Bindings{ refBinding }
 				break
 			}
-			if !solver.quickAcceptabilityCheck(rangeVariable, ref.EntityType, rangeSet) {
+			if !base.quickAcceptabilityCheck(rangeVariable, ref.EntityType, rangeSet) {
 				continue
 			}
-			testRangeBindings := solver.SolveRelationSet(rangeSet, mentalese.Bindings{refBinding})
+			testRangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{refBinding})
 			if len(testRangeBindings) == 1 {
 				refFound = true
 				rangeBindings = testRangeBindings
@@ -188,12 +189,12 @@ func (solver ProblemSolver) collectRangeBindings(quantifier mentalese.RelationSe
 		}
 
 		if !refFound {
-			rangeBindings = solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
+			rangeBindings = base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
 		}
 
 		if len(rangeBindings) != 1 {
 
-			rangeIndex, found := solver.rangeIndexClarification(rangeBindings, rangeVariable)
+			rangeIndex, found := base.rangeIndexClarification(rangeBindings, rangeVariable)
 			if found {
 				rangeBindings = rangeBindings[rangeIndex:rangeIndex + 1]
 			} else {
@@ -202,20 +203,20 @@ func (solver ProblemSolver) collectRangeBindings(quantifier mentalese.RelationSe
 		}
 
 	} else {
-		rangeBindings = solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
+		rangeBindings = base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
 	}
 
 	return rangeBindings
 }
 
-func (solver ProblemSolver) quickAcceptabilityCheck(variable string, entityType string, relations mentalese.RelationSet) bool {
+func (base *SystemNestedStructureBase) quickAcceptabilityCheck(variable string, entityType string, relations mentalese.RelationSet) bool {
 
 	accepted := false
 
 	for _, relation := range relations {
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
-				argumentEntityType := solver.predicates.GetEntityType(relation.Predicate, i)
+				argumentEntityType := base.predicates.GetEntityType(relation.Predicate, i)
 				if  argumentEntityType == "" || argumentEntityType == entityType {
 					accepted = true
 					break
@@ -228,22 +229,22 @@ func (solver ProblemSolver) quickAcceptabilityCheck(variable string, entityType 
 }
 
 // ask the user which of the specified entities he/she means
-func (solver ProblemSolver) rangeIndexClarification(rangeBindings mentalese.Bindings, rangeVariable string) (int, bool) {
+func (base *SystemNestedStructureBase) rangeIndexClarification(rangeBindings mentalese.Bindings, rangeVariable string) (int, bool) {
 
 	options := common.NewOptions()
 
-	answer, found := solver.dialogContext.GetAnswerToOpenQuestion()
+	answer, found := base.dialogContext.GetAnswerToOpenQuestion()
 
 	if found {
 
 		index, _ := strconv.Atoi(answer)
-		solver.dialogContext.RemoveAnswerToOpenQuestion()
+		base.dialogContext.RemoveAnswerToOpenQuestion()
 
 		return index, true
 
 	} else {
 
-		solver.log.SetClarificationRequest("I don't understand which one you mean", options)
+		base.log.SetClarificationRequest("I don't understand which one you mean", options)
 		return 0, false
 	}
 }

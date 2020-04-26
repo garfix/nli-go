@@ -183,7 +183,9 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 	}
 
 	// go through all nested structure bases
-	newBindings = append(newBindings, solver.solveChildStructures(relation, simpleBinding)...)
+	for _, nestedStructureBase := range solver.nestedStructureBases {
+		newBindings = append(newBindings, nestedStructureBase.SolveNestedStructure(relation, simpleBinding)...)
+	}
 
 	solver.log.EndProduction("Solve Simple Binding", fmt.Sprint(newBindings))
 
@@ -198,35 +200,6 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 	}
 
 	return completedBindings
-}
-
-func (solver ProblemSolver) solveChildStructures(goal mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
-
-	var newBindings mentalese.Bindings
-
-	if goal.Predicate == mentalese.PredicateFind {
-
-		newBindings = solver.SolveFind(goal, binding)
-
-	} else if goal.Predicate == mentalese.PredicateDo {
-
-		newBindings = solver.SolveDo(goal, binding)
-
-	} else if goal.Predicate == mentalese.PredicateSequence {
-
-		newBindings = solver.SolveSeq(goal, binding)
-
-	} else if goal.Predicate == mentalese.PredicateNot {
-
-		newBindings = solver.SolveNot(goal, binding)
-
-	} else if goal.Predicate == mentalese.PredicateCall {
-
-		newBindings = solver.Call(goal, binding)
-
-	}
-
-	return newBindings
 }
 
 // Creates bindings for the free variables in 'relations', by resolving them in factBase

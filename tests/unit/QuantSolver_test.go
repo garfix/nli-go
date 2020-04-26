@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
+	"nli-go/lib/knowledge/nested"
 	"nli-go/lib/mentalese"
 	"testing"
 )
@@ -75,7 +76,7 @@ func TestQuantSolver(t *testing.T) {
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), predicates, dialogContext, log)
 	solver.AddFactBase(factBase1)
 
-	nestedStructureBase := knowledge.NewSystemNestedStructureBase(log)
+	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
@@ -86,7 +87,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := solver.SolveFind(quant, binding)
+		result := solver.SolveRelationSet(mentalese.RelationSet{ quant }, mentalese.Bindings{ binding })
 		result = mentalese.UniqueBindings(result)
 
 		resultString := ""

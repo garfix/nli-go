@@ -42,7 +42,7 @@ func TestBlocksWorld(t *testing.T) {
 			// todo: must be: I don't know
 			{"Can a pyramid support a pyramid?", "No"},
 			{"Stack up two pyramids.", "I can't"},
-			//{"Stack up two blocks.", "OK"},
+			//{"Stack up 5 blocks.", "OK1"},
 		},
 		{
 		},

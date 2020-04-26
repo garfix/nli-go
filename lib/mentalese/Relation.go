@@ -56,6 +56,8 @@ func (relation Relation) GetVariableNames() []string {
 	for _, argument := range relation.Arguments {
 		if argument.IsVariable() {
 			names = append(names, argument.TermValue)
+		} else if argument.IsRelationSet() {
+			names = append(names, argument.TermValueRelationSet.GetVariableNames()...)
 		}
 	}
 

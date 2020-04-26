@@ -35,14 +35,17 @@ func TestInMemoryRuleBase(t *testing.T) {
 		sibling(A, B) :- parent(A, C) parent(B, C);
 	]`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
+	solver.AddRuleBase(ruleBase)
 
 	tests := []struct {
 		goal           string
 		binding        string
 		resultBindings string
 	}{
-		//{"sibling(X, Y)", "{}", "[{X:john, Y:john} {X:john, Y:james} {X:james, Y:john} {X:james, Y:james} {X:vince, Y:vince} {X:vince, Y:pat} {X:pat, Y:vince} {X:pat, Y:pat} {X:sue, Y:sue}], want [{X:john, Y:john} {X:john, Y:james} {X:james, Y:john} {X:james, Y:james} {X:vince, Y:vince} {X:vince, Y:pat} {X:pat, Y:vince} {X:pat, Y:pat} {X:sue, Y:sue}], want [{X:john, Y:james} {X:john, Y:john} {X:james, Y:james}]"},
+		// do not promote temporary variable C
 		{"sibling(X, Y)", "{X:john, Z:sue}", "[{X:john, Y:john, Z:sue} {X:john, Y:james, Z:sue}]"},
+		// do not enter unnecessary variables, because they may conflict with the temporary variables
+		{"sibling(X, Y)", "{X:john, C:sue}", "[{C:sue, X:john, Y:john} {C:sue, X:john, Y:james}]"},
 		{"sibling(X, Y)", "{X:bob}", "[]"},
 	}
 
@@ -51,7 +54,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := solver.SolveSingleRelationSingleBindingSingleRuleBase(goal, binding, ruleBase).String()
+		resultBindings := solver.SolveRelationSet(mentalese.RelationSet{ goal }, mentalese.Bindings{ binding }).String()
 
 		if resultBindings != test.resultBindings {
 			t.Errorf("SolveRuleBase: got %v, want %v", resultBindings, test.resultBindings)

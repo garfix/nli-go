@@ -54,3 +54,13 @@ func (bindings Bindings) GetDistinctValueCount(variable string) int {
 
 	return count
 }
+
+func (s Bindings) FilterVariablesByName(variableNames []string) Bindings {
+	newBindings := []Binding{}
+
+	for _, binding := range s {
+		newBindings = append(newBindings, binding.FilterVariablesByName(variableNames))
+	}
+
+	return newBindings
+}

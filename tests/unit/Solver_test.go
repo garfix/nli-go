@@ -131,7 +131,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := solver2.SolveSingleRelationSingleBindingSingleRuleBase(input, binding, ruleBase2)
+		resultBindings := solver2.SolveRelationSet(mentalese.RelationSet{ input }, mentalese.Bindings{ binding})
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)

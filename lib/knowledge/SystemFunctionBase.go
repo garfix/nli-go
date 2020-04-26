@@ -19,7 +19,7 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years", "assign"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -307,6 +307,20 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 	return newBinding
 }
 
+func (base *SystemFunctionBase) assign(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !base.validate(bound, "--") {
+		return nil
+	}
+
+	newBinding := binding.Copy()
+	newBinding[input.Arguments[0].TermValue] = bound.Arguments[1]
+
+	return newBinding
+}
+
 func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	newBinding := binding
@@ -337,6 +351,8 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.dateToday(input, binding)
 	case "date_subtract_years":
 		newBinding = base.dateSubtractYears(input, binding)
+	case "assign":
+		newBinding = base.assign(input, binding)
 	default:
 		found = false
 	}

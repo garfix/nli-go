@@ -191,24 +191,6 @@ func (b Binding) Equals(c Binding) bool {
 	return true
 }
 
-// Returns copy of bindings that contains each Binding only once
-func UniqueBindings(bindings Bindings) Bindings {
-	uniqueBindings := Bindings{}
-	for _, binding := range bindings {
-		found := false
-		for _, uniqueBinding := range uniqueBindings {
-			if uniqueBinding.Equals(binding) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			uniqueBindings = append(uniqueBindings, binding)
-		}
-	}
-	return uniqueBindings
-}
-
 func CountUniqueValues(variable string, bindings Bindings) int {
 	uniqueBindings := map[string]bool{}
 	for _, binding := range bindings {

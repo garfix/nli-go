@@ -88,7 +88,7 @@ func TestQuantSolver(t *testing.T) {
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
 		result := solver.SolveRelationSet(mentalese.RelationSet{ quant }, mentalese.Bindings{ binding })
-		result = mentalese.UniqueBindings(result)
+		result = result.UniqueBindings()
 
 		resultString := ""
 		for _, result := range result {

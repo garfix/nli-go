@@ -27,136 +27,142 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemAggregateBase) Bind(goal mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
+func (base *SystemAggregateBase) validate(input mentalese.Relation, format string) bool {
 
-	base.log.StartDebug("SystemAggregateBase BindSingle", goal, bindings)
+	expectedLength := len(format)
 
-	newBindings := mentalese.Bindings{}
-	found := true
-	aggregate := mentalese.Term{}
-
-	aggregateArgument := mentalese.NewAnonymousVariable()
-	aggregateVariable := ""
-
-	if len(goal.Arguments) != 0 {
-		aggregateArgument = goal.Arguments[0]
-		aggregateVariable = aggregateArgument.TermValue
+	for i, c := range format {
+		if i >= len(input.Arguments) {
+			base.log.AddError("Function '" + input.Predicate + "' expects at least " + strconv.Itoa(expectedLength) + " arguments")
+			return false
+		}
+		arg := input.Arguments[i]
+		if c == 'v' && !arg.IsVariable() {
+			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
+			return false
+		}
+		if c == 's' && !arg.IsString() {
+			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
+			return false
+		}
+		if c == 'i' && !arg.IsNumber() {
+			//			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
+			return false
+		}
+		if c == 'S' {
+			expectedLength = len(input.Arguments)
+			for j := i; j < len(input.Arguments); j++ {
+				arg = input.Arguments[j]
+				if !arg.IsString() {
+					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be a string")
+					return false
+				}
+			}
+			break
+		}
+		if c == 'V' {
+			expectedLength = len(input.Arguments)
+			for j := i; j < len(input.Arguments); j++ {
+				arg = input.Arguments[j]
+				if !arg.IsVariable() {
+					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be an unbound variable")
+					return false
+				}
+			}
+			break
+		}
 	}
 
-	if goal.Predicate == "number_of" {
+	if expectedLength != len(input.Arguments) {
+		base.log.AddError("Function '" + input.Predicate + "' expects " + strconv.Itoa(expectedLength) + " arguments")
+		return false
+	}
 
-		// exception
-		aggregateArgument = goal.Arguments[1]
-		aggregateVariable = aggregateArgument.TermValue
+	return true
+}
 
-		sourceVariable := goal.Arguments[0].TermValue
+func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-		differentValues := base.getDifferentValues(bindings, sourceVariable)
-		aggregate = mentalese.NewString(strconv.Itoa(len(differentValues)))
+	if !base.validate(input, "--") {
+		return mentalese.Bindings{}
+	}
 
-	} else if goal.Predicate == "first" {
+	subjectVariable := input.Arguments[0].TermValue
+	numberArgumentValue := input.Arguments[1].TermValue
+	number :=  bindings.GetDistinctValueCount(subjectVariable)
 
+	newBindings := mentalese.Bindings{}
+
+	if input.Arguments[1].IsVariable() {
 		for _, binding := range bindings {
-
-			alreadyPresent := false
-
-			for _, newBinding := range newBindings {
-
-				allFound := true
-
-				for _, argument := range goal.Arguments {
-
-					_, found := newBinding[argument.TermValue]
-					if !found {
-						allFound = false
-					}
-				}
-
-				if allFound {
-					alreadyPresent = true
-				}
-
-			}
-
-			if !alreadyPresent {
-				newBindings = append(newBindings, binding)
-			}
-
+			newBinding := binding.Copy()
+			newBinding[numberArgumentValue] = mentalese.NewString(strconv.Itoa(number))
+			newBindings = append(newBindings, newBinding)
 		}
-
-// todo the first values must be applied to all bindings; do not just throw them away!
-
-		return newBindings, true
-
-
-	// check if there are still any bindings
-	} else if goal.Predicate == "exists" {
-
-		if len(bindings) == 0 {
-			found = false
-		}
-
 	} else {
+		assertedNumber, err := strconv.Atoi(numberArgumentValue)
+		if err != nil {
+			base.log.AddError("The second argument of number_of() needs to be an integer")
+			newBindings = mentalese.Bindings{}
+		} else {
+			if number == assertedNumber {
+				newBindings = bindings
+			} else {
+				newBindings = mentalese.Bindings{}
+			}
+		}
+	}
+
+	return newBindings
+}
+
+func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+
+	if !base.validate(input, "v") {
+		return mentalese.Bindings{}
+	}
+
+	subjectVariable := input.Arguments[0].TermValue
+	distinctValues := bindings.GetDistinctValues(subjectVariable)
+
+	newBindings := mentalese.Bindings{}
+	if len(distinctValues) == 0 {
+		newBindings = bindings
+	} else {
+		for _, binding := range bindings {
+			newBinding := binding.Copy()
+			newBinding[subjectVariable] = mentalese.NewString(distinctValues[0])
+			newBindings = append(newBindings, newBinding)
+		}
+	}
+
+	return newBindings
+}
+
+func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+
+	if !base.validate(input, "") {
+		return mentalese.Bindings{}
+	}
+
+	return bindings
+}
+
+func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
+
+	newBindings := bindings
+	found := true
+
+	switch input.Predicate {
+	case "number_of":
+		newBindings = base.numberOf(input, bindings)
+	case "first":
+		newBindings = base.first(input, bindings)
+	case "exists":
+		newBindings = base.exists(input, bindings)
+	default:
 		found = false
 	}
 
-	if found {
-		newBindings = mentalese.Bindings{}
-
-		if aggregateVariable == "" {
-
-			newBindings = bindings
-
-			// number_of(E1, 4)
-		} else if aggregateArgument.IsNumber() {
-
-			if aggregateArgument.TermValue == aggregate.TermValue {
-				newBindings = bindings
-			}
-
-			// number_of(E1, N)
-		} else {
-
-			if len(bindings) > 0 {
-
-				for _, binding := range bindings {
-					newBinding := binding.Copy()
-					newBinding[aggregateVariable] = aggregate
-					newBindings = append(newBindings, newBinding)
-				}
-			} else {
-
-				newBinding := mentalese.Binding{}
-				newBinding[aggregateVariable] = aggregate
-				newBindings = append(newBindings, newBinding)
-
-			}
-		}
-	}
-
-	base.log.EndDebug("SystemAggregateBase BindSingle", newBindings, found)
-
 	return newBindings, found
-}
-
-func (base *SystemAggregateBase) getDifferentValues(bindings mentalese.Bindings, subjectVariable string) []mentalese.Term {
-
-	differentValues := []mentalese.Term{}
-
-	for _, binding := range bindings {
-		value, found := binding[subjectVariable]
-		if found {
-			preExists := false
-			for _, differentValue := range differentValues {
-				if differentValue.Equals(value) {
-					preExists = true
-				}
-			}
-			if !preExists {
-				differentValues = append(differentValues, value)
-			}
-		}
-	}
-
-	return differentValues
 }

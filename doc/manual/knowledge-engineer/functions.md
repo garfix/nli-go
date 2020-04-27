@@ -1,6 +1,6 @@
 # Functions
 
-These are some built-in functions from `SystemFunctionBase` for use in rule bases.
+These are some built-in functions from `SystemFunctionBase` to be used everywhere a match is made or a solution is found.
 
 Each function takes in a single binding, and returns either an extended binding when it succeeds, or no binding when it fails.  
 

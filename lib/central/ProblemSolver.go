@@ -92,7 +92,7 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 	}
 
 	// remove duplicates because they cause unnecessary work and they cause problems for the generator
-	newBindings = mentalese.UniqueBindings(newBindings)
+	newBindings = newBindings.UniqueBindings()
 
 	solver.log.EndProduction("Solve Set", newBindings.String())
 
@@ -121,14 +121,16 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 
 	solver.log.StartProduction("Solve Relation", relation.String() + " " + fmt.Sprint(bindings))
 
-	newBindings := []mentalese.Binding{}
+	newBindings := mentalese.Bindings{}
 	multiFound := false
+	aggregateBindings := mentalese.Bindings{}
 
 	// Note: aggregate base relations are currently the only ones whose bindings are not limited to the variables of the arguments
 	// As long as these relations are simple, this is not a problem.
 	for _, aggregateBase := range solver.aggregateBases {
-		newBindings, multiFound = aggregateBase.Bind(relation, bindings)
+		aggregateBindings, multiFound = aggregateBase.Execute(relation, bindings)
 		if multiFound {
+			newBindings = aggregateBindings
 			break
 		}
 	}
@@ -252,17 +254,18 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 
 	relationBindings := mentalese.Bindings{}
 
-	aggregateFunctionFound := false
+	multiFound := false
+	aggregateBindings := mentalese.Bindings{}
+
 	for _, aggregateBase := range solver.aggregateBases {
-		newRelationBindings, ok := aggregateBase.Bind(relation, bindings)
-		if ok {
-			relationBindings = newRelationBindings
-			aggregateFunctionFound = true
+		aggregateBindings, multiFound = aggregateBase.Execute(relation, bindings)
+		if multiFound {
+			relationBindings = aggregateBindings
 			break
 		}
 	}
 
-	if !aggregateFunctionFound {
+	if !multiFound {
 
 		for _, binding := range bindings {
 

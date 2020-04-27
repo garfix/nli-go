@@ -52,3 +52,39 @@ func TestFunctions(t *testing.T) {
 		t.Errorf("errors: %v", log.String())
 	}
 }
+
+func TestAggregateFunctions(t *testing.T) {
+
+	log := common.NewSystemLog(false)
+	functionBase := knowledge.NewSystemAggregateBase("name", log)
+	parser := importer.NewInternalGrammarParser()
+	tests := []struct {
+		input      string
+		bindings     string
+		wantBindings string
+	}{
+		{"number_of(W1, Number)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap', Number:2}{W1:'noot', Number:2}{W1:'noot', Number:2}]"},
+		{"number_of(W1, 2)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]"},
+		{"number_of(W1, 3)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[]"},
+		{"first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
+		{"exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
+		{"exists()", "[]", "[]"},
+	}
+
+	for _, test := range tests {
+
+		input := parser.CreateRelation(test.input)
+		bindings := parser.CreateBindings(test.bindings)
+		wantBindings := parser.CreateBindings(test.wantBindings)
+
+		resultBindings, _ := functionBase.Execute(input, bindings)
+
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("call %v with %v: got %v, want %v", input, bindings, resultBindings, wantBindings)
+		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
+	}
+}

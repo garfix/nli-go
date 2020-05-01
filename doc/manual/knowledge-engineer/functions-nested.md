@@ -1,12 +1,34 @@
 # Nested functions
 
-## Quantification
+## And
 
-The relations `find()`, `do()` and `quant()` apply here. Check [quantification](quantification.md) for more information.
+A variant on the boolean function `and` that works with bindings.
+
+    and(P1, A, B)
+    
+* `A`: a relation set
+* `B`: a relation set    
+
+`and(C1, A, B)` processes `A` first. Then it processes `B`. The bindings from A are used in B.
+
+## Or
+
+A variant on the boolean function `or` that works with bindings.
+
+    or(P1, A, B)
+    
+* `A`: a relation set
+* `B`: a relation set    
+
+`or(C1, A, B)` processes `A` first. If it yields results, `or` stops. Otherwise it processes `B`.
 
 ## Negation
 
-It is possible to use "not" in a simple case.
+A variant on the boolean function `not` that works with bindings.
+
+    not(A)
+    
+* `A`: a relation set   
 
 Here's an example from the blocks world: "How many blocks are not in the box?"
 
@@ -14,13 +36,39 @@ Here's an example from the blocks world: "How many blocks are not in the box?"
 
     { rule: how_many_clause(E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
 
-not() is a "nested structure" that wraps a relation set.
-
 This set is specified in the example as "sem(4)". This means: the combined senses of all syntactic structures that were
 linked to the fourth consequent (which is "pp(E1)").
 
-A not() predicate can only be evaluated correctly when it is evaluated as part of a quant scope.
+## Back reference
 
-## Or
+The system will try to resolve E1 with the entities from the anaphora queue. It will check E1's type against the types of entities in the queue. It will also check if the value of the entity in the queue matches relation set `D`.
 
-`or(C1, A, B)` processes `A` first. If it yields results, `or` stops. Otherwise it processes `B`.
+    back_reference(E1, D)
+    
+* `A`: a variable
+* `B`: a relation set    
+
+This allows you express "him", like this:
+
+    back_reference(E1, gender(E1, male))
+
+The recentless processed `person` entities will be processed, and the `gender()` check makes sure these persons are male.
+
+## Definite reference
+
+A definite reference checks not only in the anaphora queue, but in the databases as well. 
+
+If more than one entity matches, a remark is returned to the user: "I don't understand which one you mean"
+
+    definite_reference(E1, D)
+    
+* `A`: a variable
+* `B`: a relation set
+
+## Call
+
+This relation just processes its single argument, that is a relation set. The purpose of this is to implement words like "tell", whose argument is a clause.
+
+## Quantification
+
+The relations `find()`, `do()` and `quant()` apply here. Check [quantification](quantification.md) for more information.

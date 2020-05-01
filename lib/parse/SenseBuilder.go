@@ -65,6 +65,11 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 				if !present {
 					variableMap[variable] = mentalese.NewVariable(builder.GetNewVariable(variable))
 				}
+			} else if argument.IsRelationSet() {
+				childMap := builder.ExtendVariableMap(argument.TermValueRelationSet, variableMap)
+				for key, value := range childMap {
+					variableMap[key] = value
+				}
 			}
 		}
 	}

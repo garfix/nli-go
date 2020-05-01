@@ -47,6 +47,15 @@ The terminal rewrite rules have words in their right-hand side:
 
 There is no separate lexicon.
 
+## Semantic composition
+
+Each rule by itself just produces a single piece of semantics, or "sense". The "relationizer" combines these pieces to form the complete sense of the sentence. There are rules that govern this composition:
+
+1. Append the senses of the child nodes to the sense of the node
+2. Force the location of the child sense with `sem(N)` where `N` is the index of the child in the rule's consequent  
+3. Generate shared variables for the arguments
+4. Turn regular expressions into string constants  
+
 ## An imperative sentence
 
 An imperative sentence instructs the system to do something, like play music:

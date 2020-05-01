@@ -34,11 +34,9 @@ func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.R
 func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	quant := quants[0]
-	quantifierSet := quant.Arguments[mentalese.QuantQuantifierSetIndex].TermValueRelationSet
-	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
 
-	rangeBindings := base.collectRangeBindings(quantifierSet, rangeVariable, rangeSet, binding)
+	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
 	isReference := false
 
 	for _, r := range rangeSet {
@@ -130,119 +128,6 @@ func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, r
 	}
 
 	return success
-
-	// R = count(range)
-	// S = count(scope)
-
-	// the => equals(S, 1)
-	// some => greater_than(S, 0)
-	// all => equals(S, R)
-	// number(2) => equals(S, 2)
-	// two or three => or(number(S, 2), number(S, 3))
-
-	//isTheQuantifier := quantifierSet[0].Predicate == mentalese.PredicateThe
-	//isAllQuantifier := quantifierSet[0].Predicate == mentalese.PredicateAll
-	//isSomeQuantifier := quantifierSet[0].Predicate == mentalese.PredicateSome
-	//
-	//
-	//count := 0
-	//
-	//// pick the number from the quantifierSet, if applicable
-	//if quantifierSet[0].Predicate == mentalese.PredicateNumber {
-	//	numberRelation := quantifierSet[0]
-	//	count, _ = strconv.Atoi(numberRelation.Arguments[0].TermValue)
-	//}
-	//
-	//if isTheQuantifier || isReference {
-	//	count = 1
-	//}
-	//
-	//if isTheQuantifier {
-	//	// THE
-	//	if scopeCount == 1 {
-	//		return true
-	//	} else {
-	//		return false
-	//	}
-	//} else if isAllQuantifier {
-	//	// ALL
-	//	if scopeCount == len(rangeBindings) {
-	//		return true
-	//	} else {
-	//		return false
-	//	}
-	//} else if isSomeQuantifier {
-	//	// SOME
-	//	if scopeCount > 0 {
-	//		return true
-	//	} else {
-	//		return false
-	//	}
-	//} else if count > 0 {
-	//	// A NUMBER
-	//	if scopeCount == count {
-	//		return true
-	//	} else {
-	//		return false
-	//	}
-	//} else {
-	//	// NO SIMPLE QUANTIFIER
-	//	// todo
-	//	return true
-	//}
-}
-
-func (base *SystemNestedStructureBase) collectRangeBindings(quantifier mentalese.RelationSet, rangeVariable string, rangeSet mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
-	rangeBindings := []mentalese.Binding{}
-
-	isTheQuantifier := quantifier[0].Predicate == "the"
-	isReference := len(rangeSet) > 0 && rangeSet[0].Predicate == mentalese.PredicateBackReference
-
-	if isTheQuantifier || isReference {
-
-		// try the anaphora queue first
-		refFound := false
-		for _, group := range *base.dialogContext.AnaphoraQueue {
-
-			ref := group[0]
-
-			refBinding := binding.Merge(mentalese.Binding{ rangeVariable: mentalese.NewId(ref.Id, ref.EntityType)})
-			//  empty range set for "it"
-			if len(rangeSet) == 0 {
-				refFound = true
-				rangeBindings = mentalese.Bindings{ refBinding }
-				break
-			}
-			if !base.quickAcceptabilityCheck(rangeVariable, ref.EntityType, rangeSet) {
-				continue
-			}
-			testRangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{refBinding})
-			if len(testRangeBindings) == 1 {
-				refFound = true
-				rangeBindings = testRangeBindings
-				break
-			}
-		}
-
-		if !refFound {
-			rangeBindings = base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
-		}
-
-		if len(rangeBindings) != 1 {
-
-			rangeIndex, found := base.rangeIndexClarification(rangeBindings, rangeVariable)
-			if found {
-				rangeBindings = rangeBindings[rangeIndex:rangeIndex + 1]
-			} else {
-				return mentalese.Bindings{}
-			}
-		}
-
-	} else {
-		rangeBindings = base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
-	}
-
-	return rangeBindings
 }
 
 func (base *SystemNestedStructureBase) quickAcceptabilityCheck(variable string, entityType string, relations mentalese.RelationSet) bool {

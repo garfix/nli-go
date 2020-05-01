@@ -1,6 +1,11 @@
 # Todo
 
-* actually evaluate the quantifier
+* actually evaluate the quantifier / generalized quantification
+* seq => and
+* quant => for
+* for(range(), quant()) ?
+* append or prepend child senses? ; see ## Semantic composition in entity-grammar.md
+* namespaces for relations
 * do not allow zero valued predicates in the grammar
 * document 'explicit references'
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be

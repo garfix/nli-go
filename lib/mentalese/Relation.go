@@ -16,6 +16,7 @@ const PredicateQuant = "quant"
 const PredicateSem = "sem"
 const PredicateSequence = "sequence"
 const PredicateNot = "not"
+const PredicateOr = "or"
 const PredicateCall = "call"
 const PredicateName = "name"
 const PredicateText = "text"
@@ -23,19 +24,14 @@ const PredicateText = "text"
 const PredicateAssert = "assert"
 const PredicateRetract = "retract"
 
-const PredicateNumber = "number"
-const PredicateThe = "the"
-const PredicateSome = "some"
-const PredicateReference = "reference"
-const PredicateAll = "all"
-const AtomAll = "all"
-const AtomParent = "parent"
+const PredicateBackReference = "back_reference"
+const PredicateDefiniteBackReference = "definite_reference"
 
-const QuantQuantifierVariableIndex = 0
-const QuantQuantifierIndex = 1
-const QuantRangeVariableIndex = 2
-const QuantRangeIndex = 3
-const QuantScopeIndex = 4
+const QuantResultCountVariableIndex = 0
+const QuantRangeCountVariableIndex = 1
+const QuantQuantifierSetIndex = 2
+const QuantRangeVariableIndex = 3
+const QuantRangeSetIndex = 4
 
 const SeqFirstOperandIndex = 1
 const SeqSecondOperandIndex = 2

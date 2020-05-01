@@ -19,3 +19,21 @@ func (base *SystemNestedStructureBase) SolveSeq(seq mentalese.Relation, binding 
 
 	return newBindings
 }
+
+func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
+	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
+
+	newBindings := mentalese.Bindings{binding}
+
+	firstBindings := base.solver.SolveRelationSet(first, newBindings)
+
+	if len(firstBindings) != 0 {
+		return firstBindings
+	}
+
+	secondBindings := base.solver.SolveRelationSet(second, newBindings)
+
+	return secondBindings
+}

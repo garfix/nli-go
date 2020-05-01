@@ -47,19 +47,31 @@ func TestQuantSolver(t *testing.T) {
 	}{
 		{
 			// does every parent have 2 children?
-			"find(quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ]), [ have_child(S1, O1) number_of(O1, 2) ])",
+			`
+				find(
+					quant(Result_count, Range_count, equals(Result_count, Range_count), S1, [ isa(S1, parent) ]), 
+					[ have_child(S1, O1) number_of(O1, 2) ])`,
 			"{}",
 			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
 		},
 		{
 			// does every parent have 3 children?
-			"find([quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ]) quant(O1, [ isa(O1, child) ], D2, [ isa(D2, 3) ])], [ have_child(S1, O1) ])",
+			`
+				find([
+					quant(Result_count1, Range_count1, equals(Result_count1, Range_count1), S1, [ isa(S1, parent) ])
+					quant(Result_count2, Range_count2, equals(Result_count1, 3), O1, [ isa(O1, child) ])
+				], 
+				[ have_child(S1, O1) ])`,
 			"{}",
 			"",
 		},
 		{
 			// keep extra bindings?
-			"find(quant(D1, [ isa(D1, all) ], S1, [ isa(S1, parent) ]), [have_child(S1, O1) number_of(O1, 2) ])",
+			`
+				find(
+					quant(Result_count, Range_count, equals(Result_count, Range_count), S1, [ isa(S1, parent) ]), 
+					[have_child(S1, O1) number_of(O1, 2) ]
+				)`,
 			"{X: 3}",
 			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
 		},
@@ -75,6 +87,9 @@ func TestQuantSolver(t *testing.T) {
 	predicates := mentalese.Predicates{}
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), predicates, dialogContext, log)
 	solver.AddFactBase(factBase1)
+
+	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
+	solver.AddFunctionBase(systemFunctionBase)
 
 	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
 	solver.AddNestedStructureBase(nestedStructureBase)

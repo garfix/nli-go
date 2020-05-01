@@ -1,13 +1,12 @@
 [
     /* quantifiers */
 
-    { rule: qp(E1) -> an(E1),                                              sense: number(E1, 1) }
-    { rule: qp(E1) -> the(E1),                                             sense: the(E1) }
-    { rule: qp(E1) -> 'at' 'least' 'one' 'of',                             sense: some(E1) }
-    { rule: qp(E1) -> number(E1) }
+    { rule: qp(Result_count, Range_count) -> an(_),                        sense: greater_than(Result_count, 0) }
+    { rule: qp(Result_count, Range_count) -> 'at' 'least' 'one' 'of',      sense: greater_than(Result_count, 0) }
+    { rule: qp(Result_count, Range_count) -> number(N1),                   sense: equals(Result_count, N1) }
+    { rule: qp(Result_count, Range_count) -> 'two',                        sense: equals(Result_count, 2) }
 
-    { rule: number(E1) -> 'two',                                           sense: equals(E1, 2) }
-    { rule: number(N1) -> /^[0-9]+/,                                       sense: equals(N1, token) } /* not implemented yet */
+    { rule: number(N1) -> /^[0-9]+/ }
 
     { rule: an(E1) -> 'a' }
     { rule: an(E1) -> 'an' }
@@ -16,7 +15,7 @@
     /* verbs */
 
     { rule: tv(P1, E1, E2) -> 'pick' 'up',                                 sense: do_pick_up(P1, E2) }
-    { rule: tv(P1, E1, E2) -> 'grasp',                                     sense: grasp(P1, E2) }
+    { rule: tv(P1, E1, E2) -> 'grasp',                                     sense: do_pick_up(P1, E2) }
     { rule: tv(P1, E1, E2) -> 'find',                                      sense: do_find(P1, E2) }
     { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: hold(P1, E1, E2) }
     { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: pick_up(P1, E1, E2) }
@@ -60,14 +59,15 @@
     { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: find(sem(1), sem(3)) }
     { rule: relative_clause(E1) -> 'which' vp_dep(P1, E1) }
 
-    { rule: np(E1) -> qp(Q1) nbar(E1),                                     sense: quant(Q1, sem(1), E1, sem(2)) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(_, some(_), E1, sem(1)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(_, all(_), E1, sem(1)) }
+    { rule: np(E1) -> qp(Result_count, Range_count) nbar(E1),              sense: quant(Result_count, Range_count, sem(1), E1, sem(2)) }
+    { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(Result_count, Range_count, equals(Result_count, 1), E1, [definite_reference(E1, sem(2)) ]) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(Result_count, Range_count, greater_than(Result_count, 0), E1, sem(1)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(Result_count, Range_count, greater_than(Result_count, 0), E1, sem(1)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E1) -> 'them',                                            sense: reference(E1) }
+    { rule: nbar(E1) -> 'them',                                            sense: back_reference(E1, []) }
 
     { rule: noun(E1) -> 'one',                                             sense: object(E1) }
     { rule: noun(E1) -> 'block',                                           sense: block(E1) }
@@ -79,7 +79,7 @@
 
     { rule: pronoun(E1) -> 'you',                                          sense: you(E1) }
     { rule: pronoun(E1) -> 'i',                                            sense: i(E1) }
-    { rule: pronoun(E1) -> 'it',                                           sense: reference(E1) }
+    { rule: pronoun(E1) -> 'it',                                           sense: back_reference(E1, []) }
 
     /* Misc */
 

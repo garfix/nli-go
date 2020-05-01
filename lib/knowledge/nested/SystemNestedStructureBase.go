@@ -27,7 +27,15 @@ func NewSystemNestedStructureBase(solver *central.ProblemSolver, dialogContext *
 }
 
 func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{mentalese.PredicateDo, mentalese.PredicateFind, mentalese.PredicateCall, mentalese.PredicateSequence, mentalese.PredicateNot}
+	predicates := []string{
+		mentalese.PredicateDo,
+		mentalese.PredicateFind,
+		mentalese.PredicateCall,
+		mentalese.PredicateSequence,
+		mentalese.PredicateOr,
+		mentalese.PredicateNot,
+		mentalese.PredicateBackReference,
+		mentalese.PredicateDefiniteBackReference}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -40,7 +48,15 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	var newBindings mentalese.Bindings
 
-	if relation.Predicate == mentalese.PredicateFind {
+	if relation.Predicate == mentalese.PredicateBackReference {
+
+		newBindings = base.SolveBackReference(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateDefiniteBackReference {
+
+		newBindings = base.SolveDefiniteReference(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateFind {
 
 		newBindings = base.SolveFind(relation, binding)
 
@@ -51,6 +67,10 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 	} else if relation.Predicate == mentalese.PredicateSequence {
 
 		newBindings = base.SolveSeq(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateOr {
+
+		newBindings = base.SolveOr(relation, binding)
 
 	} else if relation.Predicate == mentalese.PredicateNot {
 

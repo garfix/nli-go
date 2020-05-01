@@ -72,6 +72,10 @@ func (term Term) IsAnonymousVariable() bool {
 	return term.TermType == TermAnonymousVariable
 }
 
+func (term Term) IsAtom() bool {
+	return term.TermType == TermPredicateAtom
+}
+
 func (term Term) IsRelationSet() bool {
 	return term.TermType == TermRelationSet
 }

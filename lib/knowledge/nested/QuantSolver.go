@@ -34,18 +34,24 @@ func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.R
 func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	quant := quants[0]
-	quantifierSet := quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet
+	quantifierSet := quant.Arguments[mentalese.QuantQuantifierSetIndex].TermValueRelationSet
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
-	rangeSet := quant.Arguments[mentalese.QuantRangeIndex].TermValueRelationSet
+	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
 
 	rangeBindings := base.collectRangeBindings(quantifierSet, rangeVariable, rangeSet, binding)
-	isReference := len(rangeSet) > 0 && rangeSet[0].Predicate == mentalese.PredicateReference
+	isReference := false
+
+	for _, r := range rangeSet {
+		if r.Predicate == mentalese.PredicateBackReference {
+			isReference = true
+		}
+	}
 
 	scopeBindings := mentalese.Bindings{}
 	resultCount := 0
 
 	if len(quants) == 1 {
-		scopeBindings = base.solveScope(scopeSet, quantifierSet, rangeVariable, rangeBindings, isReference, continueAfterEnough)
+		scopeBindings = base.solveScope(quant, scopeSet, rangeBindings, isReference, continueAfterEnough)
 		resultCount = len(scopeBindings)
 	} else {
 		for _, rangeBinding := range rangeBindings {
@@ -58,22 +64,18 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 		}
 	}
 
-	success := base.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference)
+	success := base.tryQuantifier(quant, rangeBindings, scopeBindings, isReference)
 
 	if success {
 		return scopeBindings
 	} else {
-		base.log.AddProduction("Do/Find", "Quantifier mismatch")
-		base.log.AddProduction("Do/Find", "  Quantifier:" + quantifierSet.String())
-		base.log.AddProduction("Do/Find", "  Range:" + rangeVariable + " " + rangeSet.String())
-		base.log.AddProduction("Do/Find", "  Range:" + rangeBindings.String())
-		base.log.AddProduction("Do/Find", "  Scope:" + scopeBindings.String())
 		return mentalese.Bindings{}
 	}
 }
 
-func (base *SystemNestedStructureBase) solveScope(scopeSet mentalese.RelationSet, quantifierSet mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, isReference bool, continueAfterEnough bool)  mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scopeSet []mentalese.Relation, rangeBindings mentalese.Bindings, isReference bool, continueAfterEnough bool)  mentalese.Bindings {
 
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	scopeBindings := mentalese.Bindings{}
 	groupedScopeBindings := []mentalese.Bindings{}
 
@@ -91,7 +93,7 @@ func (base *SystemNestedStructureBase) solveScope(scopeSet mentalese.RelationSet
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
-		if base.tryQuantifier(quantifierSet, rangeVariable, rangeBindings, scopeBindings, isReference) {
+		if base.tryQuantifier(quant, rangeBindings, scopeBindings, isReference) {
 			if !continueAfterEnough {
 				break
 			}
@@ -101,66 +103,100 @@ func (base *SystemNestedStructureBase) solveScope(scopeSet mentalese.RelationSet
 	return scopeBindings
 }
 
-func (base *SystemNestedStructureBase) tryQuantifier(quantifier mentalese.RelationSet, rangeVariable string, rangeBindings mentalese.Bindings, resultBindings mentalese.Bindings, isReference bool) bool {
+func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, isReference bool) bool {
 
-	isTheQuantifier := quantifier[0].Predicate == mentalese.PredicateThe
-	isAllQuantifier := quantifier[0].Predicate == mentalese.PredicateAll
-	isSomeQuantifier := quantifier[0].Predicate == mentalese.PredicateSome
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+	rangeCountVariable := quant.Arguments[mentalese.QuantRangeCountVariableIndex].TermValue
+	scopeCountVariable := quant.Arguments[mentalese.QuantResultCountVariableIndex].TermValue
+	quantifierSet := quant.Arguments[mentalese.QuantQuantifierSetIndex].TermValueRelationSet
 
-	resultCount := resultBindings.GetDistinctValueCount(rangeVariable)
+	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
+	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
 
-	count := 0
+	rangeVal := mentalese.NewString(strconv.Itoa(rangeCount))
+	resultVal := mentalese.NewString(strconv.Itoa(scopeCount))
 
-	// pick the number from the quantifier, if applicable
-	if quantifier[0].Predicate == mentalese.PredicateNumber {
-		numberRelation := quantifier[0]
-		count, _ = strconv.Atoi(numberRelation.Arguments[0].TermValue)
+	quantifierBindings := base.solver.SolveRelationSet(quantifierSet, mentalese.Bindings{
+		{ rangeCountVariable: rangeVal, scopeCountVariable: resultVal },
+	})
+
+	success := len(quantifierBindings) > 0
+
+	if !success {
+		base.log.AddProduction("Do/Find", "Quantifier mismatch")
+		base.log.AddProduction("Do/Find", "  Range count: "+rangeCountVariable+" = "+strconv.Itoa(rangeCount))
+		base.log.AddProduction("Do/Find", "  Scope count: "+scopeCountVariable+" = "+strconv.Itoa(scopeCount))
+		base.log.AddProduction("Do/Find", "  Quantifier check: "+quantifierSet.String())
 	}
 
-	if isTheQuantifier || isReference {
-		count = 1
-	}
+	return success
 
-	if isTheQuantifier {
-		// THE
-		if resultCount == 1 {
-			return true
-		} else {
-			return false
-		}
-	} else if isAllQuantifier {
-		// ALL
-		if resultCount == len(rangeBindings) {
-			return true
-		} else {
-			return false
-		}
-	} else if isSomeQuantifier {
-		// SOME
-		if resultCount > 0 {
-			return true
-		} else {
-			return false
-		}
-	} else if count > 0 {
-		// A NUMBER
-		if resultCount == count {
-			return true
-		} else {
-			return false
-		}
-	} else {
-		// NO SIMPLE QUANTIFIER
-		// todo
-		return true
-	}
+	// R = count(range)
+	// S = count(scope)
+
+	// the => equals(S, 1)
+	// some => greater_than(S, 0)
+	// all => equals(S, R)
+	// number(2) => equals(S, 2)
+	// two or three => or(number(S, 2), number(S, 3))
+
+	//isTheQuantifier := quantifierSet[0].Predicate == mentalese.PredicateThe
+	//isAllQuantifier := quantifierSet[0].Predicate == mentalese.PredicateAll
+	//isSomeQuantifier := quantifierSet[0].Predicate == mentalese.PredicateSome
+	//
+	//
+	//count := 0
+	//
+	//// pick the number from the quantifierSet, if applicable
+	//if quantifierSet[0].Predicate == mentalese.PredicateNumber {
+	//	numberRelation := quantifierSet[0]
+	//	count, _ = strconv.Atoi(numberRelation.Arguments[0].TermValue)
+	//}
+	//
+	//if isTheQuantifier || isReference {
+	//	count = 1
+	//}
+	//
+	//if isTheQuantifier {
+	//	// THE
+	//	if scopeCount == 1 {
+	//		return true
+	//	} else {
+	//		return false
+	//	}
+	//} else if isAllQuantifier {
+	//	// ALL
+	//	if scopeCount == len(rangeBindings) {
+	//		return true
+	//	} else {
+	//		return false
+	//	}
+	//} else if isSomeQuantifier {
+	//	// SOME
+	//	if scopeCount > 0 {
+	//		return true
+	//	} else {
+	//		return false
+	//	}
+	//} else if count > 0 {
+	//	// A NUMBER
+	//	if scopeCount == count {
+	//		return true
+	//	} else {
+	//		return false
+	//	}
+	//} else {
+	//	// NO SIMPLE QUANTIFIER
+	//	// todo
+	//	return true
+	//}
 }
 
 func (base *SystemNestedStructureBase) collectRangeBindings(quantifier mentalese.RelationSet, rangeVariable string, rangeSet mentalese.RelationSet, binding mentalese.Binding) mentalese.Bindings {
 	rangeBindings := []mentalese.Binding{}
 
-	isTheQuantifier := quantifier[0].Predicate == mentalese.PredicateThe
-	isReference := len(rangeSet) > 0 && rangeSet[0].Predicate == mentalese.PredicateReference
+	isTheQuantifier := quantifier[0].Predicate == "the"
+	isReference := len(rangeSet) > 0 && rangeSet[0].Predicate == mentalese.PredicateBackReference
 
 	if isTheQuantifier || isReference {
 

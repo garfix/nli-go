@@ -1,3 +1,13 @@
+# 2020-05-01
+
+I decided it was a good time to implement generalized quantifiers. This had been "possible" for a long time, but I never actually got to it. You can now use any relation set to describe a quantifier. That is, as long as it takes two arguments: the number of entity ids in the range set (Range_count), and the number of (distinct) entity ids in the result set (Result_count). 
+
+A generalized quantifier allows you to express not only "a", "some", and "all", but also "more than two" and "two" or "three".
+
+It was also necessary to change the references for this reason, and so I turned `reference()` into `back_reference()` and I added `definite_reference()`, a construct that expresses "the red block" (a block that was either mentioned before, or is present in the scene.
+
+I renamed `sequence` to `and` because it resembles the `or` function.
+
 # 2020-04-24
 
 I rewrote the functions library and added documentation. The use of the arguments is now more strict and I added error messages for wrong use.

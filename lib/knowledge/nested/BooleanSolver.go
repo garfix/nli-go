@@ -4,10 +4,26 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-func (base *SystemNestedStructureBase) SolveSeq(seq mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
-	first := seq.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
-	second := seq.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
+	scope := notRelation.Arguments[mentalese.NotScopeIndex].TermValueRelationSet
+
+	newBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ binding })
+	resultBindings := mentalese.Bindings{}
+
+	if len(newBindings) > 0 {
+		resultBindings = mentalese.Bindings{}
+	} else {
+		resultBindings = mentalese.Bindings{ binding }
+	}
+
+	return resultBindings
+}
+
+func (base *SystemNestedStructureBase) SolveAnd(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	first := andRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
+	second := andRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
 	newBindings := mentalese.Bindings{binding}
 

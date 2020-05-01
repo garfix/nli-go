@@ -30,6 +30,7 @@ Some of the techniques used:
 * Linking data from multiple databases in a single request
 * A dialog context to remember information from earlier in the conversation
 * Anaphora resolution: the use of pronouns and other references to earlier entities
+* Generalized quantifiers
 * A generator to produce human readable responses
 
 ## Docs

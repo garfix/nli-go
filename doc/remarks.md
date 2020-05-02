@@ -1,4 +1,4 @@
-# 3030-05-02
+# 2020-05-02
 
 Generalized quantifiers are described in Core Language Engine (p.17) As an example they use the sentence:
 

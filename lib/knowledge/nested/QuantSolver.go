@@ -103,10 +103,19 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 
 func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, isReference bool) bool {
 
+	if !quant.Arguments[mentalese.QuantQuantifierIndex].IsRelationSet() ||
+		len(quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet) != 1 ||
+		quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet[0].Predicate != mentalese.PredicateQuantifier {
+		base.log.AddError("First argument of a `quant` must be a `quantifier`")
+		return false
+	}
+
+	quantifier := quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet[0]
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
-	rangeCountVariable := quant.Arguments[mentalese.QuantRangeCountVariableIndex].TermValue
-	scopeCountVariable := quant.Arguments[mentalese.QuantResultCountVariableIndex].TermValue
-	quantifierSet := quant.Arguments[mentalese.QuantQuantifierSetIndex].TermValueRelationSet
+
+	scopeCountVariable := quantifier.Arguments[mentalese.QuantifierResultCountVariableIndex].TermValue
+	rangeCountVariable := quantifier.Arguments[mentalese.QuantifierRangeCountVariableIndex].TermValue
+	quantifierSet := quantifier.Arguments[mentalese.QuantifierSetIndex].TermValueRelationSet
 
 	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
 	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)

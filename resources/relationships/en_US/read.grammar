@@ -1,7 +1,9 @@
 [
     /* quantification */
 
-    { rule: qp(Result_count, Range_count) -> 'every',               sense: equals(Result_count, Range_count) }
+    { rule: qp(_) -> quantifier(Result, Range),                     sense: quantifier(Result, Range, sem(1)) }
+    { rule: quantifier(Result, Range) -> 'every',                   sense: equals(Result, Range) }
+    { rule: quantifier(Result, Range) -> number(N1),                sense: equals(Result, N1) }
 
     /* noun */
 
@@ -13,7 +15,7 @@
 
     { rule: noun(E1) -> parent(E1),                                 sense: parent(E1, _) }
 
-    { rule: np(R1) -> qp(Result_count, Range_count) nbar(R1),       sense: quant(Result_count, Range_count, sem(1), R1, sem(2)) }
+    { rule: np(R1) -> qp(_) nbar(R1),                               sense: quant(sem(1), R1, sem(2)) }
     { rule: np(E1) -> proper_noun_group(E1) }
 
     { rule: sibling(E1) -> 'siblings' }
@@ -42,8 +44,7 @@
     { rule: subject_complement_clause2(P1) -> np(E1) marry(P1) np(E2),        sense: marry(P1, E1, E2) }
     { rule: copula_clause(P1) -> np(E1) 'and' np(E2) sibling(_),              sense: siblings(E1, E2) }
 
-    { rule: subject_complement_clause2(P1) -> np(E1) have(_) number(N2) child(E2),
-        sense: find([ sem(1) quant(Result_count, Range_count, equals(Result_count, N2), E2, sem(4)) ], have_child(E1, E2)) }
+    { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: find([ sem(1) quant(sem(3), E2, sem(4)) ], have_child(E1, E2)) }
 
     { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: who(E1) }
     { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: which(E1) }

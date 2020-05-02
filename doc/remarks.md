@@ -1,3 +1,21 @@
+# 3030-05-02
+
+Generalized quantifiers are described in Core Language Engine (p.17) As an example they use the sentence:
+
+    "All representatives voted"
+    
+"all representatives" is called the `restriction set` and their cardinality (number of distinct entities) is `N`. "voted" is not named, but the _intersection_ of these sets is called the `intersection set`. Its cardinality is called `M`. Now the quantifiers can be described as follows:     
+
+    every:              N^M^[eq, N, M]
+    more than two:      N^M^[geq, M, 2]
+
+In NLI-GO this can now be written as
+
+    every:              quantifier(Result, Range, equals(Result, Range))
+    more than two:      quantifier(Result, Range, greater_than(Result, 2))
+
+My "range" corresponds to their "restriction set" and my "result" to their "intersection set". 
+
 # 2020-05-01
 
 I decided it was a good time to implement generalized quantifiers. This had been "possible" for a long time, but I never actually got to it. You can now use any relation set to describe a quantifier. That is, as long as it takes two arguments: the number of entity ids in the range set (Range_count), and the number of (distinct) entity ids in the result set (Result_count). 

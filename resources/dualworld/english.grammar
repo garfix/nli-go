@@ -1,15 +1,16 @@
 [
     { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
 
-    { rule: qp(Result_count, Range_count) -> 'the',                         sense: equals(Result_count, 1) }
+    { rule: qp(_) -> quantifier(Result, Range),                             sense: quantifier(Result, Range, sem(1)) }
+    { rule: quantifier(Result, Range) -> 'the',                             sense: equals(Result, 1) }
 
     { rule: np(E1) -> proper_noun_group(E1) }
-    { rule: np(R1) -> qp(Result_count, Range_count) nbar(R1),               sense: quant(Result_count, Range_count, sem(1), R1, sem(2)) }
+    { rule: np(R1) -> qp(_) nbar(R1),                                       sense: quant(sem(1), R1, sem(2)) }
     { rule: np(E1) -> nbar(E1) }
 
     { rule: noun(E1) -> 'poem', sense: poem(E1) }
 
-    { rule: nbar(E1) -> noun(E1),                                           sense: quant(Result_count, Range_count, greater_than(Result_count, 0), E1, sem(1)) }
+    { rule: nbar(E1) -> noun(E1),                                           sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
     { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: has_grandfather(E2, E1) }
 
     { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: find([sem(1) sem(3)], write(E2, E1)) }

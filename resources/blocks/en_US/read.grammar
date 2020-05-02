@@ -1,10 +1,11 @@
 [
     /* quantifiers */
 
-    { rule: qp(Result_count, Range_count) -> an(_),                        sense: greater_than(Result_count, 0) }
-    { rule: qp(Result_count, Range_count) -> 'at' 'least' 'one' 'of',      sense: greater_than(Result_count, 0) }
-    { rule: qp(Result_count, Range_count) -> number(N1),                   sense: equals(Result_count, N1) }
-    { rule: qp(Result_count, Range_count) -> 'two',                        sense: equals(Result_count, 2) }
+    { rule: qp(_) -> quantifier(Result, Range),                            sense: quantifier(Result, Range, sem(1)) }
+    { rule: quantifier(Result, Range) -> an(_),                            sense: greater_than(Result, 0) }
+    { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: greater_than(Result, 0) }
+    { rule: quantifier(Result, Range) -> number(N1),                       sense: equals(Result, N1) }
+    { rule: quantifier(Result, Range) -> 'two',                            sense: equals(Result, 2) }
 
     { rule: number(N1) -> /^[0-9]+/ }
 
@@ -59,10 +60,10 @@
     { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: find(sem(1), sem(3)) }
     { rule: relative_clause(E1) -> 'which' vp_dep(P1, E1) }
 
-    { rule: np(E1) -> qp(Result_count, Range_count) nbar(E1),              sense: quant(Result_count, Range_count, sem(1), E1, sem(2)) }
-    { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(Result_count, Range_count, equals(Result_count, 1), E1, [definite_reference(E1, sem(2)) ]) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(Result_count, Range_count, greater_than(Result_count, 0), E1, sem(1)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(Result_count, Range_count, greater_than(Result_count, 0), E1, sem(1)) }
+    { rule: np(E1) -> qp(_) nbar(E1),                                      sense: quant(sem(1), E1, sem(2)) }
+    { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(quantifier(Result, Range, equals(Result, 1)), E1, [definite_reference(E1, sem(2)) ]) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
 
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }

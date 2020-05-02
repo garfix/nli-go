@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9 generalized quantifiers - 01-05-2020
+
+* any relationset can now be used as a quantifier
+* back_reference() definite_reference()
+
 ## 1.8 do/find - 21-04-2020
 
 * do / find for different kinds of iterating over entities

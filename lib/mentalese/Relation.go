@@ -12,7 +12,7 @@ type Relation struct {
 
 const PredicateFind = "find"
 const PredicateDo = "do"
-const PredicateQuant = "quant"
+const PredicateQuantifier = "quantifier"
 const PredicateSem = "sem"
 const PredicateAnd = "and"
 const PredicateNot = "not"
@@ -20,18 +20,18 @@ const PredicateOr = "or"
 const PredicateCall = "call"
 const PredicateName = "name"
 const PredicateText = "text"
-
 const PredicateAssert = "assert"
 const PredicateRetract = "retract"
-
 const PredicateBackReference = "back_reference"
 const PredicateDefiniteBackReference = "definite_reference"
 
-const QuantResultCountVariableIndex = 0
-const QuantRangeCountVariableIndex = 1
-const QuantQuantifierSetIndex = 2
-const QuantRangeVariableIndex = 3
-const QuantRangeSetIndex = 4
+const QuantifierResultCountVariableIndex = 0
+const QuantifierRangeCountVariableIndex = 1
+const QuantifierSetIndex = 2
+
+const QuantQuantifierIndex = 0
+const QuantRangeVariableIndex = 1
+const QuantRangeSetIndex = 2
 
 const SeqFirstOperandIndex = 1
 const SeqSecondOperandIndex = 2

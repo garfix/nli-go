@@ -1,9 +1,9 @@
 # Todo
 
+* quant => for
+* describe generalized quantifiers
 * should boolean functions have P1 as argument?
 * check if the nested functions are called correctly
-* quant => for
-* for(range(), quant()) ?
 * append or prepend child senses? ; see ## Semantic composition in entity-grammar.md
 * namespaces for relations
 * do not allow zero valued predicates in the grammar

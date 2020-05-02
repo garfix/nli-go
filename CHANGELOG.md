@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9 generalized quantifiers - 01-05-2020
+## 1.9 generalized quantifiers - 02-05-2020
 
 * any relationset can now be used as a quantifier
 * back_reference() definite_reference()

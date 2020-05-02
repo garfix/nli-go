@@ -1,24 +1,19 @@
 # Todo
 
-* quant => for
-* describe generalized quantifiers
+* assign?
+* quant => for ?
 * should boolean functions have P1 as argument?
 * check if the nested functions are called correctly
 * append or prepend child senses? ; see ## Semantic composition in entity-grammar.md
 * namespaces for relations
 * do not allow zero valued predicates in the grammar
-* document 'explicit references'
-* SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be
-    solve some other way
+* SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
 * entity type (multiple) inheritance
 
 ## Misc
 
-* Provide common user queries
 * Separate interfaces (api) from implementations (model)
-* grouped relations in matcher and solver: (), and, or, not
 * Blocks World examples
-* Solutions: do not just create cases for 0 or any results, but allow for arbitrary conditions (a relation set), for the response
 
 ## Rules
 
@@ -33,7 +28,6 @@ Test if this works or make it work:
     join('', firstName, lastName: name)
     join('', firstName, lastName -> name)
     name = join('', firstName, lastName)
-- Namespace predicates?
 - should you be allowed to mix predicates of several sets? Is this confusing or a necessity to keep things manageable?
 - Must be able to write whword in place of whword(); but wait, maybe we need multiple variables as well?
 
@@ -56,7 +50,3 @@ Find a way to ensure completeness of information about all relations used in a s
 
 - Make "more than" "less than" work
 - A range itself can contain quantified nouns (the oldest child in every family). The algorithm is not up to it. (See CLE)
-
-## Domains
-
-The domain tests are not a goal in themselves, but only help to make up test cases.

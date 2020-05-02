@@ -16,6 +16,8 @@ In NLI-GO this can now be written as
 
 My "range" corresponds to their "restriction set" and my "result" to their "intersection set". 
 
+I documented all nested functions.
+
 # 2020-05-01
 
 I decided it was a good time to implement generalized quantifiers. This had been "possible" for a long time, but I never actually got to it. You can now use any relation set to describe a quantifier. That is, as long as it takes two arguments: the number of entity ids in the range set (Range_count), and the number of (distinct) entity ids in the result set (Result_count). 

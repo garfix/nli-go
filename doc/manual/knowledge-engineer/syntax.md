@@ -5,22 +5,21 @@
  * variables start with a capital, followed by zero or more lowercase or underscore characters: A, Verb, Entity1, Noun_entity
  * predicates start with a lower case character, followed by zero or more upper, lower or underscore characters
  * atoms, like predicates
- * string constants: use single quotes: 'De Nachtwacht'
- * numbers: 25 1.5
+ * string constants: use single quotes: 'De Nachtwacht'; also numbers: '25' '1.5'
  * id: entity type and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
  * relation: a predicate, followed by an argument list of terms: kick(john, jake)
 
  A term can be any of these
 
  * atom
- * number
  * variable
  * anonymous variable
  * string constant
  * regular expression
  * id
- * relation
- * relation set
+ * relation (set)
+ 
+ Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 
 
 ## Comments
 

@@ -1,38 +1,62 @@
 # Quantification
 
-Quantification is a central concept in the modelling of meaning. Each NP has a quantity, like "some", "all", "at least 2", but also implicit as with proper nouns (quantity = 1). While the default quantifier for other entities is `exists` / `some`, this is not so for NP's. NP's are always explicitly quantified. NP's typically serve as the arguments for verbs, but they may be used in other relations as well.
+Quantification is a central concept in the modelling of meaning. Each NP is quantified, which means that there are an exact number of entities involved in each NP. In "3 children" this number is 3. In "Some children" this number is higher than 0. The same holds for "children". In "All children" the number equals the number of children that results from the rest of the predication.     
+
+## Generalized quantifiers
+
+Traditional predicate logic just has the quantifiers (quantors) `exists` and `all`.
+
+Natural language also allows quantifiers like "more than 2", "two or three", "between 5 and 10" and "most". In order to understand how these quantifiers are modelled, we must go into some theory.
+
+Let's take the sentence:
+
+    Did all red balls fall from the table?
+    
+When is this sentence true? In order to answer this we distinguish between "all red balls" (the _quantification_) and "fall from the table" (the _scope_). In order to determine if the sentence is true, we must go through all entities E that are "red balls", and we will find a set of identifiers for these red balls. This set of (unique) identifiers we call the _range_. The range may have 3 values (let's call this `Range`). Now we try the scope for each of these values. Ball `1`, did it fall from the table? Yes. Ball `2`, did it fall from the table? No. Ball `3`? Yes, it did. We found that 2 red balls actually fell from the table (call it `Result`). Now we can answer the question, as _all_ simply means: `equals(Result, Range)`. This returns the empty set, so that means: No.
+
+"all" is actually one of the few quantifiers that requies two numbers. Most quantifiers just use a single value (`Result`). They don't care how many entities where in the range, as long as a specific number made it into the result. An example is:
+
+    Did at least two red balls fall from the table?
+    
+Again all red balls are checked and the number of red balls that actually fell from the table is counted in `Result`. The answer to the question is now `greater_than(Result, 2)`    
+
+In order to declare the quantifier we use the relation `quantifier`, specify variables for the two numbers, and give the relation set for the quantification. 
+
+    every:              quantifier(Result, Range, equals(Result, Range))
+    more than two:      quantifier(Result, Range, greater_than(Result, 2))
+    two or three:       quantifier(Result, Range, or(P1, equals(Result, 2), equals(Result, 3)))
 
 ## Quants 
 
-It is customary to use the part-of-speech `np` only for quantified entities. Whenever an NP is used, it is quantified: its sense is a `quant()`. The prototypical case is:
+Whenever an NP is used, it is quantified: its sense is a `quant()`. The prototypical case is:
 
-    { rule: np(R1) -> qp(Q1) nbar(R1),                                      sense: quant(Q1, sem(1), R1, sem(2)) }
+    { rule: np(R1) -> qp(_) nbar(R1),                                      sense: quant(sem(1), R1, sem(2)) }
     
-Here `sem(2)` means: include the sense of the second right-hand structure (the `nbar`) in this position. Thus `quant` is a second-order relation that nests the senses of its dependent phrases.    
+Here `sem(2)` means: include the sense of the second right-hand structure (the `nbar`) in this position, and `sem(1)` means: include the sense of the first structure. This `sem(1)` must be a `quantifier()`. 
     
-These are the parts:
+These are the arguments of the `quant`:
 
     quant(
-        QuantifierVariable,
-        QuantifierRelations,
+        Quantifier,
         RangeVariable,
         RangeRelations        
     )
+    
+and these are the arguments of the the `quantifier`:
 
-The quant consists of a _quantifier_ and a _range_. 
+    quantifier(
+        ResultCountVariable,
+        RangeCountVariable,
+        ScopeSet
+    )    
 
-The quantifier consists of a variable and a relation set and specifies the quantity of the NP ("all", "2 or more", etc). The variable is only needed if the relation set contains a variable. In most cases like when the relation set is `all(E1)` or `number(N1)` the variable can be the anonymous variable `_`.  
+Here is the typical case for the `qp`. Note that the `quantifier` relation is formed only once, in the rewrite of `qp` to `quantifier`. The sense of the quantifier can be simple (see 'every') or compound ('or').    
 
-The range also consists of a variable and a relation set, and describes the entities involved ("child", "country", "block that i asked you to pick up"). Since the relation set often contains multiple variables, the range variable is needed to specify the entity that matters.
-
-There are four built-in quantifiers:
-
-* the(_) : requires that the range consists of 1 entity
-* all(_) : specifies that all entities in the range are needed
-* some(_) : specifies that at least one entity in the range is needed
-* number(N) : specificies that N entities are needed
-
-Quantifiers like "at least two" are not yet possible.
+    { rule: qp(_) -> quantifier(Result, Range),                                                         sense: quantifier(Result, Range, sem(1)) }
+    { rule: quantifier(Result, Range) -> 'every',                                                       sense: equals(Result, Range) }
+    { rule: quantifier(Result, Range) -> 'some', 						                                sense: greater_than(Result, 0) }
+    { rule: quantifier(Result, Range) -> number(N1),                                                    sense: equals(Result, N1) }
+	{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	    sense: or(P1, sem(1), sem(3)) }
 
 ## Find
 
@@ -46,8 +70,8 @@ Imagine the sentence: "Did all these men marry two women?". Resolving this quest
 
     find(
         [
-            quant(Q1, [...]], E1, [...]) 
-            quant(Q2, [...], E2, [...])
+            quant(Q1, E1, [...]) 
+            quant(Q2, E2, [...])
         ], [
             marry(P1, E1, E2)
         ]

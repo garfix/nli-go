@@ -22,7 +22,7 @@ A variant on the boolean function `or` that works with bindings.
 
 `or(C1, A, B)` processes `A` first. If it yields results, `or` stops. Otherwise it processes `B`.
 
-## Negation
+## Not
 
 A variant on the boolean function `not` that works with bindings.
 
@@ -69,6 +69,18 @@ If more than one entity matches, a remark is returned to the user: "I don't unde
 
 This relation just processes its single argument, that is a relation set. The purpose of this is to implement words like "tell", whose argument is a clause.
 
-## Quantification
+    call(S)
+    
+* `S`: a relation set    
 
-The relations `find()`, `do()` and `quant()` apply here. Check [quantification](quantification.md) for more information.
+## Do / Find
+
+Perform the relation set `S` while iterating over the entities described by `Q`.
+
+    do(Q, S)
+    find(Q, S)
+    
+* `Q`: a relation set of `quant`s.
+* `S`: a relation set    
+
+Check [quantification](quantification.md) for more information.

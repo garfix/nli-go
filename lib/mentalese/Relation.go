@@ -12,6 +12,7 @@ type Relation struct {
 
 const PredicateFind = "find"
 const PredicateDo = "do"
+const PredicateQuant = "quant"
 const PredicateQuantifier = "quantifier"
 const PredicateSem = "sem"
 const PredicateAnd = "and"

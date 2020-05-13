@@ -34,6 +34,12 @@ func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.R
 func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	quant := quants[0]
+
+	if quant.Predicate != mentalese.PredicateQuant {
+		base.log.AddError("First argument of a `do` or `find` must contain only `quant`s")
+		return mentalese.Bindings{}
+	}
+
 	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
 
 	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})

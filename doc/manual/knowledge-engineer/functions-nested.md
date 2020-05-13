@@ -24,20 +24,11 @@ A variant on the boolean function `or` that works with bindings.
 
 ## Not
 
-A variant on the boolean function `not` that works with bindings.
+A variant on the boolean function `not` that works with bindings. If executing `A` does not return any bindings, `not` will return its original bindings; if `A` does return bindings, `not` will not return any bindings. 
 
     not(A)
     
 * `A`: a relation set   
-
-Here's an example from the blocks world: "How many blocks are not in the box?"
-
-"not" is modelled in the grammar:
-
-    { rule: how_many_clause(E1) -> np(E1) copula() not() pp(E1),           sense: not(sem(4)) }
-
-This set is specified in the example as "sem(4)". This means: the combined senses of all syntactic structures that were
-linked to the fourth consequent (which is "pp(E1)").
 
 ## Back reference
 

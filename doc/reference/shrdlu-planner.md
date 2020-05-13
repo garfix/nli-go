@@ -1,10 +1,23 @@
-# Types of theorems in SHRDLU
+# SHRDLU / Planner
 
-With page numbers in "Understanding Natural Language"
+SHRDLU uses Carl Hewitt's Planner framework for its reasoning abilities. This page serves as a reference card.
+
+With page numbers from "Understanding Natural Language"
 
 ## PLANNER
 
-All functions that start with `TH` are PLANNER functions.
+All functions that start with `TH` are PLANNER functions ("theorems").
+
+## Variables
+
+Use of variables: 
+
+* `(#PUT $?X $?Y)` declares the arguments of the function
+* `(X Y)` just declares the local variables of the function; the arguments are included 
+* `$?X` read the contents of the variable
+* `$_X` write the contents of a variable by unification.
+
+## Theorems
 
 THGOAL
 : will try to find an assertion in the data base, or prove it using other theorems (109)
@@ -53,7 +66,28 @@ THPROG
 : program. like a function in an imperative programming language. Planner's equivalent of a LISP PROG, complete with GO statements, tags, RETURN, etc. Acts as an existential quantifier. (114)
 
     (THPROG (Y)
-        (THGOAL (#FALLIBLE $?Y) (THTBF THTRUE)))        
+        (THGOAL (#FALLIBLE $?Y) (THTBF THTRUE)))
+        
+THGO
+: Corresponds with `goto` and `label` in imperative programming languages. In this example the keyword `GO` serves as a destination. `THGO GO` jumps back to this point. The theorem here check a condition repeatedly, until it fails. The label can be any word, not just `GO`, like `UP` for example.
+
+    (DEFTHEOREM TC_CLEARTOP
+        (THCONSE (X Y) (#CLEARTOP $?X)
+            GO (THCOND ((THGOAL (#SUPPORT $?X $_Y))
+                        (TGOAL (#GET-RID-OF $?Y) 
+                               (THUSE TC-GET-RID-OF))
+                        (THGO GO)
+                        ((THASSERT (#CLEARTOP $?X))))))                         
+
+THSETQ
+: variable assignment
+
+    THSETQ($_Y (TOPCENTER $?X))
+    
+THASVAL
+: is this variable bound to a value?
+
+    THASVAL($?Y)                    
 
 THAMONG
 : chooses its variable bindings from "among" a given list (136)

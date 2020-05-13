@@ -54,7 +54,7 @@ Here is the typical case for the `qp`. Note that the `quantifier` relation is fo
 
     { rule: qp(_) -> quantifier(Result, Range),                                                         sense: quantifier(Result, Range, sem(1)) }
     { rule: quantifier(Result, Range) -> 'every',                                                       sense: equals(Result, Range) }
-    { rule: quantifier(Result, Range) -> 'some', 						                                sense: greater_than(Result, 0) }
+    { rule: quantifier(Result, Range) -> 'some',                                                        sense: greater_than(Result, 0) }
     { rule: quantifier(Result, Range) -> number(N1),                                                    sense: equals(Result, N1) }
 	{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	    sense: or(P1, sem(1), sem(3)) }
 

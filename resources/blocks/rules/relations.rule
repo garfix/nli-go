@@ -1,0 +1,13 @@
+[
+    object(E1) :- block(E1);
+    object(E1) :- pyramid(E1);
+    hold(P1, E1, E2) :- grasping(E1, E2);
+    you(E1) :- named(E1, 'SHRDLU');
+    i(E1) :- named(E1, 'YOU');
+    tell(P1, P2) :- call(P2);
+    height(E, H) :- size(E, _, _, H);
+    width(E, W) :- size(E, W, _, _);
+    big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
+    taller(A, B) :- height(A, Ha) height(B, Hb) greater_than(Ha, Hb);
+    narrower(A, B) :- width(A, Wa) width(B, Wb) less_than(Wa, Wb);
+]

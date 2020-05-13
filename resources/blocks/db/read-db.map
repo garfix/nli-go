@@ -13,4 +13,5 @@
     size(E, Width, Length, Height) :- size(E, Width, Length, Height);
     name(A, N) :- name(A, N);
     pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
+    cleartop(E1) :- cleartop(E1);
 ]

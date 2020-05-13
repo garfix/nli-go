@@ -1,3 +1,15 @@
+# 2020-05-13
+
+I rewrote all "shrdlu" routines to make them a lot more robust. I also fixed the `do_stack_up` routine, so that now it is actually able to stack up blocks.
+
+I split the routines into 3 layers:
+
+- sentence.rule: these rules are now "smart", which means that when you tell the robot to pick up a block, while it is already holding a block, it puts down that other block first; or when you ask to pick the lower block of a stack, it removes the ones above first
+- helper: the in-between "do" routines that perform all kinds of actions. I took care that they keep all database relations like "support" and "cleartop" in tact. These routines are not smart; I don't want them to have to do the same checks again and again.
+- database: the simple routines that change the database
+   
+And then there is a rule-file that keep simple relations.    
+
 # 2020-05-02
 
 Generalized quantifiers are described in Core Language Engine (p.17) As an example they use the sentence:

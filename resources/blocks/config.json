@@ -21,7 +21,10 @@
     ]
   },
   "rulebases": [
-    "blocks.rule"
+    "rules/sentence.rule",
+    "rules/helper.rule",
+    "rules/relations.rule",
+    "rules/db.rule"
   ],
   "solutions": [
     "blocks.solution"

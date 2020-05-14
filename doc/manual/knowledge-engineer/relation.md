@@ -52,9 +52,9 @@ The goal can be reached by processing subgoals
 
     pick_up(A) :- position(A, P) move_hand(P) grab(P) up(P, Q) move_hand(Q); 
 
-## Function
+## Function call
 
-A function has a number of inputs (arguments), and an output (the return value). It can be represented as a relation, by
+A function call, that calls in internal function, has a number of inputs (arguments), and an output (the return value). It can be represented as a relation, by
 treating both arguments and return value as arguments of the relation
 
     greater_than(X1, X2)
@@ -62,6 +62,18 @@ treating both arguments and return value as arguments of the relation
 Some functions can have any number of arguments
 
     concat(Result, X1, X2, ...)
+    
+## Function declaration
+
+The case of the quantification shows that a relation can serve as a function declaration:
+
+    quantifier(Result, Range, or(equals(Result, 1), equals(Result, 2)))
+    
+This has a similar meaning as the function
+
+    function quantifier(Result, Range) {
+        return (Result == 1) or (Result == 2)
+    }        
     
 ## Dependencies
 

@@ -1,3 +1,73 @@
+# 2020-05-14
+
+Starting sentences 13 - 16:
+
+    13: The blue pyramid is mine
+    > I understand
+    
+    14: I own blocks which are not red, but I don't own anything which supports a pyramid
+    > I understand
+    
+    15: Do I own the box?
+    > No
+    
+    16: Do I own anything in the box?
+    > Yes, two things: the blue block and the blue pyramid
+
+These interactions are basically about teaching declarative knowledge, in a form that can later be used to anwer questions. The first sentence can be implemented as a simple assertion, but that misses the point. The second sentence brings in the full expressive power. The user does not just teach facts that can be stored as relations in the database, it stores _new rules_ in the knowledge base. And these rules must be added in a form that can be used later to answer questions.
+
+Further complication: the declaration holds an exception ("but") in the form of a second clause, and this second clause denies part of the first clause. If I were to add "I own not-red blocks" and "I don't own pyramid-supporters" separately, this would yield the wrong results. 
+
+In fact sentence 14 is in conflict with sentence 13. And this is a problem for the deduction of knowledge as I have done so far. 14 will produce something like this in the knowledge base:
+
+    own(`:friend`, E1) :- block(E1) not(red(E1));
+        
+    !own(`:friend`, E1) :- object(E1) find(quant(E1) quant(E2), E1, support(E1, E2));
+
+Note that the `!` syntax is not supported (yet).
+
+Then if the question were to be
+
+    own(`:friend`, `:b21`)
+    
+and b21 would be both not a red box and support a pyramid, both rules would fire    
+    
+And the answer should be "No" because one of the rules that applied for the goal `own` matched in a negative way.
+
+Does Prolog have anything like this? I am thinking "no", but let's check.
+
+https://en.wikipedia.org/wiki/Cut_(logic_programming)
+
+The `cut` operator might do the job, but the order of the definition of the rules matters here, and in the example above the order would be just the other way around. Also, it seems wrong to do it this way. This would be the `cut` way:
+
+    own(`:friend`, E1) :- object(E1) find(quant(E1) quant(E2), E1, support(E1, E2)) ! ;   
+    own(`:friend`, E1) :- block(E1) not(red(E1));
+    
+Note the `!` at the end. 
+
+That seems to be it. No negative facts, or negative goals.
+
+What would be a good syntax for `not`?
+
+Remember that the form must be able to be composed from its parts, it must be findable by the exisiting framework.     
+
+    !own(`:friend`, E1) :- object(E1) find(quant(E1) quant(E2), E1, support(E1, E2));
+    not(own(`:friend`, E1)) :- object(E1) find(quant(E1) quant(E2), E1, support(E1, E2));
+    own(`:friend`, E1) :- object(E1) find(quant(E1) quant(E2), E1, support(E1, E2));
+
+    I don't own anything which supports a pyramid
+    
+    assert(
+        rule(
+            own(),
+            
+        )
+    )
+    
+`own(:friend, E1)` cannot just be left hand side of the rule, because the entities in it must be quantifiable. You need to be able to assert something like
+
+    All men are mortal.          
+
 # 2020-05-13
 
 I rewrote all "shrdlu" routines to make them a lot more robust. I also fixed the `do_stack_up` routine, so that now it is actually able to stack up blocks.

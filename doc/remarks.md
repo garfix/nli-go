@@ -1,3 +1,36 @@
+# 2020-05-18
+
+Prolog has the `cut`  operator, that disables backtracking for the current goal from the point of occurrence.
+
+It also has the `negation as failure` operator `\+` which can be read as "except", and implements exceptions.
+
+http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse45
+
+Here are some thoughts about negative facts and rules.
+
+- Some facts are negative 
+- Some rules have exceptions
+- Some rules are negative but have positive exceptions "Mammals don't lay eggs except for the platypus"
+- The rules and the exceptions may be separated (for example: in different databases)
+
+This is my main concern at this point: do I need to express exceptions explicitly? Do they have to be linked to the rules they except?
+
+Prolog allows for negative facts and rules by use of the cut operator.
+
+===
+
+    -lays_eggs(X) :- mammal(X).
+    lays_eggs(X) :- platypus(X).
+    
+I think it is essential that the word "but" is interpreted as "except", that is a back-reference to a sentence, and that that sentence was a declration of a rule.
+
+Now, I don't have a way to refer to a rule, so I need to make that up.
+
+    R1: -lays_eggs(X) :- mammal(X).
+    lays_eggs(X) / R1 :- platypus(X).
+    
+Or we may think that the exception always _follows_ the rule. On evaluating a goal, if a positive goal is follewed by a negative goal, the negative goal is the exception to the positive goal; but if a negative goal is followed by a positive goal, the positive goal is the exception.     
+
 # 2020-05-14
 
 Starting sentences 13 - 16:

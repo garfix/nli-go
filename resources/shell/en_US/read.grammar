@@ -1,0 +1,5 @@
+[
+    { rule: command(S1) -> command(S2) 'page' 'by' 'page',              sense: sem(1) concat(S1, S2, '| more') }
+    { rule: command(S1) -> 'list' 'files',                              sense: unify(S1, 'ls') }
+    { rule: s(S1) -> command(S1),                                       sense: sem(1) exec(S1) }
+]

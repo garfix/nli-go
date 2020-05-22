@@ -1,0 +1,15 @@
+[
+    {
+        condition: exec('huh?'),
+        result: _,
+        responses: [
+            {
+                condition: exists(),
+                answer: canned('OK')
+            }
+            {
+                answer: canned('Error')
+            }
+        ]
+    }
+]

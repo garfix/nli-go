@@ -19,7 +19,7 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years", "assign"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years", "assign", "exec"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -321,6 +321,19 @@ func (base *SystemFunctionBase) assign(input mentalese.Relation, binding mentale
 	return newBinding
 }
 
+func (base *SystemFunctionBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !base.validate(bound, "s") {
+		return nil
+	}
+
+	newBinding := binding.Copy()
+
+	return newBinding
+}
+
 func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	newBinding := binding
@@ -353,6 +366,8 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.dateSubtractYears(input, binding)
 	case "assign":
 		newBinding = base.assign(input, binding)
+	case "exec":
+		newBinding = base.exec(input, binding)
 	default:
 		found = false
 	}

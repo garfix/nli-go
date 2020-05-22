@@ -99,13 +99,13 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	relationizer.log.StartDebug("processChildRelations", parentSet, childSets, rule)
 
 	referencedChildrenIndexes := []int{}
-	compoundRelation := mentalese.Relation{}
+	compoundRelations := mentalese.RelationSet{}
 
 	// process sem(1) sem(2)
 	combination := mentalese.RelationSet{}
 	for _, parentRelation := range parentSet {
-		compoundRelation, referencedChildrenIndexes = relationizer.includeChildSenses(parentRelation, childSets, referencedChildrenIndexes)
-		combination = append(combination, compoundRelation)
+		compoundRelations, referencedChildrenIndexes = relationizer.includeChildSenses(parentRelation, childSets, referencedChildrenIndexes)
+		combination = append(combination, compoundRelations...)
 	}
 
 	// add simple children
@@ -120,35 +120,53 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	return combination
 }
 
-func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int) (mentalese.Relation, []int) {
+func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int) (mentalese.RelationSet, []int) {
 
-	newParentRelation := parentRelation.Copy()
+	newParentRelationSet := mentalese.RelationSet{}
 
-	for i, formalArgument := range parentRelation.Arguments {
-		if formalArgument.IsRelationSet() {
-			newSet := mentalese.RelationSet{}
-			for _, relation := range formalArgument.TermValueRelationSet {
-				if relation.Predicate == mentalese.PredicateSem {
-					index, err := strconv.Atoi(relation.Arguments[0].TermValue)
-					if err == nil {
-						index = index - 1
-						childIndexes = append(childIndexes, index)
-						subSet := childSets[index]
-						newSet = append(newSet, subSet...)
-					} else {
-						panic("sem(N) must contain a number")
-					}
-				} else {
-					replacedDhild, newChildIndexes := relationizer.includeChildSenses(relation, childSets, childIndexes)
-					childIndexes = newChildIndexes
-					newSet = append(newSet, replacedDhild)
-				}
-			}
-			newParentRelation.Arguments[i] = mentalese.NewRelationSet(newSet)
+	if parentRelation.Predicate == mentalese.PredicateSem {
+
+		index, err := strconv.Atoi(parentRelation.Arguments[0].TermValue)
+		if err == nil {
+			index = index - 1
+			childIndexes = append(childIndexes, index)
+			newParentRelationSet = childSets[index]
+		} else {
+			panic("sem(N) must contain a number")
 		}
+
+	} else {
+
+		newParentRelation := parentRelation.Copy()
+
+		for i, formalArgument := range parentRelation.Arguments {
+			if formalArgument.IsRelationSet() {
+				newSet := mentalese.RelationSet{}
+				for _, relation := range formalArgument.TermValueRelationSet {
+					if relation.Predicate == mentalese.PredicateSem {
+						index, err := strconv.Atoi(relation.Arguments[0].TermValue)
+						if err == nil {
+							index = index - 1
+							childIndexes = append(childIndexes, index)
+							subSet := childSets[index]
+							newSet = append(newSet, subSet...)
+						} else {
+							panic("sem(N) must contain a number")
+						}
+					} else {
+						replacedDhild, newChildIndexes := relationizer.includeChildSenses(relation, childSets, childIndexes)
+						childIndexes = newChildIndexes
+						newSet = append(newSet, replacedDhild...)
+					}
+				}
+				newParentRelation.Arguments[i] = mentalese.NewRelationSet(newSet)
+			}
+		}
+
+		newParentRelationSet = mentalese.RelationSet{ newParentRelation}
 	}
 
-	relationizer.log.EndDebug("includeChildSenses", newParentRelation, childIndexes)
+	relationizer.log.EndDebug("includeChildSenses", newParentRelationSet, childIndexes)
 
-	return newParentRelation, childIndexes
+	return newParentRelationSet, childIndexes
 }

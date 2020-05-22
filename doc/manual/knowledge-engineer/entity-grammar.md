@@ -51,10 +51,10 @@ There is no separate lexicon.
 
 Each rule by itself just produces a single piece of semantics, or "sense". The "relationizer" combines these pieces to form the complete sense of the sentence. There are rules that govern this composition:
 
-1. Append the senses of the child nodes to the sense of the node
-2. Force the location of the child sense with `sem(N)` where `N` is the index of the child in the rule's consequent  
+1. Append the sets of all the children, from child 1 to child N; then append the sense of the node
+2. Exception to rule 1: force the location of the child sense with `sem(N)` where `N` is the index of the child in the rule's consequent  
 3. Generate shared variables for the arguments
-4. Turn regular expressions into string constants  
+4. Turn regular expressions into string constants
 
 ## An imperative sentence
 

@@ -99,12 +99,14 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 		combination = append(combination, compoundRelations...)
 	}
 
-	// add simple children
+	// prepend simple children
+	restChildrenRelations := mentalese.RelationSet{}
 	for i, childSet := range childSets {
 		if !common.IntArrayContains(referencedChildrenIndexes, i) {
-			combination = append(combination, childSet...)
+			restChildrenRelations = append(restChildrenRelations, childSet...)
 		}
 	}
+	combination = append(restChildrenRelations, combination...)
 
 	relationizer.log.EndDebug("processChildRelations", combination)
 

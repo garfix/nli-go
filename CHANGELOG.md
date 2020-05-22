@@ -1,5 +1,9 @@
 # Changelog
 
+##
+
+* changed the order child sense order evaluation from post-order to pre-order
+
 ## 1.9 generalized quantifiers - 02-05-2020
 
 * any relationset can now be used as a quantifier

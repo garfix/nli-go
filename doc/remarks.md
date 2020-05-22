@@ -4,7 +4,11 @@ I need to make the distinction between "not provable" and "not true". So far I u
 
 ===
 
-I am also starting "Shell", the use of nli commands as shell commands. I have no idea how useful this is, but I want to experiment with it.   
+I am also starting "Shell", the use of nli commands as shell commands. I have no idea how useful this is, but I want to experiment with it.
+
+In the shell world I noticed that it is actually very useful to have child sense processed _before_ the parent sense. This is also more intuitive I think: first evaluate the children, then integrate their sense with the sense of the parent.
+
+A few tests failed because of this, but they could be fixed relatively easy.   
 
 # 2020-05-21
 

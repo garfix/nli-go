@@ -1,3 +1,56 @@
+# 2020-05-22
+
+I need to make the distinction between "not provable" and "not true". So far I used "not provable", and this implied, via closed world hypothesis, "not true". But I will let go of this assumption. I need to think this through.
+
+===
+
+I am also starting "Shell", the use of nli commands as shell commands. I have no idea how useful this is, but I want to experiment with it.   
+
+# 2020-05-21
+
+Todo's:
+
+* a rule can be negative (datatype, internal parser)
+* a term can be a rule (datatype, internal parser)
+* add predicate 'learn' that may be handled by rule bases
+* problem solver: handle predicate 'learn' by contacting rule bases
+* problem solver: handle negative rules (when succeed, remove all bindings so far)
+* write documentation
+
+# 2020-05-19
+
+These are the rules I want the user to add to the knowledge base:
+
+    own(X, Y) :- friend(X) block(Y) not(red(Y))
+    -own(X, Y) :- friend(X) object(Y) pyramid(Z) support(Y, Z)
+
+To allow the addition of new rules through the grammar I will need something like this (I am giving some alternatives)
+
+    
+    I own blocks which are not red
+
+    rule: s(P1) -> np(E1) own(P1) np(E1),     sense: assert(claim(own(P1), [ sem(1) sem(3) ]))      or:
+    rule: s(P1) -> np(E1) own(P1) np(E1),     sense: assert(own(P1) -> [ sem(1) sem(3) ]))
+    rule: s(P1) -> np(E1) own(P1) np(E1),     sense: learn(own(P1) -> [ sem(1) sem(3) ]))
+    
+===
+    
+    but I don't own anything which supports a pyramid
+    
+    rule: s(P1) -> np(E1) 'don\'t' own(P1) np(E1),     sense: assert(deny(own(P1), [ sem(1) sem(4) ]))      or:
+    rule: s(P1) -> np(E1) 'don\'t' own(P1) np(E1),     sense: assert(-own(P1) -> [ sem(1) sem(4) ])
+    rule: s(P1) -> np(E1) 'don\'t' own(P1) np(E1),     sense: learn(-own(P1) -> [ sem(1) sem(4) ])
+    
+The latter variant requires me to add a new argument type: the rule. But I like the extra syntax. `-` is just another keyword and can be separated, as in `- own()`.
+
+ANTONYMS FOR deny https://www.thesaurus.com/browse/deny?s=t
+OK accept allow approve ratify sanction support acknowledge admit agree aid assist believe claim concur credit
+embrace help keep permit trust validate welcome accede affirm concede confess corroborate "go along" grant
+
+=== 
+
+I don't think I ever needed the closed world hypothesis, but even if I did, I am explicitly letting it go. NLI-GO is an open-world system: the absense of a fact does not make it false, but merely unknown. So this is a major break with Prolog.
+
 # 2020-05-18
 
 Prolog has the `cut`  operator, that disables backtracking for the current goal from the point of occurrence.

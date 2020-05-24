@@ -1,11 +1,24 @@
 [
     {
-        condition: exec('huh?'),
+        condition: exec(A),
         result: _,
         responses: [
             {
                 condition: exists(),
                 answer: canned('OK')
+            }
+            {
+                answer: canned('Error')
+            }
+        ]
+    }
+    {
+        condition: exec_response(R, A, B),
+        result: R,
+        responses: [
+            {
+                condition: exists(),
+                answer: canned(R)
             }
             {
                 answer: canned('Error')

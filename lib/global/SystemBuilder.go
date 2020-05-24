@@ -55,6 +55,9 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, predicates, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
+	shellBase := knowledge.NewShellBase("shell", builder.log)
+	solver.AddFunctionBase(shellBase)
+
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
 	system.parser = earley.NewParser(system.grammar, system.nameResolver, predicates, builder.log)

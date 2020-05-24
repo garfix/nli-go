@@ -27,63 +27,9 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemAggregateBase) validate(input mentalese.Relation, format string) bool {
-
-	expectedLength := len(format)
-
-	for i, c := range format {
-		if i >= len(input.Arguments) {
-			base.log.AddError("Function '" + input.Predicate + "' expects at least " + strconv.Itoa(expectedLength) + " arguments")
-			return false
-		}
-		arg := input.Arguments[i]
-		if c == 'v' && !arg.IsVariable() {
-			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
-			return false
-		}
-		if c == 's' && !arg.IsString() {
-			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
-			return false
-		}
-		if c == 'i' && !arg.IsNumber() {
-			//			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
-			return false
-		}
-		if c == 'S' {
-			expectedLength = len(input.Arguments)
-			for j := i; j < len(input.Arguments); j++ {
-				arg = input.Arguments[j]
-				if !arg.IsString() {
-					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be a string")
-					return false
-				}
-			}
-			break
-		}
-		if c == 'V' {
-			expectedLength = len(input.Arguments)
-			for j := i; j < len(input.Arguments); j++ {
-				arg = input.Arguments[j]
-				if !arg.IsVariable() {
-					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be an unbound variable")
-					return false
-				}
-			}
-			break
-		}
-	}
-
-	if expectedLength != len(input.Arguments) {
-		base.log.AddError("Function '" + input.Predicate + "' expects " + strconv.Itoa(expectedLength) + " arguments")
-		return false
-	}
-
-	return true
-}
-
 func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !base.validate(input, "--") {
+	if !validate(input, "--", base.log) {
 		return mentalese.Bindings{}
 	}
 
@@ -118,7 +64,7 @@ func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings men
 
 func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !base.validate(input, "v") {
+	if !validate(input, "v", base.log) {
 		return mentalese.Bindings{}
 	}
 
@@ -141,7 +87,7 @@ func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mental
 
 func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !base.validate(input, "") {
+	if !validate(input, "", base.log) {
 		return mentalese.Bindings{}
 	}
 

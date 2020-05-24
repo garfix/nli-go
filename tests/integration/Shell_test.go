@@ -3,6 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/global"
+	"strings"
 	"testing"
 )
 
@@ -21,7 +22,8 @@ func TestShell(t *testing.T) {
 		question string
 		answer   string
 	}{
-		{"List files page by page", "OK"},
+		{"List files", "OK"},
+		{"List files resources", "session-2.json"},
 	}
 
 	for _, test := range tests {
@@ -30,7 +32,7 @@ func TestShell(t *testing.T) {
 
 		answer, _ := system.Answer(test.question)
 
-		if answer != test.answer {
+		if !strings.Contains(answer, test.answer) {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
 			t.Error(log.String())
 		}

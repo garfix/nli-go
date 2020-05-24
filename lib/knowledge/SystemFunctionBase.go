@@ -19,7 +19,7 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years", "assign", "exec"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -29,65 +29,11 @@ func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemFunctionBase) validate(input mentalese.Relation, format string) bool {
-
-	expectedLength := len(format)
-
-	for i, c := range format {
-		if i >= len(input.Arguments) {
-			base.log.AddError("Function '" + input.Predicate + "' expects at least " + strconv.Itoa(expectedLength) + " arguments")
-			return false
-		}
-		arg := input.Arguments[i]
-		if c == 'v' && !arg.IsVariable() {
-			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
-			return false
-		}
-		if c == 's' && !arg.IsString() {
-			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
-			return false
-		}
-		if c == 'i' && !arg.IsNumber() {
-//			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
-			return false
-		}
-		if c == 'S' {
-			expectedLength = len(input.Arguments)
-			for j := i; j < len(input.Arguments); j++ {
-				arg = input.Arguments[j]
-				if !arg.IsString() {
-					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be a string")
-					return false
-				}
-			}
-			break
-		}
-		if c == 'V' {
-			expectedLength = len(input.Arguments)
-			for j := i; j < len(input.Arguments); j++ {
-				arg = input.Arguments[j]
-				if !arg.IsVariable() {
-					base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be an unbound variable")
-					return false
-				}
-			}
-			break
-		}
-	}
-
-	if expectedLength != len(input.Arguments) {
-		base.log.AddError("Function '" + input.Predicate + "' expects " + strconv.Itoa(expectedLength) + " arguments")
-		return false
-	}
-
-	return true
-}
-
 func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "ssV") {
+	if !validate(bound, "ssV", base.log) {
 		return nil
 	}
 
@@ -105,7 +51,7 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "vsS") {
+	if !validate(bound, "vsS", base.log) {
 		return nil
 	}
 
@@ -126,7 +72,7 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "vS") {
+	if !validate(bound, "vS", base.log) {
 		return nil
 	}
 
@@ -145,7 +91,7 @@ func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding me
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "ii") {
+	if !validate(bound, "ii", base.log) {
 		return nil
 	}
 
@@ -163,7 +109,7 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "ii") {
+	if !validate(bound, "ii", base.log) {
 		return nil
 	}
 
@@ -181,7 +127,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "iiv") {
+	if !validate(bound, "iiv", base.log) {
 		return nil
 	}
 
@@ -200,7 +146,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "iiv") {
+	if !validate(bound, "iiv", base.log) {
 		return nil
 	}
 
@@ -218,7 +164,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "--") {
+	if !validate(bound, "--", base.log) {
 		return nil
 	}
 
@@ -231,7 +177,7 @@ func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentale
 
 func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 
-	if !base.validate(input, "--") {
+	if !validate(input, "--", base.log) {
 		return nil
 	}
 
@@ -253,7 +199,7 @@ func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding ment
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "--") {
+	if !validate(bound, "--", base.log) {
 		return nil
 	}
 
@@ -268,7 +214,7 @@ func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding ment
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "v") {
+	if !validate(bound, "v", base.log) {
 		return nil
 	}
 
@@ -285,7 +231,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 
 	bound := input.BindSingle(binding)
 
-	if !base.validate(bound, "ssv") {
+	if !validate(bound, "ssv", base.log) {
 		return nil
 	}
 
@@ -303,33 +249,6 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 		years = totalDays / 365
 		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(int(years)))
 	}
-
-	return newBinding
-}
-
-func (base *SystemFunctionBase) assign(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
-
-	bound := input.BindSingle(binding)
-
-	if !base.validate(bound, "--") {
-		return nil
-	}
-
-	newBinding := binding.Copy()
-	newBinding[input.Arguments[0].TermValue] = bound.Arguments[1]
-
-	return newBinding
-}
-
-func (base *SystemFunctionBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
-
-	bound := input.BindSingle(binding)
-
-	if !base.validate(bound, "s") {
-		return nil
-	}
-
-	newBinding := binding.Copy()
 
 	return newBinding
 }
@@ -364,10 +283,6 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.dateToday(input, binding)
 	case "date_subtract_years":
 		newBinding = base.dateSubtractYears(input, binding)
-	case "assign":
-		newBinding = base.assign(input, binding)
-	case "exec":
-		newBinding = base.exec(input, binding)
 	default:
 		found = false
 	}

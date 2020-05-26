@@ -1,3 +1,28 @@
+# 2020-05-26
+
+Of course I wasn't the first to think about this, and the ideas I tried to work out yesterday are known and used for a long time.
+
+https://en.wikipedia.org/wiki/Stable_model_semantics#Strong_negation
+
+John McCarthy himself distinguished between two types of negation: 
+
+- negation as failure (derive not-P from the failure to derive P): from the fact that P is not a fact in the database, we may infer that it is not true (from Closed World Hypothesis) 
+- strong negation (knowing that not-P is true)
+
+The first form is written as `not` (which means: "not known", "not believed"), the latter as `~`. 
+
+The wikipedia article even describes the formula for partial closed world knowledge:
+
+    ~p(X1,...,Xn) <- not p(X1,...,Xn)
+    
+The term "negative atom" is used, so I will use it here as well.
+
+Negative atoms actually occur in a programming language, called Answer Set Programming.
+
+    −assign(Y, P) <- cand(Y, P), assign(X, P), X =/= Y
+    
+So ASP uses the `-` symbol for negative information.        
+
 # 2020-05-25
 
 I added the functions `exec` and `exec_response` that execute shell commands. I have no purpose for them yet, but they bring the power of all shell commands to NLI-GO.

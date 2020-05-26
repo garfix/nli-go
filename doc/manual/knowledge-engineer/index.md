@@ -80,6 +80,10 @@ The map file defines how a relation in your application is mapped to one or more
 
 For Sparql databases you will also need to specify how a relation's predicate is mapped to a uri. See names.json for example in dbpedia/db.
 
+## Common sense reasoning
+
+The goals that have been set by the input sentence and the solution, may also be reached by following inference rules. These rules allow you to create procedures that solve the problem in a common sense way. See [Common sense reasoning](common-sense-reasoning.md) for more on this. 
+
 ## Generate a response
 
 There is a separate grammar ("write grammar") for responses, because answers are very different in structure from questions. And where read-grammars produce semantic attachments ("sense"), write grammars take existing semantics as conditions for the sentence to be generated.

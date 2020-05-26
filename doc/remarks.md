@@ -1,3 +1,87 @@
+# 2020-05-25
+
+I added the functions `exec` and `exec_response` that execute shell commands. I have no purpose for them yet, but they bring the power of all shell commands to NLI-GO.
+
+===
+
+I thought about the three value values I intend to use: negative, positive, unknown/unprovable/not-found. So I read about three-valued logic: https://en.wikipedia.org/wiki/Three-valued_logic But do I need three-valued logic? No not quite.
+
+In Prolog something is either true or false. If something cannot be proven, it is false. This is the closed world assumption. I need an open world assumption. If the database has no information about someone's father, it does not mean he didn't have one.
+
+On the other hand, if I need to know if there is an object on a certain location, and the database does not have a record of an object at that location, I want the system to deduce that there isn't an object at that location, rather than that it doesn't know.
+
+So in some cases I want open world, and in other cases I want closed world. This made me wonder in what cases I want closed world. Are some knowledge bases closed world and others open world? Or just for some predicates? Or for some objects? Maybe the knowledge base itself can tell in what cases it is closed world?
+
+That last thought proved quite easy to implement:
+
+    -pred(X) :- -found(pred(X));
+    
+This will make the system Partial-closed world (PCWA) https://en.wikipedia.org/wiki/Open-world_assumption    
+
+Here `found` is a new predicate that tells us if `pred(X)` gives any results. The rule says: if `pred(X)` gives no results, then `pred(X)` is not true. The name "found" could also have been "has_bindings", "succeeded" or "provable", but this predicate is very common in use, so it needs to be simple. 
+
+You'll also notice the syntax `-pred(X)`. `-` simply means _not true_. Every relation gets this flag. `not()` will be removed as a predication because It is confusing to have two ways to do the same thing, and it is simpler to use `-` everywhere than to use the second order predicate `not` everywhere.
+
+To evaluate a goal, we need to look at the negative and the positive side. 
+
+For the goal `pred(X)` we need to collect all facts and rules with `pred(X)` and `-pred(X)`:
+
+- process `pred(X)`. This results in some bindings (true) or none (unknown).
+- process `-pred(X)`. If this matches (false), all bindings so far are discarded.
+
+For the goal `-pred(X)` also we need to collect `pred(X)` and `-pred(X)`, and then
+
+- process `pred(X)`. If this matches, all bindings so far are discarded.
+- process `-pred(X)`. This results in some bindings.
+
+The reason that we need to evaluate both the positive and the negative side, is to allow for exceptions. We need to do this for both rules and facts. Rules go first, facts second. Facts are more specific and thus more important. A fact can undo the effects of prior rules.
+
+And then there are the predicates `and` and `or`, and the other nested functions. They need to be treated as follows
+
+    `and(X, Y)`: should return bindings if both X and Y have bindings
+
+    `-and(X, Y) : evaluate X, evaluate Y, perform and, if there are bindings, return no bindings; if there are no bindings, return the original bindings
+    `-or(X, Y) :
+    `-found(X)`: evaluate X, if there are bindings, return no bindings; if there are no bindings, return the original bindings
+
+This tells us that not-or succeeds if or gives no results.    
+
+`true` was defined as `has bindings`, and `false` as `no bindings`; now `true` is defined as a `positive predicate with bindings`, but `no bindings` now means `unknown` and a `negative predicate with bindings` is `false`.
+
+Note that `and` does not operate on truth values (`true`, `false`, `unknown`), it operates on sets of bindings. In a three valued logic, if both operands are false, `and` returns `false`. This is not the case in our system. `and` simply returns the combined bindings of the operands. You can think of it as an operator on goals. Even if both goals are negative, if they have bindings, they both succeed, and so the `and` succeeds as well. All predicates and operators must be seen in the light of goal-fulfillment. We just want to make use of explicit negative knowledge.
+
+===
+
+About exceptions: rule B can undo rule A, if it is executed after it. Negative facts can undo positive facts, the same way. The order is relevant. 
+
+Note: facts have higher precedence than rules, and this can be implemented by simple evaluating them _after_ the rules.
+
+    I own blocks which are not red
+
+    rule: s(P1) -> np(E1) own(P1) np(E2),     sense: learn(own(E1, E2) -> find([sem(1) sem(3)], []))
+    
+    but I don't own anything which supports a pyramid
+    
+    rule: s(P1) -> np(E1) 'don\'t' own(P1) np(E2),     sense: learn(-own(E1, E2) -> find([sem(1) sem(4)], []))
+    
+    -own(E1, E2) -> find([
+        quant(quantifier(), E1, name(E1, `:friend`)) 
+        quant(quantifier(), E2, block(E2) support(E3) pyramid(E3))
+    ], [])
+
+Todo's:
+
+* a relation can be negative (datatype, internal parser)
+* expand the matcher for relations to handle the negative flag
+* a term can be a rule (datatype, internal parser)
+* add predicate 'learn' that may be handled by rule bases
+* problem solver: handle predicate 'learn' by contacting rule bases
+* problem solver: handle negative rules (when succeed, remove all bindings so far)
+* handle exceptions by determining precedence
+* rename predicate `not` to `not_found`
+* write tests
+* write documentation
+
 # 2020-05-22
 
 I need to make the distinction between "not provable" and "not true". So far I used "not provable", and this implied, via closed world hypothesis, "not true". But I will let go of this assumption. I need to think this through.

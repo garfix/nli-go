@@ -1,10 +1,7 @@
 # Todo
 
 * should boolean functions have P1 as argument? different or for read/write?
-* assign?
-* quant => for ?
 * check if the nested functions are called correctly
-* append or prepend child senses? ; see ## Semantic composition in entity-grammar.md
 * namespaces for relations
 * do not allow zero valued predicates in the grammar
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way

@@ -6,19 +6,19 @@ import (
 )
 
 type Term struct {
-	TermType             int
+	TermType             string
 	TermValue            string
 	TermEntityType		 string
 	TermValueRelationSet RelationSet
 }
 
-const TermVariable = 1
-const TermPredicateAtom = 2
-const TermStringConstant = 3
-const TermAnonymousVariable = 5
-const TermRegExp = 6
-const TermRelationSet = 7
-const TermId = 8
+const TermVariable = "variable"
+const TermPredicateAtom = "atom"
+const TermStringConstant = "string"
+const TermAnonymousVariable = "anonymous"
+const TermRegExp = "regexp"
+const TermRelationSet = "relation-set"
+const TermId = "id"
 
 func NewVariable(name string) Term {
 	return Term{ TermType: TermVariable, TermValue: name, TermValueRelationSet: nil}

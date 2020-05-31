@@ -5,6 +5,8 @@
     box(E) :- is(E, box);
     named(E, Name) :- call(E, Name);
     red(E) :- color(E, red);
+    blue(E) :- color(E, blue);
+    green(E) :- color(E, green);
 
     at(E, X, Y, Z) :- at(E, X, Y, Z);
     support(P, A, B) :- support(A, B);

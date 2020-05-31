@@ -80,6 +80,21 @@
             }
         ]
     }
+    /* Do I own? Yes: these things */
+    {
+        condition: question(_) yes_no() own(_, B),
+        result: B,
+        responses: [
+            {
+                condition: exists(),
+                preparation: name(B, N),
+                answer: name(B, N) make_and(B, R) select(R)
+            }
+            {
+                answer: result(false)
+            }
+        ]
+    }
     {
         condition: question(_) yes_no(),
         result: _,
@@ -90,6 +105,21 @@
             }
             {
                 answer: result(false)
+            }
+        ]
+    }
+
+    /* Declaration */
+    {
+        condition: declare(_),
+        result: _,
+        responses: [
+            {
+                condition: exists(),
+                answer: understand()
+            }
+            {
+                answer: dont_understand()
             }
         ]
     }

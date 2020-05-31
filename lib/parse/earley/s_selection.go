@@ -64,7 +64,7 @@ func getTypeFromSense(predicates mentalese.Predicates, variable string, sense me
 					goto end
 				}
 			} else if argument.IsRule() {
-				panic("not implemented yet")
+				// no need to implement
 			}
 		}
 	}

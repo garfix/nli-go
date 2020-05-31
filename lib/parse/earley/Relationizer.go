@@ -123,7 +123,12 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 		if err == nil {
 			index = index - 1
 			childIndexes = append(childIndexes, index)
-			newParentRelationSet = childSets[index]
+			newParentRelationSet = childSets[index].Copy()
+			for i := range newParentRelationSet {
+				if !parentRelation.Positive {
+					newParentRelationSet[i].Positive = !newParentRelationSet[i].Positive
+				}
+			}
 		} else {
 			panic("sem(N) must contain a number")
 		}

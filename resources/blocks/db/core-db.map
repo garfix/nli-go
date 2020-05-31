@@ -1,5 +1,6 @@
 [
     question(_) :- question(_);
+    declare(_) :- declare(_);
     who(_) :- who(_);
     which(_) :- which(_);
     what(_) :- what(_);

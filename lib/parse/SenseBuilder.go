@@ -97,15 +97,24 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 
 		for a, argument := range newRelation.Arguments {
 
-			if argument.TermType == mentalese.TermVariable {
+			if argument.IsVariable() {
 
 				newRelation.Arguments[a].TermType = variableMap[argument.TermValue].TermType
 				newRelation.Arguments[a].TermValue = variableMap[argument.TermValue].TermValue
 
-			} else if argument.TermType == mentalese.TermRelationSet {
+			} else if argument.IsRelationSet() {
 
 				newRelation.Arguments[a].TermType = mentalese.TermRelationSet
 				newRelation.Arguments[a].TermValueRelationSet = builder.CreateGrammarRuleRelations(argument.TermValueRelationSet, variableMap)
+
+			} else if argument.IsRule() {
+
+				newGoal := builder.CreateGrammarRuleRelations(mentalese.RelationSet{ argument.TermValueRule.Goal }, variableMap)
+				newPattern := builder.CreateGrammarRuleRelations(argument.TermValueRule.Pattern, variableMap)
+				newRule := mentalese.Rule{ Goal: newGoal[0], Pattern: newPattern }
+				newRelation.Arguments[a].TermType = mentalese.TermRule
+				newRelation.Arguments[a].TermValueRule = newRule
+
 			}
 		}
 

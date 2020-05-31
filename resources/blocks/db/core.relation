@@ -1,5 +1,6 @@
 [
     question(_)
+    declare(_)
     who(_)
     what(_)
     which(_)

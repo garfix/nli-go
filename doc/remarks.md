@@ -1,3 +1,17 @@
+# 2020-05-31
+
+I had no idea Prolog was so complex! You can even add new rules at run-time:
+
+https://www.swi-prolog.org/pldoc/man?predicate=asserta/1    
+
+You can add rules to the beginning of the database with `asserta` and to the end with `assertz`. For now I will just go with the `assertz` meaning.
+
+I decided to use the predicate `assert` for rules as well.
+
+===
+
+I succeeded in running interactions 13-16. But running the last interaction takes 0.65 seconds; I hope I can get this down a bit.
+
 # 2020-05-30
 
 The representation of exceptions is what currently occupies me, since I found out that there were developments in this field in the last 20 years. This is post-Prolog.

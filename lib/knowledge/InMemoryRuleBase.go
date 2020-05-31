@@ -52,3 +52,7 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentales
 
 	return subgoalRelationSets, subgoalBindings
 }
+
+func (ruleBase *InMemoryRuleBase) Assert(rule mentalese.Rule) {
+	ruleBase.rules = append(ruleBase.rules, rule)
+}

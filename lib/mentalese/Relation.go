@@ -6,6 +6,7 @@ import (
 )
 
 type Relation struct {
+	Positive  bool
 	Predicate string
 	Arguments []Term
 }
@@ -39,8 +40,9 @@ const SeqSecondOperandIndex = 2
 
 const NotScopeIndex = 0
 
-func NewRelation(predicate string, arguments []Term) Relation {
+func NewRelation(positive bool, predicate string, arguments []Term) Relation {
 	return Relation{
+		Positive:  positive,
 		Predicate: predicate,
 		Arguments: arguments,
 	}
@@ -65,6 +67,8 @@ func (relation Relation) Equals(otherRelation Relation) bool {
 
 	equals := relation.Predicate == otherRelation.Predicate
 
+	equals = equals && relation.Positive == otherRelation.Positive
+
 	for i, argument := range relation.Arguments {
 		equals = equals && argument.Equals(otherRelation.Arguments[i])
 	}
@@ -76,6 +80,7 @@ func (relation Relation) Copy() Relation {
 
 	newRelation := Relation{}
 	newRelation.Predicate = relation.Predicate
+	newRelation.Positive = relation.Positive
 	newRelation.Arguments = []Term{}
 	for _, argument := range relation.Arguments {
 		newRelation.Arguments = append(newRelation.Arguments, argument.Copy())
@@ -86,15 +91,14 @@ func (relation Relation) Copy() Relation {
 // Returns a new relation, that has all variables bound to bindings
 func (relation Relation) BindSingle(binding Binding) Relation {
 
-	boundRelation := Relation{}
-	boundRelation.Predicate = relation.Predicate
+	boundArguments := []Term{}
 
 	for _, argument := range relation.Arguments {
 		arg := argument.Bind(binding)
-		boundRelation.Arguments = append(boundRelation.Arguments, arg)
+		boundArguments = append(boundArguments, arg)
 	}
 
-	return boundRelation
+	return NewRelation(relation.Positive, relation.Predicate, boundArguments)
 }
 
 // Returns multiple relations, that has all variables bound to bindings
@@ -129,7 +133,7 @@ func (relation Relation) RelationUsesVariable(variable string) bool {
 
 func (relation Relation) ConvertVariablesToConstants() Relation {
 
-	newRelation := Relation{ Predicate: relation.Predicate }
+	newArguments := []Term{}
 
 	for _, argument := range relation.Arguments {
 
@@ -141,10 +145,10 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 			newArgument = NewRelationSet(argument.TermValueRelationSet.ConvertVariablesToConstants())
 		}
 
-		newRelation.Arguments = append(newRelation.Arguments, newArgument)
+		newArguments = append(newArguments, newArgument)
 	}
 
-	return newRelation
+	return NewRelation(relation.Positive, relation.Predicate, newArguments)
 }
 
 func (relation Relation) String() string {
@@ -157,5 +161,10 @@ func (relation Relation) String() string {
 		sep = ", "
 	}
 
-	return relation.Predicate + "(" + args + ")"
+	sign := ""
+	if !relation.Positive {
+		sign = "-"
+	}
+
+	return sign + relation.Predicate + "(" + args + ")"
 }

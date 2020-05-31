@@ -12,8 +12,6 @@ import (
 const (
 	_ = iota // number these constants 1, 2, ...
 	t_comment
-	t_if
-	t_then
 	t_predicate
 	t_variable
 	t_anonymousVariable
@@ -23,10 +21,8 @@ const (
 	t_number
 	t_comma
 	t_rewrite
-	t_transform
 	t_implication
 	t_colon
-	t_negation
 	t_semicolon
 	t_opening_parenthesis
 	t_closing_parenthesis
@@ -34,6 +30,7 @@ const (
 	t_closing_bracket
 	t_opening_brace
 	t_closing_brace
+	t_negative
 	_newline
 	_other
 )
@@ -54,8 +51,6 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		pattern string
 	}{
 		{t_comment, "/\\*.*?\\*/"},
-		{t_if, "IF"},
-		{t_then, "THEN"},
 		{t_predicate, "[a-z][a-z0-9_]*"},
 		{t_variable, "[A-Z][a-z0-9_]*"},
 		{t_anonymousVariable, "_"},
@@ -65,10 +60,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_number, "[0-9]+"},
 		{t_comma, ","},
 		{t_rewrite, "->"},
-		{t_transform, "=>"},
 		{t_implication, ":-"},
 		{t_colon, ":"},
-		{t_negation, "!"},
 		{t_semicolon, ";"},
 		{t_opening_parenthesis, "\\("},
 		{t_closing_parenthesis, "\\)"},
@@ -76,6 +69,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_closing_bracket, "\\]"},
 		{t_opening_brace, "\\{"},
 		{t_closing_brace, "\\}"},
+		{t_negative, "-"},
 		{_newline, "(?:\r\n|\n|\r)"},
 		{_other, "."},
 	}

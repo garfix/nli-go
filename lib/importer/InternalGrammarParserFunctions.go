@@ -402,17 +402,23 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 
 func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex int) (mentalese.Relation, int, bool) {
 
-	relation := mentalese.Relation{}
 	ok := true
 	commaFound, argumentFound := false, false
 	argument := mentalese.Term{}
+	arguments := []mentalese.Term{}
+	predicate := ""
 	newStartIndex := 0
+	positive := true
 
-	relation.Predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
+	if ok {
+		positive = false
+	}
+	predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 	if ok {
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_parenthesis)
 		for ok {
-			if len(relation.Arguments) > 0 {
+			if len(arguments) > 0 {
 
 				// second and further arguments
 				_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
@@ -421,7 +427,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				} else {
 					argument, startIndex, ok = parser.parseTerm(tokens, startIndex)
 					if ok {
-						relation.Arguments = append(relation.Arguments, argument)
+						arguments = append(arguments, argument)
 					}
 				}
 
@@ -432,7 +438,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				if !argumentFound {
 					break
 				} else {
-					relation.Arguments = append(relation.Arguments, argument)
+					arguments = append(arguments, argument)
 					startIndex = newStartIndex
 				}
 
@@ -442,6 +448,8 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_parenthesis)
 		}
 	}
+
+	relation := mentalese.NewRelation(positive, predicate, arguments)
 
 	return relation, startIndex, ok
 }

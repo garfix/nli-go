@@ -122,8 +122,8 @@ func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet,
 
 	for _, relationTemplate := range relationTemplates {
 
-		relation := mentalese.Relation{}
-		relation.Predicate = relationTemplate.Predicate
+		arguments := []mentalese.Term{}
+		predicate := relationTemplate.Predicate
 
 		for _, argument := range relationTemplate.Arguments {
 
@@ -142,9 +142,10 @@ func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet,
 				}
 			}
 
-			relation.Arguments = append(relation.Arguments, relationArgument)
+			arguments = append(arguments, relationArgument)
 		}
 
+		relation := mentalese.NewRelation(true, predicate, arguments)
 		relations = append(relations, relation)
 	}
 

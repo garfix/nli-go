@@ -32,7 +32,7 @@ func (transformer *RelationTransformer) replaceRelations(transformations []Rule,
 	for _, relation := range relationSet {
 
 		// replace inside hierarchical relations
-		deepRelation := NewRelation(relation.Predicate, relation.Arguments)
+		deepRelation := NewRelation(true, relation.Predicate, relation.Arguments)
 
 		for i, argument := range deepRelation.Arguments {
 			if argument.IsRelationSet() {

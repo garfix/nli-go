@@ -41,11 +41,11 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 		binding := bindings[i]
 		rightValue := mentalese.Term{TermType: mentalese.TermVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
 
-		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
+		relation := mentalese.NewRelation(true, "and", []mentalese.Term{
 			parentValue,
 			binding[entityVar],
 			rightValue,
-		}}
+		})
 
 		result = append(result, relation)
 		parentValue = rightValue
@@ -56,11 +56,11 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 		beforeLastBinding := bindings[len(bindings)-2]
 		lastBinding := bindings[len(bindings)-1]
 
-		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
+		relation := mentalese.NewRelation(true, "and", []mentalese.Term{
 			parentValue,
 			beforeLastBinding[entityVar],
 			lastBinding[entityVar],
-		}}
+		})
 
 		result = append(result, relation)
 
@@ -68,11 +68,11 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 
 		onlyBinding := bindings[0]
 
-		relation := mentalese.Relation{Predicate: "and", Arguments: []mentalese.Term{
+		relation := mentalese.NewRelation(true,"and", []mentalese.Term{
 			parentValue,
 			onlyBinding[entityVar],
 			onlyBinding[entityVar],
-		}}
+		})
 
 		result = append(result, relation)
 	}

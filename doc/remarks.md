@@ -1,3 +1,57 @@
+# 2020-05-30
+
+The representation of exceptions is what currently occupies me, since I found out that there were developments in this field in the last 20 years. This is post-Prolog.
+
+Answer Set Programming (ASP) is the logic programming paradigm that allows non-monotonic reasoning. I found a good paper on ASP that deals with exceptions using ASP:
+
+https://www.aaai.org/Papers/AAAI/2008/AAAI08-130.pdf
+
+"Using Answer Set Programming and Lambda Calculus to Characterize Natural Language Sentences with Normatives and Exceptions"
+-- Chi ta Baral and Juraj Dzifcak; Tran Cao Son (2008)
+
+Here's how to represent an exception in ASP
+
+    // all birds fly
+    fly(X) ← bird(X), not ¬fly(X)
+    
+    // pinguins don't fly
+    ¬fly(X) ← penguin(X)
+    
+But the first rule actually says: all birds fly (except the ones that are known to do not).    
+
+This is interesting: applying it to the SHRDLU sentence we get:
+
+    I own blocks which are not red
+
+    rule: s(P1) -> np(E1) own(P1) np(E2),     sense: learn(own(E1, E2) -> find([sem(1) sem(3)], []) not(-own(E1, E2)))
+    
+    but I don't own anything which supports a pyramid
+    
+    rule: s(P1) -> np(E1) 'don\'t' own(P1) np(E2),     sense: learn(-own(E1, E2) -> find([sem(1) sem(4)], []))
+    
+    -own(E1, E2) -> find([
+        quant(quantifier(), E1, name(E1, `:friend`)) 
+        quant(quantifier(), E2, block(E2) support(E3) pyramid(E3))
+    ], [])
+
+When teaching the system a new rule, we just have to include the `not` part as well. This can be done generically and is easy to do.
+
+The paper also gives the inverse example of
+
+    // birds don't swim (except the ones that do)
+    ¬swim(X) ← bird(X), not swim(X)
+    
+    // penguins swim
+    swim(X) ← penguin(X)
+    
+I love this paper!        
+
+This means that we don't need to extend the problem solving routine to handle exceptions. Nice! I learned something today.
+
+The problem is that I model "I own blocks which are not red" as "X owns Y if X is me and Y is a block", and so this predicate is much more generic than the sentence intends. This was not a problem in my old scheme (which was not brilliant, I admit) but it is now. Because my new implementation says "X owns Y if X is me and Y is a block except when there are known cases where X does not own Y"
+
+No, actually this is not a problem, because the exceptions do the same thing.
+
 # 2020-05-26
 
 Of course I wasn't the first to think about this, and the ideas I tried to work out yesterday are known and used for a long time.
@@ -103,7 +157,6 @@ Todo's:
 * problem solver: handle predicate 'learn' by contacting rule bases
 * problem solver: handle negative rules (when succeed, remove all bindings so far)
 * handle exceptions by determining precedence
-* rename predicate `not` to `not_found`
 * write tests
 * write documentation
 

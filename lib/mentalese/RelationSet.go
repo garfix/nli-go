@@ -131,33 +131,6 @@ func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 	return resultSet
 }
 
-// Recursively removes all relations from set whose predicates match predicate
-func (set RelationSet) RemoveMatchingPredicate(predicate string) RelationSet {
-
-	resultSet := RelationSet{}
-
-	for _, relation := range set {
-		found := false
-
-		for a, relationArgument := range relation.Arguments {
-			if relationArgument.IsRelationSet() {
-				relation = relation.Copy()
-				relation.Arguments[a].TermValueRelationSet = relationArgument.TermValueRelationSet.RemoveMatchingPredicate(predicate)
-			}
-		}
-
-		if relation.Predicate == predicate {
-			found = true
-		}
-
-		if !found {
-			resultSet = append(resultSet, relation)
-		}
-	}
-
-	return resultSet
-}
-
 // set contains variables A, B, and C
 // binding: A: X, C: Z
 // resulting set contains X (for A), Z (for C) and X22 (a new variable)
@@ -166,7 +139,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	importBinding := binding.Copy()
 
 	// find all variables
-	variables := findVariables(set)
+	variables := set.GetVariableNames()
 
 	// extend binding with extra variables in set
 	for _, variable  := range variables {
@@ -179,23 +152,6 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	// replace variables in set
 
 	return set.BindSingle(importBinding)
-}
-
-func findVariables(set RelationSet) []string {
-
-	var variables []string
-
-	for _, relation := range set {
-		for _, argument := range relation.Arguments {
-			if argument.IsVariable() {
-				variables = append(variables, argument.TermValue)
-			} else if argument.IsRelationSet() {
-				variables = append(variables, findVariables(argument.TermValueRelationSet)...)
-			}
-		}
-	}
-
-	return variables
 }
 
 var i = 0
@@ -265,6 +221,8 @@ func (set RelationSet) UnScope() RelationSet {
 
 				// recurse into the scope
 				unscoped = append(unscoped, scopedSet.UnScope()...)
+			} else if argument.IsRule() {
+				// no need for implementation
 			}
 		}
 
@@ -296,7 +254,7 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 				continue
 			}
 
-			if relation.RelationUsesVariable(activeVariable) {
+			if relation.UsesVariable(activeVariable) {
 				// mark this relation
 				markedRelationIndexes[r] = true
 				// add all variables of this relation

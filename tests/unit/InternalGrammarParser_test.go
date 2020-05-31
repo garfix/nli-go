@@ -65,4 +65,5 @@ func TestInternalGrammarParser(t *testing.T) {
 	grammar = parser.CreateGrammar("[]")
 
 	parser.CreateRelationSet("[assert(at(5, 3))]")
+	parser.CreateRelationSet("[learn(own(X, Y) :- fish(Y))]")
 }

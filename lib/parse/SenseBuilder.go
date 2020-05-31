@@ -70,6 +70,15 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 				for key, value := range childMap {
 					variableMap[key] = value
 				}
+			} else if argument.IsRule() {
+				childMap := builder.ExtendVariableMap(mentalese.RelationSet{ argument.TermValueRule.Goal }, variableMap)
+				for key, value := range childMap {
+					variableMap[key] = value
+				}
+				childMap = builder.ExtendVariableMap(argument.TermValueRule.Pattern, variableMap)
+				for key, value := range childMap {
+					variableMap[key] = value
+				}
 			}
 		}
 	}
@@ -132,6 +141,13 @@ func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet,
 			if argument.IsRelationSet() {
 
 				relationArgument.TermValueRelationSet = builder.ReplaceTerm(relationArgument.TermValueRelationSet, from, to)
+
+			} else if argument.IsRule() {
+
+				newGoals := builder.ReplaceTerm(mentalese.RelationSet{ relationArgument.TermValueRule.Goal }, from, to)
+				newPattern := builder.ReplaceTerm(relationArgument.TermValueRule.Pattern, from ,to)
+				newRule := mentalese.Rule{ Goal: newGoals[0], Pattern: newPattern }
+				relationArgument.TermValueRule = newRule
 
 			} else {
 

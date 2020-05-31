@@ -221,6 +221,10 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 
 		return newBinding, success
 
+	} else if subjectArgument.IsRule() {
+
+		panic("to be implemented")
+
 	} else {
 
 		// subject is atom, constant

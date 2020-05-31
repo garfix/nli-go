@@ -10,6 +10,7 @@ type Term struct {
 	TermValue            string
 	TermEntityType		 string
 	TermValueRelationSet RelationSet
+	TermValueRule        Rule
 }
 
 const TermVariable = "variable"
@@ -18,6 +19,7 @@ const TermStringConstant = "string"
 const TermAnonymousVariable = "anonymous"
 const TermRegExp = "regexp"
 const TermRelationSet = "relation-set"
+const TermRule = "rule"
 const TermId = "id"
 
 func NewVariable(name string) Term {
@@ -38,6 +40,10 @@ func NewPredicateAtom(value string) Term {
 
 func NewRelationSet(value RelationSet) Term {
 	return Term{ TermType: TermRelationSet, TermValue: "", TermValueRelationSet: value}
+}
+
+func NewRule(rule Rule) Term {
+	return Term{ TermType: TermRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: rule}
 }
 
 func NewId(id string, entityType string) Term {
@@ -80,6 +86,10 @@ func (term Term) IsRelationSet() bool {
 	return term.TermType == TermRelationSet
 }
 
+func (term Term) IsRule() bool {
+	return term.TermType == TermRule
+}
+
 func (term Term) Equals(otherTerm Term) bool {
 	if term.TermType != otherTerm.TermType {
 		return false
@@ -89,9 +99,28 @@ func (term Term) Equals(otherTerm Term) bool {
 	}
 	if term.TermType == TermRelationSet {
 		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
-	} else {
-		return term.TermValue == otherTerm.TermValue
 	}
+	if term.TermType == TermRule {
+		return term.TermValueRule.Equals(otherTerm.TermValueRule)
+	}
+	return term.TermValue == otherTerm.TermValue
+}
+
+func (term Term) UsesVariable(variable string) bool {
+	found := false
+	if term.IsVariable() {
+		found = found || term.TermValue == variable
+	} else if term.IsRelationSet() {
+		for _, rel := range term.TermValueRelationSet {
+			found = found || rel.UsesVariable(variable)
+		}
+	} else if term.IsRule() {
+		found = found || term.TermValueRule.Goal.UsesVariable(variable)
+		for _, rel := range term.TermValueRule.Pattern {
+			found = found || rel.UsesVariable(variable)
+		}
+	}
+	return found
 }
 
 func (term Term) AsKey() string {
@@ -106,6 +135,9 @@ func (term Term) Copy() Term {
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	}
+	if term.IsRule() {
+		newTerm.TermValueRule = term.TermValueRule.Copy()
+	}
 	return newTerm
 }
 
@@ -118,6 +150,8 @@ func (term Term) Bind(binding Binding) Term {
 		}
 	} else if term.IsRelationSet() {
 		arg.TermValueRelationSet = term.TermValueRelationSet.BindSingle(binding)
+	} else if term.IsRule() {
+		arg.TermValueRule = term.TermValueRule.BindSingle(binding)
 	}
 	return arg
 }
@@ -160,6 +194,8 @@ func (term Term) String() string {
 		s = "_"
 	case TermRelationSet:
 		s = term.TermValueRelationSet.String()
+	case TermRule:
+		s = term.TermValueRule.String()
 	case TermId:
 		s = "`" + term.TermEntityType + ":" + term.TermValue + "`"
 	default:

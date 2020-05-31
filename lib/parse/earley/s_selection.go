@@ -63,6 +63,8 @@ func getTypeFromSense(predicates mentalese.Predicates, variable string, sense me
 					sType = sTypeRecursive
 					goto end
 				}
+			} else if argument.IsRule() {
+				panic("not implemented yet")
 			}
 		}
 	}

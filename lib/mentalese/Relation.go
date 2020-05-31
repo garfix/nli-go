@@ -57,6 +57,8 @@ func (relation Relation) GetVariableNames() []string {
 			names = append(names, argument.TermValue)
 		} else if argument.IsRelationSet() {
 			names = append(names, argument.TermValueRelationSet.GetVariableNames()...)
+		} else if argument.IsRule() {
+			names = append(names, argument.TermValueRule.GetVariableNames()...)
 		}
 	}
 
@@ -114,18 +116,12 @@ func (relation Relation) BindMultiple(bindings Bindings) []Relation {
 }
 
 // check if relation uses a variable (perhaps in one of its nested arguments)
-func (relation Relation) RelationUsesVariable(variable string) bool {
+func (relation Relation) UsesVariable(variable string) bool {
 
 	var found = false
 
 	for _, argument := range relation.Arguments {
-		if argument.IsVariable() {
-			found = found || argument.TermValue == variable
-		} else if argument.IsRelationSet() {
-			for _, rel := range argument.TermValueRelationSet {
-				found = found || rel.RelationUsesVariable(variable)
-			}
-		}
+		found = found || argument.UsesVariable(variable)
 	}
 
 	return found
@@ -143,6 +139,8 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 			newArgument = NewPredicateAtom(strings.ToLower(argument.TermValue))
 		} else if argument.IsRelationSet() {
 			newArgument = NewRelationSet(argument.TermValueRelationSet.ConvertVariablesToConstants())
+		} else if argument.IsRule() {
+			newArgument = NewRule(argument.TermValueRule.ConvertVariablesToConstants())
 		}
 
 		newArguments = append(newArguments, newArgument)

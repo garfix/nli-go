@@ -551,56 +551,64 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 	term := mentalese.Term{}
 	newStartIndex := 0
 
-	relation, newStartIndex, ok = parser.parseRelation(tokens, startIndex)
+	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
 	if ok {
-		term.TermType = mentalese.TermRelationSet
-		term.TermValueRelationSet = mentalese.RelationSet{ relation }
-		startIndex = newStartIndex
+		term.TermType = mentalese.TermVariable
+		term.TermValue = tokenValue
 	} else {
-		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_number)
 		if ok {
-			term.TermType = mentalese.TermPredicateAtom
+			term.TermType = mentalese.TermStringConstant
 			term.TermValue = tokenValue
 		} else {
-			tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
+			tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
 			if ok {
-				term.TermType = mentalese.TermVariable
+				term.TermType = mentalese.TermStringConstant
 				term.TermValue = tokenValue
 			} else {
-				tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_number)
+				tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_anonymousVariable)
 				if ok {
-					term.TermType = mentalese.TermStringConstant
+					term.TermType = mentalese.TermAnonymousVariable
 					term.TermValue = tokenValue
 				} else {
-					tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+					id := ""
+					entityType := ""
+					id, entityType, startIndex, ok = parser.parseId(tokens, startIndex)
 					if ok {
-						term.TermType = mentalese.TermStringConstant
-						term.TermValue = tokenValue
+						term.TermType = mentalese.TermId
+						term.TermValue = id
+						term.TermEntityType = entityType
 					} else {
-						tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_anonymousVariable)
+						rule := mentalese.Rule{}
+						rule, newStartIndex, ok = parser.parseRule(tokens, startIndex)
 						if ok {
-							term.TermType = mentalese.TermAnonymousVariable
-							term.TermValue = tokenValue
+							term.TermType = mentalese.TermRule
+							term.TermValueRule = rule
+							startIndex = newStartIndex
 						} else {
-							id := ""
-							entityType := ""
-							id, entityType, startIndex, ok = parser.parseId(tokens, startIndex)
+							relationSet := mentalese.RelationSet{}
+							relation, newStartIndex, ok = parser.parseRelation(tokens, startIndex)
 							if ok {
-								term.TermType = mentalese.TermId
-								term.TermValue = id
-								term.TermEntityType = entityType
+								term.TermType = mentalese.TermRelationSet
+								term.TermValueRelationSet = mentalese.RelationSet{ relation }
+								startIndex = newStartIndex
 							} else {
-								relationSet := mentalese.RelationSet{}
 								relationSet, newStartIndex, ok = parser.parseRelationSet(tokens, startIndex)
 								if ok {
 									term.TermType = mentalese.TermRelationSet
 									term.TermValueRelationSet = relationSet
 									startIndex = newStartIndex
 								} else {
-									tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+									tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 									if ok {
-										term.TermType = mentalese.TermRegExp
+										term.TermType = mentalese.TermPredicateAtom
 										term.TermValue = tokenValue
+									} else {
+										tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+										if ok {
+											term.TermType = mentalese.TermRegExp
+											term.TermValue = tokenValue
+										}
 									}
 								}
 							}
@@ -610,6 +618,8 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 			}
 		}
 	}
+
+
 
 	return term, startIndex, ok
 }

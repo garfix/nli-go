@@ -17,6 +17,9 @@
 Test if this works or make it work:
 
     married_to(A, B) :- married_to(B, A);
+    
+* Allow the dynamically added rules to be saved (in the session).
+* Specify which predicates a rule base allows to be added.    
 
 ## Syntax
 

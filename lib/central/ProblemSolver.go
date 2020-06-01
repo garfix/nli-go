@@ -361,6 +361,8 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 				rule := relation.Arguments[0].TermValueRule.BindSingle(binding)
 				ruleBase.Assert(rule)
 				newBindings = append(newBindings, binding)
+				//  only add the rule to a single rulebase
+				break
 			}
 		}
 	} else if relation.Predicate == mentalese.PredicateRetract {

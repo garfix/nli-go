@@ -1,3 +1,9 @@
+# 2020-06-01
+
+Haha, it was only slow because the rule was added to all rule bases. And the blocks world demo has 4. Evaluation time of the demo is back to 0.15 seconds.
+
+I tried to find the reasons for the difference between `asserta` and `assertz` but could not find them. So for now I will not make the distinction and simply add rules at the end. Later I might want to add the possibility to specify in which rule base the rule is stored. For now I will simply take the first one.
+
 # 2020-05-31
 
 I had no idea Prolog was so complex! You can even add new rules at run-time:

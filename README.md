@@ -31,6 +31,7 @@ Some of the techniques used:
 * A dialog context to remember information from earlier in the conversation
 * Anaphora resolution: the use of pronouns and other references to earlier entities
 * Generalized quantifiers
+* The distinction between classic negation (`not`) and strong negation (`-`)
 * A generator to produce human readable responses
 
 ## Docs
@@ -39,4 +40,4 @@ Documentation is located in the docs directory, here you can find:
 
 * [My personal log](doc/remarks.md)
 * [The processing of a request](doc/manual/system-developer/processing.md)
-
+* [The work of a knowledge engineer](doc/manual/knowledge-engineer/index.md)

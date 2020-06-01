@@ -1,8 +1,9 @@
 # Changelog
 
-##
+## 1.10 strong negation - 01-06-2020
 
 * strong negation: the negation operator for relations
+* the predicate `exec` to execute a shell command
 * changed the order child sense order evaluation from post-order to pre-order
 
 ## 1.9 generalized quantifiers - 02-05-2020

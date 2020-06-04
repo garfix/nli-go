@@ -1,6 +1,6 @@
 [
     {
-        condition: hello_world(),
+        condition: intent(hello_world),
         result: _,
         responses: [
             {

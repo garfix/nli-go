@@ -15,7 +15,7 @@
 
     { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: find([sem(1) sem(3)], write(E2, E1)) }
 
-    { rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: which(E1) }
+    { rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: intent(which, E1) }
 
-    { rule: s(S1) -> interrogative(S1) '?',                                 sense: question(S1) }
+    { rule: s(S1) -> interrogative(S1) '?' }
 ]

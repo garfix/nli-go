@@ -4,14 +4,5 @@
   ],
   "solutions": [
     "hello.solution"
-  ],
-  "factbases": {
-    "relation": [
-      {
-        "name": "helloworld",
-        "facts": "hello.relation",
-        "readMap": "hello.map"
-      }
-    ]
-  }
+  ]
 }

@@ -1,10 +1,6 @@
 [
     {
-        condition: which(E1),
-        transformations: [
-            question(_) :- ;
-            which(_) :- ;
-        ],
+        condition: intent(which, E1),
         result: E1,
         responses: [
             {

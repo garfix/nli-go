@@ -53,6 +53,10 @@ Each grammar rule turns a phrase structure into a single word, or some other phr
 
 More on the grammar you can find [here](entity-grammar.md)
 
+Creating a grammar by hand is not easy. The best way to create one is to keep it as simple as you need for the sensences you need to support, and only abstract when necessary. 
+
+In the past few years I found out how to turn different types of phrases into semantic structures. These are described in [Creating a grammar](creating-a-grammar.md).   
+
 ## Extend the solutions
 
 At some point the system will say

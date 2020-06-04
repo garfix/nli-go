@@ -52,7 +52,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 		for _, node := range nodes {
 
 			// functions like join(N, ' ', F, I, L)
-			functionBinding, functionFound := matcher.MatchRelationToFunction(needleRelation, node.Binding)
+			functionBinding, functionFound := matcher.ExecuteFunction(needleRelation, node.Binding)
 			if functionFound  && functionBinding != nil {
 				newIndexes := node.Indexes
 				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
@@ -89,7 +89,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 // functions like join(N, ' ', F, I, L)
 // returns a binding with only one variable
-func (matcher *RelationMatcher) MatchRelationToFunction(needleRelation Relation, binding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) ExecuteFunction(needleRelation Relation, binding Binding) (Binding, bool) {
 
 	newBinding := Binding{}
 	resultBinding := Binding{}

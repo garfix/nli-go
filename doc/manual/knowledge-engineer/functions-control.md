@@ -1,4 +1,4 @@
-# Nested functions
+# Control functions
 
 ## And
 
@@ -29,6 +29,17 @@ A variant on the boolean function `not` that works with bindings. If executing `
     not(A)
     
 * `A`: a relation set   
+
+## Tag
+
+This relation is used by solutions to recognize types of problems.
+
+    tag(Atom, V...)
+    
+* `A`: an atom
+* `V`: zero or more variables    
+    
+A tag function always succeeds.    
 
 ## Back reference
 

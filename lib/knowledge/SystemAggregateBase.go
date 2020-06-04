@@ -29,7 +29,7 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 
 func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !validate(input, "--", base.log) {
+	if !Validate(input, "--", base.log) {
 		return mentalese.Bindings{}
 	}
 
@@ -64,7 +64,7 @@ func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings men
 
 func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !validate(input, "v", base.log) {
+	if !Validate(input, "v", base.log) {
 		return mentalese.Bindings{}
 	}
 
@@ -87,7 +87,7 @@ func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mental
 
 func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !validate(input, "", base.log) {
+	if !Validate(input, "", base.log) {
 		return mentalese.Bindings{}
 	}
 

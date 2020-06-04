@@ -127,22 +127,22 @@
 
     { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: find(sem(1), not(sem(4))) }
 
-    { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: what(E1) }
-    { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: how_many(E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: find(sem(2), [sem(3) select(E1)]) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: find(sem(2), [sem(3) select_subject(E2)]) }
-    { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: yes_no() }
-    { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: yes_no() }
+    { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: tag(what, E1) }
+    { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: tag(how_many, E1) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: find(sem(2), [sem(3) tag(select, E1)]) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: find(sem(2), [sem(3) tag(select_subject, E2)]) }
+    { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: tag(yes_no) }
+    { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: tag(yes_no) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
-    { rule: imperative_clause(P1) -> vp(P1),                                            sense: command(P1) }
+    { rule: imperative_clause(P1) -> vp(P1) }
     { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2), sense: and(C, sem(1), sem(3)) }
 
     { rule: imperative(P1) -> imperative_clause(P1) '.' }
     { rule: imperative(P1) -> imperative_clause(P1) }
 
-    { rule: s(S1) -> declarative(S1),                                       sense: declare(S1) }
-    { rule: s(S1) -> imperative(S1) }
-    { rule: s(S1) -> interrogative(S1),                                     sense: question(S1) }
+    { rule: s(S1) -> declarative(S1),                                       sense: tag(declaration) }
+    { rule: s(S1) -> imperative(S1),                                        sense: tag(command) }
+    { rule: s(S1) -> interrogative(S1),                                     sense: tag(question) }
 ]

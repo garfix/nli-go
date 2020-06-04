@@ -1,7 +1,7 @@
 [
     /* Any command */
     {
-        condition: command(_),
+        condition: tag(command),
         result: _,
         responses: [
             {
@@ -16,7 +16,7 @@
 
     /* What? */
     {
-        condition: question(_) what(B),
+        condition: tag(what, B),
         result: B,
         responses: [
             {
@@ -32,7 +32,7 @@
 
     /* How many? */
     {
-        condition: question(_) how_many(E1),
+        condition: tag(how_many, E1),
         result: E1,
         responses: [
             {
@@ -48,7 +48,7 @@
 
     /* Is one? */
     {
-        condition: question(_) select(B),
+        condition: tag(select, B),
         result: B,
         responses: [
             {
@@ -64,10 +64,7 @@
 
     /* Is supported? Yes, by ... */
     {
-        condition: question(_) select_subject(B),
-        transformations: [
-            select_subject(B) :- ;
-        ],
+        condition: tag(select_subject, B),
         result: B,
         responses: [
             {
@@ -82,7 +79,7 @@
     }
     /* Do I own? Yes: these things */
     {
-        condition: question(_) yes_no() own(_, B),
+        condition: tag(yes_no) own(_, B),
         result: B,
         responses: [
             {
@@ -96,7 +93,7 @@
         ]
     }
     {
-        condition: question(_) yes_no(),
+        condition: tag(yes_no),
         result: _,
         responses: [
             {
@@ -111,7 +108,7 @@
 
     /* Declaration */
     {
-        condition: declare(_),
+        condition: tag(declaration),
         result: _,
         responses: [
             {

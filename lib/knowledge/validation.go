@@ -6,16 +6,22 @@ import (
 	"strconv"
 )
 
-func validate(input mentalese.Relation, format string, log *common.SystemLog) bool {
+func Validate(input mentalese.Relation, format string, log *common.SystemLog) bool {
 
 	expectedLength := len(format)
 
 	for i, c := range format {
+		if c == '*' {
+			return true
+		}
 		if i >= len(input.Arguments) {
 			log.AddError("Function '" + input.Predicate + "' expects at least " + strconv.Itoa(expectedLength) + " arguments")
 			return false
 		}
 		arg := input.Arguments[i]
+		if c == 'a' && !arg.IsAtom() {
+			return false
+		}
 		if c == 'v' && !arg.IsVariable() {
 			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
 			return false

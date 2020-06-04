@@ -5,15 +5,6 @@
   "generationgrammars": [
     "en_US/write.grammar"
   ],
-  "factbases": {
-    "relation": [
-      {
-        "name": "system-relations",
-        "facts": "core.relation",
-        "readMap": "core-db.map"
-      }
-    ]
-  },
   "rulebases": [
     "dbpedia.rule"
   ],

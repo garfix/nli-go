@@ -8,11 +8,6 @@
   "factbases": {
     "relation": [
       {
-        "name": "system-relations",
-        "facts": "db/core.relation",
-        "readMap": "db/core-db.map"
-      },
-      {
         "name": "shrdlu",
         "facts": "db/blocks.relation",
         "readMap": "db/read-db.map",
@@ -28,6 +23,5 @@
   ],
   "solutions": [
     "blocks.solution"
-  ],
-  "predicates": "predicates.json"
+  ]
 }

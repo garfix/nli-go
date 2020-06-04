@@ -33,7 +33,7 @@ func (base *ShellBase) exec(input mentalese.Relation, binding mentalese.Binding)
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "S", base.log) {
+	if !Validate(bound, "S", base.log) {
 		return nil
 	}
 
@@ -60,7 +60,7 @@ func (base *ShellBase) execResponse(input mentalese.Relation, binding mentalese.
 	bound := input.BindSingle(binding)
 	responseVar := input.Arguments[0].TermValue
 
-	if !validate(bound, "vS", base.log) {
+	if !Validate(bound, "vS", base.log) {
 		return nil
 	}
 

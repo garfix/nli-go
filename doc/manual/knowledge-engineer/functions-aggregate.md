@@ -39,4 +39,4 @@ returns `[{Name:'Babbage'}]`
 
 Checks if there currently are any bindings. The function doesn't actually do anything. It is a filler for the condition clause in a solution.
 
-    exists(E1)
+    exists()

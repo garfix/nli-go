@@ -53,6 +53,8 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 		for i, solution := range allSolutions {
 
+			answerer.log.AddProduction("Solution", solution.Condition.String())
+
 			// apply transformation, if available
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
 

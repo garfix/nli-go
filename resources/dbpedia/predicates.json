@@ -9,11 +9,9 @@
   "has_husband": {"entityTypes": ["person", "person"] },
   "has_wife": {"entityTypes": ["person", "person"] },
   "marry": { "entityTypes": ["event", "person", "person"] },
-  "how_old": { "entityTypes": ["person"] },
   "bear": { "entityTypes": ["event", "person", "person"] },
   "die": { "entityTypes": ["event", "person"] },
-  "who": { "entityTypes": ["person"] },
-  "describe": { "entityTypes": ["person"] },
   "she": { "entityTypes": ["person"] },
-  "he": { "entityTypes": ["person"] }
+  "he": { "entityTypes": ["person"] },
+  "person": { "entityTypes": ["person"] }
 }

@@ -1,3 +1,7 @@
+# 2020-06-04
+
+I am removing the need for a "core database" with silly dummy relations. It is replaced by "intent" relations.
+
 # 2020-06-01
 
 Haha, it was only slow because the rule was added to all rule bases. And the blocks world demo has 4. Evaluation time of the demo is back to 0.15 seconds.

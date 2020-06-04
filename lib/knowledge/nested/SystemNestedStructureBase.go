@@ -28,6 +28,7 @@ func NewSystemNestedStructureBase(solver *central.ProblemSolver, dialogContext *
 
 func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 	predicates := []string{
+		mentalese.PredicateTag,
 		mentalese.PredicateDo,
 		mentalese.PredicateFind,
 		mentalese.PredicateCall,
@@ -45,10 +46,34 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
+func (base *SystemNestedStructureBase) sort(input mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	if !knowledge.Validate(input, "va", base.log) {
+		return nil
+	}
+
+	return mentalese.Bindings{ binding }
+}
+
+func (base *SystemNestedStructureBase) tag(input mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	bound := input.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "a*", base.log) {
+		return nil
+	}
+
+	return mentalese.Bindings{ binding }
+}
+
 func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	var newBindings mentalese.Bindings
 
-	if relation.Predicate == mentalese.PredicateBackReference {
+	if relation.Predicate == mentalese.PredicateTag {
+
+		newBindings = base.tag(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateBackReference {
 
 		newBindings = base.SolveBackReference(relation, binding)
 

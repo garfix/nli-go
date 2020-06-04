@@ -33,7 +33,7 @@ func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentales
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "ssV", base.log) {
+	if !Validate(bound, "ssV", base.log) {
 		return nil
 	}
 
@@ -51,7 +51,7 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "vsS", base.log) {
+	if !Validate(bound, "vsS", base.log) {
 		return nil
 	}
 
@@ -72,7 +72,7 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "vS", base.log) {
+	if !Validate(bound, "vS", base.log) {
 		return nil
 	}
 
@@ -91,7 +91,7 @@ func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding me
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "ii", base.log) {
+	if !Validate(bound, "ii", base.log) {
 		return nil
 	}
 
@@ -109,7 +109,7 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "ii", base.log) {
+	if !Validate(bound, "ii", base.log) {
 		return nil
 	}
 
@@ -127,7 +127,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "iiv", base.log) {
+	if !Validate(bound, "iiv", base.log) {
 		return nil
 	}
 
@@ -146,7 +146,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "iiv", base.log) {
+	if !Validate(bound, "iiv", base.log) {
 		return nil
 	}
 
@@ -164,7 +164,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "--", base.log) {
+	if !Validate(bound, "--", base.log) {
 		return nil
 	}
 
@@ -177,7 +177,7 @@ func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentale
 
 func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 
-	if !validate(input, "--", base.log) {
+	if !Validate(input, "--", base.log) {
 		return nil
 	}
 
@@ -199,7 +199,7 @@ func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding ment
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "--", base.log) {
+	if !Validate(bound, "--", base.log) {
 		return nil
 	}
 
@@ -214,7 +214,7 @@ func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding ment
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "v", base.log) {
+	if !Validate(bound, "v", base.log) {
 		return nil
 	}
 
@@ -231,7 +231,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 
 	bound := input.BindSingle(binding)
 
-	if !validate(bound, "ssv", base.log) {
+	if !Validate(bound, "ssv", base.log) {
 		return nil
 	}
 

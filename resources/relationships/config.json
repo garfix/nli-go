@@ -8,11 +8,6 @@
   "factbases": {
     "relation": [
       {
-        "name": "system-relations",
-        "facts": "core.relation",
-        "readMap": "core-db.map"
-      },
-      {
         "name": "relations",
         "facts": "db/relationships.relation",
         "readMap": "db/relationships-db.map",

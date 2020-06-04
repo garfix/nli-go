@@ -1,6 +1,6 @@
 [
     {
-        condition: tag(who, A) marry(P1, A, B),
+        condition: intent(who, A) marry(P1, A, B),
         result: A,
         responses: [
             {
@@ -14,7 +14,7 @@
         ]
     }
     {
-        condition: tag(yes_no) marry(P1, A, B),
+        condition: intent(yes_no) marry(P1, A, B),
         result: _,
         responses: [
             {
@@ -27,7 +27,7 @@
         ]
     }
     {
-        condition: tag(yes_no) siblings(A, B),
+        condition: intent(yes_no) siblings(A, B),
         result: _,
         responses: [
             {
@@ -40,7 +40,7 @@
         ]
     }
     {
-        condition: tag(how_many, A) have_child(B, A),
+        condition: intent(how_many, A) have_child(B, A),
         result: A,
         responses: [
             {
@@ -54,7 +54,7 @@
         ]
     }
     {
-        condition: tag(which, A) have_child(B, A),
+        condition: intent(which, A) have_child(B, A),
         result: A,
         responses: [
             {
@@ -68,7 +68,7 @@
         ]
     }
     {
-        condition: tag(yes_no) have_child(B, A) every(B),
+        condition: intent(yes_no) have_child(B, A) every(B),
         result: B,
         responses: [
             {
@@ -81,7 +81,7 @@
         ]
     }
     {
-        condition: tag(yes_no) have_child(B, A),
+        condition: intent(yes_no) have_child(B, A),
         result: _,
         responses: [
             {

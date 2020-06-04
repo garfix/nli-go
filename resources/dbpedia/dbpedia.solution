@@ -1,7 +1,7 @@
 [
     /* Who married X? */
     {
-        condition: tag(who, A) marry(_, A, B),
+        condition: intent(who, A) marry(_, A, B),
         result: A,
         responses: [
             {
@@ -17,7 +17,7 @@
 
     /* Was X married to Y? */
     {
-        condition: tag(yes_no) marry(_, A, B),
+        condition: intent(yes_no) marry(_, A, B),
         result: _,
         responses: [
             {
@@ -32,7 +32,7 @@
 
     /* How many children had X? (counting the children) */
     {
-        condition: tag(how_many, B) have_child(A, B),
+        condition: intent(how_many, B) have_child(A, B),
         result: B,
         responses: [
             {
@@ -48,7 +48,7 @@
 
     /* How many? */
     {
-        condition: tag(how_many, B),
+        condition: intent(how_many, B),
         result: B,
         responses: [
             {
@@ -64,7 +64,7 @@
 
     /* How many children had X? (using a number-of-children attribute) */
     {
-        condition: tag(how_many, B) have_child(A, B),
+        condition: intent(how_many, B) have_child(A, B),
         transformations: [
             have_child(A, B) :- have_n_children(A, Number);
         ],
@@ -83,7 +83,7 @@
 
     /* Who was X's father? */
     {
-        condition: tag(who, B) has_father(A, B),
+        condition: intent(who, B) has_father(A, B),
         result: B,
         responses: [
             {
@@ -99,7 +99,7 @@
 
     /* Who was X's mother? */
     {
-        condition: tag(who, B) has_mother(A, B),
+        condition: intent(who, B) has_mother(A, B),
         result: B,
         responses: [
             {
@@ -115,7 +115,7 @@
 
     /* When was X born? */
     {
-        condition: tag(when, P1) bear(P1, A, B),
+        condition: intent(when, P1) bear(P1, A, B),
         transformations: [
             bear(P1, A, B) :- birth_date(B, Ymd);
         ],
@@ -134,7 +134,7 @@
 
     /* When did X die? */
     {
-        condition: tag(when, P1) die(P1, A),
+        condition: intent(when, P1) die(P1, A),
         transformations: [
             die(P1, A) :- death_date(A, Ymd);
         ],
@@ -153,7 +153,7 @@
 
     /* When? */
     {
-        condition: tag(when, Ymd),
+        condition: intent(when, Ymd),
         result: _,
         responses: [
             {
@@ -170,7 +170,7 @@
     /* Who is the husband of X? */
     /* Who is the wife of X? */
     {
-        condition: tag(who, B),
+        condition: intent(who, B),
         result: B,
         responses: [
             {
@@ -186,7 +186,7 @@
 
     /* Who is X? */
     {
-        condition: tag(describe, B),
+        condition: intent(describe, B),
         result: B,
         responses: [
             {
@@ -202,7 +202,7 @@
 
     /* What is the population of X? */
     {
-        condition: tag(what, B) has_population(E1, B),
+        condition: intent(what, B) has_population(E1, B),
         result: _,
         responses: [
             {
@@ -217,7 +217,7 @@
 
     /* What is the capital of X? */
     {
-        condition: tag(what, B),
+        condition: intent(what, B),
         result: B,
         responses: [
             {
@@ -233,9 +233,9 @@
 
     /* How old is X? */
     {
-        condition: tag(how_old, E1),
+        condition: intent(how_old, E1),
         transformations: [
-            tag(how_old, E1) :- birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
+            intent(how_old, E1) :- birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
         ],
         result: _,
         responses: [

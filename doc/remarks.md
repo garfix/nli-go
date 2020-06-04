@@ -2,6 +2,20 @@
 
 I am removing the need for a "core database" with silly dummy relations. It is replaced by "intent" relations.
 
+Why you would first write
+
+    { rule: s(S1) -> interrogative(S1),                                     sense: question(_) }
+    
+you can now write
+
+    { rule: s(S1) -> interrogative(S1),                                     sense: intent(question) }
+    
+The difference is that `intent` always succeeded, so there's no need to remove it, or create a dummy database entry for it (the dummy core database files that existed).
+
+I am writing documentation, and it's hard for me to write down how silly some things are, better to fix them right away.
+
+`intent` describes much better what there relations do: they help the system find the right solution.        
+
 # 2020-06-01
 
 Haha, it was only slow because the rule was added to all rule bases. And the blocks world demo has 4. Evaluation time of the demo is back to 0.15 seconds.

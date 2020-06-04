@@ -30,16 +30,16 @@ A variant on the boolean function `not` that works with bindings. If executing `
     
 * `A`: a relation set   
 
-## Tag
+## Intent
 
 This relation is used by solutions to recognize types of problems.
 
-    tag(Atom, V...)
+    intent(Atom, V...)
     
 * `A`: an atom
 * `V`: zero or more variables    
     
-A tag function always succeeds.    
+An intent function has no effect; it always succeeds.    
 
 ## Back reference
 

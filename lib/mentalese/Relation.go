@@ -24,7 +24,7 @@ const PredicateName = "name"
 const PredicateText = "text"
 const PredicateAssert = "assert"
 const PredicateRetract = "retract"
-const PredicateTag = "tag"
+const PredicateIntent = "intent"
 const PredicateBackReference = "back_reference"
 const PredicateDefiniteBackReference = "definite_reference"
 

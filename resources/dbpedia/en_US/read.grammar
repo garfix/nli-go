@@ -77,16 +77,16 @@
     { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: find(sem(1), marry(P1, E1, E2)) }
     { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: find([sem(1) sem(4)], marry(P1, E1, E2)) }
 
-    { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: tag(who, E1) }
-    { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: tag(describe, E1) person(E1) }
-    { rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np_poss(E1),    sense: tag(who, E1) }
-    { rule: interrogative(P1) -> 'who' copula(_) np_poss(E1),               sense: tag(who, E1) person(E1) }
-    { rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: tag(when, P1) }
-    { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: tag(how_many, E1) }
-    { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: find(sem(4), tag(how_old, E1)) person(E1) }
-    { rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   sense: tag(yes_no) }
-    { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: find(sem(3), tag(what, E1)) }
+    { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: intent(who, E1) }
+    { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: intent(describe, E1) person(E1) }
+    { rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np_poss(E1),    sense: intent(who, E1) }
+    { rule: interrogative(P1) -> 'who' copula(_) np_poss(E1),               sense: intent(who, E1) person(E1) }
+    { rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: intent(when, P1) }
+    { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: intent(how_many, E1) }
+    { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: find(sem(4), intent(how_old, E1)) person(E1) }
+    { rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   sense: intent(yes_no) }
+    { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: find(sem(3), intent(what, E1)) }
 
     { rule: interrogative(S1) -> interrogative(S1) '?' }
-    { rule: s(S1) -> interrogative(S1),                                     sense: tag(question) }
+    { rule: s(S1) -> interrogative(S1),                                     sense: intent(question) }
 ]

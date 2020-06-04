@@ -46,12 +46,12 @@
 
     { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: find([ sem(1) quant(sem(3), E2, sem(4)) ], have_child(E1, E2)) }
 
-    { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: tag(who, E1) }
-    { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: tag(which, E1) }
-    { rule: interrogative(P1) -> 'how' 'many' how_many_clause(E1),            sense: tag(how_many, E1) }
-    { rule: interrogative(P1) -> aux_do(_) subject_complement_clause2(P1),    sense: tag(yes_no) }
-    { rule: interrogative(P1) -> copula(_) copula_clause(P1),                 sense: tag(yes_no) }
+    { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: intent(who, E1) }
+    { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: intent(which, E1) }
+    { rule: interrogative(P1) -> 'how' 'many' how_many_clause(E1),            sense: intent(how_many, E1) }
+    { rule: interrogative(P1) -> aux_do(_) subject_complement_clause2(P1),    sense: intent(yes_no) }
+    { rule: interrogative(P1) -> copula(_) copula_clause(P1),                 sense: intent(yes_no) }
 
     { rule: interrogative(S1) -> interrogative(S1) '?' }
-    { rule: s(S1) -> interrogative(S1),                                       sense: tag(question) }
+    { rule: s(S1) -> interrogative(S1),                                       sense: intent(question) }
 ]

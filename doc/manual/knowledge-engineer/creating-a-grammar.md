@@ -10,13 +10,13 @@ At the sentence level there are three types of sentences: interrogative (questio
 
 This then, is basically how one starts a grammar that needs these three types of sentences:
 
-    { rule: s(S1) -> declarative(S1),                                       sense: declare(S1) }
-    { rule: s(S1) -> imperative(S1),                                        sense: command(S1) }
-    { rule: s(S1) -> interrogative(S1),                                     sense: question(S1) }
+    { rule: s(S1) -> declarative(S1),                                       sense: intent(declare) }
+    { rule: s(S1) -> imperative(S1),                                        sense: intent(command) }
+    { rule: s(S1) -> interrogative(S1),                                     sense: intent(question) }
 
 As in the rest of this document, you may not need all these rules. Just pick the ones you need and add others later. The art of creating a grammar is to use as few rules as you need, but no less ;)
 
-Note that the head is formed by the build-in top-level node `s(S1)`. All sentences start with this node, and this node is _rewritten_ to one or more other nodes. Together they form a syntax tree. The `sense` you see is attached to the node that is formed by the head of the rule.
+Note that the head is formed by the build-in top-level node `s(S1)`. All sentences start with this node, and this node is _rewritten_ to one or more other nodes. Together they form a syntax tree. The `sense` you see is attached to the node that is formed by the head of the rule. `intent` relations are used by solutions to recognize certain types of sentences. When executed they always succeed.
 
 It is important to note that a sentence can be interogative in a syntactic sense, while being a command in the semantic sense. "Can you please shut the door?" is not useful as a question. And this form of sentence must the rewritten as `imperative`, since the sense must be a `command`.
 
@@ -38,13 +38,13 @@ There are many types of questions. The type of question is determined by the way
 
 I don't think I found the ultimate way to represent questions, but what I'd like to do is to create a main rewrite rule for the fixed structure:
 
-    { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: yes_no() }
+    { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: intent(yes_no) }
     
 and then refine the changing part in a separate rule:
 
     { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: find([sem(1) sem(3)], sem(2)) }
     
-The first rule states that these type of questions start with "do" and that they are yes/no questions, which means that their answer is a simple yes or no. The `yes_no()` in the sense of the rule is a kind of tag that is used by the solution to recognize the type of sentence.
+The first rule states that these type of questions start with "do" and that they are yes/no questions, which means that their answer is a simple yes or no. The `intent(yes_no)` in the sense of the rule is a kind of tag that is used by the solution to recognize the type of sentence.
 
 The seconde rule says that the changing part has a NP, a VP and another NP.
 

@@ -131,6 +131,43 @@ A pronoun refers to an entity and can be represented thus:
     { rule: pronoun(E1) -> 'you',                                          sense: you(E1) }
     { rule: pronoun(E1) -> 'i',                                            sense: i(E1) }
     { rule: pronoun(E1) -> 'it',                                           sense: back_reference(E1, []) }
+    
+## Proper nouns
+
+Proper nouns, or names of things and people, are treated specially. They are not looked up in the grammar, but in the database. And this takes some extra work:
+
+Here are the basics:
+
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) }
+
+    { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, []) }
+    
+Since this is an NP, it needs a quantifer; let's use the all-quantor.
+
+The group exists of 1, 2 or 3 words, hence 3 rules. Do not use recursion. This is a heavy operation that uses much database access, so we don't want to try more words than necessary.
+
+At the moment the `proper_noun_group` is processed, the parser has received top-down information about the entity type of the holder of the name. The parser knows that it is the name of a person. How? 
+
+Let's have an example:
+
+    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                                sense: find(sem(3), has_daughter(E2, E1)) }
+    
+Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "predicates.json":
+
+    "has_daughter": {"entityTypes": ["person", "person"] },
+    
+With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (entities.json) to understand how to query the name in the knowledge base:
+
+     "person": {
+        "name": "person_name(Id, Name)",
+        "knownby": {
+          "description": "description(Id, Value)"
+        }
+      },
+        
+It uses the "name" property to find the relation needed to find out the id of the entity, given its name. "knownby" is used only for disambiguation. The system can ask the user "This Charles Babbage" or "That Charles Babbage"?                                 
   
 ## Determininer phrases
 
@@ -207,6 +244,10 @@ In this example, the variable `N1` is replaced by the number in the relationizat
     equals(Result, 22)
     
 given that the word "22" was used in the sentence.    
+
+## Other open ended word forms
+
+Other open-ended word forms can be treated with regular expression, like numbers. But one would need a different tokenizer.
 
 ## Conjunctions
 

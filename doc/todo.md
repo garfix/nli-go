@@ -1,5 +1,6 @@
 # Todo
 
+* Allow the tokenizer regexp to be configurable by the user. 
 * should boolean functions have P1 as argument? different or for read/write?
 * relation set => not [] brackets
 * check if the nested functions are called correctly

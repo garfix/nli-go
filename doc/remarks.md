@@ -1,3 +1,7 @@
+# 2020-06-06
+
+I wrote about how to create a grammar in "creating-a-grammar.md". 
+
 # 2020-06-04
 
 I am removing the need for a "core database" with silly dummy relations. It is replaced by "intent" relations.

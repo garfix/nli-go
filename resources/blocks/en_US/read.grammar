@@ -129,8 +129,8 @@
 
     { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: intent(what, E1) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: intent(how_many, E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: find(sem(2), [sem(3) intent(select, E1)]) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: find(sem(2), [sem(3) intent(select_subject, E2)]) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: intent(select, E1) find(sem(2), sem(3)) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: intent(select_subject, E2) find(sem(2), sem(3)) }
     { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: intent(yes_no) }
     { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: intent(yes_no) }
 

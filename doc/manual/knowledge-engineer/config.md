@@ -8,6 +8,12 @@ A relative path in a config files has that config file as its base.
  
 ## Sections
 
+### tokenizer
+
+You can name the regular expression used to tokize a sentence if you are not satisfied with the standard expression. For example
+
+    "tokenizer": "([_0-9a-zA-Z]+|[^\\s])"
+
 ### grammars
  
  "grammars" is an array of file paths of grammars.

@@ -37,7 +37,15 @@ Create an automated test for all the new question and its expected answer.
 
 This allows you to go through the following phases quickly without having to enter the question again and again.
 
-When you try to add a new question, it is possible that you break earlier question / answers. So you need to run the previous tests as well.   
+When you try to add a new question, it is possible that you break earlier question / answers. So you need to run the previous tests as well.
+
+## Change the regular expression for the tokenizer
+
+The standard tokenizer expression creates tokens of all adjoining wordlike-characters: "apple", "11", "c64". All other characters each get a separate token: "?", "'", "-". This works fine for simple words, but if you need email addresses or other complex forms as single tokens, you need to create a custom regular expression. 
+
+You can name the regular expression used to tokize a sentence if you are not satisfied with the standard expression. For example
+
+    "tokenizer": "([_0-9a-zA-Z]+|[^\\s])"   
 
 ## Extend the grammar
 

@@ -10,7 +10,7 @@ import (
 func TestTokenizer(test *testing.T) {
 
 	log := common.NewSystemLog(false)
-	tokenizer := parse.NewTokenizer(log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
 
 	tests := []struct {
 		input            string

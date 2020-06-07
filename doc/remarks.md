@@ -1,3 +1,7 @@
+# 2020-06-07
+
+I made is possible to change the tokenizer regular expression in the config.md. 
+
 # 2020-06-06
 
 I wrote about how to create a grammar in "creating-a-grammar.md". 

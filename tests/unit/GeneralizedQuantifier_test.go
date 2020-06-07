@@ -62,7 +62,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	solver.AddNestedStructureBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
-	tokenizer := parse.NewTokenizer(log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
 	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
 	parser := earley.NewParser(grammar, nameResolver, predicates, log)
 

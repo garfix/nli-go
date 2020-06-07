@@ -39,7 +39,7 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 
 	system.grammar = parse.NewGrammar()
 	system.generationGrammar = parse.NewGrammar()
-	system.tokenizer = parse.NewTokenizer(builder.log)
+	system.tokenizer = builder.CreateTokenizer(config.Tokenizer)
 	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
 
@@ -86,6 +86,17 @@ func (builder systemBuilder) BuildFromConfig(system *system, config systemConfig
 	for _, solutionBasePath := range config.Solutions {
 		builder.ImportSolutionBaseFromPath(system, solutionBasePath)
 	}
+}
+
+func (builder systemBuilder) CreateTokenizer(configExpression string) *parse.Tokenizer {
+
+	expression := parse.DefaultTokenizerExpression
+
+	if configExpression != "" {
+		expression = configExpression
+	}
+
+	return parse.NewTokenizer(expression, builder.log)
 }
 
 func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates, bool) {

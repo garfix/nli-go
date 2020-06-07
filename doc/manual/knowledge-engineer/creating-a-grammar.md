@@ -247,7 +247,7 @@ given that the word "22" was used in the sentence.
 
 ## Other open ended word forms
 
-Other open-ended word forms can be treated with regular expression, like numbers. But one would need a different tokenizer.
+Other open-ended word forms can be treated with regular expression, like numbers. You may need to change the regular expression for the tokenizer to create separate tokens for this. You can set one with the field "tokenizer" in the config.json.
 
 ## Conjunctions
 

@@ -56,6 +56,7 @@ type factBases struct {
 
 type systemConfig struct {
 	ParentConfig       string
+	Tokenizer          string
 	Grammars           []string
 	Rulebases          []string
 	Factbases          factBases
@@ -74,6 +75,7 @@ func (firstConfig systemConfig) Merge(secondConfig systemConfig) systemConfig {
 
 	newConfig := systemConfig{
 		ParentConfig: secondConfig.ParentConfig,
+		Tokenizer: secondConfig.Tokenizer,
 		Grammars: append(firstConfig.Grammars, secondConfig.Grammars...),
 		Rulebases: append(firstConfig.Rulebases, secondConfig.Rulebases...),
 		Factbases: factBases {

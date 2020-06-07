@@ -34,7 +34,7 @@ func TestEarleyParser(test *testing.T) {
 	log := common.NewSystemLog(false)
 
 	rawInput := "the small shy girl speaks up"
-	tokenizer := parse.NewTokenizer(log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
 
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()

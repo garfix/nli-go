@@ -109,22 +109,35 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 
 func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, isReference bool) bool {
 
-	if !quant.Arguments[mentalese.QuantQuantifierIndex].IsRelationSet() ||
-		len(quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet) != 1 ||
-		quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet[0].Predicate != mentalese.PredicateQuantifier {
+	firstArgument := quant.Arguments[mentalese.QuantQuantifierIndex]
+
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+
+	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
+	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
+
+	// special case: the existential quantifier `some`
+	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.PredicateQuantifierSome {
+		if scopeCount == 0 {
+			base.log.AddProduction("Do/Find", "Quantifier Some mismatch: no results")
+			return false
+		} else {
+			return true
+		}
+	}
+
+	if !firstArgument.IsRelationSet() ||
+		len(firstArgument.TermValueRelationSet) != 1 ||
+		firstArgument.TermValueRelationSet[0].Predicate != mentalese.PredicateQuantifier {
 		base.log.AddError("First argument of a `quant` must be a `quantifier`")
 		return false
 	}
 
 	quantifier := quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet[0]
-	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 
 	scopeCountVariable := quantifier.Arguments[mentalese.QuantifierResultCountVariableIndex].TermValue
 	rangeCountVariable := quantifier.Arguments[mentalese.QuantifierRangeCountVariableIndex].TermValue
 	quantifierSet := quantifier.Arguments[mentalese.QuantifierSetIndex].TermValueRelationSet
-
-	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
-	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
 
 	rangeVal := mentalese.NewString(strconv.Itoa(rangeCount))
 	resultVal := mentalese.NewString(strconv.Itoa(scopeCount))

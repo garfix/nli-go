@@ -23,7 +23,7 @@
             unify(Q1, quant(_, E1, _))
             block(E1)
             do_cleartop(E1)
-            or(
+            xor(
                 _,
                 [
                     at(Base, X, Y, _) cleartop(Base) /* find the topmost object on the stack */

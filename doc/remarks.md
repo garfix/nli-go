@@ -1,6 +1,45 @@
+# 2020-06-09
+
+This could be a solution
+
+    find(max, Q, S)             // the old `find`, find as much as possible
+    find(min, Q, S)             // the old `do`, stop at the minimal amount necessary
+    find(inherit, Q, S)         // nested scopes: inherit from parent find
+    
+===
+
+I made a better implementation for the operator `or` and added `xor`. I also added the atom `some` as a shortcut for the existential quantifier.
+
+# 2020-06-08
+
+This appeared to be a solution
+
+    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1,
+                                                                                union(_, find(sem(1), []), find(sem(3), []))) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1,
+                                                                                or(_, find(sem(2), []), find(sem(4), []))) }
+
+introducing the operator `union` because I wanted to _combine_ the results of the two `find`s, not `and` them. But there's another problem: I should be using `do` here in stead of `find` because this quantified entity is used in an imperative context. Except: how could I know? 
+
 # 2020-06-07
 
-I made is possible to change the tokenizer regular expression in the config.md. 
+I made it possible to change the tokenizer regular expression in the config.md.
+
+===
+
+SHRDLU interaction 17:
+    
+    "Will you please stack up both of the red blocks and either a green cube or a pyramid?"
+    
+    "OK"
+    
+Winograd notices: "Logical connectives such as "and" "or" "either" etc. are handled in both the grammar and semantics. A command is executed even if it looks like a question. The command is carried out by the following steps: It puts a green cube on the large red block (note that it chooses the green cube with nothing on it), then removes the small pyramid from the little red cube, so that it can use that cube to complete the stack as specified."
+
+The existing code should now be able to handle most of this relatively easy. I am picking out the aside "note that it chooses the green cube with nothing on it". This is a remark that Winograd has made in other places: the solver tries to solve the problem in the most efficient way. This looks problematic.      
+
+The red blocks are b1 and b6. Both green blocks b3 and b7 are cubes.   
+
+At second glance, the use of 'and' and 'or' for np's is also new.
 
 # 2020-06-06
 

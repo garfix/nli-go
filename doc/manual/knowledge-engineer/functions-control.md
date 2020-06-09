@@ -13,14 +13,22 @@ A variant on the boolean function `and` that works with bindings.
 
 ## Or
 
-A variant on the boolean function `or` that works with bindings.
+A variant on the boolean function `or` that works with bindings. This is the only operator that can yield more bindings than each of its children.
 
     or(P1, A, B)
     
 * `A`: a relation set
 * `B`: a relation set    
 
-`or(C1, A, B)` processes `A` first. If it yields results, `or` stops. Otherwise it processes `B`.
+`or(C1, A, B)` processes both `A` and `B`. The bindings of both are combined and doubles are removed.
+
+## Xor
+
+A variant on the boolean function `xor` that works with bindings. Resolves either A or B, and returns the results of the first successful one. 
+
+    xor(P1, A, B)
+    
+`xor(C1, A, B)` processes `A` first. If it yields results, `xor` stops. Otherwise it processes `B`.     
 
 ## Not
 

@@ -34,6 +34,7 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateCall,
 		mentalese.PredicateAnd,
 		mentalese.PredicateOr,
+		mentalese.PredicateXor,
 		mentalese.PredicateNot,
 		mentalese.PredicateBackReference,
 		mentalese.PredicateDefiniteBackReference}
@@ -92,6 +93,10 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 	} else if relation.Predicate == mentalese.PredicateAnd {
 
 		newBindings = base.SolveAnd(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateXor {
+
+		newBindings = base.SolveXor(relation, binding)
 
 	} else if relation.Predicate == mentalese.PredicateOr {
 

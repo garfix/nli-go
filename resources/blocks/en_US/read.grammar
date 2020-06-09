@@ -5,6 +5,7 @@
     { rule: quantifier(Result, Range) -> 'all',                            sense: equals(Result, Range) }
     { rule: quantifier(Result, Range) -> an(_),                            sense: greater_than(Result, 0) }
     { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: greater_than(Result, 0) }
+    { rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: equals(Result, 2) }
     { rule: quantifier(Result, Range) -> number(N1),                       sense: equals(Result, N1) }
     { rule: quantifier(Result, Range) -> 'two',                            sense: equals(Result, 2) }
 
@@ -72,10 +73,11 @@
 
     { rule: np(E1) -> qp(_) nbar(E1),                                      sense: quant(sem(1), E1, sem(2)) }
     { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(quantifier(Result, Range, equals(Result, 1)), E1, [definite_reference(E1, sem(2)) ]) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
-    { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
-
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(some, E1, sem(1)) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(some, E1, sem(1)) }
+    { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(some, E1, sem(1)) }
+    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: quant(some, E1, or(_, do(sem(1), []), find(sem(3), []))) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: quant(some, E1, xor(_, do(sem(2), []), find(sem(4), []))) }
     { rule: nbar(E1) -> nbar(E1) pp(E1) }
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
@@ -85,6 +87,7 @@
     { rule: noun(E1) -> 'one',                                             sense: object(E1) }
     { rule: noun(E1) -> 'anything',                                        sense: object(E1) }
     { rule: noun(E1) -> 'block',                                           sense: block(E1) }
+    { rule: noun(E1) -> 'cube',                                            sense: cube(E1) }
     { rule: noun(E1) -> 'blocks',                                          sense: block(E1) }
     { rule: noun(E1) -> 'pyramid',                                         sense: pyramid(E1) }
     { rule: noun(E1) -> 'pyramids',                                        sense: pyramid(E1) }
@@ -140,6 +143,7 @@
     { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2), sense: and(C, sem(1), sem(3)) }
 
     { rule: imperative(P1) -> imperative_clause(P1) '.' }
+    { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }
     { rule: imperative(P1) -> imperative_clause(P1) }
 
     { rule: s(S1) -> declarative(S1),                                       sense: intent(declaration) }

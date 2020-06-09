@@ -8,6 +8,7 @@
     height(E, H) :- size(E, _, _, H);
     width(E, W) :- size(E, W, _, _);
     big(E) :- size(E, Width, Length, Height) greater_than(Width, 128) greater_than(Length, 128) greater_than(Height, 128);
+    cube(E) :- block(E) size(E, Width, Length, Height) equals(Width, Length) equals(Length, Height);
     taller(A, B) :- height(A, Ha) height(B, Hb) greater_than(Ha, Hb);
     narrower(A, B) :- width(A, Wa) width(B, Wb) less_than(Wa, Wb);
 ]

@@ -121,6 +121,10 @@ Here is how quantifiers are modelled:
     { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: greater_than(Result, 0) }
     { rule: quantifier(Result, Range) -> number(N1),                       sense: equals(Result, N1) }
     { rule: quantifier(Result, Range) -> 'two',                            sense: equals(Result, 2) }
+    
+Since the quantifier `quantifier(Result, Range, greater_than(Result, 0))` (i.e. the existential quantifier) is very common, and may be needed in multiple places, you can use the atom `some` in its place. For example:
+
+    quant(some, E1, sem(1))
       
 ## Pronouns
 

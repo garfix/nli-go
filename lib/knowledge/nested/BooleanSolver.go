@@ -44,12 +44,25 @@ func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, bi
 	newBindings := mentalese.Bindings{binding}
 
 	firstBindings := base.solver.SolveRelationSet(first, newBindings)
-
-	if len(firstBindings) != 0 {
-		return firstBindings
-	}
-
 	secondBindings := base.solver.SolveRelationSet(second, newBindings)
 
-	return secondBindings
+	result := append(firstBindings, secondBindings...)
+
+	return result.UniqueBindings()
+}
+
+func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
+	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
+
+	newBindings := mentalese.Bindings{binding}
+
+	firstBindings := base.solver.SolveRelationSet(first, newBindings)
+
+	if len(newBindings) == 0 {
+		newBindings = base.solver.SolveRelationSet(second, firstBindings)
+	}
+
+	return newBindings
 }

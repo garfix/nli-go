@@ -44,18 +44,15 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
 
 	scopeBindings := mentalese.Bindings{}
-	resultCount := 0
 
 	if len(quants) == 1 {
 		scopeBindings = base.solveScope(quant, scopeSet, rangeBindings, continueAfterEnough)
-		resultCount = len(scopeBindings)
 	} else {
 		for _, rangeBinding := range rangeBindings {
 			singleScopeBindings := base.solveQuants(quants[1:], scopeSet, rangeBinding, continueAfterEnough)
 
 			if len(singleScopeBindings) > 0 {
 				scopeBindings = append(scopeBindings, singleScopeBindings...)
-				resultCount++
 			}
 		}
 	}

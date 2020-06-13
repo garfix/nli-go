@@ -50,10 +50,7 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 	} else {
 		for _, rangeBinding := range rangeBindings {
 			singleScopeBindings := base.solveQuants(quants[1:], scopeSet, rangeBinding, continueAfterEnough)
-
-			if len(singleScopeBindings) > 0 {
-				scopeBindings = append(scopeBindings, singleScopeBindings...)
-			}
+			scopeBindings = append(scopeBindings, singleScopeBindings...)
 		}
 	}
 

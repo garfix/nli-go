@@ -41,21 +41,13 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 	}
 
 	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
-
 	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
-	isReference := false
-
-	for _, r := range rangeSet {
-		if r.Predicate == mentalese.PredicateBackReference {
-			isReference = true
-		}
-	}
 
 	scopeBindings := mentalese.Bindings{}
 	resultCount := 0
 
 	if len(quants) == 1 {
-		scopeBindings = base.solveScope(quant, scopeSet, rangeBindings, isReference, continueAfterEnough)
+		scopeBindings = base.solveScope(quant, scopeSet, rangeBindings, continueAfterEnough)
 		resultCount = len(scopeBindings)
 	} else {
 		for _, rangeBinding := range rangeBindings {
@@ -68,7 +60,7 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 		}
 	}
 
-	success := base.tryQuantifier(quant, rangeBindings, scopeBindings, isReference)
+	success := base.tryQuantifier(quant, rangeBindings, scopeBindings)
 
 	if success {
 		return scopeBindings
@@ -77,7 +69,7 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 	}
 }
 
-func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scopeSet []mentalese.Relation, rangeBindings mentalese.Bindings, isReference bool, continueAfterEnough bool)  mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scopeSet []mentalese.Relation, rangeBindings mentalese.Bindings, continueAfterEnough bool)  mentalese.Bindings {
 
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
 	scopeBindings := mentalese.Bindings{}
@@ -97,7 +89,7 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
-		if base.tryQuantifier(quant, rangeBindings, scopeBindings, isReference) {
+		if base.tryQuantifier(quant, rangeBindings, scopeBindings) {
 			if !continueAfterEnough {
 				break
 			}
@@ -107,7 +99,7 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 	return scopeBindings
 }
 
-func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, isReference bool) bool {
+func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings) bool {
 
 	firstArgument := quant.Arguments[mentalese.QuantQuantifierIndex]
 

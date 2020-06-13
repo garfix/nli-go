@@ -113,3 +113,17 @@ Imagine now this sentence: "pick up two blocks".
 Handling this question with `find` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `do` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
 
 The difference between `find` and `do` is that `do` stops when it has enough, while `find` continues. Use `find` with interrogative relations and `do` with imperative relations. 
+
+## Nested quants
+
+To model a compound NP like "both of the red blocks and either a green cube or a pyramid" You can nest quants with boolean operators `and`, `or` and `xor`. For example
+
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: xor(_, sem(2), sem(4)) }
+        
+The meaning of the operators corresponds with what you might expect, but here's a more detailed description:
+
+`xor` means: "either A or B, but not both". First the range of A is determined and used to evaluate the scope. Only if this produces no bindings, the range of B is determined and used.
+
+`or` means: "A or B, or both". First the range of A is determined and used to evaluate the scope. Then the range of B. Then the results are combined.
+
+`and` means: "A and B must match". First the range of A is determined and used to evaluate the scope. Only if this produces results the range of B is determined and evaluated.     

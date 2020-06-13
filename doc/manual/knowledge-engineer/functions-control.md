@@ -11,6 +11,8 @@ A variant on the boolean function `and` that works with bindings.
 
 `and(C1, A, B)` processes `A` first. Then it processes `B`. The bindings from A are used in B.
 
+Note: the boolean functions (`and`, `or` and `xor`) have a different meaning when used with quants. See [Nested Quants](quantification.md#nested-quants) 
+
 ## Or
 
 A variant on the boolean function `or` that works with bindings. This is the only operator that can yield more bindings than each of its children.

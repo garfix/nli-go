@@ -24,15 +24,18 @@ func TestQuantSolver(t *testing.T) {
 		person(6, 'Durkje van Dongen', 'M', '1982')
 		person(7, 'Huub de Boer', 'M', '1998')
 		person(8, 'Babs de Boer', 'F', '1999')
-		person(7, 'Johanneke de Boer', 'M', '1998')
-		person(8, 'Baukje de Boer', 'F', '1999')
+		person(9, 'Johanneke de Boer', 'M', '1998')
+		person(10, 'Baukje de Boer', 'F', '1999')
 		have_child(4, 2)
 		have_child(4, 3)
 		have_child(1, 7)
 		have_child(1, 8)
+		have_child(8, 9)
+		have_child(8, 10)
 	]`)
 
 	ds2db := internalGrammarParser.CreateRules(`[
+		is_person(Id) :- person(Id, _, _, _);
 		have_child(A, B) :- have_child(A, B);
 		isa(A, parent) :- have_child(A, _);
 		isa(A, child) :- have_child(_, A);
@@ -52,7 +55,7 @@ func TestQuantSolver(t *testing.T) {
 					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, [ isa(S1, parent) ]), 
 					[ have_child(S1, O1) number_of(O1, 2) ])`,
 			"{}",
-			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}",
+			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}{O1:9, S1:8}{O1:10, S1:8}",
 		},
 		{
 			// does every parent have 3 children?
@@ -73,10 +76,28 @@ func TestQuantSolver(t *testing.T) {
 					[have_child(S1, O1) number_of(O1, 2) ]
 				)`,
 			"{X: 3}",
-			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}",
+			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}{O1:9, S1:8, X:3}{O1:10, S1:8, X:3}",
 		},
-
-// do 2 parents each have 2 children?
+		{
+			// xor
+			// the first quant in the xor has a range, but only the second quant has a range and scope bindings
+			`
+				find(
+					or(_,	
+						and(_,
+							quant(some, S1, [ is_person(S1) equals(S1, 8) ]),
+							quant(some, S1, [ is_person(S1) have_child(S1, 9) ])
+						),
+						xor(_,
+							quant(some, S1, [ is_person(S1) equals(S1, 4) ]),
+							quant(some, S1, [ is_person(S1) equals(S1, 1) ])
+						)
+					),
+					[ or(_, have_child(S1, 7), have_child(S1, 10)) ]
+				)`,
+			"{}",
+			"{S1:8}{S1:1}",
+		},
 	}
 
 	matcher := mentalese.NewRelationMatcher(log)
@@ -99,6 +120,8 @@ func TestQuantSolver(t *testing.T) {
 
 	for _, test := range tests {
 
+		log.Clear()
+
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
@@ -110,8 +133,13 @@ func TestQuantSolver(t *testing.T) {
 			resultString += result.String()
 		}
 
+		if !log.IsOk() {
+			t.Error(log.String())
+		}
+
 		if resultString != test.result {
 			t.Errorf("got %s, want %s", resultString, test.result)
+			t.Error(log.String())
 		}
 	}
 }

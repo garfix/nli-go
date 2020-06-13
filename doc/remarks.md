@@ -1,3 +1,28 @@
+# 2020-06-13
+
+I implemented and documented nested quants. This allows the robot to stack up the complex 
+
+# 2020-06-10
+
+It is important to realize that the entities a quant produces are produced during the solving process, not _before_. This becomes more obvious when boolean operators start working on quants. The right hand of an XOR should only be processed when the first hand fails.
+
+    np -> qp nbar,      quant
+    np -> np xor np,    xor(quant, quant) 
+
+This is the solution I am now thinking of. Where before a quant was needed as argument of a do/find, we can also use boolean operators (and, or, xor).
+
+    do/find(quant quant ..., scope)
+    do/find(or(quant, quant) and(quant, quant) ..., scope)
+
+Then the rules of 2020-06-08 will simply be:
+
+    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: and(sem(1), sem(3)) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: xor(sem(2), sem(4)) }
+
+This is the easy part. The hard part is the change in the quant solver.
+
+`do` and `find` can remain unchanged in this solution. 
+
 # 2020-06-09
 
 This could be a solution

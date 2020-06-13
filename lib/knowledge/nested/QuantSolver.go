@@ -28,28 +28,53 @@ func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.R
 	quants := find.Arguments[0].TermValueRelationSet
 	scope := find.Arguments[1].TermValueRelationSet
 
-	return base.solveQuants(quants, scope, binding, continueAfterEnough)
+	return base.solveQuants(quants[0], quants[1:], scope, binding, continueAfterEnough)
 }
 
-func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+func (base *SystemNestedStructureBase) solveQuants(quant mentalese.Relation, restQuants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
-	quant := quants[0]
+	base.log.StartProduction("Quant", quant.String())
 
-	if quant.Predicate != mentalese.PredicateQuant {
+	result := mentalese.Bindings{}
+
+	if quant.Predicate == mentalese.PredicateXor {
+
+		result = base.SolveXorQuant(quant, restQuants, scopeSet, binding, continueAfterEnough)
+
+	} else if quant.Predicate == mentalese.PredicateOr {
+
+		result = base.SolveOrQuant(quant, restQuants, scopeSet, binding, continueAfterEnough)
+
+	} else if quant.Predicate == mentalese.PredicateAnd {
+
+		result = base.SolveAndQuant(quant, restQuants, scopeSet, binding, continueAfterEnough)
+
+	} else if quant.Predicate != mentalese.PredicateQuant {
 		base.log.AddError("First argument of a `do` or `find` must contain only `quant`s")
 		return mentalese.Bindings{}
+	} else {
+
+		result = base.solveSimpleQuant(quant, restQuants, scopeSet, binding, continueAfterEnough)
+
 	}
+
+	base.log.EndProduction("Quant", result.String())
+
+	return result
+}
+
+func (base *SystemNestedStructureBase) solveSimpleQuant(quant mentalese.Relation, restQuants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
 
 	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
 	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
 
 	scopeBindings := mentalese.Bindings{}
 
-	if len(quants) == 1 {
+	if len(restQuants) == 0 {
 		scopeBindings = base.solveScope(quant, scopeSet, rangeBindings, continueAfterEnough)
 	} else {
 		for _, rangeBinding := range rangeBindings {
-			singleScopeBindings := base.solveQuants(quants[1:], scopeSet, rangeBinding, continueAfterEnough)
+			singleScopeBindings := base.solveQuants(restQuants[0], restQuants[1:], scopeSet, rangeBinding, continueAfterEnough)
 			scopeBindings = append(scopeBindings, singleScopeBindings...)
 		}
 	}
@@ -61,6 +86,41 @@ func (base *SystemNestedStructureBase) solveQuants(quants mentalese.RelationSet,
 	} else {
 		return mentalese.Bindings{}
 	}
+}
+
+func (base *SystemNestedStructureBase) SolveAndQuant(xorQuant mentalese.Relation, restQuants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+	leftQuant := xorQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
+	rightQuant := xorQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
+
+	leftResultBindings := base.solveQuants(leftQuant, restQuants, scopeSet, binding, continueAfterEnough)
+
+	resultBindings := mentalese.Bindings{}
+	for _, leftResultBinding := range leftResultBindings {
+		rightResultBindings := base.solveQuants(rightQuant, restQuants, scopeSet, leftResultBinding, continueAfterEnough)
+		resultBindings = append(resultBindings, rightResultBindings...)
+	}
+
+	return resultBindings
+}
+
+func (base *SystemNestedStructureBase) SolveOrQuant(orQuant mentalese.Relation, restQuants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+	leftQuant := orQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
+	rightQuant := orQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
+	leftResultBindings := base.solveQuants(leftQuant, restQuants, scopeSet, binding, continueAfterEnough)
+	rightResultBindings := base.solveQuants(rightQuant, restQuants, scopeSet, binding, continueAfterEnough)
+
+	return append(leftResultBindings, rightResultBindings...)
+}
+
+func (base *SystemNestedStructureBase) SolveXorQuant(xorQuant mentalese.Relation, restQuants mentalese.RelationSet, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+	leftQuant := xorQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
+	resultBindings := base.solveQuants(leftQuant, restQuants, scopeSet, binding, continueAfterEnough)
+	if len(resultBindings) == 0 {
+		rightQuant := xorQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
+		resultBindings = base.solveQuants(rightQuant, restQuants, scopeSet, binding, continueAfterEnough)
+	}
+
+	return resultBindings
 }
 
 func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scopeSet []mentalese.Relation, rangeBindings mentalese.Bindings, continueAfterEnough bool)  mentalese.Bindings {

@@ -9,6 +9,7 @@
 * entity type (multiple) inheritance
 * sortal restrictions (using predicates.json and adding 'parent' to entities.json)
 * agreement checking (reintroducing feature unification)
+* clarification questions must be translatable (they must go through the generator)
 
 ## Misc
 

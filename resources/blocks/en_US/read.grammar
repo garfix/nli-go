@@ -28,7 +28,7 @@
 
     { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: do(sem(2), sem(1)) }
     { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: do([sem(2) sem(4)], do_put_in_smart(P1, E1, E2)) }
-    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_stack_up_smart(P1, sem(3)) }
+    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_stack_up_smart(P1, E1, sem(3)) }
     { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: find(sem(1), sem(3)) }
     { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: find([sem(1) sem(3)], sem(2))  }
     { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: find([sem(1) sem(5)], sem(3)) }
@@ -76,8 +76,8 @@
     { rule: np(E1) -> nbar(E1),                                            sense: quant(some, E1, sem(1)) }
     { rule: np(E1) -> pronoun(E1),                                         sense: quant(some, E1, sem(1)) }
     { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(some, E1, sem(1)) }
-    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: quant(some, E1, or(_, do(sem(1), []), find(sem(3), []))) }
-    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: quant(some, E1, xor(_, do(sem(2), []), find(sem(4), []))) }
+    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: or(_, sem(1), sem(3)) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: xor(_, sem(2), sem(4)) }
     { rule: nbar(E1) -> nbar(E1) pp(E1) }
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
     { rule: nbar(E1) -> noun(E1) relative_clause(E1) }

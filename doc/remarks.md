@@ -1,6 +1,12 @@
 # 2020-06-13
 
-I implemented and documented nested quants. This allows the robot to stack up the complex 
+I implemented and documented nested quants. This allows the robot to stack up blocks with a compound description.
+
+===
+
+I started writing tests for the blocks world, in natural language. Because some interactions just say "OK", and you just have to believe that the robot actually did it. And to check the side effects. Also it makes the language more robust.  
+
+This was very useful and really necessary. It already brought several errors to the surface.
 
 # 2020-06-10
 

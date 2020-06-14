@@ -56,12 +56,10 @@ func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, b
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
-	newBindings := mentalese.Bindings{binding}
-
-	firstBindings := base.solver.SolveRelationSet(first, newBindings)
+	newBindings := base.solver.SolveRelationSet(first, mentalese.Bindings{ binding })
 
 	if len(newBindings) == 0 {
-		newBindings = base.solver.SolveRelationSet(second, firstBindings)
+		newBindings = base.solver.SolveRelationSet(second, mentalese.Bindings{ binding })
 	}
 
 	return newBindings

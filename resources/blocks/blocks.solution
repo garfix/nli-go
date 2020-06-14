@@ -79,7 +79,7 @@
     }
     /* Do I own? Yes: these things */
     {
-        condition: intent(yes_no) own(_, B),
+        condition: intent(yes_no) own(_, B) object(B),
         result: B,
         responses: [
             {

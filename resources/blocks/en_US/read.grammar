@@ -21,6 +21,7 @@
     { rule: tv(P1, E1, E2) -> 'grasp',                                     sense: do_pick_up_smart(P1, E2) }
     { rule: tv(P1, E1, E2) -> 'find' }
     { rule: tv(P1, E1, E2) -> 'own',                                       sense: own(E1, E2) }
+    { rule: tv(P1, E1, E2) -> 'support',                                   sense: support(P1, E1, E2) }
     { rule: tv(P1, E1, E2) -> 'supports',                                  sense: support(P1, E1, E2) }
     { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: hold(P1, E1, E2) }
     { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: pick_up(P1, E1, E2) }
@@ -63,6 +64,7 @@
     { rule: adjective(E1) -> 'blue',                                       sense: blue(E1) }
     { rule: adjective(E1) -> 'green',                                      sense: green(E1) }
     { rule: adjective(E1) -> 'big',                                        sense: big(E1) }
+    { rule: adjective(E1) -> 'small',                                      sense: small(E1) }
 
     { rule: pp(E1) -> 'in' np(E2),                                         sense: find(sem(2), contain(_, E2, E1)) }
 
@@ -126,6 +128,8 @@
     { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: find(sem(2), contain(P1, E1, E2)) }
     { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: find(sem(2), sem(3)) }
 
+    { rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: find([sem(4) sem(1)], sem(2)) }
+
     { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: find([sem(1) sem(3)], sem(2)) }
 
     { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: find(sem(1), not(sem(4))) }
@@ -133,6 +137,8 @@
     { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: intent(what, E1) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: intent(how_many, E1) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: intent(select, E1) find(sem(2), sem(3)) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: intent(yes_no) find(sem(2), sem(3)) }
+    { rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: intent(yes_no) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: intent(select_subject, E2) find(sem(2), sem(3)) }
     { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: intent(yes_no) }
     { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: intent(yes_no) }

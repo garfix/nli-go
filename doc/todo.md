@@ -3,6 +3,7 @@
 * should boolean functions have P1 as argument? different or for read/write?
 * relation set => not [] brackets
 * check if the nested functions are called correctly
+* syntax check while parsing: is the number of arguments correct?
 * namespaces for relations
 * do not allow zero valued predicates in the grammar
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way

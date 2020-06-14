@@ -18,7 +18,7 @@
     /* after making sure you can, create a stack from a number of things */
     do_stack_up_smart(P1, E1, Q1) :-
         do_clear_hand(_)
-        do_find_space_on_table(X, Y)
+        unify(X, 678) unify(Y, 678) /* todo: find a proper place */
         do(Q1, [
             block(E1)
             do_cleartop(E1)

@@ -12,13 +12,13 @@
         db_unsupport(_, E1)
         db_memo(pick_up(123, `:shrdlu`, E1));
 
-    /* pick up E1, move it, place it on top of E2 */
     do_put_on(E1, E2) :-
         at(E2, X, Y, Z)
         height(E2, H)
         add(Z, H, Z1)
         do_move(E1, X, Y, Z1)
-        db_support(E2, E1);
+        db_support(E2, E1)
+        db_hidetop(E2);
 
     do_put_on_table(E1, X, Y) :-
         do_move(E1, X, Y, 0)
@@ -45,8 +45,8 @@
     );
 
     /* remove all blocks that are on top of X */
-    do_cleartop(E1) :- not(support(E1, _));
-    do_cleartop(E1) :- support(E1, E2) do_cleartop(E2) do_get_rid_of(E2) db_cleartop(E1);
+    do_cleartop(E1) :- cleartop(E1);
+    do_cleartop(E1) :- support(_, E1, E2) do_cleartop(E2) do_get_rid_of(E2) db_cleartop(E1);
 
     /* move the hand */
     do_move_hand(X, Y, Z) :- db_hand(X, Y, Z);
@@ -61,10 +61,10 @@
     /* (!) these commands do not keep the relations in tact */
 
     /* pick up, move, put down, ungrasp, raise hand */
-    do_move(E1, X, Y, Z) :- do_pick_up(E1) do_put_down(X, Y, Z);
+    do_move(E1, X, Y, Z) :- do_pick_up(E1) do_put_down(E1, X, Y, Z);
 
     /* place the object in the hand */
-    do_put_down(X, Y, Z) :-
+    do_put_down(E1, X, Y, Z) :-
     do_move_hand(X, Y, Z)
-    db_release(_);
+    db_release(E1);
 ]

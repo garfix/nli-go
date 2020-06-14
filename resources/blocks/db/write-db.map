@@ -4,4 +4,5 @@
     contain(P, A, B) :- contain(A, B);
     pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
     cleartop(E1) :- cleartop(E1);
+    support(P1, E1, E2) :- support(E1, E2);
 ]

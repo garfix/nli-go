@@ -1,3 +1,54 @@
+# 2020-06-16
+
+I thought about this comment by Winograd
+
+    "The command is carried out by the following steps: It puts a green cube on the large red block (note that it chooses the green cube with nothing on it), then removes the small pyramid from the little red cube, so that it can use that cube to complete the stack as specified."
+    
+about that sentence    
+
+    "Will you please stack up both of the red blocks and either a green cube or a pyramid?"
+    
+These are the sizes and colors of the relevant blocks:
+
+    size(`block:b1`, 100, 100, 100)
+    size(`block:b3`, 200, 200, 200)
+    size(`block:b6`, 200, 300, 300)
+    size(`block:b7`, 200, 200, 200)
+    
+    color(`block:b1`, red)
+    color(`block:b3`, green)
+    color(`block:b6`, red)
+    color(`block:b7`, green)
+    
+    color(`pyramid:b2`, green)
+    color(`pyramid:b4`, blue)
+    color(`pyramid:b5`, red)
+    
+    support(`block:b3`, `pyramid:b5`)
+    support(`block:b6`, `block:b7`)
+
+So the sentence comes down to "stack_up( and( both(b1, b6), xor(one_of(b3, b7), one_of(b2, b4, b5)) ))"
+
+And the actual order is: b6 (red [200, 300, 300]), b7 green [200, 200, 200], b1 [100, 100, 100] )
+
+So the order appears to be the from big to small (which is common sense), and easy to difficult (which is common sense).
+
+Without these extra common sense rules, and just going through the blocks as they are named in the sentence/database the order is b1 (red, small), b6 (red, big), b3 (green with pyramid on top).
+
+So this sentence implies that common sense is used to execute the stacking. And this common sence determines the order of the blocks.
+
+This again means that we do not just need a compound quant, but also a sorting function that determines the order in which the compound quant is iterated through. Quite complex!
+
+Note that we cannot "just" sort the quant and start executing this ordered set of blocks. The compound structure of the quant must remain intact while executing the command, so that when one hand of the xor fails during execution, the other is taken.
+
+This means that the order of this stack_up is:
+
+1. find the ranges of all simple quants in the compound quant. That is, find the entities for "both of the red blocks" (b1, b6), "a green cube" (b3, b7), and "a pyramid" (b2, b4, b5)
+2. order these objects by some common sense ordering function (mainly the minimum of width and depth, and within that, the least number of objects on top of it)
+3. start stacking in the order found, but skip objects that do not fit the compound quant any more (once one hand of the xor is used, the xor is complete).
+
+Now I have to think of the way to implement this beast in a simple way :D       
+
 # 2020-06-13
 
 I implemented and documented nested quants. This allows the robot to stack up blocks with a compound description.

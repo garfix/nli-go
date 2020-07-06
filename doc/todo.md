@@ -1,16 +1,39 @@
 # Todo
 
+* agreement, especially for number, because it reduces ambiguity
+* syntactic placeholders for `sem(n)` (`$np1`)
+* namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?
 * relation set => not [] brackets
 * check if the nested functions are called correctly
 * syntax check while parsing: is the number of arguments correct?
-* namespaces for relations
 * do not allow zero valued predicates in the grammar
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
 * entity type (multiple) inheritance
 * sortal restrictions (using predicates.json and adding 'parent' to entities.json)
 * agreement checking (reintroducing feature unification)
 * clarification questions must be translatable (they must go through the generator)
+
+## Agreement
+
+    'boy', sense: block(E), agr(E, number, 1)
+    'boys', sense: block(E), agr(E, number, multiple)
+    
+    'pick' 'up', sense: pick_up(E1) agr(E1, number, 1) // first person singular
+    'pick' 'up', sense: pick_up(E1) agr(E1, number, multiple) // plural
+    
+    'pick' 'up', sense: pick_up(E1) number(E1, multiple)
+    > number's second argument must have a single value; declare this in some way
+
+## Syntactic sugar
+
+    sense: find([sem(1) sem(4)], marry(P1, E1, E2))
+    sense: find(a b, marry(P1, E1, E2))
+    sense: find(#1 #2, marry(P1, E1, E2))
+    sense: find($1 $2, marry(P1, E1, E2))
+    { rule: np_check(P1) -> np(E1)$1 marry(P1) 'to' np(E2)$2,                    sense: find_all([$1 $2], marry(P1, E1, E2)) }
+    { rule: np_check(P1) -> np(E1)$subject marry(P1) 'to' np(E2)$object,         sense: find_all([$subject $object], marry(P1, E1, E2)) }
+    { rule: np_check(P1) -> np(E1) marry(P1) 'to' np(E2),                        sense: find_all([$np1 $np2], marry(P1, E1, E2)) }
 
 ## Misc
 

@@ -1,3 +1,29 @@
+# 2020-07-06
+
+Is a quant a kind of continuation? See https://en.wikipedia.org/wiki/Continuation
+
+# 2020-06-19
+
+I think `do()` and `find()` need to be changed and extended to other predicates. In trying to solve interaction 17 I discovered that I needed two more operations on quantified entities (quants), namely `sort` and `filter`.
+
+I will combine `do` and `find` into `find` and pass `min`/`max` as extra parameter to `find` so that it can be passed to a filter function. And it's always good to be aware of this issue.
+
+A nice extension to 'min' and 'max' would be 'rand'. If you tell the robot to stack up more than 3 blocks, he could pick 5 or 7 blocks, in stead of always 4.     
+
+So I think I need the following functions:
+
+    find(max, Q, E, Scope_function)                      // returns a maximal amount of results that fulfill Scope_function into E
+    find(min, Q, E)                                      // find with empty scope
+    find(min, Q, E)                                      // find with empty scope
+    find_pref(min, Q, E, Pref_function)
+    sort(E, S, func(E, Sort_function, R))                // aggregate function; sort E by Sort_function (returning R) 
+
+# 2020-06-17
+
+I found out about [SEMPRE](https://github.com/percyliang/sempre), an open source system that is a like NLI-GO in that it turns a sentence into a logical structure and then executes it. Very interesting! It names itself both a "semantic parser" and "execution engine" and these terms stick. I had heard of "semantic grammar", but curiously not about [semantic parsing](https://en.wikipedia.org/wiki/Semantic_parsing), which is of course what NLI-GO is trying to do. I like the term execution engine because the system also executes the logical form, as a goal directed system.
+
+SEMPRE started in 2013 and while is still active, its main development ceased in 2017. It implements a form of Montague grammar using lambda calculus, which means that its representation consists of nested functions (not relations, like NLI-GO). 
+
 # 2020-06-16
 
 I thought about this comment by Winograd

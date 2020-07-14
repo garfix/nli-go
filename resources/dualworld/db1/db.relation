@@ -1,6 +1,4 @@
-[
     has_parent(`person:a71`, `person:a34`)
     has_parent(`person:a34`, `person:a11`)
     name(`person:a11`, 'Erasmus Darwin')
     name(`person:a71`, 'Charles Darwin')
-]

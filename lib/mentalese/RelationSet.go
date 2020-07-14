@@ -196,12 +196,14 @@ func (set RelationSet) String() string {
 
 	s, sep := "", ""
 
+	if len(set) == 0 { return PredicateNone }
+
 	for _, relation := range set {
 		s += sep + relation.String()
 		sep = " "
 	}
 
-	return "[" + s + "]"
+	return s
 }
 
 func (set RelationSet) UnScope() RelationSet {

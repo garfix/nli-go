@@ -1,4 +1,3 @@
-[
     marriages(`:2`, `:1`, '1992')
     parent(`:4`, `:2`)
     parent(`:4`, `:3`)
@@ -18,4 +17,3 @@
     person(`:8`, 'Babs de Boer', 'F', '1999')
     person(`:7`, 'Johanneke de Boer', 'M', '1998')
     person(`:8`, 'Baukje de Boer', 'F', '1999')
-]

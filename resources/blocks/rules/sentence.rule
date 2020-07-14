@@ -19,16 +19,40 @@
     do_stack_up_smart(P1, E1, Q1) :-
         do_clear_hand(_)
         unify(X, 678) unify(Y, 678) /* todo: find a proper place */
-        do(Q1, [
+        do(Q1,
             block(E1)
             do_cleartop(E1)
             xor(
                 _,
-                [
-                    at(Base, X, Y, _) cleartop(Base) /* find the topmost object on the stack */
-                    do_put_on(E1, Base)
-                ],
+                at(Base, X, Y, _) cleartop(Base) /* find the topmost object on the stack */
+                do_put_on(E1, Base),
                 do_put_on_table(E1, X, Y)
             )
-        ]);
+        );
+
+    by_easiness(E1, E2, R) :-
+        if_then_else( cleartop(E1), unify(R, 1), unify(R, 0) );
+
+    by_size(E1, E2, R) :-
+        size(E1, Width1, Depth1, Height1) min(Width1, Depth1, Min1)
+        size(E2, Width2, Depth2, Height2) min(Width2, Depth2, Min2)
+        if_then_else( greater_than(Min1, Min2), unify(R, 1), unify(R, 0) );
+
+    do_stack_up_smart_2(P1, Q1) :-
+        do_clear_hand(_)
+        quant_find_ordered(Q1, min, by_easiness, List1)
+        list_sort(List1, by_size, List2)
+        unify(X, 678) unify(Y, 678) /* todo: find a proper place */
+        stack_up_proper(List2, X, Y);
+
+    stack_up_proper(List1, X, Y) :-
+        list_foreach(List1, E1,
+            /* block(E1) */
+            do_cleartop(E1)
+            if_then_else(
+                at(Base, X, Y, _), cleartop(Base), /* find the topmost object on the stack */
+                do_put_on(E1, Base),
+                do_put_on_table(E1, X, Y)
+            )
+        );
 ]

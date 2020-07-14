@@ -38,10 +38,7 @@
     do_clear_hand(_) :- or(
         _,
         not(grasping(`:shrdlu`, _)),
-        [
-            grasping(`:shrdlu`, E1)
-            do_get_rid_of(E1)
-        ]
+        grasping(`:shrdlu`, E1) do_get_rid_of(E1)
     );
 
     /* remove all blocks that are on top of X */

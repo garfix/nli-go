@@ -34,7 +34,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: find(sem(4), read('abraham', E1)) }
 	]`)
 
-	facts := internalGrammarParser.CreateRelationSet(`[
+	facts := internalGrammarParser.CreateRelationSet(`
 		book('Dracula')
 		book('Frankenstein')
 		book('Curse of the mummy')
@@ -43,7 +43,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		read('abraham', 'Frankenstein')
 		read('abraham', 'Curse of the mummy')
 		read('sarah', 'Dracula')
-	]`)
+	`)
 
 	ds2db := internalGrammarParser.CreateRules(`[
 		book(A) :- book(A);

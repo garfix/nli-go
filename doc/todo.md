@@ -3,6 +3,9 @@
 todo
 
 * list as term 
+* if_then_else(if, then, else)
+    if `if` succeeds, then `then`, else `else`
+---    
 * do/find -> quant_foreach(quant, minMax, E, scope) // note! single quant per predicate      
 * quant_find_ordered(quant, minMax, sort_func, List)
     goes through compound quant, using sort function within each sub quant, placing results in List 
@@ -10,8 +13,6 @@ todo
     sorts List1 by sort_func, places result in List2
 * list_foreach(List, E, scope)
     instantiates List in E, and executes scope
-* if_then_else(if, then, else)
-    if `if` succeeds, then `then`, else `else`
 
 
 * agreement, especially for number, because it reduces ambiguity
@@ -19,7 +20,6 @@ todo
 * syntactic placeholders for `sem(n)` (`$np1`)
 * namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?
-* relation set => not [] brackets
 * check if the nested functions are called correctly
 * syntax check while parsing: is the number of arguments correct?
 * do not allow zero valued predicates in the grammar

@@ -33,7 +33,7 @@ func TestGenerator(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"[predication(P1, marry) subject(P1, E1) object(P1, E2) name(E1, 'John') name(E2, 'Mary') grammatical_subject(E1)]", "John married Mary"},
+		{"predication(P1, marry) subject(P1, E1) object(P1, E2) name(E1, 'John') name(E2, 'Mary') grammatical_subject(E1)", "John married Mary"},
 	}
 
 	for _, test := range tests {

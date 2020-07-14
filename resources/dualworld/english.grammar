@@ -13,7 +13,7 @@
     { rule: nbar(E1) -> noun(E1),                                           sense: quant(quantifier(Result, Range, greater_than(Result, 0)), E1, sem(1)) }
     { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: has_grandfather(E2, E1) }
 
-    { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: find([sem(1) sem(3)], write(E2, E1)) }
+    { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: find(sem(1) sem(3), write(E2, E1)) }
 
     { rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: intent(which, E1) }
 

@@ -9,21 +9,27 @@ import (
 func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
 
 	relationSet := mentalese.RelationSet{}
-	ok := true
+	ok := false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-	if ok {
-		for startIndex < len(tokens) {
-			relation := mentalese.Relation{}
-			relation, startIndex, ok = parser.parseRelation(tokens, startIndex)
-			if ok {
-				relationSet = append(relationSet, relation)
-			} else {
-				break
+	for startIndex < len(tokens) {
+		relation, newStartIndex, found := parser.parseRelation(tokens, startIndex)
+		if found {
+			relationSet = append(relationSet, relation)
+			startIndex = newStartIndex
+			ok = true
+		} else {
+			break
+		}
+	}
+
+	if !ok {
+		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if found {
+			if tokenValue == mentalese.PredicateNone {
+				startIndex = newStartIndex
+				ok = true
 			}
 		}
-
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 	}
 
 	return relationSet, startIndex, ok
@@ -543,9 +549,46 @@ func (parser *InternalGrammarParser) parseId(tokens []Token, startIndex int) (st
 	return id, entityType, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseTermList(tokens []Token, startIndex int) (mentalese.TermList, int, bool) {
+
+	list := mentalese.TermList{}
+	term := mentalese.Term{}
+	ok := false
+	newStartIndex := 0
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	if ok {
+		term, newStartIndex, ok = parser.parseTerm(tokens, startIndex)
+		if ok {
+			list = append(list, term)
+			startIndex = newStartIndex
+
+			for startIndex < len(tokens) {
+				_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_comma)
+				if ok {
+					startIndex = newStartIndex
+					term, newStartIndex, ok = parser.parseTerm(tokens, startIndex)
+					if ok {
+						list = append(list, term)
+						startIndex = newStartIndex
+					} else {
+						goto end
+					}
+				} else {
+					break
+				}
+			}
+		}
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+	}
+
+	end:
+
+	return list, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
 
-	relation := mentalese.Relation{}
 	ok := false
 	tokenValue := ""
 	term := mentalese.Term{}
@@ -587,22 +630,23 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 							startIndex = newStartIndex
 						} else {
 							relationSet := mentalese.RelationSet{}
-							relation, newStartIndex, ok = parser.parseRelation(tokens, startIndex)
+							relationSet, newStartIndex, ok = parser.parseRelationSet(tokens, startIndex)
 							if ok {
 								term.TermType = mentalese.TermTypeRelationSet
-								term.TermValueRelationSet = mentalese.RelationSet{ relation }
+								term.TermValueRelationSet = relationSet
 								startIndex = newStartIndex
 							} else {
-								relationSet, newStartIndex, ok = parser.parseRelationSet(tokens, startIndex)
+								tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
 								if ok {
-									term.TermType = mentalese.TermTypeRelationSet
-									term.TermValueRelationSet = relationSet
-									startIndex = newStartIndex
+									term.TermType = mentalese.TermTypePredicateAtom
+									term.TermValue = tokenValue
 								} else {
-									tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+									list := mentalese.TermList{}
+									list, newStartIndex, ok = parser.parseTermList(tokens, startIndex)
 									if ok {
-										term.TermType = mentalese.TermTypePredicateAtom
-										term.TermValue = tokenValue
+										term.TermType = mentalese.TermTypeList
+										term.TermValueList = list
+										startIndex = newStartIndex
 									} else {
 										tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
 										if ok {

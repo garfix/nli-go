@@ -1,5 +1,3 @@
-[
     author(`person:x21-r01`, `:w909`)
     person(`person:x21-r01`, 'Darwin', 'Erasmus')
     work(`:w909`, 'The Loves of the Plants')
-]

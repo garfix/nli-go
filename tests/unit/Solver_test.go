@@ -16,7 +16,7 @@ func TestSolver(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	facts := parser.CreateRelationSet(`[
+	facts := parser.CreateRelationSet(`
 		book(1, 'The red book', 5)
 		book(2, 'The green book', 6)
 		book(3, 'The blue book', 6)
@@ -31,7 +31,7 @@ func TestSolver(t *testing.T) {
 		person(9, 'Sally Klein')
 		person(10, 'Keith Partridge')
 		person(11, 'Onslow Bigbrain')
-	]`)
+	`)
 
 	ds2db := parser.CreateRules(`[
 		write(Person_name, Book_name) :- book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
@@ -54,12 +54,12 @@ func TestSolver(t *testing.T) {
 		input            string
 		wantRelationSets string
 	}{
-		{"[write('Sally Klein', B)]", "[[write('Sally Klein', 'The red book')] [write('Sally Klein', 'The green book')]]"},
-		{"[write('Sally Klein', B) publish(P, B)]", "[[write('Sally Klein', 'The red book') publish('Orbital', 'The red book')] [write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]]"},
+		{"write('Sally Klein', B)", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
+		{"write('Sally Klein', B) publish(P, B)", "[write('Sally Klein', 'The red book') publish('Orbital', 'The red book') write('Sally Klein', 'The green book') publish('Bookworm inc', 'The green book')]"},
 		// stop processing when a predicate fails
-		{"[missing_predicate() write('Sally Klein', B)]", "[]"},
+		{"missing_predicate() write('Sally Klein', B)", "[]"},
 		//// a failing predicate should remove existing bindings
-		{"[write('Sally Klein', B) missing_predicate()]", "[]"},
+		{"write('Sally Klein', B) missing_predicate()", "[]"},
 	}
 
 	for _, test := range tests {
@@ -101,11 +101,11 @@ func TestSolver(t *testing.T) {
 		indirect_link(A, B) :- link(A, C) link(C, B);
 	]`)
 
-	facts2 := parser.CreateRelationSet(`[
+	facts2 := parser.CreateRelationSet(`
 		link('red', 'blue')
 		link('blue', 'green')
 		link('blue', 'yellow')
-	]`)
+	`)
 
 	ds2db2 := parser.CreateRules(`[
 		link(A, B) :- link(A, B);
@@ -144,7 +144,7 @@ func TestMissingHanlerError(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	facts := parser.CreateRelationSet(`[]`)
+	facts := mentalese.RelationSet{}
 	ds2db := parser.CreateRules(`[]`)
 	ds2dbWrite := parser.CreateRules(`[]`)
 	matcher := mentalese.NewRelationMatcher(log)
@@ -157,7 +157,7 @@ func TestMissingHanlerError(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	solver.AddFactBase(factBase)
 
-	input := parser.CreateRelationSet("[ not_a_relation() ]")
+	input := parser.CreateRelationSet("not_a_relation()")
 	bindings := parser.CreateBindings("[{}]")
 	resultBindings := solver.SolveRelationSet(input, bindings)
 

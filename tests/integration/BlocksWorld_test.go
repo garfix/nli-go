@@ -26,7 +26,6 @@ func TestBlocksWorld(t *testing.T) {
 	}{
 		{
 				{"Does the table support the big red block?", "Yes"},
-			// todo: move the green block on top of it away
 			{"Pick up a big red block", "OK"},
 				{"Does the table support the big red block?", "No"},
 

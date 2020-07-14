@@ -15,7 +15,7 @@ func TestQuantSolver(t *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	dbFacts := internalGrammarParser.CreateRelationSet(`[
+	dbFacts := internalGrammarParser.CreateRelationSet(`
 		person(1, 'Jacqueline de Boer', 'F', '1964')
 		person(2, 'Mark van Dongen', 'M', '1967')
 		person(3, 'Suzanne van Dongen', 'F', '1967')
@@ -32,7 +32,7 @@ func TestQuantSolver(t *testing.T) {
 		have_child(1, 8)
 		have_child(8, 9)
 		have_child(8, 10)
-	]`)
+	`)
 
 	ds2db := internalGrammarParser.CreateRules(`[
 		is_person(Id) :- person(Id, _, _, _);
@@ -52,19 +52,19 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 2 children?
 			`
 				find(
-					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, [ isa(S1, parent) ]), 
-					[ have_child(S1, O1) number_of(O1, 2) ])`,
+					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, isa(S1, parent)), 
+					have_child(S1, O1) number_of(O1, 2))`,
 			"{}",
 			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}{O1:9, S1:8}{O1:10, S1:8}",
 		},
 		{
 			// does every parent have 3 children?
 			`
-				find([
-					quant(quantifier(Result_count1, Range_count1, equals(Result_count1, Range_count1)), S1, [ isa(S1, parent) ])
-					quant(quantifier(Result_count2, Range_count2, equals(Result_count1, 3)), O1, [ isa(O1, child) ])
-				], 
-				[ have_child(S1, O1) ])`,
+				find(
+					quant(quantifier(Result_count1, Range_count1, equals(Result_count1, Range_count1)), S1, isa(S1, parent))
+					quant(quantifier(Result_count2, Range_count2, equals(Result_count1, 3)), O1, isa(O1, child))
+				, 
+				have_child(S1, O1))`,
 			"{}",
 			"",
 		},
@@ -72,8 +72,8 @@ func TestQuantSolver(t *testing.T) {
 			// keep extra bindings?
 			`
 				find(
-					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, [ isa(S1, parent) ]), 
-					[have_child(S1, O1) number_of(O1, 2) ]
+					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, isa(S1, parent)), 
+					have_child(S1, O1) number_of(O1, 2)
 				)`,
 			"{X: 3}",
 			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}{O1:9, S1:8, X:3}{O1:10, S1:8, X:3}",
@@ -85,15 +85,15 @@ func TestQuantSolver(t *testing.T) {
 				find(
 					or(_,	
 						and(_,
-							quant(some, S1, [ is_person(S1) equals(S1, 8) ]),
-							quant(some, S1, [ is_person(S1) have_child(S1, 9) ])
+							quant(some, S1, is_person(S1) equals(S1, 8)),
+							quant(some, S1, is_person(S1) have_child(S1, 9))
 						),
 						xor(_,
-							quant(some, S1, [ is_person(S1) equals(S1, 4) ]),
-							quant(some, S1, [ is_person(S1) equals(S1, 1) ])
+							quant(some, S1, is_person(S1) equals(S1, 4)),
+							quant(some, S1, is_person(S1) equals(S1, 1))
 						)
 					),
-					[ or(_, have_child(S1, 7), have_child(S1, 10)) ]
+					or(_, have_child(S1, 7), have_child(S1, 10))
 				)`,
 			"{}",
 			"{S1:8}{S1:1}",

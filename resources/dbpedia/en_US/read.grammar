@@ -13,7 +13,7 @@
     { rule: np(E1) -> 'she',                                              sense: quant(quantifier(Result, Range, equals(Result, 1)), E1, back_reference(E1, gender(E1, female))) }
     { rule: np(E1) -> 'he',                                               sense: quant(quantifier(Result, Range, equals(Result, 1)), E1, back_reference(E1, gender(E1, male))) }
     { rule: np(R1) -> qp(_) nbar(R1),                                     sense: quant(sem(1), R1, sem(2)) }
-    { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, []) }
+    { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, none) }
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: find(sem(3), has_capital(E1, E2)) }
@@ -75,7 +75,7 @@
     { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: find(sem(2), die(P1, E1)) }
 
     { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: find(sem(1), marry(P1, E1, E2)) }
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: find([sem(1) sem(4)], marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: find(sem(1) sem(4), marry(P1, E1, E2)) }
 
     { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: intent(who, E1) }
     { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: intent(describe, E1) person(E1) }

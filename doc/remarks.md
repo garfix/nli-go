@@ -1,3 +1,30 @@
+# 2020-07-14
+
+Since I need to do something with the order of entities, the thought keeps reocurring that _order_ can be part of the quant:
+
+    quant(quantification, range, order)
+    
+As yet I need order because "stack up both of the red blocks and either a green cube or a pyramid" implies "stack up easiest first".
+
+Are there sentences where the order of entities is part of the NP?
+
+    * Play songs by Moby sorted by age    
+    * Play songs by Moby oldest first
+    * Play songs by Moby shuffled
+    * Stack up some blocks, starting with the easy ones
+    
+I also like to have order part of the quant because the quant itself becomes a sort of SQL query, with FROM = range, LIMIT = quantification (WHERE would go in the scope of the `find` relation). It is an object specification that can be passed around, modified, and executed at any desired time.
+
+What I don't like is that `quant` then has sometimes two, sometimes three arguments.      
+
+===
+
+I added a list of terms as a term type. This means that you can now use [1, 2, 3, 4] as an argument to a relation. Any type of term is allowed as element.
+
+To make this possible I needed to remove the optional brackets `[]` in the relation set, which I intended to to for a long time.
+
+Use the atom `none` if you want to enter an empty relation set.   
+
 # 2020-07-12
 
 Trying to solve the stacking problem, you can split it in a planning phase and an execution phase

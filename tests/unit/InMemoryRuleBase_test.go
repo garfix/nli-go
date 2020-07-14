@@ -18,14 +18,14 @@ func TestInMemoryRuleBase(t *testing.T) {
 	dialogContext := central.NewDialogContext()
 	predicates := mentalese.Predicates{}
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
-	facts := parser.CreateRelationSet(`[
+	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)
 		parent(vince, bob)
 		parent(pat, bob)
 		parent(sue, cyrill)
 		-sibling(alice, bob)
-	]`)
+	`)
 	entities := mentalese.Entities{}
 	ds2db := parser.CreateRules(`[
 		parent(A, B) :- parent(A, B);

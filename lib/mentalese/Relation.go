@@ -10,6 +10,7 @@ type Relation struct {
 	Arguments []Term
 }
 
+const PredicateNone = "none"
 const PredicateFind = "find"
 const PredicateDo = "do"
 const PredicateQuant = "quant"

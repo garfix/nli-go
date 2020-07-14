@@ -15,7 +15,7 @@ func TestAnswerer(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	facts := parser.CreateRelationSet(`[
+	facts := parser.CreateRelationSet(`
 		book(1, 'The red book', 5)
 		book(2, 'The green book', 6)
 		book(3, 'The blue book', 6)
@@ -30,7 +30,7 @@ func TestAnswerer(t *testing.T) {
 		person(9, 'Sally Klein')
 		person(10, 'Keith Partridge')
 		person(11, 'Onslow Bigbrain')
-	]`)
+	`)
 
 	ds2db := parser.CreateRules(`[
 		write(Person_name, Book_name) :- book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
@@ -113,13 +113,13 @@ func TestAnswerer(t *testing.T) {
 		wantRelationSet string
 	}{
 		// simple
-		{"[write('Sally Klein', B)]", "[write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')]"},
+		{"write('Sally Klein', B)", "write('Sally Klein', 'The red book') write('Sally Klein', 'The green book')"},
 		// preparation
-		{"[publish('Bookworm inc', B)]", "[publish_author('Bookworm inc', 'Sally Klein') publish_author('Bookworm inc', 'Onslow Bigbrain')]"},
+		{"publish('Bookworm inc', B)", "publish_author('Bookworm inc', 'Sally Klein') publish_author('Bookworm inc', 'Onslow Bigbrain')"},
 		//// return each relation only once
-		{"[write(Person_name, B) publish('Orbital', B)]", "[book('The red book')]"},
+		{"write(Person_name, B) publish('Orbital', B)", "book('The red book')"},
 		// number_of
-		{"[write('Sally Klein', Book) number_of(Book, N)]", "[focus(2)]"},
+		{"write('Sally Klein', Book) number_of(Book, N)", "focus(2)"},
 	}
 
 	for _, test := range tests {
@@ -142,9 +142,9 @@ func TestUnScope(t *testing.T) {
 		wantRelationSet string
 	}{
 		// use all arguments
-		{"[abc(A, 1) quant(B, [isa(B, 2)], A, [isa(A, 1)], [make(A, B)])]", "[abc(A, 1) isa(B, 2) isa(A, 1) make(A, B) quant(B, [], A, [], [])]"},
+		{"abc(A, 1) quant(B, isa(B, 2), A, isa(A, 1), make(A, B))", "abc(A, 1) isa(B, 2) isa(A, 1) make(A, B) quant(B, none, A, none, none)"},
 		// recurse
-		{"[quant(A, [ quant(B, [], A, [ isa(A, 1) ], []) ], B, [], [])]", "[isa(A, 1) quant(B, [], A, [], []) quant(A, [], B, [], [])]"},
+		{"quant(A, quant(B, none, A, isa(A, 1), none), B, none, none)", "isa(A, 1) quant(B, none, A, none, none) quant(A, none, B, none, none)"},
 	}
 
 	for _, test := range tests {

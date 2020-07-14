@@ -44,7 +44,7 @@
     { rule: subject_complement_clause2(P1) -> np(E1) marry(P1) np(E2),        sense: marry(P1, E1, E2) }
     { rule: copula_clause(P1) -> np(E1) 'and' np(E2) sibling(_),              sense: siblings(E1, E2) }
 
-    { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: find([ sem(1) quant(sem(3), E2, sem(4)) ], have_child(E1, E2)) }
+    { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: find(sem(1) quant(sem(3), E2, sem(4)), have_child(E1, E2)) }
 
     { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: intent(who, E1) }
     { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: intent(which, E1) }

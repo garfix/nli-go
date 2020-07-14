@@ -34,7 +34,7 @@ func TestMatchTwoTerms(t *testing.T) {
 		{"E1", "`:id11`", "{}", "{E1: `:id11`}", true},
 		{"E1", "/deer/", "{}", "{E1: /deer/}", true},
 		{"E1", "'grass'", "{}", "{E1: 'grass'}", true},
-		{"E1", "[son_of(blagger)]", "{}", "{E1: [son_of(blagger)]}", true},
+		{"E1", "son_of(blagger)", "{}", "{E1: son_of(blagger)}", true},
 		{"E1", "_", "{}", "{}", true},
 
 		// bind variable to anything, with bindings
@@ -95,10 +95,10 @@ func TestMatchTwoRelations(t *testing.T) {
 		{"parent(X, Y)", "parent(A, B)", "{X: 'Luke'}", "{X:'Luke', Y:B}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Luke'}", "{X: 'Luke', Y: 'George'}", true},
 		{"parent(X, Y)", "parent('Luke', 'George')", "{X: 'Vincent'}", "{X: 'Vincent'}", false},
-		{"quantification(X, [], Y, [ isa(Y, every) ])", "quantification(A, [], B, [ isa(B, every) ])", "{}", "{X: A, Y: B}", true},
-		{"quantification(X, _, Y, [ isa(Y, every) ])", "quantification(A, [], B, [ isa(B, P) specification(B, S) isa(S, very)])", "{}", "{X: A, Y: B}", true},
-		{"quantification(X, [], Y, Y1)", "quantification(A, E, B, [ isa(Y, every) ])", "{}", "{X: A, Y: B, Y1: [isa(Y, every)]}", true},
-		{"quantification(X, _, Y, [ isa(Y, Q) ])", "quantification(A, [], B, [ isa(B, every) specification(B, S) isa(S, very)])", "{}", "{X: A, Q: every, Y: B}", true},
+		{"quantification(X, none, Y, isa(Y, every))", "quantification(A, none, B, isa(B, every))", "{}", "{X: A, Y: B}", true},
+		{"quantification(X, _, Y, isa(Y, every))", "quantification(A, none, B, isa(B, P) specification(B, S) isa(S, very))", "{}", "{X: A, Y: B}", true},
+		{"quantification(X, none, Y, Y1)", "quantification(A, E, B, isa(Y, every))", "{}", "{X: A, Y: B, Y1: isa(Y, every)}", true},
+		{"quantification(X, _, Y, isa(Y, Q))", "quantification(A, none, B, isa(B, every) specification(B, S) isa(S, very))", "{}", "{X: A, Q: every, Y: B}", true},
 	}
 
 	for _, test := range tests {
@@ -122,13 +122,13 @@ func TestMatchRelationToSet(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
-	haystack := parser.CreateRelationSet(`[
+	haystack := parser.CreateRelationSet(`
 		gender('Luke', male) 
 		gender('George', male) 
 		parent('Luke', 'George') 
 		parent('Carry', 'Steven') 
 		gender('Carry', female)
-	]`)
+	`)
 
 	var tests = []struct {
 		needle       string
@@ -175,14 +175,14 @@ func TestMatchSequenceToSet(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
-	haystack := parser.CreateRelationSet(`[
+	haystack := parser.CreateRelationSet(`
 		gender('Luke', male)
 		gender('George', male)
 		gender('Jeanne', female)
 		parent('Luke', 'George')
 		parent('Carry', 'Steven')
 		parent('Carry', 'Jeanne')
-		gender('Carry', female)]
+		gender('Carry', female)
 	`)
 
 	var tests = []struct {
@@ -193,12 +193,12 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantIndexes  []int
 		wantMatch    bool
 	}{
-		{"[parent(X, Y) gender(X, male)]", haystack, "{}", "[{Y:'George', X:'Luke'}]", []int{3, 0}, true},
-		{"[parent(X, Y) gender(Y, female)]", haystack, "{X: 'Carry'}", "[{X: 'Carry', Y:'Jeanne'}]", []int{5, 2}, true},
-		{"[parent(X, Y) gender(Y, female)]", haystack, "{X: 'Quincy'}", "[]", []int{}, false},
-		{"[parent(X, Y) gender(X, female)]", haystack, "{}", "[{X:'Carry', Y:'Steven'} {X:'Carry', Y:'Jeanne'}]", []int{4, 6, 5}, true},
-		{"[parent('Carry', Y) gender(Y, M)]", haystack, "{Q: 3}", "[{Q: 3, Y:'Jeanne', M: female}]", []int{5, 2}, true},
-		{"[gender(Y, M) parent(X, Y) gender(X, M)]", haystack, "{}", "[{X:'Luke', Y:'George', M:male} {X:'Carry', Y:'Jeanne', M:female}]", []int{1, 3, 0, 2, 5, 6}, true},
+		{"parent(X, Y) gender(X, male)", haystack, "{}", "[{Y:'George', X:'Luke'}]", []int{3, 0}, true},
+		{"parent(X, Y) gender(Y, female)", haystack, "{X: 'Carry'}", "[{X: 'Carry', Y:'Jeanne'}]", []int{5, 2}, true},
+		{"parent(X, Y) gender(Y, female)", haystack, "{X: 'Quincy'}", "[]", []int{}, false},
+		{"parent(X, Y) gender(X, female)", haystack, "{}", "[{X:'Carry', Y:'Steven'} {X:'Carry', Y:'Jeanne'}]", []int{4, 6, 5}, true},
+		{"parent('Carry', Y) gender(Y, M)", haystack, "{Q: 3}", "[{Q: 3, Y:'Jeanne', M: female}]", []int{5, 2}, true},
+		{"gender(Y, M) parent(X, Y) gender(X, M)", haystack, "{}", "[{X:'Luke', Y:'George', M:male} {X:'Carry', Y:'Jeanne', M:female}]", []int{1, 3, 0, 2, 5, 6}, true},
 	}
 
 	for _, test := range tests {

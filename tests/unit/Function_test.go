@@ -31,7 +31,7 @@ func TestFunctions(t *testing.T) {
 		{"not_equals(E1, E2)", "{E1:2, E2:2}", "{}"},
 		{"equals(E1, E2)", "{E1:1, E2:2}", "{}"},
 		{"equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
-		{"unify(quant(Q2, [], R2, []), quant(Q1, [], R1, []))", "{R2:5}", "{R1:5, R2:5}"},
+		{"unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "{R1:5, R2:5}"},
 		{"unify(X, 0)", "{Z:0}", "{X:0, Z:0}"},
 		{"unify(0, Y)", "{Z:0}", "{Y:0, Z:0}"},
 		{"date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},

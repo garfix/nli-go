@@ -7,7 +7,11 @@ and some arguments.
 
 The arguments can be variables, values or even sets of relations.
 
-    relation_name(argument1, [relation_name() relation_name()])  
+    relation_name(argument1, relation_name() relation_name())
+    
+The empty relation set is represented by the atom `none`:    
+
+    relation_name(argument1, none)  
     
 The variables in the relation can be bound by both a binding
 
@@ -51,6 +55,10 @@ A single relation can express a goal
 The goal can be reached by processing subgoals
 
     pick_up(A) :- position(A, P) move_hand(P) grab(P) up(P, Q) move_hand(Q); 
+
+## Object
+
+The arguments of a relation can be regarded as the members of an object.
 
 ## Function call
 

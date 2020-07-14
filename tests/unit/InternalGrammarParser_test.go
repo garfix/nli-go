@@ -11,7 +11,7 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 
 	tests := []string{
-		"determiner(E, [], D, [])",
+		"determiner(E, some, D, some)",
 	}
 
 	for _, test := range tests {
@@ -64,6 +64,9 @@ func TestInternalGrammarParser(t *testing.T) {
 
 	grammar = parser.CreateGrammar("[]")
 
-	parser.CreateRelationSet("[assert(at(5, 3))]")
-	parser.CreateRelationSet("[learn(own(X, Y) :- fish(Y))]")
+	parser.CreateRelationSet("assert(at(5, 3))")
+	parser.CreateRelationSet("learn(own(X, Y) :- fish(Y))")
+	parser.CreateRelationSet("sort([])")
+	parser.CreateRelationSet("sort([5])")
+	parser.CreateRelationSet("sort([5,2,3,1])")
 }

@@ -159,23 +159,23 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 	extra := ""
 	variables := []string{}
 
-	if relation.Arguments[0].TermType == mentalese.TermAnonymousVariable || relation.Arguments[0].TermType == mentalese.TermVariable {
+	if relation.Arguments[0].IsAnonymousVariable() || relation.Arguments[0].IsVariable() {
 		var1 = "?variable1"
 		variables = append(variables, var1)
 	} else {
 		var1 = relation.Arguments[0].String()
-		if relation.Arguments[0].TermType == mentalese.TermStringConstant {
+		if relation.Arguments[0].IsString() {
 			var1 += "@en"
 		} else if relation.Arguments[0].IsId() {
 			var1 = "<" + relation.Arguments[0].TermValue + ">"
 		}
 	}
 
-	if relation.Arguments[1].TermType == mentalese.TermAnonymousVariable || relation.Arguments[1].TermType == mentalese.TermVariable {
+	if relation.Arguments[1].IsAnonymousVariable() || relation.Arguments[1].IsVariable() {
 		var2 = "?variable2"
 		variables = append(variables, var2)
 	} else {
-		if relation.Arguments[1].TermType == mentalese.TermStringConstant {
+		if relation.Arguments[1].IsString() {
 //todo make this into a config value
 			arg1 := relation.Arguments[1].TermValue
 			if false {

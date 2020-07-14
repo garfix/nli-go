@@ -1,6 +1,21 @@
 # Todo
 
+todo
+
+* list as term 
+* do/find -> quant_foreach(quant, minMax, E, scope) // note! single quant per predicate      
+* quant_find_ordered(quant, minMax, sort_func, List)
+    goes through compound quant, using sort function within each sub quant, placing results in List 
+* sort(List1, sort_func, List2)
+    sorts List1 by sort_func, places result in List2
+* list_foreach(List, E, scope)
+    instantiates List in E, and executes scope
+* if_then_else(if, then, else)
+    if `if` succeeds, then `then`, else `else`
+
+
 * agreement, especially for number, because it reduces ambiguity
+* variables camelcase only
 * syntactic placeholders for `sem(n)` (`$np1`)
 * namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?
@@ -13,6 +28,11 @@
 * sortal restrictions (using predicates.json and adding 'parent' to entities.json)
 * agreement checking (reintroducing feature unification)
 * clarification questions must be translatable (they must go through the generator)
+* use relations as functions (with special role for the last parameter as the return value)
+
+* (?) to_list(E1)
+    collect all distinct values of E1 into a list, replace the value of E1 in all bindings with this list; remove duplicate bindings
+    not yet needed; maybe postpone
 
 ## Agreement
 
@@ -34,6 +54,22 @@
     { rule: np_check(P1) -> np(E1)$1 marry(P1) 'to' np(E2)$2,                    sense: find_all([$1 $2], marry(P1, E1, E2)) }
     { rule: np_check(P1) -> np(E1)$subject marry(P1) 'to' np(E2)$object,         sense: find_all([$subject $object], marry(P1, E1, E2)) }
     { rule: np_check(P1) -> np(E1) marry(P1) 'to' np(E2),                        sense: find_all([$np1 $np2], marry(P1, E1, E2)) }
+
+## Aggregation functions on bindings
+
+`number_of`, `exists`, and the functions that still need to be build, `min` and `max`, work on bindings, and it is better to make this explicit.
+
+    bindings_max(E)
+    
+for example. On the other hand, I could make a single function
+
+    to_list(E)
+    
+that converts the binding variables into a list. And create
+
+    list_max(E)
+    
+But I don't like `to_list` because it must change the variable E and this is against the rules in Prolog. If it wouldn't change E then the number of bindings would stay unnecessary large.            
 
 ## Misc
 

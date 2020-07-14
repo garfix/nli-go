@@ -364,6 +364,8 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 				//  only add the rule to a single rulebase
 				break
 			}
+		} else if argument.IsList() {
+			panic("assert not implemented for list")
 		}
 	} else if relation.Predicate == mentalese.PredicateRetract {
 		if argument.IsRelationSet() {

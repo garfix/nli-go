@@ -2,7 +2,6 @@ package mentalese
 
 import (
 	"nli-go/lib/common"
-	"strings"
 )
 
 type Relation struct {
@@ -21,6 +20,7 @@ const PredicateAnd = "and"
 const PredicateNot = "not"
 const PredicateOr = "or"
 const PredicateXor = "xor"
+const PredicateIfThenElse = "if_then_else"
 const PredicateCall = "call"
 const PredicateName = "name"
 const PredicateText = "text"
@@ -56,13 +56,7 @@ func (relation Relation) GetVariableNames() []string {
 	var names []string
 
 	for _, argument := range relation.Arguments {
-		if argument.IsVariable() {
-			names = append(names, argument.TermValue)
-		} else if argument.IsRelationSet() {
-			names = append(names, argument.TermValueRelationSet.GetVariableNames()...)
-		} else if argument.IsRule() {
-			names = append(names, argument.TermValueRule.GetVariableNames()...)
-		}
+		names = append(names, argument.GetVariableNames()...)
 	}
 
 	return common.StringArrayDeduplicate(names)
@@ -136,16 +130,7 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 
 	for _, argument := range relation.Arguments {
 
-		newArgument := argument.Copy()
-
-		if argument.IsVariable() {
-			newArgument = NewPredicateAtom(strings.ToLower(argument.TermValue))
-		} else if argument.IsRelationSet() {
-			newArgument = NewRelationSet(argument.TermValueRelationSet.ConvertVariablesToConstants())
-		} else if argument.IsRule() {
-			newArgument = NewRule(argument.TermValueRule.ConvertVariablesToConstants())
-		}
-
+		newArgument := argument.ConvertVariablesToConstants()
 		newArguments = append(newArguments, newArgument)
 	}
 

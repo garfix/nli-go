@@ -150,6 +150,8 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 				replaced, childIndexes = relationizer.includeChildSensesInSet(formalArgument.TermValueRule.Pattern, childSets, childIndexes)
 				newRule.Pattern = replaced
 				newParentRelation.Arguments[i] = mentalese.NewRule(newRule)
+			} else if formalArgument.IsList() {
+				panic("not implemented")
 			}
 		}
 

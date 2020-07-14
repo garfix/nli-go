@@ -3,6 +3,8 @@
 ##
 
 * the regular expression of the tokenizer is now configurable via config.json
+* if_then_else
+* term type `list`
 
 ## 1.10 strong negation - 01-06-2020
 

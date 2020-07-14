@@ -106,6 +106,10 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 
 		newBindings = base.SolveNot(relation, binding)
 
+	} else if relation.Predicate == mentalese.PredicateIfThenElse {
+
+		newBindings = base.SolveIfThenElse(relation, binding)
+
 	} else if relation.Predicate == mentalese.PredicateCall {
 
 		newBindings = base.Call(relation, binding)

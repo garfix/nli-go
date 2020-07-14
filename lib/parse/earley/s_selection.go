@@ -65,6 +65,8 @@ func getTypeFromSense(predicates mentalese.Predicates, variable string, sense me
 				}
 			} else if argument.IsRule() {
 				// no need to implement
+			} else if argument.IsList() {
+				// no need to implement
 			}
 		}
 	}

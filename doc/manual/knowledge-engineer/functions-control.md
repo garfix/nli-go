@@ -40,6 +40,12 @@ A variant on the boolean function `not` that works with bindings. If executing `
     
 * `A`: a relation set   
 
+## If / then / else
+
+If `Condition` succeeds, then `Action` is executed. If not, then `Alternative` is executed. 
+
+    if_then_else(Condition, Action, Alternative)     
+
 ## Intent
 
 This relation is used by solutions to recognize types of problems.

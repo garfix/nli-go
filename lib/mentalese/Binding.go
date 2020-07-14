@@ -123,8 +123,8 @@ func (b Binding) Swap() Binding {
 	result := Binding{}
 
 	for key, value := range b {
-		if value.TermType == TermVariable {
-			result[value.TermValue] = Term{TermType: TermVariable, TermValue: key}
+		if value.IsVariable() {
+			result[value.TermValue] = Term{TermType: TermTypeVariable, TermValue: key}
 		}
 	}
 

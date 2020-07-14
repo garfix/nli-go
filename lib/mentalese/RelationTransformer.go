@@ -39,6 +39,8 @@ func (transformer *RelationTransformer) replaceRelations(transformations []Rule,
 				deepRelation.Arguments[i] = NewRelationSet(transformer.replaceRelations(transformations, argument.TermValueRelationSet, binding))
 			} else if argument.IsRule() {
 				// no need for implementation
+			} else if argument.IsList() {
+				// no need for implementation
 			}
 		}
 

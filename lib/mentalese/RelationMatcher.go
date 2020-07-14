@@ -225,6 +225,10 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 
 		panic("to be implemented")
 
+	} else if subjectArgument.IsList() {
+
+		panic("to be implemented")
+
 	} else {
 
 		// subject is atom, constant

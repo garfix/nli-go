@@ -223,6 +223,8 @@ func (set RelationSet) UnScope() RelationSet {
 				unscoped = append(unscoped, scopedSet.UnScope()...)
 			} else if argument.IsRule() {
 				// no need for implementation
+			} else if argument.IsList() {
+				// no need for implementation
 			}
 		}
 
@@ -259,7 +261,7 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 				markedRelationIndexes[r] = true
 				// add all variables of this relation
 				for _, argument := range relation.Arguments {
-					if argument.TermType == TermVariable {
+					if argument.IsVariable() {
 						var someVar = argument.TermValue
 						var _, variableAlreadyFound = foundVariables[someVar]
 						if !variableAlreadyFound {

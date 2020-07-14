@@ -39,7 +39,7 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 	for i := 0; i < len(bindings)-2; i++ {
 
 		binding := bindings[i]
-		rightValue := mentalese.Term{TermType: mentalese.TermVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
+		rightValue := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
 
 		relation := mentalese.NewRelation(true, "and", []mentalese.Term{
 			parentValue,

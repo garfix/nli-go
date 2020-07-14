@@ -1,8 +1,11 @@
 package tests
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
+	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/mentalese"
 	"testing"
 )
 
@@ -55,7 +58,7 @@ func TestFunctions(t *testing.T) {
 func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	functionBase := knowledge.NewSystemAggregateBase("name", log)
+	aggregateBase := knowledge.NewSystemAggregateBase("name", log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -76,10 +79,52 @@ func TestAggregateFunctions(t *testing.T) {
 		bindings := parser.CreateBindings(test.bindings)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings, _ := functionBase.Execute(input, bindings)
+		resultBindings, _ := aggregateBase.Execute(input, bindings)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, bindings, resultBindings, wantBindings)
+		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
+	}
+}
+
+func TestControlFunctions(t *testing.T) {
+
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
+	dialogContext := central.NewDialogContext()
+	predicates := mentalese.Predicates{}
+
+	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	solver.AddFunctionBase(functionBase)
+	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	parser := importer.NewInternalGrammarParser()
+	tests := []struct {
+		input      string
+		binding     string
+		wantBindings string
+	}{
+		{"xor(_, unify(E, 1), unify(E, 2))", "{}", "[{E:1}]"},
+		{"and(_, unify(E, 1), unify(E, 2))", "{}", "[]"},
+		{"or(_, unify(E, 1), unify(E, 2))", "{}", "[{E:1} {E:2}]"},
+		{"if_then_else(greater_than(6, 5), unify(E, 1), unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
+		{"if_then_else(greater_than(5, 6), unify(E, 1), unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
+	}
+
+	for _, test := range tests {
+
+		input := parser.CreateRelation(test.input)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
+
+		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
 		}
 	}
 

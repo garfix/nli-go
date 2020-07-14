@@ -79,6 +79,8 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 				for key, value := range childMap {
 					variableMap[key] = value
 				}
+			} else if argument.IsList() {
+				panic("to be implemented")
 			}
 		}
 	}
@@ -104,7 +106,7 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 
 			} else if argument.IsRelationSet() {
 
-				newRelation.Arguments[a].TermType = mentalese.TermRelationSet
+				newRelation.Arguments[a].TermType = mentalese.TermTypeRelationSet
 				newRelation.Arguments[a].TermValueRelationSet = builder.CreateGrammarRuleRelations(argument.TermValueRelationSet, variableMap)
 
 			} else if argument.IsRule() {
@@ -112,9 +114,11 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 				newGoal := builder.CreateGrammarRuleRelations(mentalese.RelationSet{ argument.TermValueRule.Goal }, variableMap)
 				newPattern := builder.CreateGrammarRuleRelations(argument.TermValueRule.Pattern, variableMap)
 				newRule := mentalese.Rule{ Goal: newGoal[0], Pattern: newPattern }
-				newRelation.Arguments[a].TermType = mentalese.TermRule
+				newRelation.Arguments[a].TermType = mentalese.TermTypeRule
 				newRelation.Arguments[a].TermValueRule = newRule
 
+			} else if argument.IsList() {
+				panic("to be implemented")
 			}
 		}
 
@@ -127,8 +131,8 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 // Create actual relations given a set of templates and an actual variable to replace any * positions
 func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.RelationSet, variable string) mentalese.RelationSet {
 
-	from := mentalese.Term{TermType: mentalese.TermVariable, TermValue: "E"}
-	to := mentalese.Term{TermType: mentalese.TermVariable, TermValue: variable}
+	from := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: "E"}
+	to := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: variable}
 
 	return builder.ReplaceTerm(relationTemplates, from, to)
 }
@@ -153,11 +157,13 @@ func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet,
 
 			} else if argument.IsRule() {
 
-				newGoals := builder.ReplaceTerm(mentalese.RelationSet{ relationArgument.TermValueRule.Goal }, from, to)
-				newPattern := builder.ReplaceTerm(relationArgument.TermValueRule.Pattern, from ,to)
-				newRule := mentalese.Rule{ Goal: newGoals[0], Pattern: newPattern }
+				newGoals := builder.ReplaceTerm(mentalese.RelationSet{relationArgument.TermValueRule.Goal}, from, to)
+				newPattern := builder.ReplaceTerm(relationArgument.TermValueRule.Pattern, from, to)
+				newRule := mentalese.Rule{Goal: newGoals[0], Pattern: newPattern}
 				relationArgument.TermValueRule = newRule
 
+			} else if argument.IsList() {
+				panic("to be implemented")
 			} else {
 
 				if argument.TermType == from.TermType && argument.TermValue == from.TermValue {

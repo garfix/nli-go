@@ -1,3 +1,56 @@
+# 2020-07-12
+
+Trying to solve the stacking problem, you can split it in a planning phase and an execution phase
+
+1) planning: find 4 easy objects that match the requirements, order them by size (pyramid on top)
+2) execution: place the objects on top of each other
+
+But, while this is not an issue in the blocks world, it can be in other situations, there may be problems in the execution phase. A certain block may be taken by someone else while you are building the tower, for example.
+
+Therefore a more robust solution would be to integrate the planning and the execution phases. All objects would remain possible to use while executing. But this requires a much more complex working data structure with two types of ordering (by size, by easiness). 
+
+This would be _more robust_, but it would not be completely robust. Because someone might kick over the stack. This problem would not be solved by the extra robustness.
+
+People, I think, use the two phases: select some blocks, build the stack. If something goes wrong, _replan_.
+
+But I am not now going to build a replanning agent.
+
+===
+
+    "Will you please stack up both of the red blocks and either a green cube or a pyramid?"
+    
+If a computer has an option between A XOR B, it will try A first. But what if both of the green cubes are much more difficult to move then the pyramid? Can this system handle this situation?    
+
+=== 
+
+Possible new description of NLI-GO: "rule based semantic parser and executor" (like SEMPRE)
+
+# 2020-07-11
+
+I needed a sort function that sorted current bindings with respect to a sort function that handled on a specific variable. But the fact that the set of bindings served as a sort of data structure always troubled me. This intended sort function pushed me over the edge
+
+    sort(E, sort_func)
+    
+(Sort all bindings using sort_func and use E as the active variable)
+
+While it is _possible_ to use the active bindings as a data structure, it is not intuitive, not explicit, and Prolog does not do it.
+
+When Prolog acts on multiple bindings (called 'solutions'), it is always in the scope of a specific function (findall, aggregate).
+
+Therefore I want to introduce the list, that holds an array of values of any type. Programming with lists is intuitive.
+
+And I need a (single) function that takes a set of current bindings and turns a single variable of them into a list.
+
+    to_list(E1, List)
+  
+# 2020-07-09
+
+Is it possible to generate a semantic representation without executing it immediately?
+
+It would be possible to generate a list of possible goals and rules that may be needed to solve a problem, and have a third party execute them. But that means that the logic of executing the goals needs to be specified explicitly and be implemented by each new execution agent. 
+
+This is not something I will currently actively persue.  
+
 # 2020-07-06
 
 Is a quant a kind of continuation? See https://en.wikipedia.org/wiki/Continuation

@@ -6,10 +6,11 @@ todo
 * if_then_else(if, then, else)
     if `if` succeeds, then `then`, else `else`
 ---    
-* do/find -> quant_foreach(quant, minMax, E, scope) // note! single quant per predicate      
-* quant_find_ordered(quant, minMax, sort_func, List)
+* do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
+* find -> quant_check(quant, E, scope) // note! single quant per predicate
+* quant_list_ordered(quant, sort_func, List)
     goes through compound quant, using sort function within each sub quant, placing results in List 
-* sort(List1, sort_func, List2)
+* list_sort(List1, sort_func, List2)
     sorts List1 by sort_func, places result in List2
 * list_foreach(List, E, scope)
     instantiates List in E, and executes scope

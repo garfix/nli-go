@@ -1,3 +1,15 @@
+# 2020-07-17
+
+What is the quantifier for the unquantified noun?
+
+* Does every woman have _children_? => some
+* What _bike_ did you take? => "what" is an "interrogative determiner"
+* How many _cookies_ did you take? => count them all
+* Can _birds_ fly? => yes, most can, but not this penguin here
+* Pick up _blocks_ => not possible
+
+I am going to treat the unquantified noun as a noun that lacks a quantifier. It will try to match as much as it can, and will make no checks. But I will treat it as quantifier, because it is much easier for me to treat all NP's as being quantified. The quantifier will get the special atom `none`. 
+
 # 2020-07-14
 
 Since I need to do something with the order of entities, the thought keeps reocurring that _order_ can be part of the quant:

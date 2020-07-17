@@ -75,7 +75,7 @@
 
     { rule: np(E1) -> qp(_) nbar(E1),                                      sense: quant(sem(1), E1, sem(2)) }
     { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(some, E1, definite_reference(E1, sem(2))) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(some, E1, sem(1)) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, sem(1)) }
     { rule: np(E1) -> pronoun(E1),                                         sense: quant(some, E1, sem(1)) }
     { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(some, E1, sem(1)) }
     { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: or(_, sem(1), sem(3)) }

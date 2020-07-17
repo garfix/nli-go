@@ -79,7 +79,7 @@ func (base *SystemNestedStructureBase) solveSimpleQuant(quant mentalese.Relation
 		}
 	}
 
-	success := base.tryQuantifier(quant, rangeBindings, scopeBindings)
+	success := base.tryQuantifier(quant, rangeBindings, scopeBindings, true)
 
 	if success {
 		return scopeBindings
@@ -143,7 +143,7 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
-		if base.tryQuantifier(quant, rangeBindings, scopeBindings) {
+		if base.tryQuantifier(quant, rangeBindings, scopeBindings, false) {
 			if !continueAfterEnough {
 				break
 			}
@@ -153,7 +153,7 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 	return scopeBindings
 }
 
-func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings) bool {
+func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, final bool) bool {
 
 	firstArgument := quant.Arguments[mentalese.QuantQuantifierIndex]
 
@@ -172,14 +172,22 @@ func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, r
 		}
 	}
 
+	// special case: the existential quantifier `none`
+	if firstArgument.IsRelationSet() && len(firstArgument.TermValueRelationSet) == 0 {
+		if final {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	if !firstArgument.IsRelationSet() ||
-		len(firstArgument.TermValueRelationSet) != 1 ||
 		firstArgument.TermValueRelationSet[0].Predicate != mentalese.PredicateQuantifier {
-		base.log.AddError("First argument of a `quant` must be a `quantifier`")
+		base.log.AddError("First argument of a `quant` must be a `quantifier`, but is " + firstArgument.String())
 		return false
 	}
 
-	quantifier := quant.Arguments[mentalese.QuantQuantifierIndex].TermValueRelationSet[0]
+	quantifier := firstArgument.TermValueRelationSet[0]
 
 	scopeCountVariable := quantifier.Arguments[mentalese.QuantifierResultCountVariableIndex].TermValue
 	rangeCountVariable := quantifier.Arguments[mentalese.QuantifierRangeCountVariableIndex].TermValue

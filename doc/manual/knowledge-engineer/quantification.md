@@ -14,7 +14,7 @@ Let's take the sentence:
     
 When is this sentence true? In order to answer this we distinguish between "all red balls" (the _quantification_) and "fall from the table" (the _scope_). In order to determine if the sentence is true, we must go through all entities E that are "red balls", and we will find a set of identifiers for these red balls. This set of (unique) identifiers we call the _range_. The range may have 3 values (let's call this `Range`). Now we try the scope for each of these values. Ball `1`, did it fall from the table? Yes. Ball `2`, did it fall from the table? No. Ball `3`? Yes, it did. We found that 2 red balls actually fell from the table (call it `Result`). Now we can answer the question, as _all_ simply means: `equals(Result, Range)`. This returns the empty set, so that means: No.
 
-"all" is actually one of the few quantifiers that requies two numbers. Most quantifiers just use a single value (`Result`). They don't care how many entities where in the range, as long as a specific number made it into the result. An example is:
+"all" is actually one of the few quantifiers that requires two numbers. Most quantifiers just use a single value (`Result`). They don't care how many entities where in the range, as long as a specific number made it into the result. An example is:
 
     Did at least two red balls fall from the table?
     
@@ -113,6 +113,22 @@ Imagine now this sentence: "pick up two blocks".
 Handling this question with `find` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `do` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
 
 The difference between `find` and `do` is that `do` stops when it has enough, while `find` continues. Use `find` with interrogative relations and `do` with imperative relations. 
+
+## Unquantified nouns
+
+Unquantified nouns are nouns that are not preceded by a determiner or quantifier. An example is 
+
+    blocks 
+
+We still use a quantifier in this situation, because it is easier to treat all NP's as quants. But the the quantifier is 
+
+    none
+    
+An example grammar rule is
+
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, sem(1)) }       
+
+The system will find as much entities that match the scope as it can, and it always succeeds.
 
 ## Nested quants
 

@@ -52,7 +52,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 	}{
 		{t_comment, "/\\*.*?\\*/"},
 		{t_predicate, "[a-z][a-z0-9_]*"},
-		{t_variable, "[A-Z][a-z0-9_]*"},
+		{t_variable, "[A-Z][a-zA-Z0-9]*"},
 		{t_anonymousVariable, "_"},
 		{t_id, "`[^`]+`"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},

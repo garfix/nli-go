@@ -34,8 +34,8 @@ func TestSolver(t *testing.T) {
 	`)
 
 	ds2db := parser.CreateRules(`[
-		write(Person_name, Book_name) :- book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
-		publish(Pub_name, Book_name) :- book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
+		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
 	ds2dbWrite := parser.CreateRules(`[]`)

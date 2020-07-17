@@ -2,14 +2,14 @@
 
 ## Identifiers
 
- * variables start with a capital, followed by zero or more lowercase or underscore characters: A, Verb, Entity1, Noun_entity
- * predicates start with a lower case character, followed by zero or more upper, lower or underscore characters
- * atoms, like predicates
+ * variables are CamelCased: A, Verb, Entity1, OrderedBlocks
+ * predicates are snake_cased
+ * atoms are snake_cased
  * string constants: use single quotes: 'De Nachtwacht'; also numbers: '25' '1.5'
  * id: entity type and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
- * relation: a predicate, followed by an argument list of terms: kick(john, jake)
- * relation set: multiple predicates, separated by space, or `none` for no an empty set
-
+ 
+ ## Terms
+ 
  A term can be any of these
 
  * atom
@@ -18,7 +18,7 @@
  * string constant
  * regular expression
  * id
- * relation (set)
+ * relation set
  * list of terms
  
  Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 

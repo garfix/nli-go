@@ -235,19 +235,19 @@
     {
         condition: intent(how_old, E1),
         transformations: [
-            intent(how_old, E1) :- birth_date(E1, Birth_date) date_today(Today) date_subtract_years(Today, Birth_date, Years_since_birth);
+            intent(how_old, E1) :- birth_date(E1, BirthDate) date_today(Today) date_subtract_years(Today, BirthDate, YearsSinceBirth);
         ],
         result: _,
         responses: [
             {
-                condition: death_date(E1, Death_date) date_subtract_years(Death_date, Today, Years_since_death) less_than(Years_since_death, 0),
-                preparation: gender(E1, Gender) date_subtract_years(Death_date, Birth_date, Age) split(Birth_date, '-', Year1, Month1, Day1) split(Death_date, '-', Year2, Month2, Day2),
-                answer: report_age_deceased(E1, Age, Birth_date, Death_date) gender(E1, Gender) date(Birth_date, Day1, Month1, Year1) date(Death_date, Day2, Month2, Year2)
+                condition: death_date(E1, DeathDate) date_subtract_years(DeathDate, Today, YearsSinceDeath) less_than(YearsSinceDeath, 0),
+                preparation: gender(E1, Gender) date_subtract_years(DeathDate, BirthDate, Age) split(BirthDate, '-', Year1, Month1, Day1) split(DeathDate, '-', Year2, Month2, Day2),
+                answer: report_age_deceased(E1, Age, BirthDate, DeathDate) gender(E1, Gender) date(BirthDate, Day1, Month1, Year1) date(DeathDate, Day2, Month2, Year2)
             }
             {
                 condition: exists(),
-                preparation: gender(E1, Gender) split(Birth_date, '-', Year, Month, Day),
-                answer: report_age_alive(E1, Years_since_birth, Birth_date) gender(E1, Gender) date(Birth_date, Day, Month, Year)
+                preparation: gender(E1, Gender) split(BirthDate, '-', Year, Month, Day),
+                answer: report_age_alive(E1, YearsSinceBirth, BirthDate) gender(E1, Gender) date(BirthDate, Day, Month, Year)
             }
             {
                 answer: dont_know()

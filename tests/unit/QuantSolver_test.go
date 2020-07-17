@@ -52,7 +52,7 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 2 children?
 			`
 				find(
-					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, isa(S1, parent)), 
+					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
 					have_child(S1, O1) number_of(O1, 2))`,
 			"{}",
 			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}{O1:9, S1:8}{O1:10, S1:8}",
@@ -61,8 +61,8 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 3 children?
 			`
 				find(
-					quant(quantifier(Result_count1, Range_count1, equals(Result_count1, Range_count1)), S1, isa(S1, parent))
-					quant(quantifier(Result_count2, Range_count2, equals(Result_count1, 3)), O1, isa(O1, child))
+					quant(quantifier(ResultCount1, RangeCount1, equals(ResultCount1, RangeCount1)), S1, isa(S1, parent))
+					quant(quantifier(ResultCount2, RangeCount2, equals(ResultCount1, 3)), O1, isa(O1, child))
 				, 
 				have_child(S1, O1))`,
 			"{}",
@@ -72,7 +72,7 @@ func TestQuantSolver(t *testing.T) {
 			// keep extra bindings?
 			`
 				find(
-					quant(quantifier(Result_count, Range_count, equals(Result_count, Range_count)), S1, isa(S1, parent)), 
+					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
 					have_child(S1, O1) number_of(O1, 2)
 				)`,
 			"{X: 3}",

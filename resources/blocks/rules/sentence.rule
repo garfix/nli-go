@@ -38,9 +38,10 @@
         size(E2, Width2, Depth2, Height2) min(Width2, Depth2, Min2)
         if_then_else( greater_than(Min1, Min2), unify(R, 1), unify(R, 0) );
 
-    do_stack_up_smart_2(P1, Q1) :-
+    do_stack_up_smart_2(P1, QBlocks) :-
         do_clear_hand(_)
-        quant_find_ordered(Q1, min, by_easiness, List1)
+        quant_set_order(QBlock, EasyBlocks)
+        quant_list(EasyBlocks, List1)
         list_sort(List1, by_size, List2)
         unify(X, 678) unify(Y, 678) /* todo: find a proper place */
         stack_up_proper(List2, X, Y);

@@ -33,20 +33,20 @@ func TestAnswerer(t *testing.T) {
 	`)
 
 	ds2db := parser.CreateRules(`[
-		write(Person_name, Book_name) :- book(Book_id, Book_name, _) author(Person_id, Book_id) person(Person_id, Person_name);
-		publish(Pub_name, Book_name) :- book(Book_id, Book_name, Pub_id) publisher(Pub_id, Pub_name);
+		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
+		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
 	ds2dbWrite := parser.CreateRules(`[]`)
 
 	solutions := parser.CreateSolutions(`[
 		{
-			condition: write(Person_name, Book_name) publish(Pub_name, Book_name),
+			condition: write(PersonName, BookName) publish(PubName, BookName),
 			result: _,
 			responses: [
 				{
 					condition: exists(),
-					answer: book(Book_name)
+					answer: book(BookName)
 				}
 				{
 					answer: none()
@@ -117,7 +117,7 @@ func TestAnswerer(t *testing.T) {
 		// preparation
 		{"publish('Bookworm inc', B)", "publish_author('Bookworm inc', 'Sally Klein') publish_author('Bookworm inc', 'Onslow Bigbrain')"},
 		//// return each relation only once
-		{"write(Person_name, B) publish('Orbital', B)", "book('The red book')"},
+		{"write(PersonName, B) publish('Orbital', B)", "book('The red book')"},
 		// number_of
 		{"write('Sally Klein', Book) number_of(Book, N)", "focus(2)"},
 	}

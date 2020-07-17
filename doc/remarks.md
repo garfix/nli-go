@@ -8,7 +8,15 @@ What is the quantifier for the unquantified noun?
 * Can _birds_ fly? => yes, most can, but not this penguin here
 * Pick up _blocks_ => not possible
 
-I am going to treat the unquantified noun as a noun that lacks a quantifier. It will try to match as much as it can, and will make no checks. But I will treat it as quantifier, because it is much easier for me to treat all NP's as being quantified. The quantifier will get the special atom `none`. 
+I am going to treat the unquantified noun as a noun that lacks a quantifier. It will try to match as much as it can, and will make no checks. But I will treat it as quantifier, because it is much easier for me to treat all NP's as being quantified. The quantifier will get the special atom `none`.
+
+===
+
+I changed variables to completely camelcased. 
+
+    Ordered_blocks => OrderedBlocks
+    
+Because I don't know what I was thinking when I created this (actually I do) :).     
 
 # 2020-07-14
 

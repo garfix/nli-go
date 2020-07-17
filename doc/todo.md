@@ -5,19 +5,19 @@ todo
 * list as term 
 * if_then_else(if, then, else)
     if `if` succeeds, then `then`, else `else`
----    
-* do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
-* find -> quant_check(quant, E, scope) // note! single quant per predicate
-* quant_list_ordered(quant, sort_func, List)
+---
+* quant_set_order(quant, sort_func, ordered_quant)    
+* quant_list_ordered(quant, List)
     goes through compound quant, using sort function within each sub quant, placing results in List 
 * list_sort(List1, sort_func, List2)
     sorts List1 by sort_func, places result in List2
 * list_foreach(List, E, scope)
     instantiates List in E, and executes scope
+* do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
+* find -> quant_check(quant, E, scope) // note! single quant per predicate
 
 
 * agreement, especially for number, because it reduces ambiguity
-* variables camelcase only
 * syntactic placeholders for `sem(n)` (`$np1`)
 * namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?

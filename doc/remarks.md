@@ -1,3 +1,13 @@
+# 2020-07-23
+
+I am reading "Semantics in Generative Grammar" by Heim and Kratzer. Very clearly presented book. But on the first page I stumbled over
+
+    "To know the meaning of a sentence is to know its truth-conditions"
+    
+There is also a variation where "truth-conditions" reads "truth-value". My point is that in NLI-GO the meaning of a sentence is not about truth, but about command. The semantics of a sentence is correct if the command succeeds in making the computer do what you want it to do. Even a declarative sentence, which is the type of sentence treated in books on language semantics, has a commanding reading; it says: assert this statement to your knowledge base. Furthermore, the final episthemological level of NLI-GO is not _truth_, but rather _belief_. The facts in the knowledge base are the atoms of work. Whether this information is true or false is outside the responsibilities of the system.
+
+Frege / Montague use functions to calculate the truth value of a sentence. Since this is not our aim, the use of functions is not necessary, and we can use a much  more free use of semantic composition.      
+
 # 2020-07-17
 
 What is the quantifier for the unquantified noun?

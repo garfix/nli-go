@@ -6,6 +6,15 @@ import (
 	"strconv"
 )
 
+// a = atom
+// s = string
+// S = one or more strings
+// v = variable
+// V = one or more variables
+// i = integer
+// r = relation set
+// l = list
+// * = any type
 func Validate(input mentalese.Relation, format string, log *common.SystemLog) bool {
 
 	expectedLength := len(format)
@@ -30,8 +39,16 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
 			return false
 		}
+		if c == 'l' && !arg.IsList() {
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a list")
+			return false
+		}
 		if c == 'i' && !arg.IsNumber() {
-			//			base.log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
+			//			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
+			return false
+		}
+		if c == 'r' && !arg.IsRelationSet() {
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a relation set")
 			return false
 		}
 		if c == 'S' {

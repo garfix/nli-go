@@ -75,9 +75,9 @@ func (base *SystemNestedStructureBase) SolveIfThenElse(orRelation mentalese.Rela
 	newBindings := base.solver.SolveRelationSet(condition, mentalese.Bindings{ binding })
 
 	if len(newBindings) > 0 {
-		newBindings = base.solver.SolveRelationSet(action, mentalese.Bindings{ binding })
+		newBindings = base.solver.SolveRelationSet(action, newBindings )
 	} else {
-		newBindings = base.solver.SolveRelationSet(alternative, mentalese.Bindings{ binding })
+		newBindings = base.solver.SolveRelationSet(alternative, mentalese.Bindings{ binding } )
 	}
 
 	return newBindings

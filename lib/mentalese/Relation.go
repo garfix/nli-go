@@ -13,9 +13,12 @@ type Relation struct {
 const PredicateNone = "none"
 const PredicateFind = "find"
 const PredicateDo = "do"
+const PredicateQuantOrderedList = "quant_ordered_list"
 const PredicateQuant = "quant"
 const PredicateQuantifier = "quantifier"
 const PredicateQuantifierSome = "some"
+const PredicateListOrder = "list_order"
+const PredicateListForeach = "list_foreach"
 const PredicateSem = "sem"
 const PredicateAnd = "and"
 const PredicateNot = "not"
@@ -30,6 +33,7 @@ const PredicateRetract = "retract"
 const PredicateIntent = "intent"
 const PredicateBackReference = "back_reference"
 const PredicateDefiniteBackReference = "definite_reference"
+const PredicateQuantOrder = "quant_order"
 
 const QuantifierResultCountVariableIndex = 0
 const QuantifierRangeCountVariableIndex = 1

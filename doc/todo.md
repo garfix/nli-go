@@ -5,14 +5,14 @@ todo
 * list as term 
 * if_then_else(if, then, else)
     if `if` succeeds, then `then`, else `else`
----
-* quant_set_order(quant, sort_func, ordered_quant)    
-* quant_list_ordered(quant, List)
-    goes through compound quant, using sort function within each sub quant, placing results in List 
-* list_sort(List1, sort_func, List2)
+* quant_order(quant, sort_func, ordered_quant)    
+* quant_ordered_list(quant, List, orderFunc)
+    goes through compound quant, using orderFunc, placing results in List 
+* list_order(List1, sort_func, List2)
     sorts List1 by sort_func, places result in List2
 * list_foreach(List, E, scope)
     instantiates List in E, and executes scope
+---
 * do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
 * find -> quant_check(quant, E, scope) // note! single quant per predicate
 

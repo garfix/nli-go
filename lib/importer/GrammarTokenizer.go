@@ -57,7 +57,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_id, "`[^`]+`"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
 		{t_regExp, "/(?:\\\\/|\\\\\\\\|[^/])*/"},
-		{t_number, "[0-9]+"},
+		{t_number, "-?[0-9]+"},
 		{t_comma, ","},
 		{t_rewrite, "->"},
 		{t_implication, ":-"},

@@ -132,3 +132,133 @@ func TestControlFunctions(t *testing.T) {
 		t.Errorf("errors: %v", log.String())
 	}
 }
+
+func TestQuantFunctions(t *testing.T) {
+
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
+	dialogContext := central.NewDialogContext()
+	predicates := mentalese.Predicates{}
+	parser := importer.NewInternalGrammarParser()
+
+	rules := parser.CreateRules(`[
+		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) compare(Name1, Name2, R);
+	]`)
+	facts := parser.CreateRelationSet("" +
+		"person(`:C`, 'Charles') " +
+		"person(`:D`, 'Duncan') " +
+		"person(`:B`, 'Bernhard') " +
+		"person(`:E`, 'Edward') " +
+		"person(`:A`, 'Abraham') ")
+	ds2db := parser.CreateRules(`[
+		person(E, Name) :- person(E, Name);
+		person_named_bernhard(E) :- person(E, 'Bernhard');
+		person_named_edward(E) :- person(E, 'Edward');
+	]`)
+	ds2dbWrite := parser.CreateRules(`[]`)
+	entities := mentalese.Entities{}
+
+	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	solver.AddFactBase(factBase)
+	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	solver.AddFunctionBase(functionBase)
+	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
+	solver.AddRuleBase(ruleBase)
+	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	tests := []struct {
+		input      string
+		binding     string
+		wantBindings string
+	}{
+		{"quant_order(quant(Q1, E1), by_size, QSized)", "{}", "[{QSized: quant(Q1, E1, by_size)}]"},
+		{"quant_order(or(_, quant(Q1, E1), quant(Q1, E1)), by_size, QSized)", "{}", "[{QSized: or(_, quant(Q1, E1, by_size), quant(Q1, E1, by_size))}]"},
+		{`
+			do(
+				quant(
+					quantifier(Result, Range, equals(Result, 3)),
+					E,
+					person(E, _)),
+				List)`,
+			"{}", "[{E: `:C`} {E: `:D`} {E: `:B`}]"},
+		{`
+			quant_ordered_list(
+				quant(
+					quantifier(Result, Range, equals(Result, 3)),
+					E,
+					person(E, _)),
+				by_name,
+				List)`,
+			"{}", "[{List: [`:A`, `:B`, `:C`]}]"},
+		{`
+			quant_ordered_list(
+				and(_,
+					quant(
+						quantifier(Result, Range, equals(Result, 3)),
+						E,
+						person(E, _)),
+					quant(
+						quantifier(Result, Range, equals(Result, 1)),
+						E,
+						person_named_edward(E))
+				),
+				by_name,
+				List)`,
+			"{}", "[{List: [`:A`, `:B`, `:C`, `:E`]}]"},
+		{`
+			quant_ordered_list(
+				or(_,
+					quant(
+						quantifier(Result, Range, equals(Result, 3)),
+						E,
+						person(E, _)),
+					quant(
+						quantifier(Result, Range, equals(Result, 1)),
+						E,
+						person_named_bernhard(E))
+				),
+				by_name,
+				List)`,
+			"{}", "[{List: [`:B`]}]"},
+		{`
+			quant_ordered_list(
+				or(_,
+					quant(
+						quantifier(Result, Range, equals(Result, 3)),
+						E,
+						person(E, _)),
+					or(_,
+						quant(
+							quantifier(Result, Range, equals(Result, 3)),
+							E,
+							person(E, _)),
+						quant(
+							quantifier(Result, Range, equals(Result, 1)),
+							E,
+							person_named_bernhard(E))
+					)
+				),
+				by_name,
+				List)`,
+			"{}", "[{List: [`:B`]}]"},
+		{"list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
+		{"list_foreach([`:B`, `:C`, `:A`], E, unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
+	}
+
+	for _, test := range tests {
+
+		input := parser.CreateRelation(test.input)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
+
+		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("got %v, want %v", resultBindings, wantBindings)
+		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
+	}
+}

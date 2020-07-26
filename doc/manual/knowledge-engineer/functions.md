@@ -124,6 +124,28 @@ Adds two numbers `N1` and `N2` and places the result in `Sum`. If `Sum  is a num
 * `N2`: a number
 * `Sum`: a variable (to contain a number) or a number
 
+## min
+
+Sets `Min` to the smallest of `N1` and `N2.  
+
+    min(N1, N2, Min)
+    
+* `N1`: a number
+* `N2`: a number
+* `Sum`: a variable (to contain a number) or a number
+
+## compare
+
+Adds two strings `N1` and `N2` and places the result in `R`. If N1 < N2, then R = -1; if N1 = N2, them R = 0; if N1 > N2, then R = 1;  
+
+    compare(N1, N2, R)
+    
+* `N1`: a string
+* `N2`: a string
+* `R`: a variable (to contain a number)
+
+This function is useful in order functions.
+
 ## subtract
 
 Subtracts two numbers `N1` and `N2` and places the result in `Diff`. If `Diff  is a number and it is not the diff of the arguments, the function fails.  

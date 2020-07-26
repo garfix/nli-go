@@ -27,7 +27,7 @@ func NewSystemNestedStructureBase(solver *central.ProblemSolver, dialogContext *
 }
 
 func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{
+	predicates := []string {
 		mentalese.PredicateIntent,
 		mentalese.PredicateDo,
 		mentalese.PredicateFind,
@@ -37,7 +37,13 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateXor,
 		mentalese.PredicateNot,
 		mentalese.PredicateBackReference,
-		mentalese.PredicateDefiniteBackReference}
+		mentalese.PredicateIfThenElse,
+		mentalese.PredicateDefiniteBackReference,
+		mentalese.PredicateQuantOrder,
+		mentalese.PredicateQuantOrderedList,
+		mentalese.PredicateListOrder,
+		mentalese.PredicateListForeach,
+	}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -114,6 +120,21 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 
 		newBindings = base.Call(relation, binding)
 
+	} else if relation.Predicate == mentalese.PredicateQuantOrder {
+
+		newBindings = base.QuantOrder(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateQuantOrderedList {
+
+		newBindings = base.SolveQuantOrderedList(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateListOrder {
+
+		newBindings = base.SolveListOrder(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateListForeach {
+
+		newBindings = base.SolveListForeach(relation, binding)
 	}
 
 	return newBindings

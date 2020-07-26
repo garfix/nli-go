@@ -19,7 +19,7 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "unify", "add", "subtract", "date_today", "date_subtract_years"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "compare", "unify", "add", "subtract", "min", "date_today", "date_subtract_years"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -161,6 +161,47 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	return newBinding
 }
 
+func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "iiv", base.log) {
+		return nil
+	}
+
+	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
+	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+
+	result := int1
+	if int2 < int1 {
+		result = int2
+	}
+
+	newBinding := binding.Copy()
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+
+	return newBinding
+}
+
+func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ssv", base.log) {
+		return nil
+	}
+
+	n1 := bound.Arguments[0].TermValue
+	n2 := bound.Arguments[1].TermValue
+
+	result := strings.Compare(n1, n2)
+
+	newBinding := binding.Copy()
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+
+	return newBinding
+}
+
 func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 	bound := input.BindSingle(binding)
 
@@ -273,8 +314,12 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.add(input, binding)
 	case "subtract":
 		newBinding = base.subtract(input, binding)
+	case "min":
+		newBinding = base.min(input, binding)
 	case "equals":
 		newBinding = base.equals(input, binding)
+	case "compare":
+		newBinding = base.compare(input, binding)
 	case "not_equals":
 		newBinding = base.notEquals(input, binding)
 	case "unify":

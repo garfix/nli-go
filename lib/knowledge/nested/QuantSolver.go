@@ -3,6 +3,7 @@ package nested
 import (
 	"nli-go/lib/central"
 	"nli-go/lib/common"
+	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"strconv"
 )
@@ -21,6 +22,180 @@ func (base *SystemNestedStructureBase) SolveDo(find mentalese.Relation, binding 
 		panic("do(quants, scope) needs two arguments")
 	}
 	return base.solveQuantifiedRelations(find, binding, false)
+}
+
+func (base *SystemNestedStructureBase) SolveQuantOrderedList(quantList mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	bound := quantList.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "rav", base.log) { return nil }
+
+	quant := bound.Arguments[0].TermValueRelationSet[0]
+	orderFunction := bound.Arguments[1].TermValue
+	listVariable := bound.Arguments[2].TermValue
+
+	list := base.selectEntities(quant, orderFunction, binding)
+
+	newBinding := binding.Copy()
+	newBinding[listVariable] = mentalese.NewList(list)
+
+	return mentalese.Bindings{ newBinding }
+}
+
+func (base *SystemNestedStructureBase) selectEntities(quant mentalese.Relation, orderFunction string, binding mentalese.Binding) mentalese.TermList {
+
+	quantifiedEntities := mentalese.TermList{}
+
+	if quant.Predicate == mentalese.PredicateOr {
+
+		leftQuant := quant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
+		rightQuant := quant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
+
+		leftEntities := base.getEntities(leftQuant, binding)
+		rightEntities := base.getEntities(rightQuant, binding)
+		combinedEntities := append(leftEntities, rightEntities...)
+		uniqueEntities := unique(combinedEntities)
+		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
+		quantifiedEntities = base.applyQuantifierForOr(leftQuant, rightQuant, leftEntities, rightEntities, orderedEntities)
+
+	} else if quant.Predicate == mentalese.PredicateAnd {
+
+		leftQuant := quant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
+		rightQuant := quant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
+
+		leftEntities := base.getEntities(leftQuant, binding)
+		rightEntities := base.getEntities(rightQuant, binding)
+		combinedEntities := append(leftEntities, rightEntities...)
+		uniqueEntities := unique(combinedEntities)
+		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
+		quantifiedEntities = base.applyQuantifierForAnd(leftQuant, rightQuant, leftEntities, rightEntities, orderedEntities)
+
+	} else if quant.Predicate != mentalese.PredicateQuant {
+
+		base.log.AddError("First argument of a `quant_list` must be a `quant`")
+		return mentalese.TermList{}
+
+	} else {
+
+		entities := base.getEntities(quant, binding)
+		orderedEntities := base.entityQuickSort(entities, orderFunction)
+		quantifiedEntities = base.applyQuantifier(quant, orderedEntities)
+
+	}
+
+	return quantifiedEntities
+}
+
+func unique(values []mentalese.Term) []mentalese.Term {
+	uniq := []mentalese.Term{}
+
+	for i := 0; i < len(values); i++ {
+		value := values[i].TermValue
+		if !containsId(uniq, value) {
+			uniq = append(uniq, values[i])
+		}
+	}
+
+	return uniq
+}
+
+func containsId(values []mentalese.Term, value string) bool {
+	for i := 0; i < len(values); i++ {
+		if values[i].TermValue == value {
+			return true
+		}
+	}
+	return false
+}
+
+// select either the left branch or the right branch, based on the entities and the quantifiers
+func (base *SystemNestedStructureBase) applyQuantifierForOr(leftQuant mentalese.Relation, rightQuant mentalese.Relation, leftValues []mentalese.Term, rightValues []mentalese.Term, orderedValues []mentalese.Term) []mentalese.Term {
+
+	leftScopeCount := 0
+	rightScopeCount := 0
+	selectedIds := []mentalese.Term{}
+
+	for i := 0; i < len(orderedValues); i++ {
+		value := orderedValues[i].TermValue
+		if containsId(leftValues, value) {
+			leftScopeCount++
+			ok := base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+			if ok {
+				selectedIds = leftValues[0:leftScopeCount]
+				break
+			}
+		}
+		if containsId(rightValues, value) {
+			rightScopeCount++
+			ok := base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+			if ok {
+				selectedIds = rightValues[0:rightScopeCount]
+				break
+			}
+		}
+	}
+
+	return selectedIds
+}
+
+// select either the left branch or the right branch, based on the entities and the quantifiers
+func (base *SystemNestedStructureBase) applyQuantifierForAnd(leftQuant mentalese.Relation, rightQuant mentalese.Relation, leftValues []mentalese.Term, rightValues []mentalese.Term, orderedValues []mentalese.Term) []mentalese.Term {
+
+	leftScopeCount := 0
+	rightScopeCount := 0
+	leftDone := false
+	rightDone := false
+	selectedIds := []mentalese.Term{}
+
+
+	for i := 0; i < len(orderedValues); i++ {
+		term := orderedValues[i]
+		value := term.TermValue
+		if !leftDone {
+			if containsId(leftValues, value) {
+				selectedIds = append(selectedIds, term)
+				leftScopeCount++
+				ok := base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+				if ok {
+					leftDone = true
+				}
+			}
+		}
+		if !rightDone {
+			if containsId(rightValues, value) {
+				selectedIds = append(selectedIds, term)
+				rightScopeCount++
+				ok := base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+				if ok {
+					rightDone = true
+				}
+			}
+		}
+		if leftDone && rightDone { break }
+	}
+
+	return selectedIds
+}
+
+func (base *SystemNestedStructureBase) applyQuantifier(quant mentalese.Relation, rangeValues []mentalese.Term) []mentalese.Term {
+	rangeCount := len(rangeValues)
+	scopeCount := 0
+	for i := 0; i < rangeCount; i++ {
+		ok := base.tryQuantifier(quant, rangeCount, i, true)
+		if ok {
+			scopeCount = i
+			break
+		}
+	}
+
+	return rangeValues[0:scopeCount]
+}
+
+func (base *SystemNestedStructureBase) getEntities(quant mentalese.Relation, binding mentalese.Binding) []mentalese.Term {
+	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
+	return rangeBindings.GetIds(rangeVariable)
 }
 
 func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
@@ -79,7 +254,12 @@ func (base *SystemNestedStructureBase) solveSimpleQuant(quant mentalese.Relation
 		}
 	}
 
-	success := base.tryQuantifier(quant, rangeBindings, scopeBindings, true)
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+
+	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
+	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
+
+	success := base.tryQuantifier(quant, rangeCount, scopeCount, true)
 
 	if success {
 		return scopeBindings
@@ -143,7 +323,10 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
-		if base.tryQuantifier(quant, rangeBindings, scopeBindings, false) {
+		rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
+		scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
+
+		if base.tryQuantifier(quant, rangeCount, scopeCount, false) {
 			if !continueAfterEnough {
 				break
 			}
@@ -153,14 +336,9 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 	return scopeBindings
 }
 
-func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeBindings mentalese.Bindings, scopeBindings mentalese.Bindings, final bool) bool {
+func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, rangeCount int, scopeCount int, final bool) bool {
 
 	firstArgument := quant.Arguments[mentalese.QuantQuantifierIndex]
-
-	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
-
-	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
-	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
 
 	// special case: the existential quantifier `some`
 	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.PredicateQuantifierSome {

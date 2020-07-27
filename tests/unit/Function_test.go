@@ -152,6 +152,7 @@ func TestQuantFunctions(t *testing.T) {
 		"person(`:A`, 'Abraham') ")
 	ds2db := parser.CreateRules(`[
 		person(E, Name) :- person(E, Name);
+		person_named_abraham(E) :- person(E, 'Abraham');
 		person_named_bernhard(E) :- person(E, 'Bernhard');
 		person_named_edward(E) :- person(E, 'Edward');
 	]`)
@@ -227,20 +228,20 @@ func TestQuantFunctions(t *testing.T) {
 						quantifier(Result, Range, equals(Result, 3)),
 						E,
 						person(E, _)),
-					or(_,
+					and(_,
 						quant(
 							quantifier(Result, Range, equals(Result, 3)),
 							E,
-							person(E, _)),
+							person_named_bernhard(E)),
 						quant(
 							quantifier(Result, Range, equals(Result, 1)),
 							E,
-							person_named_bernhard(E))
+							person_named_abraham(E))
 					)
 				),
 				by_name,
 				List)`,
-			"{}", "[{List: [`:B`]}]"},
+			"{}", "[{List: [`:A`, `:B`]}]"},
 		{"list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"list_foreach([`:B`, `:C`, `:A`], E, unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 	}

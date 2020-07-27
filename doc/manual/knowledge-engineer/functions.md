@@ -65,6 +65,28 @@ Compares two integers. Succeeds if N1 < N2.
 
 The function does not bind new variables. It just removes existing bindings if the comparison fails.
 
+## greater_than_equals
+
+Compares two integers. Succeeds if N1 >= N2.
+
+    greater_than_equals(N1, N2)
+    
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
+
+## less_than_equals
+
+Compares two integers. Succeeds if N1 <= N2.
+
+    less_than_equals(N1, N2)
+    
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
+
 ## equals
 
 This function compares two terms. Next to its obvious comparison function, it is also powerful as a destructuring function.

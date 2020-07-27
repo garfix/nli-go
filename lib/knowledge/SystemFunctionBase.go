@@ -19,7 +19,7 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "equals", "not_equals", "compare", "unify", "add", "subtract", "min", "date_today", "date_subtract_years"}
+	predicates := []string{"split", "join", "concat", "greater_than", "less_than", "greater_than_equals", "less_than_equals", "equals", "not_equals", "compare", "unify", "add", "subtract", "min", "date_today", "date_subtract_years"}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -117,6 +117,42 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	if int1 < int2 {
+		return binding
+	} else {
+		return nil
+	}
+}
+
+func (base *SystemFunctionBase) greaterThanEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ii", base.log) {
+		return nil
+	}
+
+	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
+	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+
+	if int1 >= int2 {
+		return binding
+	} else {
+		return nil
+	}
+}
+
+func (base *SystemFunctionBase) lessThanEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ii", base.log) {
+		return nil
+	}
+
+	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
+	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+
+	if int1 <= int2 {
 		return binding
 	} else {
 		return nil
@@ -310,6 +346,10 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.greaterThan(input, binding)
 	case "less_than":
 		newBinding = base.lessThan(input, binding)
+	case "greater_than_equals":
+		newBinding = base.greaterThanEquals(input, binding)
+	case "less_than_equals":
+		newBinding = base.lessThanEquals(input, binding)
 	case "add":
 		newBinding = base.add(input, binding)
 	case "subtract":

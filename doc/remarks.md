@@ -1,3 +1,9 @@
+# 2020-07-27
+
+    "The command is carried out by the following steps: It puts a green cube on the large red block (note that it chooses the green cube with nothing on it), then removes the small pyramid from the little red cube, so that it can use that cube to complete the stack as specified."
+    
+I don't understand why SHRDLU doesn't just put the little pyramid on top. This is an object that has "nothing on it", which is appararently a reason to choose something over something else. Somehow a block with a pyramid on top is still more attractive than a pyramid for building a stack.   
+
 # 2020-07-23
 
 I am reading "Semantics in Generative Grammar" by Heim and Kratzer. Very clearly presented book. But on the first page I stumbled over

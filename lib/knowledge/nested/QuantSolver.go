@@ -34,7 +34,7 @@ func (base *SystemNestedStructureBase) SolveQuantOrderedList(quantList mentalese
 	orderFunction := bound.Arguments[1].TermValue
 	listVariable := bound.Arguments[2].TermValue
 
-	list := base.selectEntities(quant, orderFunction, binding)
+	list := base.getQuantifiedEntities(quant, orderFunction, binding)
 
 	newBinding := binding.Copy()
 	newBinding[listVariable] = mentalese.NewList(list)
@@ -42,7 +42,7 @@ func (base *SystemNestedStructureBase) SolveQuantOrderedList(quantList mentalese
 	return mentalese.Bindings{ newBinding }
 }
 
-func (base *SystemNestedStructureBase) selectEntities(quant mentalese.Relation, orderFunction string, binding mentalese.Binding) mentalese.TermList {
+func (base *SystemNestedStructureBase) getQuantifiedEntities(quant mentalese.Relation, orderFunction string, binding mentalese.Binding) mentalese.TermList {
 
 	quantifiedEntities := mentalese.TermList{}
 
@@ -51,8 +51,8 @@ func (base *SystemNestedStructureBase) selectEntities(quant mentalese.Relation, 
 		leftQuant := quant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 		rightQuant := quant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
 
-		leftEntities := base.getEntities(leftQuant, binding)
-		rightEntities := base.getEntities(rightQuant, binding)
+		leftEntities := base.getEntities(leftQuant, orderFunction, binding)
+		rightEntities := base.getEntities(rightQuant, orderFunction, binding)
 		combinedEntities := append(leftEntities, rightEntities...)
 		uniqueEntities := unique(combinedEntities)
 		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
@@ -63,8 +63,8 @@ func (base *SystemNestedStructureBase) selectEntities(quant mentalese.Relation, 
 		leftQuant := quant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 		rightQuant := quant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
 
-		leftEntities := base.getEntities(leftQuant, binding)
-		rightEntities := base.getEntities(rightQuant, binding)
+		leftEntities := base.getEntities(leftQuant, orderFunction, binding)
+		rightEntities := base.getEntities(rightQuant, orderFunction, binding)
 		combinedEntities := append(leftEntities, rightEntities...)
 		uniqueEntities := unique(combinedEntities)
 		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
@@ -77,13 +77,25 @@ func (base *SystemNestedStructureBase) selectEntities(quant mentalese.Relation, 
 
 	} else {
 
-		entities := base.getEntities(quant, binding)
+		entities := base.getEntities(quant, orderFunction, binding)
 		orderedEntities := base.entityQuickSort(entities, orderFunction)
 		quantifiedEntities = base.applyQuantifier(quant, orderedEntities)
 
 	}
 
 	return quantifiedEntities
+}
+
+func (base *SystemNestedStructureBase) getEntities(quant mentalese.Relation, orderFunction string, binding mentalese.Binding) []mentalese.Term {
+
+	if quant.Predicate != mentalese.PredicateQuant {
+		return base.getQuantifiedEntities(quant, orderFunction, binding)
+	}
+
+	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
+	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
+	return rangeBindings.GetIds(rangeVariable)
 }
 
 func unique(values []mentalese.Term) []mentalese.Term {
@@ -114,12 +126,17 @@ func (base *SystemNestedStructureBase) applyQuantifierForOr(leftQuant mentalese.
 	leftScopeCount := 0
 	rightScopeCount := 0
 	selectedIds := []mentalese.Term{}
+	ok := false
 
 	for i := 0; i < len(orderedValues); i++ {
 		value := orderedValues[i].TermValue
 		if containsId(leftValues, value) {
 			leftScopeCount++
-			ok := base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+			if leftQuant.Predicate != mentalese.PredicateQuant {
+				ok = leftScopeCount == len(leftValues)
+			} else {
+				ok = base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+			}
 			if ok {
 				selectedIds = leftValues[0:leftScopeCount]
 				break
@@ -127,7 +144,11 @@ func (base *SystemNestedStructureBase) applyQuantifierForOr(leftQuant mentalese.
 		}
 		if containsId(rightValues, value) {
 			rightScopeCount++
-			ok := base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+			if rightQuant.Predicate != mentalese.PredicateQuant {
+				ok = rightScopeCount == len(rightValues)
+			} else {
+				ok = base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+			}
 			if ok {
 				selectedIds = rightValues[0:rightScopeCount]
 				break
@@ -146,7 +167,7 @@ func (base *SystemNestedStructureBase) applyQuantifierForAnd(leftQuant mentalese
 	leftDone := false
 	rightDone := false
 	selectedIds := []mentalese.Term{}
-
+	ok := false
 
 	for i := 0; i < len(orderedValues); i++ {
 		term := orderedValues[i]
@@ -155,7 +176,11 @@ func (base *SystemNestedStructureBase) applyQuantifierForAnd(leftQuant mentalese
 			if containsId(leftValues, value) {
 				selectedIds = append(selectedIds, term)
 				leftScopeCount++
-				ok := base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+				if leftQuant.Predicate != mentalese.PredicateQuant {
+					ok = leftScopeCount == len(leftValues)
+				} else {
+					ok = base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
+				}
 				if ok {
 					leftDone = true
 				}
@@ -165,7 +190,11 @@ func (base *SystemNestedStructureBase) applyQuantifierForAnd(leftQuant mentalese
 			if containsId(rightValues, value) {
 				selectedIds = append(selectedIds, term)
 				rightScopeCount++
-				ok := base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+				if rightQuant.Predicate != mentalese.PredicateQuant {
+					ok = rightScopeCount == len(rightValues)
+				} else {
+					ok = base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
+				}
 				if ok {
 					rightDone = true
 				}
@@ -189,13 +218,6 @@ func (base *SystemNestedStructureBase) applyQuantifier(quant mentalese.Relation,
 	}
 
 	return rangeValues[0:scopeCount]
-}
-
-func (base *SystemNestedStructureBase) getEntities(quant mentalese.Relation, binding mentalese.Binding) []mentalese.Term {
-	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
-	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
-	rangeBindings := base.solver.SolveRelationSet(rangeSet, mentalese.Bindings{binding})
-	return rangeBindings.GetIds(rangeVariable)
 }
 
 func (base *SystemNestedStructureBase) solveQuantifiedRelations(find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {

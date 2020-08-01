@@ -1,25 +1,23 @@
 ## Quant foreach
 
-Find all entities `E` specified by `Quant`, assign each of them in turn to variable `Var` and execute `Scope`.
+Find all entities specified by `Quants` (minimally), assign each of them in turn to variable `Var` and execute `Scope`.
 
 Fails as soon as a scope returns no results. 
 
-    quant_foreach(Quant, Var, Scope)
+    quant_foreach(Quants ..., Scope)
     
-* `Quant`: a quant
-* `Var`: a variable
+* `Quants`: one or more quants
 * `Scope`: a relation set    
 
 Check [quantification](quantification.md) for more information.
 
 ## Quant check
 
-Find all entities `E` specified by `Quant`, check if the number of entities that pass `Scope` is the same as specified by the quantifier of `Quant`. 
+Find all entities specified by `Quants`, check if the number of entities that pass `Scope` is the same as specified by the quantifier of `Quant`. 
 
-    quant_check(Quant, Var, Scope)
+    quant_check(Quants, Scope)
     
-* `Quant`: a quant
-* `Var`: a variable
+* `Quants`: one or more quants
 * `Scope`: a relation set      
 
 Check [quantification](quantification.md) for more information.

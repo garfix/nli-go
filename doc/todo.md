@@ -1,8 +1,5 @@
 # Todo
 
-* do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
-* find -> quant_check(quant, E, scope) // note! single quant per predicate
-
 Allow to change this
 
     { rule: month_name(Date, E) -> 'November',      condition: date(Date, _, '11', _) }

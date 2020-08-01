@@ -1,21 +1,15 @@
 # Todo
 
-todo
-
-* list as term 
-* if_then_else(if, then, else)
-    if `if` succeeds, then `then`, else `else`
-* quant_order(quant, sort_func, ordered_quant)    
-* quant_ordered_list(quant, List, orderFunc)
-    goes through compound quant, using orderFunc, placing results in List 
-* list_order(List1, sort_func, List2)
-    sorts List1 by sort_func, places result in List2
-* list_foreach(List, E, scope)
-    instantiates List in E, and executes scope
----
 * do -> quant_foreach(quant, E, scope) // note! single quant per predicate, use min      
 * find -> quant_check(quant, E, scope) // note! single quant per predicate
 
+Allow to change this
+
+    { rule: month_name(Date, E) -> 'November',      condition: date(Date, _, '11', _) }
+    
+to this
+    
+    { rule: month_name('11') -> 'November' }
 
 * agreement, especially for number, because it reduces ambiguity
 * syntactic placeholders for `sem(n)` (`$np1`)

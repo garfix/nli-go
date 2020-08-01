@@ -177,8 +177,6 @@ func TestQuantFunctions(t *testing.T) {
 		binding     string
 		wantBindings string
 	}{
-		{"quant_order(quant(Q1, E1), by_size, QSized)", "{}", "[{QSized: quant(Q1, E1, by_size)}]"},
-		{"quant_order(or(_, quant(Q1, E1), quant(Q1, E1)), by_size, QSized)", "{}", "[{QSized: or(_, quant(Q1, E1, by_size), quant(Q1, E1, by_size))}]"},
 		{`
 			do(
 				quant(

@@ -39,7 +39,6 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateBackReference,
 		mentalese.PredicateIfThenElse,
 		mentalese.PredicateDefiniteBackReference,
-		mentalese.PredicateQuantOrder,
 		mentalese.PredicateQuantOrderedList,
 		mentalese.PredicateListOrder,
 		mentalese.PredicateListForeach,
@@ -119,10 +118,6 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 	} else if relation.Predicate == mentalese.PredicateCall {
 
 		newBindings = base.Call(relation, binding)
-
-	} else if relation.Predicate == mentalese.PredicateQuantOrder {
-
-		newBindings = base.QuantOrder(relation, binding)
 
 	} else if relation.Predicate == mentalese.PredicateQuantOrderedList {
 

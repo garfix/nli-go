@@ -62,13 +62,13 @@ Here is the typical case for the `qp`. Note that the `quantifier` relation is fo
 
 The quant is only useful when combined with a parent relation (typically a verb). You need to specify explicity that the quant is used. If there is more than one quant, the order of the quants can be given. An example:
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: find([sem(1) sem(4)], marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: quant_check([sem(1) sem(4)], marry(P1, E1, E2)) }
     
 Imagine the sentence: "Did all these men marry two women?". Resolving this question means going through all the men, one-by-one, and for each of them counting the women that were married to them. If one of them married only one woman, the answer is no.     
     
 `find` says: apply the quants from the right-hand positions 1 (`sem(1)`), which is the sense of the `np(E1)` and 4 (`sem(4)`) and use them in that order. When the sense is built, the result looks like this:
 
-    find(
+    quant_check(
         [
             quant(Q1, E1, [...]) 
             quant(Q2, E2, [...])

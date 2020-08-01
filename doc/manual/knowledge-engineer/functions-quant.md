@@ -1,4 +1,30 @@
- ## Quant to list
+## Quant foreach
+
+Find all entities `E` specified by `Quant`, assign each of them in turn to variable `Var` and execute `Scope`.
+
+Fails as soon as a scope returns no results. 
+
+    quant_foreach(Quant, Var, Scope)
+    
+* `Quant`: a quant
+* `Var`: a variable
+* `Scope`: a relation set    
+
+Check [quantification](quantification.md) for more information.
+
+## Quant check
+
+Find all entities `E` specified by `Quant`, check if the number of entities that pass `Scope` is the same as specified by the quantifier of `Quant`. 
+
+    quant_check(Quant, Var, Scope)
+    
+* `Quant`: a quant
+* `Var`: a variable
+* `Scope`: a relation set      
+
+Check [quantification](quantification.md) for more information.
+
+## Quant to list
 
 Creates a new quant, based on an existing quant, but extended with an order function. If the original quant already had an order, it will be replaced.
 

@@ -31,7 +31,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 
 		{ rule: nbar(E1) -> 'books', 										sense: book(E1) }
 		{ rule: np(E1) -> qp(_) nbar(E1), 									sense: quant(sem(1), E1, sem(2)) }
-		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: find(sem(4), read('abraham', E1)) }
+		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: quant_check(sem(4), read('abraham', E1)) }
 	]`)
 
 	facts := internalGrammarParser.CreateRelationSet(`

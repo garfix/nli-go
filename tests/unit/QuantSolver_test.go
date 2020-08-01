@@ -51,7 +51,7 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// does every parent have 2 children?
 			`
-				find(
+				quant_check(
 					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
 					have_child(S1, O1) number_of(O1, 2))`,
 			"{}",
@@ -60,7 +60,7 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// does every parent have 3 children?
 			`
-				find(
+				quant_check(
 					quant(quantifier(ResultCount1, RangeCount1, equals(ResultCount1, RangeCount1)), S1, isa(S1, parent))
 					quant(quantifier(ResultCount2, RangeCount2, equals(ResultCount1, 3)), O1, isa(O1, child))
 				, 
@@ -71,7 +71,7 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// keep extra bindings?
 			`
-				find(
+				quant_check(
 					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
 					have_child(S1, O1) number_of(O1, 2)
 				)`,
@@ -82,7 +82,7 @@ func TestQuantSolver(t *testing.T) {
 			// xor
 			// the first quant in the xor has a range, but only the second quant has a range and scope bindings
 			`
-				find(
+				quant_check(
 					or(_,	
 						and(_,
 							quant(some, S1, is_person(S1) equals(S1, 8)),

@@ -90,15 +90,3 @@ This relation just processes its single argument, that is a relation set. The pu
     call(S)
     
 * `S`: a relation set    
-
-## Do / Find
-
-Perform the relation set `S` while iterating over the entities described by `Q`.
-
-    do(Q, S)
-    find(Q, S)
-    
-* `Q`: a relation set of `quant`s.
-* `S`: a relation set    
-
-Check [quantification](quantification.md) for more information.

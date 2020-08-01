@@ -8,18 +8,18 @@ import (
 	"strconv"
 )
 
-// find(quant() quant(), relationset)
-func (base *SystemNestedStructureBase) SolveFind(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+// quant_check(quant() quant(), relationset)
+func (base *SystemNestedStructureBase) SolveQuantCheck(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	if len(find.Arguments) != 2 {
-		panic("find(quants, scope) needs two arguments")
+		panic("quant_check(quants, scope) needs two arguments")
 	}
 	return base.solveQuantifiedRelations(find, binding, true)
 }
 
-// do(quant() quant(), relationset)
-func (base *SystemNestedStructureBase) SolveDo(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+// quant_foreach(quant() quant(), relationset)
+func (base *SystemNestedStructureBase) SolveQuantForeach(find mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 	if len(find.Arguments) != 2 {
-		panic("do(quants, scope) needs two arguments")
+		panic("quant_foreach(quants, scope) needs two arguments")
 	}
 	return base.solveQuantifiedRelations(find, binding, false)
 }

@@ -16,26 +16,26 @@
     { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, none) }
 
     { rule: nbar(E1) -> noun(E1) }
-    { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: find(sem(3), has_capital(E1, E2)) }
-    { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: find(sem(3), has_population(E1, E2)) }
+    { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: quant_check(sem(3), has_capital(E1, E2)) }
+    { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: quant_check(sem(3), has_population(E1, E2)) }
 
     { rule: child(E1) -> 'children' }
     { rule: birthday(E1) -> 'birthday' }
     { rule: country(E1) -> 'countries' }
 
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: find(sem(1), has_father(E2, E1)) }
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: find(sem(1), has_mother(E2, E1)) }
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'daughter',        sense: find(sem(1), has_daughter(E2, E1)) }
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'son',             sense: find(sem(1), has_son(E2, E1)) }
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'wife',            sense: find(sem(1), has_wife(E2, E1)) }
-    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'husband',         sense: find(sem(1), has_husband(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: quant_check(sem(1), has_father(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: quant_check(sem(1), has_mother(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'daughter',        sense: quant_check(sem(1), has_daughter(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'son',             sense: quant_check(sem(1), has_son(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'wife',            sense: quant_check(sem(1), has_wife(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'husband',         sense: quant_check(sem(1), has_husband(E2, E1)) }
 
-    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: find(sem(3), has_daughter(E2, E1)) }
-    { rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: find(sem(3), has_son(E2, E1)) }
-    { rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: find(sem(3), has_father(E2, E1)) }
-    { rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: find(sem(3), has_mother(E2, E1)) }
-    { rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: find(sem(3), has_wife(E2, E1)) }
-    { rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: find(sem(3), has_husband(E2, E1)) }
+    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: quant_check(sem(3), has_daughter(E2, E1)) }
+    { rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: quant_check(sem(3), has_son(E2, E1)) }
+    { rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: quant_check(sem(3), has_father(E2, E1)) }
+    { rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: quant_check(sem(3), has_mother(E2, E1)) }
+    { rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: quant_check(sem(3), has_wife(E2, E1)) }
+    { rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: quant_check(sem(3), has_husband(E2, E1)) }
 
     /* verb */
 
@@ -64,18 +64,18 @@
 
     /* sentence */
 
-    { rule: np_comp(E1) -> marry(P1) np(E2),                                sense: find(sem(2), marry(P1, E1, E2)) }
-    { rule: np_comp(E1) -> marry(P1) 'to' np(E2),                           sense: find(sem(3), marry(P1, E1, E2)) }
+    { rule: np_comp(E1) -> marry(P1) np(E2),                                sense: quant_check(sem(2), marry(P1, E1, E2)) }
+    { rule: np_comp(E1) -> marry(P1) 'to' np(E2),                           sense: quant_check(sem(3), marry(P1, E1, E2)) }
 
-    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: find(sem(3), have_child(E2, E1)) }
+    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: quant_check(sem(3), have_child(E2, E1)) }
     { rule: np_comp2(E1) -> country(E1) have(_) 'population' pp(E2),         sense: has_population(E1, E2) sem(4) }
 
-    { rule: np_comp3(P1) -> aux_be(_) np(E1) bear(P1),                       sense: find(sem(2), bear(P1, _, E1)) }
-    { rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: find(sem(2), birth_date(E1, Ymd)) }
-    { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: find(sem(2), die(P1, E1)) }
+    { rule: np_comp3(P1) -> aux_be(_) np(E1) bear(P1),                       sense: quant_check(sem(2), bear(P1, _, E1)) }
+    { rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: quant_check(sem(2), birth_date(E1, Ymd)) }
+    { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: quant_check(sem(2), die(P1, E1)) }
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: find(sem(1), marry(P1, E1, E2)) }
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: find(sem(1) sem(4), marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: quant_check(sem(1), marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: quant_check(sem(1) sem(4), marry(P1, E1, E2)) }
 
     { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: intent(who, E1) }
     { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: intent(describe, E1) person(E1) }
@@ -83,9 +83,9 @@
     { rule: interrogative(P1) -> 'who' copula(_) np_poss(E1),               sense: intent(who, E1) person(E1) }
     { rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: intent(when, P1) }
     { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: intent(how_many, E1) }
-    { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: find(sem(4), intent(how_old, E1)) person(E1) }
+    { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: quant_check(sem(4), intent(how_old, E1)) person(E1) }
     { rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   sense: intent(yes_no) }
-    { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: find(sem(3), intent(what, E1)) }
+    { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: quant_check(sem(3), intent(what, E1)) }
 
     { rule: interrogative(S1) -> interrogative(S1) '?' }
     { rule: s(S1) -> interrogative(S1),                                     sense: intent(question) }

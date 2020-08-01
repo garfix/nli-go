@@ -11,8 +11,8 @@ type Relation struct {
 }
 
 const PredicateNone = "none"
-const PredicateFind = "find"
-const PredicateDo = "do"
+const PredicateQuantCheck = "quant_check"
+const PredicateQuantForeach = "quant_foreach"
 const PredicateQuantOrderedList = "quant_ordered_list"
 const PredicateQuant = "quant"
 const PredicateQuantifier = "quantifier"

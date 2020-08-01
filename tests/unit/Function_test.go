@@ -178,7 +178,7 @@ func TestQuantFunctions(t *testing.T) {
 		wantBindings string
 	}{
 		{`
-			do(
+			quant_foreach(
 				quant(
 					quantifier(Result, Range, equals(Result, 3)),
 					E,

@@ -54,8 +54,8 @@ from: The Core Language Engine, chapter 5: Semantic rules for English
 
 The grammar proposed by NLI-GO treats the sentence like this:
 
-    s(P1) -> np(E1) vp(E1)              find($np, $vp)
-    vp(E1) -> tv(E1, E2) np(E2)         find($np, $tv)
+    s(P1) -> np(E1) vp(E1)              quant_check($np, $vp)
+    vp(E1) -> tv(E1, E2) np(E2)         quant_check($np, $tv)
     tv(E1, E2) -> "kisses"              kiss(E1, E2)
     np(E1) -> det(_) cn(E1)             quant($det, E1, $cn)
     det(_) -> "a"                       quantifier(Result, Range, equals(Result, 1))

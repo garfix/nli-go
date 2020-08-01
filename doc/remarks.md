@@ -1,3 +1,9 @@
+# 2020-08-01
+
+I completed the complex interaction number 17.
+
+I replaced `do()` with `quant_foreach()` and `find` with `quant_check()`, because these names express their meaning better.
+
 # 2020-07-27
 
     "The command is carried out by the following steps: It puts a green cube on the large red block (note that it chooses the green cube with nothing on it), then removes the small pyramid from the little red cube, so that it can use that cube to complete the stack as specified."

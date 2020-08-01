@@ -2,7 +2,11 @@
 
     "The command is carried out by the following steps: It puts a green cube on the large red block (note that it chooses the green cube with nothing on it), then removes the small pyramid from the little red cube, so that it can use that cube to complete the stack as specified."
     
-I don't understand why SHRDLU doesn't just put the little pyramid on top. This is an object that has "nothing on it", which is appararently a reason to choose something over something else. Somehow a block with a pyramid on top is still more attractive than a pyramid for building a stack.   
+I don't understand why SHRDLU doesn't just put the little pyramid on top. This is an object that has "nothing on it", which is appararently a reason to choose something over something else. Somehow a block with a pyramid on top is still more attractive than a pyramid for building a stack.
+
+===
+
+A lambda function takes just one argument. If a semantics needs three variables, it is necessary to nest three functions. It is necessary to call these in the correct order. In my syntax you can pass multiple variables at once, via the head. The order is determined by the position of the arguments.   
 
 # 2020-07-23
 

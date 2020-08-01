@@ -164,8 +164,68 @@ func createVariable() Term {
 
 
 
+func (relations RelationSet) InstantiateUnboundVariables(binding Binding) RelationSet {
+	inputVariables := relations.GetVariableNames()
+
+	newRelations := relations
+
+	for _, inputVariable := range inputVariables {
+		_, found := binding[inputVariable]
+		if !found {
+			newRelations = newRelations.ReplaceTerm(NewVariable(inputVariable), createVariable())
+		}
+	}
+
+	return newRelations
+}
 
 
+// Replaces all occurrences in relationTemplates from from to to
+func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
+
+	newRelations := RelationSet{}
+
+	for _, relation := range relations {
+
+		arguments := []Term{}
+		predicate := relation.Predicate
+		positive := relation.Positive
+
+		for _, argument := range relation.Arguments {
+
+			relationArgument := argument
+
+			if argument.IsRelationSet() {
+
+				relationArgument.TermValueRelationSet = relationArgument.TermValueRelationSet.ReplaceTerm(from, to)
+
+			} else if argument.IsRule() {
+
+				newGoals := RelationSet{relationArgument.TermValueRule.Goal}.ReplaceTerm(from, to)
+				newPattern := relationArgument.TermValueRule.Pattern.ReplaceTerm(from, to)
+				newRule := Rule{Goal: newGoals[0], Pattern: newPattern}
+				relationArgument.TermValueRule = newRule
+
+			} else if argument.IsList() {
+				panic("to be implemented")
+			} else {
+
+				if argument.Equals(from) {
+					relationArgument = to.Copy()
+				} else {
+					relationArgument = argument
+				}
+			}
+
+			arguments = append(arguments, relationArgument)
+		}
+
+		relation := NewRelation(positive, predicate, arguments)
+		newRelations = append(newRelations, relation)
+	}
+
+	return newRelations
+}
 
 
 // Returns a new relation set, that has all variables bound to bindings

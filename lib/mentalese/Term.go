@@ -187,6 +187,8 @@ func (term Term) Copy() Term {
 	return newTerm
 }
 
+var x = 1000
+
 func (term Term) Bind(binding Binding) Term {
 	arg := term
 	if term.IsVariable() {

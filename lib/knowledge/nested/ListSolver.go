@@ -38,7 +38,12 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 	for _, element := range list {
 		scopedBinding := binding.Copy()
 		scopedBinding[variable] = element
-		newBindings = append(newBindings, base.solver.SolveRelationSet(scope, mentalese.Bindings{ scopedBinding })...)
+		elementBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ scopedBinding })
+		if len(elementBindings) == 0 {
+			newBindings = mentalese.Bindings{}
+			break
+		}
+		newBindings = append(newBindings, elementBindings...)
 	}
 
 	return newBindings

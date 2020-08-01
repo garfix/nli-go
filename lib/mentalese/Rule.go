@@ -14,6 +14,13 @@ func (rule Rule) BindSingle(binding Binding) Rule {
 	}
 }
 
+func (rule Rule) InstantiateUnboundVariables(binding Binding) Rule {
+	newRule := Rule{}
+	newRule.Goal = rule.Goal
+	newRule.Pattern = rule.Pattern.InstantiateUnboundVariables(binding)
+	return newRule
+}
+
 func (rule Rule) Equals(otherRule Rule) bool {
 	return rule.Goal.Equals(otherRule.Goal) && rule.Pattern.Equals(otherRule.Pattern)
 }

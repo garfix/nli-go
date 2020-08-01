@@ -352,7 +352,13 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 			for _, factBase := range solver.factBases {
 				localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 				boundRelation := relation.BindSingle(localIdBinding)
-				solver.modifier.Assert(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
+				singleRelation := boundRelation.Arguments[0].TermValueRelationSet[0]
+				if (singleRelation.IsBound()) {
+					solver.modifier.Assert(singleRelation, factBase)
+				} else {
+					solver.log.AddError("Cannot assert unbound relation " + singleRelation.String())
+					return mentalese.Bindings{}
+				}
 				binding = solver.replaceLocalIdBySharedId(binding, factBase)
 				newBindings = append(newBindings, binding)
 			}

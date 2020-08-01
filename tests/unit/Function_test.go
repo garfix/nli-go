@@ -35,6 +35,11 @@ func TestFunctions(t *testing.T) {
 		{"unify(X, 0)", "{Z:0}", "{X:0, Z:0}"},
 		{"unify(0, Y)", "{Z:0}", "{Y:0, Z:0}"},
 		{"date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},
+		{"date_subtract_years('2020-12-22', '1969-11-24', S)", "{}", "{S:'51'}"},
+		{"date_subtract_years('2020-07-01', '2020-06-01', S)", "{}", "{S:'0'}"},
+		{"date_subtract_years('2020-07-01', '2020-08-01', S)", "{}", "{S:'-1'}"},
+		{"date_subtract_years('2020-07-01', '2021-01-01', S)", "{}", "{S:'-1'}"},
+		{"date_subtract_years('2020-07-01', '2021-08-01', S)", "{}", "{S:'-2'}"},
 	}
 
 	for _, test := range tests {

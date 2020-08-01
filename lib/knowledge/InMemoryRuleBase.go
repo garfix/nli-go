@@ -43,6 +43,7 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentales
 		if match {
 			bBinding, _ := matcher.MatchTwoRelations(rule.Goal, goal, mentalese.Binding{})
 			boundRule := rule.BindSingle(bBinding)
+			boundRule = boundRule.InstantiateUnboundVariables(aBinding)
 			subgoalRelationSets = append(subgoalRelationSets, boundRule.Pattern)
 			subgoalBindings = append(subgoalBindings, aBinding)
 		}

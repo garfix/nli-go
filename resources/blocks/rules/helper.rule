@@ -50,10 +50,13 @@
 
     do_raise_hand(_) :- at(`:hand`, X, Y, Z) db_hand(X, Y, 1000);
 
-    /* todo requires a low-level implementation */
-    do_find_space_on_table(X, Y) :- unify(X, 0) unify(Y, 0);
+    do_find_space_on_table(X, Y) :- do_find_iter(X, Y, 0, 0);
 
-
+    do_find_iter(X, Y, SugX, SugY) :- if_then_else(
+        at(E, SugX, SugY, _),
+        add(SugX, 10, A) do_find_iter(X, Y, A, SugY) ,
+        unify(X, SugX) unify(Y, SugY)
+    );
 
     /* (!) these commands do not keep the relations in tact */
 
@@ -62,6 +65,6 @@
 
     /* place the object in the hand */
     do_put_down(E1, X, Y, Z) :-
-    do_move_hand(X, Y, Z)
-    db_release(E1);
+        do_move_hand(X, Y, Z)
+        db_release(E1);
 ]

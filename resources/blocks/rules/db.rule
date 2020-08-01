@@ -1,6 +1,6 @@
 [
     db_memo(P1) :- assert(P1);
-    db_contain(A, B) :- assert(contain(_, A, B));
+    db_contain(A, B) :- assert(contain(123, A, B));
     db_hand(X, Y, Z) :- retract(at(`:hand`, _, _, _)) assert(at(`:hand`, X, Y, Z));
     db_grasp(X) :- retract(grasping(_, _)) assert(grasping(`:shrdlu`, X));
     db_release(E1) :- retract(grasping(_, _)) at(`:hand`, X, Y, Z) retract(at(E1, _, _, _)) assert(at(E1, X, Y, Z));

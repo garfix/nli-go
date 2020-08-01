@@ -23,6 +23,10 @@ The example shows that the essential variables may be found in nested relations 
 
 While processing `relationX`, a new variable `D` may be bound. It is very important that this binding is not integrated in the result set of bindings. The result set should only contain the original bindings, appended with the new values of the variables of `relationX`.
 
+## Create new variables for new variables
+
+When the child relation set contains variables that have not been bound, create new variables for each of them.
+
 ## Rules
 
 When a relation is "solved" using a rule, there are some additional things to think about.

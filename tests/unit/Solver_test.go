@@ -97,6 +97,25 @@ func TestSolver(t *testing.T) {
 		}
 	}
 
+	tests4 := []struct {
+		input              string
+		binding            string
+		wantResultBindings string
+	}{
+		{"write(PersonName, BookName)", "{BookId:100, PersonName: 'John Graydon', BookName: 'The red book'}", "[{BookId:100, BookName:'The red book', PersonName:'John Graydon'}]"},
+	}
+
+	for _, test := range tests4 {
+
+		input := parser.CreateRelation(test.input)
+		binding := parser.CreateBinding(test.binding)
+		resultBindings := solver.SolveRelationSet(mentalese.RelationSet{ input }, mentalese.Bindings{ binding })
+
+		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
+			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
+		}
+	}
+
 	rules2 := parser.CreateRules(`[
 		indirect_link(A, B) :- link(A, C) link(C, B);
 	]`)
@@ -139,7 +158,7 @@ func TestSolver(t *testing.T) {
 	}
 }
 
-func TestMissingHanlerError(t *testing.T) {
+func TestMissingHandlerError(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)

@@ -66,11 +66,11 @@ func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, b
 }
 
 
-func (base *SystemNestedStructureBase) SolveIfThenElse(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveIfThenElse(ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
-	condition := orRelation.Arguments[0].TermValueRelationSet
-	action := orRelation.Arguments[1].TermValueRelationSet
-	alternative := orRelation.Arguments[2].TermValueRelationSet
+	condition := ifThenElse.Arguments[0].TermValueRelationSet
+	action := ifThenElse.Arguments[1].TermValueRelationSet
+	alternative := ifThenElse.Arguments[2].TermValueRelationSet
 
 	newBindings := base.solver.SolveRelationSet(condition, mentalese.Bindings{ binding })
 

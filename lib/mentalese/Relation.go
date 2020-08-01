@@ -117,6 +117,16 @@ func (relation Relation) BindMultiple(bindings Bindings) []Relation {
 	return boundRelations
 }
 
+func (relation Relation) IsBound() bool {
+	for _, arg := range relation.Arguments {
+		if arg.IsVariable() || arg.IsAnonymousVariable() {
+			return false
+		}
+	}
+
+	return true
+}
+
 // check if relation uses a variable (perhaps in one of its nested arguments)
 func (relation Relation) UsesVariable(variable string) bool {
 

@@ -314,16 +314,27 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 
 	date1, err1 := time.Parse("2006-01-02", bound.Arguments[0].TermValue)
 	date2, err2 := time.Parse("2006-01-02", bound.Arguments[1].TermValue)
-	years := 0.0
 
 	newBinding := binding.Copy()
 	if err1 != nil || err2 != nil {
 		newBinding = nil
 	} else {
-		duration := date1.Sub(date2)
-		hours := duration.Hours()
-		totalDays := hours / 24
-		years = totalDays / 365
+		//years := 0
+		//if date1.Year() < date2.Year() {
+		//	years = date1.Year() - date2.Year()
+		//} else if date1.YearDay() < date2.YearDay() {
+		//	years = date1.Year() - date2.Year() - 1
+		//} else {
+		//	years = date1.Year() - date2.Year()
+		//}
+
+		years := 0
+		if date1.YearDay() < date2.YearDay() {
+			years = date1.Year() - date2.Year() - 1
+		} else {
+			years = date1.Year() - date2.Year()
+		}
+
 		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(int(years)))
 	}
 

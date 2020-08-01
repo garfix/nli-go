@@ -19,15 +19,15 @@
         do_clear_hand(_)
         quant_ordered_list(QBlocks, by_easiness, List)
         list_order(List, by_size, SortedList)
-        unify(X, 678) unify(Y, 678) /* todo: find a proper place */
+        do_find_space_on_table(X, Y)
         stack_up_proper(SortedList, X, Y);
 
     stack_up_proper(List1, X, Y) :-
         list_foreach(List1, E1,
-            block(E1)
             do_cleartop(E1)
             if_then_else(
                 at(Base, X, Y, _) cleartop(Base), /* find the topmost object on the stack */
+                block(Base)
                 do_put_on(E1, Base),
                 do_put_on_table(E1, X, Y)
             )

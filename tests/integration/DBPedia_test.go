@@ -36,7 +36,7 @@ func TestDBPedia(t *testing.T) {
 			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie", "", ""},
 			{"Who is Sean Penn's wife?", "Robin Wright and Madonna", "", ""},
 			{"How old is Madonna?", "She is 61 years old ( born on August 16, 1958 )", "", ""},
-			{"How old is percy florence shelley?", "He was 70 years old ( born on November 12, 1819 ; died on November 05, 1889 )", "", ""},
+			{"How old is percy florence shelley?", "He was 70 years old ( born on November 12, 1819 ; died on December 05, 1889 )", "", ""},
 			{"Who married Anne Isabella Milbanke?", "Lord Byron married her", "", ""},
 			{"Who was Ada Lovelace's father?", "Lord Byron was her father", "", ""},
 			{"Who was Ada Lovelace's mother?", "Anne Isabella Byron was her mother", "", ""},
@@ -61,7 +61,7 @@ func TestDBPedia(t *testing.T) {
 			{"When did Lord Byron die?", "He died on April 19, 1824", "session-2.json", ""},
 		},
 		{
-			{"How many countries have population above 130000000", "9", "", ""},
+			{"How many countries have population above 130000000", "7", "", ""},
 		},
 	}
 

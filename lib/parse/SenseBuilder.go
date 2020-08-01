@@ -134,51 +134,6 @@ func (builder SenseBuilder) CreateLexItemRelations(relationTemplates mentalese.R
 	from := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: "E"}
 	to := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: variable}
 
-	return builder.ReplaceTerm(relationTemplates, from, to)
+	return relationTemplates.ReplaceTerm(from, to)
 }
 
-// Replaces all occurrences in relationTemplates from from to to
-func (builder SenseBuilder) ReplaceTerm(relationTemplates mentalese.RelationSet, from mentalese.Term, to mentalese.Term) mentalese.RelationSet {
-
-	relations := mentalese.RelationSet{}
-
-	for _, relationTemplate := range relationTemplates {
-
-		arguments := []mentalese.Term{}
-		predicate := relationTemplate.Predicate
-
-		for _, argument := range relationTemplate.Arguments {
-
-			relationArgument := argument
-
-			if argument.IsRelationSet() {
-
-				relationArgument.TermValueRelationSet = builder.ReplaceTerm(relationArgument.TermValueRelationSet, from, to)
-
-			} else if argument.IsRule() {
-
-				newGoals := builder.ReplaceTerm(mentalese.RelationSet{relationArgument.TermValueRule.Goal}, from, to)
-				newPattern := builder.ReplaceTerm(relationArgument.TermValueRule.Pattern, from, to)
-				newRule := mentalese.Rule{Goal: newGoals[0], Pattern: newPattern}
-				relationArgument.TermValueRule = newRule
-
-			} else if argument.IsList() {
-				panic("to be implemented")
-			} else {
-
-				if argument.TermType == from.TermType && argument.TermValue == from.TermValue {
-
-					relationArgument.TermType = to.TermType
-					relationArgument.TermValue = to.TermValue
-				}
-			}
-
-			arguments = append(arguments, relationArgument)
-		}
-
-		relation := mentalese.NewRelation(true, predicate, arguments)
-		relations = append(relations, relation)
-	}
-
-	return relations
-}

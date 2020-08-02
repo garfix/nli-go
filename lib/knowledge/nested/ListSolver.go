@@ -18,7 +18,7 @@ func (base *SystemNestedStructureBase) SolveListOrder(relation mentalese.Relatio
 	orderedList := base.entityQuickSort(list, orderFunction)
 
 	newBinding := binding.Copy()
-	newBinding[listVariable] = mentalese.NewList(orderedList)
+	newBinding[listVariable] = mentalese.NewTermList(orderedList)
 
 	return mentalese.Bindings{ newBinding }
 }

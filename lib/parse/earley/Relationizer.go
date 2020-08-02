@@ -44,7 +44,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 		firstAntecedentVariable := antecedentVariables[0]
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			nameBinding[firstAntecedentVariable] = mentalese.NewId(nameInformation.SharedId, nameInformation.EntityType)
+			nameBinding[firstAntecedentVariable] = mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType)
 		}
 	}
 
@@ -67,7 +67,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 		constantBinding = constantBinding.Merge(childConstantBinding)
 
 		if node.rule.GetConsequentPositionType(i) == parse.PosTypeRegExp {
-			constantBinding[antecedentVariables[0]] = mentalese.NewString(childNode.form)
+			constantBinding[antecedentVariables[0]] = mentalese.NewTermString(childNode.form)
 		}
 	}
 
@@ -92,10 +92,10 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 	referencedChildrenIndexes := []int{}
 	compoundRelations := mentalese.RelationSet{}
 
-	// process sem(1) sem(2)
+	// process sem(Cat, Index)
 	combination := mentalese.RelationSet{}
 	for _, parentRelation := range parentSet {
-		compoundRelations, referencedChildrenIndexes = relationizer.includeChildSenses(parentRelation, childSets, referencedChildrenIndexes)
+		compoundRelations, referencedChildrenIndexes = relationizer.includeChildSenses(parentRelation, childSets, referencedChildrenIndexes, rule)
 		combination = append(combination, compoundRelations...)
 	}
 
@@ -114,23 +114,27 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 }
 
 // replaces `sem(N)` in parentRelation
-func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int, rule parse.GrammarRule) (mentalese.RelationSet, []int) {
 
 	newParentRelationSet := mentalese.RelationSet{}
 
 	if parentRelation.Predicate == mentalese.PredicateSem {
-		index, err := strconv.Atoi(parentRelation.Arguments[0].TermValue)
+
+		cat := parentRelation.Arguments[0].TermValue
+		catIndex, err := strconv.Atoi(parentRelation.Arguments[1].TermValue)
 		if err == nil {
-			index = index - 1
-			childIndexes = append(childIndexes, index)
-			newParentRelationSet = childSets[index].Copy()
-			for i := range newParentRelationSet {
-				if !parentRelation.Positive {
-					newParentRelationSet[i].Positive = !newParentRelationSet[i].Positive
+			index := rule.FindConsequentIndex(cat, catIndex)
+			if index != -1 {
+				childIndexes = append(childIndexes, index)
+				newParentRelationSet = childSets[index].Copy()
+				for i := range newParentRelationSet {
+					if !parentRelation.Positive {
+						newParentRelationSet[i].Positive = !newParentRelationSet[i].Positive
+					}
 				}
+			} else {
+				relationizer.log.AddError("$" + cat + strconv.Itoa(catIndex) + " not found in grammar rule")
 			}
-		} else {
-			panic("sem(N) must contain a number")
 		}
 
 	} else {
@@ -139,17 +143,17 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 
 		for i, formalArgument := range parentRelation.Arguments {
 			if formalArgument.IsRelationSet() {
-				newSet, newChildIndexes := relationizer.includeChildSensesInSet(formalArgument.TermValueRelationSet, childSets, childIndexes)
+				newSet, newChildIndexes := relationizer.includeChildSensesInSet(formalArgument.TermValueRelationSet, childSets, childIndexes, rule)
 				childIndexes = newChildIndexes
-				newParentRelation.Arguments[i] = mentalese.NewRelationSet(newSet)
+				newParentRelation.Arguments[i] = mentalese.NewTermRelationSet(newSet)
 			} else if formalArgument.IsRule() {
 				newRule := mentalese.Rule{}
 				replaced := mentalese.RelationSet{}
-				replaced, childIndexes = relationizer.includeChildSenses(formalArgument.TermValueRule.Goal, childSets, childIndexes)
+				replaced, childIndexes = relationizer.includeChildSenses(formalArgument.TermValueRule.Goal, childSets, childIndexes, rule)
 				newRule.Goal = replaced[0]
-				replaced, childIndexes = relationizer.includeChildSensesInSet(formalArgument.TermValueRule.Pattern, childSets, childIndexes)
+				replaced, childIndexes = relationizer.includeChildSensesInSet(formalArgument.TermValueRule.Pattern, childSets, childIndexes, rule)
 				newRule.Pattern = replaced
-				newParentRelation.Arguments[i] = mentalese.NewRule(newRule)
+				newParentRelation.Arguments[i] = mentalese.NewTermRule(newRule)
 			} else if formalArgument.IsList() {
 				panic("not implemented")
 			}
@@ -163,11 +167,11 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 	return newParentRelationSet, childIndexes
 }
 
-func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int, rule parse.GrammarRule) (mentalese.RelationSet, []int) {
 
 	newSet := mentalese.RelationSet{}
 	for _, relation := range parentRelations {
-		replacedChild, newChildIndexes := relationizer.includeChildSenses(relation, childSets, childIndexes)
+		replacedChild, newChildIndexes := relationizer.includeChildSenses(relation, childSets, childIndexes, rule)
 		childIndexes = newChildIndexes
 		newSet = append(newSet, replacedChild...)
 	}

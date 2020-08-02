@@ -254,7 +254,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 		}
 
 		bindings := resolver.solver.FindFacts(factBase, entityInfo.Name, mentalese.Binding{
-			mentalese.NameVar: mentalese.NewString(name),
+			mentalese.NameVar: mentalese.NewTermString(name),
 		})
 
 		for _, binding := range bindings {
@@ -275,7 +275,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 
 				// create a relation set for each field that gives Information about this name
 				bindings2 := resolver.solver.FindFacts(factBase, relationSet, mentalese.Binding{
-					mentalese.IdVar: mentalese.NewId(id.TermValue, entityType),
+					mentalese.IdVar: mentalese.NewTermId(id.TermValue, entityType),
 				})
 
 				for _, binding2 := range bindings2 {

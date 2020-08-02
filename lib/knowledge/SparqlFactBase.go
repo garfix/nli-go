@@ -277,13 +277,13 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 				if variable.Type == "uri" {
 					// todo predicates does not contain database relations
 					entityType := factBase.predicates.GetEntityType(relation.Predicate, i)
-					binding[relation.Arguments[i].TermValue] = mentalese.NewId(variable.Value, entityType)
+					binding[relation.Arguments[i].TermValue] = mentalese.NewTermId(variable.Value, entityType)
 				} else {
 					// skip non-english results
 					if variable.Lang != "" && variable.Lang != "en" {
 						goto next
 					}
-					binding[relation.Arguments[i].TermValue] = mentalese.NewString(variable.Value)
+					binding[relation.Arguments[i].TermValue] = mentalese.NewTermString(variable.Value)
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 [
     /* quantifiers */
 
-    { rule: qp(_) -> quantifier(Result, Range),                            sense: quantifier(Result, Range, sem(1)) }
+    { rule: qp(_) -> quantifier(Result, Range),                            sense: quantifier(Result, Range, $quantifier) }
     { rule: quantifier(Result, Range) -> 'all',                            sense: equals(Result, Range) }
     { rule: quantifier(Result, Range) -> an(_),                            sense: greater_than(Result, 0) }
     { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: greater_than(Result, 0) }
@@ -27,14 +27,14 @@
     { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: pick_up(P1, E1, E2) }
     { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: support(P1, E1, E2) }
 
-    { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: quant_foreach(sem(2), sem(1)) }
-    { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: quant_foreach(sem(2) sem(4), do_put_in_smart(P1, E1, E2)) }
-    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_stack_up_smart(P1, sem(3)) }
-    { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: quant_check(sem(1), sem(3)) }
-    { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: quant_check(sem(1) sem(3), sem(2))  }
-    { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: quant_check(sem(1) sem(5), sem(3)) }
+    { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: quant_foreach($np, $tv) }
+    { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: quant_foreach($np1, quant_foreach($np2, do_put_in_smart(P1, E1, E2))) }
+    { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: do_stack_up_smart(P1, $np) }
+    { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: quant_check($np, $tv_infinitive) }
+    { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: quant_check($np1, quant_check($np2, $tv_infinitive))  }
+    { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: quant_check($np1, quant_check($np2, $past_participle)) }
 
-    { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: quant_check(sem(1), tell(P1, sem(3))) }
+    { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: quant_check($np, tell(P1, $vp)) }
 
     { rule: dont(P1) -> 'don' '\'' 't' }
 
@@ -55,10 +55,10 @@
 
     /* nouns */
 
-    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: quant_check(sem(3), taller(E1, E2)) }
-    { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: quant_check(sem(3), narrower(E1, E2)) }
+    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: quant_check($np, taller(E1, E2)) }
+    { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: quant_check($np, narrower(E1, E2)) }
     { rule: adjp(E1) -> adjective(E1) }
-    { rule: adjp(E1) -> 'not' adjective(E1),                               sense: not(sem(2)) }
+    { rule: adjp(E1) -> 'not' adjective(E1),                               sense: not($adjective) }
 
     { rule: adjective(E1) -> 'red',                                        sense: red(E1) }
     { rule: adjective(E1) -> 'blue',                                       sense: blue(E1) }
@@ -66,20 +66,20 @@
     { rule: adjective(E1) -> 'big',                                        sense: big(E1) }
     { rule: adjective(E1) -> 'small',                                      sense: small(E1) }
 
-    { rule: pp(E1) -> 'in' np(E2),                                         sense: quant_check(sem(2), contain(_, E2, E1)) }
+    { rule: pp(E1) -> 'in' np(E2),                                         sense: quant_check($np, contain(_, E2, E1)) }
 
     { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
-    { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: quant_check(sem(1), sem(3)) }
+    { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: quant_check($np, $tv_gerund) }
     { rule: relative_clause(E1) -> 'which' vp_dep(P1, E1) }
-    { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: quant_check(sem(3), sem(2))  }
+    { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: quant_check($np, $tv)  }
 
-    { rule: np(E1) -> qp(_) nbar(E1),                                      sense: quant(sem(1), E1, sem(2)) }
-    { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(some, E1, definite_reference(E1, sem(2))) }
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, sem(1)) }
-    { rule: np(E1) -> pronoun(E1),                                         sense: quant(some, E1, sem(1)) }
-    { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(some, E1, sem(1)) }
-    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: and(_, sem(1), sem(3)) }
-    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: or(_, sem(2), sem(4)) }
+    { rule: np(E1) -> qp(_) nbar(E1),                                      sense: quant($qp, E1, $nbar) }
+    { rule: np(E1) -> the(E1) nbar(E1),                                    sense: quant(some, E1, definite_reference(E1, $nbar)) }
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, $nbar) }
+    { rule: np(E1) -> pronoun(E1),                                         sense: quant(some, E1, $pronoun) }
+    { rule: np(E1) -> poss_pronoun(E1),                                    sense: quant(some, E1, $poss_pronoun) }
+    { rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: and(_, $np1, $np2) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: or(_, $np1, $np2) }
 
     { rule: nbar(E1) -> nbar(E1) pp(E1) }
     { rule: nbar(E1) -> adjp(E1) nbar(E1) }
@@ -107,15 +107,13 @@
 
     { rule: and(C1) -> 'and' }
 
-    { rule: assertion(P1) -> np(E1) copula(_) np(E2),                                 sense: assert(
-                                                                                        own(A, B) :-
-                                                                                        quant_check(sem(1) sem(3), equals(A, E2) equals(B, E1))) }
-    { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),                      sense: assert(
-                                                                                        -sem(3) :-
-                                                                                        quant_check(sem(1) sem(4), equals(A, E1) equals(B, E2))) }
-    { rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                           sense: assert(
-                                                                                        sem(2) :-
-                                                                                        quant_check(sem(1) sem(3), equals(A, E1) equals(B, E2) not( -sem(2) ))) }
+    { rule: assertion(P1) -> np(E1) copula(_) np(E2),                      sense: assert(
+                                                                           own(A, B) :-
+                                                                                quant_check($np1, quant_check($np2, equals(A, E2) equals(B, E1)))) }
+    { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           sense: assert(
+                                                                                -$tv :- quant_check($np1, quant_check($np2, equals(A, E1) equals(B, E2)))) }
+    { rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                sense: assert(
+                                                                                $tv :- quant_check($np1, quant_check($np2, equals(A, E1) equals(B, E2) not( -$tv )))) }
 
     { rule: exception(P1) -> 'but' assertion(P1) }
     { rule: exception(P1) -> ',' exception(P1) }
@@ -126,28 +124,28 @@
     { rule: declarative(P1) -> default_rule(P1) }
     { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
-    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: quant_check(sem(2), contain(P1, E1, E2)) }
-    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: quant_check(sem(2), sem(3)) }
+    { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: quant_check($np, contain(P1, E1, E2)) }
+    { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: quant_check($np, $past_participle) }
 
-    { rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: quant_check(sem(4) sem(1), sem(2)) }
+    { rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: quant_check($np2, quant_check($np1, $past_participle)) }
 
-    { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: quant_check(sem(1) sem(3), sem(2)) }
+    { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: quant_check($np1, quant_check($np2, $tv)) }
 
-    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: quant_check(sem(1), not(sem(4))) }
+    { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: quant_check($np, not($pp)) }
 
     { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: intent(what, E1) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: intent(how_many, E1) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: intent(select, E1) quant_check(sem(2), sem(3)) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: intent(yes_no) quant_check(sem(2), sem(3)) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: intent(select, E1) quant_check($np, $adjp) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: intent(yes_no) quant_check($np, $pp) }
     { rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: intent(yes_no) }
-    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: intent(select_subject, E2) quant_check(sem(2), sem(3)) }
+    { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: intent(select_subject, E2) quant_check($np, $past_participle) }
     { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: intent(yes_no) }
     { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: intent(yes_no) }
 
     { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
     { rule: imperative_clause(P1) -> vp(P1) }
-    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2), sense: and(C, sem(1), sem(3)) }
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2), sense: and(C, $imperative_clause1, $imperative_clause2) }
 
     { rule: imperative(P1) -> imperative_clause(P1) '.' }
     { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }

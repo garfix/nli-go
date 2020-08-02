@@ -41,7 +41,7 @@ func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentales
 	parts := strings.Split(bound.Arguments[0].TermValue, bound.Arguments[1].TermValue)
 
 	for i, argument := range bound.Arguments[2:] {
-		newBinding[argument.TermValue] = mentalese.NewString(parts[i])
+		newBinding[argument.TermValue] = mentalese.NewTermString(parts[i])
 	}
 
 	return newBinding
@@ -63,7 +63,7 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 		sep = input.Arguments[1].TermValue
 	}
 
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewString(result)
+	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(result)
 
 	return newBinding
 }
@@ -82,7 +82,7 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 		result += argument.TermValue
 	}
 
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewString(result)
+	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(result)
 
 	return newBinding
 }
@@ -173,7 +173,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 	result := int1 + int2
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
 
 	return newBinding
 }
@@ -192,7 +192,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	result := int1 - int2
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
 
 	return newBinding
 }
@@ -214,7 +214,7 @@ func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.
 	}
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
 
 	return newBinding
 }
@@ -233,7 +233,7 @@ func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mental
 	result := strings.Compare(n1, n2)
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(result))
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
 
 	return newBinding
 }
@@ -299,7 +299,7 @@ func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding ment
 	formatted := now.Format("2006-01-02")
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewString(formatted)
+	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(formatted)
 
 	return newBinding
 }
@@ -335,7 +335,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 			years = date1.Year() - date2.Year()
 		}
 
-		newBinding[input.Arguments[2].TermValue] = mentalese.NewString(strconv.Itoa(int(years)))
+		newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(int(years)))
 	}
 
 	return newBinding

@@ -303,7 +303,7 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding
 					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, entityType, factBase.GetName()))
 					return mentalese.Binding{}
 				}
-				newValue = mentalese.NewId(localId, entityType)
+				newValue = mentalese.NewTermId(localId, entityType)
 			}
 		}
 
@@ -329,7 +329,7 @@ func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, 
 					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, entityType, factBase.GetName()))
 					return mentalese.Binding{}
 				}
-				newValue = mentalese.NewId(sharedId, entityType)
+				newValue = mentalese.NewTermId(sharedId, entityType)
 			}
 		}
 

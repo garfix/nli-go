@@ -19,15 +19,15 @@ func (base *SystemNestedStructureBase) quantOrderSingle(quant mentalese.Relation
 
 	if quant.Predicate == mentalese.PredicateQuant {
 		for len(orderedQuant.Arguments) < 3 {
-			orderedQuant.Arguments = append(orderedQuant.Arguments, mentalese.NewAnonymousVariable())
+			orderedQuant.Arguments = append(orderedQuant.Arguments, mentalese.NewTermAnonymousVariable())
 		}
-		orderedQuant.Arguments[2] = mentalese.NewPredicateAtom(orderFunction)
+		orderedQuant.Arguments[2] = mentalese.NewTermAtom(orderFunction)
 	} else {
 		leftQuant := orderedQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 		rightQuant := orderedQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 
-		orderedQuant.Arguments[mentalese.SeqFirstOperandIndex] = mentalese.NewRelationSet( base.quantOrderSingle(leftQuant, orderFunction) )
-		orderedQuant.Arguments[mentalese.SeqSecondOperandIndex] = mentalese.NewRelationSet( base.quantOrderSingle(rightQuant, orderFunction) )
+		orderedQuant.Arguments[mentalese.SeqFirstOperandIndex] = mentalese.NewTermRelationSet( base.quantOrderSingle(leftQuant, orderFunction) )
+		orderedQuant.Arguments[mentalese.SeqSecondOperandIndex] = mentalese.NewTermRelationSet( base.quantOrderSingle(rightQuant, orderFunction) )
 	}
 
 	return mentalese.RelationSet{ orderedQuant }

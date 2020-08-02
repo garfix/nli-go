@@ -33,7 +33,6 @@ const PredicateRetract = "retract"
 const PredicateIntent = "intent"
 const PredicateBackReference = "back_reference"
 const PredicateDefiniteBackReference = "definite_reference"
-const PredicateQuantOrder = "quant_order"
 
 const QuantifierResultCountVariableIndex = 0
 const QuantifierRangeCountVariableIndex = 1

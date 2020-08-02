@@ -57,6 +57,23 @@ func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }
 
+// returns the index of the consequent specified by, for example: np2
+func (rule GrammarRule) FindConsequentIndex(category string, catIndex int) int {
+
+	count := 0
+
+	for index, cat := range rule.GetConsequents() {
+		if cat == category {
+			count++
+			if count == catIndex {
+				return index
+			}
+		}
+	}
+
+	return -1
+}
+
 func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 
 	if len(rule.SyntacticCategories) != len(otherRule.SyntacticCategories) {

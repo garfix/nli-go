@@ -9,7 +9,6 @@ to this
     { rule: month_name('11') -> 'November' }
 
 * agreement, especially for number, because it reduces ambiguity
-* syntactic placeholders for `sem(n)` (`$np1`)
 * namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?
 * check if the nested functions are called correctly
@@ -36,16 +35,6 @@ to this
     
     'pick' 'up', sense: pick_up(E1) number(E1, multiple)
     > number's second argument must have a single value; declare this in some way
-
-## Syntactic sugar
-
-    sense: find([sem(1) sem(4)], marry(P1, E1, E2))
-    sense: find(a b, marry(P1, E1, E2))
-    sense: find(#1 #2, marry(P1, E1, E2))
-    sense: find($1 $2, marry(P1, E1, E2))
-    { rule: np_check(P1) -> np(E1)$1 marry(P1) 'to' np(E2)$2,                    sense: find_all([$1 $2], marry(P1, E1, E2)) }
-    { rule: np_check(P1) -> np(E1)$subject marry(P1) 'to' np(E2)$object,         sense: find_all([$subject $object], marry(P1, E1, E2)) }
-    { rule: np_check(P1) -> np(E1) marry(P1) 'to' np(E2),                        sense: find_all([$np1 $np2], marry(P1, E1, E2)) }
 
 ## Aggregation functions on bindings
 

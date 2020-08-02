@@ -42,7 +42,7 @@ func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings men
 	if input.Arguments[1].IsVariable() {
 		for _, binding := range bindings {
 			newBinding := binding.Copy()
-			newBinding[numberArgumentValue] = mentalese.NewString(strconv.Itoa(number))
+			newBinding[numberArgumentValue] = mentalese.NewTermString(strconv.Itoa(number))
 			newBindings = append(newBindings, newBinding)
 		}
 	} else {
@@ -77,7 +77,7 @@ func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mental
 	} else {
 		for _, binding := range bindings {
 			newBinding := binding.Copy()
-			newBinding[subjectVariable] = mentalese.NewString(distinctValues[0])
+			newBinding[subjectVariable] = mentalese.NewTermString(distinctValues[0])
 			newBindings = append(newBindings, newBinding)
 		}
 	}

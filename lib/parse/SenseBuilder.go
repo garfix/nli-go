@@ -39,7 +39,7 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antece
 	}
 
 	for i, antecedentVariable := range antecedentVariables {
-		m[antecedentVariable] = mentalese.NewVariable(actualAntecedents[i])
+		m[antecedentVariable] = mentalese.NewTermVariable(actualAntecedents[i])
 	}
 
 	for _, consequentVariables := range allConsequentVariables {
@@ -47,7 +47,7 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antece
 
 			_, present := m[consequentVariable]
 			if !present {
-				m[consequentVariable] = mentalese.NewVariable(builder.GetNewVariable(consequentVariable))
+				m[consequentVariable] = mentalese.NewTermVariable(builder.GetNewVariable(consequentVariable))
 			}
 		}
 	}
@@ -63,7 +63,7 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 				variable := argument.TermValue
 				_, present := variableMap[variable]
 				if !present {
-					variableMap[variable] = mentalese.NewVariable(builder.GetNewVariable(variable))
+					variableMap[variable] = mentalese.NewTermVariable(builder.GetNewVariable(variable))
 				}
 			} else if argument.IsRelationSet() {
 				childMap := builder.ExtendVariableMap(argument.TermValueRelationSet, variableMap)

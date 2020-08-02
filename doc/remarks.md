@@ -1,3 +1,19 @@
+# 2020-08-02
+
+I replaced the `sem(N)` semantics references with the `$` references. For instance
+
+before:
+
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: or(_, sem(2), sem(4)) }
+    
+after:    
+
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: or(_, $np1, $np2) } 
+    
+An index of 1 is implied, so you can use `$np` if there is only one `np`.
+
+Also, `quant_check` and `quant_foreach` not allow only a single quant.    
+
 # 2020-08-01
 
 I completed the complex interaction number 17.

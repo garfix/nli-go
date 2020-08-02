@@ -18,20 +18,20 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	log := common.NewSystemLog(false)
 
 	grammar := internalGrammarParser.CreateGrammar(`[
-		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: quantifier(Result, Range, sem(1)) }
+		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: quantifier(Result, Range, $quantifier) }
 		{ rule: quantifier(Result, Range) -> 'all', 						sense: equals(Result, Range) } 
 		{ rule: quantifier(Result, Range) -> 'some', 						sense: greater_than(Result, 0) }
 		{ rule: quantifier(Result, Range) -> 'no', 							sense: equals(Result, 0) }
 		{ rule: quantifier(Result, Range) -> number(N1), 	    			sense: equals(Result, N1) }
 		{ rule: quantifier(Result, Range) -> 'more' 'than' number(N1),		sense: greater_than(Result, N1) }
 		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	
-																			sense: or(P1, sem(1), sem(3)) }
+																			sense: or(P1, $quantifier1, $quantifier2) }
 
 		{ rule: number(N1) -> /^[0-9]+/ }
 
 		{ rule: nbar(E1) -> 'books', 										sense: book(E1) }
-		{ rule: np(E1) -> qp(_) nbar(E1), 									sense: quant(sem(1), E1, sem(2)) }
-		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: quant_check(sem(4), read('abraham', E1)) }
+		{ rule: np(E1) -> qp(_) nbar(E1), 									sense: quant($qp, E1, $nbar) }
+		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: quant_check($np, read('abraham', E1)) }
 	]`)
 
 	facts := internalGrammarParser.CreateRelationSet(`

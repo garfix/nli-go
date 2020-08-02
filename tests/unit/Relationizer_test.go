@@ -27,7 +27,7 @@ func TestRelationizer(t *testing.T) {
 
 		{ rule: pp(E1) -> preposition(P1) np(E1),                                    sense: case(E1, P1) }
 	
-		{ rule: s_declarative(P1) -> np(E1) vp(P1),									 sense: subject(P1, E1) sem(1) } /* test explicit sem() */
+		{ rule: s_declarative(P1) -> np(E1) vp(P1),									 sense: subject(P1, E1) $np } /* test explicit child semantics append */
 		{ rule: s_declarative(P1) -> s_declarative(P1) '.' }
 	
 		{ rule: s(S1) -> s_declarative(S1),											 sense: declaration(S1) }

@@ -78,7 +78,7 @@ func (base *ShellBase) execResponse(input mentalese.Relation, binding mentalese.
 
 	newBinding := binding.Copy()
 
-	newBinding[responseVar] = mentalese.NewString(string(output))
+	newBinding[responseVar] = mentalese.NewTermString(string(output))
 
 	return newBinding
 }

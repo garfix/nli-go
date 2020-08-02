@@ -158,7 +158,7 @@ var i = 0
 
 func createVariable() Term {
 	i++
-	return NewVariable("Gen" + strconv.Itoa(i))
+	return NewTermVariable("Gen" + strconv.Itoa(i))
 }
 
 
@@ -172,7 +172,7 @@ func (relations RelationSet) InstantiateUnboundVariables(binding Binding) Relati
 	for _, inputVariable := range inputVariables {
 		_, found := binding[inputVariable]
 		if !found {
-			newRelations = newRelations.ReplaceTerm(NewVariable(inputVariable), createVariable())
+			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), createVariable())
 		}
 	}
 

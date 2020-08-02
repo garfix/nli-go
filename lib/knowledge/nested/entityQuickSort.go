@@ -47,9 +47,9 @@ func (base *SystemNestedStructureBase) partition(ids *[]mentalese.Term, lo int, 
 func (base *SystemNestedStructureBase) compare(id1 mentalese.Term, id2 mentalese.Term, orderFunction string) int {
 
 	relation := mentalese.NewRelation(true, orderFunction, []mentalese.Term{
-		mentalese.NewVariable("E1"),
-		mentalese.NewVariable("E2"),
-		mentalese.NewVariable("R"),
+		mentalese.NewTermVariable("E1"),
+		mentalese.NewTermVariable("E2"),
+		mentalese.NewTermVariable("R"),
 	})
 
 	bindings := base.solver.SolveRelationSet(mentalese.RelationSet{ relation }, mentalese.Bindings{ mentalese.Binding{

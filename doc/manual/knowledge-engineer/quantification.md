@@ -30,9 +30,9 @@ In order to declare the quantifier we use the relation `quantifier`, specify var
 
 Whenever an NP is used, it is quantified: its sense is a `quant()`. The prototypical case is:
 
-    { rule: np(R1) -> qp(_) nbar(R1),                                      sense: quant(sem(1), R1, sem(2)) }
+    { rule: np(R1) -> qp(_) nbar(R1),                                      sense: quant($qp, R1, $nbar) }
     
-Here `sem(2)` means: include the sense of the second right-hand structure (the `nbar`) in this position, and `sem(1)` means: include the sense of the first structure. This `sem(1)` must be a `quantifier()`. 
+Here `$nbar` means: include the sense of the second right-hand structure (the `nbar`) in this position, and `$qp` means: include the sense of the first structure. This `$qp` must be a `quantifier()`. 
     
 These are the arguments of the `quant`:
 
@@ -52,36 +52,32 @@ and these are the arguments of the the `quantifier`:
 
 Here is the typical case for the `qp`. Note that the `quantifier` relation is formed only once, in the rewrite of `qp` to `quantifier`. The sense of the quantifier can be simple (see 'every') or compound ('or').    
 
-    { rule: qp(_) -> quantifier(Result, Range),                                                         sense: quantifier(Result, Range, sem(1)) }
+    { rule: qp(_) -> quantifier(Result, Range),                                                         sense: quantifier(Result, Range, $quantifier) }
     { rule: quantifier(Result, Range) -> 'every',                                                       sense: equals(Result, Range) }
     { rule: quantifier(Result, Range) -> 'some',                                                        sense: greater_than(Result, 0) }
     { rule: quantifier(Result, Range) -> number(N1),                                                    sense: equals(Result, N1) }
-	{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	    sense: or(P1, sem(1), sem(3)) }
+	{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	    sense: or(P1, $quantifier1, $quantifier2) }
 
-## Find
+## Quant check
 
 The quant is only useful when combined with a parent relation (typically a verb). You need to specify explicity that the quant is used. If there is more than one quant, the order of the quants can be given. An example:
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: quant_check([sem(1) sem(4)], marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: quant_check($np1, quant_check($np2, marry(P1, E1, E2))) }
     
 Imagine the sentence: "Did all these men marry two women?". Resolving this question means going through all the men, one-by-one, and for each of them counting the women that were married to them. If one of them married only one woman, the answer is no.     
     
-`find` says: apply the quants from the right-hand positions 1 (`sem(1)`), which is the sense of the `np(E1)` and 4 (`sem(4)`) and use them in that order. When the sense is built, the result looks like this:
+`quant_check` says: apply the quants from the right-hand positions 1 (`$np1`), which is the sense of the `np(E1)` and 4 (`$np2`) and use them in that order. When the sense is built, the result looks like this:
 
     quant_check(
-        [
-            quant(Q1, E1, [...]) 
-            quant(Q2, E2, [...])
-        ], [
-            marry(P1, E1, E2)
-        ]
+        quant(Q1, E1, [...]), 
+        marry(P1, E1, E2)
     )     
 
-`find` has a set of quantifiers, and a _scope_ that consists of zero or more relations (`marry(P1, E1, E2)`).
+`quant_check` has a set of quantifiers, and a _scope_ that consists of zero or more relations (`marry(P1, E1, E2)`).
 
 In this example the quant for E1 precedes that of E2, but the order does not need to match the order of the variables in the scope.
 
-It is important to understand the way `find` is evaluated. I will sketch the process here briefly. Note that the quants are nested, and that the inner loop uses a single value from the range of the outer quant, and goes through all range values of the inner loop.
+It is important to understand the way `quant_check` is evaluated. I will sketch the process here briefly. Note that the quants are nested, and that the inner loop uses a single value from the range of the outer quant, and goes through all range values of the inner loop.
 
     b1 = []binding
     foreach E1-range-set as E1 in outer range {
@@ -97,9 +93,9 @@ It is important to understand the way `find` is evaluated. I will sketch the pro
     
 This is the process for 2 quants. The number of quants is often 1, and possibly more than 2.    
 
-## Do
+## Quant foreach
 
-The function `do` is exactly like find, with one important distinction: `do` checks the quantifier _during_ the loop as well.
+The function `quant_foreach` is exactly like find, with one important distinction: `do` checks the quantifier _during_ the loop as well.
 
     foreach E2-range-set as E2 in inner range {
         execute scope, bound with single E1 and E2, and add binding to b2
@@ -110,9 +106,9 @@ This relation is needed for different kinds of relations: imperative ones, like 
 
 Imagine now this sentence: "pick up two blocks". 
 
-Handling this question with `find` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `do` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
+Handling this question with `quant_check` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `quant_foreach` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
 
-The difference between `find` and `do` is that `do` stops when it has enough, while `find` continues. Use `find` with interrogative relations and `do` with imperative relations. 
+The difference between `quant_check` and `quant_foreach` is that `quant_foreach` stops when it has enough, while `quant_check` continues. Use `quant_check` with interrogative relations and `quant_foreach` with imperative relations. 
 
 ## Unquantified nouns
 
@@ -126,7 +122,7 @@ We still use a quantifier in this situation, because it is easier to treat all N
     
 An example grammar rule is
 
-    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, sem(1)) }       
+    { rule: np(E1) -> nbar(E1),                                            sense: quant(none, E1, $nbar) }       
 
 The system will find as much entities that match the scope as it can, and it always succeeds.
 
@@ -134,7 +130,7 @@ The system will find as much entities that match the scope as it can, and it alw
 
 To model a compound NP like "both of the red blocks and either a green cube or a pyramid" You can nest quants with boolean operators `and`, `or` and `xor`. For example
 
-    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: xor(_, sem(2), sem(4)) }
+    { rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: or(_, $np1, $np2) }
         
 The meaning of the operators corresponds with what you might expect, but here's a more detailed description:
 

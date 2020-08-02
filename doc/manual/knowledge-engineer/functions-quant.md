@@ -1,12 +1,12 @@
 ## Quant foreach
 
-Find all entities specified by `Quants` (minimally), assign each of them in turn to variable `Var` and execute `Scope`.
+Find all entities specified by a `quant` (minimally), assign each of them in turn to a variable and execute `Scope`.
 
 Fails as soon as a scope returns no results. 
 
-    quant_foreach(Quants ..., Scope)
+    quant_foreach(Quant ..., Scope)
     
-* `Quants`: one or more quants
+* `Quant`: a quant
 * `Scope`: a relation set    
 
 Check [quantification](quantification.md) for more information.

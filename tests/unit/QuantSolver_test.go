@@ -61,10 +61,11 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 3 children?
 			`
 				quant_check(
-					quant(quantifier(ResultCount1, RangeCount1, equals(ResultCount1, RangeCount1)), S1, isa(S1, parent))
-					quant(quantifier(ResultCount2, RangeCount2, equals(ResultCount1, 3)), O1, isa(O1, child))
+					quant(quantifier(ResultCount1, RangeCount1, equals(ResultCount1, RangeCount1)), S1, isa(S1, parent)),
+					quant_check(
+						quant(quantifier(ResultCount2, RangeCount2, equals(ResultCount1, 3)), O1, isa(O1, child))
 				, 
-				have_child(S1, O1))`,
+				have_child(S1, O1)))`,
 			"{}",
 			"",
 		},

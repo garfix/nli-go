@@ -25,35 +25,35 @@ const TermTypeRule = "rule"
 const TermTypeId = "id"
 const TermTypeList = "list"
 
-func NewVariable(name string) Term {
+func NewTermVariable(name string) Term {
 	return Term{ TermType: TermTypeVariable, TermValue: name, TermValueRelationSet: nil}
 }
 
-func NewAnonymousVariable() Term {
+func NewTermAnonymousVariable() Term {
 	return Term{ TermType: TermTypeAnonymousVariable, TermValue: "", TermValueRelationSet: nil}
 }
 
-func NewString(value string) Term {
+func NewTermString(value string) Term {
 	return Term{ TermType: TermTypeStringConstant, TermValue: value, TermValueRelationSet: nil}
 }
 
-func NewPredicateAtom(value string) Term {
+func NewTermAtom(value string) Term {
 	return Term{ TermType: TermTypePredicateAtom, TermValue: value, TermValueRelationSet: nil}
 }
 
-func NewRelationSet(value RelationSet) Term {
+func NewTermRelationSet(value RelationSet) Term {
 	return Term{ TermType: TermTypeRelationSet, TermValue: "", TermValueRelationSet: value}
 }
 
-func NewRule(rule Rule) Term {
+func NewTermRule(rule Rule) Term {
 	return Term{ TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: rule}
 }
 
-func NewId(id string, entityType string) Term {
+func NewTermId(id string, entityType string) Term {
 	return Term{ TermType: TermTypeId, TermValue: id, TermEntityType: entityType, TermValueRelationSet: nil}
 }
 
-func NewList(list TermList) Term {
+func NewTermList(list TermList) Term {
 	return Term{ TermType: TermTypeList, TermValueList: list }
 }
 
@@ -157,13 +157,13 @@ func (term Term) GetVariableNames() []string {
 
 func (term Term) ConvertVariablesToConstants() Term {
 	if term.IsVariable() {
-		return NewPredicateAtom(strings.ToLower(term.TermValue))
+		return NewTermAtom(strings.ToLower(term.TermValue))
 	} else if term.IsRelationSet() {
-		return NewRelationSet(term.TermValueRelationSet.ConvertVariablesToConstants())
+		return NewTermRelationSet(term.TermValueRelationSet.ConvertVariablesToConstants())
 	} else if term.IsRule() {
-		return NewRule(term.TermValueRule.ConvertVariablesToConstants())
+		return NewTermRule(term.TermValueRule.ConvertVariablesToConstants())
 	} else if term.IsList() {
-		return NewList(term.TermValueList.ConvertVariablesToConstants())
+		return NewTermList(term.TermValueList.ConvertVariablesToConstants())
 	}
 	return term
 }

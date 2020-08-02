@@ -15,11 +15,11 @@ func TestFillerStack(t *testing.T) {
 
 	grammar := internalGrammarParser.CreateGrammar(`[
 
-		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),			sense: which(E1) quant_check(sem(2), sem(3)) }
-		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, sem(1)) }
+		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),			sense: which(E1) quant_check($np, $dep_vp) }
+		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, $nbar) }
 		{ rule: nbar(E) -> noun(E) }
-		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2), 	sense: quant_check(sem(2), sem(3) sem(4)) }
-		{ rule: np(E1) -> qp(Q1) nbar(E1), 						sense: quant(Q1, sem(1), E1, sem(2)) }
+		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2), 	sense: quant_check($np, $advp $vp) }
+		{ rule: np(E1) -> qp(Q1) nbar(E1), 						sense: quant(Q1, $qp, E1, $nbar) }
 		{ rule: advp(P1) -> adverb(P1) }
 		{ rule: vp(P1, E1, E2) -> 'to' 'take' 'from', 			sense: take_from(P1, E2, E1)  }
 		{ rule: be(P1) -> 'were' }

@@ -1,0 +1,9 @@
+type: db/sparql
+uses:
+  dom: garfixia-dbpedia-domain
+baseurl: https://dbpedia.org/sparql
+defaultgraphuri: http://dbpedia.org
+map: ds2db.map
+names: names.json
+entities: entities.json
+cache: true

@@ -1,0 +1,5 @@
+type: grammar
+uses:
+  dom: garfixia-dbpedia-domain
+read: [read.grammar]
+write: [write.grammar]

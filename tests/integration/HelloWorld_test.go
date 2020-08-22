@@ -10,7 +10,7 @@ import (
 func TestHelloWorld(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/helloworld/config.json", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/helloworld", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

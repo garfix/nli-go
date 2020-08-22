@@ -13,5 +13,11 @@
   "die": { "entityTypes": ["event", "person"] },
   "she": { "entityTypes": ["person"] },
   "he": { "entityTypes": ["person"] },
-  "person": { "entityTypes": ["person"] }
+  "person": { "entityTypes": ["person"] },
+
+  "dont_know",
+  "result",
+  "root",
+  "report_age_deceased",
+  "report_age_alive"
 }

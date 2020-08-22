@@ -1,7 +1,6 @@
 package global
 
 import (
-	"encoding/json"
 	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
@@ -9,8 +8,6 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
-	"os"
-	"path/filepath"
 	"strconv"
 )
 
@@ -27,49 +24,6 @@ type system struct {
 	answerer          *central.Answerer
 	generator         *generate.Generator
 	surfacer          *generate.SurfaceRepresentation
-}
-
-func NewSystem(configPath string, log *common.SystemLog) *system {
-
-	system := &system{ log: log }
-	config := system.ReadConfig(configPath, log)
-
-	if log.IsOk() {
-		builder := NewSystemBuilder(filepath.Dir(configPath), log)
-		builder.BuildFromConfig(system, config)
-	}
-
-	return system
-}
-
-func (system *system) ReadConfig(configPath string, log *common.SystemLog) (systemConfig) {
-
-	config := systemConfig{}
-
-	configJson, err := common.ReadFile(configPath)
-	if err != nil {
-		log.AddError("Error reading JSON file " + configPath + " (" + err.Error() + ")")
-	}
-
-	if log.IsOk() {
-		err := json.Unmarshal([]byte(configJson), &config)
-		if err != nil {
-			log.AddError("Error parsing JSON file " + configPath + " (" + err.Error() + ")")
-		}
-	}
-
-	if config.ParentConfig != "" {
-		parentConfigPath := config.ParentConfig
-		if len(parentConfigPath) > 0 && parentConfigPath[0] != os.PathSeparator {
-			parentConfigPath = filepath.Dir(configPath) + string(os.PathSeparator) + parentConfigPath
-		}
-		parentConfig := system.ReadConfig(parentConfigPath, log)
-
-		config = parentConfig.Merge(config)
-		config.ParentConfig = ""
-	}
-
-	return config
 }
 
 func (system *system) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {

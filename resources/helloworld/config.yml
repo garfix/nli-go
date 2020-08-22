@@ -1,0 +1,4 @@
+uses:
+  - coolcorp-helloworld-domain:1.0.0
+  - coolcorp-helloworld-en-us:1.0.0
+  - coolcorp-helloworld-solution:1.0.0

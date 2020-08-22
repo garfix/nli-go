@@ -1,0 +1,97 @@
+[
+    /* quantification */
+
+    { rule: qp(_) -> quantifier(Result, Range),                           sense: go:quantifier(Result, Range, $quantifier) }
+    { rule: quantifier(Result, Range) -> 'the',                           sense: go:equals(Result, 1) }
+
+    /* noun */
+
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
+    { rule: proper_noun_group(N1) -> proper_noun(N1) }
+
+    { rule: np(E1) -> 'she',                                              sense: go:quant(
+                                                                            quantifier(Result, Range, go:equals(Result, 1)),
+                                                                            E1, go:back_reference(E1, gender(E1, female))) }
+    { rule: np(E1) -> 'he',                                               sense: go:quant(
+                                                                            quantifier(Result, Range, go:equals(Result, 1)),
+                                                                            E1, go:back_reference(E1, gender(E1, male))) }
+
+    { rule: np(R1) -> qp(_) nbar(R1),                                     sense: go:quant($qp, R1, $nbar) }
+    { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
+
+    { rule: nbar(E1) -> noun(E1) }
+    { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
+    { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: go:quant_check($np, dom:has_population(E1, E2)) }
+
+    { rule: child(E1) -> 'children' }
+    { rule: birthday(E1) -> 'birthday' }
+    { rule: country(E1) -> 'countries' }
+
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: go:quant_check($np, dom:has_father(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: go:quant_check($np, dom:has_mother(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'daughter',        sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'son',             sense: go:quant_check($np, dom:has_son(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'wife',            sense: go:quant_check($np, dom:has_wife(E2, E1)) }
+    { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'husband',         sense: go:quant_check($np, dom:has_husband(E2, E1)) }
+
+    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
+    { rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: go:quant_check($np, dom:has_son(E2, E1)) }
+    { rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: go:quant_check($np, dom:has_father(E2, E1)) }
+    { rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: go:quant_check($np, dom:has_mother(E2, E1)) }
+    { rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: go:quant_check($np, dom:has_wife(E2, E1)) }
+    { rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: go:quant_check($np, dom:has_husband(E2, E1)) }
+
+    /* verb */
+
+    { rule: die(P1) -> 'die' }
+    { rule: marry(P1) -> 'married' }
+    { rule: bear(P1) -> 'born' }
+
+    { rule: have(P1) -> 'have' }
+    { rule: have(P1) -> 'had' }
+    { rule: have(P1) -> 'has' }
+
+    { rule: copula(P1) -> 'is' }
+    { rule: copula(P1) -> 'was' }
+
+    { rule: aux_be(P1) -> 'is' }
+    { rule: aux_be(P1) -> 'was' }
+    { rule: aux_do(P1) -> 'did' }
+
+    /* misc */
+
+    { rule: number(N1) -> /^[0-9]+/ }
+
+    { rule: possessive_marker(P) -> '\'' 's' }
+
+    { rule: pp(E1) -> 'above' number(N1),                                   sense: go:greater_than(E1, N1) }
+
+    /* sentence */
+
+    { rule: np_comp(E1) -> marry(P1) np(E2),                                sense: go:quant_check($np, dom:marry(P1, E1, E2)) }
+    { rule: np_comp(E1) -> marry(P1) 'to' np(E2),                           sense: go:quant_check($np, dom:marry(P1, E1, E2)) }
+
+    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: go:quant_check($np, dom:have_child(E2, E1)) }
+    { rule: np_comp2(E1) -> country(E1) have(_) 'population' pp(E2),         sense: dom:has_population(E1, E2) $pp }
+
+    { rule: np_comp3(P1) -> aux_be(_) np(E1) bear(P1),                       sense: go:quant_check($np, dom:bear(P1, _, E1)) }
+    { rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: go:quant_check($np, dom:birth_date(E1, Ymd)) }
+    { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: go:quant_check($np, dom:die(P1, E1)) }
+
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: go:quant_check($np, dom:marry(P1, E1, E2)) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:quant_check($np1, dom:quant_check($np2, marry(P1, E1, E2))) }
+
+    { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: go:intent(who, E1) }
+    { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: go:intent(describe, E1) dom:person(E1) }
+    { rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np_poss(E1),    sense: go:intent(who, E1) }
+    { rule: interrogative(P1) -> 'who' copula(_) np_poss(E1),               sense: go:intent(who, E1) dom:person(E1) }
+    { rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: go:intent(when, P1) }
+    { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: go:intent(how_many, E1) }
+    { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: go:quant_check($np, go:intent(how_old, E1)) dom:person(E1) }
+    { rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   sense: go:intent(yes_no) }
+    { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: go:quant_check($np, go:intent(what, E1)) }
+
+    { rule: interrogative(S1) -> interrogative(S1) '?' }
+    { rule: s(S1) -> interrogative(S1),                                     sense: go:intent(question) }
+]

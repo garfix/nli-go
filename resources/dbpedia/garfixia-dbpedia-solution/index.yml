@@ -1,0 +1,4 @@
+type: solution
+uses:
+  dom: garfixia-dbpedia-domain
+solution: dbpedia.solution

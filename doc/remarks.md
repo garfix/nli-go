@@ -1,3 +1,88 @@
+# 2020-09-16
+
+I will introduce modules to go with the namespaces. 
+
+# 2020-08-13
+
+About predication declaration: these define sorts
+
+    "has_wife": {"entityTypes": ["person", "person"] },
+    
+But validation uses types
+
+    go:add(int, int, int)
+    
+For custom predicates I also want to have these
+
+    dom:parent(id:Person, id:Person)
+    dom:name(id:Person, string)        
+
+Where `id:Person` contains both the type (id) and the sort (Person).
+
+# 2020-08-07
+
+Thinking about namespaces. Namespaces are necessary when using third party knowledge bases, and they are useful to distinguish own predicates with system predicates. I want to make this easy to use. This is where I am now:
+
+A namespace is rooted in a directory. Below this directory can be other directories.
+Within a namespace, we distinguish between own predicates and external predicates. Own predicates have no prefix; external predicates do:
+
+    my_predicate(X, Y)
+    bb:their_predicate(W, Y)
+    
+I will be using the prefix `go` for system predicates:
+
+    go:quant_foreach()    
+    
+Predicate files may be placed in subdirectories, and own predicates may refer to these; paths are relative to the namespace root.
+
+    orders/my_order(X, Y)
+    
+You can only refer to external predicates in the root directory of a namespace; these are public. Nested directories of external namespaces are off limit, they are private. So this is not possible:
+
+    * bb:subdir/their_predicate(W, Y)    
+
+Each namespace has a file called `index.json` that contains information about it:
+
+    {
+        "name": "corpsoft/plants",
+        "uses": {
+            "ani": "othercorpsoft/animals",
+            "min": "othercorpsoft/minerals"
+        }
+    } 
+
+This file determines the full name of the package, and its dependencies. It also maps the full names of other packages to prefixes. These prefixes are used to denote the predicates as in
+
+    ani:has_legs(X, Y)
+    
+The index file will later be extended with a major-minor-patch version; and the dependencies with version restrictions.
+
+Fact bases will also get an `index.json` file. It will contain the information about the fact base, and the predicates it maps from   
+
+    {
+        "name": "corpsoft/database",
+        "type": "sparql",
+        "baseurl": "https://dbpedia.org/sparql",
+        "defaultgraphuri": "http://dbpedia.org",
+        "map": "db/ds2db.map",
+        "names": "db/names.json",
+        "entities": "entities.json",
+        "doCache": true,
+        "use": {
+            "animal": "corpsoft/animals"
+        }
+    } 
+
+A grammar uses predicates, so it must specify its dependencies in its index
+
+    {
+        "uses": {
+            "me": "mysoft/blocks"
+        }
+    }
+
+
+
 # 2020-08-02
 
 I replaced the `sem(N)` semantics references with the `$` references. For instance

@@ -1,5 +1,13 @@
 # Todo
 
+- read config.yml to learn the modules
+- read the modules index.yml files; check dependencies
+- add prefix to predicate
+- parse predicates: replace prefixed name with globally unique name (append module index if needed)
+- predicates.json -> new format with sorts for ids
+- sort hierarchy
+- semantic versioning
+
 Allow to change this
 
     { rule: month_name(Date, E) -> 'November',      condition: date(Date, _, '11', _) }
@@ -8,6 +16,7 @@ to this
     
     { rule: month_name('11') -> 'November' }
 
+* quant_foreach: add as second parameter the variable to which the ids must be bound 
 * agreement, especially for number, because it reduces ambiguity
 * namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?

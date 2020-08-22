@@ -1,3 +1,0 @@
-[
-    { rule: s(P1) -> 'hello' 'world',       sense: intent(hello_world) }
-]

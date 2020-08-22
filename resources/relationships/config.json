@@ -11,7 +11,7 @@
         "name": "relations",
         "facts": "db/relationships.relation",
         "readMap": "db/relationships-db.map",
-        "entities": "entities.json"
+        "entities": "db/entities.json"
       }
     ],
     "mysql": [

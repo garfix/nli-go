@@ -1,0 +1,5 @@
+includes:
+  - garfixia-dbpedia-domain
+  - garfixia-dbpedia-db
+  - garfixia-dbpedia-en-us
+  - garfixia-dbpedia-solution

@@ -1,4 +1,4 @@
-# Aggregate functions
+# Multi-binding aggregate functions
 
 Aggregate functions make use of the fact that at any time variables may be bound to several values, in different bindings.
 

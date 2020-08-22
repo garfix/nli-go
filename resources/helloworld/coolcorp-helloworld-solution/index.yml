@@ -2,4 +2,4 @@ type: solution
 version: 1.0.0
 uses:
   dom: coolcorp-helloworld-domain:1.0.0
-solution: hello.solution
+solution: [ hello.solution ]

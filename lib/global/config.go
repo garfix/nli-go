@@ -1,5 +1,7 @@
 package global
 
 type config struct {
-	Uses []string
+	Tokenizer string
+	Predicates string
+	Modules []string
 }

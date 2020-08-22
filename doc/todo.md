@@ -7,6 +7,7 @@
 - predicates.json -> new format with sorts for ids
 - sort hierarchy
 - semantic versioning
+- move predicates from config to domain 
 
 Allow to change this
 

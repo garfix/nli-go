@@ -1,6 +1,0 @@
-[
-    { rule: arg(A1) -> /\w+/ }
-    { rule: command(S1) -> 'list' 'files' arg(A1),                      sense: exec_response(R, 'ls', A1) }
-    { rule: command(S1) -> 'list' 'files',                              sense: exec('ls') }
-    { rule: s(S1) -> command(S1) }
-]

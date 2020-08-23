@@ -8,6 +8,8 @@
 - sort hierarchy
 - semantic versioning
 - move predicates from config to domain 
+- read/reads, write/writes ?
+- hello(X); ipv hello(X) -> ;
 
 Allow to change this
 

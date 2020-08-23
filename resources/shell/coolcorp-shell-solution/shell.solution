@@ -1,0 +1,28 @@
+[
+    {
+        condition: go:exec(A),
+        result: _,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: go:canned('OK')
+            }
+            {
+                answer: go:canned('Error')
+            }
+        ]
+    }
+    {
+        condition: go:exec_response(R, A, B),
+        result: R,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: go:canned(R)
+            }
+            {
+                answer: go:canned('Error')
+            }
+        ]
+    }
+]

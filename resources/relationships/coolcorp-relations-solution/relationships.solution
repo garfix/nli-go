@@ -1,0 +1,96 @@
+[
+    {
+        condition: go:intent(who, A) dom:marry(P1, A, B),
+        result: A,
+        responses: [
+            {
+                condition: go:exists(),
+                preparation: dom:gender(B, G) dom:name(A, N),
+                answer: dom:focus(A) dom:married_to(A, B) dom:gender(B, G) dom:name(A, N)
+            }
+            {
+                answer: dom:dont_know()
+            }
+        ]
+    }
+    {
+        condition: go:intent(yes_no) dom:marry(P1, A, B),
+        result: _,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: dom:result(true)
+            }
+            {
+                answer: dom:result(false)
+            }
+        ]
+    }
+    {
+        condition: go:intent(yes_no) dom:siblings(A, B),
+        result: _,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: dom:result(true)
+            }
+            {
+                answer: dom:result(false)
+            }
+        ]
+    }
+    {
+        condition: go:intent(how_many, A) dom:have_child(B, A),
+        result: A,
+        responses: [
+            {
+                condition: go:exists(),
+                preparation: dom:gender(B, G) go:number_of(A, N),
+                answer: dom:gender(B, G) go:count(C, N) dom:have_child(C, B)
+            }
+            {
+                answer: dom:none()
+            }
+        ]
+    }
+    {
+        condition: go:intent(which, A) dom:have_child(B, A),
+        result: A,
+        responses: [
+            {
+                condition: go:exists(),
+                preparation: dom:name(A, N),
+                answer: dom:root(R) dom:name(A, N) go:make_and(A, R)
+            }
+            {
+                answer: dom:none()
+            }
+        ]
+    }
+    {
+        condition: go:intent(yes_no) dom:have_child(B, A) dom:every(B),
+        result: B,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: dom:result(true)
+            }
+            {
+                answer: dom:none()
+            }
+        ]
+    }
+    {
+        condition: go:intent(yes_no) dom:have_child(B, A),
+        result: _,
+        responses: [
+            {
+                condition: go:exists(),
+                answer: dom:result(true)
+            }
+            {
+                answer: dom:result(false)
+            }
+        ]
+    }
+]

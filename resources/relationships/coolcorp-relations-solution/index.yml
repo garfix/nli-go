@@ -1,0 +1,5 @@
+type: solution
+version: 1.0.0
+solution: [ relationships.solution ]
+uses:
+  dom: coolcorp-relations-domain:1.0.0

@@ -21,6 +21,8 @@ type system struct {
 	tokenizer         *parse.Tokenizer
 	parser            *earley.Parser
 	relationizer      *earley.Relationizer
+	matcher           *mentalese.RelationMatcher
+	solver			  *central.ProblemSolver
 	answerer          *central.Answerer
 	generator         *generate.Generator
 	surfacer          *generate.SurfaceRepresentation

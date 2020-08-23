@@ -22,6 +22,8 @@ type InternalGrammarParser struct {
 	tokenizer        *GrammarTokenizer
 	lastParsedResult ParseResult
 	panicOnParseFail bool
+	// map predicate alias to system-wide module index
+	aliasMap map[string]int
 }
 
 func NewInternalGrammarParser() *InternalGrammarParser {
@@ -29,7 +31,12 @@ func NewInternalGrammarParser() *InternalGrammarParser {
 		tokenizer:        new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
 		panicOnParseFail: true,
+		aliasMap: map[string]int{},
 	}
+}
+
+func (parser *InternalGrammarParser) SetAliasMap(aliasMap map[string]int) {
+	parser.aliasMap = aliasMap
 }
 
 // automatically panic with meaningful error message on tokenization / parse fail
@@ -129,7 +136,7 @@ func (parser *InternalGrammarParser) CreateRelation(source string) mentalese.Rel
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	relation, _, parseOk := parser.parseRelation(tokens, 0)
+	relation, _, parseOk := parser.parseRelation(tokens, 0, true)
 	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
 	return relation

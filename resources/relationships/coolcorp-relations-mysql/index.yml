@@ -1,0 +1,18 @@
+type: db/mysql
+version: 1.0.0
+enabled: false
+domain: localhost
+username: root
+password: ""
+database: my_nligo
+tables:
+  -
+    name: marriages
+    columns: [ { name: person1_id }, { name: person2_id }, { name: year } ]
+  -
+    name: parent
+    columns: [ { name: parent_id }, { name: child_id } ]
+  -
+    name: person
+    columns: [ { name: person_id }, { name: name } ]
+map: db/relationships-db.map

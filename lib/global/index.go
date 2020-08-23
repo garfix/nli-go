@@ -7,4 +7,10 @@ type index struct {
 	Read         []string
 	Write		 []string
 	Solution	 []string
+	Rules		 []string
+	Facts		 []string
+	ReadMap		 []string
+	WriteMap	 []string
+	Entities	 []string
+	SharedIds    []string
 }

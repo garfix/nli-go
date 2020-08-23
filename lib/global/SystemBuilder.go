@@ -18,10 +18,10 @@ import (
 )
 
 type systemBuilder struct {
-	log     *common.SystemLog
-	baseDir string
-	parser  *importer.InternalGrammarParser
-	usesStack []string
+	log       *common.SystemLog
+	baseDir   string
+	parser    *importer.InternalGrammarParser
+	loadedModules []string
 }
 
 func NewSystem(systemPath string, log *common.SystemLog) *system {
@@ -40,19 +40,19 @@ func NewSystem(systemPath string, log *common.SystemLog) *system {
 	return system
 }
 
-func newSystemBuilder(baseDir string, log *common.SystemLog) systemBuilder {
+func newSystemBuilder(baseDir string, log *common.SystemLog) *systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
-	return systemBuilder {
+	return &systemBuilder {
 		baseDir: baseDir,
 		parser:  parser,
 		log:     log,
 	}
 }
 
-func (builder systemBuilder) build(system *system) {
+func (builder *systemBuilder) build(system *system) {
 
 	indexes, ok := builder.readIndexes()
 	if !ok {
@@ -67,15 +67,16 @@ func (builder systemBuilder) build(system *system) {
 	builder.buildBasic(config, system)
 
 	for _, moduleSpec := range config.Modules {
-		builder.use(moduleSpec, &indexes, system)
+		builder.loadModule(moduleSpec, &indexes, system)
 	}
 }
 
-func (builder systemBuilder) buildBasic(config config, system *system) {
+func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", builder.log)
 	matcher := mentalese.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
+	system.matcher = matcher
 
 	system.grammar = parse.NewGrammar()
 	system.generationGrammar = parse.NewGrammar()
@@ -98,6 +99,7 @@ func (builder systemBuilder) buildBasic(config config, system *system) {
 	shellBase := knowledge.NewShellBase("shell", builder.log)
 	solver.AddFunctionBase(shellBase)
 
+	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
 	system.parser = earley.NewParser(system.grammar, system.nameResolver, predicates, builder.log)
@@ -106,7 +108,7 @@ func (builder systemBuilder) buildBasic(config config, system *system) {
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 }
 
-func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates, bool) {
+func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicates, bool) {
 
 	predicates := mentalese.Predicates{}
 
@@ -130,7 +132,7 @@ func (builder systemBuilder) CreatePredicates(path string) (mentalese.Predicates
 	return predicates, true
 }
 
-func (builder systemBuilder) createTokenizer(configExpression string) *parse.Tokenizer {
+func (builder *systemBuilder) createTokenizer(configExpression string) *parse.Tokenizer {
 
 	expression := parse.DefaultTokenizerExpression
 
@@ -141,16 +143,26 @@ func (builder systemBuilder) createTokenizer(configExpression string) *parse.Tok
 	return parse.NewTokenizer(expression, builder.log)
 }
 
-func (builder systemBuilder) use(moduleSpec string, indexes *map[string]index, system *system) {
+func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]index, system *system) {
 
 	parts := strings.Split(moduleSpec, ":")
 	if len(parts) != 2 {
-		builder.log.AddError("A uses specification must have a module internalName and a version: module-internalName:1.2.3")
+		builder.log.AddError("A module specification must have a module name and a version: module-name:1.2.3")
 		return
 	}
 
 	moduleName := parts[0]
 	version := parts[1]
+
+	// check if the module has been loaded already
+	for _, aModuleName := range builder.loadedModules {
+		if aModuleName == moduleName {
+			// circular dependencies are allowed
+			return
+		}
+	}
+
+	builder.loadedModules = append(builder.loadedModules, moduleName)
 
 	index, found := (*indexes)[moduleName]
 	if !found {
@@ -162,15 +174,13 @@ func (builder systemBuilder) use(moduleSpec string, indexes *map[string]index, s
 		return
 	}
 
-	builder.processDependendentIndexes(index, indexes, moduleName, system)
+	aliasMap := builder.useDependentModules(index, indexes, moduleName, system)
 
 	moduleBaseDir := builder.baseDir + "/" + moduleName
-	if !builder.processIndex(index, system, moduleBaseDir) {
-		return
-	}
+	builder.processIndex(index, system, moduleName, moduleBaseDir, aliasMap)
 }
 
-func (builder systemBuilder) checkVersion(moduleName string, expectedVersion string, actualVersion string) bool {
+func (builder *systemBuilder) checkVersion(moduleName string, expectedVersion string, actualVersion string) bool {
 	// elementary version check
 	if expectedVersion != actualVersion {
 		builder.log.AddError("Module " + moduleName + " has version " + actualVersion + ", but version " + expectedVersion + " is required")
@@ -180,27 +190,25 @@ func (builder systemBuilder) checkVersion(moduleName string, expectedVersion str
 	return true
 }
 
-func (builder systemBuilder) processDependendentIndexes(index index, indexes *map[string]index, moduleName string, system *system) {
+func (builder *systemBuilder) useDependentModules(index index, indexes *map[string]index, moduleName string, system *system) map[string]int {
 
-	// check for recursion
-	for _, aModuleName := range builder.usesStack {
-		if aModuleName == moduleName {
-			// circular dependencies are allowed
-			return
-		}
+	aliasMap := map[string]int{
+		"": builder.GetModuleIndex(moduleName),
+		"go": 0,
 	}
-
-	builder.usesStack = append(builder.usesStack, moduleName)
 
 	// load dependencies
-	for _, moduleSpec := range index.Uses {
-		builder.use(moduleSpec, indexes, system)
+	for alias, moduleSpec := range index.Uses {
+		parts := strings.Split(moduleSpec, ":")
+		moduleIndex := builder.GetModuleIndex(parts[0])
+		aliasMap[alias] = moduleIndex
+		builder.loadModule(moduleSpec, indexes, system)
 	}
 
-	builder.usesStack = builder.usesStack[0: len(builder.usesStack) - 1]
+	return aliasMap
 }
 
-func (builder systemBuilder) readConfig() (config, bool) {
+func (builder *systemBuilder) readConfig() (config, bool) {
 
 	config := config{}
 	configPath := builder.baseDir + "/config.yml"
@@ -219,7 +227,7 @@ func (builder systemBuilder) readConfig() (config, bool) {
 	return config, true
 }
 
-func (builder systemBuilder) readIndexes() (map[string]index, bool) {
+func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 
 	indexes := map[string]index{}
 	ok := true
@@ -252,13 +260,13 @@ func (builder systemBuilder) readIndexes() (map[string]index, bool) {
 			goto end
 		}
 
-		//if index.Name != "" && index.Name != dirName {
-		//	builder.log.AddError("The internalName in an index.yml file is optional; but if it is given, it must be the same as the directory internalName: " + dirName)
-		//	goto end
-		//}
-
 		if index.Type == "" {
 			builder.log.AddError("'type' is required; index.yml from: " + dirName)
+			goto end
+		}
+
+		if index.Version == "" {
+			builder.log.AddError("'version' is required; index.yml from: " + dirName)
 			goto end
 		}
 
@@ -270,9 +278,23 @@ func (builder systemBuilder) readIndexes() (map[string]index, bool) {
 	return indexes, ok
 }
 
-func (builder systemBuilder) processIndex(index index, system *system, moduleBaseDir string) bool {
+func (builder *systemBuilder) GetModuleIndex(module string) int {
+
+	for i, moduleName := range builder.loadedModules {
+		if moduleName == module {
+			return i
+		}
+	}
+
+	builder.log.AddError("Module not found: " + module)
+	return -1
+}
+
+func (builder *systemBuilder) processIndex(index index, system *system, moduleName string, moduleBaseDir string, aliasMap map[string]int) bool {
 
 	ok := true
+
+	builder.parser.SetAliasMap(aliasMap)
 
 	switch index.Type {
 	case "domain":
@@ -281,6 +303,8 @@ func (builder systemBuilder) processIndex(index index, system *system, moduleBas
 		builder.buildGrammar(index, system, moduleBaseDir)
 	case "solution":
 		builder.buildSolution(index, system, moduleBaseDir)
+	case "db/internal":
+		builder.buildInternalDatabase(index, system, moduleBaseDir, moduleName)
 	default:
 		builder.log.AddError("Unknown type: " + index.Type)
 		ok = false
@@ -289,11 +313,13 @@ func (builder systemBuilder) processIndex(index index, system *system, moduleBas
 	return ok
 }
 
-func (builder systemBuilder) buildDomain(index index, system *system, moduleBaseDir string) {
-
+func (builder *systemBuilder) buildDomain(index index, system *system, moduleBaseDir string) {
+	for _, rule := range index.Rules {
+		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
+	}
 }
 
-func (builder systemBuilder) buildGrammar(index index, system *system, moduleBaseDir string) {
+func (builder *systemBuilder) buildGrammar(index index, system *system, moduleBaseDir string) {
 
 	for _, read := range index.Read {
 		builder.importGrammarFromPath(system, moduleBaseDir + "/" + read)
@@ -303,14 +329,95 @@ func (builder systemBuilder) buildGrammar(index index, system *system, moduleBas
 	}
 }
 
-func (builder systemBuilder) buildSolution(index index, system *system, moduleBaseDir string) {
+func (builder *systemBuilder) buildSolution(index index, system *system, moduleBaseDir string) {
 
 	for _, solution := range index.Solution {
-		builder.ImportSolutionBaseFromPath(system, moduleBaseDir + "/" + solution)
+		builder.importSolutionBaseFromPath(system, moduleBaseDir + "/" + solution)
 	}
 }
 
-func (builder systemBuilder) importGrammarFromPath(system *system, path string) {
+func (builder *systemBuilder) buildInternalDatabase(index index, system *system, baseDir string, moduleName string) {
+
+	facts := mentalese.RelationSet{}
+	readMap := []mentalese.Rule{}
+	writeMap := []mentalese.Rule{}
+	entities := mentalese.Entities{}
+
+	for _, file := range index.Facts {
+		path := common.AbsolutePath(baseDir, file)
+		factString, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading facts " + path + " (" + err.Error() + ")")
+			return
+		}
+
+		facts = builder.parser.CreateRelationSet(factString)
+		lastResult := builder.parser.GetLastParseResult()
+		if !lastResult.Ok {
+			builder.log.AddError("Error parsing facts file " + path + " (" + lastResult.String() + ")")
+			return
+		}
+	}
+
+	for _, file := range index.ReadMap {
+		path := common.AbsolutePath(baseDir, file)
+		readMapString, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading read map file " + path + " (" + err.Error() + ")")
+			return
+		}
+
+		readMap = append(readMap, builder.parser.CreateRules(readMapString)...)
+		lastResult := builder.parser.GetLastParseResult()
+		if !lastResult.Ok {
+			builder.log.AddError("Error parsing read map file " + path + " (" + lastResult.String() + ")")
+			return
+		}
+	}
+
+	for _, file := range index.WriteMap {
+		path := common.AbsolutePath(baseDir, file)
+		if path != "" {
+			writeMapString, err := common.ReadFile(path)
+			if err != nil {
+				builder.log.AddError("Error reading write map file " + path + " (" + err.Error() + ")")
+				return
+			}
+
+			writeMap = append(writeMap, builder.parser.CreateRules(writeMapString)...)
+			lastResult := builder.parser.GetLastParseResult()
+			if !lastResult.Ok {
+				builder.log.AddError("Error parsing write map file " + path + " (" + lastResult.String() + ")")
+				return
+			}
+		}
+	}
+
+	for _, file := range index.Entities {
+		path := common.AbsolutePath(baseDir, file)
+		newEntities, ok := builder.CreateEntities(path)
+		if !ok {
+			return
+		}
+		for key, value := range newEntities {
+			entities[key] = value
+		}
+	}
+
+	database := knowledge.NewInMemoryFactBase(moduleName, facts, system.matcher, readMap, writeMap, entities, builder.log)
+
+	for _, file := range index.SharedIds {
+		path := common.AbsolutePath(baseDir, file)
+		sharedIds, ok := builder.LoadSharedIds(path)
+		if ok {
+			database.SetSharedIds(sharedIds)
+		}
+	}
+
+	system.solver.AddFactBase(database)
+}
+
+func (builder *systemBuilder) importGrammarFromPath(system *system, path string) {
 
 	grammarString, err := common.ReadFile(path)
 	if err != nil {
@@ -328,7 +435,7 @@ func (builder systemBuilder) importGrammarFromPath(system *system, path string) 
 	system.grammar.ImportFrom(grammar)
 }
 
-func (builder systemBuilder) importGenerationGrammarFromPath(system *system, path string) {
+func (builder *systemBuilder) importGenerationGrammarFromPath(system *system, path string) {
 
 	grammarString, err := common.ReadFile(path)
 	if err != nil {
@@ -346,7 +453,7 @@ func (builder systemBuilder) importGenerationGrammarFromPath(system *system, pat
 	system.generationGrammar.ImportFrom(grammar)
 }
 
-func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, path string) {
+func (builder *systemBuilder) importSolutionBaseFromPath(system *system, path string) {
 
 	solutionString, err := common.ReadFile(path)
 	if err != nil {
@@ -362,4 +469,95 @@ func (builder systemBuilder) ImportSolutionBaseFromPath(system *system, path str
 	}
 
 	system.answerer.AddSolutions(solutions)
+}
+
+func (builder systemBuilder) importRuleBaseFromPath(system *system, path string) {
+
+	ruleBaseString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError("Error reading rules " + path + " (" + err.Error() + ")")
+		return
+	}
+
+	rules := builder.parser.CreateRules(ruleBaseString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.AddError("Error parsing rules file " + path + " (" + lastResult.String() + ")")
+		return
+	}
+
+	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, builder.log))
+}
+
+func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bool) {
+
+	entities := mentalese.Entities{}
+
+	if path != "" {
+
+		content, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading entities file " + path + " (" + err.Error() + ")")
+			return entities, false
+		}
+
+		entityStructure := Entities{}
+
+		err = json.Unmarshal([]byte(content), &entityStructure)
+		if err != nil {
+			builder.log.AddError("Error parsing entities file " + path + " (" + err.Error() + ")")
+			return entities, false
+		}
+
+		for key, entityInfo := range entityStructure {
+
+			nameRelationSet := builder.parser.CreateRelation(entityInfo.Name)
+
+			parseResult := builder.parser.GetLastParseResult()
+			if !parseResult.Ok {
+				builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
+				return entities, false
+			}
+
+			knownBy := map[string]mentalese.Relation{}
+			for knownByKey, knownByValue := range entityInfo.Knownby {
+				knownBy[knownByKey] = builder.parser.CreateRelation(knownByValue)
+
+				parseResult := builder.parser.GetLastParseResult()
+				if !parseResult.Ok {
+					builder.log.AddError("Error parsing " + path + " (" + parseResult.String() + ")")
+					return entities, false
+				}
+			}
+
+			entities[key] = mentalese.EntityInfo{
+				Name:    nameRelationSet,
+				Knownby: knownBy,
+			}
+		}
+	}
+
+	return entities, true
+}
+
+func (builder systemBuilder) LoadSharedIds(path string) (knowledge.SharedIds, bool) {
+
+	sharedIds := knowledge.SharedIds{}
+
+	if path != "" {
+
+		content, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading shared ids file " + path + " (" + err.Error() + ")")
+			return sharedIds, false
+		}
+
+		err = json.Unmarshal([]byte(content), &sharedIds)
+		if err != nil {
+			builder.log.AddError("Error parsing shared ids file " + path + " (" + err.Error() + ")")
+			return sharedIds, false
+		}
+	}
+
+	return sharedIds, true
 }

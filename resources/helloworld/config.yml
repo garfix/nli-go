@@ -1,5 +1,5 @@
-modules:
-  - coolcorp-helloworld-domain:1.0.0
-  - coolcorp-helloworld-en-us:1.0.0
-  - coolcorp-helloworld-solution:1.0.0
+uses:
+  dom: coolcorp-helloworld-domain:1.0.0
+  en: coolcorp-helloworld-en-us:1.0.0
+  sol: coolcorp-helloworld-solution:1.0.0
 predicates: predicates.json

@@ -3,3 +3,4 @@ version: 1.0.0
 uses:
   dom: coolcorp-relations-domain:1.0.0
 read: [ read.grammar ]
+write: [ write.grammar ]

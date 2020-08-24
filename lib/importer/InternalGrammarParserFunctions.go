@@ -4,7 +4,6 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -413,7 +412,7 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex int, useAlias bool) (mentalese.Relation, int, bool) {
 
 	ok := true
-	suffix := ""
+	prefix := ""
 	commaFound, argumentFound := false, false
 	argument := mentalese.Term{}
 	arguments := []mentalese.Term{}
@@ -444,11 +443,11 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				}
 			}
 
-			moduleIndex, found := parser.aliasMap[alias]
+			applicationAlias, found := parser.aliasMap[alias]
 			if !found {
 				return relation, newStartIndex, false
-			} else if moduleIndex > 0 {
-				suffix = "_" + strconv.Itoa(moduleIndex)
+			} else if applicationAlias != "" {
+				prefix = applicationAlias + "_"
 			}
 		}
 
@@ -487,7 +486,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			}
 
 		}
-		relation = mentalese.NewRelation(positive, predicate + suffix, arguments)
+		relation = mentalese.NewRelation(positive, prefix + predicate, arguments)
 	}
 
 	return relation, startIndex, ok

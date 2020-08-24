@@ -1,6 +1,6 @@
 {
   "person": {
-    "name": "name(Id, Name)",
+    "name": "dom:name(Id, Name)",
     "knownby": {
     }
   }

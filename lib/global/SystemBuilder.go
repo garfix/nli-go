@@ -18,10 +18,11 @@ import (
 )
 
 type systemBuilder struct {
-	log       *common.SystemLog
-	baseDir   string
-	parser    *importer.InternalGrammarParser
-	loadedModules []string
+	log                *common.SystemLog
+	baseDir            string
+	parser             *importer.InternalGrammarParser
+	loadedModules      []string
+	applicationAliases map[string]string
 }
 
 func NewSystem(systemPath string, log *common.SystemLog) *system {
@@ -66,8 +67,16 @@ func (builder *systemBuilder) build(system *system) {
 
 	builder.buildBasic(config, system)
 
-	for _, moduleSpec := range config.Modules {
-		builder.loadModule(moduleSpec, &indexes, system)
+	builder.applicationAliases = map[string]string{}
+	for alias, moduleSpec := range config.Uses {
+		parts := strings.Split(moduleSpec, ":")
+		moduleName := parts[0]
+		builder.applicationAliases[moduleName] = alias
+	}
+
+	builder.loadedModules = []string{ "go" }
+	for alias, moduleSpec := range config.Uses {
+		builder.loadModule(moduleSpec, alias, &indexes, system)
 	}
 }
 
@@ -122,10 +131,17 @@ func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicate
 			return predicates, false
 		}
 
-		err = json.Unmarshal([]byte(content), &predicates)
+		rawPredicates := mentalese.Predicates{}
+		err = json.Unmarshal([]byte(content), &rawPredicates)
 		if err != nil {
 			builder.log.AddError("Error parsing predicates file " + absolutePath + " (" + err.Error() + ")")
 			return predicates, false
+		}
+
+		// hack: fix it by replacing the entire JSON file with something better
+		for predicate, entityTypes := range rawPredicates {
+			predicate = strings.Replace(predicate, ":", "_", 1)
+			predicates[predicate] = entityTypes
 		}
 	}
 
@@ -143,7 +159,7 @@ func (builder *systemBuilder) createTokenizer(configExpression string) *parse.To
 	return parse.NewTokenizer(expression, builder.log)
 }
 
-func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]index, system *system) {
+func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *system) {
 
 	parts := strings.Split(moduleSpec, ":")
 	if len(parts) != 2 {
@@ -157,7 +173,7 @@ func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]
 	// check if the module has been loaded already
 	for _, aModuleName := range builder.loadedModules {
 		if aModuleName == moduleName {
-			// circular dependencies are allowed
+			// no need to load again. also: avoid circular dependencies
 			return
 		}
 	}
@@ -174,10 +190,13 @@ func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]
 		return
 	}
 
-	aliasMap := builder.useDependentModules(index, indexes, moduleName, system)
+	aliasMap := builder.createAliasMap(index, moduleName)
 
 	moduleBaseDir := builder.baseDir + "/" + moduleName
-	builder.processIndex(index, system, moduleName, moduleBaseDir, aliasMap)
+	applicationAlias := builder.applicationAliases[moduleName]
+	builder.processIndex(index, system, applicationAlias, moduleBaseDir, aliasMap)
+
+	builder.loadDependentModules(index, indexes, system)
 }
 
 func (builder *systemBuilder) checkVersion(moduleName string, expectedVersion string, actualVersion string) bool {
@@ -190,22 +209,26 @@ func (builder *systemBuilder) checkVersion(moduleName string, expectedVersion st
 	return true
 }
 
-func (builder *systemBuilder) useDependentModules(index index, indexes *map[string]index, moduleName string, system *system) map[string]int {
+func (builder *systemBuilder) createAliasMap(index index, moduleName string) map[string]string {
 
-	aliasMap := map[string]int{
-		"": builder.GetModuleIndex(moduleName),
-		"go": 0,
+	aliasMap := map[string]string{
+		"": builder.GetApplicationAlias(moduleName),
+		"go": "",
 	}
 
-	// load dependencies
-	for alias, moduleSpec := range index.Uses {
+	for moduleAlias, moduleSpec := range index.Uses {
 		parts := strings.Split(moduleSpec, ":")
-		moduleIndex := builder.GetModuleIndex(parts[0])
-		aliasMap[alias] = moduleIndex
-		builder.loadModule(moduleSpec, indexes, system)
+		applicationAlias := builder.GetApplicationAlias(parts[0])
+		aliasMap[moduleAlias] = applicationAlias
 	}
 
 	return aliasMap
+}
+
+func (builder *systemBuilder) loadDependentModules(index index, indexes *map[string]index, system *system) {
+	for _, moduleSpec := range index.Uses {
+		builder.loadModule(moduleSpec, "", indexes, system)
+	}
 }
 
 func (builder *systemBuilder) readConfig() (config, bool) {
@@ -278,19 +301,19 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 	return indexes, ok
 }
 
-func (builder *systemBuilder) GetModuleIndex(module string) int {
+func (builder *systemBuilder) GetApplicationAlias(module string) string {
 
-	for i, moduleName := range builder.loadedModules {
-		if moduleName == module {
-			return i
-		}
+	alias, found := builder.applicationAliases[module]
+
+	if !found {
+		builder.log.AddError("Module not found: " + module)
+		alias = ""
 	}
 
-	builder.log.AddError("Module not found: " + module)
-	return -1
+	return alias
 }
 
-func (builder *systemBuilder) processIndex(index index, system *system, moduleName string, moduleBaseDir string, aliasMap map[string]int) bool {
+func (builder *systemBuilder) processIndex(index index, system *system, applicationAlias string, moduleBaseDir string, aliasMap map[string]string) bool {
 
 	ok := true
 
@@ -304,7 +327,7 @@ func (builder *systemBuilder) processIndex(index index, system *system, moduleNa
 	case "solution":
 		builder.buildSolution(index, system, moduleBaseDir)
 	case "db/internal":
-		builder.buildInternalDatabase(index, system, moduleBaseDir, moduleName)
+		builder.buildInternalDatabase(index, system, moduleBaseDir, applicationAlias)
 	default:
 		builder.log.AddError("Unknown type: " + index.Type)
 		ok = false
@@ -336,7 +359,7 @@ func (builder *systemBuilder) buildSolution(index index, system *system, moduleB
 	}
 }
 
-func (builder *systemBuilder) buildInternalDatabase(index index, system *system, baseDir string, moduleName string) {
+func (builder *systemBuilder) buildInternalDatabase(index index, system *system, baseDir string, applicationAlias string) {
 
 	facts := mentalese.RelationSet{}
 	readMap := []mentalese.Rule{}
@@ -359,7 +382,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 		}
 	}
 
-	for _, file := range index.ReadMap {
+	for _, file := range index.Read {
 		path := common.AbsolutePath(baseDir, file)
 		readMapString, err := common.ReadFile(path)
 		if err != nil {
@@ -375,7 +398,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 		}
 	}
 
-	for _, file := range index.WriteMap {
+	for _, file := range index.Write {
 		path := common.AbsolutePath(baseDir, file)
 		if path != "" {
 			writeMapString, err := common.ReadFile(path)
@@ -404,7 +427,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 		}
 	}
 
-	database := knowledge.NewInMemoryFactBase(moduleName, facts, system.matcher, readMap, writeMap, entities, builder.log)
+	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, entities, builder.log)
 
 	for _, file := range index.SharedIds {
 		path := common.AbsolutePath(baseDir, file)

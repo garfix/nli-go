@@ -1,7 +1,7 @@
 type: db/internal
 version: 1.0.0
 facts: [ relationships.relation ]
-readMap: [ relationships-db.map ]
+read: [ relationships-db.map ]
 entities: [ entities.json ]
 uses:
   dom: coolcorp-relations-domain:1.0.0

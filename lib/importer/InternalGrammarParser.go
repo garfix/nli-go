@@ -23,7 +23,7 @@ type InternalGrammarParser struct {
 	lastParsedResult ParseResult
 	panicOnParseFail bool
 	// map predicate alias to system-wide module index
-	aliasMap map[string]int
+	aliasMap map[string]string
 }
 
 func NewInternalGrammarParser() *InternalGrammarParser {
@@ -31,11 +31,11 @@ func NewInternalGrammarParser() *InternalGrammarParser {
 		tokenizer:        new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
 		panicOnParseFail: true,
-		aliasMap: map[string]int{},
+		aliasMap: map[string]string{},
 	}
 }
 
-func (parser *InternalGrammarParser) SetAliasMap(aliasMap map[string]int) {
+func (parser *InternalGrammarParser) SetAliasMap(aliasMap map[string]string) {
 	parser.aliasMap = aliasMap
 }
 

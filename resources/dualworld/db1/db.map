@@ -1,4 +1,0 @@
-[
-    person_name(Id, Name) :- name(Id, Name);
-    has_parent(Child, Parent) :- has_parent(Child, Parent);
-]

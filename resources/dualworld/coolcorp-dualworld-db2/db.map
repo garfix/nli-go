@@ -1,0 +1,5 @@
+[
+    dom:work_name(Id, Name) :- work(Id, Name);
+    dom:write(Author, Work) :- author(Author, Work);
+    dom:poem(Work) :- work(Work, _);
+]

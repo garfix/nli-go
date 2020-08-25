@@ -1,0 +1,5 @@
+type: solution
+version: 1.0.0
+solution: [ dual.solution ]
+uses:
+  dom: coolcorp-dualworld-domain:1.0.0

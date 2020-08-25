@@ -1,8 +1,0 @@
-{
-  "person": {
-    "name": "person_name(Id, Name)",
-    "knownby": {
-      "description": "description(Id, Value)"
-    }
-  }
-}

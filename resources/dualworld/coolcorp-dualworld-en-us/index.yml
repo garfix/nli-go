@@ -1,0 +1,5 @@
+type: grammar
+version: 1.0.0
+uses:
+  dom: coolcorp-dualworld-domain:1.0.0
+read: [ read.grammar ]

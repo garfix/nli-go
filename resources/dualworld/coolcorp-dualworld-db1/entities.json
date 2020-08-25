@@ -1,0 +1,8 @@
+{
+  "person": {
+    "name": "dom:person_name(Id, Name)",
+    "knownby": {
+      "description": "dom:description(Id, Value)"
+    }
+  }
+}

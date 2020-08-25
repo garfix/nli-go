@@ -429,7 +429,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 
 	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, entities, builder.log)
 
-	for _, file := range index.SharedIds {
+	for _, file := range index.Shared {
 		path := common.AbsolutePath(baseDir, file)
 		sharedIds, ok := builder.LoadSharedIds(path)
 		if ok {

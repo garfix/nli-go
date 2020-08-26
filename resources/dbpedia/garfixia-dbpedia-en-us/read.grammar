@@ -11,14 +11,14 @@
     { rule: proper_noun_group(N1) -> proper_noun(N1) }
 
     { rule: np(E1) -> 'she',                                              sense: go:quant(
-                                                                            quantifier(Result, Range, go:equals(Result, 1)),
-                                                                            E1, go:back_reference(E1, gender(E1, female))) }
+                                                                            go:quantifier(Result, Range, go:equals(Result, 1)),
+                                                                            E1, go:back_reference(E1, dom:gender(E1, female))) }
     { rule: np(E1) -> 'he',                                               sense: go:quant(
-                                                                            quantifier(Result, Range, go:equals(Result, 1)),
-                                                                            E1, go:back_reference(E1, gender(E1, male))) }
+                                                                            go:quantifier(Result, Range, go:equals(Result, 1)),
+                                                                            E1, go:back_reference(E1, dom:gender(E1, male))) }
 
     { rule: np(R1) -> qp(_) nbar(R1),                                     sense: go:quant($qp, R1, $nbar) }
-    { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
+    { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
 
     { rule: nbar(E1) -> noun(E1) }
     { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
@@ -80,7 +80,7 @@
     { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: go:quant_check($np, dom:die(P1, E1)) }
 
     { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np_poss(E2),               sense: go:quant_check($np, dom:marry(P1, E1, E2)) }
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:quant_check($np1, dom:quant_check($np2, marry(P1, E1, E2))) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2))) }
 
     { rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: go:intent(who, E1) }
     { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: go:intent(describe, E1) dom:person(E1) }

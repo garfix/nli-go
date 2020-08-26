@@ -10,7 +10,7 @@
                 answer: dom:gender(B, G) dom:name(A, N) go:make_and(A, R) dom:married_to(R, B)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -22,10 +22,10 @@
         responses: [
             {
                 condition: go:exists(),
-                answer: result(true)
+                answer: dom:result(true)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -41,7 +41,7 @@
                 answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -57,7 +57,7 @@
                 answer: go:canned(Number)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -76,7 +76,7 @@
                 answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -87,12 +87,12 @@
         result: B,
         responses: [
             {
-                condition: exists(),
+                condition: go:exists(),
                 preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
                 answer: dom:gender(A, Gender) dom:name(B, N) dom:has_father(A, B)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -108,7 +108,7 @@
                 answer: dom:gender(A, Gender) dom:name(B, N) dom:has_mother(A, B)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -127,7 +127,7 @@
                 answer: dom:gender(B, Gender) dom:birth_date(B, D) dom:date(D, Day, Month, Year)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -146,7 +146,7 @@
                 answer: dom:gender(A, Gender) dom:death_date(A, D) dom:date(D, Day, Month, Year)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -159,10 +159,10 @@
             {
                 condition: go:exists(),
                 preparation: go:split(Ymd, '-', Year, Month, Day),
-                answer: dom:date(D, Day, Month, Year) root(D)
+                answer: dom:date(D, Day, Month, Year) dom:root(D)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -176,10 +176,10 @@
             {
                 condition: go:exists(),
                 preparation: dom:name(B, N, canonical_name),
-                answer: dom:name(B, N) go:make_and(B, R) root(R)
+                answer: dom:name(B, N) go:make_and(B, R) dom:root(R)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -195,7 +195,7 @@
                 answer: go:canned(D)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -210,7 +210,7 @@
                 answer: go:canned(B)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -226,7 +226,7 @@
                 answer: go:canned(L)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }
@@ -242,15 +242,15 @@
             {
                 condition: dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) go:less_than(YearsSinceDeath, 0),
                 preparation: dom:gender(E1, Gender) go:date_subtract_years(DeathDate, BirthDate, Age) go:split(BirthDate, '-', Year1, Month1, Day1) go:split(DeathDate, '-', Year2, Month2, Day2),
-                answer: report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
+                answer: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
             }
             {
                 condition: go:exists(),
                 preparation: dom:gender(E1, Gender) go:split(BirthDate, '-', Year, Month, Day),
-                answer: report_age_alive(E1, YearsSinceBirth, BirthDate) dom:gender(E1, Gender) date(BirthDate, Day, Month, Year)
+                answer: dom:report_age_alive(E1, YearsSinceBirth, BirthDate) dom:gender(E1, Gender) dom:date(BirthDate, Day, Month, Year)
             }
             {
-                answer: dont_know()
+                answer: dom:dont_know()
             }
         ]
     }

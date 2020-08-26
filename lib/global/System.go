@@ -20,6 +20,7 @@ type system struct {
 	generationGrammar *parse.Grammar
 	tokenizer         *parse.Tokenizer
 	parser            *earley.Parser
+	predicates        *mentalese.Predicates
 	relationizer      *earley.Relationizer
 	matcher           *mentalese.RelationMatcher
 	solver			  *central.ProblemSolver

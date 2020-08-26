@@ -10,6 +10,9 @@
 - move predicates from config to domain 
 - read/reads, write/writes ?
 - hello(X); ipv hello(X) -> ;
+- hello(X) -> ; niet meer toestaan
+- schrijven naar MySQL
+- check of alle relaties goed zijn bij het inlezen van de source files
 
 Allow to change this
 

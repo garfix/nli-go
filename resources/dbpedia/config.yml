@@ -1,5 +1,6 @@
-includes:
-  - garfixia-dbpedia-domain
-  - garfixia-dbpedia-db
-  - garfixia-dbpedia-en-us
-  - garfixia-dbpedia-solution
+uses:
+  dom: garfixia-dbpedia-domain:1.0.0
+  dbpedia: garfixia-dbpedia-db:1.0.0
+  en: garfixia-dbpedia-en-us:1.0.0
+  sol: garfixia-dbpedia-solution:1.0.0
+predicates: predicates.json

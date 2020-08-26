@@ -95,6 +95,8 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	predicates, _ := builder.CreatePredicates(config.Predicates)
 
+	system.predicates = &predicates
+
 	solver := central.NewProblemSolver(matcher, predicates, system.dialogContext, builder.log)
 
 	solver.AddFunctionBase(systemFunctionBase)
@@ -328,6 +330,8 @@ func (builder *systemBuilder) processIndex(index index, system *system, applicat
 		builder.buildSolution(index, system, moduleBaseDir)
 	case "db/internal":
 		builder.buildInternalDatabase(index, system, moduleBaseDir, applicationAlias)
+	case "db/sparql":
+		builder.buildSparqlDatabase(index, system, moduleBaseDir, applicationAlias)
 	default:
 		builder.log.AddError("Unknown type: " + index.Type)
 		ok = false
@@ -362,9 +366,6 @@ func (builder *systemBuilder) buildSolution(index index, system *system, moduleB
 func (builder *systemBuilder) buildInternalDatabase(index index, system *system, baseDir string, applicationAlias string) {
 
 	facts := mentalese.RelationSet{}
-	readMap := []mentalese.Rule{}
-	writeMap := []mentalese.Rule{}
-	entities := mentalese.Entities{}
 
 	for _, file := range index.Facts {
 		path := common.AbsolutePath(baseDir, file)
@@ -382,21 +383,65 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 		}
 	}
 
+	readMap := builder.buildReadMap(index, baseDir)
+	writeMap := builder.buildWriteMap(index, baseDir)
+	entities := builder.buildEntities(index, baseDir)
+
+	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, entities, builder.log)
+
+	sharedIds, ok := builder.buildSharedIds(index, baseDir)
+	if ok {
+		database.SetSharedIds(sharedIds)
+	}
+
+	system.solver.AddFactBase(database)
+}
+
+func (builder *systemBuilder) buildSparqlDatabase(index index, system *system, baseDir string, applicationAlias string) {
+
+	readMap := builder.buildReadMap(index, baseDir)
+	entities := builder.buildEntities(index, baseDir)
+	names, ok := builder.buildNames(index, baseDir, applicationAlias)
+	if !ok {
+		return
+	}
+
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, entities, *system.predicates, index.Cache, builder.log)
+
+	sharedIds, ok := builder.buildSharedIds(index, baseDir)
+	if ok {
+		database.SetSharedIds(sharedIds)
+	}
+
+	system.solver.AddFactBase(database)
+}
+
+func (builder *systemBuilder) buildReadMap(index index, baseDir string) []mentalese.Rule {
+
+	readMap := []mentalese.Rule{}
+
 	for _, file := range index.Read {
 		path := common.AbsolutePath(baseDir, file)
 		readMapString, err := common.ReadFile(path)
 		if err != nil {
 			builder.log.AddError("Error reading read map file " + path + " (" + err.Error() + ")")
-			return
+			return readMap
 		}
 
 		readMap = append(readMap, builder.parser.CreateRules(readMapString)...)
 		lastResult := builder.parser.GetLastParseResult()
 		if !lastResult.Ok {
 			builder.log.AddError("Error parsing read map file " + path + " (" + lastResult.String() + ")")
-			return
+			return readMap
 		}
 	}
+
+	return readMap
+}
+
+func (builder *systemBuilder) buildWriteMap(index index, baseDir string) []mentalese.Rule {
+
+	writeMap := []mentalese.Rule{}
 
 	for _, file := range index.Write {
 		path := common.AbsolutePath(baseDir, file)
@@ -404,40 +449,78 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 			writeMapString, err := common.ReadFile(path)
 			if err != nil {
 				builder.log.AddError("Error reading write map file " + path + " (" + err.Error() + ")")
-				return
+				return writeMap
 			}
 
 			writeMap = append(writeMap, builder.parser.CreateRules(writeMapString)...)
 			lastResult := builder.parser.GetLastParseResult()
 			if !lastResult.Ok {
 				builder.log.AddError("Error parsing write map file " + path + " (" + lastResult.String() + ")")
-				return
+				return writeMap
 			}
 		}
 	}
+
+	return writeMap
+}
+
+func (builder *systemBuilder) buildEntities(index index, baseDir string) mentalese.Entities {
+
+	entities := mentalese.Entities{}
 
 	for _, file := range index.Entities {
 		path := common.AbsolutePath(baseDir, file)
 		newEntities, ok := builder.CreateEntities(path)
 		if !ok {
-			return
+			return entities
 		}
 		for key, value := range newEntities {
 			entities[key] = value
 		}
 	}
 
-	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, entities, builder.log)
+	return entities
+}
+
+func (builder *systemBuilder) buildSharedIds(index index, baseDir string) (knowledge.SharedIds, bool) {
+
+	sharedIds := knowledge.SharedIds{}
+	ok := true
 
 	for _, file := range index.Shared {
 		path := common.AbsolutePath(baseDir, file)
-		sharedIds, ok := builder.LoadSharedIds(path)
-		if ok {
-			database.SetSharedIds(sharedIds)
+		sharedIds, ok = builder.LoadSharedIds(path)
+		if !ok {
+			break
 		}
 	}
 
-	system.solver.AddFactBase(database)
+	return sharedIds, ok
+}
+
+func (builder systemBuilder) buildNames(index index, baseDir string, applicationAlias string) (mentalese.ConfigMap, bool) {
+
+	configMap := mentalese.ConfigMap{}
+	names := mentalese.ConfigMap{}
+
+	path := common.AbsolutePath(baseDir, index.Names)
+	content, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError("Error reading config map file " + path + " (" + err.Error() + ")")
+		return configMap, false
+	}
+
+	err = json.Unmarshal([]byte(content), &configMap)
+	if err != nil {
+		builder.log.AddError("Error parsing config map file " + path + " (" + err.Error() + ")")
+		return configMap, false
+	}
+
+	for key, value := range configMap {
+		names[applicationAlias + "_" + key] = value
+	}
+
+	return names, true
 }
 
 func (builder *systemBuilder) importGrammarFromPath(system *system, path string) {

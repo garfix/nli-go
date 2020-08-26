@@ -1,5 +1,6 @@
 type: grammar
+version: 1.0.0
 uses:
-  dom: garfixia-dbpedia-domain
-read: [read.grammar]
-write: [write.grammar]
+  dom: garfixia-dbpedia-domain:1.0.0
+read: [ read.grammar ]
+write: [ write.grammar ]

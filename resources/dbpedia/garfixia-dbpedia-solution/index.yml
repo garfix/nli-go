@@ -1,4 +1,5 @@
 type: solution
+version: 1.0.0
 uses:
-  dom: garfixia-dbpedia-domain
-solution: dbpedia.solution
+  dom: garfixia-dbpedia-domain:1.0.0
+solution: [ dbpedia.solution ]

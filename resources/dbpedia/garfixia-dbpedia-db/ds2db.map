@@ -12,7 +12,7 @@
 
     dom:country_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
 
-    dom:name(A, N, canonical_name) :- foaf_name(A, N) first(N);
+    dom:name(A, N, canonical_name) :- foaf_name(A, N) go:first(N);
 
     dom:description(A, D) :- description(A, D);
     dom:long_description(A, D) :- abstract(A, D);

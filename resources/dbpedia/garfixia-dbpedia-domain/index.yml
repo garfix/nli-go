@@ -1,4 +1,4 @@
 type: domain
-rules:
-  - dbpedia.rule
+version: 1.0.0
+rules: [ dbpedia.rule ]
 predicate: predicates.json

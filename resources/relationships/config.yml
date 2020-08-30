@@ -2,5 +2,6 @@ uses:
   dom: coolcorp-relations-domain:1.0.0
   sol: coolcorp-relations-solution:1.0.0
   en: coolcorp-relations-en-us:1.0.0
-  db: coolcorp-relations-db:1.0.0
+#  db: coolcorp-relations-db:1.0.0
+  db: coolcorp-relations-mysql:1.0.0
 predicates: predicates.json

@@ -332,6 +332,8 @@ func (builder *systemBuilder) processIndex(index index, system *system, applicat
 		builder.buildInternalDatabase(index, system, moduleBaseDir, applicationAlias)
 	case "db/sparql":
 		builder.buildSparqlDatabase(index, system, moduleBaseDir, applicationAlias)
+	case "db/mysql":
+		builder.buildMySqlDatabase(index, system, moduleBaseDir, applicationAlias)
 	default:
 		builder.log.AddError("Unknown type: " + index.Type)
 		ok = false
@@ -407,6 +409,35 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *system, b
 	}
 
 	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, entities, *system.predicates, index.Cache, builder.log)
+
+	sharedIds, ok := builder.buildSharedIds(index, baseDir)
+	if ok {
+		database.SetSharedIds(sharedIds)
+	}
+
+	system.solver.AddFactBase(database)
+}
+
+func (builder *systemBuilder) buildMySqlDatabase(index index, system *system, baseDir string, applicationAlias string) {
+
+	readMap := builder.buildReadMap(index, baseDir)
+	entities := builder.buildEntities(index, baseDir)
+
+	prefix := ""
+
+	if applicationAlias != "" {
+		prefix = applicationAlias + "_"
+	}
+
+	database := knowledge.NewMySqlFactBase(applicationAlias, index.Domain, index.Username, index.Password, index.Database, system.matcher, readMap, entities, builder.log)
+
+	for _, table := range index.Tables {
+		columns := []string{}
+		for _, column := range table.Columns {
+			columns = append(columns, column.Name)
+		}
+		database.AddTableDescription(prefix + table.Name, table.Name, columns)
+	}
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {

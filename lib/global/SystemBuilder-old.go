@@ -296,7 +296,7 @@ func (builder systemBuilderOld) ImportMySqlDatabase(name string, solver *central
 		for _, column := range table.Columns {
 			columns = append(columns, column.Name)
 		}
-		database.AddTableDescription(table.Name, columns)
+		database.AddTableDescription(table.Name, table.Name, columns)
 	}
 
 	if factBase.SharedIds != "" {

@@ -1,10 +1,13 @@
 type: db/mysql
 version: 1.0.0
-enabled: false
 domain: localhost
 username: root
-password: ""
+password: root
 database: my_nligo
+read: [ relationships-db.map ]
+entities: [ entities.json ]
+uses:
+  dom: coolcorp-relations-domain:1.0.0
 tables:
   -
     name: marriages
@@ -14,5 +17,4 @@ tables:
     columns: [ { name: parent_id }, { name: child_id } ]
   -
     name: person
-    columns: [ { name: person_id }, { name: name } ]
-map: db/relationships-db.map
+    columns: [ { name: person_id }, { name: name }, {name: gender}, {name: birthyear} ]

@@ -1,18 +1,17 @@
 # Todo
 
-- read config.yml to learn the modules
-- read the modules index.yml files; check dependencies
-- add prefix to predicate
-- parse predicates: replace prefixed name with globally unique name (append module index if needed)
+- ok read config.yml to learn the modules
+- ok read the modules index.yml files; check dependencies
+- ok parse predicates: replace prefixed name with globally unique name (append module index if needed)
+- ok semantic versioning
+- ok hello(X); ipv hello(X) -> ;
+- schrijven naar MySQL
 - predicates.json -> new format with sorts for ids
 - sort hierarchy
-- semantic versioning
 - move predicates from config to domain
 - move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - read/reads, write/writes ?
-- hello(X); ipv hello(X) -> ;
 - hello(X) -> ; niet meer toestaan
-- schrijven naar MySQL
 - check of alle relaties goed zijn bij het inlezen van de source files
 
 Allow to change this

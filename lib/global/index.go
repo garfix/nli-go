@@ -15,4 +15,18 @@ type index struct {
 	DefaultGraphUri string
 	Names           string
 	Cache           bool
+	Database		string
+	Domain			string
+	Username		string
+	Password		string
+	Tables 			[]table
+}
+
+type table struct {
+	Name string
+	Columns []column
+}
+
+type column struct {
+	Name string
 }

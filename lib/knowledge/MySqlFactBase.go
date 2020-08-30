@@ -16,12 +16,17 @@ import (
 type MySqlFactBase struct {
 	KnowledgeBaseCore
 	db                *sql.DB
-	tableDescriptions map[string][]string
+	tableDescriptions map[string]tableDescription
 	ds2db             []mentalese.Rule
 	entities 		  mentalese.Entities
 	sharedIds 		  SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
+}
+
+type tableDescription struct {
+	tableName string
+	columns []string
 }
 
 func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
@@ -34,7 +39,7 @@ func NewMySqlFactBase(name string, domain string, username string, password stri
 	return &MySqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
 		db: db,
-		tableDescriptions: map[string][]string{},
+		tableDescriptions: map[string]tableDescription{},
 		ds2db: ds2db,
 		entities: entities,
 		sharedIds: SharedIds{},
@@ -100,8 +105,8 @@ func (factBase *MySqlFactBase) GetSharedId(inId string, entityType string) strin
 	return outId
 }
 
-func (factBase *MySqlFactBase) AddTableDescription(tableName string, columns []string) {
-	factBase.tableDescriptions[tableName] = columns
+func (factBase *MySqlFactBase) AddTableDescription(predicate string, tableName string, columns []string) {
+	factBase.tableDescriptions[predicate] = tableDescription{ tableName: tableName, columns: columns }
 }
 
 // Matches needleRelation to all relations in the database
@@ -114,8 +119,9 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 	dbBindings := mentalese.Bindings{}
 
-	table := needleRelation.Predicate
-	columns := factBase.tableDescriptions[table]
+	description := factBase.tableDescriptions[needleRelation.Predicate]
+	columns := description.columns
+	tableName := description.tableName
 
 	whereClause := ""
 	var values = []interface{}{}
@@ -130,7 +136,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 	columnClause := strings.Join(columns, ", ")
 
-	query := "SELECT " + columnClause + " FROM " + table + " WHERE TRUE" + whereClause
+	query := "SELECT " + columnClause + " FROM " + tableName + " WHERE TRUE" + whereClause
 
 	rows, err := factBase.db.Query(query, values...)
 	if err != nil {

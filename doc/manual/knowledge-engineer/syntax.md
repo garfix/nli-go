@@ -19,6 +19,8 @@
  * regular expression
  * id
  * relation set
+ * a rule
+ * a reference to a rule
  * list of terms
  
  Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 

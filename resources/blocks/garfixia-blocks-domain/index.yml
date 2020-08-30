@@ -1,0 +1,7 @@
+type: domain
+version: 1.0.0
+rules:
+  - sentence.rule
+  - helper.rule
+  - relations.rule
+  - db.rule

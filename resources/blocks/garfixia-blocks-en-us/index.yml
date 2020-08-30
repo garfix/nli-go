@@ -1,0 +1,6 @@
+type: grammar
+version: 1.0.0
+uses:
+  dom: garfixia-blocks-domain:1.0.0
+read: [ read.grammar ]
+write: [ write.grammar ]

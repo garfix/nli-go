@@ -24,6 +24,7 @@ const (
 	t_rewrite
 	t_implication
 	t_colon
+	t_ampersand
 	t_semicolon
 	t_opening_parenthesis
 	t_closing_parenthesis
@@ -64,6 +65,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_rewrite, "->"},
 		{t_implication, ":-"},
 		{t_colon, ":"},
+		{t_ampersand, "&"},
 		{t_semicolon, ";"},
 		{t_opening_parenthesis, "\\("},
 		{t_closing_parenthesis, "\\)"},

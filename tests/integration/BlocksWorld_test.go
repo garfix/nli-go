@@ -11,7 +11,7 @@ import (
 
 func TestBlocksWorld(t *testing.T) {
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/blocks/config.json", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/blocks", log)
 	sessionId := "1"
 	actualSessionPath := common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
 

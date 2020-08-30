@@ -1,0 +1,5 @@
+type: solution
+version: 1.0.0
+uses:
+  dom: garfixia-blocks-domain:1.0.0
+solution: [ blocks.solution ]

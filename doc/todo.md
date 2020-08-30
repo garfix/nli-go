@@ -7,7 +7,8 @@
 - predicates.json -> new format with sorts for ids
 - sort hierarchy
 - semantic versioning
-- move predicates from config to domain 
+- move predicates from config to domain
+- move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - read/reads, write/writes ?
 - hello(X); ipv hello(X) -> ;
 - hello(X) -> ; niet meer toestaan

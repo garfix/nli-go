@@ -1,0 +1,8 @@
+[
+    dom:at(E, X, Y, Z) :- at(E, X, Y, Z);
+    dom:grasping(P1, E1) :- grasping(P1, E1);
+    dom:contain(P, A, B) :- contain(A, B);
+    dom:pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
+    dom:cleartop(E1) :- cleartop(E1);
+    dom:support(P1, E1, E2) :- support(E1, E2);
+]

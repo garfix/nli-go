@@ -1,0 +1,19 @@
+[
+    dom:block(E) :- is(E, block);
+    dom:pyramid(E) :- is(E, pyramid);
+    dom:table(E) :- is(E, table);
+    dom:box(E) :- is(E, box);
+    dom:named(E, Name) :- call(E, Name);
+    dom:red(E) :- color(E, red);
+    dom:blue(E) :- color(E, blue);
+    dom:green(E) :- color(E, green);
+
+    dom:at(E, X, Y, Z) :- at(E, X, Y, Z);
+    dom:support(P, A, B) :- support(A, B);
+    dom:contain(P, A, B) :- contain(A, B);
+    dom:grasping(P1, E1) :- grasping(P1, E1);
+    dom:size(E, Width, Length, Height) :- size(E, Width, Length, Height);
+    dom:name(A, N) :- name(A, N);
+    dom:pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
+    dom:cleartop(E1) :- cleartop(E1);
+]

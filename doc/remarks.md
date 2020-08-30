@@ -1,3 +1,15 @@
+# 2020-09-30
+
+I need to handle rule-references like `by_easiness` in
+
+    go:quant_ordered_list(QBlocks, by_easiness, List)
+    
+Left unchanged, it is an atom, and atoms don't have a hamespace. I treat them just like strings, they are constants that get their meaning through their use by predicates. I came up with the idea of introducing a rule reference `&`:
+
+    go:quant_ordered_list(QBlocks, &by_easiness, List)
+    
+A rule reference can have a prefix.
+
 # 2020-09-16
 
 I will introduce modules to go with the namespaces. 

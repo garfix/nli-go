@@ -429,7 +429,7 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *system, ba
 		prefix = applicationAlias + "_"
 	}
 
-	database := knowledge.NewMySqlFactBase(applicationAlias, index.Domain, index.Username, index.Password, index.Database, system.matcher, readMap, entities, builder.log)
+	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, entities, builder.log)
 
 	for _, table := range index.Tables {
 		columns := []string{}

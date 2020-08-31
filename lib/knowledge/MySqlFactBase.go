@@ -29,9 +29,10 @@ type tableDescription struct {
 	columns []string
 }
 
-func NewMySqlFactBase(name string, domain string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
 
-	db, err := sql.Open("mysql", username+":"+password+"@/"+database)
+	db, _ := sql.Open("mysql", username+":"+password+"@/"+database)
+	err := db.Ping()
 	if err != nil {
 		log.AddError("Error opening MySQL: " + err.Error())
 	}

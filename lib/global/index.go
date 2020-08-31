@@ -16,7 +16,6 @@ type index struct {
 	Names           string
 	Cache           bool
 	Database		string
-	Domain			string
 	Username		string
 	Password		string
 	Tables 			[]table

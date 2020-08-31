@@ -1,13 +1,15 @@
 type: db/mysql
 version: 1.0.0
-domain: localhost
+
 username: root
 password: root
 database: my_nligo
+
 read: [ relationships-db.map ]
 entities: [ entities.json ]
 uses:
   dom: coolcorp-relations-domain:1.0.0
+
 tables:
   -
     name: marriages

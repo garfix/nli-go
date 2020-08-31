@@ -5,13 +5,13 @@
 - ok parse predicates: replace prefixed name with globally unique name (append module index if needed)
 - ok semantic versioning
 - ok hello(X); ipv hello(X) -> ;
-- schrijven naar MySQL
+- ok schrijven naar MySQL
+- ok hello(X) -> ; niet meer toestaan
 - predicates.json -> new format with sorts for ids
 - sort hierarchy
 - move predicates from config to domain
 - move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - read/reads, write/writes ?
-- hello(X) -> ; niet meer toestaan
 - check of alle relaties goed zijn bij het inlezen van de source files
 
 Allow to change this

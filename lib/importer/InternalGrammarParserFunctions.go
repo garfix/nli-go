@@ -7,35 +7,6 @@ import (
 	"strings"
 )
 
-func (parser *InternalGrammarParser) parseRelationSet(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
-
-	relationSet := mentalese.RelationSet{}
-	ok := false
-
-	for startIndex < len(tokens) {
-		relation, newStartIndex, found := parser.parseRelation(tokens, startIndex, true)
-		if found {
-			relationSet = append(relationSet, relation)
-			startIndex = newStartIndex
-			ok = true
-		} else {
-			break
-		}
-	}
-
-	if !ok {
-		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, t_predicate)
-		if found {
-			if tokenValue == mentalese.PredicateNone {
-				startIndex = newStartIndex
-				ok = true
-			}
-		}
-	}
-
-	return relationSet, startIndex, ok
-}
-
 func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) ([]mentalese.Rule, int, bool) {
 
 	rules := []mentalese.Rule{}
@@ -46,12 +17,14 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 	for startIndex < len(tokens) {
 		rule := mentalese.Rule{}
 		rule, startIndex, ok = parser.parseRule(tokens, startIndex)
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
-		if ok {
-			rules = append(rules, rule)
-		} else {
+		if !ok {
 			break
 		}
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
+		if !ok {
+			break
+		}
+		rules = append(rules, rule)
 	}
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
@@ -71,6 +44,9 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 		if ok {
 			startIndex = newStartIndex
 			rule.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+		} else {
+			startIndex = newStartIndex
+			ok = true
 		}
 	}
 
@@ -392,21 +368,36 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int, useAlias bool) ([]mentalese.Relation, int, bool) {
 
-	relations := []mentalese.Relation{}
-	ok := true
+	relationSet := mentalese.RelationSet{}
+	ok := false
 
-	for ok {
-
-		relation := mentalese.Relation{}
-		relation, startIndex, ok = parser.parseRelation(tokens, startIndex, useAlias)
-		if ok {
-			relations = append(relations, relation)
+	for startIndex < len(tokens) {
+		relation, newStartIndex, found := parser.parseRelation(tokens, startIndex, true)
+		if found {
+			relationSet = append(relationSet, relation)
+			startIndex = newStartIndex
+			ok = true
+		} else {
+			break
 		}
 	}
 
-	ok = len(relations) > 0
+	if !ok {
+		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if found {
+			if tokenValue == mentalese.PredicateNone {
+				startIndex = newStartIndex
+				ok = true
+			}
+		}
+	}
 
-	return relations, startIndex, ok
+	_, _, found := parser.parseSingleToken(tokens, startIndex, t_implication)
+	if found {
+		ok = false
+	}
+
+	return relationSet, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex int, useAlias bool) (mentalese.Relation, int, bool) {
@@ -734,21 +725,21 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 		}
 	}
 	{
-		rule := mentalese.Rule{}
-		rule, newStartIndex, ok = parser.parseRule(tokens, startIndex)
+		relationSet := mentalese.RelationSet{}
+		relationSet, newStartIndex, ok = parser.parseRelations(tokens, startIndex, true)
 		if ok {
-			term.TermType = mentalese.TermTypeRule
-			term.TermValueRule = rule
+			term.TermType = mentalese.TermTypeRelationSet
+			term.TermValueRelationSet = relationSet
 			startIndex = newStartIndex
 			goto end
 		}
 	}
 	{
-		relationSet := mentalese.RelationSet{}
-		relationSet, newStartIndex, ok = parser.parseRelationSet(tokens, startIndex)
+		rule := mentalese.Rule{}
+		rule, newStartIndex, ok = parser.parseRule(tokens, startIndex)
 		if ok {
-			term.TermType = mentalese.TermTypeRelationSet
-			term.TermValueRelationSet = relationSet
+			term.TermType = mentalese.TermTypeRule
+			term.TermValueRule = rule
 			startIndex = newStartIndex
 			goto end
 		}

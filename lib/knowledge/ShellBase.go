@@ -19,7 +19,7 @@ func NewShellBase(name string, log *common.SystemLog) *ShellBase {
 }
 
 func (factBase *ShellBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"exec", "exec_response"}
+	predicates := []string{mentalese.PredicateExec, mentalese.PredicateExecResponse}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -89,9 +89,9 @@ func (base *ShellBase) Execute(input mentalese.Relation, binding mentalese.Bindi
 	found := true
 
 	switch input.Predicate {
-	case "exec":
+	case mentalese.PredicateExec:
 		newBinding = base.exec(input, binding)
-	case "exec_response":
+	case mentalese.PredicateExecResponse:
 		newBinding = base.execResponse(input, binding)
 	default:
 		found = false

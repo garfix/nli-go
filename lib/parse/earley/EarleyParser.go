@@ -13,8 +13,6 @@ import (
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
 
-const ProperNounCategory = "proper_noun"
-
 type Parser struct {
 	grammar      *parse.Grammar
 	nameResolver *central.NameResolver
@@ -153,7 +151,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		}
 	}
 
-	if !lexItemFound && nextConsequent == ProperNounCategory {
+	if !lexItemFound && nextConsequent == mentalese.PredicateProperNoun {
 		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 	}
 

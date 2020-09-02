@@ -39,8 +39,8 @@ func TestInMemoryRuleBase(t *testing.T) {
 	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
 	solver.AddNestedStructureBase(nestedBase)
 	rules := parser.CreateRules(`[
-		sibling(A, B) :- parent(A, C) parent(B, C) not( -sibling(A, B) );
-		-sibling(A, B) :- equals(A, B);
+		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
+		-sibling(A, B) :- go:equals(A, B);
 	]`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
 	solver.AddRuleBase(ruleBase)

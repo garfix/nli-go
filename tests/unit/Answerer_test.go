@@ -45,7 +45,7 @@ func TestAnswerer(t *testing.T) {
 			result: _,
 			responses: [
 				{
-					condition: exists(),
+					condition: go:exists(),
 					answer: book(BookName)
 				}
 				{
@@ -53,11 +53,11 @@ func TestAnswerer(t *testing.T) {
 				}
 			]
 		} {
-			condition: write(Person, Book) number_of(Book, N),
+			condition: write(Person, Book) go:number_of(Book, N),
 			result: _,
 			responses: [
 				{
-					condition: exists(),
+					condition: go:exists(),
 					answer: focus(N)
 				}
 				{
@@ -69,7 +69,7 @@ func TestAnswerer(t *testing.T) {
 			result: _,
 			responses: [
 				{
-					condition: exists(),
+					condition: go:exists(),
 					answer: write(X, Y)
 				}
 				{
@@ -81,7 +81,7 @@ func TestAnswerer(t *testing.T) {
 			result: _,
 			responses: [
 				{
-					condition: exists(),
+					condition: go:exists(),
 					preparation: write(C, B),
 					answer: publish_author(A, C)
 				}
@@ -119,7 +119,7 @@ func TestAnswerer(t *testing.T) {
 		//// return each relation only once
 		{"write(PersonName, B) publish('Orbital', B)", "book('The red book')"},
 		// number_of
-		{"write('Sally Klein', Book) number_of(Book, N)", "focus(2)"},
+		{"write('Sally Klein', Book) go:number_of(Book, N)", "focus(2)"},
 	}
 
 	for _, test := range tests {

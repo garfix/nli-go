@@ -31,7 +31,7 @@ func NewInternalGrammarParser() *InternalGrammarParser {
 		tokenizer:        new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
 		panicOnParseFail: true,
-		aliasMap: map[string]string{"": ""},
+		aliasMap: map[string]string{"": "", "go": "go"},
 	}
 }
 

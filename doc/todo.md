@@ -7,6 +7,7 @@
 - ok hello(X); ipv hello(X) -> ;
 - ok schrijven naar MySQL
 - ok hello(X) -> ; niet meer toestaan
+- ok a prefix for go functions
 - predicates.json -> new format with sorts for ids
 - sort hierarchy
 - move predicates from config to domain

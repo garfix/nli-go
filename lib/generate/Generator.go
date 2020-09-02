@@ -21,7 +21,7 @@ func NewGenerator(Grammar *parse.Grammar, log *common.SystemLog, matcher *mental
 func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []string {
 
 	// canned response
-	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == "canned" {
+	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == mentalese.PredicateCanned {
 		return []string{ sentenceSense[0].Arguments[0].TermValue }
 	}
 

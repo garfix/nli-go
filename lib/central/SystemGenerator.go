@@ -19,7 +19,7 @@ func (gen SystemGenerator) generate(template mentalese.Relation, bindings mental
 
 	predicate := template.Predicate
 
-	if predicate == "make_and" {
+	if predicate == mentalese.PredicateMakeAnd {
 		found = true
 		result = gen.makeAnd(template, bindings)
 	}
@@ -41,7 +41,7 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 		binding := bindings[i]
 		rightValue := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
 
-		relation := mentalese.NewRelation(true, "and", []mentalese.Term{
+		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
 			parentValue,
 			binding[entityVar],
 			rightValue,
@@ -56,7 +56,7 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 		beforeLastBinding := bindings[len(bindings)-2]
 		lastBinding := bindings[len(bindings)-1]
 
-		relation := mentalese.NewRelation(true, "and", []mentalese.Term{
+		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
 			parentValue,
 			beforeLastBinding[entityVar],
 			lastBinding[entityVar],
@@ -68,7 +68,7 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 
 		onlyBinding := bindings[0]
 
-		relation := mentalese.NewRelation(true,"and", []mentalese.Term{
+		relation := mentalese.NewRelation(true,mentalese.PredicateAnd, []mentalese.Term{
 			parentValue,
 			onlyBinding[entityVar],
 			onlyBinding[entityVar],

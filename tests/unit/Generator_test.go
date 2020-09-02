@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
@@ -42,6 +43,7 @@ func TestGenerator(t *testing.T) {
 		result := generator.Generate(input)
 		if strings.Join(result, " ") != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, strings.Join(result, " "), test.want)
+			fmt.Println(log.String())
 		}
 	}
 }

@@ -215,7 +215,7 @@ func (builder *systemBuilder) createAliasMap(index index, moduleName string) map
 
 	aliasMap := map[string]string{
 		"": builder.GetApplicationAlias(moduleName),
-		"go": "",
+		"go": "go",
 	}
 
 	for moduleAlias, moduleSpec := range index.Uses {

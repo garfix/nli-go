@@ -51,19 +51,19 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// does every parent have 2 children?
 			`
-				quant_check(
-					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
-					have_child(S1, O1) number_of(O1, 2))`,
+				go:quant_check(
+					go:quant(go:quantifier(ResultCount, RangeCount, go:equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
+					have_child(S1, O1) go:number_of(O1, 2))`,
 			"{}",
 			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}{O1:9, S1:8}{O1:10, S1:8}",
 		},
 		{
 			// does every parent have 3 children?
 			`
-				quant_check(
-					quant(quantifier(ResultCount1, RangeCount1, equals(ResultCount1, RangeCount1)), S1, isa(S1, parent)),
-					quant_check(
-						quant(quantifier(ResultCount2, RangeCount2, equals(ResultCount1, 3)), O1, isa(O1, child))
+				go:quant_check(
+					go:quant(go:quantifier(ResultCount1, RangeCount1, go:equals(ResultCount1, RangeCount1)), S1, isa(S1, parent)),
+					go:quant_check(
+						go:quant(go:quantifier(ResultCount2, RangeCount2, go:equals(ResultCount1, 3)), O1, isa(O1, child))
 				, 
 				have_child(S1, O1)))`,
 			"{}",
@@ -72,9 +72,9 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// keep extra bindings?
 			`
-				quant_check(
-					quant(quantifier(ResultCount, RangeCount, equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
-					have_child(S1, O1) number_of(O1, 2)
+				go:quant_check(
+					go:quant(go:quantifier(ResultCount, RangeCount, go:equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
+					have_child(S1, O1) go:number_of(O1, 2)
 				)`,
 			"{X: 3}",
 			"{O1:2, S1:4, X:3}{O1:3, S1:4, X:3}{O1:7, S1:1, X:3}{O1:8, S1:1, X:3}{O1:9, S1:8, X:3}{O1:10, S1:8, X:3}",
@@ -83,18 +83,18 @@ func TestQuantSolver(t *testing.T) {
 			// xor
 			// the first quant in the xor has a range, but only the second quant has a range and scope bindings
 			`
-				quant_check(
-					or(_,	
-						and(_,
-							quant(some, S1, is_person(S1) equals(S1, 8)),
-							quant(some, S1, is_person(S1) have_child(S1, 9))
+				go:quant_check(
+					go:or(_,	
+						go:and(_,
+							go:quant(some, S1, is_person(S1) go:equals(S1, 8)),
+							go:quant(some, S1, is_person(S1) have_child(S1, 9))
 						),
-						xor(_,
-							quant(some, S1, is_person(S1) equals(S1, 4)),
-							quant(some, S1, is_person(S1) equals(S1, 1))
+						go:xor(_,
+							go:quant(some, S1, is_person(S1) go:equals(S1, 4)),
+							go:quant(some, S1, is_person(S1) go:equals(S1, 1))
 						)
 					),
-					or(_, have_child(S1, 7), have_child(S1, 10))
+					go:or(_, have_child(S1, 7), have_child(S1, 10))
 				)`,
 			"{}",
 			"{S1:8}{S1:1}",

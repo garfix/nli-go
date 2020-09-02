@@ -19,27 +19,27 @@ func TestFunctions(t *testing.T) {
 		binding     string
 		wantBinding string
 	}{
-		{"split(W1, '-', S1, S2)", "{W1:'aap-noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
-		{"join(W1, '-', S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
-		{"concat(W1, S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aapnoot'}"},
-		{"greater_than(2, 1)", "{E1:1}", "{E1:1}"},
-		{"greater_than(1, 2)", "{E1:1}", "{}"},
-		{"less_than(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
-		{"add(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'3'}"},
-		{"subtract(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'-1'}"},
-		{"not_equals(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
-		{"not_equals(E1, E2)", "{E1:2, E2:2}", "{}"},
-		{"equals(E1, E2)", "{E1:1, E2:2}", "{}"},
-		{"equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
-		{"unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "{R1:5, R2:5}"},
-		{"unify(X, 0)", "{Z:0}", "{X:0, Z:0}"},
-		{"unify(0, Y)", "{Z:0}", "{Y:0, Z:0}"},
-		{"date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},
-		{"date_subtract_years('2020-12-22', '1969-11-24', S)", "{}", "{S:'51'}"},
-		{"date_subtract_years('2020-07-01', '2020-06-01', S)", "{}", "{S:'0'}"},
-		{"date_subtract_years('2020-07-01', '2020-08-01', S)", "{}", "{S:'-1'}"},
-		{"date_subtract_years('2020-07-01', '2021-01-01', S)", "{}", "{S:'-1'}"},
-		{"date_subtract_years('2020-07-01', '2021-08-01', S)", "{}", "{S:'-2'}"},
+		{"go:split(W1, '-', S1, S2)", "{W1:'aap-noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
+		{"go:join(W1, '-', S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
+		{"go:concat(W1, S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aapnoot'}"},
+		{"go:greater_than(2, 1)", "{E1:1}", "{E1:1}"},
+		{"go:greater_than(1, 2)", "{E1:1}", "{}"},
+		{"go:less_than(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
+		{"go:add(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'3'}"},
+		{"go:subtract(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'-1'}"},
+		{"go:not_equals(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
+		{"go:not_equals(E1, E2)", "{E1:2, E2:2}", "{}"},
+		{"go:equals(E1, E2)", "{E1:1, E2:2}", "{}"},
+		{"go:equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
+		{"go:unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "{R1:5, R2:5}"},
+		{"go:unify(X, 0)", "{Z:0}", "{X:0, Z:0}"},
+		{"go:unify(0, Y)", "{Z:0}", "{Y:0, Z:0}"},
+		{"go:date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},
+		{"go:date_subtract_years('2020-12-22', '1969-11-24', S)", "{}", "{S:'51'}"},
+		{"go:date_subtract_years('2020-07-01', '2020-06-01', S)", "{}", "{S:'0'}"},
+		{"go:date_subtract_years('2020-07-01', '2020-08-01', S)", "{}", "{S:'-1'}"},
+		{"go:date_subtract_years('2020-07-01', '2021-01-01', S)", "{}", "{S:'-1'}"},
+		{"go:date_subtract_years('2020-07-01', '2021-08-01', S)", "{}", "{S:'-2'}"},
 	}
 
 	for _, test := range tests {
@@ -70,12 +70,12 @@ func TestAggregateFunctions(t *testing.T) {
 		bindings     string
 		wantBindings string
 	}{
-		{"number_of(W1, Number)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap', Number:2}{W1:'noot', Number:2}{W1:'noot', Number:2}]"},
-		{"number_of(W1, 2)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]"},
-		{"number_of(W1, 3)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[]"},
-		{"first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
-		{"exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
-		{"exists()", "[]", "[]"},
+		{"go:number_of(W1, Number)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap', Number:2}{W1:'noot', Number:2}{W1:'noot', Number:2}]"},
+		{"go:number_of(W1, 2)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]"},
+		{"go:number_of(W1, 3)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[]"},
+		{"go:first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
+		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
+		{"go:exists()", "[]", "[]"},
 	}
 
 	for _, test := range tests {
@@ -113,11 +113,11 @@ func TestControlFunctions(t *testing.T) {
 		binding     string
 		wantBindings string
 	}{
-		{"xor(_, unify(E, 1), unify(E, 2))", "{}", "[{E:1}]"},
-		{"and(_, unify(E, 1), unify(E, 2))", "{}", "[]"},
-		{"or(_, unify(E, 1), unify(E, 2))", "{}", "[{E:1} {E:2}]"},
-		{"if_then_else(greater_than(6, 5), unify(E, 1), unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
-		{"if_then_else(greater_than(5, 6), unify(E, 1), unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
+		{"go:xor(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1}]"},
+		{"go:and(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[]"},
+		{"go:or(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1} {E:2}]"},
+		{"go:if_then_else(go:greater_than(6, 5), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
+		{"go:if_then_else(go:greater_than(5, 6), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
 	}
 
 	for _, test := range tests {
@@ -147,7 +147,7 @@ func TestQuantFunctions(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 
 	rules := parser.CreateRules(`[
-		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) compare(Name1, Name2, R);
+		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) go:compare(Name1, Name2, R);
 	]`)
 	facts := parser.CreateRelationSet("" +
 		"person(`:C`, 'Charles') " +
@@ -178,75 +178,75 @@ func TestQuantFunctions(t *testing.T) {
 		wantBindings string
 	}{
 		{`
-			quant_foreach(
-				quant(
-					quantifier(Result, Range, equals(Result, 3)),
+			go:quant_foreach(
+				go:quant(
+					go:quantifier(Result, Range, go:equals(Result, 3)),
 					E,
 					person(E, _)),
 				List)`,
 			"{}", "[{E: `:C`} {E: `:D`} {E: `:B`}]"},
 		{`
-			quant_ordered_list(
-				quant(
-					quantifier(Result, Range, equals(Result, 3)),
+			go:quant_ordered_list(
+				go:quant(
+					go:quantifier(Result, Range, go:equals(Result, 3)),
 					E,
 					person(E, _)),
-				by_name,
+				&by_name,
 				List)`,
 			"{}", "[{List: [`:A`, `:B`, `:C`]}]"},
 		{`
-			quant_ordered_list(
-				and(_,
-					quant(
-						quantifier(Result, Range, equals(Result, 3)),
+			go:quant_ordered_list(
+				go:and(_,
+					go:quant(
+						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
 						person(E, _)),
-					quant(
-						quantifier(Result, Range, equals(Result, 1)),
+					go:quant(
+						go:quantifier(Result, Range, go:equals(Result, 1)),
 						E,
 						person_named_edward(E))
 				),
-				by_name,
+				&by_name,
 				List)`,
 			"{}", "[{List: [`:A`, `:B`, `:C`, `:E`]}]"},
 		{`
-			quant_ordered_list(
-				or(_,
-					quant(
-						quantifier(Result, Range, equals(Result, 3)),
+			go:quant_ordered_list(
+				go:or(_,
+					go:quant(
+						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
 						person(E, _)),
-					quant(
-						quantifier(Result, Range, equals(Result, 1)),
+					go:quant(
+						go:quantifier(Result, Range, go:equals(Result, 1)),
 						E,
 						person_named_bernhard(E))
 				),
-				by_name,
+				&by_name,
 				List)`,
 			"{}", "[{List: [`:B`]}]"},
 		{`
-			quant_ordered_list(
-				or(_,
-					quant(
-						quantifier(Result, Range, equals(Result, 3)),
+			go:quant_ordered_list(
+				go:or(_,
+					go:quant(
+						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
 						person(E, _)),
-					and(_,
-						quant(
-							quantifier(Result, Range, equals(Result, 3)),
+					go:and(_,
+						go:quant(
+							go:quantifier(Result, Range, go:equals(Result, 3)),
 							E,
 							person_named_bernhard(E)),
-						quant(
-							quantifier(Result, Range, equals(Result, 1)),
+						go:quant(
+							go:quantifier(Result, Range, go:equals(Result, 1)),
 							E,
 							person_named_abraham(E))
 					)
 				),
-				by_name,
+				&by_name,
 				List)`,
 			"{}", "[{List: [`:A`, `:B`]}]"},
-		{"list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
-		{"list_foreach([`:B`, `:C`, `:A`], E, unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
+		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
+		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 	}
 
 	for _, test := range tests {

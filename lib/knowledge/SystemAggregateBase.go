@@ -17,7 +17,7 @@ func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregate
 }
 
 func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{"number_of", "first", "exists"}
+	predicates := []string{mentalese.PredicateNumberOf, mentalese.PredicateFirst, mentalese.PredicateExists}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -100,11 +100,11 @@ func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings ment
 	found := true
 
 	switch input.Predicate {
-	case "number_of":
+	case mentalese.PredicateNumberOf:
 		newBindings = base.numberOf(input, bindings)
-	case "first":
+	case mentalese.PredicateFirst:
 		newBindings = base.first(input, bindings)
-	case "exists":
+	case mentalese.PredicateExists:
 		newBindings = base.exists(input, bindings)
 	default:
 		found = false

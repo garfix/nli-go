@@ -256,7 +256,8 @@ func (set RelationSet) String() string {
 
 	s, sep := "", ""
 
-	if len(set) == 0 { return PredicateNone }
+	if len(set) == 0 { return AtomNone
+	}
 
 	for _, relation := range set {
 		s += sep + relation.String()

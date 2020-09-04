@@ -20,22 +20,22 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
 	predicates := []string{
-		mentalese.PREDICATE_SPLIT,
-		mentalese.PREDICATE_JOIN,
-		mentalese.PREDICATE_CONCAT,
-		mentalese.PREDICATE_GREATER_THAN,
-		mentalese.PREDICATE_LESS_THAN,
-		mentalese.PREDICATE_GREATER_THAN_EQUALS,
-		mentalese.PREDICATE_LESS_THAN_EQUALS,
-		mentalese.PREDICATE_EQUALS,
-		mentalese.PREDICATE_NOT_EQUALS,
-		mentalese.PREDICATE_COMPARE,
-		mentalese.PREDICATE_UNIFY,
-		mentalese.PREDICATE_ADD,
-		mentalese.PREDICATE_SUBTRACT,
-		mentalese.PREDICATE_MIN,
-		mentalese.PREDICATE_DATE_TODAY,
-		mentalese.PREDICATE_DATE_SUBTRACT_YEARS,
+		mentalese.PredicateSplit,
+		mentalese.PredicateJoin,
+		mentalese.PredicateConcat,
+		mentalese.PredicateGreaterThan,
+		mentalese.PredicateLessThan,
+		mentalese.PredicateGreaterThanEquals,
+		mentalese.PredicateLessThanEquals,
+		mentalese.PredicateEquals,
+		mentalese.PredicateNotEquals,
+		mentalese.PredicateCompare,
+		mentalese.PredicateUnify,
+		mentalese.PredicateAdd,
+		mentalese.PredicateSubtract,
+		mentalese.PredicateMin,
+		mentalese.PredicateDateToday,
+		mentalese.PredicateDateSubtractYears,
 	}
 
 	for _, p := range predicates {
@@ -364,37 +364,37 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 	found := true
 
 	switch input.Predicate {
-	case mentalese.PREDICATE_SPLIT:
+	case mentalese.PredicateSplit:
 		newBinding = base.split(input, binding)
-	case mentalese.PREDICATE_JOIN:
+	case mentalese.PredicateJoin:
 		newBinding = base.join(input, binding)
-	case mentalese.PREDICATE_CONCAT:
+	case mentalese.PredicateConcat:
 		newBinding = base.concat(input, binding)
-	case mentalese.PREDICATE_GREATER_THAN:
+	case mentalese.PredicateGreaterThan:
 		newBinding = base.greaterThan(input, binding)
-	case mentalese.PREDICATE_LESS_THAN:
+	case mentalese.PredicateLessThan:
 		newBinding = base.lessThan(input, binding)
-	case mentalese.PREDICATE_GREATER_THAN_EQUALS:
+	case mentalese.PredicateGreaterThanEquals:
 		newBinding = base.greaterThanEquals(input, binding)
-	case mentalese.PREDICATE_LESS_THAN_EQUALS:
+	case mentalese.PredicateLessThanEquals:
 		newBinding = base.lessThanEquals(input, binding)
-	case mentalese.PREDICATE_ADD:
+	case mentalese.PredicateAdd:
 		newBinding = base.add(input, binding)
-	case mentalese.PREDICATE_SUBTRACT:
+	case mentalese.PredicateSubtract:
 		newBinding = base.subtract(input, binding)
-	case mentalese.PREDICATE_MIN:
+	case mentalese.PredicateMin:
 		newBinding = base.min(input, binding)
-	case mentalese.PREDICATE_EQUALS:
+	case mentalese.PredicateEquals:
 		newBinding = base.equals(input, binding)
-	case mentalese.PREDICATE_COMPARE:
+	case mentalese.PredicateCompare:
 		newBinding = base.compare(input, binding)
-	case mentalese.PREDICATE_NOT_EQUALS:
+	case mentalese.PredicateNotEquals:
 		newBinding = base.notEquals(input, binding)
-	case mentalese.PREDICATE_UNIFY:
+	case mentalese.PredicateUnify:
 		newBinding = base.unify(input, binding)
-	case mentalese.PREDICATE_DATE_TODAY:
+	case mentalese.PredicateDateToday:
 		newBinding = base.dateToday(input, binding)
-	case mentalese.PREDICATE_DATE_SUBTRACT_YEARS:
+	case mentalese.PredicateDateSubtractYears:
 		newBinding = base.dateSubtractYears(input, binding)
 	default:
 		found = false

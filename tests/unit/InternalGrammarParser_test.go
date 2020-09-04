@@ -71,7 +71,7 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateRelationSet("sort([5,2,3,1])")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
-	if set.String() != "quant_foreach(sem(np, 1), quant_foreach(sem(np, 2), none))" {
+	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {
 		t.Error(set.String())
 	}
 }

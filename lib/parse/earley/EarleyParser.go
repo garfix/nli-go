@@ -151,7 +151,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		}
 	}
 
-	if !lexItemFound && nextConsequent == mentalese.PredicateProperNoun {
+	if !lexItemFound && nextConsequent == mentalese.CategoryProperNoun {
 		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 	}
 

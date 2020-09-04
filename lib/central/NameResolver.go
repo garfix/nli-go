@@ -5,7 +5,6 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"sort"
-	"strconv"
 )
 
 const defaultEntityType = "entity"
@@ -155,80 +154,6 @@ func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInf
 type nameInfo struct {
 	name string
 	entityType string
-}
-
-// in: SharedId(E1, "de", 1) SharedId(E1, "Boer", 2) SharedId(E1, "Jan", 0)
-// out: E1: "Jan de Boer"
-func (resolver *NameResolver) collectNamesAndTypes(relations mentalese.RelationSet) map[string]nameInfo {
-
-	nameTree := map[string]map[int]string{}
-
-	for _, relation := range relations {
-		if relation.Predicate == mentalese.PredicateName {
-			variable := relation.Arguments[0].TermValue
-			name := relation.Arguments[1].TermValue
-			indexString := relation.Arguments[2]
-			index, err := strconv.Atoi(indexString.TermValue)
-			if err == nil {
-				_, found := nameTree[variable]
-				if !found {
-					nameTree[variable] = map[int]string{}
-				}
-				nameTree[variable][index] = name
-			}
-		}
-	}
-
-	names := map[string]nameInfo{}
-
-	for variable, branch := range nameTree {
-
-		name := ""
-
-		for i := 1; i <= len(branch); i++ {
-			value, found := branch[i]
-			if found {
-				if name == "" {
-					name = value
-				} else {
-					name = name + " " + value
-				}
-			}
-		}
-
-		entityType := resolver.getEntityTypeFromRelations(variable, relations)
-
-		names[variable] = nameInfo{ name: name, entityType: entityType }
-	}
-
-	return names
-}
-
-func (resolver *NameResolver) getEntityTypeFromRelations(variable string, relations mentalese.RelationSet) string {
-
-	entityType := defaultEntityType
-
-	for _, relation := range relations {
-		predicate := relation.Predicate
-
-		for i, argument := range relation.Arguments {
-			if argument.IsVariable() && argument.TermValue == variable {
-
-				entityTypes, found := resolver.predicates[predicate]
-
-				if found {
-
-					if entityType != defaultEntityType && entityTypes.EntityTypes[i] != entityType {
-						panic("Conflict in entity types!")
-					}
-
-					entityType = entityTypes.EntityTypes[i]
-				}
-			}
-		}
-	}
-
-	return entityType
 }
 
 func (resolver *NameResolver) ResolveName(name string, entityType string) []NameInformation {

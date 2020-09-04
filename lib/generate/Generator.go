@@ -123,7 +123,7 @@ func (generator *Generator) generateSingleConsequent(predicate string, arguments
 
 	if positionType == parse.PosTypeWordForm {
 		words = append(words, predicate)
-	} else if predicate == mentalese.PredicateText {
+	} else if predicate == mentalese.CategoryText {
 		variable := arguments[0]
 		text := consequentBinding[variable]
 		words = append(words, text.TermValue)

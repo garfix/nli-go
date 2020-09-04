@@ -356,7 +356,7 @@ func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, r
 	firstArgument := quant.Arguments[mentalese.QuantQuantifierIndex]
 
 	// special case: the existential quantifier `some`
-	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.PredicateQuantifierSome {
+	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.AtomSome {
 		if scopeCount == 0 {
 			base.log.AddProduction("Do/Find", "Quantifier Some mismatch: no results")
 			return false

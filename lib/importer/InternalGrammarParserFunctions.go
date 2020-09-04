@@ -385,7 +385,7 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 	if !ok {
 		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, t_predicate)
 		if found {
-			if tokenValue == mentalese.PredicateNone {
+			if tokenValue == mentalese.AtomNone {
 				startIndex = newStartIndex
 				ok = true
 			}

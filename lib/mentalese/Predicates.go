@@ -8,6 +8,12 @@ type PredicateInfo struct {
 	EntityTypes []string
 }
 
+func (predicates Predicates) AddPredicates(p Predicates) {
+	for predicate, info := range p {
+		predicates[predicate] = info
+	}
+}
+
 func (predicates Predicates) GetEntityType(predicate string, argumentIndex int) string {
 
 	pred, found := predicates[predicate]

@@ -1,6 +1,0 @@
-{
-  "dom:parent": {"entityTypes": ["person", "person"] },
-  "dom:have_child": {"entityTypes": ["person", "person"] },
-  "dom:siblings": {"entityTypes": ["person", "person"] },
-  "dom:marry": { "entityTypes": ["event", "person", "person"] }
-}

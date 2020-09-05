@@ -4,4 +4,3 @@ uses:
   en: coolcorp-dualworld-en-us:1.0.0
   db1: coolcorp-dualworld-db1:1.0.0
   db2: coolcorp-dualworld-db2:1.0.0
-predicates: predicates.json

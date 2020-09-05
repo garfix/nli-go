@@ -9,11 +9,12 @@
 - ok hello(X) -> ; niet meer toestaan
 - ok a prefix for go functions
 - predicates.json -> new format with sorts for ids
-- sort hierarchy
 - move predicates from config to domain
+- sort hierarchy
 - move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - read/reads, write/writes ?
 - check of alle relaties goed zijn bij het inlezen van de source files
+- extend a module with another module
 
 Allow to change this
 

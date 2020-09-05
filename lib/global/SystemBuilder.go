@@ -93,18 +93,16 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
 
-	predicates, _ := builder.CreatePredicates(config.Predicates)
+	system.predicates = &mentalese.Predicates{}
 
-	system.predicates = &predicates
-
-	solver := central.NewProblemSolver(matcher, predicates, system.dialogContext, builder.log)
+	solver := central.NewProblemSolver(matcher, system.predicates, system.dialogContext, builder.log)
 
 	solver.AddFunctionBase(systemFunctionBase)
 
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
-	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, predicates, builder.log)
+	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, system.predicates, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	shellBase := knowledge.NewShellBase("shell", builder.log)
@@ -112,8 +110,8 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
-	system.nameResolver = central.NewNameResolver(solver, matcher, predicates, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.grammar, system.nameResolver, predicates, builder.log)
+	system.nameResolver = central.NewNameResolver(solver, matcher, system.predicates, builder.log, system.dialogContext)
+	system.parser = earley.NewParser(system.grammar, system.nameResolver, system.predicates, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
@@ -125,26 +123,25 @@ func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicate
 
 	if path != "" {
 
-		absolutePath := common.AbsolutePath(builder.baseDir, path)
-
-		content, err := common.ReadFile(absolutePath)
+		content, err := common.ReadFile(path)
 		if err != nil {
-			builder.log.AddError("Error reading predicates file " + absolutePath + " (" + err.Error() + ")")
+			builder.log.AddError("Error reading relation types file " + path + " (" + err.Error() + ")")
 			return predicates, false
 		}
 
-		rawPredicates := mentalese.Predicates{}
-		err = json.Unmarshal([]byte(content), &rawPredicates)
-		if err != nil {
-			builder.log.AddError("Error parsing predicates file " + absolutePath + " (" + err.Error() + ")")
-			return predicates, false
+		relationTypes := builder.parser.CreateRelationSet(content)
+
+		for _, relationType := range relationTypes {
+			name := strings.Replace(relationType.Predicate, ":", "_", 1)
+			entityTypes := []string{}
+			for _, argument := range relationType.Arguments {
+				entityTypes = append(entityTypes, argument.TermValue)
+			}
+			predicates[name] = mentalese.PredicateInfo{
+				EntityTypes: entityTypes,
+			}
 		}
 
-		// hack: fix it by replacing the entire JSON file with something better
-		for predicate, entityTypes := range rawPredicates {
-			predicate = strings.Replace(predicate, ":", "_", 1)
-			predicates[predicate] = entityTypes
-		}
 	}
 
 	return predicates, true
@@ -346,6 +343,12 @@ func (builder *systemBuilder) buildDomain(index index, system *system, moduleBas
 	for _, rule := range index.Rules {
 		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
 	}
+
+	path := common.AbsolutePath(moduleBaseDir, index.Predicates)
+	predicates, ok := builder.CreatePredicates(path)
+	if ok {
+		system.predicates.AddPredicates(predicates)
+	}
 }
 
 func (builder *systemBuilder) buildGrammar(index index, system *system, moduleBaseDir string) {
@@ -408,7 +411,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *system, b
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, entities, *system.predicates, index.Cache, builder.log)
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, entities, index.Cache, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {

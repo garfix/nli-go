@@ -3,4 +3,3 @@ uses:
   dbpedia: garfixia-dbpedia-db:1.0.0
   en: garfixia-dbpedia-en-us:1.0.0
   sol: garfixia-dbpedia-solution:1.0.0
-predicates: predicates.json

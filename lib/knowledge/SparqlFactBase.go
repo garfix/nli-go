@@ -22,7 +22,6 @@ type SparqlFactBase struct {
 	ds2db           []mentalese.Rule
 	names           mentalese.ConfigMap
 	entities        mentalese.Entities
-	predicates 		mentalese.Predicates
 	sharedIds 		SharedIds
 	matcher         *mentalese.RelationMatcher
 	queryCount      int
@@ -30,7 +29,7 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, entities mentalese.Entities, predicates mentalese.Predicates, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, entities mentalese.Entities, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
@@ -39,7 +38,6 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		ds2db:             ds2db,
 		names:             names,
 		entities:          entities,
-		predicates:		   predicates,
 		sharedIds: 		   SharedIds{},
 		matcher:           matcher,
 		queryCount:        0,
@@ -275,8 +273,8 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 			if relation.Arguments[i].IsVariable() {
 
 				if variable.Type == "uri" {
-					// todo predicates does not contain database relations
-					entityType := factBase.predicates.GetEntityType(relation.Predicate, i)
+					// todo look up entity type from db predicates
+					entityType := ""
 					binding[relation.Arguments[i].TermValue] = mentalese.NewTermId(variable.Value, entityType)
 				} else {
 					// skip non-english results

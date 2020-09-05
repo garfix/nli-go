@@ -13,12 +13,12 @@ const defaultEntityType = "entity"
 type NameResolver struct {
 	solver 			*ProblemSolver
 	matcher 		*mentalese.RelationMatcher
-	predicates      mentalese.Predicates
+	predicates      *mentalese.Predicates
 	log 			*common.SystemLog
 	dialogContext   *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, predicates *mentalese.Predicates, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
 		solver:      	solver,
 		matcher:	 	matcher,

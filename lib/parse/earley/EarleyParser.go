@@ -16,11 +16,11 @@ import (
 type Parser struct {
 	grammar      *parse.Grammar
 	nameResolver *central.NameResolver
-	predicates   mentalese.Predicates
+	predicates   *mentalese.Predicates
 	log          *common.SystemLog
 }
 
-func NewParser(grammar *parse.Grammar, nameResolver *central.NameResolver, predicates mentalese.Predicates, log *common.SystemLog) *Parser {
+func NewParser(grammar *parse.Grammar, nameResolver *central.NameResolver, predicates *mentalese.Predicates, log *common.SystemLog) *Parser {
 	return &Parser{
 		grammar:      grammar,
 		nameResolver: nameResolver,

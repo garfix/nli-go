@@ -101,7 +101,7 @@ func TestControlFunctions(t *testing.T) {
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := mentalese.Predicates{}
+	predicates := &mentalese.Predicates{}
 
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
@@ -143,7 +143,7 @@ func TestQuantFunctions(t *testing.T) {
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := mentalese.Predicates{}
+	predicates := &mentalese.Predicates{}
 	parser := importer.NewInternalGrammarParser()
 
 	rules := parser.CreateRules(`[

@@ -19,6 +19,7 @@ type index struct {
 	Username		string
 	Password		string
 	Tables 			[]table
+	Predicates 		string
 }
 
 type table struct {

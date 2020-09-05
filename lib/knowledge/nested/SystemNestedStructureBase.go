@@ -12,11 +12,11 @@ type SystemNestedStructureBase struct {
 	knowledge.KnowledgeBaseCore
 	solver *central.ProblemSolver
 	dialogContext *central.DialogContext
-	predicates mentalese.Predicates
+	predicates *mentalese.Predicates
 	log     *common.SystemLog
 }
 
-func NewSystemNestedStructureBase(solver *central.ProblemSolver, dialogContext *central.DialogContext, predicates mentalese.Predicates, log *common.SystemLog) *SystemNestedStructureBase {
+func NewSystemNestedStructureBase(solver *central.ProblemSolver, dialogContext *central.DialogContext, predicates *mentalese.Predicates, log *common.SystemLog) *SystemNestedStructureBase {
 	return &SystemNestedStructureBase{
 		KnowledgeBaseCore: knowledge.KnowledgeBaseCore{ Name: "nested-structure" },
 		solver: solver,

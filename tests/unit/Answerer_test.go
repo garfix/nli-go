@@ -98,7 +98,7 @@ func TestAnswerer(t *testing.T) {
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)
-	predicates := mentalese.Predicates{}
+	predicates := &mentalese.Predicates{}
 
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)

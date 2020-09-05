@@ -8,7 +8,7 @@ import (
 // Create a new s-selection
 // Inherit the types that were bound to the antecedent
 // If not inherited, find a proper type from the sense
-func combineSSelection(predicates mentalese.Predicates, parentTypes []string, rule parse.GrammarRule) (parse.SSelection, bool) {
+func combineSSelection(predicates *mentalese.Predicates, parentTypes []string, rule parse.GrammarRule) (parse.SSelection, bool) {
 
 	// start with the type of the antecedent
 	sSelection := parse.SSelection{ parentTypes }
@@ -44,7 +44,7 @@ func combineSSelection(predicates mentalese.Predicates, parentTypes []string, ru
 	return sSelection, true
 }
 
-func getTypeFromSense(predicates mentalese.Predicates, variable string, sense mentalese.RelationSet) string {
+func getTypeFromSense(predicates *mentalese.Predicates, variable string, sense mentalese.RelationSet) string {
 
 	sType := ""
 
@@ -52,7 +52,7 @@ func getTypeFromSense(predicates mentalese.Predicates, variable string, sense me
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
 
-				sTypes, found := predicates[relation.Predicate]
+				sTypes, found := (*predicates)[relation.Predicate]
 				if found {
 					sType = sTypes.EntityTypes[i]
 					goto end

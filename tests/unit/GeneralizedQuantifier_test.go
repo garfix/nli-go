@@ -53,7 +53,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := mentalese.Predicates{}
+	predicates := &mentalese.Predicates{}
 	entities := mentalese.Entities{}
 	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, ds2db, ds2dbWrite, entities, log)

@@ -1,0 +1,4 @@
+parent(person, person)
+have_child(person, person)
+siblings(person, person)
+marry(event, person, person)

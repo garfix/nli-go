@@ -18,14 +18,14 @@ type ProblemSolver struct {
 	aggregateBases       []knowledge.AggregateBase
 	nestedStructureBases []knowledge.NestedStructureBase
 	matcher              *mentalese.RelationMatcher
-	predicates           mentalese.Predicates
+	predicates           *mentalese.Predicates
 	modifier             *FactBaseModifier
 	dialogContext        *DialogContext
 	log                  *common.SystemLog
 	SolveDepth           int
 }
 
-func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates mentalese.Predicates, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
+func NewProblemSolver(matcher *mentalese.RelationMatcher, predicates *mentalese.Predicates, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
 		knowledgeBases: []knowledge.KnowledgeBase{},
 		factBases:      []knowledge.FactBase{},

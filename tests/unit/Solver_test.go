@@ -46,8 +46,7 @@ func TestSolver(t *testing.T) {
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 
 	dialogContext := central.NewDialogContext()
-	predicates := &mentalese.Predicates{}
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)
 
 	tests := []struct {
@@ -133,7 +132,7 @@ func TestSolver(t *testing.T) {
 	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, entities, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
-	solver2 := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver2 := central.NewProblemSolver(matcher, dialogContext, log)
 	solver2.AddFactBase(factBase2)
 	solver2.AddRuleBase(ruleBase2)
 
@@ -171,9 +170,8 @@ func TestMissingHandlerError(t *testing.T) {
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 
 	dialogContext := central.NewDialogContext()
-	predicates := &mentalese.Predicates{}
 
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)
 
 	input := parser.CreateRelationSet("not_a_relation()")

@@ -17,7 +17,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Predicates{}
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)

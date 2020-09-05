@@ -103,7 +103,7 @@ func TestControlFunctions(t *testing.T) {
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Predicates{}
 
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
 	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
@@ -164,7 +164,7 @@ func TestQuantFunctions(t *testing.T) {
 	ds2dbWrite := parser.CreateRules(`[]`)
 	entities := mentalese.Entities{}
 
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, ds2db, ds2dbWrite, entities, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)

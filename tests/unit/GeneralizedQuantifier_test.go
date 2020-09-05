@@ -55,7 +55,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Predicates{}
 	entities := mentalese.Entities{}
-	solver := central.NewProblemSolver(matcher, predicates, dialogContext, log)
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
 	solver.AddFactBase(factBase)
 	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
@@ -63,7 +63,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
-	nameResolver := central.NewNameResolver(solver, matcher, predicates, log, dialogContext)
+	nameResolver := central.NewNameResolver(solver, matcher, log, dialogContext)
 	parser := earley.NewParser(grammar, nameResolver, predicates, log)
 
 	tests := []struct {

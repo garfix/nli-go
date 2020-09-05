@@ -95,7 +95,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	system.predicates = &mentalese.Predicates{}
 
-	solver := central.NewProblemSolver(matcher, system.predicates, system.dialogContext, builder.log)
+	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 
 	solver.AddFunctionBase(systemFunctionBase)
 
@@ -110,7 +110,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
-	system.nameResolver = central.NewNameResolver(solver, matcher, system.predicates, builder.log, system.dialogContext)
+	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
 	system.parser = earley.NewParser(system.grammar, system.nameResolver, system.predicates, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(system.generationGrammar, builder.log, matcher)

@@ -30,15 +30,15 @@ func main() {
 	options := common.NewOptions()
 
 	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog context")
-	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a JSON nli-go config file")
+	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a YAML nli-go config file")
 
 	flag.Parse()
 
 	if len(flag.Args()) != 1 {
-		fmt.Println("Usage: nli [-s <session_id>] [-c </path/to/config.json>] <full sentence>")
+		fmt.Println("Usage: nli [-s <session_id>] [-c </path/to/config.yml>] <full sentence>")
 		fmt.Println("")
 		fmt.Println("Example:")
-		fmt.Println("    nli -s 73926642 -c fox/config.json \"Did the quick brown fox jump over the lazy dog?\"")
+		fmt.Println("    nli -s 73926642 -c fox/config.yml \"Did the quick brown fox jump over the lazy dog?\"")
 		fmt.Println("")
 		return
 	}

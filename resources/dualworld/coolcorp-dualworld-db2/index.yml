@@ -5,4 +5,4 @@ read: [ db.map ]
 entities: [ entities.yml ]
 uses:
   dom: coolcorp-dualworld-domain:1.0.0
-shared: [ shared-id.json ]
+shared: [ shared-id.yml ]

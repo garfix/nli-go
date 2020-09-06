@@ -9,7 +9,7 @@ session_start();
 $sessionId = session_id();
 
 $command = __DIR__ . '/nli';
-$configPath = __DIR__ . '/../resources/dbpedia/config-online.json';
+$configPath = __DIR__ . '/../resources/dbpedia';
 $fullCommand = sprintf('%s -s %s -c %s "%s"', $command, $sessionId, $configPath, $query);
 $start = microtime(true);
 

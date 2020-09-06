@@ -23,7 +23,7 @@ The following call uses `nli` to answer the question "What does the box contain?
 JSON config file and storing its dialog context (spanning multiple sentences) in a session file in `./sessions/123.json`
 
 ```
-./nli -s 123 -c "../resources/blocks/config.json" "What does the box contain?"
+./nli -s 123 -c "../resources/blocks/config" "What does the box contain?"
 ```
 
 the response is a JSON string, that looks like this:

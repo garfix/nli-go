@@ -1,7 +1,6 @@
 package global
 
 import (
-	"encoding/json"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"nli-go/lib/central"
@@ -573,7 +572,7 @@ func (builder systemBuilder) buildNames(index index, baseDir string, application
 		return configMap, false
 	}
 
-	err = json.Unmarshal([]byte(content), &configMap)
+	err = yaml.Unmarshal([]byte(content), &configMap)
 	if err != nil {
 		builder.log.AddError("Error parsing config map file " + path + " (" + err.Error() + ")")
 		return configMap, false
@@ -685,7 +684,7 @@ func (builder systemBuilder) LoadSharedIds(path string) (knowledge.SharedIds, bo
 			return sharedIds, false
 		}
 
-		err = json.Unmarshal([]byte(content), &sharedIds)
+		err = yaml.Unmarshal([]byte(content), &sharedIds)
 		if err != nil {
 			builder.log.AddError("Error parsing shared ids file " + path + " (" + err.Error() + ")")
 			return sharedIds, false

@@ -36,7 +36,7 @@ func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogCon
 	err = json.Unmarshal([]byte(dialogContextJson), &dialogContext)
 	if err != nil {
 		if !clearWhenCorrupt {
-			storage.log.AddError("Error parsing JSON file " + dialogContextJson + " (" + err.Error() + ")")
+			storage.log.AddError("Error parsing YAML file " + dialogContextJson + " (" + err.Error() + ")")
 			return
 		}
 	}

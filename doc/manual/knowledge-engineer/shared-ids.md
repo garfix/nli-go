@@ -50,7 +50,7 @@ In this example:
     database-2:
     db-id = r22, shared-id = aeinstein
 
-The shared ids are not part of the database. Thet are stored in JSON files and added to the fact base structure. The
+The shared ids are not part of the database. Thet are stored in YAML files and added to the fact base structure. The
 name of the JSON file is stored in the `sharedIds` attribute of a fact base.
 
 All types of fact bases have this property, so it can even be used to join

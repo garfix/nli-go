@@ -158,18 +158,16 @@ Let's have an example:
 
     { rule: nbar(E1) -> 'daughter' 'of' np(E2),                                sense: quant_check($np, has_daughter(E2, E1)) }
     
-Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "predicates.json":
+Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "predicates.relation":
 
-    "has_daughter": {"entityTypes": ["person", "person"] },
+    has_daughter(person, person)
     
-With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (entities.json) to understand how to query the name in the knowledge base:
+With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (entities.yml) to understand how to query the name in the knowledge base:
 
-     "person": {
-        "name": "person_name(Id, Name)",
-        "knownby": {
-          "description": "description(Id, Value)"
-        }
-      },
+     person:
+        name: person_name(Id, Name)
+        knownby:
+          description: description(Id, Value)
         
 It uses the "name" property to find the relation needed to find out the id of the entity, given its name. "knownby" is used only for disambiguation. The system can ask the user "This Charles Babbage" or "That Charles Babbage"?                                 
   

@@ -1,8 +1,8 @@
 # Config files
 
-The command line application needs a JSON config file to work. This config file specifies the resources used.
+The command line application needs a YAML config file to work. This config file specifies the resources used.
  
-Check the _resources_ directory for example config.json files.
+Check the _resources_ directory for example config.yml files.
 
 A relative path in a config files has that config file as its base.
  
@@ -27,7 +27,7 @@ You can name the regular expression used to tokize a sentence if you are not sat
  
  "factbases" is an array of databases of the following types
 
-Each fact base may have a `sharedIds` field that holds the path to a JSON file. This file holds a mapping of local
+Each fact base may have a `sharedIds` field that holds the path to a YAML file. This file holds a mapping of local
 database ids to shared database ids.
   
 #### relation
@@ -171,11 +171,9 @@ A solution is the way the system uses to link a problem to a solution.
  
 ### predicates
 
-The path of a predicates json file, which looks like this:
+The path of a predicates.relation file, which looks like this:
 
-    {
-        "has_capital": {"entityTypes": ["country", "city"] }
-    }
+    has_capital(country, city)
 
 This file contains domain specific predicates, the ones that are used in transformation files.
 
@@ -188,11 +186,9 @@ It is optional to specify the predicates in this file. If there is no need to sp
 
 ## Specify entity-types for predicate arguments
 
-Create a file predicates.json, for example like this
+Create a file predicates.relation, for example like this
 
-    {
-      "has_capital": {"entityTypes": ["country", "city"] }
-    }
+    has_capital(country, city)
 
 This file specifies the entity types of the arguments of the domain specific predicate "has_capital".
 

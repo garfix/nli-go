@@ -87,16 +87,12 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
 
-	system.grammar = parse.NewGrammar()
-	system.generationGrammar = parse.NewGrammar()
-	system.tokenizer = builder.createTokenizer(config.Tokenizer)
+	system.grammars = []parse.Grammar{}
 	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
-
-	system.predicates = &mentalese.Predicates{}
+	system.predicates = mentalese.NewPredicates()
 
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
-
 	solver.AddFunctionBase(systemFunctionBase)
 
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
@@ -111,9 +107,9 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
 	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.grammar, system.nameResolver, system.predicates, builder.log)
+	system.parser = earley.NewParser(system.nameResolver, system.predicates, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
-	system.generator = generate.NewGenerator(system.generationGrammar, builder.log, matcher)
+	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 }
 
@@ -145,17 +141,6 @@ func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicate
 	}
 
 	return predicates, true
-}
-
-func (builder *systemBuilder) createTokenizer(configExpression string) *parse.Tokenizer {
-
-	expression := parse.DefaultTokenizerExpression
-
-	if configExpression != "" {
-		expression = configExpression
-	}
-
-	return parse.NewTokenizer(expression, builder.log)
 }
 
 func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *system) {
@@ -353,12 +338,56 @@ func (builder *systemBuilder) buildDomain(index index, system *system, moduleBas
 
 func (builder *systemBuilder) buildGrammar(index index, system *system, moduleBaseDir string) {
 
+	grammar := parse.NewGrammar()
+
 	for _, read := range index.Read {
-		builder.importGrammarFromPath(system, moduleBaseDir + "/" + read)
+		builder.importGrammarFromPath(&grammar, moduleBaseDir + "/" + read)
 	}
 	for _, write := range index.Write {
-		builder.importGenerationGrammarFromPath(system, moduleBaseDir + "/" + write)
+		builder.importGenerationGrammarFromPath(&grammar, moduleBaseDir + "/" + write)
 	}
+
+	if index.TokenExpression != "" {
+		grammar.SetTokenizer(parse.NewTokenizer(index.TokenExpression))
+	}
+
+	system.grammars = append(system.grammars, grammar)
+}
+
+func (builder *systemBuilder) importGrammarFromPath(grammar *parse.Grammar, path string) {
+
+	grammarString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return
+	}
+
+	rules := builder.parser.CreateGrammarRules(grammarString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
+		return
+	}
+
+	grammar.GetReadRules().ImportFrom(rules)
+}
+
+func (builder *systemBuilder) importGenerationGrammarFromPath(grammar *parse.Grammar, path string) {
+
+	grammarString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return
+	}
+
+	rules := builder.parser.CreateGenerationGrammar(grammarString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
+		return
+	}
+
+	grammar.GetWriteRules().ImportFrom(rules)
 }
 
 func (builder *systemBuilder) buildSolution(index index, system *system, moduleBaseDir string) {
@@ -555,42 +584,6 @@ func (builder systemBuilder) buildNames(index index, baseDir string, application
 	}
 
 	return names, true
-}
-
-func (builder *systemBuilder) importGrammarFromPath(system *system, path string) {
-
-	grammarString, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError(err.Error())
-		return
-	}
-
-	grammar := builder.parser.CreateGrammar(grammarString)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
-		return
-	}
-
-	system.grammar.ImportFrom(grammar)
-}
-
-func (builder *systemBuilder) importGenerationGrammarFromPath(system *system, path string) {
-
-	grammarString, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError(err.Error())
-		return
-	}
-
-	grammar := builder.parser.CreateGenerationGrammar(grammarString)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
-		return
-	}
-
-	system.generationGrammar.ImportFrom(grammar)
 }
 
 func (builder *systemBuilder) importSolutionBaseFromPath(system *system, path string) {

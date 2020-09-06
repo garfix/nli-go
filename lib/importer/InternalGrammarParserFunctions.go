@@ -203,9 +203,9 @@ func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startInd
 	return resultHandler, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int) (*parse.Grammar, int, bool) {
+func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int) (*parse.GrammarRules, int, bool) {
 
-	grammar := parse.NewGrammar()
+	grammar := parse.NewGrammarRules()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -224,9 +224,9 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 	return grammar, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*parse.Grammar, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*parse.GrammarRules, int, bool) {
 
-	grammar := parse.NewGrammar()
+	grammar := parse.NewGrammarRules()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)

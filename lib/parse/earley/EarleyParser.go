@@ -14,15 +14,13 @@ import (
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
 
 type Parser struct {
-	grammar      *parse.Grammar
 	nameResolver *central.NameResolver
 	predicates   *mentalese.Predicates
 	log          *common.SystemLog
 }
 
-func NewParser(grammar *parse.Grammar, nameResolver *central.NameResolver, predicates *mentalese.Predicates, log *common.SystemLog) *Parser {
+func NewParser(nameResolver *central.NameResolver, predicates *mentalese.Predicates, log *common.SystemLog) *Parser {
 	return &Parser{
-		grammar:      grammar,
 		nameResolver: nameResolver,
 		predicates:   predicates,
 		log:          log,
@@ -31,11 +29,11 @@ func NewParser(grammar *parse.Grammar, nameResolver *central.NameResolver, predi
 
 // Parses words using Parser.grammar
 // Returns parse tree roots
-func (parser *Parser) Parse(words []string) []ParseTreeNode {
+func (parser *Parser) Parse(grammarRules *parse.GrammarRules, words []string) []ParseTreeNode {
 
 	parser.log.StartDebug("Parse", words)
 
-	chart := parser.buildChart(words)
+	chart := parser.buildChart(grammarRules, words)
 
 	rootNodes := extractTreeRoots(chart)
 
@@ -58,7 +56,7 @@ func (parser *Parser) Parse(words []string) []ParseTreeNode {
 }
 
 // The body of Earley's algorithm
-func (parser *Parser) buildChart(words []string) (*chart) {
+func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []string) (*chart) {
 
 	parser.log.StartDebug("createChart", words)
 
@@ -86,7 +84,7 @@ func (parser *Parser) buildChart(words []string) (*chart) {
 				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
 
 				// add all entries that have this abstract consequent as their antecedent
-				parser.predict(chart, state)
+				parser.predict(grammarRules, chart, state)
 
 				// if the current word in the sentence has this part-of-speech, then
 				// we add a completed entry to the chart (part-of-speech => word)
@@ -108,7 +106,7 @@ func (parser *Parser) buildChart(words []string) (*chart) {
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
-func (parser *Parser) predict(chart *chart, state chartState) {
+func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, state chartState) {
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
@@ -116,7 +114,7 @@ func (parser *Parser) predict(chart *chart, state chartState) {
 	endWordIndex := state.endWordIndex
 
 	// go through all rules that have the next consequent as their antecedent
-	for _, rule := range parser.grammar.FindRules(nextConsequent, len(nextConsequentVariables)) {
+	for _, rule := range grammarRules.FindRules(nextConsequent, len(nextConsequentVariables)) {
 
 		parentSSelection := state.sSelection[consequentIndex + 1]
 		sSelection, allowed := combineSSelection(parser.predicates, parentSSelection, rule)

@@ -8,17 +8,19 @@ import (
 )
 
 type Generator struct {
-	Grammar *parse.Grammar
 	matcher *mentalese.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewGenerator(Grammar *parse.Grammar, log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
-	return &Generator{Grammar: Grammar, matcher: matcher, log: log}
+func NewGenerator(log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
+	return &Generator{
+		matcher: matcher,
+		log: log,
+	}
 }
 
 // Creates an array of words that forms the surface representation of a mentalese sense
-func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) Generate(grammarRules *parse.GrammarRules, sentenceSense mentalese.RelationSet) []string {
 
 	// canned response
 	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == mentalese.PredicateCanned {
@@ -30,13 +32,13 @@ func (generator *Generator) Generate(sentenceSense mentalese.RelationSet) []stri
 
 	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
 
-	return generator.GenerateNode("s", []string{"S1"}, mentalese.Binding{}, boundSense)
+	return generator.GenerateNode(grammarRules, "s", []string{"S1"}, mentalese.Binding{}, boundSense)
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
@@ -44,14 +46,14 @@ func (generator *Generator) GenerateNode(predicate string, arguments []string, a
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
-	rule, conditionBinding, ok := generator.findMatchingRule(predicate, arguments, antecedentBinding, sentenceSense)
+	rule, conditionBinding, ok := generator.findMatchingRule(grammarRules, predicate, arguments, antecedentBinding, sentenceSense)
 
 	if ok {
 
 		for i, consequentPredicate := range rule.GetConsequents() {
 
 			consequentArguments := rule.GetConsequentVariables(i)
-			words = append(words, generator.generateSingleConsequent(consequentPredicate, consequentArguments, rule.GetConsequentPositionType(i), conditionBinding, sentenceSense)...)
+			words = append(words, generator.generateSingleConsequent(grammarRules, consequentPredicate, consequentArguments, rule.GetConsequentPositionType(i), conditionBinding, sentenceSense)...)
 		}
 	} else {
 		generator.log.AddError("Cannot generate response for syntax node " + predicate)
@@ -65,7 +67,7 @@ func (generator *Generator) GenerateNode(predicate string, arguments []string, a
 // From a set of rules (with a shared antecedent), find the first one whose conditions match
 // antecedent: i.e. np(E1)
 // bindingL i.e { E1: 3 }
-func (generator *Generator) findMatchingRule(predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) (parse.GrammarRule, mentalese.Binding, bool) {
+func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, predicate string, arguments []string, antecedentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) (parse.GrammarRule, mentalese.Binding, bool) {
 
 	found := false
 	resultRule := parse.GrammarRule{}
@@ -73,7 +75,7 @@ func (generator *Generator) findMatchingRule(predicate string, arguments []strin
 
 	generator.log.StartDebug("findMatchingRule", predicate, antecedentBinding)
 
-	rules := generator.Grammar.FindRules(predicate, len(arguments))
+	rules := grammarRules.FindRules(predicate, len(arguments))
 
 	for _, rule := range rules {
 
@@ -115,7 +117,7 @@ func (generator *Generator) findMatchingRule(predicate string, arguments []strin
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(predicate string, arguments []string, positionType string, consequentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(grammarRules *parse.GrammarRules, predicate string, arguments []string, positionType string, consequentBinding mentalese.Binding, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
@@ -128,7 +130,7 @@ func (generator *Generator) generateSingleConsequent(predicate string, arguments
 		text := consequentBinding[variable]
 		words = append(words, text.TermValue)
 	} else {
-		words = generator.GenerateNode(predicate, arguments, consequentBinding, sentenceSense)
+		words = generator.GenerateNode(grammarRules, predicate, arguments, consequentBinding, sentenceSense)
 	}
 
 	generator.log.EndDebug("generateSingleConsequent", words)

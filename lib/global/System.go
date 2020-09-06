@@ -16,9 +16,7 @@ type system struct {
 	dialogContext     *central.DialogContext
 	dialogContextStorage *DialogContextFileStorage
 	nameResolver      *central.NameResolver
-	grammar           *parse.Grammar
-	generationGrammar *parse.Grammar
-	tokenizer         *parse.Tokenizer
+	grammars          []parse.Grammar
 	parser            *earley.Parser
 	predicates        *mentalese.Predicates
 	relationizer      *earley.Relationizer
@@ -71,43 +69,49 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 
 	system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 
-	if !system.log.IsDone() {
-		tokens = system.tokenizer.Process(originalInput)
-		system.log.AddProduction("Tokenizer", fmt.Sprintf("%v", tokens))
-	}
+	for _, grammar := range system.grammars {
 
-	if !system.log.IsDone() {
-		parseTrees := system.parser.Parse(tokens)
-		if len(parseTrees) == 0 {
-			system.log.AddError("Parser returned no parse trees")
-		} else {
-			parseTree = parseTrees[0]
-			system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
-			system.log.AddProduction("Parser", parseTree.String())
+		if !system.log.IsDone() {
+			tokens = grammar.GetTokenizer().Process(originalInput)
+			system.log.AddProduction("TokenExpression", fmt.Sprintf("%v", tokens))
 		}
-	}
 
-	if !system.log.IsDone() {
-		requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
-		system.storeNamedEntities(nameBinding)
-		system.log.AddProduction("Relationizer", requestRelations.String())
-		system.log.AddProduction("Named entities", nameBinding.String())
-	}
+		if !system.log.IsDone() {
+			parseTrees := system.parser.Parse(grammar.GetReadRules(), tokens)
+			if len(parseTrees) == 0 {
+				system.log.AddError("Parser returned no parse trees")
+			} else {
+				parseTree = parseTrees[0]
+				system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
+				system.log.AddProduction("Parser", parseTree.String())
+			}
+		}
 
-	if !system.log.IsDone() {
-		answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{ nameBinding })
-		system.log.AddProduction("Answer", answerRelations.String())
-		system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
-	}
+		if !system.log.IsDone() {
+			requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
+			system.storeNamedEntities(nameBinding)
+			system.log.AddProduction("Relationizer", requestRelations.String())
+			system.log.AddProduction("Named entities", nameBinding.String())
+		}
 
-	if !system.log.IsDone() {
-		answerWords = system.generator.Generate(answerRelations)
-		system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
-	}
+		if !system.log.IsDone() {
+			answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{nameBinding})
+			system.log.AddProduction("Answer", answerRelations.String())
+			system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
+		}
 
-	if !system.log.IsDone() {
-		answer = system.surfacer.Create(answerWords)
-		system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
+		if !system.log.IsDone() {
+			answerWords = system.generator.Generate(grammar.GetWriteRules(), answerRelations)
+			system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
+		}
+
+		if !system.log.IsDone() {
+			answer = system.surfacer.Create(answerWords)
+			system.log.AddProduction("Answer", fmt.Sprintf("%v", answer))
+		}
+
+		// for now, just use the first grammar
+		break
 	}
 
 	if system.log.GetClarificationQuestion() != "" {

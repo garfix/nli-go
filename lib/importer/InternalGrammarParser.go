@@ -70,9 +70,9 @@ func (parser *InternalGrammarParser) CreateRules(source string) []mentalese.Rule
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGrammar(source string) *parse.Grammar {
+func (parser *InternalGrammarParser) CreateGrammarRules(source string) *parse.GrammarRules {
 
-	grammar := parse.NewGrammar()
+	grammar := parse.NewGrammarRules()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
@@ -91,9 +91,9 @@ func (parser *InternalGrammarParser) CreateGrammar(source string) *parse.Grammar
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *parse.Grammar {
+func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *parse.GrammarRules {
 
-	grammar := parse.NewGrammar()
+	grammar := parse.NewGrammarRules()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0

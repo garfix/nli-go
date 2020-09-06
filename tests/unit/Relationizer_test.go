@@ -13,7 +13,7 @@ func TestRelationizer(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammar := internalGrammarParser.CreateGrammar(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`[
 
 		{ rule: dp(D1) -> determiner(D1) }
 	
@@ -48,11 +48,11 @@ func TestRelationizer(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, log, dialogContext)
 
-	parser := earley.NewParser(grammar, nameResolver, predicates, log)
+	parser := earley.NewParser(nameResolver, predicates, log)
 
 	relationizer := earley.NewRelationizer(log)
 
-	parseTrees := parser.Parse([]string{"the", "book", "falls", "."})
+	parseTrees := parser.Parse(grammarRules, []string{"the", "book", "falls", "."})
 	result, _ := relationizer.Relationize(parseTrees[0], nameResolver)
 
 	want := "isa(S5, fall) subject(S5, E5) isa(D5, the) isa(E5, book) determiner(E5, D5) declaration(S5)"
@@ -67,7 +67,7 @@ func TestRelationizer(t *testing.T) {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	parseTrees2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."})
+	parseTrees2 := parser.Parse(grammarRules, []string{"the", "book", "falls", "on", "the", "ground", "."})
 	result2, _ := relationizer.Relationize(parseTrees2[0], nameResolver)
 
 	want2 := "isa(S7, fall) isa(P6, on) isa(D8, the) isa(P5, ground) determiner(P5, D8) case(P5, P6) mod(S7, P5) subject(S7, E7) isa(D7, the) isa(E7, book) determiner(E7, D7) declaration(S7)"

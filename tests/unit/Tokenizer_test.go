@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"nli-go/lib/common"
 	"nli-go/lib/parse"
 	"strings"
 	"testing"
@@ -9,8 +8,7 @@ import (
 
 func TestTokenizer(test *testing.T) {
 
-	log := common.NewSystemLog(false)
-	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 
 	tests := []struct {
 		input            string

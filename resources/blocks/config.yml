@@ -1,4 +1,3 @@
-tokenizer: "([_0-9a-zA-Z]+|[^\\s])"
 uses:
   dom: garfixia-blocks-domain:1.0.0
   en: garfixia-blocks-en-us:1.0.0

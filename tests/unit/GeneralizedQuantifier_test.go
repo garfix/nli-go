@@ -17,7 +17,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	grammar := internalGrammarParser.CreateGrammar(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`[
 		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: go:quantifier(Result, Range, $quantifier) }
 		{ rule: quantifier(Result, Range) -> 'all', 						sense: go:equals(Result, Range) } 
 		{ rule: quantifier(Result, Range) -> 'some', 						sense: go:greater_than(Result, 0) }
@@ -62,9 +62,9 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	solver.AddNestedStructureBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
-	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 	nameResolver := central.NewNameResolver(solver, matcher, log, dialogContext)
-	parser := earley.NewParser(grammar, nameResolver, predicates, log)
+	parser := earley.NewParser(nameResolver, predicates, log)
 
 	tests := []struct {
 		input string
@@ -85,7 +85,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	for _, test := range tests {
 
 		words := tokenizer.Process(test.input)
-		trees := parser.Parse(words)
+		trees := parser.Parse(grammarRules, words)
 		if len(trees) == 0 {
 			t.Errorf("Cannot parse: %s", test.input)
 			continue

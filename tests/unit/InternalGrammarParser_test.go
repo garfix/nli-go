@@ -23,7 +23,7 @@ func TestInternalGrammarParser(t *testing.T) {
 
 	// =====================================================
 
-	grammar := parser.CreateGrammar("[" +
+	grammar := parser.CreateGrammarRules("[" +
 		"{ rule: s(P) -> np(E) vp(P),         sense: subject(P, E) }" +
 		"]")
 
@@ -48,7 +48,7 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error(fmt.Printf("Error in number of sense relations: %d", len(rules[0].Sense)))
 	}
 
-	grammar = parser.CreateGrammar("[" +
+	grammar = parser.CreateGrammarRules("[" +
 		"{ rule: s(P) -> np(E) vp(P),    sense: subject(P, E) }" +
 		"{ rule: np(P) -> nbar(E) }" +
 		"]")
@@ -62,7 +62,7 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error("No rules found")
 	}
 
-	grammar = parser.CreateGrammar("[]")
+	grammar = parser.CreateGrammarRules("[]")
 
 	parser.CreateRelationSet("assert(at(5, 3))")
 	parser.CreateRelationSet("learn(own(X, Y) :- fish(Y))")

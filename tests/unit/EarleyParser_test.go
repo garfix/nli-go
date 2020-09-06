@@ -14,7 +14,7 @@ import (
 func TestEarleyParser(test *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	grammar := internalGrammarParser.CreateGrammar(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`[
 		{ rule: s(P) -> np(E) vp(P),			sense: subject(P, E) }
 		{ rule: np(E) -> nbar(E) }
 		{ rule: np(E) -> det(D) nbar(E),      sense: determiner(E, D) }
@@ -34,7 +34,7 @@ func TestEarleyParser(test *testing.T) {
 	log := common.NewSystemLog(false)
 
 	rawInput := "the small shy girl speaks up"
-	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression, log)
+	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
@@ -42,12 +42,12 @@ func TestEarleyParser(test *testing.T) {
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, log, dialogContext)
 
-	parser := earley.NewParser(grammar, nameResolver, predicates, log)
+	parser := earley.NewParser(nameResolver, predicates, log)
 	relationizer := earley.NewRelationizer(log)
 
 	wordArray := tokenizer.Process(rawInput)
 
-	trees := parser.Parse(wordArray)
+	trees := parser.Parse(grammarRules, wordArray)
 	relations, _ := relationizer.Relationize(trees[0], nameResolver)
 
 	if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {

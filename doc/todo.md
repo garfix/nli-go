@@ -8,10 +8,10 @@
 - ok schrijven naar MySQL
 - ok hello(X) -> ; niet meer toestaan
 - ok a prefix for go functions
-- predicates.json -> new format with sorts for ids
-- move predicates from config to domain
+- ok predicates.json -> new format with sorts for ids
+- ok move predicates from config to domain
+- ok move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - sort hierarchy
-- move tokenizer from config to grammar, and make each grammar use separate tokenizer  
 - read/reads, write/writes ?
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module

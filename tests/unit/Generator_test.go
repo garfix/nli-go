@@ -16,7 +16,7 @@ func TestGenerator(t *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	grammar := internalGrammarParser.CreateGenerationGrammar(`[
+	grammarRules := internalGrammarParser.CreateGenerationGrammar(`[
         { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }
         { rule: np(E) -> proper_noun(E),          condition: name(E, Name) }
 		{ rule: proper_noun(E) -> text(Name),     condition: name(E, Name) }
@@ -28,7 +28,7 @@ func TestGenerator(t *testing.T) {
 	]`)
 	matcher := mentalese.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
-	generator := generate.NewGenerator(grammar, log, matcher)
+	generator := generate.NewGenerator(log, matcher)
 
 	tests := []struct {
 		input string
@@ -40,7 +40,7 @@ func TestGenerator(t *testing.T) {
 	for _, test := range tests {
 
 		input := internalGrammarParser.CreateRelationSet(test.input)
-		result := generator.Generate(input)
+		result := generator.Generate(grammarRules, input)
 		if strings.Join(result, " ") != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, strings.Join(result, " "), test.want)
 			fmt.Println(log.String())

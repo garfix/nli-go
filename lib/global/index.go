@@ -15,11 +15,12 @@ type index struct {
 	DefaultGraphUri string
 	Names           string
 	Cache           bool
-	Database		string
-	Username		string
-	Password		string
-	Tables 			[]table
-	Predicates 		string
+	Database        string
+	Username        string
+	Password        string
+	Tables          []table
+	Predicates      string
+	TokenExpression string
 }
 
 type table struct {
@@ -29,4 +30,11 @@ type table struct {
 
 type column struct {
 	Name string
+}
+
+type Entities map[string]EntityInfo
+
+type EntityInfo struct {
+	Name string
+	Knownby map[string]string
 }

@@ -13,7 +13,7 @@ func TestFillerStack(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammar := internalGrammarParser.CreateGrammar(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`[
 
 		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),			sense: which(E1) quant_check($np, $dep_vp) }
 		{ rule: np(E1) -> nbar(E1), 							sense: quant(_, some(_), E1, $nbar) }
@@ -37,11 +37,11 @@ func TestFillerStack(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	nameResolver := central.NewNameResolver(solver, matcher, log, dialogContext)
 
-	parser := earley.NewParser(grammar, nameResolver, predicates, log)
+	parser := earley.NewParser(nameResolver, predicates, log)
 
 	relationizer := earley.NewRelationizer(log)
 
-	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
+	parseTrees := parser.Parse(grammarRules, []string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
 
 	if len(parseTrees) == 0 {
 		t.Error(log.String())

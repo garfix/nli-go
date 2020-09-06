@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"nli-go/lib/common"
 	"regexp"
 )
 
@@ -15,11 +14,12 @@ const DefaultTokenizerExpression = "([_0-9\u0041-\u005A\u0061-\u007A\u00AA\u00B5
 // Returns an array of string tokens from rawInput.
 type Tokenizer struct {
 	expression string
-	log *common.SystemLog
 }
 
-func NewTokenizer(expression string, log *common.SystemLog) *Tokenizer {
-	return &Tokenizer{expression: expression, log: log}
+func NewTokenizer(expression string) *Tokenizer {
+	return &Tokenizer{
+		expression: expression,
+	}
 }
 
 func (tok *Tokenizer) Process(rawInput string) []string {

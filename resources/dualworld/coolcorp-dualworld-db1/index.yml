@@ -2,7 +2,7 @@ type: db/internal
 version: 1.0.0
 facts: [ db.relation ]
 read: [ db.map ]
-entities: [ entities.json ]
+entities: [ entities.yml ]
 uses:
   dom: coolcorp-dualworld-domain:1.0.0
 shared: [ shared-id.json ]

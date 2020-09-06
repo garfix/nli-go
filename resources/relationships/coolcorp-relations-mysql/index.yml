@@ -6,7 +6,7 @@ password: root
 database: my_nligo
 
 read: [ relationships-db.map ]
-entities: [ entities.json ]
+entities: [ entities.yml ]
 uses:
   dom: coolcorp-relations-domain:1.0.0
 

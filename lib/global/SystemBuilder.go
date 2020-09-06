@@ -636,7 +636,7 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 		entityStructure := Entities{}
 
-		err = json.Unmarshal([]byte(content), &entityStructure)
+		err = yaml.Unmarshal([]byte(content), &entityStructure)
 		if err != nil {
 			builder.log.AddError("Error parsing entities file " + path + " (" + err.Error() + ")")
 			return entities, false

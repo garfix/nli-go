@@ -12,10 +12,9 @@
 - ok move tokenizer from config to grammar, and make each grammar use separate tokenizer
 - ok entities.json -> yml  
 - ok sort hierarchy
-- read/reads, write/writes ?
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module
-- schrijven naar MySQL
+- write to MySQL
 
 Allow to change this
 
@@ -107,7 +106,6 @@ Find a way to ensure completeness of information about all relations used in a s
 # Multiple languages
 
 - Introduce a second language
-- Constants like "all", are they universal, or english?
 
 # Quantifier Scoping
 

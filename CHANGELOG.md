@@ -2,11 +2,13 @@
 
 ## 
 
-* namespaces
+* namespaces; predicate prefixing
 * modules
-* the regular expression of the tokenizer is now configurable via config.json
+* sort hierarchy
+* configuration from JSON to YAML
+* configurable tokenizer expression
+* data type `list` and list functions
 * if_then_else
-* term type `list` and list functions
 
 ## 1.10 strong negation - 01-06-2020
 

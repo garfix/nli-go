@@ -89,7 +89,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	system.grammars = []parse.Grammar{}
 	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
-	system.predicates = mentalese.NewPredicates()
+	system.meta = mentalese.NewMeta()
 
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 	solver.AddFunctionBase(systemFunctionBase)
@@ -97,7 +97,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
-	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, system.predicates, builder.log)
+	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, system.meta, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	shellBase := knowledge.NewShellBase("shell", builder.log)
@@ -105,23 +105,21 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
-	system.nameResolver = central.NewNameResolver(solver, matcher, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.nameResolver, system.predicates, builder.log)
+	system.nameResolver = central.NewNameResolver(solver, system.meta, matcher, builder.log, system.dialogContext)
+	system.parser = earley.NewParser(system.nameResolver, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 }
 
-func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicates, bool) {
-
-	predicates := mentalese.Predicates{}
+func (builder *systemBuilder) AddPredicates(path string, system *system) bool {
 
 	if path != "" {
 
 		content, err := common.ReadFile(path)
 		if err != nil {
 			builder.log.AddError("Error reading relation types file " + path + " (" + err.Error() + ")")
-			return predicates, false
+			return false
 		}
 
 		relationTypes := builder.parser.CreateRelationSet(content)
@@ -132,14 +130,32 @@ func (builder *systemBuilder) CreatePredicates(path string) (mentalese.Predicate
 			for _, argument := range relationType.Arguments {
 				entityTypes = append(entityTypes, argument.TermValue)
 			}
-			predicates[name] = mentalese.PredicateInfo{
-				EntityTypes: entityTypes,
-			}
-		}
 
+			system.meta.AddPredicate(name, entityTypes)
+		}
 	}
 
-	return predicates, true
+	return true
+}
+
+func (builder *systemBuilder) AddSorts(path string, system *system) bool {
+
+	if path != "" {
+
+		content, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading relation types file " + path + " (" + err.Error() + ")")
+			return false
+		}
+
+		sortRelations := builder.parser.CreateSortRelations(content)
+
+		for _, sortRelation := range sortRelations {
+			system.meta.AddSort(sortRelation.GetSuperSort(), sortRelation.GetSubSort())
+		}
+	}
+
+	return true
 }
 
 func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *system) {
@@ -329,9 +345,15 @@ func (builder *systemBuilder) buildDomain(index index, system *system, moduleBas
 	}
 
 	path := common.AbsolutePath(moduleBaseDir, index.Predicates)
-	predicates, ok := builder.CreatePredicates(path)
-	if ok {
-		system.predicates.AddPredicates(predicates)
+	ok := builder.AddPredicates(path, system)
+	if !ok {
+		return
+	}
+
+	path2 := common.AbsolutePath(moduleBaseDir, index.Sorts)
+	ok = builder.AddSorts(path2, system)
+	if !ok {
+		return
 	}
 }
 

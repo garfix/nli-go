@@ -11,7 +11,7 @@
 - ok move predicates from config to domain
 - ok move tokenizer from config to grammar, and make each grammar use separate tokenizer
 - ok entities.json -> yml  
-- sort hierarchy
+- ok sort hierarchy
 - read/reads, write/writes ?
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module

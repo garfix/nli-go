@@ -412,11 +412,17 @@ func (base *SystemNestedStructureBase) quickAcceptabilityCheck(variable string, 
 	for _, relation := range relations {
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
-				argumentEntityType := base.predicates.GetEntityType(relation.Predicate, i)
-				if  argumentEntityType == "" || argumentEntityType == entityType {
+				argumentEntityType := base.meta.GetEntityType(relation.Predicate, i)
+
+				if argumentEntityType == "" || base.meta.MatchesSort(argumentEntityType, entityType) {
 					accepted = true
 					break
 				}
+
+				//if  argumentEntityType == "" || argumentEntityType == entityType {
+				//	accepted = true
+				//	break
+				//}
 			}
 		}
 	}

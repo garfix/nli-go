@@ -15,14 +15,14 @@ import (
 
 type Parser struct {
 	nameResolver *central.NameResolver
-	predicates   *mentalese.Predicates
+	meta         *mentalese.Meta
 	log          *common.SystemLog
 }
 
-func NewParser(nameResolver *central.NameResolver, predicates *mentalese.Predicates, log *common.SystemLog) *Parser {
+func NewParser(nameResolver *central.NameResolver, meta *mentalese.Meta, log *common.SystemLog) *Parser {
 	return &Parser{
 		nameResolver: nameResolver,
-		predicates:   predicates,
+		meta:         meta,
 		log:          log,
 	}
 }
@@ -117,7 +117,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 	for _, rule := range grammarRules.FindRules(nextConsequent, len(nextConsequentVariables)) {
 
 		parentSSelection := state.sSelection[consequentIndex + 1]
-		sSelection, allowed := combineSSelection(parser.predicates, parentSSelection, rule)
+		sSelection, allowed := combineSSelection(parser.meta, parentSSelection, rule)
 		if !allowed {
 			continue
 		}

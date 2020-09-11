@@ -20,6 +20,7 @@ type index struct {
 	Password        string
 	Tables          []table
 	Predicates      string
+	Sorts			string
 	TokenExpression string
 }
 

@@ -7,19 +7,19 @@ import (
 	"sort"
 )
 
-const defaultEntityType = "entity"
-
 // uses SharedId() relations to create new sense() relations, that hold the SharedId's of the entities of different knowledge bases
 type NameResolver struct {
 	solver 			*ProblemSolver
+	meta 			*mentalese.Meta
 	matcher 		*mentalese.RelationMatcher
 	log 			*common.SystemLog
 	dialogContext   *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, matcher *mentalese.RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, matcher *mentalese.RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
 		solver:      	solver,
+		meta: 			meta,
 		matcher:	 	matcher,
 		log: 			log,
 		dialogContext:	dialogContext,
@@ -172,7 +172,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 	// go through all entity types
 	for entityType, entityInfo := range factBase.GetEntities() {
 
-		if inducedEntityType != defaultEntityType && entityType != inducedEntityType {
+		if inducedEntityType != "entity" && !resolver.meta.MatchesSort(inducedEntityType, entityType) {
 			continue
 		}
 

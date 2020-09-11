@@ -101,12 +101,12 @@ func TestControlFunctions(t *testing.T) {
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := &mentalese.Predicates{}
+	meta := mentalese.NewMeta()
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -143,7 +143,7 @@ func TestQuantFunctions(t *testing.T) {
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := &mentalese.Predicates{}
+	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
 	rules := parser.CreateRules(`[

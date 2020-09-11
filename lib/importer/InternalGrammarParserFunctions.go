@@ -400,6 +400,46 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 	return relationSet, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseSortRelations(tokens []Token, startIndex int) ([]mentalese.SortRelation, int, bool) {
+
+	sortRelations := []mentalese.SortRelation{}
+	sortRelation := mentalese.SortRelation{}
+	newStartIndex := 0
+	ok := true
+
+	for true {
+		sortRelation, newStartIndex, ok = parser.parseSortRelation(tokens, startIndex)
+		if ok {
+			sortRelations = append(sortRelations, sortRelation)
+			startIndex = newStartIndex
+		} else {
+			break
+		}
+	}
+
+	return sortRelations, startIndex, len(sortRelations) > 0
+}
+
+func (parser *InternalGrammarParser) parseSortRelation(tokens []Token, startIndex int) (mentalese.SortRelation, int, bool) {
+	sortRelation := mentalese.SortRelation{}
+	ok := true
+	superSort := ""
+	subSort := ""
+
+	superSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_gt)
+		if ok {
+			subSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+			if ok {
+				sortRelation = mentalese.NewSortRelation(superSort, subSort)
+			}
+		}
+	}
+
+	return sortRelation, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex int, useAlias bool) (mentalese.Relation, int, bool) {
 
 	ok := true

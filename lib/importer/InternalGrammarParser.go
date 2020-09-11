@@ -183,6 +183,26 @@ func (parser *InternalGrammarParser) CreateSolutions(source string) []mentalese.
 	return solutions
 }
 
+func (parser *InternalGrammarParser) CreateSortRelations(source string) []mentalese.SortRelation {
+
+	sortRelations := []mentalese.SortRelation{}
+
+	// tokenize
+	parser.lastParsedResult.LineNumber = 0
+	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
+	if !tokensOk {
+		return sortRelations
+	}
+
+	// parse
+	parser.lastParsedResult.LineNumber = 0
+	sortRelations, _, parseOk := parser.parseSortRelations(tokens, 0)
+	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
+
+	return sortRelations
+}
+
 func (parser *InternalGrammarParser) CreateTerm(source string) mentalese.Term {
 
 	// tokenize

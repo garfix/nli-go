@@ -16,7 +16,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	log := common.NewSystemLog(false)
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
-	predicates := &mentalese.Predicates{}
+	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
@@ -36,7 +36,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
 	solver.AddNestedStructureBase(nestedBase)
 	rules := parser.CreateRules(`[
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );

@@ -12,19 +12,19 @@ import (
 )
 
 type system struct {
-	log               *common.SystemLog
-	dialogContext     *central.DialogContext
+	log                  *common.SystemLog
+	dialogContext        *central.DialogContext
 	dialogContextStorage *DialogContextFileStorage
-	nameResolver      *central.NameResolver
-	grammars          []parse.Grammar
-	parser            *earley.Parser
-	predicates        *mentalese.Predicates
-	relationizer      *earley.Relationizer
-	matcher           *mentalese.RelationMatcher
-	solver			  *central.ProblemSolver
-	answerer          *central.Answerer
-	generator         *generate.Generator
-	surfacer          *generate.SurfaceRepresentation
+	nameResolver         *central.NameResolver
+	grammars             []parse.Grammar
+	parser               *earley.Parser
+	meta                 *mentalese.Meta
+	relationizer         *earley.Relationizer
+	matcher              *mentalese.RelationMatcher
+	solver               *central.ProblemSolver
+	answerer             *central.Answerer
+	generator            *generate.Generator
+	surfacer             *generate.SurfaceRepresentation
 }
 
 func (system *system) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {

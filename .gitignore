@@ -1,7 +1,3 @@
 /.idea/
-/app/nli
 /tests/integration/sessions
-/app/sessions
-/app/log
 /cache/
-/app/cache/

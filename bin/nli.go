@@ -25,17 +25,19 @@ func main() {
 	var sessionId = ""
 	var absSessionPath = ""
 	var configPath = ""
+	var returnType = ""
 
 	answer := ""
 	options := common.NewOptions()
 
-	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog context")
-	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to a YAML nli-go config file")
+	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog session")
+	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to the root directory of an application")
+	flag.StringVar(&returnType, "r", "text", "Return type (text / json)")
 
 	flag.Parse()
 
 	if len(flag.Args()) != 1 {
-		fmt.Println("Usage: nli [-s <session_id>] [-c </path/to/config.yml>] <full sentence>")
+		fmt.Println("Usage: nli [-s <session_id>] [-r JSON] -c </path/to/application> <full sentence>")
 		fmt.Println("")
 		fmt.Println("Example:")
 		fmt.Println("    nli -s 73926642 -c fox/config.yml \"Did the quick brown fox jump over the lazy dog?\"")
@@ -44,7 +46,8 @@ func main() {
 	}
 
 	sentence := flag.Arg(0)
-	absConfigPath := common.AbsolutePath(common.Dir(), configPath)
+	workingDir, _ := os.Getwd()
+	absConfigPath := common.AbsolutePath(workingDir, configPath)
 	log := common.NewSystemLog(false)
 	system := global.NewSystem(absConfigPath, log)
 
@@ -76,17 +79,32 @@ func main() {
 
 	done:
 
-	result := Result{
-		Success:      log.IsOk(),
-		ErrorLines:   log.GetErrors(),
-		Productions:  log.GetProductions(),
-		Answer:       answer,
-		OptionKeys:   options.GetKeys(),
-		OptionValues: options.GetValues(),
+	response := ""
+
+	if returnType == "json" || returnType == "JSON" {
+
+		result := Result{
+			Success:      log.IsOk(),
+			ErrorLines:   log.GetErrors(),
+			Productions:  log.GetProductions(),
+			Answer:       answer,
+			OptionKeys:   options.GetKeys(),
+			OptionValues: options.GetValues(),
+		}
+
+		responseRaw, _ := json.MarshalIndent(result, "", "    ")
+		response = string(responseRaw) + "\n"
+	} else {
+		if log.IsOk() {
+			response = answer + "\n"
+		} else {
+			for _, err := range log.GetErrors() {
+				response += err + "\n"
+			}
+		}
 	}
 
-	jsonString, _ := json.Marshal(result)
-	fmt.Printf(string(jsonString) + "\n")
+	fmt.Printf(response)
 
 	if !log.IsOk() {
 		os.Exit(1)

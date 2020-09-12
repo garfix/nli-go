@@ -8,9 +8,9 @@ $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : "";
 session_start();
 $sessionId = session_id();
 
-$command = __DIR__ . '/nli';
+$command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/dbpedia';
-$fullCommand = sprintf('%s -s %s -c %s "%s"', $command, $sessionId, $configPath, $query);
+$fullCommand = sprintf('%s -s %s -c %s -r json "%s"', $command, $sessionId, $configPath, $query);
 $start = microtime(true);
 
 $process = exec($fullCommand, $output);

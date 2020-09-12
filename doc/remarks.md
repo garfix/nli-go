@@ -1,3 +1,7 @@
+# 2020-09-12
+
+Made the nli app more prominent, separated it from the web-app for clarity, and extended the documentation on the main README. 
+
 # 2020-09-30
 
 I need to handle rule-references like `by_easiness` in

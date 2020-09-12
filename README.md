@@ -1,6 +1,6 @@
 # NLI-GO
 
-nli-go is a library, written in Go, that provides a Natural Language Interface to databases. It is a I use it to experiment with
+nli-go is a library, written in Go, that provides a Natural Language Interface to databases. It is a semantic parser and execution engine. I use it to experiment with
 nli techniques. It is not stable yet and backward-incompatible changes can be made at any time.
 
 ## Demo

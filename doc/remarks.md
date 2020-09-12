@@ -2,7 +2,7 @@
 
 Made the nli app more prominent, separated it from the web-app for clarity, and extended the documentation on the main README. 
 
-# 2020-09-30
+# 2020-08-30
 
 I need to handle rule-references like `by_easiness` in
 
@@ -14,7 +14,7 @@ Left unchanged, it is an atom, and atoms don't have a hamespace. I treat them ju
     
 A rule reference can have a prefix.
 
-# 2020-09-16
+# 2020-08-16
 
 I will introduce modules to go with the namespaces. 
 

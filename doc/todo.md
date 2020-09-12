@@ -1,16 +1,6 @@
 # Todo
 
-- ok read config.yml to learn the modules
-- ok read the modules index.yml files; check dependencies
-- ok parse predicates: replace prefixed name with globally unique name (append module index if needed)
-- ok semantic versioning
-- ok hello(X); ipv hello(X) -> ;
-- ok hello(X) -> ; niet meer toestaan
-- ok a prefix for go functions
 - ok predicates.json -> new format with sorts for ids
-- ok move predicates from config to domain
-- ok move tokenizer from config to grammar, and make each grammar use separate tokenizer
-- ok entities.json -> yml  
 - ok sort hierarchy
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module

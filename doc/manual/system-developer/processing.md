@@ -52,11 +52,11 @@ The tokenizer splits a raw line of text in "words" or tokens. A token is either 
 
 For example, the sentence
 
-> How many children had Lord Byron?
+    How many children had Lord Byron?
 
 is split into
 
-> How,many,children,had,Lord,Byron,?
+    How,many,children,had,Lord,Byron,?
 
 ### Parser
 
@@ -68,11 +68,9 @@ To use the parser, you need to define a grammar.
 
 Each grammar entry contains a rule and, optionally, a sense. The rule is the syntactic part, but extended with entity variables. The sense consists of the relations that are created when parsing the sentence. The entity variables of the syntax reappear in the relations. Let me give you an example of how this works. When the following rewrite rule has been completed (example clause: John could marry Elsa)
 
-> clause(S1) -> np(E1) modal(M) vp(S1)
+    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                       sense: go:quant_check($np, dom:have_child(E2, E1)) }
 
-The following relations are created
-
-> subject(S1, E1) modality(S1, M)
+    { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: go:intent(how_many, E1) }
 
 The example sentence (from Tokenizer paragraph) yields the following parse tree:
 
@@ -96,10 +94,10 @@ The example sentence (from Tokenizer paragraph) yields the following parse tree:
 
 ### Relationizer
 
-Because subject and modality use the same variable, S1, these relations are connected. When the whole tree is parsed all relations will be connected in a relational model. I just call this a relation set.
+When the whole tree is parsed all relations will be connected in a relational model. I just call this a relation set.
  Here's the relation set for our sample sentence:
 
-> [question(S1, whQuestion) focus(E1) determiner(E1, A1) specifier(A1, W1) subject(S1, E1) object(S1, E2) isa(W1, how) isa(A1, many) isa(E1, child) isa(S1, had) name(E2, 'Lord', firstName)  name(E2, 'Byron', lastName)]
+    go_quant_check(go_quant(go_quantifier(R9, R10, go_equals(R9, R10)), E8, none), dom_have_child(E8, E7)) go_intent(how_many, E7) go_intent(question)
 
 ### Answerer
 
@@ -109,13 +107,13 @@ The answerer turns a question into an answer. To do this, it goes through the fo
 
 Each question requires a specific type of answer. To answer a question, a solution must be found. A solution looks like this
 
-    condition: act(question, howMany) child(A, B) focus(A),
+    condition: act(question, howMany) child(A, B),
     transformations: []
     responses: [
         {
-            condition: exists(),
-            preparation: gender(B, G) number_of(N, A),
-            answer: gender(B, G) count(C, N) have_child(B, C)
+            condition: go:exists(),
+            preparation: gender(B, G) go:number_of(N, A),
+            answer: gender(B, G) go:count(C, N) have_child(B, C)
         }
         {
             answer: dont_know()
@@ -150,14 +148,12 @@ To evaluate a question, three sources of information may be inspected: in-memory
 
 An in-memory fact base looks like this
 
-    [
-		marriages(1, 4, '1815')
-		marriages(6, 8, '1889')
-		parent(2, 1)
-		parent(6, 9)
-		person(1, 'Lord Byron', 'M', '1788')
-		person(2, 'Lady Lovelace', 'F', '1815')
-	]
+    marriages(1, 4, '1815')
+    marriages(6, 8, '1889')
+    parent(2, 1)
+    parent(6, 9)
+    person(1, 'Lord Byron', 'M', '1788')
+    person(2, 'Lady Lovelace', 'F', '1815')
 
 It's a simple relational database. It can be used to test things, and to store additional information not present in the actual database.
 
@@ -175,12 +171,12 @@ Rule bases can be used to make inferences on the information of the database.
 
 To use a database, you must tell the engine how a relation maps to one or more relations in the database. Here's an example
 
-    married_to(A, B) :- marriages(A, B, _);
-    name(A, N) :- person(A, N, _, _);
-    parent(P, C) :- parent(P, C);
-    child(C, P) :- parent(P, C);
-    gender(A, male) :- person(A, _, 'M', _);
-    gender(A, female) :- person(A, _, 'F', _);
+    dom:married_to(A, B) :- marriages(A, B, _);
+    dom:name(A, N) :- person(A, N, _, _);
+    dom:parent(P, C) :- parent(P, C);
+    dom:child(C, P) :- parent(P, C);
+    dom:gender(A, male) :- person(A, _, 'M', _);
+    dom:gender(A, female) :- person(A, _, 'F', _);
 
 In this example there's just a single relation at both the left (domain) and the right (database) side of the =>, but there could be more. It's a n:m mapping.
 

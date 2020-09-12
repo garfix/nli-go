@@ -73,16 +73,11 @@ func main() {
 		system.StoreDialogContext(absSessionPath)
 	}
 
-	if log.IsOk() {
-		goto done
-	}
-
 	done:
 
 	response := ""
 
 	if returnType == "json" || returnType == "JSON" {
-
 		result := Result{
 			Success:      log.IsOk(),
 			ErrorLines:   log.GetErrors(),

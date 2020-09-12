@@ -21,11 +21,13 @@ Pronouns must have a very specific sense in the grammar, in order to be treated 
 
 Here's "it" for example:
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [ the(_) ], E1, []) }
+    { rule: pronoun(E1) -> 'it',                                           sense: go:back_reference(E1, none) }
 
 and here's "she"
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, [ the(_) ], E1, [ female(E1) ]) }
+    { rule: np(E1) -> 'she',                                              sense: go:quant(
+                                                                                go:quantifier(Result, Range, go:equals(Result, 1)),
+                                                                                E1, go:back_reference(E1, dom:gender(E1, female))) }
 
 ## Solution
 

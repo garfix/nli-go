@@ -49,7 +49,7 @@ The executable is now available as `bin/nli`. You can move the executable to ano
 
 ## Run the executable with the sample applications
 
-NLI-GO comes with some sample applications, located in the directory "resources". In this example you tell "Hello world" to the hello world application:
+NLI-GO comes with some sample applications, located in the directory "resources". In this example you tell "Hello World" to the hello world application:
 
     bin/nli -c resources/helloworld "Hello World"    
 
@@ -81,6 +81,11 @@ and NLI-GO responds with a JSON string like this:
         "OptionValues": []
     }
     
+If the system responds with a clarification question, it does this with a number of options the user can choose from
+
+* OptionKeys: the keys of these options
+* OptionValues: the values of these options
+
 And if you want to specify a session identifier to allow NLI-GO to resolve back-references to earlier parts of the dialog, use `-s` with an identifier of your choice.     
 
     bin/nli -c resources/helloworld -s 64152 "Hello World"    

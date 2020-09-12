@@ -1,15 +1,21 @@
-# Knowledge engineer
+# Build an application
 
-The knowledge engineer writes the grammar, the rules, the solutions, and the mapping to the database.
+To build an NLI-GO application, you need to write the domain rules, the grammar, the solutions, and the mapping to the database.
 
 ## Before you start
 
 Make sure you have a working resource directory with the basic configuration files (grammar, solution, etc) that you can
-extend. Copy the directory `helloworld` for instance. Look at [this page](config.md) for the contents of the `config.json` file.
+extend. Copy the directory `helloworld` for instance. Look at [this page](config.md) for the contents of the `config.yml` file.
 
 ## Relations
 
 In this system you convert sentences in natural language to a semantic representation in the form of relations. Relations, "senses", or "predications" are extremely versatile. To get a feeling for this concept, check [this](relation.md).
+
+## Modules and namespaces
+
+NLI-GO uses modules to divide an application in parts.
+
+To allow a system to grow and make use of third-party modules, each module forms a namespace. Relations from other namespaces are distinguished by adding a prefix. Read more about them [here](modules-namespaces.md).
 
 ## The content writing process
 

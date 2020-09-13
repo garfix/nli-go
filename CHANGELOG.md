@@ -1,6 +1,6 @@
 # Changelog
 
-## 
+## 1.11 modules - 13-09-2020
 
 * namespaces; predicate prefixing
 * modules

@@ -146,6 +146,26 @@ Adds two numbers `N1` and `N2` and places the result in `Sum`. If `Sum  is a num
 * `N2`: a number
 * `Sum`: a variable (to contain a number) or a number
 
+## subtract
+
+Subtracts two numbers `N1` and `N2` and places the result in `Diff`. If `Diff  is a number and it is not the diff of the arguments, the function fails.  
+
+    subtract(N1, N2, Diff)
+    
+* `N1`: a number
+* `N2`: a number
+* `Sum`: a variable (to contain a number) or a number
+
+## multiply
+
+Multiplies two numbers `N1` and `N2` and places the result in `Product`. If `Product  is a number and it is not the diff of the arguments, the function fails.  
+
+    multiply(N1, N2, Product)
+    
+* `N1`: a number
+* `N2`: a number
+* `Product`: a variable (to contain a number) or a number
+
 ## min
 
 Sets `Min` to the smallest of `N1` and `N2.  
@@ -167,16 +187,6 @@ Adds two strings `N1` and `N2` and places the result in `R`. If N1 < N2, then R 
 * `R`: a variable (to contain a number)
 
 This function is useful in order functions.
-
-## subtract
-
-Subtracts two numbers `N1` and `N2` and places the result in `Diff`. If `Diff  is a number and it is not the diff of the arguments, the function fails.  
-
-    subtract(N1, N2, Diff)
-    
-* `N1`: a number
-* `N2`: a number
-* `Sum`: a variable (to contain a number) or a number
 
 ## date_today
 

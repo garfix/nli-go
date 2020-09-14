@@ -33,6 +33,7 @@ func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateUnify,
 		mentalese.PredicateAdd,
 		mentalese.PredicateSubtract,
+		mentalese.PredicateMultiply,
 		mentalese.PredicateMin,
 		mentalese.PredicateDateToday,
 		mentalese.PredicateDateSubtractYears,
@@ -214,6 +215,25 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	return newBinding
 }
 
+func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "iiv", base.log) {
+		return nil
+	}
+
+	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
+	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+
+	result := int1 * int2
+
+	newBinding := binding.Copy()
+	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+
+	return newBinding
+}
+
 func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
 
 	bound := input.BindSingle(binding)
@@ -382,6 +402,8 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding = base.add(input, binding)
 	case mentalese.PredicateSubtract:
 		newBinding = base.subtract(input, binding)
+	case mentalese.PredicateMultiply:
+		newBinding = base.multiply(input, binding)
 	case mentalese.PredicateMin:
 		newBinding = base.min(input, binding)
 	case mentalese.PredicateEquals:

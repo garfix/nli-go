@@ -45,7 +45,7 @@ From the root of NLI-GO build the executable with
 
     go build -o bin/nli bin/nli.go
     
-The executable is now available as `bin/nli`. You can move the executable to another location if you like.    
+The executable is now available as `bin/nli`. You can add the extension .exe and move the executable to another location if you like.    
 
 ## Run the executable with the sample applications
 

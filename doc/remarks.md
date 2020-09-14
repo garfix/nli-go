@@ -1,3 +1,16 @@
+# 2020-09-14
+
+Started the application 'expressions', because I am reading about [SEMPRE](https://github.com/percyliang/sempre/blob/master/TUTORIAL.md) and I wanted to know what the expressions example looked like in NLI-GO. 
+
+# 2020-09-13
+
+Interaction 18: 
+
+    Q: Which cube is sitting on the table?
+    A: The large green one which supports the red pyramid
+
+Winograd: "Ordinarily the system would be satisfied with calling this 'a big green cube', but since we asked 'which cube' it has to be more specific in naming it. The use of substitute nouns (such as 'one') and pronouns in answers makes the discourse more natural."
+
 # 2020-09-12
 
 Made the nli app more prominent, separated it from the web-app for clarity, and extended the documentation on the main README. 

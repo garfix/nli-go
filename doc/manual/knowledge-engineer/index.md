@@ -11,6 +11,10 @@ extend. Copy the directory `helloworld` for instance. Look at [this page](config
 
 In this system you convert sentences in natural language to a semantic representation in the form of relations. Relations, "senses", or "predications" are extremely versatile. To get a feeling for this concept, check [this](relation.md).
 
+## Sort hierarchy
+
+Optionally you can build a hierarchy of entity types, or "sorts" as they are usually called, that captures the ontology of the domain. 
+
 ## Modules and namespaces
 
 NLI-GO uses modules to divide an application in parts.
@@ -87,8 +91,8 @@ Some relations are resolved by the database. A relation like `parent(X, :18)` wi
 
 To use this you must
 
-* Configure the database and the tables you need in `config.json`
-* Create a `.map` file
+* Configure the database and the tables you need in `index.yml`
+* Create a `read` file
 
 A database can be just a `.relation` file, or it can be a MySQL or Sparql database. In most cases you will just want to read from the database. If you also want to write to the database, you will need to create a separate `write` map-file.
 

@@ -11,9 +11,16 @@
     { rule: number(N1) -> 'nine',                               sense: go:unify(N1, 9) }
     { rule: number(N1) -> 'ten',                                sense: go:unify(N1, 10) }
 
-    { rule: expr(E1) -> number(E1) }
-    { rule: expr(E1) -> expr(E2) 'plus' expr(E3),               sense: go:add(E2, E3, E1) }
-    { rule: expr(E1) -> expr(E2) 'minus' expr(E3),              sense: go:subtract(E2, E3, E1) }
-    { rule: expr(E1) -> expr(E2) 'times' expr(E3),              sense: go:multiply(E2, E3, E1) }
+    /* Building an expression according to the Precedence climbing method */
+    /* https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method */
+
+    { rule: primary(E1) -> number(E1) }
+    { rule: product(E1) -> product(E2) 'times' product(E3),     sense: go:multiply(E2, E3, E1) }
+    { rule: product(E1) -> primary(E1) }
+    { rule: sum(E1) -> sum(E2) 'plus' sum(E3),                  sense: go:add(E2, E3, E1) }
+    { rule: sum(E1) -> sum(E2) 'minus' sum(E3),                 sense: go:subtract(E2, E3, E1) }
+    { rule: sum(E1) -> product(E1) }
+    { rule: expr(E1) -> sum(E1) }
+
     { rule: s(P) -> 'what' 'is' expr(E1),                       sense: go:intent(calc, E1) }
 ]

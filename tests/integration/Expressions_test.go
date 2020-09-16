@@ -24,6 +24,8 @@ func TestExpressions(t *testing.T) {
 		{"What is three plus four minus five", "2"},
 		{"What is 3 plus 4 minus 5", "2"},
 		{"What is 8 times 5", "40"},
+		{"What is 18 minus 5 times 2", "8"},
+		{"What is 5 times 4 minus 5", "15"},
 	}
 
 	for _, test := range tests {

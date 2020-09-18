@@ -61,7 +61,7 @@ func TestDBPedia(t *testing.T) {
 			{"When did Lord Byron die?", "He died on April 19, 1824", "session-2.json", ""},
 		},
 		{
-			{"How many countries have population above 130000000", "9", "", ""},
+			{"How many countries have population above 130000000", "7", "", ""},
 		},
 	}
 

@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-type system struct {
+type System struct {
 	log                  *common.SystemLog
 	dialogContext        *central.DialogContext
 	dialogContextStorage *DialogContextFileStorage
@@ -27,19 +27,19 @@ type system struct {
 	surfacer             *generate.SurfaceRepresentation
 }
 
-func (system *system) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {
+func (system *System) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {
 	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext, clearWhenCorrupt)
 }
 
-func (system *system) ClearDialogContext() {
+func (system *System) ClearDialogContext() {
 	system.dialogContext.Initialize()
 }
 
-func (system *system) StoreDialogContext(sessionDataPath string) {
+func (system *System) StoreDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
 }
 
-func (system *system) Answer(input string) (string, *common.Options) {
+func (system *System) Answer(input string) (string, *common.Options) {
 
 	// process possible user responses and start with the original question
 	originalInput := system.dialogContext.Process(input)
@@ -47,7 +47,7 @@ func (system *system) Answer(input string) (string, *common.Options) {
 	// process it (again)
 	answer, options := system.Process(originalInput)
 
-	// does the system ask the user a question?
+	// does the System ask the user a question?
 	if !options.HasOptions() {
 		// the original question has been answered
 		system.dialogContext.RemoveOriginalInput()
@@ -56,7 +56,7 @@ func (system *system) Answer(input string) (string, *common.Options) {
 	return answer, options
 }
 
-func (system *system) Process(originalInput string) (string, *common.Options) {
+func (system *System) Process(originalInput string) (string, *common.Options) {
 
 	options := common.NewOptions()
 	answer := ""
@@ -117,12 +117,13 @@ func (system *system) Process(originalInput string) (string, *common.Options) {
 	if system.log.GetClarificationQuestion() != "" {
 		answer = system.log.GetClarificationQuestion()
 		options = system.log.GetClarificationOptions()
+		system.log.SetClarificationRequest("", &common.Options{})
 	}
 
 	return answer, options
 }
 
-func (system system) storeNamedEntities(binding mentalese.Binding) {
+func (system System) storeNamedEntities(binding mentalese.Binding) {
 	 for _, value := range binding {
 		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermEntityType) })
 	 }

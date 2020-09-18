@@ -24,9 +24,9 @@ type systemBuilder struct {
 	applicationAliases map[string]string
 }
 
-func NewSystem(systemPath string, log *common.SystemLog) *system {
+func NewSystem(systemPath string, log *common.SystemLog) *System {
 
-	system := &system{ log: log }
+	system := &System{ log: log }
 
 	absolutePath, err := filepath.Abs(systemPath)
 	if err != nil {
@@ -52,7 +52,7 @@ func newSystemBuilder(baseDir string, log *common.SystemLog) *systemBuilder {
 	}
 }
 
-func (builder *systemBuilder) build(system *system) {
+func (builder *systemBuilder) build(system *System) {
 
 	indexes, ok := builder.readIndexes()
 	if !ok {
@@ -79,9 +79,9 @@ func (builder *systemBuilder) build(system *system) {
 	}
 }
 
-func (builder *systemBuilder) buildBasic(config config, system *system) {
+func (builder *systemBuilder) buildBasic(config config, system *System) {
 
-	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", builder.log)
+	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", builder.log)
 	matcher := mentalese.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
@@ -94,7 +94,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", builder.log)
+	systemAggregateBase := knowledge.NewSystemAggregateBase("System-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
 	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, system.meta, builder.log)
@@ -112,7 +112,7 @@ func (builder *systemBuilder) buildBasic(config config, system *system) {
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 }
 
-func (builder *systemBuilder) AddPredicates(path string, system *system) bool {
+func (builder *systemBuilder) AddPredicates(path string, system *System) bool {
 
 	if path != "" {
 
@@ -138,7 +138,7 @@ func (builder *systemBuilder) AddPredicates(path string, system *system) bool {
 	return true
 }
 
-func (builder *systemBuilder) AddSorts(path string, system *system) bool {
+func (builder *systemBuilder) AddSorts(path string, system *System) bool {
 
 	if path != "" {
 
@@ -158,7 +158,7 @@ func (builder *systemBuilder) AddSorts(path string, system *system) bool {
 	return true
 }
 
-func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *system) {
+func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *System) {
 
 	parts := strings.Split(moduleSpec, ":")
 	if len(parts) != 2 {
@@ -224,7 +224,7 @@ func (builder *systemBuilder) createAliasMap(index index, moduleName string) map
 	return aliasMap
 }
 
-func (builder *systemBuilder) loadDependentModules(index index, indexes *map[string]index, system *system) {
+func (builder *systemBuilder) loadDependentModules(index index, indexes *map[string]index, system *System) {
 	for _, moduleSpec := range index.Uses {
 		builder.loadModule(moduleSpec, "", indexes, system)
 	}
@@ -312,7 +312,7 @@ func (builder *systemBuilder) GetApplicationAlias(module string) string {
 	return alias
 }
 
-func (builder *systemBuilder) processIndex(index index, system *system, applicationAlias string, moduleBaseDir string, aliasMap map[string]string) bool {
+func (builder *systemBuilder) processIndex(index index, system *System, applicationAlias string, moduleBaseDir string, aliasMap map[string]string) bool {
 
 	ok := true
 
@@ -339,7 +339,7 @@ func (builder *systemBuilder) processIndex(index index, system *system, applicat
 	return ok
 }
 
-func (builder *systemBuilder) buildDomain(index index, system *system, moduleBaseDir string) {
+func (builder *systemBuilder) buildDomain(index index, system *System, moduleBaseDir string) {
 	for _, rule := range index.Rules {
 		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
 	}
@@ -357,7 +357,7 @@ func (builder *systemBuilder) buildDomain(index index, system *system, moduleBas
 	}
 }
 
-func (builder *systemBuilder) buildGrammar(index index, system *system, moduleBaseDir string) {
+func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBaseDir string) {
 
 	grammar := parse.NewGrammar()
 
@@ -411,14 +411,14 @@ func (builder *systemBuilder) importGenerationGrammarFromPath(grammar *parse.Gra
 	grammar.GetWriteRules().ImportFrom(rules)
 }
 
-func (builder *systemBuilder) buildSolution(index index, system *system, moduleBaseDir string) {
+func (builder *systemBuilder) buildSolution(index index, system *System, moduleBaseDir string) {
 
 	for _, solution := range index.Solution {
 		builder.importSolutionBaseFromPath(system, moduleBaseDir + "/" + solution)
 	}
 }
 
-func (builder *systemBuilder) buildInternalDatabase(index index, system *system, baseDir string, applicationAlias string) {
+func (builder *systemBuilder) buildInternalDatabase(index index, system *System, baseDir string, applicationAlias string) {
 
 	facts := mentalese.RelationSet{}
 
@@ -452,7 +452,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *system,
 	system.solver.AddFactBase(database)
 }
 
-func (builder *systemBuilder) buildSparqlDatabase(index index, system *system, baseDir string, applicationAlias string) {
+func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
 
 	readMap := builder.buildReadMap(index, baseDir)
 	entities := builder.buildEntities(index, baseDir)
@@ -471,7 +471,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *system, b
 	system.solver.AddFactBase(database)
 }
 
-func (builder *systemBuilder) buildMySqlDatabase(index index, system *system, baseDir string, applicationAlias string) {
+func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
 
 	readMap := builder.buildReadMap(index, baseDir)
 	entities := builder.buildEntities(index, baseDir)
@@ -607,7 +607,7 @@ func (builder systemBuilder) buildNames(index index, baseDir string, application
 	return names, true
 }
 
-func (builder *systemBuilder) importSolutionBaseFromPath(system *system, path string) {
+func (builder *systemBuilder) importSolutionBaseFromPath(system *System, path string) {
 
 	solutionString, err := common.ReadFile(path)
 	if err != nil {
@@ -625,7 +625,7 @@ func (builder *systemBuilder) importSolutionBaseFromPath(system *system, path st
 	system.answerer.AddSolutions(solutions)
 }
 
-func (builder systemBuilder) importRuleBaseFromPath(system *system, path string) {
+func (builder systemBuilder) importRuleBaseFromPath(system *System, path string) {
 
 	ruleBaseString, err := common.ReadFile(path)
 	if err != nil {

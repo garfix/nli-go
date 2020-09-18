@@ -1,3 +1,13 @@
+# 2020-09-16
+
+Some remarks on SEMPRE: 
+
+Names: in the tutorial it suggests creating a lexicon for the names of the entity in the database. Apparantly this lexicon is hand-written. This is a huge amount of work. And I would ask: why not use the names in the database directly?
+
+Relations: in the tutorial the relations used to compose the logical form are taken directly from Freebase. This makes the grammar domain-specific. It is a semantic grammar that is bound to a single database. Tieing domain logic to database representation can be cumbersome, since database representation has a different responsibility than domain logic. In a database, efficient storage is important. For domain logic, human reasoning is important. It is better to separate these right away.
+
+Interactive mode: I really like SEMPRE's interactive mode. It allows you to interact with the system without having to start it each time. This works very well in a terminal. I'd like to copy that. 
+
 # 2020-09-14
 
 Started the application 'expressions', because I am reading about [SEMPRE](https://github.com/percyliang/sempre/blob/master/TUTORIAL.md) and I wanted to know what the expressions example looked like in NLI-GO. 

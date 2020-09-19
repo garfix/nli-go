@@ -1,38 +1,12 @@
 # NLI-GO
 
-nli-go is small executable program, written in Go, that provides a Natural Language Interface to databases. It is a semantic parser and execution engine. I use it to experiment with nli techniques. It is not stable yet and backward-incompatible changes will be made from time to time.
+NLI-GO is a semantic parser and execution engine in the form of an executable program, written in Go, that provides a Natural Language Interface to databases. It allows the user to interact with a computer system using natural language like English or French. It is a rule based system that requires the developer to write rules by hand. Thus, the developer has full control over the behaviour of the system. 
 
-## Demo
+It is not production ready, but you can use it to experiment. Backward-incompatible changes will be made from time to time.
 
-A demo of this library can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia. 
+## Web demo
 
-## Purpose
-
-This library helps a developer to create a system that allow end-users to use plain English / French / German to interface with a MySQL or SPARQL database. This allows your the system to handle interactions like this:
-
-    > Q How many children had Lord Byron? 
-    > A: He had 2 children.
-    
-    > Q: Was Michael Jackson married to Elvis Presley's daughter?
-    > A: Yes
-
-Every part of the system is configurable.
-
-## Techniques
-
-Some of the techniques used:
-
-* An Earley parser to create a syntax tree from an input sentence, with semantic attachments
-* Mentalese, a based internal language, based on Predicate Logic, to process the user input
-* A Prolog-like language for rule based reasoning
-* Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
-* Using data from multiple databases in a single request
-* A dialog context to remember information from earlier in the conversation
-* Anaphora resolution: the use of pronouns and other references to earlier entities
-* Generalized quantifiers
-* The distinction between classic negation (`not`) and strong negation (`-`)
-* A generator to produce human readable responses
-* Modules and namespaces, for modular development
+A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia. 
 
 ## Build the nli executable
 
@@ -44,11 +18,39 @@ From the root of NLI-GO build the executable with
 
     go build -o bin/nli bin/nli.go
     
-The executable is now available as `bin/nli`. You can add the extension .exe and move the executable to another location if you like.    
+On Windows, you may want to use `go build -o bin/nli.exe bin/nli.go`.
 
-## Run the executable with the sample applications
+You can and move the executable to another location if you like.    
 
-NLI-GO comes with some sample applications, located in the directory "resources". In this example you tell "Hello World" to the hello world application:
+## Run NLI-GO in interactive mode
+
+NLI-GO comes with some sample applications, located in the directory "resources". The application `resources/blocks`, for example, is an attempt to recreate the results of [SHRDLU](https://en.wikipedia.org/wiki/SHRDLU). Start an interactive session with it like this:
+
+    bin/nli -i -c resources/blocks   
+    
+NLI-GO will then show
+
+    NLI-GO session with resources/blocks. Type 'exit' to stop.
+    
+    > 
+
+and you can type, for instance:
+
+    > Pick up a big red block
+    
+and NLI-GO, like SHRDLU in the old days, will eply with
+
+    OK
+    
+The sentences that this applications can currently handle can be found in `tests/integration/BlocksWorld_test.go`, but you can try other sentences to see if they work.           
+
+When done, just type
+
+    exit 
+
+## Run NLI-GO in single-request mode
+
+NLI-GO can also be used just to give a single response. This allows you to use it as part of a larger system. This variant is used by the web demo, for instance. In this example you tell "Hello World" to the hello world application:
 
     bin/nli -c resources/helloworld "Hello World"    
 
@@ -92,6 +94,22 @@ And if you want to specify a session identifier to allow NLI-GO to resolve back-
 ## Trying it out
 
 If you want to experiment with NLI-GO, copy one of the application directories in `resources` and make changes to it.
+
+## Techniques
+
+Some of the techniques used:
+
+* An Earley parser to create a syntax tree from an input sentence, with semantic attachments
+* Mentalese, a based internal language, based on Predicate Logic, to process the user input
+* A language with a Prolog-like syntax for rule based reasoning
+* Support for Sparql (DBPedia) and MySQL as well as an in-memory data stores
+* Combining data from multiple databases in reaction to a single request
+* A dialog context to remember information from earlier in the conversation
+* Anaphora resolution: the use of pronouns and other references to earlier entities
+* Generalized quantifiers
+* The distinction between classic negation (`not`) and strong negation (`-`)
+* A generator to produce human readable responses
+* Modules and namespaces, for modular development
 
 ## Docs
 

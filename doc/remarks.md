@@ -6,7 +6,25 @@ Names: in the tutorial it suggests creating a lexicon for the names of the entit
 
 Relations: in the tutorial the relations used to compose the logical form are taken directly from Freebase. This makes the grammar domain-specific. It is a semantic grammar that is bound to a single database. Tieing domain logic to database representation can be cumbersome, since database representation has a different responsibility than domain logic. In a database, efficient storage is important. For domain logic, human reasoning is important. It is better to separate these right away.
 
-Interactive mode: I really like SEMPRE's interactive mode. It allows you to interact with the system without having to start it each time. This works very well in a terminal. I'd like to copy that. 
+Interactive mode: I really like SEMPRE's interactive mode. It allows you to interact with the system without having to start it each time. This works very well in a terminal. I'd like to copy that.
+
+Compilation to Java: SEMPRE compiles a sentence into a Java program. It brings in the expressive power of a complete programming language. This is a very powerful feature, and not one I can simply copy. 
+
+And I found [these examples](https://github.com/percyliang/sempre/blob/master/DOCUMENTATION.md) interesting:
+
+    Here is the city with the largest area:    
+    (argmax 1 1 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The second largest city by area:    
+    (argmax 2 1 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The five largest cities by area:    
+    (argmax 1 5 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The person who has the most number of children (who, in Freebase, turns out to be Chulalongkorn with a whopping 62):    
+    (argmax 1 1 (fb:type.object.type fb:people.person) (reverse (lambda x (count (!fb:people.person.children (var x))))))
+
+I don't have anything like this yet.
 
 # 2020-09-14
 

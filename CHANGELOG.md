@@ -1,5 +1,9 @@
 # Changelog
 
+##
+
+* nli executable allows interactive session 
+
 ## 1.11 modules - 13-09-2020
 
 * namespaces; predicate prefixing

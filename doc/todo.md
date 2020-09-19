@@ -3,6 +3,7 @@
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module
 - write to MySQL
+- interactive: arrow up/down for history
 
 Allow to change this
 
@@ -14,17 +15,14 @@ to this
 
 * quant_foreach: add as second parameter the variable to which the ids must be bound 
 * agreement, especially for number, because it reduces ambiguity
-* namespaces for relations: `:find()`, `db:support()`
 * should boolean functions have P1 as argument? different or for read/write?
-* check if the nested functions are called correctly
 * syntax check while parsing: is the number of arguments correct?
-* do not allow zero valued predicates in the grammar
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
-* entity type (multiple) inheritance
 * sortal restrictions (using predicates.json and adding 'parent' to entities.json)
 * agreement checking (reintroducing feature unification)
 * clarification questions must be translatable (they must go through the generator)
 * use relations as functions (with special role for the last parameter as the return value)
+* write a good tutorial
 
 * (?) to_list(E1)
     collect all distinct values of E1 into a list, replace the value of E1 in all bindings with this list; remove duplicate bindings

@@ -38,7 +38,7 @@ and you can type, for instance:
 
     > Pick up a big red block
     
-and NLI-GO, like SHRDLU in the old days, will eply with
+and NLI-GO, like SHRDLU in the old days, will reply with
 
     OK
     

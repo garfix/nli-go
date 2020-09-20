@@ -3,6 +3,7 @@
 ##
 
 * nli executable allows interactive session 
+* insert / delete in MySQL
 
 ## 1.11 modules - 13-09-2020
 

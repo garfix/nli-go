@@ -30,6 +30,8 @@ func TestRelationships(t *testing.T) {
 
 		{"Does every parent have 4 children?", "Yes"},
 		{"Does every parent have 3 children?", "No"},
+		{"Suzanne van Dongen is married to Henk Smit", "Ok"},
+		{"Did Suzanne van Dongen marry Henk Smit?", "Yes"},
 	}
 
 	for _, test := range tests {

@@ -1,4 +1,14 @@
 [
+    /* Declaration */
+    {
+        condition: go:intent(declaration),
+        result: _,
+        responses: [
+            {
+                answer: go:canned('Ok')
+            }
+        ]
+    }
     {
         condition: go:intent(who, A) dom:marry(P1, A, B),
         result: A,

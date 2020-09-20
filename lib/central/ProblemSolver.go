@@ -210,7 +210,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation ment
 
 	dbBindings := mentalese.Bindings{}
 
-	for _, ds2db := range factBase.GetMappings() {
+	for _, ds2db := range factBase.GetReadMappings() {
 
 		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.Binding{})
 		if !match { continue }

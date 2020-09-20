@@ -1,0 +1,3 @@
+[
+    dom:marry(_, A, B) :- marriages(A, B, '');
+]

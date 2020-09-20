@@ -474,6 +474,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
 
 	readMap := builder.buildReadMap(index, baseDir)
+	writeMap := builder.buildWriteMap(index, baseDir)
 	entities := builder.buildEntities(index, baseDir)
 
 	prefix := ""
@@ -482,7 +483,7 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 		prefix = applicationAlias + "_"
 	}
 
-	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, entities, builder.log)
+	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, writeMap, entities, builder.log)
 
 	for _, table := range index.Tables {
 		columns := []string{}

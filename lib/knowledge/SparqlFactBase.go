@@ -55,7 +55,7 @@ func (factBase *SparqlFactBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (factBase *SparqlFactBase) GetMappings() []mentalese.Rule {
+func (factBase *SparqlFactBase) GetReadMappings() []mentalese.Rule {
 	return factBase.ds2db
 }
 

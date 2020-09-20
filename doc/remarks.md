@@ -1,3 +1,7 @@
+# 2020-09-20
+
+I added ASSERT and RETRACT for MySQL. You can now insert and delete information in a MySQL database.
+
 # 2020-09-16
 
 Some remarks on SEMPRE: 

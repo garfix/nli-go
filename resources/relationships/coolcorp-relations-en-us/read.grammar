@@ -29,6 +29,7 @@
     { rule: have(P1) -> 'have' }
     { rule: have(P1) -> 'has' }
     { rule: copula(P1) -> 'are' }
+    { rule: copula(P1) -> 'is' }
     { rule: marry(P1) -> 'marry' }
     { rule: marry(P1) -> 'married' }
 
@@ -47,6 +48,8 @@
     { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: go:quant_check($np1,
                                                                                 go:quant_check(go:quant($qp, E2, $child), dom:have_child(E1, E2))) }
 
+    { rule: declarative(P1) -> np(E1) 'is' 'married' 'to' np(E2),             sense: go:assert( dom:marry(1, E1, E2) ) }
+
     { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: go:intent(who, E1) }
     { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: go:intent(which, E1) }
     { rule: interrogative(P1) -> 'how' 'many' how_many_clause(E1),            sense: go:intent(how_many, E1) }
@@ -55,4 +58,5 @@
 
     { rule: interrogative(S1) -> interrogative(S1) '?' }
     { rule: s(S1) -> interrogative(S1),                                       sense: go:intent(question) }
+    { rule: s(S1) -> declarative(S1),                                         sense: go:intent(declaration) }
 ]

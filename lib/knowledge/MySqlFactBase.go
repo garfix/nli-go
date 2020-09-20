@@ -17,9 +17,10 @@ type MySqlFactBase struct {
 	KnowledgeBaseCore
 	db                *sql.DB
 	tableDescriptions map[string]tableDescription
-	ds2db             []mentalese.Rule
-	entities 		  mentalese.Entities
-	sharedIds 		  SharedIds
+	readMap           []mentalese.Rule
+	writeMap           []mentalese.Rule
+	entities          mentalese.Entities
+	sharedIds         SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
 }
@@ -29,7 +30,7 @@ type tableDescription struct {
 	columns []string
 }
 
-func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
 
 	db, _ := sql.Open("mysql", username+":"+password+"@/"+database)
 	err := db.Ping()
@@ -39,31 +40,35 @@ func NewMySqlFactBase(name string, username string, password string, database st
 
 	return &MySqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
-		db: db,
+		db:                db,
 		tableDescriptions: map[string]tableDescription{},
-		ds2db: ds2db,
-		entities: entities,
-		sharedIds: SharedIds{},
-		matcher: matcher,
-		log: log,
+		readMap:           readMap,
+		writeMap: 		   writeMap,
+		entities:          entities,
+		sharedIds:         SharedIds{},
+		matcher:           matcher,
+		log:               log,
 	}
 }
 
 func (factBase *MySqlFactBase) HandlesPredicate(predicate string) bool {
-	for _, rule := range factBase.ds2db {
+	for _, rule := range factBase.readMap {
 		if rule.Goal.Predicate == predicate {
 			return true
 		}
 	}
+	if len(factBase.writeMap) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
+		return true
+	}
 	return false
 }
 
-func (factBase *MySqlFactBase) GetMappings() []mentalese.Rule {
-	return factBase.ds2db
+func (factBase *MySqlFactBase) GetReadMappings() []mentalese.Rule {
+	return factBase.readMap
 }
 
 func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.Rule {
-	return []mentalese.Rule{}
+	return factBase.writeMap
 }
 
 func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {
@@ -112,22 +117,21 @@ func (factBase *MySqlFactBase) AddTableDescription(predicate string, tableName s
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
 
-	factBase.log.StartDebug("MatchRelationToDatabase", needleRelation)
+	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
-	needleRelation = needleRelation.BindSingle(binding)
+	relation = relation.BindSingle(binding)
 
 	dbBindings := mentalese.Bindings{}
-
-	description := factBase.tableDescriptions[needleRelation.Predicate]
+	description := factBase.tableDescriptions[relation.Predicate]
 	columns := description.columns
 	tableName := description.tableName
 
 	whereClause := ""
 	var values = []interface{}{}
 
-	for i, argument := range needleRelation.Arguments {
+	for i, argument := range relation.Arguments {
 		column := columns[i]
 		if !argument.IsAnonymousVariable() && !argument.IsVariable() {
 			whereClause += " AND " + column + " = ?"
@@ -136,7 +140,6 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 	}
 
 	columnClause := strings.Join(columns, ", ")
-
 	query := "SELECT " + columnClause + " FROM " + tableName + " WHERE TRUE" + whereClause
 
 	rows, err := factBase.db.Query(query, values...)
@@ -168,7 +171,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 		} else {
 
-			for i, argument := range needleRelation.Arguments {
+			for i, argument := range relation.Arguments {
 				if argument.IsVariable() {
 					variable := argument.TermValue
 					binding[variable] = mentalese.Term{TermType: mentalese.TermTypeStringConstant, TermValue: resultValues[i]}
@@ -186,8 +189,74 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(needleRelation mentalese.
 
 func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
 
+	factBase.log.StartDebug("Assert", relation)
+
+	argCount := len(relation.Arguments)
+
+	if argCount == 0 { return }
+
+	// check if relation already present; do not duplicate!
+	existingBindings := factBase.MatchRelationToDatabase(relation, mentalese.Binding{})
+	if len(existingBindings) > 0 { return }
+
+	description := factBase.tableDescriptions[relation.Predicate]
+	columns := description.columns
+	tableName := description.tableName
+
+	var values = []interface{}{}
+	valueClause := ""
+	sep := ""
+
+	for i, argument := range relation.Arguments {
+		column := columns[i]
+		if !argument.IsAnonymousVariable() && !argument.IsVariable() {
+			valueClause += sep + column + " = ?"
+			sep = ", "
+			values = append(values, argument.TermValue)
+		}
+	}
+
+	query := "INSERT INTO " + tableName + " SET " + valueClause
+	_, err := factBase.db.Exec(query, values...)
+
+	if err != nil {
+		factBase.log.AddError(err.Error())
+	}
+
+	factBase.log.EndDebug("Assert", relation)
 }
 
 func (factBase *MySqlFactBase) Retract(relation mentalese.Relation) {
 
+	factBase.log.StartDebug("Retract", relation)
+
+	argCount := len(relation.Arguments)
+
+	if argCount == 0 { return }
+
+	description := factBase.tableDescriptions[relation.Predicate]
+	columns := description.columns
+	tableName := description.tableName
+
+	whereClause := ""
+	sep := ""
+	var values = []interface{}{}
+
+	for i, argument := range relation.Arguments {
+		column := columns[i]
+		if !argument.IsAnonymousVariable() && !argument.IsVariable() {
+			whereClause += sep + column + " = ?"
+			sep = " AND "
+			values = append(values, argument.TermValue)
+		}
+	}
+
+	query := "DELETE FROM " + tableName + " WHERE " + whereClause
+
+	_, err := factBase.db.Exec(query, values...)
+	if err != nil {
+		factBase.log.AddError("Error on querying MySQL: " + err.Error())
+	}
+
+	factBase.log.EndDebug("Retract", relation)
 }

@@ -7,46 +7,46 @@ import (
 
 type InMemoryFactBase struct {
 	KnowledgeBaseCore
-	facts   	mentalese.RelationSet
-	ds2db   	[]mentalese.Rule
-	ds2dbWrite 	[]mentalese.Rule
-	entities 	mentalese.Entities
-	sharedIds 	SharedIds
-	matcher 	*mentalese.RelationMatcher
-	log     	*common.SystemLog
+	facts     mentalese.RelationSet
+	readMap   []mentalese.Rule
+	writeMap  []mentalese.Rule
+	entities  mentalese.Entities
+	sharedIds SharedIds
+	matcher   *mentalese.RelationMatcher
+	log       *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, ds2dbWrite []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
-		facts: facts,
-		ds2db: ds2db,
-		ds2dbWrite: ds2dbWrite,
-		entities: entities,
-		sharedIds: SharedIds{},
-		matcher: matcher,
-		log: log,
+		facts:             facts,
+		readMap:           readMap,
+		writeMap:          writeMap,
+		entities:          entities,
+		sharedIds:         SharedIds{},
+		matcher:           matcher,
+		log:               log,
 	}
 }
 
 func (factBase *InMemoryFactBase) HandlesPredicate(predicate string) bool {
-	for _, rule := range factBase.ds2db {
+	for _, rule := range factBase.readMap {
 		if rule.Goal.Predicate == predicate {
 			return true
 		}
 	}
-	if len(factBase.ds2dbWrite) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
+	if len(factBase.writeMap) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
 		return true
 	}
 	return false
 }
 
-func (factBase *InMemoryFactBase) GetMappings() []mentalese.Rule {
-	return factBase.ds2db
+func (factBase *InMemoryFactBase) GetReadMappings() []mentalese.Rule {
+	return factBase.readMap
 }
 
 func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.Rule {
-	return factBase.ds2dbWrite
+	return factBase.writeMap
 }
 
 func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {

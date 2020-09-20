@@ -13,7 +13,6 @@
     person(`:4`, 'John van Dongen', 'M', '1938')
     person(`:5`, 'Dirk van Dongen', 'M', '1972')
     person(`:6`, 'Durkje van Dongen', 'M', '1982')
-    person(`:7`, 'Huub de Boer', 'M', '1998')
-    person(`:8`, 'Babs de Boer', 'F', '1999')
     person(`:7`, 'Johanneke de Boer', 'M', '1998')
     person(`:8`, 'Baukje de Boer', 'F', '1999')
+    person(`:9`, 'Henk Smit', 'M', '1963')

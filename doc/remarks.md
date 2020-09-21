@@ -2,6 +2,31 @@
 
 I added ASSERT and RETRACT for MySQL. You can now insert and delete information in a MySQL database.
 
+===
+
+About interaction 18:
+
+    Q: Which cube is sitting on the table?
+    A: The large green one which supports the red pyramid
+    
+This is a `which` question, that asks for a selection. The programmer may choose to use a function that's called, let's say "go:describe(E)" to create a distinguishing text for the answer. But would would such a function do?
+
+In 8.3.3 Naming Objects and Events, Winograd describes how SHRDLU forms a meaningful description of an object. 
+
+"First we need to know how the object is basically classified." Each type of entity needs a human-defined set of useful properties: size, color (but not: x-location, height). They are properties that a human would find easy to distinguish, but for a computer it would not matter, so they need to be hand-picked.
+
+1) "The naming program first checks for the unique object in the world." They either have a name, or they are one of a kind (i.e. "the box").
+
+2) If the object is a block, ball or pyramid, the correct noun is used and a description is built of its color and size. If this uniquely describes the object, the description is preceded with "the" and its done.
+
+3a) If the requirement is nonspecific, just use these properties, preceded by an article: "a green cube"
+
+3b) If it needs to be specific: add still more information:
+    - information about the objects it supports
+    - name the objects to its left
+    
+It is clear that a computer cannot determine a proper description by itself; it needs our help.    
+
 # 2020-09-16
 
 Some remarks on SEMPRE: 

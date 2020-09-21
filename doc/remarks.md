@@ -1,3 +1,7 @@
+# 2020-09-21
+
+I am moving entities.yml from db to domain, because it contains only domain references, and I want to extend it with properties I can use for interaction 18.
+
 # 2020-09-20
 
 I added ASSERT and RETRACT for MySQL. You can now insert and delete information in a MySQL database.

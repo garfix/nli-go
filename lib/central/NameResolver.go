@@ -170,7 +170,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 	var nameInformations []NameInformation
 
 	// go through all entity types
-	for entityType, entityInfo := range factBase.GetEntities() {
+	for entityType, entityInfo := range resolver.meta.GetEntities() {
 
 		if inducedEntityType != "entity" && inducedEntityType != "" && !resolver.meta.MatchesSort(inducedEntityType, entityType) {
 			continue

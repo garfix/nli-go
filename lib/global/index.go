@@ -9,7 +9,6 @@ type index struct {
 	Solution        []string
 	Rules           []string
 	Facts           []string
-	Entities        []string
 	Shared          []string
 	BaseUrl         string
 	DefaultGraphUri string
@@ -19,6 +18,7 @@ type index struct {
 	Username        string
 	Password        string
 	Tables          []table
+	Entities        string
 	Predicates      string
 	Sorts			string
 	TokenExpression string

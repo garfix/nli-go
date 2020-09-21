@@ -3,6 +3,7 @@ package mentalese
 // maps a predicate to information about a relation
 type Meta struct {
 	predicates map[string]PredicateInfo
+	entities Entities
 	sorts map[string][]string
 }
 
@@ -14,6 +15,7 @@ type PredicateInfo struct {
 func NewMeta() *Meta {
 	return &Meta{
 		predicates: map[string]PredicateInfo{},
+		entities: Entities{},
 		sorts: map[string][]string{},
 	}
 }
@@ -24,6 +26,10 @@ func (meta Meta) AddPredicate(name string, entityTypes []string) {
 	}
 }
 
+func (meta Meta) AddEntityInfo(name string, entityInfo EntityInfo) {
+	meta.entities[name] = entityInfo
+}
+
 func (meta Meta) GetEntityType(predicate string, argumentIndex int) string {
 
 	pred, found := meta.predicates[predicate]
@@ -31,6 +37,10 @@ func (meta Meta) GetEntityType(predicate string, argumentIndex int) string {
 		return pred.EntityTypes[argumentIndex]
 	}
 	return ""
+}
+
+func (meta Meta) GetEntities() Entities {
+	return meta.entities
 }
 
 func (meta Meta) AddSort(superSort string, subSort string) {

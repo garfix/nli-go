@@ -340,18 +340,28 @@ func (builder *systemBuilder) processIndex(index index, system *System, applicat
 }
 
 func (builder *systemBuilder) buildDomain(index index, system *System, moduleBaseDir string) {
+
+	ok := true
+	path := ""
+
 	for _, rule := range index.Rules {
 		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
 	}
 
-	path := common.AbsolutePath(moduleBaseDir, index.Predicates)
-	ok := builder.AddPredicates(path, system)
+	path = common.AbsolutePath(moduleBaseDir, index.Entities)
+	ok = builder.AddEntities(path, system)
 	if !ok {
 		return
 	}
 
-	path2 := common.AbsolutePath(moduleBaseDir, index.Sorts)
-	ok = builder.AddSorts(path2, system)
+	path = common.AbsolutePath(moduleBaseDir, index.Predicates)
+	ok = builder.AddPredicates(path, system)
+	if !ok {
+		return
+	}
+
+	path = common.AbsolutePath(moduleBaseDir, index.Sorts)
+	ok = builder.AddSorts(path, system)
 	if !ok {
 		return
 	}
@@ -440,9 +450,8 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 
 	readMap := builder.buildReadMap(index, baseDir)
 	writeMap := builder.buildWriteMap(index, baseDir)
-	entities := builder.buildEntities(index, baseDir)
 
-	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, entities, builder.log)
+	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {
@@ -455,13 +464,12 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
 
 	readMap := builder.buildReadMap(index, baseDir)
-	entities := builder.buildEntities(index, baseDir)
 	names, ok := builder.buildNames(index, baseDir, applicationAlias)
 	if !ok {
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, entities, index.Cache, builder.log)
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {
@@ -475,7 +483,6 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 
 	readMap := builder.buildReadMap(index, baseDir)
 	writeMap := builder.buildWriteMap(index, baseDir)
-	entities := builder.buildEntities(index, baseDir)
 
 	prefix := ""
 
@@ -483,7 +490,7 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 		prefix = applicationAlias + "_"
 	}
 
-	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, writeMap, entities, builder.log)
+	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, writeMap,  builder.log)
 
 	for _, table := range index.Tables {
 		columns := []string{}
@@ -549,22 +556,17 @@ func (builder *systemBuilder) buildWriteMap(index index, baseDir string) []menta
 	return writeMap
 }
 
-func (builder *systemBuilder) buildEntities(index index, baseDir string) mentalese.Entities {
+func (builder *systemBuilder) AddEntities(path string, system *System) bool {
 
-	entities := mentalese.Entities{}
-
-	for _, file := range index.Entities {
-		path := common.AbsolutePath(baseDir, file)
-		newEntities, ok := builder.CreateEntities(path)
-		if !ok {
-			return entities
-		}
-		for key, value := range newEntities {
-			entities[key] = value
-		}
+	entities, ok := builder.CreateEntities(path)
+	if !ok {
+		return false
+	}
+	for name, info := range entities {
+		system.meta.AddEntityInfo(name, info)
 	}
 
-	return entities
+	return true
 }
 
 func (builder *systemBuilder) buildSharedIds(index index, baseDir string) (knowledge.SharedIds, bool) {

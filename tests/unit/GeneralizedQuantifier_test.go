@@ -45,18 +45,17 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		read('sarah', 'Dracula')
 	`)
 
-	ds2db := internalGrammarParser.CreateRules(`[
+	readMap := internalGrammarParser.CreateRules(`[
 		book(A) :- book(A);
 		read(A, B) :- read(A, B);
 	]`)
-	ds2dbWrite := internalGrammarParser.CreateRules(`[]`)
+	writeMap := internalGrammarParser.CreateRules(`[]`)
 
 	matcher := mentalese.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
-	entities := mentalese.Entities{}
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
 	solver.AddNestedStructureBase(nestedStructureBase)

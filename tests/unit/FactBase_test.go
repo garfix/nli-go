@@ -32,16 +32,15 @@ func TestFactBase(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	ds2db := parser.CreateRules(`[
+	readMap := parser.CreateRules(`[
 		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	ds2dbWrite := parser.CreateRules(`[]`)
+	writeMap := parser.CreateRules(`[]`)
 
-	entities := mentalese.Entities{}
 	matcher := mentalese.NewRelationMatcher(log)
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 

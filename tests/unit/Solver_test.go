@@ -33,17 +33,16 @@ func TestSolver(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	ds2db := parser.CreateRules(`[
+	readMap := parser.CreateRules(`[
 		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
 	]`)
 
-	ds2dbWrite := parser.CreateRules(`[]`)
+	writeMap := parser.CreateRules(`[]`)
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	entities := mentalese.Entities{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
@@ -125,11 +124,11 @@ func TestSolver(t *testing.T) {
 		link('blue', 'yellow')
 	`)
 
-	ds2db2 := parser.CreateRules(`[
+	readMap2 := parser.CreateRules(`[
 		link(A, B) :- link(A, B);
 	]`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, ds2db2, ds2dbWrite, entities, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, dialogContext, log)
@@ -163,11 +162,10 @@ func TestMissingHandlerError(t *testing.T) {
 	log := common.NewSystemLog(false)
 
 	facts := mentalese.RelationSet{}
-	ds2db := parser.CreateRules(`[]`)
-	ds2dbWrite := parser.CreateRules(`[]`)
+	readMap := parser.CreateRules(`[]`)
+	writeMap := parser.CreateRules(`[]`)
 	matcher := mentalese.NewRelationMatcher(log)
-	entities := mentalese.Entities{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 
 	dialogContext := central.NewDialogContext()
 

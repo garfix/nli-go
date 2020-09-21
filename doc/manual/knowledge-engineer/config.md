@@ -59,6 +59,7 @@ A sample index.yml:
     rules: [dbpedia.rule]
     predicates: predicates.relation
     sorts: predicates.sort
+    entities: entities.yml
     
 All of these are optional.     
 
@@ -93,6 +94,22 @@ From this it will find out what entity type belongs to the name. It will then on
 
 It is optional to specify the predicates in this file. If there is no need to specify the sorts, they may be omitted.
 
+`entities` are used to resolve proper names into database specific identifiers. Here's an example:
+
+    person:
+        name: name(Id, Name, full_name) person(Id)
+        knownby:
+          description: description(Id, Value)
+
+Here `person` is a sort.
+
+`name` specifies a relation. When used, the system will fill variable Name, query the relation set in the factbase. The bound Id variable will be stored as the id of the named entity.
+
+`knownby` specifies some means to help a human user to disambiguate an entity. Here "description" is, like "person" a random identifier to be shown to the user.
+Id is the variable that is entered by the system, just before the relation is queried in the fact base. The Value variable is filled with data from the fact base.
+
+In this example the fact base contained a relation "description(Id, Value)" that holds a proper description of a person. In other cases, multiple entity attributes may be needed to specify a person / entity to a user.
+
 ### Solution modules
 
 A solution is the way the system uses to link a problem to a solution.
@@ -124,7 +141,6 @@ Three types of database are supported; each has its own entries in the index.yml
 Common fields in index.yml:
 
     shared: [ shared-id.yml ]
-    entities: [ entities.yml ]
     read: [ read.map ]
     write: [ write.map ]
 
@@ -136,22 +152,6 @@ database ids to shared database ids.
       x21-r11: person3
 
 Here `person` is a sort from the domain. `x21-r01` is an identifier from the database, and `person` is a shared identifier. When shared ids are used, NLI-GO reasons with these shared ids, and will convert them to database ids only when contacting the database. This allows you to combine the results of multiple databases in a single query.
-
-`Entities` are used to resolve proper names into database specific identifiers. Here's an example:
-
-    person:
-        name: name(Id, Name, full_name) person(Id)
-        knownby:
-          description: description(Id, Value)
-
-Here `person` is a sort.
-
-`name` specifies a relation. When used, the system will fill variable Name, query the relation set in the factbase. The bound Id variable will be stored as the id of the named entity.
-
-`knownby` specifies some means to help a human user to disambiguate an entity. Here "description" is, like "person" a random identifier to be shown to the user.
-Id is the variable that is entered by the system, just before the relation is queried in the fact base. The Value variable is filled with data from the fact base.
-
-In this example the fact base contained a relation "description(Id, Value)" that holds a proper description of a person. In other cases, multiple entity attributes may be needed to specify a person / entity to a user.
 
 In index.yml `read` and `write` are names of files that map from domain relations to database relations, when reading from or writing to the database.
 

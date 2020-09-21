@@ -21,7 +21,6 @@ type SparqlFactBase struct {
 	defaultGraphUri string
 	ds2db           []mentalese.Rule
 	names           mentalese.ConfigMap
-	entities        mentalese.Entities
 	sharedIds 		SharedIds
 	matcher         *mentalese.RelationMatcher
 	queryCount      int
@@ -29,7 +28,7 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, entities mentalese.Entities, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
@@ -37,7 +36,6 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 		defaultGraphUri:   defaultGraphUri,
 		ds2db:             ds2db,
 		names:             names,
-		entities:          entities,
 		sharedIds: 		   SharedIds{},
 		matcher:           matcher,
 		queryCount:        0,
@@ -61,10 +59,6 @@ func (factBase *SparqlFactBase) GetReadMappings() []mentalese.Rule {
 
 func (factBase *SparqlFactBase) GetWriteMappings() []mentalese.Rule {
 	return []mentalese.Rule{}
-}
-
-func (factBase *SparqlFactBase) GetEntities() mentalese.Entities {
-	return factBase.entities
 }
 
 func (factBase *SparqlFactBase) SetSharedIds(sharedIds SharedIds) {

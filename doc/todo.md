@@ -2,7 +2,6 @@
 
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module
-- write to MySQL
 - interactive: arrow up/down for history
 
 Allow to change this

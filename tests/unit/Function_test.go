@@ -155,17 +155,16 @@ func TestQuantFunctions(t *testing.T) {
 		"person(`:B`, 'Bernhard') " +
 		"person(`:E`, 'Edward') " +
 		"person(`:A`, 'Abraham') ")
-	ds2db := parser.CreateRules(`[
+	readMap := parser.CreateRules(`[
 		person(E, Name) :- person(E, Name);
 		person_named_abraham(E) :- person(E, 'Abraham');
 		person_named_bernhard(E) :- person(E, 'Bernhard');
 		person_named_edward(E) :- person(E, 'Edward');
 	]`)
-	ds2dbWrite := parser.CreateRules(`[]`)
-	entities := mentalese.Entities{}
+	writeMap := parser.CreateRules(`[]`)
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)

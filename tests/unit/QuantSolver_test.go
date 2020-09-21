@@ -34,14 +34,14 @@ func TestQuantSolver(t *testing.T) {
 		have_child(8, 10)
 	`)
 
-	ds2db := internalGrammarParser.CreateRules(`[
+	readMap := internalGrammarParser.CreateRules(`[
 		is_person(Id) :- person(Id, _, _, _);
 		have_child(A, B) :- have_child(A, B);
 		isa(A, parent) :- have_child(A, _);
 		isa(A, child) :- have_child(_, A);
 	]`)
 
-	ds2dbWrite := internalGrammarParser.CreateRules(`[]`)
+	writeMap := internalGrammarParser.CreateRules(`[]`)
 
 	tests := []struct {
 		quant   string
@@ -103,8 +103,7 @@ func TestQuantSolver(t *testing.T) {
 
 	matcher := mentalese.NewRelationMatcher(log)
 
-	entities := mentalese.Entities{}
-	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, ds2db, ds2dbWrite, entities, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), dialogContext, log)

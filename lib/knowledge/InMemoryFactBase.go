@@ -16,13 +16,12 @@ type InMemoryFactBase struct {
 	log       *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts:             facts,
 		readMap:           readMap,
 		writeMap:          writeMap,
-		entities:          entities,
 		sharedIds:         SharedIds{},
 		matcher:           matcher,
 		log:               log,
@@ -47,10 +46,6 @@ func (factBase *InMemoryFactBase) GetReadMappings() []mentalese.Rule {
 
 func (factBase *InMemoryFactBase) GetWriteMappings() []mentalese.Rule {
 	return factBase.writeMap
-}
-
-func (factBase *InMemoryFactBase) GetEntities() mentalese.Entities {
-	return factBase.entities
 }
 
 func (factBase *InMemoryFactBase) SetSharedIds(sharedIds SharedIds) {

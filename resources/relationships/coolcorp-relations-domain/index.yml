@@ -2,3 +2,5 @@ type: domain
 version: 1.0.0
 rules: [ relationships.rule ]
 predicates: predicates.relation
+entities: entities.yml
+

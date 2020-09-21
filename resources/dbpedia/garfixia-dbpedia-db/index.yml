@@ -6,5 +6,4 @@ baseurl: https://dbpedia.org/sparql
 defaultgraphuri: http://dbpedia.org
 read: [ ds2db.map ]
 names: names.yml
-entities: [ entities.yml ]
 cache: true

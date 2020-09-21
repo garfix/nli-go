@@ -99,7 +99,7 @@
     size(`block:b6`, 200, 300, 300)
     size(`block:b7`, 200, 200, 200)
     size(`block:b10`, 200, 100, 400)
-size(`pyramid:b2`, 200, 200, 200)
+    size(`pyramid:b2`, 200, 200, 200)
     size(`pyramid:b4`, 200, 200, 200)
     size(`pyramid:b5`, 100, 100, 300)
     size(`:hand`, 0, 0, 0)

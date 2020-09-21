@@ -19,7 +19,6 @@ type MySqlFactBase struct {
 	tableDescriptions map[string]tableDescription
 	readMap           []mentalese.Rule
 	writeMap           []mentalese.Rule
-	entities          mentalese.Entities
 	sharedIds         SharedIds
 	matcher           *mentalese.RelationMatcher
 	log               *common.SystemLog
@@ -30,7 +29,7 @@ type tableDescription struct {
 	columns []string
 }
 
-func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, entities mentalese.Entities, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *MySqlFactBase {
 
 	db, _ := sql.Open("mysql", username+":"+password+"@/"+database)
 	err := db.Ping()
@@ -44,7 +43,6 @@ func NewMySqlFactBase(name string, username string, password string, database st
 		tableDescriptions: map[string]tableDescription{},
 		readMap:           readMap,
 		writeMap: 		   writeMap,
-		entities:          entities,
 		sharedIds:         SharedIds{},
 		matcher:           matcher,
 		log:               log,
@@ -69,10 +67,6 @@ func (factBase *MySqlFactBase) GetReadMappings() []mentalese.Rule {
 
 func (factBase *MySqlFactBase) GetWriteMappings() []mentalese.Rule {
 	return factBase.writeMap
-}
-
-func (factBase *MySqlFactBase) GetEntities() mentalese.Entities {
-	return factBase.entities
 }
 
 func (factBase *MySqlFactBase) SetSharedIds(sharedIds SharedIds) {

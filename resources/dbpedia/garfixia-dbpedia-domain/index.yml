@@ -1,6 +1,5 @@
 type: domain
 version: 1.0.0
-rules: [ dbpedia.rule ]
 predicates: predicates.relation
 entities: entities.yml
 sorts: predicates.sort

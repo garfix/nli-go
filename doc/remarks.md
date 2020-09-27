@@ -1,3 +1,76 @@
+# 2020-09-26
+
+I don't think its necessary to introduce a new entities.yml entry, nor a special command. The solution can call a domain rule to get a description.
+
+On the other hand, it is not enough to create a string of text to serve as a description; it should be language-independent. This means that the solution must create, from a single entity id, a more complex relation structure, which can then be fed to the generator.
+
+For example, if E1 is the large green one which supports the red pyramid, then the solution must create the relational structure
+
+    green(E1) large(E1) support(E1, E2) pyramid(E2) red(E2)
+    
+The only relations the solution currently creates is done by `make_and()` which adds some `and` relations.
+
+So this interaction is not only about finding a unique description, but about building relation structures as well.
+
+    {
+        condition: ...,
+        responses: [
+            {
+                preparation: dom:create_description(E1, DescSet),
+                answer: {{ DescSet }}
+            }
+        ]
+    }     
+    
+    create_description(E1, DescSet) :-
+        if_then_else(
+            type(E1, T) type(Et, T) number_of(Et, 1), 
+            unify(DescSet, type(E1, T)),
+            if_then_else(
+                size_type(E1, ST) size_type(Ex, ST) number_of(Ex, 1),
+                unify(DescSet, size_type(E1, ST)),
+                if_then_else(
+                    color(E1, C) color(Ey, C) number_of(Ey, 1),
+                    unify(DescSet, color(E1, C)),
+                    if_then_else(
+                        color(E1, C) size_type(E1, ST) color(Ea, C) size_type(Ea, ST) number_of(Ea, 1),
+                        unify(DescSet, size_type(E1, ST) color(E1, ST)),
+                        support(E1, E2) create_description(E2, E2Desc) unify(DescSet, size_type(E1, ST) color(E1, ST) support(E1, E2) {{ E2Desc }})
+                    )                    
+                )
+            )
+        )
+        
+This looks good. I will try this out.        
+
+# 2020-09-25
+
+From 09-20:
+
+    - color(Id, Color) size_type(Id, SizeType)
+
+Can be implemented as: 
+
+- select color from E1: C
+- select size from E1: S
+- select all ids where color = C: Cc
+- select all ids where size = S: Sc
+- if Cs = 1, take color as unique property
+- if Sc = 1, take size as unique property
+- if the intersection of C ids and S ids = 1 id, take the combination of C and S as unique property
+
+
+    block:
+        describe: &describe_entity
+        
+    describe_entity(E1, Name) :- 
+        switch(
+            name(E1, Name),
+            color(E1, Color) count( color(E1, Color), 1) color_name(Color, ColorName) ...
+        )      
+
+Make sure the description can be generated in any language.                 
+
 # 2020-09-21
 
 I am moving entities.yml from db to domain, because it contains only domain references, and I want to extend it with properties I can use for interaction 18.
@@ -6,6 +79,15 @@ I am moving entities.yml from db to domain, because it contains only domain refe
 
 I added ASSERT and RETRACT for MySQL. You can now insert and delete information in a MySQL database.
 
+    block:
+        describe:
+            - name(Id, Name)
+            - color(Id, Color) size_type(Id, SizeType)
+            - support(Id, X)
+            - to_left(Id, Y)
+            
+Maybe I need generation rules to create the response. 
+            
 ===
 
 About interaction 18:

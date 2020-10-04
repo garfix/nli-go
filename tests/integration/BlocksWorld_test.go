@@ -67,7 +67,9 @@ func TestBlocksWorld(t *testing.T) {
 			{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
 				{"Is the small red block supported by a green block?", "Yes"},
 				{"Is a green block supported by the big red block?", "Yes"},
-				{"Does a green block support a pyramid?", "No"},
+				{"Does a green block support a pyramid?", "Yes"},
+
+			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
 		},
 		{
 		},

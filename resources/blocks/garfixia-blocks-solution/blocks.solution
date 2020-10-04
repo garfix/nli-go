@@ -30,6 +30,22 @@
         ]
     }
 
+    /* Which? */
+    {
+        condition: go:intent(which, A),
+        result: A,
+        responses: [
+            {
+                condition: go:exists(),
+                preparation: dom:describe(A, Desc),
+                answer: dom:root(A) {{ Desc }}
+            }
+            {
+                answer: dom:dont_know()
+            }
+        ]
+    }
+
     /* How many? */
     {
         condition: go:intent(how_many, E1),

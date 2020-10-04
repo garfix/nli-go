@@ -3,10 +3,12 @@
     dom:pyramid(E) :- is(E, pyramid);
     dom:table(E) :- is(E, table);
     dom:box(E) :- is(E, box);
+    dom:type(E, T) :- is(E, T);
     dom:named(E, Name) :- call(E, Name);
     dom:red(E) :- color(E, red);
     dom:blue(E) :- color(E, blue);
     dom:green(E) :- color(E, green);
+    dom:color(E, C) :- color(E, C);
 
     dom:at(E, X, Y, Z) :- at(E, X, Y, Z);
     dom:support(P, A, B) :- support(A, B);

@@ -23,7 +23,19 @@
  * a reference to a rule
  * list of terms
  
- Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 
+Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 
+ 
+ ## Relation set 
+ 
+A relation is a predicate followed by zero or more arguments, separated by commas and wrapped in parentheses.
+
+    predicate(arg1, arg2, ...)
+    
+A relation set is a list of relations. A relation set may contain relation tags like this:
+
+    relation() relation() {{ VarB }} relation() relation()
+    
+When binding the varables of this relation set, `{{ VarB }}` will be expanded to the value of variable `VarB`, which must be a relation set.         
 
 ## Comments
 

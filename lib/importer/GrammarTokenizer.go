@@ -31,6 +31,8 @@ const (
 	t_closing_parenthesis
 	t_opening_bracket
 	t_closing_bracket
+	t_double_opening_brace
+	t_double_closing_brace
 	t_opening_brace
 	t_closing_brace
 	t_negative
@@ -73,6 +75,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_closing_parenthesis, "\\)"},
 		{t_opening_bracket, "\\["},
 		{t_closing_bracket, "\\]"},
+		{t_double_opening_brace, "\\{\\{"},
+		{t_double_closing_brace, "\\}\\}"},
 		{t_opening_brace, "\\{"},
 		{t_closing_brace, "\\}"},
 		{t_negative, "-"},

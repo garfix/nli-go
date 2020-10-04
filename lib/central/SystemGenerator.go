@@ -22,6 +22,9 @@ func (gen SystemGenerator) generate(template mentalese.Relation, bindings mental
 	if predicate == mentalese.PredicateMakeAnd {
 		found = true
 		result = gen.makeAnd(template, bindings)
+	//} else if predicate == mentalese.PredicateIncludeRelations {
+	//	found = true
+	//	result = gen.processIncludes(template, bindings)
 	}
 
 	return result, found
@@ -79,3 +82,19 @@ func (gen SystemGenerator) makeAnd(template mentalese.Relation, bindings mentale
 
 	return result
 }
+//
+//func (gen SystemGenerator) processIncludes(relation mentalese.Relation, bindings mentalese.Bindings) mentalese.RelationSet {
+//
+//	newSet := mentalese.RelationSet{relation}
+//
+//	variable := relation.Arguments[0].TermValue
+//
+//	for _, binding := range bindings {
+//		term, found := binding[variable]
+//		if found {
+//			newSet = append(newSet, term.TermValueRelationSet...)
+//		}
+//	}
+//
+//	return newSet
+//}

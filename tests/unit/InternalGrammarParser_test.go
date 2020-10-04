@@ -74,4 +74,9 @@ func TestInternalGrammarParser(t *testing.T) {
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {
 		t.Error(set.String())
 	}
+
+	set2 := parser.CreateRelationSet("unify(A, parent(a, b)) {{ A }}")
+	if set2.String() != "unify(A, parent(a, b)) $go$_include_relations(A)" {
+		t.Error(set2.String())
+	}
 }

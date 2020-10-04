@@ -1,4 +1,19 @@
 [
+    { rule: s(E1) -> rel(E1),                                                   condition: dom:root(E1) dom:description(E1) }
+    { rule: rel(E1) -> np(E1) 'which' 'supports' np(E2),                        condition: dom:support(_, E1, E2) }
+    { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
+    { rule: qp(E1) -> 'the' }
+    { rule: nbar(E1) -> volume(E1) color(E1) noun(E1),                          condition: dom:color(E1, C) dom:volume(E1, V) }
+    { rule: nbar(E1) -> color(E1) noun(E1),                                     condition: dom:color(E1, C) }
+    { rule: nbar(E1) -> noun(E1) }
+    { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
+    { rule: noun(E1) -> 'pyramid',                                              condition: dom:type(E1, pyramid) }
+    { rule: noun(E1) -> 'block',                                                condition: dom:type(E1, block) }
+    { rule: color(E1) -> 'red',                                                 condition: dom:color(E1, red) }
+    { rule: color(E1) -> 'green',                                               condition: dom:color(E1, green) }
+    { rule: color(E1) -> 'blue',                                                condition: dom:color(E1, blue) }
+    { rule: volume(E1) -> 'large',                                              condition: dom:volume(E1, big) }
+
     { rule: proper_noun(E1) -> text(Name),                                      condition: dom:name(E1, Name) }
 
     { rule: s(S1) -> boolean(S1),                                               condition: dom:result(S1) }
@@ -15,6 +30,7 @@
 
     { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
     { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
+    { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
     { rule: multiple_proper_noun(C) -> proper_noun(C),                          condition: dom:name(C, Name) }
     { rule: multiple_proper_noun(C) -> proper_noun(P1),                         condition: go:and(C, P1, P1) }

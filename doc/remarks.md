@@ -1,3 +1,41 @@
+# 2020-10-04
+
+I had a problem with generation of text from a structure that contains multiple relations for the same entity
+
+    large(E1) green(E1) block(E1)
+    
+    { rule: adj(E1) -> 'large',                                                 condition: dom:volumne(E1, large) }
+    { rule: adj(E1) -> 'green',                                                 condition: dom:color(E1, green) }
+    
+Since the generator takes the first rule it can find, it will use only the first one; and 'green' will not be used.
+
+I tried to solve this by creating
+
+    { rule: nbar(E1) -> volume(E1) color(E1) noun(E1),                          condition: dom:color(E1, C) dom:volume(E1, V) }
+ 
+And this works for small grammars, but it is not extensible. 
+
+What I am going to do is that I will go back to more standard rewrite rules and introduce the restriction that a rule, together with a variable-binding can be used only once in a generation. This technique is also used by Earley to avoid left-recursion.  
+
+===
+
+The include syntax `{{ DescSet }}` is implemented as a relation `$go$_include_relations`. I chose this name so that the relation cannot be used explicity by the developer.
+
+The processing of `{{ DescSet }}` is now done by the variable binding functions. When a relation set is bound to variables `BindSimple()`, this process checks if the relation set contains a relation `$go$_include_relations` and if so, replaces this relation by its bound contents.
+
+# 2020-10-01
+
+    "The large green one which supports the red pyramid"
+    
+"The large green one"? The green blocks are both equally large (200x200x200)! So "large" provides no extra information and should have been left out.   
+
+# 2020-09-28
+
+`{{ DescSet }}` is like `call(DescSet)` with some subtle differences:
+
+- relations are inlined before generation
+- `call` does not export variables, while `{{ }}` does.
+
 # 2020-09-26
 
 I don't think its necessary to introduce a new entities.yml entry, nor a special command. The solution can call a domain rule to get a description.
@@ -16,7 +54,7 @@ So this interaction is not only about finding a unique description, but about bu
         condition: ...,
         responses: [
             {
-                preparation: dom:create_description(E1, DescSet),
+                preparation: dom:create_description(E999, DescSet),
                 answer: {{ DescSet }}
             }
         ]

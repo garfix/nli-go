@@ -234,10 +234,29 @@ func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 	boundRelations := RelationSet{}
 
 	for _, relation := range relations {
-		boundRelations = append(boundRelations, relation.BindSingle(binding))
+
+		if relation.Predicate == PredicateIncludeRelations {
+			boundRelations = append(boundRelations, relations.processIncludes(relation, binding)...)
+		} else {
+			boundRelations = append(boundRelations, relation.BindSingle(binding))
+		}
 	}
 
 	return boundRelations
+}
+
+func (relations RelationSet) processIncludes(relation Relation, binding Binding) RelationSet {
+
+	newSet := RelationSet{relation}
+
+	variable := relation.Arguments[0].TermValue
+
+	term, found := binding[variable]
+	if found {
+		newSet = term.TermValueRelationSet.BindSingle(binding)
+	}
+
+	return newSet
 }
 
 // Returns new relation sets, that have all variables bound to bindings

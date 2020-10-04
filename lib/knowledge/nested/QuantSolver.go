@@ -125,32 +125,36 @@ func (base *SystemNestedStructureBase) applyQuantifierForOr(leftQuant mentalese.
 
 	leftScopeCount := 0
 	rightScopeCount := 0
+	selectedLeftIds := []mentalese.Term{}
+	selectedRightIds := []mentalese.Term{}
 	selectedIds := []mentalese.Term{}
 	ok := false
 
 	for i := 0; i < len(orderedValues); i++ {
-		value := orderedValues[i].TermValue
-		if containsId(leftValues, value) {
+		value := orderedValues[i]
+		if containsId(leftValues, value.TermValue) {
 			leftScopeCount++
+			selectedLeftIds = append(selectedLeftIds, value)
 			if leftQuant.Predicate != mentalese.PredicateQuant {
 				ok = leftScopeCount == len(leftValues)
 			} else {
 				ok = base.tryQuantifier(leftQuant, len(leftValues), leftScopeCount, true)
 			}
 			if ok {
-				selectedIds = leftValues[0:leftScopeCount]
+				selectedIds = selectedLeftIds
 				break
 			}
 		}
-		if containsId(rightValues, value) {
+		if containsId(rightValues, value.TermValue) {
 			rightScopeCount++
+			selectedRightIds = append(selectedRightIds, value)
 			if rightQuant.Predicate != mentalese.PredicateQuant {
 				ok = rightScopeCount == len(rightValues)
 			} else {
 				ok = base.tryQuantifier(rightQuant, len(rightValues), rightScopeCount, true)
 			}
 			if ok {
-				selectedIds = rightValues[0:rightScopeCount]
+				selectedIds = selectedRightIds
 				break
 			}
 		}

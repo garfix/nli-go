@@ -34,13 +34,29 @@ func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, binding
 
 		if !generatorUsed {
 
-			if len(bindings) == 0 {
+			//if len(bindings) == 0 {
 				newSet = append(newSet, templateRelation)
-			} else {
-				relations := templateRelation.BindMultiple(bindings)
-				newSet = newSet.Merge(relations)
-			}
+			//} else {
+				//relations := templateRelation.BindMultiple(bindings)
+				//newSet = newSet.Merge(relations)
+			//}
 
+		}
+	}
+
+// todo remove ^ that by moving make_and
+
+	template = newSet
+
+	if len(bindings) == 0 {
+		newSet = template
+	} else {
+
+		sets := template.BindRelationSetMultipleBindings(bindings)
+
+		newSet = mentalese.RelationSet{}
+		for _, set := range sets {
+			newSet = newSet.Merge(set)
 		}
 	}
 

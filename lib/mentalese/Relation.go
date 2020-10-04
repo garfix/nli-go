@@ -35,6 +35,7 @@ const PredicateExists = "go_exists"
 const PredicateExec = "go_exec"
 const PredicateExecResponse = "go_exec_response"
 const PredicateMakeAnd = "go_make_and"
+const PredicateIncludeRelations = "$go$_include_relations"
 
 const PredicateSplit = "go_split"
 const PredicateJoin = "go_join"

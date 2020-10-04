@@ -127,6 +127,8 @@
     { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: go:quant_check($np, dom:contain(P1, E1, E2)) }
     { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: go:quant_check($np, $past_participle) }
 
+    { rule: which_clause(P1, E2) -> aux_be(_) 'sitting' 'on' np(E1),                    sense: go:quant_check($np1, dom:support(P1, E1, E2)) }
+
     { rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
 
     { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
@@ -134,6 +136,7 @@
     { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: go:quant_check($np, go:not($pp)) }
 
     { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: go:intent(what, E1) }
+    { rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: go:intent(how_many, E1) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }

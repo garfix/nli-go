@@ -368,18 +368,30 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int, useAlias bool) ([]mentalese.Relation, int, bool) {
 
+	relation := mentalese.Relation{}
 	relationSet := mentalese.RelationSet{}
+	newStartIndex := 0
+	found:= false
 	ok := false
 
 	for startIndex < len(tokens) {
-		relation, newStartIndex, found := parser.parseRelation(tokens, startIndex, true)
+
+		relation, newStartIndex, found = parser.parseRelationTag(tokens, startIndex)
 		if found {
 			relationSet = append(relationSet, relation)
 			startIndex = newStartIndex
 			ok = true
-		} else {
-			break
+			continue
 		}
+
+		relation, newStartIndex, found = parser.parseRelation(tokens, startIndex, true)
+		if found {
+			relationSet = append(relationSet, relation)
+			startIndex = newStartIndex
+			ok = true
+			continue
+		}
+		break
 	}
 
 	if !ok {
@@ -392,12 +404,32 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 		}
 	}
 
-	_, _, found := parser.parseSingleToken(tokens, startIndex, t_implication)
+	_, _, found = parser.parseSingleToken(tokens, startIndex, t_implication)
 	if found {
 		ok = false
 	}
 
 	return relationSet, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseRelationTag(tokens []Token, startIndex int) (mentalese.Relation, int, bool) {
+
+	found := false
+	relation := mentalese.Relation{}
+	tag := ""
+
+	_, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_double_opening_brace)
+	if found {
+		tag, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_variable)
+		if found {
+			relation = mentalese.NewRelation(true, mentalese.PredicateIncludeRelations, []mentalese.Term{
+				mentalese.NewTermVariable(tag),
+			})
+			_, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_double_closing_brace)
+		}
+	}
+
+	return relation, startIndex, found
 }
 
 func (parser *InternalGrammarParser) parseSortRelations(tokens []Token, startIndex int) ([]mentalese.SortRelation, int, bool) {

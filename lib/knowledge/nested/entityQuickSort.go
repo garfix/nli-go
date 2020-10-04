@@ -64,10 +64,10 @@ func (base *SystemNestedStructureBase) compare(id1 mentalese.Term, id2 mentalese
 	}
 
 	r := values[0]
-	value, err := strconv.Atoi(r)
+	value, err := strconv.Atoi(r.TermValue)
 
 	if err != nil {
-		base.log.AddError("order compare function " + orderFunction + " returned " + r)
+		base.log.AddError("order compare function " + orderFunction + " returned " + r.TermValue)
 		return 0
 	}
 

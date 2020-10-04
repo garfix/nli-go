@@ -39,7 +39,7 @@ allows you to fetch this extra information.
 
 A special function of "answer" is "make_and().
 
-    answer: root(R) name(A, N) make_and(A, R)
+    preparation: make_and(A, And, R)
 
 This construction allows you to create a nested structure of AND's, so that you can respond with
 

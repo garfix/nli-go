@@ -21,8 +21,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(B, N),
-                answer: dom:name(B, N) go:make_and(B, R) dom:root(R)
+                preparation: dom:name(B, N) go:make_and(B, R, And),
+                answer: dom:name(B, N) dom:root(R) {{ And }}
             }
             {
                 answer: dom:dont_know()
@@ -69,8 +69,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(B, N),
-                answer: dom:name(B, N) go:make_and(B, R) dom:select(R)
+                preparation: dom:name(B, N) go:make_and(B, R, And),
+                answer: dom:name(B, N) {{ And }} dom:select(R)
             }
             {
                 answer: dom:none()
@@ -85,8 +85,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(B, N),
-                answer: dom:name(B, N) go:make_and(B, R) dom:select_subject(R)
+                preparation: dom:name(B, N) go:make_and(B, R, And),
+                answer: dom:name(B, N) dom:select_subject(R) {{ And }}
             }
             {
                 answer: dom:none()
@@ -100,8 +100,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(B, N),
-                answer: dom:name(B, N) go:make_and(B, R) dom:select(R)
+                preparation: dom:name(B, N) go:make_and(B, R, And),
+                answer: dom:name(B, N)  {{ And }} dom:select(R)
             }
             {
                 answer: dom:result(false)

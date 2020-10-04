@@ -69,8 +69,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(A, N),
-                answer: dom:root(R) dom:name(A, N) go:make_and(A, R)
+                preparation: dom:name(A, N) go:make_and(A, R, And),
+                answer: dom:root(R) dom:name(A, N) {{ And }}
             }
             {
                 answer: dom:none()

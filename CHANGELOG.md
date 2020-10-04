@@ -4,6 +4,7 @@
 
 * nli executable allows interactive session 
 * insert / delete in MySQL
+* relation tags {{ Variable }} to help generate compound sentences
 
 ## 1.11 modules - 13-09-2020
 

@@ -55,9 +55,9 @@ func (bindings Bindings) GetDistinctValueCount(variable string) int {
 	return count
 }
 
-func (bindings Bindings) GetDistinctValues(variable string) []string {
+func (bindings Bindings) GetDistinctValues(variable string) []Term {
 	idMap := map[string]bool{}
-	values := []string{}
+	values := []Term{}
 
 	for _, binding := range bindings {
 		for key, value := range binding {
@@ -66,7 +66,7 @@ func (bindings Bindings) GetDistinctValues(variable string) []string {
 			}
 			found := idMap[value.String()]
 			if !found {
-				values = append(values, value.TermValue)
+				values = append(values, value)
 				idMap[value.String()] = true
 			}
 		}

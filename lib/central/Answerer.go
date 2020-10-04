@@ -19,7 +19,6 @@ type Answerer struct {
 func NewAnswerer(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
 
 	builder := NewRelationSetBuilder()
-	builder.addGenerator(NewSystemGenerator())
 
 	return &Answerer{
 		solutions: []mentalese.Solution{},

@@ -17,7 +17,12 @@ func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregate
 }
 
 func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{mentalese.PredicateNumberOf, mentalese.PredicateFirst, mentalese.PredicateExists}
+	predicates := []string{
+		mentalese.PredicateNumberOf,
+		mentalese.PredicateFirst,
+		mentalese.PredicateExists,
+		mentalese.PredicateMakeAnd,
+	}
 
 	for _, p := range predicates {
 		if p == predicate {
@@ -77,7 +82,7 @@ func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mental
 	} else {
 		for _, binding := range bindings {
 			newBinding := binding.Copy()
-			newBinding[subjectVariable] = mentalese.NewTermString(distinctValues[0])
+			newBinding[subjectVariable] = distinctValues[0]
 			newBindings = append(newBindings, newBinding)
 		}
 	}
@@ -94,6 +99,74 @@ func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings menta
 	return bindings
 }
 
+func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+
+	if !Validate(input, "vvv", base.log) {
+		return mentalese.Bindings{}
+	}
+
+	result := mentalese.RelationSet{}
+	entityVar := input.Arguments[0].TermValue
+	rootTerm := input.Arguments[1]
+	andVar := input.Arguments[2].TermValue
+
+	parentValue := rootTerm
+
+	uniqueValues := bindings.GetDistinctValues(entityVar)
+
+	for i := 0; i < len(uniqueValues)-2; i++ {
+
+		value := uniqueValues[i]
+
+		rightValue := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
+
+		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+			parentValue,
+			value,
+			rightValue,
+		})
+
+		result = append(result, relation)
+		parentValue = rightValue
+	}
+
+	if len(uniqueValues) > 1 {
+
+		beforeLastValue := uniqueValues[len(bindings)-2]
+		lastValue := uniqueValues[len(bindings)-1]
+
+		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+			parentValue,
+			beforeLastValue,
+			lastValue,
+		})
+
+		result = append(result, relation)
+
+	} else if len(uniqueValues) == 1 {
+
+		onlyValue := uniqueValues[0]
+
+		relation := mentalese.NewRelation(true,mentalese.PredicateAnd, []mentalese.Term{
+			parentValue,
+			onlyValue,
+			onlyValue,
+		})
+
+		result = append(result, relation)
+	}
+
+	newBindings := mentalese.Bindings{}
+
+	for _, binding := range bindings {
+		newBinding := binding.Copy()
+		newBinding[andVar] = mentalese.NewTermRelationSet(result)
+		newBindings = append(newBindings, newBinding)
+	}
+
+	return newBindings
+}
+
 func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
 
 	newBindings := bindings
@@ -106,6 +179,8 @@ func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings ment
 		newBindings = base.first(input, bindings)
 	case mentalese.PredicateExists:
 		newBindings = base.exists(input, bindings)
+	case mentalese.PredicateMakeAnd:
+		newBindings = base.makeAnd(input, bindings)
 	default:
 		found = false
 	}

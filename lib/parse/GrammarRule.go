@@ -1,6 +1,9 @@
 package parse
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
+)
 
 type GrammarRule struct {
 	// relation -> relation word-form
@@ -57,6 +60,23 @@ func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }
 
+func (rule GrammarRule) BindSimple(binding mentalese.Binding) GrammarRule {
+	bound := rule.Copy()
+
+	for i, variables := range rule.EntityVariables {
+		for j, variable := range variables {
+			val, found := binding[variable]
+			if found {
+				bound.EntityVariables[i][j] = val.String()
+			}
+		}
+	}
+
+	bound.Sense = bound.Sense.BindSingle(binding)
+
+	return bound
+}
+
 // returns the index of the consequent specified by, for example: np2
 func (rule GrammarRule) FindConsequentIndex(category string, catIndex int) int {
 
@@ -102,9 +122,9 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 
 func (rule GrammarRule) Copy() GrammarRule {
 	return GrammarRule{
-		PositionTypes:		 rule.PositionTypes,
-		SyntacticCategories: rule.SyntacticCategories,
-		EntityVariables:     rule.EntityVariables,
+		PositionTypes:		 common.StringArrayCopy(rule.PositionTypes),
+		SyntacticCategories: common.StringArrayCopy(rule.SyntacticCategories),
+		EntityVariables:     common.StringMatrixCopy(rule.EntityVariables),
 		Sense:               rule.Sense.Copy(),
 	}
 }

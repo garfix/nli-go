@@ -25,7 +25,7 @@
     { rule: object(E) -> objective_personal_pronoun(E),                           condition: dom:gender(E, _) }
     { rule: object(E) -> multiple_proper_noun(E) }
 
-    { rule: date_formatted(Date) -> month_name(Date, M) text(D) ',' text(Y),      condition: dom:date(Date, D, M, Y) }
+    { rule: date_formatted(Date) -> month_name(Date) text(D) ',' text(Y),         condition: dom:date(Date, D, M, Y) }
 
     { rule: proper_noun(E1) -> text(Name),                                        condition: dom:name(E1, Name) }
 
@@ -63,16 +63,16 @@
     { rule: subjective_personal_pronoun(E) -> 'he',	                              condition: dom:gender(E, male) }
     { rule: subjective_personal_pronoun(E) -> 'she',	                          condition: dom:gender(E, female) }
 
-    { rule: month_name(Date, E) -> 'January',      condition: dom:date(Date, _, '01', _) }
-    { rule: month_name(Date, E) -> 'February',     condition: dom:date(Date, _, '02', _) }
-    { rule: month_name(Date, E) -> 'March',        condition: dom:date(Date, _, '03', _) }
-    { rule: month_name(Date, E) -> 'April',        condition: dom:date(Date, _, '04', _) }
-    { rule: month_name(Date, E) -> 'May',          condition: dom:date(Date, _, '05', _) }
-    { rule: month_name(Date, E) -> 'June',         condition: dom:date(Date, _, '06', _) }
-    { rule: month_name(Date, E) -> 'July',         condition: dom:date(Date, _, '07', _) }
-    { rule: month_name(Date, E) -> 'August',       condition: dom:date(Date, _, '08', _) }
-    { rule: month_name(Date, E) -> 'September',    condition: dom:date(Date, _, '09', _) }
-    { rule: month_name(Date, E) -> 'October',      condition: dom:date(Date, _, '10', _) }
-    { rule: month_name(Date, E) -> 'November',     condition: dom:date(Date, _, '11', _) }
-    { rule: month_name(Date, E) -> 'December',     condition: dom:date(Date, _, '12', _) }
+    { rule: month_name(Date) -> 'January',      condition: dom:date(Date, _, '01', _) }
+    { rule: month_name(Date) -> 'February',     condition: dom:date(Date, _, '02', _) }
+    { rule: month_name(Date) -> 'March',        condition: dom:date(Date, _, '03', _) }
+    { rule: month_name(Date) -> 'April',        condition: dom:date(Date, _, '04', _) }
+    { rule: month_name(Date) -> 'May',          condition: dom:date(Date, _, '05', _) }
+    { rule: month_name(Date) -> 'June',         condition: dom:date(Date, _, '06', _) }
+    { rule: month_name(Date) -> 'July',         condition: dom:date(Date, _, '07', _) }
+    { rule: month_name(Date) -> 'August',       condition: dom:date(Date, _, '08', _) }
+    { rule: month_name(Date) -> 'September',    condition: dom:date(Date, _, '09', _) }
+    { rule: month_name(Date) -> 'October',      condition: dom:date(Date, _, '10', _) }
+    { rule: month_name(Date) -> 'November',     condition: dom:date(Date, _, '11', _) }
+    { rule: month_name(Date) -> 'December',     condition: dom:date(Date, _, '12', _) }
 ]

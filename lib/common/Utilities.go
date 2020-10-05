@@ -14,6 +14,26 @@ func IntArrayCopy(original []int) []int {
 	return copiedArray
 }
 
+func StringArrayCopy(original []string) []string {
+	copiedArray := []string{}
+	for _, element := range original {
+		copiedArray = append(copiedArray, element)
+	}
+	return copiedArray
+}
+
+func StringMatrixCopy(original [][]string) [][]string {
+	copiedArray := [][]string{}
+	for _, array := range original {
+		anArray := []string{}
+		for _, element := range array {
+			anArray = append(anArray, element)
+		}
+		copiedArray = append(copiedArray, anArray)
+	}
+	return copiedArray
+}
+
 func IntArrayContains(haystack []int, needle int) bool {
 	for _, value := range haystack {
 		if needle == value {

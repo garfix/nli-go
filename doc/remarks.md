@@ -1,3 +1,11 @@
+# 2020-10-05
+
+I fininished interaction 18! Today I cleaned up the generation grammar, by using the technique that each rule could be used only once with a particular binding.
+
+This way I could use left recursion for `nbar -> adj nbar`. 
+
+I noticed that I could not do without categories like `color` and `volume`. It was not possible to make these `adj`. But I think this is not a problem. 
+
 # 2020-10-04
 
 I had a problem with generation of text from a structure that contains multiple relations for the same entity
@@ -789,6 +797,37 @@ Todo's:
 * handle exceptions by determining precedence
 * write tests
 * write documentation
+
+# 2020-05-23
+
+(4 october: I just found this entry in another editor, don't know why I removed it earlier)
+
+I thought about the three-valued logic that I need: true, false, unknown/unprovable/not-found.
+
+In Prolog something is either true or false. If something cannot be proven, it is false. This is the closed world assumption. I need an open world assumption. If the database has no information about someone's father, it does not mean he didn't have one.
+
+On the other hand, if I need to know if there is an object on a certain location, and the database does not have a record of an object at that location, I want the system to deduce that there isn't an object at that location, rather than that it doesn't know.
+
+So in some cases I want open world, and in other cases I want closed world. This made me wonder in what cases I want closed world. Are some knowledge bases closed world and others open world? Or just for some predicates? Or for some objects? Maybe the knowledge base itself can tell in what cases it is closed world?
+
+That last thought proved quite easy to implement:
+
+    not(pred(X)) :- empty(pred(X));
+
+Here `empty` is a new predicate that tells us if `pred(X)` gives any results. The rule says: if `pred(X)` gives no results, then `pred(X)` is not true.
+
+You'll also notice the syntax `not(pred(X))`. `not()` simply means _not true_. I dropped the idea of `-pred(X)` as a syntax, because `-` is not a predicate, and so I could not use it to nest predicates, as in `not(P)` where P is a variable relation. It now appears that there's a second order expression in the left-hand of the rule, but that's just appearance. Internally, the relation will just get a 'negative' flag.
+
+This is the `not()` in the rule. It is syntactically the same as the `not()` in expressions, but semantically it is different. 
+
+`not(pred(X))` as a goal in an expression succeeds only if `not(pred(X))` can be deduced. This is the case if `not(pred(X))` is stated as a fact, or, more common, that it is the left hand of a rule that succeeds.
+
+Special cases are the predicates `and` and `or`, which need to be handled as follows:
+
+    `not(and(X, Y)) :- empty(and(X, Y));
+    `not(or(X, Y)) :- empty(or(X, Y));
+    
+This tells us that not-or succeeds if or gives no results.    
 
 # 2020-05-22
 

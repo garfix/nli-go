@@ -1,3 +1,9 @@
+# 2020-10-06
+
+Before, I had introduced names for objects in the blocks world, like "the blue cube". So that I could use these names in the answers. However, SHRDLU generates these names based on these distinguishing characteristics. Since I can do that too, now, I thought it would be nice to remove the names from the blocks database. And it worked! 
+
+For this to work I had to introduce the predicate `shape`, which is always the same as `type`, except when type is a block and its dimensions are the same; then it is a cube.
+
 # 2020-10-05
 
 I fininished interaction 18! Today I cleaned up the generation grammar, by using the technique that each rule could be used only once with a particular binding.

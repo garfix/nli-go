@@ -13,4 +13,5 @@
     cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);
     taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
     narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
+    shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );
 ]

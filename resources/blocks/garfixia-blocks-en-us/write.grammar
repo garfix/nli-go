@@ -1,6 +1,7 @@
 [
     { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
     { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(_, E1, E2) }
+
     { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
     { rule: qp(E1) -> 'the' }
 
@@ -9,14 +10,18 @@
     { rule: nbar(E1) -> noun(E1) }
 
     { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
-    { rule: noun(E1) -> 'pyramid',                                              condition: dom:type(E1, pyramid) }
-    { rule: noun(E1) -> 'block',                                                condition: dom:type(E1, block) }
+    { rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
+    { rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
+    { rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }
+    { rule: noun(E1) -> 'box',                                                  condition: dom:shape(E1, box) }
+    { rule: noun(E1) -> 'table',                                                condition: dom:shape(E1, table) }
 
     { rule: color(E1) -> 'red',                                                 condition: dom:color(E1, red) }
     { rule: color(E1) -> 'green',                                               condition: dom:color(E1, green) }
     { rule: color(E1) -> 'blue',                                                condition: dom:color(E1, blue) }
 
     { rule: volume(E1) -> 'large',                                              condition: dom:volume(E1, big) }
+    { rule: volume(E1) -> 'small',                                              condition: dom:volume(E1, small) }
 
     { rule: s(S1) -> boolean(S1),                                               condition: dom:result(S1) }
     { rule: boolean(B1) -> 'yes',                                               condition: dom:result(true) }
@@ -25,19 +30,21 @@
     { rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
     { rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
 
-    { rule: s(S1) -> multiple_proper_noun(S1),                                  condition: dom:root(S1) go:and(S1, C1, C2) }
-    { rule: s(S1) -> 'yes' ',' multiple_proper_noun(S1),                        condition: dom:select(S1) go:and(S1, C1, C2) }
-    { rule: s(S1) -> 'yes' ',' 'by' multiple_proper_noun(S1),                   condition: dom:select_subject(S1) go:and(S1, C1, C2) }
+    { rule: s(S1) -> multiple_entities(S1),                                     condition: dom:root(S1) go:and(S1, C1, C2) }
+    { rule: s(S1) -> 'yes' ',' multiple_entities(S1),                           condition: dom:select(S1) go:and(S1, C1, C2) }
+    { rule: s(S1) -> 'yes' ',' 'by' multiple_entities(S1),                      condition: dom:select_subject(S1) go:and(S1, C1, C2) }
     { rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
     { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
     { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
     { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-    { rule: multiple_proper_noun(C) -> proper_noun(C),                          condition: dom:name(C, Name) }
-    { rule: multiple_proper_noun(C) -> proper_noun(P1),                         condition: go:and(C, P1, P1) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) ',' multiple_proper_noun(P2),           condition: go:and(C, P1, P2) go:and(P2, _, _) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) 'and' multiple_proper_noun(P2),         condition: go:and(C, P1, P2) }
+    { rule: multiple_entities(C) -> np(C),                                      condition: dom:description(C) }
+    { rule: multiple_entities(C) -> np(P1),                                     condition: go:and(C, P1, P1) dom:description(P1) }
+    { rule: multiple_entities(C) -> proper_noun(C),                             condition: dom:name(C, Name) }
+    { rule: multiple_entities(C) -> proper_noun(P1),                            condition: go:and(C, P1, P1) }
+    { rule: multiple_entities(C) -> multiple_entities(P1) ',' multiple_entities(P2),           condition: go:and(C, P1, P2) go:and(P2, _, _) }
+    { rule: multiple_entities(C) -> multiple_entities(P1) 'and' multiple_entities(P2),         condition: go:and(C, P1, P2) }
 
     { rule: proper_noun(E1) -> text(Name),                                      condition: dom:name(E1, Name) }
 

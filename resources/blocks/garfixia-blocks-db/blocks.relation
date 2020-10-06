@@ -12,17 +12,6 @@
     is(`:friend`, person)
     is(`:hand`, hand)
 
-    name(`block:b1`, 'the red cube')
-    name(`block:b3`, 'the block b3')
-    name(`block:b6`, 'the block b6')
-    name(`block:b7`, 'the block b7')
-    name(`block:b10`, 'the blue block')
-    name(`pyramid:b2`, 'the pyramid b2')
-    name(`pyramid:b4`, 'the blue pyramid')
-    name(`pyramid:b5`, 'the pyramid b5')
-    name(`box:box`, 'the box')
-    name(`table:table`, 'the table')
-
     is(red, color)
     is(blue, color)
     is(green, color)

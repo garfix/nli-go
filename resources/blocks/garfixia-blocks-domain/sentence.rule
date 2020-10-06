@@ -59,21 +59,21 @@
         );
 
     describe(E1, DescSet) :-
-        type(E1, T)
+        shape(E1, T)
         color(E1, C)
         volume(E1, V)
         go:if_then_else(
-            type(E2, T) go:number_of(E2, 1),
-            go:unify(DescSet, description(E1) type(E1, T)),
+            shape(E2, T) go:number_of(E2, 1),
+            go:unify(DescSet, description(E1) shape(E1, T)),
             go:if_then_else(
-                type(E2, T) color(E2, C) go:number_of(E2, 1),
-                go:unify(DescSet, description(E1) type(E1, T) color(E1, C)),
+                shape(E2, T) color(E2, C) go:number_of(E2, 1),
+                go:unify(DescSet, description(E1) shape(E1, T) color(E1, C)),
                 go:if_then_else(
-                    type(E2, T) color(E2, C) volume(E2, V) go:number_of(E2, 1),
-                    go:unify(DescSet, description(E1) type(E1, T) color(E1, C) volume(E1, V)),
+                    shape(E2, T) color(E2, C) volume(E2, V) go:number_of(E2, 1),
+                    go:unify(DescSet, description(E1) shape(E1, T) color(E1, C) volume(E1, V)),
                     support(_, E1, E3) describe(E3, E3Desc)
                     go:unify(DescSet,
-                        description(E1) type(E1, T) color(E1, C) volume(E1, V)
+                        description(E1) shape(E1, T) color(E1, C) volume(E1, V)
                         support(_, E1, E3)
                         description(E3) {{ E3Desc }})
                 )

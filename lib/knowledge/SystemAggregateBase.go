@@ -101,66 +101,42 @@ func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings menta
 
 func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 
-	if !Validate(input, "vvv", base.log) {
+	if !Validate(input, "vv", base.log) {
 		return mentalese.Bindings{}
 	}
 
-	result := mentalese.RelationSet{}
 	entityVar := input.Arguments[0].TermValue
-	rootTerm := input.Arguments[1]
-	andVar := input.Arguments[2].TermValue
-
-	parentValue := rootTerm
+	andVar := input.Arguments[1].TermValue
 
 	uniqueValues := bindings.GetDistinctValues(entityVar)
+	relation := mentalese.Relation{}
+	count := len(uniqueValues)
 
-	for i := 0; i < len(uniqueValues)-2; i++ {
-
-		value := uniqueValues[i]
-
-		rightValue := mentalese.Term{TermType: mentalese.TermTypeVariable, TermValue: rootTerm.TermValue + strconv.Itoa(i+1)}
-
-		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
-			parentValue,
-			value,
-			rightValue,
+	if count == 0 {
+		return bindings
+	} else if count == 1 {
+		relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+			uniqueValues[0],
+			uniqueValues[0],
 		})
-
-		result = append(result, relation)
-		parentValue = rightValue
-	}
-
-	if len(uniqueValues) > 1 {
-
-		beforeLastValue := uniqueValues[len(bindings)-2]
-		lastValue := uniqueValues[len(bindings)-1]
-
-		relation := mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
-			parentValue,
-			beforeLastValue,
-			lastValue,
+	} else {
+		relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+			uniqueValues[count - 2],
+			uniqueValues[count - 1],
 		})
-
-		result = append(result, relation)
-
-	} else if len(uniqueValues) == 1 {
-
-		onlyValue := uniqueValues[0]
-
-		relation := mentalese.NewRelation(true,mentalese.PredicateAnd, []mentalese.Term{
-			parentValue,
-			onlyValue,
-			onlyValue,
-		})
-
-		result = append(result, relation)
+		for i := len(uniqueValues)-3; i >= 0 ; i-- {
+			relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+				uniqueValues[i],
+				mentalese.NewTermRelationSet(mentalese.RelationSet{ relation }),
+			})
+		}
 	}
 
 	newBindings := mentalese.Bindings{}
 
 	for _, binding := range bindings {
 		newBinding := binding.Copy()
-		newBinding[andVar] = mentalese.NewTermRelationSet(result)
+		newBinding[andVar] = mentalese.NewTermRelationSet(mentalese.RelationSet{ relation })
 		newBindings = append(newBindings, newBinding)
 	}
 

@@ -316,6 +316,30 @@ func (set RelationSet) UnScope() RelationSet {
 	return unscoped
 }
 
+// Returns set, but appends it with all its child relation sets, recursively
+func (set RelationSet) ExpandChildren() RelationSet {
+
+	expanded := RelationSet{}
+
+	for _, relation := range set {
+
+		for i, argument := range relation.Arguments {
+			if argument.IsRelationSet() {
+				child := relation.Arguments[i].TermValueRelationSet
+				expanded = append(expanded, child.ExpandChildren()...)
+			} else if argument.IsRule() {
+				// no need for implementation
+			} else if argument.IsList() {
+				// no need for implementation
+			}
+		}
+
+		expanded = append(expanded, relation)
+	}
+
+	return expanded
+}
+
 // Returns all relations with variable as argument; those relations have other variables, find all relations with those as well
 func (set RelationSet) findRelationsStartingWithVariable(variable string) RelationSet {
 

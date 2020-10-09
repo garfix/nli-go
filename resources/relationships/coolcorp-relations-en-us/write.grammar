@@ -1,6 +1,6 @@
 [
     { rule: s(S1) -> boolean(S1),                                                 condition: dom:result(S1) }
-    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: go:and(S1, C1, C2) dom:root(S1) }
+    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: dom:root(go:and(S1, _)) }
     { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: dom:married_to(E1, E2) }
     { rule: s(S1) -> subject(E2) have(S1) text(N) child(E1),                      condition: dom:have_child(E1, E2) go:count(E1, N) }
 
@@ -12,10 +12,11 @@
 
     { rule: proper_noun(E1) -> text(Name),                                        condition: dom:name(E1, Name) }
 
-    { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: dom:name(C, Name) }
-    { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: go:and(C, P1, P1) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) ',' multiple_proper_noun(P2),           condition: go:and(C, P1, P2) go:and(P2, _, _) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) 'and' multiple_proper_noun(P2),         condition: go:and(C, P1, P2) }
+    { rule: multiple_proper_noun(E1) -> proper_noun(E1),                                        condition: go:and(E1, E1) }
+    { rule: multiple_proper_noun(E1) -> proper_noun(E1) ',' multiple_proper_noun(E2),           condition: go:and(E1, go:and(E2, _)) }
+    { rule: multiple_proper_noun(E1) -> proper_noun(E1) 'and' multiple_proper_noun(E2),         condition: go:and(E1, E2) }
+
+    { rule: multiple_proper_noun(E1) -> proper_noun(E1),                          condition: dom:name(E1, Name) }
 
     { rule: boolean(B1) -> 'yes',                       condition: dom:result(true) }
     { rule: boolean(B1) -> 'no',                        condition: dom:result(false) }

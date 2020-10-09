@@ -8,7 +8,7 @@
     { rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                      condition: dom:have_child(E1, E2) go:count(E2, N) }
     { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) 'on' date_formatted(D2),     condition: dom:birth_date(D1, D2) }
     { rule: s(S1) -> subject(E1) die(S1) 'on' date_formatted(D2),                 condition: dom:death_date(D1, D2) }
-    { rule: s(S1) -> multiple_proper_noun(S1),                                    condition: dom:root(S1) go:and(S1, C1, C2) }
+    { rule: s(S1) -> entities(S1),                                                condition: dom:root(go:and(S1, _))  }
     { rule: s(S1) -> date_formatted(D2),                                          condition: dom:root(D1) dom:date(D1, Y, M, D) }
 
     { rule: s(S1) -> subject(E1) 'is' text(Age) year(Age) old(E1) '(' bear(S1) 'on' date_formatted(BirthDate) ')',
@@ -20,23 +20,24 @@
                                                                                   condition: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) }
 
     { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: dom:gender(E, _) }
-    { rule: subject(E) -> multiple_proper_noun(E) }
+    { rule: subject(E) -> entities(E) }
 
     { rule: object(E) -> objective_personal_pronoun(E),                           condition: dom:gender(E, _) }
-    { rule: object(E) -> multiple_proper_noun(E) }
+    { rule: object(E) -> entities(E) }
 
     { rule: date_formatted(Date) -> month_name(Date) text(D) ',' text(Y),         condition: dom:date(Date, D, M, Y) }
 
+    { rule: entities(And) -> entities(E1),                                        condition: go:unify(And, go:and(E1, _))  }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(E1, E1) }
+    { rule: entities(E1) -> entity(E1) ',' entities(E2),                          condition: go:and(E1, go:and(E2, _)) }
+    { rule: entities(E1) -> entity(E1) 'and' entities(E2),                        condition: go:and(E1, E2) }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(_, E1) }
+    { rule: entities(E1) -> entity(E1) }
+
+    { rule: entity(E1) -> proper_noun(E1) }
+
     { rule: proper_noun(E1) -> text(Name),                                        condition: dom:name(E1, Name) }
 
-    { rule: multiple_proper_noun(C) -> proper_noun(C),                            condition: dom:name(C, Name) }
-    { rule: multiple_proper_noun(C) -> proper_noun(P1),                           condition: go:and(C, P1, P1) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) ',' multiple_proper_noun(P2),
-                                                                                  condition: go:and(C, P1, P2) go:and(P2, _, _) }
-    { rule: multiple_proper_noun(C) -> multiple_proper_noun(P1) 'and' multiple_proper_noun(P2),
-                                                                                  condition: go:and(C, P1, P2) }
-    
-    
     { rule: boolean(B1) -> 'yes',                                                 condition: dom:result(true) }
     { rule: boolean(B1) -> 'no',                                                  condition: dom:result(false) }
 

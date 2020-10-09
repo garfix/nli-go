@@ -6,8 +6,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:make_and(A, R, And),
-                answer: dom:gender(B, G) dom:name(A, N) {{ And }} dom:married_to(R, B)
+                preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:make_and(A, And),
+                answer: dom:gender(B, G) dom:name(A, N) dom:married_to({{ And }}, B)
             }
             {
                 answer: dom:dont_know()
@@ -175,8 +175,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:name(B, N, canonical_name) go:make_and(B, R, And),
-                answer: dom:name(B, N)  dom:root(R) {{ And }}
+                preparation: dom:name(B, N, canonical_name) go:make_and(B, And),
+                answer: dom:name(B, N)  dom:root({{ And }})
             }
             {
                 answer: dom:dont_know()

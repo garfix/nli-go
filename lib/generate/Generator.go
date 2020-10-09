@@ -34,6 +34,10 @@ func (generator *Generator) Generate(grammarRules *parse.GrammarRules, sentenceS
 
 	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
 
+	boundSense = boundSense.ExpandChildren()
+
+	generator.log.AddProduction("Unscoped 2", fmt.Sprintf("%v", boundSense))
+
 	return generator.GenerateNode(grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense)
 }
 
@@ -44,11 +48,15 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 
 	words := []string{}
 
+	generator.log.StartProduction("Generate", fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
+
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
 	rule, binding, ok := generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 
 	if ok {
+
+		generator.log.AddProduction("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String()))
 
 		for i, consequentCategory := range rule.GetConsequents() {
 			consequentValue := generator.getConsequentValue(rule, i, binding)
@@ -57,8 +65,12 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 			words = append(words, consequent...)
 		}
 	} else {
-		generator.log.AddError("Cannot generate response for syntax node " + antecedentCategory)
+		generator.log.AddError("No rule found for " + fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
+
+		rule, binding, ok = generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 	}
+
+	generator.log.EndProduction("Generate", fmt.Sprintf("%v", words))
 
 	return words
 }
@@ -95,7 +107,7 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 		ruleAntecedentVariable := rule.GetAntecedentVariables()[0]
 		binding = mentalese.Binding{}
 
-		if antecedentValue.TermValue != "" {
+		if !(antecedentValue.IsString() && antecedentValue.TermValue == "") {
 			binding[ruleAntecedentVariable] = antecedentValue
 		}
 

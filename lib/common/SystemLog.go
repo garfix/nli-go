@@ -47,18 +47,18 @@ func (log *SystemLog) ToggleDebug() {
 }
 
 func (log *SystemLog) AddProduction(name string, production string) {
-	stmt := strings.Repeat("  ", log.debugDepth) + name + ": " + production + " "
+	stmt := strings.Repeat("| ", log.debugDepth) + name + ": " + production + " "
 	log.productions = append(log.productions, stmt)
 }
 
 func (log *SystemLog) StartProduction(name string, production string) {
-	log.AddProduction(name, production)
+	log.AddProduction("╭ " + name, production)
 	log.debugDepth++
 }
 
 func (log *SystemLog) EndProduction(name string, production string) {
 	log.debugDepth--
-	log.AddProduction(name, production)
+	log.AddProduction("╰ " + name, production)
 }
 
 func (log *SystemLog) AddError(error string) {

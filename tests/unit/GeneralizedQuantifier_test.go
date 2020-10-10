@@ -25,7 +25,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		{ rule: quantifier(Result, Range) -> number(N1), 	    			sense: go:equals(Result, N1) }
 		{ rule: quantifier(Result, Range) -> 'more' 'than' number(N1),		sense: go:greater_than(Result, N1) }
 		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	
-																			sense: go:or(P1, $quantifier1, $quantifier2) }
+																			sense: go:or($quantifier1, $quantifier2) }
 
 		{ rule: number(N1) -> /^[0-9]+/ }
 

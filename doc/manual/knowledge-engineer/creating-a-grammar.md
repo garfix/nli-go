@@ -255,7 +255,7 @@ Other open-ended word forms can be treated with regular expression, like numbers
 
 Here we just treat the conjunctions "and" and "or". They can be used on several levels of the sentence. In this example "and" connects two clauses:  
 
-    { rule: imperative_clause(C) -> imperative_clause(P1) and(C) imperative_clause(P2),         sense: and(C, $imperative_clause, $imperative_clause) }    
+    { rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2),         sense: and($imperative_clause, $imperative_clause) }    
 
 ## Negations
 

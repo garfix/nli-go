@@ -113,9 +113,9 @@ func TestControlFunctions(t *testing.T) {
 		binding     string
 		wantBindings string
 	}{
-		{"go:xor(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1}]"},
-		{"go:and(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[]"},
-		{"go:or(_, go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1} {E:2}]"},
+		{"go:xor(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1}]"},
+		{"go:and(go:unify(E, 1), go:unify(E, 2))", "{}", "[]"},
+		{"go:or(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1} {E:2}]"},
 		{"go:if_then_else(go:greater_than(6, 5), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
 		{"go:if_then_else(go:greater_than(5, 6), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
 	}
@@ -195,7 +195,7 @@ func TestQuantFunctions(t *testing.T) {
 			"{}", "[{List: [`:A`, `:B`, `:C`]}]"},
 		{`
 			go:quant_ordered_list(
-				go:and(_,
+				go:and(
 					go:quant(
 						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
@@ -210,7 +210,7 @@ func TestQuantFunctions(t *testing.T) {
 			"{}", "[{List: [`:A`, `:B`, `:C`, `:E`]}]"},
 		{`
 			go:quant_ordered_list(
-				go:or(_,
+				go:or(
 					go:quant(
 						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
@@ -225,12 +225,12 @@ func TestQuantFunctions(t *testing.T) {
 			"{}", "[{List: [`:B`]}]"},
 		{`
 			go:quant_ordered_list(
-				go:or(_,
+				go:or(
 					go:quant(
 						go:quantifier(Result, Range, go:equals(Result, 3)),
 						E,
 						person(E, _)),
-					go:and(_,
+					go:and(
 						go:quant(
 							go:quantifier(Result, Range, go:equals(Result, 3)),
 							E,

@@ -4,12 +4,12 @@
 
 A variant on the boolean function `and` that works with bindings.
 
-    and(P1, A, B)
+    and(A, B)
     
 * `A`: a relation set
 * `B`: a relation set    
 
-`and(C1, A, B)` processes `A` first. Then it processes `B`. The bindings from A are used in B.
+`and(A, B)` processes `A` first. Then it processes `B`. The bindings from A are used in B.
 
 Note: the boolean functions (`and`, `or` and `xor`) have a different meaning when used with quants. See [Nested Quants](quantification.md#nested-quants) 
 
@@ -17,20 +17,20 @@ Note: the boolean functions (`and`, `or` and `xor`) have a different meaning whe
 
 A variant on the boolean function `or` that works with bindings. This is the only operator that can yield more bindings than each of its children.
 
-    or(P1, A, B)
+    or(A, B)
     
 * `A`: a relation set
 * `B`: a relation set    
 
-`or(C1, A, B)` processes both `A` and `B`. The bindings of both are combined and doubles are removed.
+`or(A, B)` processes both `A` and `B`. The bindings of both are combined and doubles are removed.
 
 ## Xor
 
 A variant on the boolean function `xor` that works with bindings. Resolves either A or B, and returns the results of the first successful one. 
 
-    xor(P1, A, B)
+    xor(A, B)
     
-`xor(C1, A, B)` processes `A` first. If it yields results, `xor` stops. Otherwise it processes `B`.     
+`xor(A, B)` processes `A` first. If it yields results, `xor` stops. Otherwise it processes `B`.     
 
 ## Not
 

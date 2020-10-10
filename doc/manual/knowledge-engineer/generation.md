@@ -10,10 +10,10 @@ The grammar contains rewrite rules to rewrite the top-level construct `s()` into
 
 Here's an example `s()` rewrite rule for a response like "Peter and John" 
 
-    { rule: s(C) -> np(P1) conjunction(C) np(P2),                                 condition: and(C, P1, P2) }
+    { rule: s(C) -> np(P1) 'and' np(P2),                                 condition: and(P1, P2) }
 
-The rule says: the syntax tree of the response contains the nodes `np(P1) conjunction(C) np(P2)` if the relation `and(C,
-P1, P2)` is present in the response. The contents of the variables `C`, `P1` and `P2` is bound to the syntax tree nodes.
+The rule says: the syntax tree of the response contains the nodes `np(P1) 'and' np(P2)` if the relation `and(
+P1, P2)` is present in the response. The contents of the variables `P1` and `P2` is bound to the syntax tree nodes.
 
 ## Literal text
 

@@ -70,8 +70,8 @@ const QuantQuantifierIndex = 0
 const QuantRangeVariableIndex = 1
 const QuantRangeSetIndex = 2
 
-const SeqFirstOperandIndex = 1
-const SeqSecondOperandIndex = 2
+const SeqFirstOperandIndex = 0
+const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
 

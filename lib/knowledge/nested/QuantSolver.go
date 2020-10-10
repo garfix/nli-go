@@ -288,6 +288,7 @@ func (base *SystemNestedStructureBase) solveSimpleQuant(quant mentalese.Relation
 }
 
 func (base *SystemNestedStructureBase) SolveAndQuant(xorQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.Bindings {
+
 	leftQuant := xorQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 	rightQuant := xorQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
 

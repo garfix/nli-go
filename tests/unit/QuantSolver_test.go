@@ -84,17 +84,17 @@ func TestQuantSolver(t *testing.T) {
 			// the first quant in the xor has a range, but only the second quant has a range and scope bindings
 			`
 				go:quant_check(
-					go:or(_,	
-						go:and(_,
+					go:or(	
+						go:and(
 							go:quant(some, S1, is_person(S1) go:equals(S1, 8)),
 							go:quant(some, S1, is_person(S1) have_child(S1, 9))
 						),
-						go:xor(_,
+						go:xor(
 							go:quant(some, S1, is_person(S1) go:equals(S1, 4)),
 							go:quant(some, S1, is_person(S1) go:equals(S1, 1))
 						)
 					),
-					go:or(_, have_child(S1, 7), have_child(S1, 10))
+					go:or(have_child(S1, 7), have_child(S1, 10))
 				)`,
 			"{}",
 			"{S1:8}{S1:1}",

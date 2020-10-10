@@ -1,3 +1,28 @@
+# 2020-10-10
+
+I removed the node argument from `and()`, `or()` and `xor()`. I no longer use this node argument to link and's in the generation process. I just nest them, like I do in the parsing process. 
+
+This makes and end to the dummy argument in the parsing process, but it makes generation somewhat more complicated, since it now allows for nested structures.
+
+This situation is better than before, because it is unnatural to require a "node" argument in a logical and, but I am not happy with the generation of one or more entities. dbpedia now contains the most generic and-generation code, and it looks like this:
+
+    { rule: entities(And) -> entities(E1),                                        condition: go:unify(And, go:and(E1, _))  }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(E1, E1) }
+    { rule: entities(E1) -> entity(E1) ',' entities(E2),                          condition: go:and(E1, go:and(E2, _)) }
+    { rule: entities(E1) -> entity(E1) 'and' entities(E2),                        condition: go:and(E1, E2) }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(_, E1) }
+    { rule: entities(E1) -> entity(E1) }
+
+This complexity is created by both `make_and()` which always creates `and()` relations, even when there is only one entity:
+
+    and(`byron`, `byron`)
+    
+And that a relation may contain either entity-variables and `and`s:
+
+    married_to(E, and(`presley`, `rowe`))      
+
+So maybe it's time for an improvement to `make_and()`.
+
 # 2020-10-06
 
 Before, I had introduced names for objects in the blocks world, like "the blue cube". So that I could use these names in the answers. However, SHRDLU generates these names based on these distinguishing characteristics. Since I can do that too, now, I thought it would be nice to remove the names from the blocks database. And it worked! 

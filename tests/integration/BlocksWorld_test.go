@@ -1,14 +1,21 @@
 package tests
 
 import (
+	"github.com/tidwall/pinhole"
+	"image/color"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"os"
+	"strconv"
 	"testing"
 )
 
 // Mimics some of SHRDLU's functions, but in the nli-go way
 
+// Using Pinhole https://github.com/tidwall/pinhole to render the scene to a png
+//
+// go get -u github.com/tidwall/pinhole
+//
 func TestBlocksWorld(t *testing.T) {
 	log := common.NewSystemLog(false)
 	system := global.NewSystem(common.Dir() + "/../../resources/blocks", log)
@@ -69,12 +76,14 @@ func TestBlocksWorld(t *testing.T) {
 				{"Does a green block support a pyramid?", "Yes"},
 
 			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
+
+			//{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and a blue one"},
 		},
 		{
 		},
 	}
 
-	os.Remove(actualSessionPath)
+	_ = os.Remove(actualSessionPath)
 
 	for _, session := range tests {
 
@@ -98,4 +107,76 @@ func TestBlocksWorld(t *testing.T) {
 			}
 		}
 	}
+
+	createImage(system)
+}
+
+func createImage(system *global.System) {
+
+	p := pinhole.New()
+
+	data := system.Query("dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)")
+
+	p.DrawCube(-.99, -.99, -.99, .99, .99, .99)
+
+	scale := 500.0
+
+	for _, binding := range data {
+
+		p.Begin()
+
+		x, _ := strconv.ParseFloat(binding["X"].TermValue, 64)
+		y, _ := strconv.ParseFloat(binding["Y"].TermValue, 64)
+		z, _ := strconv.ParseFloat(binding["Z"].TermValue, 64)
+		theType := binding["Type"].TermValue
+		theColor := binding["Color"].TermValue
+		width, _ := strconv.ParseFloat(binding["Width"].TermValue, 64)
+		length, _ := strconv.ParseFloat(binding["Length"].TermValue, 64)
+		height, _ := strconv.ParseFloat(binding["Height"].TermValue, 64)
+
+		x1 := (x - 500) / scale
+		y1 := (y - 500) / scale
+		z1 := (z - 0) / scale
+
+		x2 := x1 + width / scale
+		y2 := y1 + height / scale
+		z2 := z1 + length / scale
+
+		if theType == "pyramid" {
+			drawPyramid(p, x1, y1, z1, width / scale, height / scale)
+		} else {
+			p.DrawCube(x1, y1, z1, x2, y2, z2)
+		}
+
+		switch theColor {
+		case "red":
+			p.Colorize(color.RGBA{255, 0, 0, 255})
+		case "green":
+			p.Colorize(color.RGBA{0, 255, 0, 255})
+		case "blue":
+			p.Colorize(color.RGBA{0, 0, 255, 255})
+		default:
+			p.Colorize(color.RGBA{0, 0, 0, 255})
+		}
+
+		p.End()
+	}
+
+	p.SavePNG(common.Dir() + "/blocksworld.png", 1200, 600, nil)
+}
+
+func drawPyramid(p *pinhole.Pinhole, x float64, y float64, z float64, width float64, height float64) {
+	topX := x + width / 2
+	topY := y + height
+	topZ := z + width / 2
+
+	p.DrawLine(x, y, z, x + width, y, z)
+	p.DrawLine(x + width, y, z, x + width, y, z + width)
+	p.DrawLine(x + width, y, z + width, x, y, z + width)
+	p.DrawLine(x, y, z + width, x, y, z)
+
+	p.DrawLine(x, y, z, topX, topY, topZ)
+	p.DrawLine(x + width, y, z, topX, topY, topZ)
+	p.DrawLine(x + width, y, z + width, topX, topY, topZ)
+	p.DrawLine(x, y, z + width, topX, topY, topZ)
 }

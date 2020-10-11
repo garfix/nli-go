@@ -1,3 +1,17 @@
+# 2020-10-11
+
+I used Pinhole https://github.com/tidwall/pinhole to create a visual representation of the blockworld's scene. I found myself drawing pictures with pencil using debug data, more than once, so I thought this could be easier.
+
+This is image of the initial blocks world
+
+![Initial blocks world](archive/blocksworld1.png)
+
+and this is the situation after interaction 18:
+
+![Initial blocks world](archive/blocksworld2.png)
+
+Something clearly went a bit wrong :}
+
 # 2020-10-10
 
 I removed the node argument from `and()`, `or()` and `xor()`. I no longer use this node argument to link and's in the generation process. I just nest them, like I do in the parsing process. 
@@ -22,6 +36,19 @@ And that a relation may contain either entity-variables and `and`s:
     married_to(E, and(`presley`, `rowe`))      
 
 So maybe it's time for an improvement to `make_and()`.
+
+===
+
+Interaction 19:
+
+    Q: Is there a large block behind a pyramid?
+    A: Yes, three of them: a large red one, a large green cube and a blue one
+
+When I programmed this question, the first answer I got was: none.
+
+Checking out what was wrong I found that the blue pyramid had moved to a different place; I don't know why yet. Also, I built the tower in the wrong place. It's in the front now, so no pyramid is in front of it any more. I should have built the tower on the big red block, without moving it. It would have been easier not moving the largest block, since it was already on the table. Let's see if I can change the code so that it will build the tower without moving the big red block.
+
+I gave the objects some better readable id's (b1 -> small-red, etc).
 
 # 2020-10-06
 

@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
+	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
@@ -12,19 +13,20 @@ import (
 )
 
 type System struct {
-	log                  *common.SystemLog
-	dialogContext        *central.DialogContext
-	dialogContextStorage *DialogContextFileStorage
-	nameResolver         *central.NameResolver
-	grammars             []parse.Grammar
-	parser               *earley.Parser
-	meta                 *mentalese.Meta
-	relationizer         *earley.Relationizer
-	matcher              *mentalese.RelationMatcher
-	solver               *central.ProblemSolver
-	answerer             *central.Answerer
-	generator            *generate.Generator
-	surfacer             *generate.SurfaceRepresentation
+	log                   *common.SystemLog
+	dialogContext         *central.DialogContext
+	dialogContextStorage  *DialogContextFileStorage
+	internalGrammarParser *importer.InternalGrammarParser
+	nameResolver          *central.NameResolver
+	grammars              []parse.Grammar
+	parser                *earley.Parser
+	meta                  *mentalese.Meta
+	relationizer          *earley.Relationizer
+	matcher               *mentalese.RelationMatcher
+	solver                *central.ProblemSolver
+	answerer              *central.Answerer
+	generator             *generate.Generator
+	surfacer              *generate.SurfaceRepresentation
 }
 
 func (system *System) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {
@@ -37,6 +39,12 @@ func (system *System) ClearDialogContext() {
 
 func (system *System) StoreDialogContext(sessionDataPath string) {
 	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
+}
+
+// Low-level function to inspect the internal state of the system
+func (system *System) Query(relations string) mentalese.Bindings {
+	set := system.internalGrammarParser.CreateRelationSet(relations)
+	return system.solver.SolveRelationSet(set, mentalese.Bindings{})
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {

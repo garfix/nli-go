@@ -64,7 +64,7 @@ func (builder *systemBuilder) build(system *System) {
 		return
 	}
 
-	builder.buildBasic(config, system)
+	builder.buildBasic(system)
 
 	builder.applicationAliases = map[string]string{}
 	for alias, moduleSpec := range config.Uses {
@@ -79,7 +79,7 @@ func (builder *systemBuilder) build(system *System) {
 	}
 }
 
-func (builder *systemBuilder) buildBasic(config config, system *System) {
+func (builder *systemBuilder) buildBasic(system *System) {
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", builder.log)
 	matcher := mentalese.NewRelationMatcher(builder.log)
@@ -90,6 +90,7 @@ func (builder *systemBuilder) buildBasic(config config, system *System) {
 	system.relationizer = earley.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
 	system.meta = mentalese.NewMeta()
+	system.internalGrammarParser = builder.parser
 
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 	solver.AddFunctionBase(systemFunctionBase)

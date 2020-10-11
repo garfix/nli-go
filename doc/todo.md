@@ -5,19 +5,29 @@
 - interactive: arrow up/down for history
 
 * quant_foreach: add as second parameter the variable to which the ids must be bound 
-* agreement, especially for number, because it reduces ambiguity
-* should boolean functions have P1 as argument? different or for read/write?
+* agreement, especially for number, because it reduces ambiguity (reintroducing feature unification?)
 * syntax check while parsing: is the number of arguments correct?
+* remove the square brackets where they are not needed
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
-* sortal restrictions (using predicates.json and adding 'parent' to entities.json)
-* agreement checking (reintroducing feature unification)
 * clarification questions must be translatable (they must go through the generator)
 * use relations as functions (with special role for the last parameter as the return value)
 * write a good tutorial
+* think of a better replacement to make_and() to an "and" sequence 
 
 * (?) to_list(E1)
     collect all distinct values of E1 into a list, replace the value of E1 in all bindings with this list; remove duplicate bindings
     not yet needed; maybe postpone
+    
+## generation of multiple entities
+
+Replace `make_and()` by a `make_list()` and add list unification syntax
+
+    { rule: entities(E1) -> entity(A) ',' entities(Tail),                         condition: go:unify(E1, [A _ _ | Tail]) }
+    { rule: entities(E1) -> entity(A) 'and' entities(B),                          condition: go:unify(E1, [A B]) }
+    { rule: entities(E1) -> entity(A),                                            condition: go:unify(E1, [A]) }
+    { rule: entities(E1) -> entity(E1) }    
+
+The last one is used with just a single constant.
 
 ## Agreement
 
@@ -53,7 +63,7 @@ But I don't like `to_list` because it must change the variable E and this is aga
 
 ## Rules
 
-Test if this works or make it work:
+Test if this works or make it work. Create a stack of current relations to be solved, and check if the stack already contains the bound relation.
 
     married_to(A, B) :- married_to(B, A);
     

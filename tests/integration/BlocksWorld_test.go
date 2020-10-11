@@ -120,6 +120,7 @@ func createImage(system *global.System) {
 	p.DrawCube(-.99, -.99, -.99, .99, .99, .99)
 
 	scale := 500.0
+	zScale := 1200.0
 
 	for _, binding := range data {
 
@@ -136,14 +137,14 @@ func createImage(system *global.System) {
 
 		x1 := (x - 500) / scale
 		y1 := (y - 500) / scale
-		z1 := (z - 0) / scale
+		z1 := (z + 50) / zScale
 
 		x2 := x1 + width / scale
 		y2 := y1 + height / scale
-		z2 := z1 + length / scale
+		z2 := z1 + length / zScale
 
 		if theType == "pyramid" {
-			drawPyramid(p, x1, y1, z1, width / scale, height / scale)
+			drawPyramid(p, x1, y1, z1, width / scale, height / scale, length / zScale)
 		} else {
 			p.DrawCube(x1, y1, z1, x2, y2, z2)
 		}
@@ -165,18 +166,18 @@ func createImage(system *global.System) {
 	p.SavePNG(common.Dir() + "/blocksworld.png", 1200, 600, nil)
 }
 
-func drawPyramid(p *pinhole.Pinhole, x float64, y float64, z float64, width float64, height float64) {
+func drawPyramid(p *pinhole.Pinhole, x float64, y float64, z float64, width float64, height float64, length float64) {
 	topX := x + width / 2
 	topY := y + height
-	topZ := z + width / 2
+	topZ := z + length / 2
 
 	p.DrawLine(x, y, z, x + width, y, z)
-	p.DrawLine(x + width, y, z, x + width, y, z + width)
-	p.DrawLine(x + width, y, z + width, x, y, z + width)
-	p.DrawLine(x, y, z + width, x, y, z)
+	p.DrawLine(x + width, y, z, x + width, y, z + length)
+	p.DrawLine(x + width, y, z + length, x, y, z + length)
+	p.DrawLine(x, y, z + length, x, y, z)
 
 	p.DrawLine(x, y, z, topX, topY, topZ)
 	p.DrawLine(x + width, y, z, topX, topY, topZ)
-	p.DrawLine(x + width, y, z + width, topX, topY, topZ)
-	p.DrawLine(x, y, z + width, topX, topY, topZ)
+	p.DrawLine(x + width, y, z + length, topX, topY, topZ)
+	p.DrawLine(x, y, z + length, topX, topY, topZ)
 }

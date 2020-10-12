@@ -151,19 +151,19 @@ func createImage(system *global.System) {
 
 		switch theColor {
 		case "red":
-			p.Colorize(color.RGBA{255, 0, 0, 255})
+			p.Colorize(color.RGBA{200, 0, 0, 255})
 		case "green":
-			p.Colorize(color.RGBA{0, 255, 0, 255})
+			p.Colorize(color.RGBA{0, 200, 0, 255})
 		case "blue":
-			p.Colorize(color.RGBA{0, 0, 255, 255})
+			p.Colorize(color.RGBA{0, 0, 200, 255})
 		default:
-			p.Colorize(color.RGBA{0, 0, 0, 255})
+			p.Colorize(color.RGBA{0, 0, 0, 200})
 		}
 
 		p.End()
 	}
 
-	p.SavePNG(common.Dir() + "/blocksworld.png", 1200, 600, nil)
+	p.SavePNG(common.Dir() + "/blocksworld.png", 800, 800, nil)
 }
 
 func drawPyramid(p *pinhole.Pinhole, x float64, y float64, z float64, width float64, height float64, length float64) {

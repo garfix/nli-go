@@ -25,7 +25,7 @@
         db_support(`table:table`, E1);
 
     do_put_in(E1, E2) :-
-        at(E1, X, Y, Z)
+        at(E2, X, Y, Z)
         do_move(E1, X, Y, Z)
         db_contain(E2, E1);
 

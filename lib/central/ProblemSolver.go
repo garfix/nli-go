@@ -21,7 +21,6 @@ type ProblemSolver struct {
 	modifier             *FactBaseModifier
 	dialogContext        *DialogContext
 	log                  *common.SystemLog
-	SolveDepth           int
 }
 
 func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {

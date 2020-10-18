@@ -143,9 +143,9 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 
 	// extend binding with extra variables in set
 	for _, variable  := range variables {
-		_, found := importBinding[variable]
+		_, found := importBinding.Get(variable)
 		if !found {
-			importBinding[variable] = createVariable()
+			importBinding.Set(variable, createVariable())
 		}
 	}
 
@@ -170,7 +170,7 @@ func (relations RelationSet) InstantiateUnboundVariables(binding Binding) Relati
 	newRelations := relations
 
 	for _, inputVariable := range inputVariables {
-		_, found := binding[inputVariable]
+		_, found := binding.Get(inputVariable)
 		if !found {
 			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), createVariable())
 		}
@@ -251,7 +251,7 @@ func (relations RelationSet) processIncludes(relation Relation, binding Binding)
 
 	variable := relation.Arguments[0].TermValue
 
-	term, found := binding[variable]
+	term, found := binding.Get(variable)
 	if found {
 		newSet = term.TermValueRelationSet.BindSingle(binding)
 	}
@@ -349,7 +349,7 @@ func (set RelationSet) findRelationsStartingWithVariable(variable string) Relati
 
 	// process a stack with variables
 	for len(awaitingVariables) != 0 {
-		// pop
+		// Pop
 		var activeVariable = awaitingVariables[0]
 		awaitingVariables = awaitingVariables[1:]
 

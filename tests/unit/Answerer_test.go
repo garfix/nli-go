@@ -123,7 +123,7 @@ func TestAnswerer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Answer(input, mentalese.Bindings{{}})
+		resultRelationSet := answerer.Answer(input, mentalese.Bindings{mentalese.NewBinding()})
 
 		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
 			t.Errorf("Answerer(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)

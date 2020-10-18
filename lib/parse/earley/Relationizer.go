@@ -36,15 +36,15 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariables, node.rule, node.rule.Sense)
 
-	nameBinding := mentalese.Binding{}
-	constantBinding := mentalese.Binding{}
+	nameBinding := mentalese.NewBinding()
+	constantBinding := mentalese.NewBinding()
 	relationSet := mentalese.RelationSet{}
 
 	if len(node.nameInformations) > 0 {
 		firstAntecedentVariable := antecedentVariables[0]
 		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
 		for _, nameInformation := range resolvedNameInformations {
-			nameBinding[firstAntecedentVariable] = mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType)
+			nameBinding.Set(firstAntecedentVariable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
 		}
 	}
 
@@ -67,7 +67,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 		constantBinding = constantBinding.Merge(childConstantBinding)
 
 		if node.rule.GetConsequentPositionType(i) == parse.PosTypeRegExp {
-			constantBinding[antecedentVariables[0]] = mentalese.NewTermString(childNode.form)
+			constantBinding.Set(antecedentVariables[0], mentalese.NewTermString(childNode.form))
 		}
 	}
 

@@ -559,7 +559,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 // {}
 func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int) (mentalese.Binding, int, bool) {
 
-	binding := mentalese.Binding{}
+	binding := mentalese.NewBinding()
 	ok := true
 	commaFound := false
 	variable := ""
@@ -567,7 +567,7 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
 	for ok {
-		if len(binding) > 0 {
+		if len(binding.GetAll()) > 0 {
 			// second and further bindings
 			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
 			if !commaFound {
@@ -587,7 +587,7 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 			if ok {
 				value, startIndex, ok = parser.parseTerm(tokens, startIndex)
 				if ok {
-					binding[variable] = value
+					binding.Set(variable, value)
 				}
 			}
 		}

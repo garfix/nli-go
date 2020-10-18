@@ -52,8 +52,8 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 		for _, node := range nodes {
 
 			// functions like join(N, ' ', F, I, L)
-			functionBinding, functionFound := matcher.ExecuteFunction(needleRelation, node.Binding)
-			if functionFound  && functionBinding != nil {
+			functionBinding, functionFound, success := matcher.ExecuteFunction(needleRelation, node.Binding)
+			if functionFound  && success {
 				newIndexes := node.Indexes
 				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 				nodeMatches = true
@@ -89,21 +89,22 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 // functions like join(N, ' ', F, I, L)
 // returns a binding with only one variable
-func (matcher *RelationMatcher) ExecuteFunction(needleRelation Relation, binding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) ExecuteFunction(needleRelation Relation, binding Binding) (Binding, bool, bool) {
 
-	newBinding := Binding{}
-	resultBinding := Binding{}
+	newBinding := NewBinding()
+	resultBinding := NewBinding()
 	functionFound := false
+	success := false
 
 	for _, functionBase := range matcher.functionBases {
-		resultBinding, functionFound = functionBase.Execute(needleRelation, binding)
+		resultBinding, functionFound, success = functionBase.Execute(needleRelation, binding)
 		if functionFound {
 			newBinding = resultBinding
 			break
 		}
 	}
 
-	return newBinding, functionFound
+	return newBinding, functionFound, success
 }
 
 // Matches a single relation to a relation set
@@ -178,7 +179,7 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 
 	} else if subjectArgument.IsVariable() {
 
-		value, match := subjectBinding[subjectArgument.String()]
+		value, match := subjectBinding.Get(subjectArgument.String())
 		if match {
 
 			if patternArgument.IsVariable() {
@@ -197,7 +198,7 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument 
 
 			// A, 13, {B:7} => {B:7, A:13}
 			newBinding := subjectBinding.Copy()
-			newBinding[subjectArgument.String()] = patternArgument
+			newBinding.Set(subjectArgument.String(), patternArgument)
 			return newBinding, true
 		}
 

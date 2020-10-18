@@ -125,7 +125,7 @@ func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.S
 
 		unScopedGoal := goal.UnScope()
 
-		bindings, found := answerer.matcher.MatchSequenceToSet(aSolution.Condition, unScopedGoal, mentalese.Binding{})
+		bindings, found := answerer.matcher.MatchSequenceToSet(aSolution.Condition, unScopedGoal, mentalese.NewBinding())
 		if found {
 
 			for _, binding := range bindings {

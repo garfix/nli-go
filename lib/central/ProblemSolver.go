@@ -17,6 +17,7 @@ type ProblemSolver struct {
 	functionBases        []knowledge.FunctionBase
 	aggregateBases       []knowledge.AggregateBase
 	nestedStructureBases []knowledge.NestedStructureBase
+	scopeStack           *mentalese.ScopeStack
 	matcher              *mentalese.RelationMatcher
 	modifier             *FactBaseModifier
 	dialogContext        *DialogContext
@@ -30,6 +31,7 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogC
 		ruleBases:      []knowledge.RuleBase{},
 		functionBases:  []knowledge.FunctionBase{},
 		aggregateBases: []knowledge.AggregateBase{},
+		scopeStack: 	mentalese.NewScopeStack(),
 		matcher:        matcher,
 		modifier:       NewFactBaseModifier(log),
 		dialogContext:  dialogContext,
@@ -60,6 +62,10 @@ func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.AggregateB
 func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructureBase) {
 	solver.nestedStructureBases = append(solver.nestedStructureBases, base)
 	solver.knowledgeBases = append(solver.knowledgeBases, base)
+}
+
+func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
+	return solver.scopeStack.GetCurrentScope()
 }
 
 // set e.g. [ father(X, Y) father(Y, Z) ]
@@ -135,7 +141,7 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 	if !multiFound {
 
 		if len(bindings) == 0 {
-			newBindings = solver.solveSingleRelationSingleBinding(relation, mentalese.Binding{})
+			newBindings = solver.solveSingleRelationSingleBinding(relation, mentalese.NewScopedBinding(solver.scopeStack.GetCurrentScope()))
 		} else {
 			for _, binding := range bindings {
 				newBindings = append(newBindings, solver.solveSingleRelationSingleBinding(relation, binding)...)
@@ -175,8 +181,8 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 
 	// go through all function bases
 	for _, functionBase := range solver.functionBases {
-		resultBinding, functionFound := functionBase.Execute(relation, simpleBinding)
-		if functionFound && resultBinding != nil {
+		resultBinding, functionFound, success := functionBase.Execute(relation, simpleBinding)
+		if functionFound && success {
 			newBindings = append(newBindings, resultBinding)
 		}
 	}
@@ -211,10 +217,10 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation ment
 
 	for _, ds2db := range factBase.GetReadMappings() {
 
-		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.Binding{})
+		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.NewBinding())
 		if !match { continue }
 
-		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.Binding{})
+		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
 		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2)
@@ -286,9 +292,9 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 
 func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
 
-	newBinding := mentalese.Binding{}
+	newBinding := mentalese.NewScopedBinding(binding.GetScope())
 
-	for key, value := range binding {
+	for key, value := range binding.GetAll() {
 		newValue := value
 
 		if value.IsId() {
@@ -298,13 +304,13 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding
 				localId := factBase.GetLocalId(sharedId, entityType)
 				if localId == "" {
 					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, entityType, factBase.GetName()))
-					return mentalese.Binding{}
+					return newBinding
 				}
 				newValue = mentalese.NewTermId(localId, entityType)
 			}
 		}
 
-		newBinding[key] = newValue
+		newBinding.Set(key, newValue)
 	}
 
 	return newBinding
@@ -312,9 +318,9 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding
 
 func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
 
-	newBinding := mentalese.Binding{}
+	newBinding := mentalese.NewScopedBinding(binding.GetScope())
 
-	for key, value := range binding {
+	for key, value := range binding.GetAll() {
 		newValue := value
 
 		if value.IsId() {
@@ -324,13 +330,13 @@ func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, 
 				sharedId := factBase.GetSharedId(localId, entityType)
 				if sharedId == "" {
 					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, entityType, factBase.GetName()))
-					return mentalese.Binding{}
+					return newBinding
 				}
 				newValue = mentalese.NewTermId(sharedId, entityType)
 			}
 		}
 
-		newBinding[key] = newValue
+		newBinding.Set(key, newValue)
 	}
 
 	return newBinding
@@ -402,7 +408,12 @@ func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalR
 
 	for _, sourceSubgoalSet := range sourceSubgoalSets {
 
-		subgoalResultBindings := mentalese.Bindings{binding}
+		scope := mentalese.NewScope()
+		solver.scopeStack.Push(scope)
+
+		scopedBinding := mentalese.NewScopedBinding(&scope).Merge(binding)
+
+		subgoalResultBindings := mentalese.Bindings{ scopedBinding }
 
 		for _, subGoal := range sourceSubgoalSet {
 
@@ -418,10 +429,12 @@ func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalR
 			filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
 
 			// make sure all variables of the original binding are present
-			goalBinding := binding.Merge(filteredBinding)
+			goalBinding := scopedBinding.Merge(filteredBinding)
 
 			goalBindings = append(goalBindings, goalBinding)
 		}
+
+		solver.scopeStack.Pop()
 	}
 
 	return goalBindings

@@ -21,7 +21,7 @@ func NewRelationTransformer(matcher *RelationMatcher, log *common.SystemLog) *Re
 func (transformer *RelationTransformer) Replace(rules []Rule, relationSet RelationSet) RelationSet {
 
 	// replace the relations embedded in quants
-	replacedSet := transformer.replaceRelations(rules, relationSet, Binding{})
+	replacedSet := transformer.replaceRelations(rules, relationSet, NewBinding())
 
 	return replacedSet
 }
@@ -49,7 +49,7 @@ func (transformer *RelationTransformer) replaceRelations(transformations []Rule,
 
 		found := false
 		for _, rule := range transformations {
-			aBinding, ok := transformer.matcher.MatchTwoRelations(rule.Goal, deepRelation, Binding{})
+			aBinding, ok := transformer.matcher.MatchTwoRelations(rule.Goal, deepRelation, NewBinding())
 			if  ok {
 				boundRelations := rule.Pattern.BindSingle(aBinding)
 				newRelations = append(newRelations, boundRelations...)

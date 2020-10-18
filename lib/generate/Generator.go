@@ -81,7 +81,7 @@ func (generator *Generator) getConsequentValue(rule parse.GrammarRule, i int, bi
 
 	if rule.GetConsequentPositionType(i) != parse.PosTypeWordForm {
 		consequentVariable := rule.GetConsequentVariables(i)[0]
-		consequentValue, found = binding[consequentVariable]
+		consequentValue, found = binding.Get(consequentVariable)
 		if !found {
 			consequentValue = mentalese.NewTermString("")
 		}
@@ -97,7 +97,7 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 
 	found := false
 	resultRule := parse.GrammarRule{}
-	binding := mentalese.Binding{}
+	binding := mentalese.NewBinding()
 
 	rules := grammarRules.FindRules(antecedentCategory, 1)
 
@@ -105,10 +105,10 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 
 		// copy the value of the antecedent variable
 		ruleAntecedentVariable := rule.GetAntecedentVariables()[0]
-		binding = mentalese.Binding{}
+		binding = mentalese.NewBinding()
 
 		if !(antecedentValue.IsString() && antecedentValue.TermValue == "") {
-			binding[ruleAntecedentVariable] = antecedentValue
+			binding.Set(ruleAntecedentVariable, antecedentValue)
 		}
 
 		if len(rule.Sense) == 0 {

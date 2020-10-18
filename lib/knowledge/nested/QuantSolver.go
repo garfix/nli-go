@@ -37,7 +37,7 @@ func (base *SystemNestedStructureBase) SolveQuantOrderedList(quantList mentalese
 	list := base.getQuantifiedEntities(quant, orderFunction, binding)
 
 	newBinding := binding.Copy()
-	newBinding[listVariable] = mentalese.NewTermList(list)
+	newBinding.Set(listVariable, mentalese.NewTermList(list))
 
 	return mentalese.Bindings{ newBinding }
 }
@@ -337,7 +337,7 @@ func (base *SystemNestedStructureBase) solveScope(quant mentalese.Relation, scop
 			scopeBindings = append(scopeBindings, singleScopeBindings...)
 		}
 
-		value, found := rangeBinding[rangeVariable]
+		value, found := rangeBinding.Get(rangeVariable)
 		if found && value.IsId() {
 			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermEntityType) }
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
@@ -394,9 +394,11 @@ func (base *SystemNestedStructureBase) tryQuantifier(quant mentalese.Relation, r
 	rangeVal := mentalese.NewTermString(strconv.Itoa(rangeCount))
 	resultVal := mentalese.NewTermString(strconv.Itoa(scopeCount))
 
-	quantifierBindings := base.solver.SolveRelationSet(quantifierSet, mentalese.Bindings{
-		{ rangeCountVariable: rangeVal, scopeCountVariable: resultVal },
-	})
+	b := mentalese.NewBinding()
+	b.Set(rangeCountVariable, rangeVal)
+	b.Set(scopeCountVariable, resultVal)
+
+	quantifierBindings := base.solver.SolveRelationSet(quantifierSet, mentalese.Bindings{ b })
 
 	success := len(quantifierBindings) > 0
 

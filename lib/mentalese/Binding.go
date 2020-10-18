@@ -1,25 +1,89 @@
 package mentalese
 
-import "sort"
+import (
+	"sort"
+)
 
-type Binding map[string]Term
+type Binding struct {
+	k2v map[string]Term
+	scope *Scope
+}
+
+func NewBinding() Binding {
+	return Binding{ k2v: map[string]Term{}, scope: nil }
+}
+
+func NewScopedBinding(scope *Scope) Binding {
+	return Binding{ k2v: map[string]Term{}, scope: scope }
+}
+
+func (b Binding) GetScope() *Scope {
+	return b.scope
+}
 
 func (b Binding) ContainsVariable(variable string) bool {
-	_, found := b[variable]
+	_, found := b.k2v[variable]
 	return found
+}
+
+func (b Binding) Set(variable string, value Term) {
+	if b.scope != nil {
+		variables := b.scope.GetVariables()
+		if variables.ContainsVariable(variable) {
+			variables.Set(variable, value)
+			return
+		}
+	}
+	b.k2v[variable] = value
+}
+
+func (b Binding) Get(variable string) (Term, bool) {
+
+	if b.scope != nil {
+		variables := b.scope.GetVariables()
+		value, found := variables.Get(variable)
+		if found {
+			return value, true
+		}
+	}
+
+	value, found := b.k2v[variable]
+	return value, found
+}
+
+func (b Binding) MustGet(variable string) Term {
+	value, found := b.Get(variable)
+	if found {
+		return value
+	} else {
+		panic("variable not found: " + variable)
+	}
+}
+
+func (b Binding) GetAll() map[string]Term {
+	all := map[string]Term{}
+	for key, value := range b.k2v {
+		all[key] = value
+	}
+	if b.scope != nil {
+		for key, value := range b.scope.GetVariables().k2v {
+			all[key] = value
+		}
+	}
+	return all
 }
 
 // Returns a new Binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 
-	result := Binding{}
+	result := NewScopedBinding(b.scope)
 
-	for k, v := range b {
-		result[k] = v
+	for k, v := range b.k2v {
+		result.k2v[k] = v
 	}
 
-	for k, v := range b2 {
-		result[k] = v
+	for k, v := range b2.k2v {
+		result.k2v[k] = v
 	}
 
 	return result
@@ -28,16 +92,20 @@ func (b Binding) Merge(b2 Binding) Binding {
 // Returns a new Binding that contains just the keys of b, and whose values may be overwritten by those of b2
 func (b Binding) Intersection(b2 Binding) Binding {
 
-	result := Binding{}
+	result := NewScopedBinding(b.scope)
 
-	for k, v := range b {
-		result[k] = v
+	if b2.scope != nil {
+		panic("binding has scope")
 	}
 
-	for k, v := range b2 {
-		_, found := result[k]
+	for k, v := range b.k2v {
+		result.k2v[k] = v
+	}
+
+	for k, v := range b2.k2v {
+		_, found := result.k2v[k]
 		if found {
-			result[k] = v
+			result.k2v[k] = v
 		}
 	}
 
@@ -46,12 +114,12 @@ func (b Binding) Intersection(b2 Binding) Binding {
 
 // returns a binding with only given keys, if present
 func (b Binding) Select(keys []string) Binding {
-	newBinding := Binding{}
+	newBinding := NewBinding()
 
 	for _, key := range keys {
-		value, found := b[key]
+		value, found := b.k2v[key]
 		if found {
-			newBinding[key] = value
+			newBinding.k2v[key] = value
 		}
 	}
 
@@ -61,10 +129,10 @@ func (b Binding) Select(keys []string) Binding {
 // Returns a copy
 func (b Binding) Copy() Binding {
 
-	result := Binding{}
+	result := NewScopedBinding(b.scope)
 
-	for k, v := range b {
-		result[k] = v
+	for k, v := range b.k2v {
+		result.k2v[k] = v
 	}
 
 	return result
@@ -82,16 +150,20 @@ func (b Binding) Copy() Binding {
 // note: F is discarded
 func (b Binding) Bind(c Binding) Binding {
 
-	result := Binding{}.Merge(b)
+	result := NewScopedBinding(b.scope).Merge(b)
 
-	for bKey, bVal := range b {
+	if c.scope != nil {
+		panic("binding has scope")
+	}
 
-		result[bKey] = bVal
+	for bKey, bVal := range b.k2v {
+
+		result.k2v[bKey] = bVal
 
 		if bVal.IsVariable() {
-			value, found := c[bVal.TermValue]
+			value, found := c.k2v[bVal.TermValue]
 			if found {
-				result[bKey] = value
+				result.k2v[bKey] = value
 			}
 		}
 	}
@@ -102,11 +174,11 @@ func (b Binding) Bind(c Binding) Binding {
 // Returns a version of b without the keys that have variable values
 func (b Binding) RemoveVariables() Binding {
 
-	result := Binding{}
+	result := NewScopedBinding(b.scope)
 
-	for key, value := range b {
+	for key, value := range b.k2v {
 		if !value.IsVariable() {
-			result[key] = value
+			result.k2v[key] = value
 		}
 	}
 
@@ -120,11 +192,11 @@ func (b Binding) RemoveVariables() Binding {
 // { X: B }
 func (b Binding) Swap() Binding {
 
-	result := Binding{}
+	result := NewScopedBinding(b.scope)
 
-	for key, value := range b {
+	for key, value := range b.k2v {
 		if value.IsVariable() {
-			result[value.TermValue] = Term{TermType: TermTypeVariable, TermValue: key}
+			result.k2v[value.TermValue] = Term{TermType: TermTypeVariable, TermValue: key}
 		}
 	}
 
@@ -132,25 +204,25 @@ func (b Binding) Swap() Binding {
 }
 
 func (b Binding) FilterVariablesByName(variableNames []string) Binding {
-	newBinding := Binding{}
+	result := NewScopedBinding(b.scope)
 
 	for _, variableName := range variableNames {
-		_, found := b[variableName]
+		_, found := b.k2v[variableName]
 		if found {
-			newBinding[variableName] = b[variableName]
+			result.k2v[variableName] = b.k2v[variableName]
 		}
 	}
 
-	return newBinding
+	return result
 }
 
 // Returns a new Binding with just key, if exists
 func (b Binding) Extract(key string) Binding {
-	newBinding := Binding{}
+	newBinding := NewBinding()
 
-	val, found := b[key]
+	val, found := b.k2v[key]
 	if found {
-		newBinding[key] = val
+		newBinding.k2v[key] = val
 	}
 
 	return newBinding
@@ -162,14 +234,14 @@ func (b Binding) String() string {
 	s, sep := "", ""
 	keys := []string{}
 
-	for k := range b {
+	for k := range b.k2v {
 		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		s += sep + k + ":" + b[k].String()
+		s += sep + k + ":" + b.k2v[k].String()
 		sep = ", "
 	}
 
@@ -178,26 +250,15 @@ func (b Binding) String() string {
 
 func (b Binding) Equals(c Binding) bool {
 
-	if len(b) != len(c) {
+	if len(b.k2v) != len(c.k2v) {
 		return false
 	}
 
-	for key, value := range b {
-		if !c[key].Equals(value) {
+	for key, value := range b.k2v {
+		if !c.k2v[key].Equals(value) {
 			return false
 		}
 	}
 
 	return true
-}
-
-func CountUniqueValues(variable string, bindings Bindings) int {
-	uniqueBindings := map[string]bool{}
-	for _, binding := range bindings {
-		value, found := binding[variable]
-		if found {
-			uniqueBindings[value.TermValue] = true
-		}
-	}
-	return len(uniqueBindings)
 }

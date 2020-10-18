@@ -19,7 +19,7 @@ func (bindings Bindings) GetIds(variable string) []Term {
 	ids := []Term{}
 
 	for _, binding := range bindings {
-		for key, value := range binding {
+		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
 			}
@@ -40,7 +40,7 @@ func (bindings Bindings) GetDistinctValueCount(variable string) int {
 	count := 0
 
 	for _, binding := range bindings {
-		for key, value := range binding {
+		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
 			}
@@ -60,7 +60,7 @@ func (bindings Bindings) GetDistinctValues(variable string) []Term {
 	values := []Term{}
 
 	for _, binding := range bindings {
-		for key, value := range binding {
+		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
 			}

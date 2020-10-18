@@ -42,6 +42,7 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateQuantOrderedList,
 		mentalese.PredicateListOrder,
 		mentalese.PredicateListForeach,
+		mentalese.PredicateLet,
 	}
 
 	for _, p := range predicates {
@@ -68,6 +69,18 @@ func (base *SystemNestedStructureBase) intent(input mentalese.Relation, binding 
 	if !knowledge.Validate(bound, "a*", base.log) {
 		return nil
 	}
+
+	return mentalese.Bindings{ binding }
+}
+
+func (base *SystemNestedStructureBase) SolveLet(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	if !knowledge.Validate(relation, "v*", base.log) { return nil }
+
+	variable := relation.Arguments[0].TermValue
+	value := relation.Arguments[1]
+	variables := base.solver.GetCurrentScope().GetVariables()
+	(*variables).Set(variable, value)
 
 	return mentalese.Bindings{ binding }
 }
@@ -130,6 +143,10 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 	} else if relation.Predicate == mentalese.PredicateListForeach {
 
 		newBindings = base.SolveListForeach(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateLet {
+
+		newBindings = base.SolveLet(relation, binding)
 	}
 
 	return newBindings

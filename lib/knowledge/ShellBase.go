@@ -29,12 +29,12 @@ func (factBase *ShellBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *ShellBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *ShellBase) exec(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "S", base.log) {
-		return nil
+		return binding, false
 	}
 
 	command := bound.Arguments[0].TermValue
@@ -51,17 +51,17 @@ func (base *ShellBase) exec(input mentalese.Relation, binding mentalese.Binding)
 
 	newBinding := binding.Copy()
 
-	return newBinding
+	return newBinding, true
 }
 
 
-func (base *ShellBase) execResponse(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *ShellBase) execResponse(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 	responseVar := input.Arguments[0].TermValue
 
 	if !Validate(bound, "vS", base.log) {
-		return nil
+		return binding, false
 	}
 
 	command := bound.Arguments[1].TermValue
@@ -78,24 +78,25 @@ func (base *ShellBase) execResponse(input mentalese.Relation, binding mentalese.
 
 	newBinding := binding.Copy()
 
-	newBinding[responseVar] = mentalese.NewTermString(string(output))
+	newBinding.Set(responseVar, mentalese.NewTermString(string(output)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *ShellBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *ShellBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
 
 	newBinding := binding
 	found := true
+	success := true
 
 	switch input.Predicate {
 	case mentalese.PredicateExec:
-		newBinding = base.exec(input, binding)
+		newBinding, success = base.exec(input, binding)
 	case mentalese.PredicateExecResponse:
-		newBinding = base.execResponse(input, binding)
+		newBinding, success = base.execResponse(input, binding)
 	default:
 		found = false
 	}
 
-	return newBinding, found
+	return newBinding, found, success
 }

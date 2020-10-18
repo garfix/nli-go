@@ -73,7 +73,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
-	nameBinding := mentalese.Binding{}
+	nameBinding := mentalese.NewBinding()
 
 	system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 
@@ -132,7 +132,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 }
 
 func (system System) storeNamedEntities(binding mentalese.Binding) {
-	 for _, value := range binding {
+	 for _, value := range binding.GetAll() {
 		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermEntityType) })
 	 }
 }

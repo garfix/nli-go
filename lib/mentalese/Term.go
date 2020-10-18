@@ -192,7 +192,7 @@ var x = 1000
 func (term Term) Bind(binding Binding) Term {
 	arg := term
 	if term.IsVariable() {
-		newValue, found := binding[term.TermValue]
+		newValue, found := binding.Get(term.TermValue)
 		if found {
 			arg = newValue
 		}
@@ -213,7 +213,7 @@ func (term Term) Resolve(binding Binding) Term {
 	resolved := term
 
 	if term.IsVariable() {
-		 value, found := binding[term.TermValue]
+		 value, found := binding.Get(term.TermValue)
 		 if found {
 		 	resolved = value
 		 }

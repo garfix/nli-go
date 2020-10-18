@@ -48,7 +48,7 @@ func TestFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBinding := parser.CreateBinding(test.wantBinding)
 
-		resultBinding, _ := functionBase.Execute(input, binding)
+		resultBinding, _, _ := functionBase.Execute(input, binding)
 
 		if !resultBinding.Equals(wantBinding) {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBinding, wantBinding)

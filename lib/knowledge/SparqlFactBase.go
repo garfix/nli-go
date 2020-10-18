@@ -260,7 +260,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 	for _, resultBinding := range sparqlResponse.Results.Bindings {
 
-		binding := mentalese.Binding{}
+		binding := mentalese.NewBinding()
 
 		for i, variable := range []sparqlResponseVariable{ resultBinding.Variable1, resultBinding.Variable2 } {
 
@@ -269,13 +269,13 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 				if variable.Type == "uri" {
 					// todo look up entity type from db predicates
 					entityType := ""
-					binding[relation.Arguments[i].TermValue] = mentalese.NewTermId(variable.Value, entityType)
+					binding.Set(relation.Arguments[i].TermValue, mentalese.NewTermId(variable.Value, entityType))
 				} else {
 					// skip non-english results
 					if variable.Lang != "" && variable.Lang != "en" {
 						goto next
 					}
-					binding[relation.Arguments[i].TermValue] = mentalese.NewTermString(variable.Value)
+					binding.Set(relation.Arguments[i].TermValue, mentalese.NewTermString(variable.Value))
 				}
 			}
 		}

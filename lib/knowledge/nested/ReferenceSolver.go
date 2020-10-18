@@ -13,7 +13,10 @@ func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Rel
 
 		ref := group[0]
 
-		refBinding := binding.Merge(mentalese.Binding{ variable: mentalese.NewTermId(ref.Id, ref.EntityType)})
+		b := mentalese.NewBinding()
+		b.Set(variable, mentalese.NewTermId(ref.Id, ref.EntityType))
+
+		refBinding := binding.Merge(b)
 
 		// empty set ("it")
 		if len(set) == 0 {

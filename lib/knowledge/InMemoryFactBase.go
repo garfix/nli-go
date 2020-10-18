@@ -99,7 +99,7 @@ func (factBase *InMemoryFactBase) AddRelation(relation mentalese.Relation) {
 func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
 
 	for _, fact := range factBase.facts {
-		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.Binding{})
+		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.NewBinding())
 		if found {
 			return
 		}
@@ -117,7 +117,7 @@ func (factBase *InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
 	newFacts := []mentalese.Relation{}
 
 	for _, fact := range factBase.facts {
-		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.Binding{})
+		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.NewBinding())
 		if !found {
 			newFacts = append(newFacts, fact)
 		}

@@ -144,7 +144,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 	defer rows.Close()
 	for rows.Next() {
 
-		binding := mentalese.Binding{}
+		binding := mentalese.NewBinding()
 
 		// prepare an array of result value references
 		resultValues := []string{}
@@ -168,7 +168,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 			for i, argument := range relation.Arguments {
 				if argument.IsVariable() {
 					variable := argument.TermValue
-					binding[variable] = mentalese.Term{TermType: mentalese.TermTypeStringConstant, TermValue: resultValues[i]}
+					binding.Set(variable, mentalese.Term{TermType: mentalese.TermTypeStringConstant, TermValue: resultValues[i]})
 				}
 			}
 
@@ -190,7 +190,7 @@ func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
 	if argCount == 0 { return }
 
 	// check if relation already present; do not duplicate!
-	existingBindings := factBase.MatchRelationToDatabase(relation, mentalese.Binding{})
+	existingBindings := factBase.MatchRelationToDatabase(relation, mentalese.NewBinding())
 	if len(existingBindings) > 0 { return }
 
 	description := factBase.tableDescriptions[relation.Predicate]

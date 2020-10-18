@@ -176,13 +176,14 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 			continue
 		}
 
-		bindings := resolver.solver.FindFacts(factBase, entityInfo.Name, mentalese.Binding{
-			mentalese.NameVar: mentalese.NewTermString(name),
-		})
+		b := mentalese.NewBinding()
+		b.Set(mentalese.NameVar, mentalese.NewTermString(name))
+
+		bindings := resolver.solver.FindFacts(factBase, entityInfo.Name, b)
 
 		for _, binding := range bindings {
 
-			id, _ := binding[mentalese.IdVar]
+			id, _ := binding.Get(mentalese.IdVar)
 			information := entityType
 
 			// sort because the resulting strings must not be in random order
@@ -197,12 +198,12 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 				relationSet := entityInfo.Knownby[infoType]
 
 				// create a relation set for each field that gives Information about this name
-				bindings2 := resolver.solver.FindFacts(factBase, relationSet, mentalese.Binding{
-					mentalese.IdVar: mentalese.NewTermId(id.TermValue, entityType),
-				})
+				b := mentalese.NewBinding()
+				b.Set(mentalese.IdVar, mentalese.NewTermId(id.TermValue, entityType))
+				bindings2 := resolver.solver.FindFacts(factBase, relationSet, b)
 
 				for _, binding2 := range bindings2 {
-					value, _ := binding2[mentalese.ValueVar]
+					value, _ := binding2.Get(mentalese.ValueVar)
 					information += "; " + infoType + ": " + value.TermValue
 					// DBPedia sometimes returns multiple results for a date, while there should be only one
 					break

@@ -228,7 +228,7 @@ func (parser *InternalGrammarParser) CreateBinding(source string) mentalese.Bind
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
 	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return mentalese.Binding{}
+		return mentalese.NewBinding()
 	}
 
 	// parse

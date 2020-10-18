@@ -65,7 +65,7 @@ func (rule GrammarRule) BindSimple(binding mentalese.Binding) GrammarRule {
 
 	for i, variables := range rule.EntityVariables {
 		for j, variable := range variables {
-			val, found := binding[variable]
+			val, found := binding.Get(variable)
 			if found {
 				bound.EntityVariables[i][j] = val.String()
 			}

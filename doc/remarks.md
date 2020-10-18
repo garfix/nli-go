@@ -1,3 +1,47 @@
+# 2020-10-16
+
+Writing the algorithm for finding space made me clearly see that I needed real operators. Specially the fact that I need to introduce extra variables just to add things up is tiresome:
+
+    go:subtract(H, 1, HPrev) grid(WorkH, HPrev, V, WorkPrevH) go:add(WorkPrevH, 1, WorkH)
+    
+I want to write
+
+    grid(WorkH, H - 1, V, WorkPrevH) WorkH = WorkPrevH + 1
+    
+I can do this with two things:
+
+1) parse `A + B` as `add(A, B)`, and `A = B` as `unify(A, B)`
+2) if `add(A, B)` is used on the place of a scalar argument, it should be expanded as `add(A, B, C)`, executed, and the value of `C` filled in into the argument        
+
+I have no intention to allow the user to create operators. This makes code hard to read to outsiders.
+
+Another idea is to actually create functions that can only be used where a term is wanted.
+
+square(X) :- return(X * X)
+
+These don't need to be special. They just need to contain one or more returns. I like this better then the extra argument at the end; and it still allows for a variable number of arguments.
+
+In Erlang the last expression in a function is returned.
+Mercury, another declarative language, does the same: https://en.wikipedia.org/wiki/Mercury_(programming_language)#Examples 
+
+But how do you make the difference between passing a relation set, and passing the result of a function call? 
+
+It can be solved by adding type information to the arguments of relations. How about this:
+
+    surface(X int, Y int) int :-
+        return(X * Y);   
+
+# 2020-10-12
+
+The image has revealed all kinds of problems!
+
+- There was a bug in the do_put_in() routine (now fixed)
+- "Stack up two pyramids" has moved the blue pyramid in order to attempt to create a stack. It is out of the box (now fixed)
+- All objects that were but on the table are in the lower left corner of the table
+- The blue block and the blue pyramid take up the same position
+
+It's time for a better routine to find empty space.
+
 # 2020-10-11
 
 I used Pinhole https://github.com/tidwall/pinhole to create a visual representation of the blockworld's scene. I found myself drawing pictures with pencil using debug data, more than once, so I thought this could be easier.

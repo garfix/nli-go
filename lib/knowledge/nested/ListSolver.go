@@ -18,7 +18,7 @@ func (base *SystemNestedStructureBase) SolveListOrder(relation mentalese.Relatio
 	orderedList := base.entityQuickSort(list, orderFunction)
 
 	newBinding := binding.Copy()
-	newBinding[listVariable] = mentalese.NewTermList(orderedList)
+	newBinding.Set(listVariable, mentalese.NewTermList(orderedList))
 
 	return mentalese.Bindings{ newBinding }
 }
@@ -37,7 +37,7 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 
 	for _, element := range list {
 		scopedBinding := binding.Copy()
-		scopedBinding[variable] = element
+		scopedBinding.Set(variable, element)
 		elementBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ scopedBinding })
 		if len(elementBindings) == 0 {
 			newBindings = mentalese.Bindings{}

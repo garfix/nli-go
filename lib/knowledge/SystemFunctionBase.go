@@ -47,30 +47,30 @@ func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ssV", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	newBinding := binding.Copy()
 	parts := strings.Split(bound.Arguments[0].TermValue, bound.Arguments[1].TermValue)
 
 	for i, argument := range bound.Arguments[2:] {
-		newBinding[argument.TermValue] = mentalese.NewTermString(parts[i])
+		newBinding.Set(argument.TermValue, mentalese.NewTermString(parts[i]))
 	}
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "vsS", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	newBinding := binding.Copy()
@@ -81,17 +81,17 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 		sep = input.Arguments[1].TermValue
 	}
 
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(result)
+	newBinding.Set(input.Arguments[0].TermValue, mentalese.NewTermString(result))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "vS", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	newBinding := binding.Copy()
@@ -100,89 +100,89 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 		result += argument.TermValue
 	}
 
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(result)
+	newBinding.Set(input.Arguments[0].TermValue, mentalese.NewTermString(result))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ii", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	if int1 > int2 {
-		return binding
+		return binding, true
 	} else {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 }
 
-func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ii", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	if int1 < int2 {
-		return binding
+		return binding, true
 	} else {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 }
 
-func (base *SystemFunctionBase) greaterThanEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) greaterThanEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ii", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	if int1 >= int2 {
-		return binding
+		return binding, true
 	} else {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 }
 
-func (base *SystemFunctionBase) lessThanEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) lessThanEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ii", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	if int1 <= int2 {
-		return binding
+		return binding, true
 	} else {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 }
 
-func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "iiv", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -191,17 +191,17 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 	result := int1 + int2
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "iiv", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -210,17 +210,17 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	result := int1 - int2
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "iiv", base.log) {
-		return nil
+	if !Validate(bound, "ii*", base.log) {
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -229,17 +229,17 @@ func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding menta
 	result := int1 * int2
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "iiv", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
@@ -251,17 +251,17 @@ func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.
 	}
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ssv", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	n1 := bound.Arguments[0].TermValue
@@ -270,83 +270,83 @@ func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mental
 	result := strings.Compare(n1, n2)
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(result))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "--", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	if !bound.Arguments[0].Equals(bound.Arguments[1]) {
-		return nil
+		return mentalese.NewBinding(), false
 	} else {
-		return binding
+		return binding, true
 	}
 }
 
-func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	if !Validate(input, "--", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	bound := input.BindSingle(binding)
 
-	firstBinding, match1 := base.matcher.MatchTerm(bound.Arguments[0], bound.Arguments[1], mentalese.Binding{})
-	secondBinding, match2 := base.matcher.MatchTerm(bound.Arguments[1], bound.Arguments[0], mentalese.Binding{})
+	firstBinding, match1 := base.matcher.MatchTerm(bound.Arguments[0], bound.Arguments[1], mentalese.NewBinding())
+	secondBinding, match2 := base.matcher.MatchTerm(bound.Arguments[1], bound.Arguments[0], mentalese.NewBinding())
 	combinedBinding := firstBinding.Merge(secondBinding).RemoveVariables()
 	newBinding := binding.Merge(combinedBinding)
 
 	if !match1 || !match2 {
-		return nil
+		return mentalese.NewBinding(), false
 	} else {
-		return newBinding
+		return newBinding, true
 	}
 }
 
-func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "--", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	if bound.Arguments[0].Equals(bound.Arguments[1]) {
-		return nil
+		return mentalese.NewBinding(), false
 	} else {
-		return binding
+		return binding, true
 	}
 }
 
-func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "v", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	now := time.Now()
 	formatted := now.Format("2006-01-02")
 
 	newBinding := binding.Copy()
-	newBinding[input.Arguments[0].TermValue] = mentalese.NewTermString(formatted)
+	newBinding.Set(input.Arguments[0].TermValue, mentalese.NewTermString(formatted))
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, binding mentalese.Binding) mentalese.Binding {
+func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "ssv", base.log) {
-		return nil
+		return mentalese.NewBinding(), false
 	}
 
 	date1, err1 := time.Parse("2006-01-02", bound.Arguments[0].TermValue)
@@ -354,7 +354,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 
 	newBinding := binding.Copy()
 	if err1 != nil || err2 != nil {
-		newBinding = nil
+		return mentalese.NewBinding(), false
 	} else {
 		//years := 0
 		//if date1.Year() < date2.Year() {
@@ -372,55 +372,56 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 			years = date1.Year() - date2.Year()
 		}
 
-		newBinding[input.Arguments[2].TermValue] = mentalese.NewTermString(strconv.Itoa(int(years)))
+		newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(int(years))))
 	}
 
-	return newBinding
+	return newBinding, true
 }
 
-func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
 
 	newBinding := binding
 	found := true
+	success := true
 
 	switch input.Predicate {
 	case mentalese.PredicateSplit:
-		newBinding = base.split(input, binding)
+		newBinding, success = base.split(input, binding)
 	case mentalese.PredicateJoin:
-		newBinding = base.join(input, binding)
+		newBinding, success = base.join(input, binding)
 	case mentalese.PredicateConcat:
-		newBinding = base.concat(input, binding)
+		newBinding, success = base.concat(input, binding)
 	case mentalese.PredicateGreaterThan:
-		newBinding = base.greaterThan(input, binding)
+		newBinding, success = base.greaterThan(input, binding)
 	case mentalese.PredicateLessThan:
-		newBinding = base.lessThan(input, binding)
+		newBinding, success = base.lessThan(input, binding)
 	case mentalese.PredicateGreaterThanEquals:
-		newBinding = base.greaterThanEquals(input, binding)
+		newBinding, success = base.greaterThanEquals(input, binding)
 	case mentalese.PredicateLessThanEquals:
-		newBinding = base.lessThanEquals(input, binding)
+		newBinding, success = base.lessThanEquals(input, binding)
 	case mentalese.PredicateAdd:
-		newBinding = base.add(input, binding)
+		newBinding, success = base.add(input, binding)
 	case mentalese.PredicateSubtract:
-		newBinding = base.subtract(input, binding)
+		newBinding, success = base.subtract(input, binding)
 	case mentalese.PredicateMultiply:
-		newBinding = base.multiply(input, binding)
+		newBinding, success = base.multiply(input, binding)
 	case mentalese.PredicateMin:
-		newBinding = base.min(input, binding)
+		newBinding, success = base.min(input, binding)
 	case mentalese.PredicateEquals:
-		newBinding = base.equals(input, binding)
+		newBinding, success = base.equals(input, binding)
 	case mentalese.PredicateCompare:
-		newBinding = base.compare(input, binding)
+		newBinding, success = base.compare(input, binding)
 	case mentalese.PredicateNotEquals:
-		newBinding = base.notEquals(input, binding)
+		newBinding, success = base.notEquals(input, binding)
 	case mentalese.PredicateUnify:
-		newBinding = base.unify(input, binding)
+		newBinding, success = base.unify(input, binding)
 	case mentalese.PredicateDateToday:
-		newBinding = base.dateToday(input, binding)
+		newBinding, success = base.dateToday(input, binding)
 	case mentalese.PredicateDateSubtractYears:
-		newBinding = base.dateSubtractYears(input, binding)
+		newBinding, success = base.dateSubtractYears(input, binding)
 	default:
 		found = false
 	}
 
-	return newBinding, found
+	return newBinding, found, success
 }

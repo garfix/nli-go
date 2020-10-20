@@ -1,5 +1,19 @@
 # Control functions
 
+## Let
+
+Introduce a local variable. Local variable are only visible within the rule in which they are executed. Their values may be overwritten.
+
+    let(A, B)
+
+* `A`: a variable
+* `B`: a value (any term)    
+
+Example 
+
+    let(Name, "Byron")
+    let(X, 0)
+
 ## And
 
 A variant on the boolean function `and` that works with bindings.
@@ -90,3 +104,20 @@ This relation just processes its single argument, that is a relation set. The pu
     call(S)
     
 * `S`: a relation set    
+
+## Range foreach
+
+For loop over an integer range Start .. End. `Scope` will be called with Variable instantiated to each of the numbers in [Start..End], including Start and End. 
+
+    range_foreach(Start, End, Variable, Scope)
+    
+* `Start`: an integer
+* `End`: an integer
+* `Variable`: a variable    
+* `Scope`: a relation set    
+
+Example:
+
+    go:range_foreach(1, 10, I,
+        go:multiply(Result, I, Result)
+    )     

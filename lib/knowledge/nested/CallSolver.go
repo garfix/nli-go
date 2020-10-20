@@ -2,6 +2,7 @@ package nested
 
 import (
 	"nli-go/lib/mentalese"
+	"strconv"
 )
 
 func (base *SystemNestedStructureBase) Call(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
@@ -9,6 +10,47 @@ func (base *SystemNestedStructureBase) Call(relation mentalese.Relation, binding
 	child := relation.Arguments[0].TermValueRelationSet
 
 	newBindings := base.solver.SolveRelationSet(child, mentalese.Bindings{ binding })
+
+	return newBindings
+}
+
+func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	bound := relation.BindSingle(binding)
+
+	startTerm := bound.Arguments[0].TermValue
+	endTerm := bound.Arguments[1].TermValue
+	variableTerm := relation.Arguments[2]
+	variable := variableTerm.TermValue
+	children := relation.Arguments[3].TermValueRelationSet
+
+	newBindings := mentalese.Bindings{}
+
+	start, err := strconv.Atoi(startTerm)
+	if err != nil {
+		return newBindings
+	}
+
+	end, err := strconv.Atoi(endTerm)
+	if err != nil {
+		return newBindings
+	}
+
+	for i := start; i <= end; i++ {
+		scopedBinding := binding.Copy()
+		if !variableTerm.IsAnonymousVariable() {
+			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
+		}
+		elementBindings := base.solver.SolveRelationSet(children, mentalese.Bindings{scopedBinding })
+		if len(elementBindings) == 0 {
+			newBindings = mentalese.Bindings{}
+			break
+		}
+		if !variableTerm.IsAnonymousVariable() {
+			elementBindings = elementBindings.FilterOutVariablesByName([]string{ variable })
+		}
+		newBindings = append(newBindings, elementBindings...)
+	}
 
 	return newBindings
 }

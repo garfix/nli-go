@@ -85,6 +85,17 @@ func (s Bindings) FilterVariablesByName(variableNames []string) Bindings {
 	return newBindings
 }
 
+
+func (s Bindings) FilterOutVariablesByName(variableNames []string) Bindings {
+	newBindings := []Binding{}
+
+	for _, binding := range s {
+		newBindings = append(newBindings, binding.FilterOutVariablesByName(variableNames))
+	}
+
+	return newBindings
+}
+
 // Returns copy of bindings that contains each Binding only once
 func (s Bindings) UniqueBindings() Bindings {
 	uniqueBindings := Bindings{}

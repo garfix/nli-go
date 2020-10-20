@@ -181,7 +181,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "iiv", base.log) {
+	if !Validate(bound, "ii*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
@@ -200,7 +200,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "iiv", base.log) {
+	if !Validate(bound, "ii*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 

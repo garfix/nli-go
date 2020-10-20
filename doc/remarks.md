@@ -1,3 +1,9 @@
+# 2020-10-18
+
+Adding local variables, because I am creating a function that determines the largest rectangle, and I don't want to do this via recursion.
+
+The local variables are stored in a Scope object. Scope objects are stored in a stack. Whenever a rule fires, it pushes a scope onto the stack; when it is done, the scope is removed. A binding can have a reference to such a scope, so that I don't need to pass bindings and local variables separately all through the system.
+
 # 2020-10-16
 
 Writing the algorithm for finding space made me clearly see that I needed real operators. Specially the fact that I need to introduce extra variables just to add things up is tiresome:

@@ -411,8 +411,7 @@ func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalR
 		scope := mentalese.NewScope()
 		solver.scopeStack.Push(scope)
 
-		scopedBinding := mentalese.NewScopedBinding(&scope).Merge(binding)
-
+		scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
 		subgoalResultBindings := mentalese.Bindings{ scopedBinding }
 
 		for _, subGoal := range sourceSubgoalSet {

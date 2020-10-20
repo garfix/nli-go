@@ -40,10 +40,24 @@ func TestLocalVariables(t *testing.T) {
 	rules := parser.CreateRules(`[
 		pow(Base, Number, Pow) :- 
 			go:let(Result, 1)
-			go:multiply(Result, Base, Result)
-			go:multiply(Result, Base, Result)
-			go:multiply(Result, Base, Result)
-			go:unify(Pow, Result);
+			go:range_foreach(1, Number, _,
+				go:multiply(Result, Base, Result)
+			)
+			go:unify(Pow, Result);	
+
+		first(In, Out) :-
+			go:let(X, In)
+			go:let(Y, 13)
+			times_three(X, Y)
+			go:add(Y, 1, X)
+			go:unify(Out, X)
+		;
+
+		times_three(In, Out) :-
+			go:let(X, 3)
+			go:multiply(X, In, Out)
+		;
+	
 	]`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
 	solver.AddRuleBase(ruleBase)
@@ -54,9 +68,12 @@ func TestLocalVariables(t *testing.T) {
 		resultBindings string
 	}{
 		{"pow(2, 3, Pow)", "{}", "[{Pow:8}]"},
+		{"first(5, Result)", "{}", "[{Result:16}]"},
 	}
 
 	for _, test := range tests {
+
+		log.Clear()
 
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
@@ -69,6 +86,7 @@ func TestLocalVariables(t *testing.T) {
 
 		if resultBindings != test.resultBindings {
 			t.Errorf("SolveRuleBase: got %v, want %v", resultBindings, test.resultBindings)
+			t.Errorf(log.String())
 		}
 	}
 }

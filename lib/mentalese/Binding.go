@@ -1,6 +1,7 @@
 package mentalese
 
 import (
+	"nli-go/lib/common"
 	"sort"
 )
 
@@ -84,6 +85,10 @@ func (b Binding) Merge(b2 Binding) Binding {
 
 	for k, v := range b2.k2v {
 		result.k2v[k] = v
+	}
+
+	if b.scope != nil && b2.scope != nil && b.scope != b2.scope {
+		b.scope.variables = b.scope.GetVariables().Merge(*b2.scope.GetVariables())
 	}
 
 	return result
@@ -216,6 +221,18 @@ func (b Binding) FilterVariablesByName(variableNames []string) Binding {
 	return result
 }
 
+func (b Binding) FilterOutVariablesByName(variableNames []string) Binding {
+	result := NewScopedBinding(b.scope)
+
+	for key, value := range b.k2v {
+		if !common.StringArrayContains(variableNames, key) {
+			result.k2v[key] = value
+		}
+	}
+
+	return result
+}
+
 // Returns a new Binding with just key, if exists
 func (b Binding) Extract(key string) Binding {
 	newBinding := NewBinding()
@@ -245,7 +262,12 @@ func (b Binding) String() string {
 		sep = ", "
 	}
 
-	return "{" + s + "}"
+	local := ""
+	if b.scope != nil {
+		local = "&" + b.scope.variables.String()
+	}
+
+	return "{" + s + "}" + local
 }
 
 func (b Binding) Equals(c Binding) bool {

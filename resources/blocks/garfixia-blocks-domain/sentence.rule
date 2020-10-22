@@ -29,7 +29,7 @@
                 at(Base, X, Y, _) cleartop(Base), /* find the topmost object on the stack */
                 block(Base)
                 do_put_on(E1, Base),
-                do_put_on_table(E1, X, Y)
+                block(E1) do_put_on_table(E1, X, Y)
             )
         );
 

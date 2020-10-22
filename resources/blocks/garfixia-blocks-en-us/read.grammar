@@ -56,6 +56,7 @@
     /* nouns */
 
     { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: go:quant_check($np, dom:taller(E1, E2)) }
+    { rule: adjp(E1) -> 'behind' np(E2),                                   sense: go:quant_check($np, dom:behind(E1, E2)) }
     { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: go:quant_check($np, dom:narrower(E1, E2)) }
     { rule: adjp(E1) -> adjective(E1) }
     { rule: adjp(E1) -> 'not' adjective(E1),                               sense: go:not($adjective) }
@@ -65,6 +66,7 @@
     { rule: adjective(E1) -> 'green',                                      sense: dom:green(E1) }
     { rule: adjective(E1) -> 'big',                                        sense: dom:big(E1) }
     { rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
+    { rule: adjective(E1) -> 'large',                                      sense: dom:big(E1) }
 
     { rule: pp(E1) -> 'in' np(E2),                                         sense: go:quant_check($np, dom:contain(_, E2, E1)) }
 
@@ -139,6 +141,7 @@
     { rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: go:intent(how_many, E1) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
+    { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),              sense: go:intent(select, E1) go:quant_check($np, $adjp) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
     { rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: go:intent(yes_no) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }

@@ -126,14 +126,14 @@ func createImage(system *global.System) {
 
 		p.Begin()
 
-		x, _ := strconv.ParseFloat(binding["X"].TermValue, 64)
-		y, _ := strconv.ParseFloat(binding["Y"].TermValue, 64)
-		z, _ := strconv.ParseFloat(binding["Z"].TermValue, 64)
-		theType := binding["Type"].TermValue
-		theColor := binding["Color"].TermValue
-		width, _ := strconv.ParseFloat(binding["Width"].TermValue, 64)
-		length, _ := strconv.ParseFloat(binding["Length"].TermValue, 64)
-		height, _ := strconv.ParseFloat(binding["Height"].TermValue, 64)
+		x, _ := strconv.ParseFloat(binding.MustGet("X").TermValue, 64)
+		y, _ := strconv.ParseFloat(binding.MustGet("Y").TermValue, 64)
+		z, _ := strconv.ParseFloat(binding.MustGet("Z").TermValue, 64)
+		theType := binding.MustGet("Type").TermValue
+		theColor := binding.MustGet("Color").TermValue
+		width, _ := strconv.ParseFloat(binding.MustGet("Width").TermValue, 64)
+		length, _ := strconv.ParseFloat(binding.MustGet("Length").TermValue, 64)
+		height, _ := strconv.ParseFloat(binding.MustGet("Height").TermValue, 64)
 
 		x1 := (x - 500) / scale
 		y1 := (y - 500) / scale

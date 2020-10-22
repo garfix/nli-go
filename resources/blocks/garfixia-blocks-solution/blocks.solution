@@ -73,6 +73,7 @@
                 answer: dom:select({{ And }}) {{ N }}
             }
             {
+                preparation: dom:at(E1, X, Y, Z),
                 answer: dom:none()
             }
         ]

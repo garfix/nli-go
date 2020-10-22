@@ -1,5 +1,27 @@
 # List functions
 
+## List make
+
+Creates a new list, based on existing variables with multiple bindings
+
+    go:list_make(List, X)
+    go:list_make(List, X, Y, Z)
+    
+* `List`: a variable that will contain the list
+* `X`, `Y`, `Z`: variables with one or more values
+
+Example: 
+
+When calling `go:list_make(List, X)` with bindings 
+
+    [{X: 2, Y: 1}{X: 3}{}] 
+
+the resulting bindings will be
+
+    [{List: [2, 3, 1]}]
+    
+As you can see the values are added, first in order of argument appearance, and second in order of binding appearance. First `X` is added as `2` and `3`; then `Y` is added as `1`.
+
 ## List order
 
 Creates a new list, based on an existing list, but ordered by an order function.

@@ -30,21 +30,23 @@
     { rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
     { rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
 
-    { rule: s(S1) -> multiple_entities(S1),                                     condition: dom:root(go:and(S1, _))  }
-    { rule: s(S1) -> 'yes' ',' multiple_entities(S1),                           condition: dom:select(go:and(S1, _))  }
-    { rule: s(S1) -> 'yes' ',' 'by' multiple_entities(S1),                      condition: dom:select_subject(go:and(S1, _)) }
+    { rule: s(S1) -> entities(S1),                                     condition: dom:root(go:and(S1, _))  }
+    { rule: s(S1) -> 'yes' ',' entities(S1),                           condition: dom:select(go:and(S1, _))  }
+    { rule: s(S1) -> 'yes' ',' 'by' entities(S1),                      condition: dom:select_subject(go:and(S1, _)) }
     { rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
     { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
     { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
     { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-    { rule: multiple_entities(E1) -> single_entity(E1),                                 condition: go:and(E1, E1) }
-    { rule: multiple_entities(E1) -> single_entity(E1) ',' multiple_entities(E2),       condition: go:and(E1, and(E2, _)) }
-    { rule: multiple_entities(E1) -> single_entity(E1) 'and' multiple_entities(E2),     condition: go:and(E1, E2) }
-    { rule: multiple_entities(E1) -> single_entity(E1),                                 condition: go:and(_, E1) }
+    { rule: entities(And) -> entities(E1),                                        condition: go:unify(And, go:and(E1, _))  }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(E1, E1) }
+    { rule: entities(E1) -> entity(E1) ',' entities(E2),                          condition: go:and(E1, go:and(E2, _)) }
+    { rule: entities(E1) -> entity(E1) 'and' entities(E2),                        condition: go:and(E1, E2) }
+    { rule: entities(E1) -> entity(E1),                                           condition: go:and(_, E1) }
+    { rule: entities(E1) -> entity(E1) }
 
-    { rule: single_entity(E1) -> np(E1),                                        condition: dom:description(E1) }
+    { rule: entity(E1) -> np(E1),                                        condition: dom:description(E1) }
 
     { rule: named_number(C) -> 'one',                                           condition: dom:a_number(1) }
     { rule: named_number(C) -> 'two',                                           condition: dom:a_number(2) }

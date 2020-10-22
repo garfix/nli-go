@@ -76,6 +76,7 @@ func TestAggregateFunctions(t *testing.T) {
 		{"go:first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
 		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
 		{"go:exists()", "[]", "[]"},
+		{"go:list_make(List, X, Y)", "[{X: 2, Y: 1}{X: 3}{}]", "[{List:[2,3,1]}]"},
 	}
 
 	for _, test := range tests {
@@ -119,6 +120,73 @@ func TestControlFunctions(t *testing.T) {
 		{"go:if_then_else(go:greater_than(6, 5), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
 		{"go:if_then_else(go:greater_than(5, 6), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
 	}
+
+	for _, test := range tests {
+
+		input := parser.CreateRelation(test.input)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
+
+		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
+		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
+	}
+}
+
+func TestListFunctions(t *testing.T) {
+
+	log := common.NewSystemLog(false)
+	matcher := mentalese.NewRelationMatcher(log)
+	dialogContext := central.NewDialogContext()
+	predicates := &mentalese.Meta{}
+	parser := importer.NewInternalGrammarParser()
+
+	rules := parser.CreateRules(`[
+		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) go:compare(Name1, Name2, R);
+	]`)
+	facts := parser.CreateRelationSet("" +
+		"person(`:C`, 'Charles') " +
+		"person(`:D`, 'Duncan') " +
+		"person(`:B`, 'Bernhard') " +
+		"person(`:E`, 'Edward') " +
+		"person(`:A`, 'Abraham') ")
+	readMap := parser.CreateRules(`[
+		person(E, Name) :- person(E, Name);
+	]`)
+	writeMap := parser.CreateRules(`[]`)
+
+	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
+	solver.AddFactBase(factBase)
+	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	solver.AddFunctionBase(functionBase)
+	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
+	solver.AddRuleBase(ruleBase)
+	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	tests := []struct {
+		input      string
+		binding     string
+		wantBindings string
+	}{
+		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
+		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
+	}
+
+	/*
+	- go:list_make()
+	- go:list_deduplicate
+	- go:list_sort
+	- go:list_index
+	- go:list_length
+	- go:list_get
+
+	*/
 
 	for _, test := range tests {
 
@@ -244,8 +312,6 @@ func TestQuantFunctions(t *testing.T) {
 				&by_name,
 				List)`,
 			"{}", "[{List: [`:A`, `:B`]}]"},
-		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
-		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 	}
 
 	for _, test := range tests {

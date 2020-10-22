@@ -1,5 +1,18 @@
 # Todo
 
+- go:list_make()
+- go:list_deduplicate
+- go:list_sort
+- go:list_index
+- go:list_length
+- go:list_get
+
+- local variables (mutable)
+- functions calls for arguments
+- typed arguments
+- operators
+- n-dimensional arrays as local variables
+
 - check of alle relaties goed zijn bij het inlezen van de source files
 - extend a module with another module
 - interactive: arrow up/down for history

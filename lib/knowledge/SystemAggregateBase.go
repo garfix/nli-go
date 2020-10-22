@@ -22,6 +22,7 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateFirst,
 		mentalese.PredicateExists,
 		mentalese.PredicateMakeAnd,
+		mentalese.PredicateListMake,
 	}
 
 	for _, p := range predicates {
@@ -143,6 +144,34 @@ func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings ment
 	return newBindings
 }
 
+func (base *SystemAggregateBase) makeList(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+	if !Validate(input, "V", base.log) {
+		return mentalese.Bindings{}
+	}
+	if len(bindings) == 0 {
+		return mentalese.Bindings{}
+	}
+
+	scope := bindings[0].GetScope()
+
+	listVar := input.Arguments[0].TermValue
+	list := mentalese.TermList{}
+
+	for i, argument := range input.Arguments {
+		if i == 0 { continue }
+		variable := argument.TermValue
+		for _, value := range bindings.GetDistinctValues(variable) {
+			list = append(list, value)
+		}
+	}
+
+	listTerm := mentalese.NewTermList(list)
+
+	newBindings := mentalese.NewScopedBinding(scope)
+	newBindings.Set(listVar, listTerm)
+	return mentalese.Bindings{ newBindings }
+}
+
 func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
 
 	newBindings := bindings
@@ -157,6 +186,8 @@ func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings ment
 		newBindings = base.exists(input, bindings)
 	case mentalese.PredicateMakeAnd:
 		newBindings = base.makeAnd(input, bindings)
+	case mentalese.PredicateListMake:
+		newBindings = base.makeList(input, bindings)
 	default:
 		found = false
 	}

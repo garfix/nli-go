@@ -1,0 +1,124 @@
+[
+    /* Inspired by */
+    /* https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/ */
+
+    /* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
+    do_find_free_space(E1, BoundX1, BoundY1, BoundX2, BoundY2, X1, Y1) :-
+        do_find_objects(BoundX1, BoundY1, BoundX2, BoundY2, O1)
+        do_find_lines(O1, BoundX1, BoundY1, BoundX2, BoundY2, HorLines, VerLines)
+       // do_create_grid(fixed, HorLines, VerLines)
+        do_init_grid(fixed, O1, HorLines, VerLines)
+        do_find_free_position(E1, fixed, HorLines, VerLines, X1, X2)
+    ;
+
+    rectangle(R1, X1, X2, Y1, Y2) :-
+        at(R1, X1, Y1, 0)
+        size(R1, Width, Length, _)
+        go:add(X1, Width, X2)
+        go:add(Y1, Length), Y2)
+    ;
+
+    do_find_objects(BoundX1, BoundY1, BoundX2, BoundY2, O1) :-
+        do_find_objects(O1, X1, X2, Y1, Y2)
+        go:greater_than_equals(X2, BoundX1)
+        go:less_than_equals(X1, BoundX2)
+        go:greater_than_equals(Y2, BoundY1)
+        go:less_than_equals(Y1, BoundY2)
+    ;
+
+    do_find_lines(O1, BoundX1, BoundY1, BoundX2, BoundY2, HorLines, VerLines) :-
+        rectangle(O1, X1, X2, Y1, Y2)
+        go:list_make(V1, BoundX1, X1, BoundX2)
+        go:list_make(H1, BoundY1, Y1, BoundY2)
+        go:list_deduplicate(V3, V4)
+        go:list_deduplicate(H3, H4)
+        go:list_sort(V4, VerLines)
+        go:list_sort(H4, HorLines)
+    ;
+
+    do_create_grid(Fixed, R1, HorLines, VerLines) :-
+        go:retract( grid(Fixed, _, _, _, _) )
+
+        go:list_foreach(VerLines, V,
+            go:list_foreach(HorLines, H,
+                go:assert( grid(Fixed, H, V, 0) )
+            )
+        )
+    ;
+
+    do_init_grid(Grid, O1, HorLines, VerLines) :-
+        rectangle(O1, X1, X2, Y1, Y2)
+        go:list_index(VerLines, X1, V1)
+        go:list_index(VerLines, X2, V2)
+        go:list_index(HorLines, Y1, H1)
+        go:list_index(HorLines, Y2, H2)
+        go:range_foreach(V1, V2, V,
+            go:range_foreach(H1, H2, H,
+                 go:retract( grid(Grid, H, V, 0) )
+                 go:assert( grid(Grid, H, V, 1) )
+            )
+        )
+    ;
+
+    do_find_free_position(E1, Grid, HorLines, VerLines, X1, X2) :-
+        go:let(A1, -1)
+        go:let(B1, -1)
+        go:let(VSpan, 0)
+        go:let(SpanHeight, 0)
+        go:let(PrevY, 0)
+        go:let(StartY, 0)
+
+        size(E1, Width, Length, _)
+        go:list_length(VerLines, ColCount)
+        go:list_length(HorLines, RowCount)
+
+        go:range_foreach(1, ColCount, ColIndex,
+            go:list_get(VerLines, ColIndex, X)
+            find_span(Width, VerLines, ColIndex, ColSpan)
+            go:range_foreach(1, RowCount, RowIndex,
+                go:list_get(HorLines, RowIndex, Y)
+                go:subtract(Y, PrevY, RowHeight)
+                go:if_then_else(
+                    row_match(ColIndex, ColSpan, RowIndex, Grid),
+
+                    go:add(SpanHeight, RowHeight, SpanHeight)
+                    go:greater_than_equals(RowHeight, SpanHeight),
+                    go:let(A1, X)
+                    go:let(B1, StartY),
+
+                    go:let(SpanHeight, 0) go:let(StartY, Y)
+                )
+                go:let(PrevY, Y)
+            )
+        )
+
+        go:not_equals(A1, -1),
+        go:unify(X1, A1)
+        go:unify(Y1, B1)
+    ;
+
+    find_span(Size, Lines, V, StartIndex, Span) :-
+        go:let(Span, 0);
+        go:let(CurrentSize, 0)
+
+        go:list_get(Lines, StartIndex, CurrentSize)
+        go:add(CurrentSize, Size, CurrentSize)
+
+         go:list_foreach(Lines, L,
+            go:less_than(L, CurrentSize)
+            go:add(Span, 1, Span)
+         )
+    ;
+
+    row_match(ColStart, ColSpan, RowIndex, Grid) :-
+        go:let(Success, true)
+        go:add(ColIndex, ColSpan, V1)
+        go:subtract(V1, 1, ColEnd)
+        go:range_foreach(ColStart, ColEnd, ColIndex
+            grid(Grid, RowIndex, ColIndex, 1),
+            go:let(Success, false)
+        )
+        go:equals(Success, true)
+    ;
+
+]

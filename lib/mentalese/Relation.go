@@ -38,6 +38,7 @@ const PredicateExecResponse = "go_exec_response"
 const PredicateMakeAnd = "go_make_and"
 const PredicateLet = "go_let"
 const PredicateIncludeRelations = "$go$_include_relations"
+const PredicateListMake = "go_list_make"
 
 const PredicateSplit = "go_split"
 const PredicateJoin = "go_join"

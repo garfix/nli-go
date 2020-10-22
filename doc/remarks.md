@@ -1,3 +1,42 @@
+# 2020-10-22
+
+Starting to appreciate the "Let it crash" coding style
+
+https://en.wikipedia.org/wiki/Erlang_(programming_language)#%22Let_it_Crash%22_coding_style
+
+# 2020-10-20
+
+I got local variables to work. Local variables might not be the right name. Perhaps "rewritable variables" is better. I solved the problem of using local variables as parameters to relations.
+
+This is experimental, of course, as is the whole application in this state. I now have two types of variables that look exactly the same. One can receive a value only once; the other one may be rewritten. It would be good to make them syntactically different. For example
+
+    go:let(%X, 0)
+    go:let(&X, 0)
+    
+But I haven't done that yet. 
+
+The question arises: why not make all variable rewritable? Other languages do it all the time. If you don't need rewriting, don't use it.
+
+The reason of course is that the variable, once bound, serves as a constraint for the rest of the program. Once Name is "John", and you use it in the relation name(E, Name), Name should not be overwritten, it serves to find only entities whose name is "John".
+
+Erlang does not support mutating variables. Elixir, which is based on Erlang, doesn't either. But it has "variable rebinding". 
+http://blog.plataformatec.com.br/2016/01/comparing-elixir-and-erlang-variables/
+https://medium.com/everydayhero-engineering/elixir-variable-rebinding-342c5d0fd961
+
+===
+
+An algoritm to find a place for a block. 
+
+Collect all vertical (V) and horizontal (H) lines that form the edges of existing objects.
+Create a VxH grid of 1 and 0 where 1 means: occupied by an objects.
+Go through all V
+    Take 1, 2 or 3 columns at once (a multicolumn, V1), as much as minimally needed for the block.
+    H1 = 0
+    Go through all H        
+          If the block fits in H1, stop
+          If the multicolumn is not empty, H1 = H + 1
+            
+  
 # 2020-10-18
 
 Adding local variables, because I am creating a function that determines the largest rectangle, and I don't want to do this via recursion.

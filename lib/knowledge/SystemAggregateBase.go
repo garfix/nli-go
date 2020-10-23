@@ -144,22 +144,19 @@ func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings ment
 	return newBindings
 }
 
-func (base *SystemAggregateBase) makeList(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
 	if !Validate(input, "V", base.log) {
 		return mentalese.Bindings{}
 	}
-	if len(bindings) == 0 {
-		return mentalese.Bindings{}
-	}
-
-	scope := bindings[0].GetScope()
 
 	listVar := input.Arguments[0].TermValue
 	list := mentalese.TermList{}
 
+	variables := []string{}
 	for i, argument := range input.Arguments {
 		if i == 0 { continue }
 		variable := argument.TermValue
+		variables = append(variables, variable)
 		for _, value := range bindings.GetDistinctValues(variable) {
 			list = append(list, value)
 		}
@@ -167,9 +164,14 @@ func (base *SystemAggregateBase) makeList(input mentalese.Relation, bindings men
 
 	listTerm := mentalese.NewTermList(list)
 
-	newBindings := mentalese.NewScopedBinding(scope)
-	newBindings.Set(listVar, listTerm)
-	return mentalese.Bindings{ newBindings }
+	newBindings := mentalese.Bindings{}
+	for _, binding := range bindings {
+		newBinding := binding.Copy()
+		newBinding.Set(listVar, listTerm)
+		newBinding = newBinding.FilterOutVariablesByName(variables)
+		newBindings = append(newBindings, newBinding)
+	}
+	return newBindings.UniqueBindings()
 }
 
 func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
@@ -187,7 +189,7 @@ func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings ment
 	case mentalese.PredicateMakeAnd:
 		newBindings = base.makeAnd(input, bindings)
 	case mentalese.PredicateListMake:
-		newBindings = base.makeList(input, bindings)
+		newBindings = base.listMake(input, bindings)
 	default:
 		found = false
 	}

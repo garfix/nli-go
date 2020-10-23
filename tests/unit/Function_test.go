@@ -76,7 +76,7 @@ func TestAggregateFunctions(t *testing.T) {
 		{"go:first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
 		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
 		{"go:exists()", "[]", "[]"},
-		{"go:list_make(List, X, Y)", "[{X: 2, Y: 1}{X: 3}{}]", "[{List:[2,3,1]}]"},
+		{"go:list_make(List, X, Y)", "[{X: 2, Y: 1, E: 5}{X: 3}{}{E: 4}{E: 4}]", "[{E:5, List:[2,3,1]}{List:[2,3,1]}{E:4, List:[2,3,1]}]"},
 	}
 
 	for _, test := range tests {
@@ -176,10 +176,10 @@ func TestListFunctions(t *testing.T) {
 	}{
 		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
+		{"go:list_deduplicate(ListA, ListB)", "{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`]}", "[{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`],ListB:[`:B`, `:C`, `:A`]}]"},
 	}
 
 	/*
-	- go:list_make()
 	- go:list_deduplicate
 	- go:list_sort
 	- go:list_index

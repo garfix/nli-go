@@ -2,10 +2,10 @@
 
 ## List make
 
-Creates a new list, based on existing variables with multiple bindings
+Creates a new list, based on existing variables with multiple bindings. The values of `X`, `Y` and `Z` are added to the list, and they are removed from the bindings. The resulting bindings are deduplicated.
 
-    go:list_make(List, X)
-    go:list_make(List, X, Y, Z)
+    go:list_make(List)
+    go:list_make(List, X, Y, Z, ...)
     
 * `List`: a variable that will contain the list
 * `X`, `Y`, `Z`: variables with one or more values
@@ -47,3 +47,12 @@ Binds each of the values of list to `Variable`, and executes `Scope` for each va
 * `List`: a list
 * `Variable`: a variable
 * `Scope`: a relation set
+
+## List deduplicate
+
+Creates a new list, based on existing list, but with all duplicate elements removed. The order of the values will not change.
+
+    go:list_deduplicate(List, NewList)
+    
+* `List`: a list
+* `NewList`: a variable that will contain a list

@@ -25,6 +25,23 @@ func (list TermList) ConvertVariablesToConstants() TermList {
 	return newList
 }
 
+func (list TermList) Deduplicate() TermList {
+	newList := TermList{}
+	for _, element := range list {
+		found := false
+		for _, e := range newList {
+			if element.Equals(e) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			newList = append(newList, element)
+		}
+	}
+	return newList
+}
+
 func (list TermList) GetVariableNames() []string {
 	names := []string{}
 	for _, element := range list {

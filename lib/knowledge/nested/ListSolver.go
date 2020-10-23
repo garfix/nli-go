@@ -48,3 +48,21 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 
 	return newBindings
 }
+
+func (base *SystemNestedStructureBase) listDeduplicate(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "lv", base.log) {
+		return mentalese.Bindings{}
+	}
+
+	list := bound.Arguments[0].TermValueList
+	newlistVar := bound.Arguments[1].TermValue
+
+	newList := list.Deduplicate()
+
+	newBinding := binding.Copy()
+	newBinding.Set(newlistVar, mentalese.NewTermList(newList))
+	return mentalese.Bindings{ newBinding }
+}

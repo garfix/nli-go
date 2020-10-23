@@ -42,6 +42,7 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateQuantOrderedList,
 		mentalese.PredicateListOrder,
 		mentalese.PredicateListForeach,
+		mentalese.PredicateListDeduplicate,
 		mentalese.PredicateLet,
 		mentalese.PredicateRangeForeach,
 	}
@@ -146,6 +147,10 @@ func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.R
 	} else if relation.Predicate == mentalese.PredicateListForeach {
 
 		newBindings = base.SolveListForeach(relation, binding)
+
+	} else if relation.Predicate == mentalese.PredicateListDeduplicate {
+
+		newBindings = base.listDeduplicate(relation, binding)
 
 	} else if relation.Predicate == mentalese.PredicateLet {
 

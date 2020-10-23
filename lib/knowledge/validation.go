@@ -43,7 +43,7 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a list")
 			return false
 		}
-		if c == 'i' && !arg.IsNumber() {
+		if c == 'i' && !arg.IsInteger() {
 			//			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
 			return false
 		}

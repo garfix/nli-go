@@ -56,3 +56,43 @@ Creates a new list, based on existing list, but with all duplicate elements remo
     
 * `List`: a list
 * `NewList`: a variable that will contain a list
+
+## List sort
+
+Creates a new list, based on existing list, but with all elements sorted. 
+
+    go:list_sort(List, NewList)
+    
+* `List`: a list
+* `NewList`: a variable that will contain a list
+
+The function checks the types of the elements. If they are all integers, the list will be sorted from low to high. If they are all strings, they will be sorted alphabetically. Otherwise, it will cause an error.
+
+## List length
+
+Puts the number of elements of List in Len. 
+
+    go:list_sort(List, Len)
+    
+* `List`: a list
+* `Len`: a variable that will contain an integer
+ 
+## List index
+ 
+Puts the index of the occurrence of `E` in `Index`. If there are more occurrences, more bindings will be created. 
+ 
+     go:list_index(List, E, Index)
+     
+ * `List`: a list
+ * `E`: any term
+ * `Index`: an variable that will contain an integer
+ 
+## List get
+ 
+Puts the Index'th term in E 
+ 
+    go:list_index(List, Index, E)
+     
+ * `List`: a list
+ * `Index`: an integer
+ * `E`: a variable that will contain the term

@@ -1,5 +1,10 @@
 package mentalese
 
+import (
+	"sort"
+	"strconv"
+)
+
 type TermList []Term
 
 func (list TermList) Equals(otherList TermList) bool {
@@ -40,6 +45,70 @@ func (list TermList) Deduplicate() TermList {
 		}
 	}
 	return newList
+}
+
+func (list TermList) GetTermType() (string, bool) {
+	aType := ""
+
+	for _, element := range list {
+		if aType == "" {
+			aType = element.TermType
+		} else if aType != element.TermType {
+			return "", false
+		}
+	}
+
+	return aType, true
+}
+
+func (list TermList) IsIntegerList() bool {
+	for _, element := range list {
+		if !element.IsInteger() {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (list TermList) GetValues() []string {
+	values := []string{}
+	for _, e := range list {
+		values = append(values, e.TermValue)
+	}
+	return values
+}
+
+func (list TermList) Sort() (TermList, bool) {
+	newList := TermList{}
+
+	termType, ok := list.GetTermType()
+	if !ok {
+		return TermList{}, false
+	}
+	if termType == TermTypeStringConstant {
+		if list.IsIntegerList() {
+			stringValues := list.GetValues()
+			values := []int{}
+			for _, stringValue := range stringValues {
+				i, _ := strconv.Atoi(stringValue)
+				values = append(values, i)
+			}
+			sort.Ints(values)
+
+			for _, value := range values {
+				newList = append(newList, NewTermString(strconv.Itoa(value)))
+			}
+		} else {
+			values := list.GetValues()
+			sort.Strings(values)
+
+			for _, value := range values {
+				newList = append(newList, NewTermString(value))
+			}
+		}
+	}
+	return newList, true
 }
 
 func (list TermList) GetVariableNames() []string {

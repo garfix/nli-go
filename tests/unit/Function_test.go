@@ -177,16 +177,13 @@ func TestListFunctions(t *testing.T) {
 		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 		{"go:list_deduplicate(ListA, ListB)", "{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`]}", "[{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`],ListB:[`:B`, `:C`, `:A`]}]"},
+		{"go:list_sort(ListA, ListB)", "{ListA:['B', 'C', 'A', 'B', 'C']}", "[{ListA:['B', 'C', 'A', 'B', 'C'],ListB:['A', 'B', 'B', 'C', 'C']}]"},
+		{"go:list_sort(ListA, ListB)", "{ListA:[2, 3, 12, 1, 2, 3]}", "[{ListA:[2, 3, 12, 1, 2, 3],ListB:[1, 2, 2, 3, 3, 12]}]"},
+		{"go:list_sort(ListA, ListB)", "{ListA:['two', 1]}", "[{ListA:['two', 1], ListB:[1, 'two']}]"},
+		{"go:list_index([`:B`, `:C`, `:A`, `:B`, `:C`], `:B`, I)", "{X: 1}", "[{X:1, I:0}{X:1, I:3}]"},
+		{"go:list_length([`:B`, `:C`, `:A`, `:B`, `:C`], L)", "{X: 1}", "[{X:1, L:5}]"},
+		{"go:list_get([`:B`, `:C`, `:A`, `:B`, `:C`], 1, V)", "{X: 1}", "[{X:1, V:`:C`}]"},
 	}
-
-	/*
-	- go:list_deduplicate
-	- go:list_sort
-	- go:list_index
-	- go:list_length
-	- go:list_get
-
-	*/
 
 	for _, test := range tests {
 

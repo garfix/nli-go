@@ -61,7 +61,7 @@ func (term Term) IsVariable() bool {
 	return term.TermType == TermTypeVariable
 }
 
-func (term Term) IsNumber() bool {
+func (term Term) IsInteger() bool {
 	if term.TermType != TermTypeStringConstant {
 		return false
 	}

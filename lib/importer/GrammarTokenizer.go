@@ -92,7 +92,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		sep = "|"
 	}
 
-	expression, _ := regexp.Compile("(?:" + pattern + ")[ \t]*")
+	expression, _ := regexp.Compile("(?s)(?:" + pattern + ")[ \t]*")
 
 	tokens := []Token{}
 	lineNumber := 1
@@ -113,6 +113,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 			lineNumber++
 			continue
 		} else if tokenId == t_comment {
+			lineNumber += strings.Count(tokenValue, "\n")
 			continue
 		} else if tokenId == t_stringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)

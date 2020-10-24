@@ -88,4 +88,9 @@ func TestGrammarTokenizer(test *testing.T) {
 	if line != 2 {
 		test.Error(fmt.Sprintf("Incorrect number of lines: %d", line))
 	}
+
+	_, line2, _ := tok.Tokenize("/*\nmulti line comment\n*/")
+	if line2 != 3 {
+		test.Error(fmt.Sprintf("Incorrect number of lines: %d", line))
+	}
 }

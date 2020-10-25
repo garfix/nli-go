@@ -18,4 +18,6 @@
     dom:name(A, N) :- name(A, N);
     dom:pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
     dom:cleartop(E1) :- cleartop(E1);
+
+    dom:grid(Grid, X, Y, Value) :- dom:grid(Grid, X, Y, Value);
 ]

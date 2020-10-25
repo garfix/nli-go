@@ -31,8 +31,8 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 	if !knowledge.Validate(bound, "lvr", base.log) { return nil }
 
 	list := bound.Arguments[0].TermValueList
-	variable := bound.Arguments[1].TermValue
-	scope := bound.Arguments[2].TermValueRelationSet
+	variable := relation.Arguments[1].TermValue
+	scope := relation.Arguments[2].TermValueRelationSet
 
 	newBindings := mentalese.Bindings{}
 
@@ -40,10 +40,6 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 		scopedBinding := binding.Copy()
 		scopedBinding.Set(variable, element)
 		elementBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ scopedBinding })
-		if len(elementBindings) == 0 {
-			newBindings = mentalese.Bindings{}
-			break
-		}
 		newBindings = append(newBindings, elementBindings...)
 	}
 
@@ -125,7 +121,7 @@ func (base *SystemNestedStructureBase) listGet(relation mentalese.Relation, bind
 
 	list := bound.Arguments[0].TermValueList
 	index := bound.Arguments[1].TermValue
-	termVar := bound.Arguments[2].TermValue
+	termVar := relation.Arguments[2].TermValue
 
 	i, err := strconv.Atoi(index)
 	if err != nil {
@@ -160,4 +156,26 @@ func (base *SystemNestedStructureBase) listLength(relation mentalese.Relation, b
 	newBinding := binding.Copy()
 	newBinding.Set(lengthVar, mentalese.NewTermString(strconv.Itoa(length)))
 	return mentalese.Bindings{ newBinding }
+}
+
+func (base *SystemNestedStructureBase) listExpand(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "lv", base.log) {
+		return mentalese.Bindings{}
+	}
+
+	list := bound.Arguments[0].TermValueList
+	termVar := bound.Arguments[1].TermValue
+
+	newBindings := mentalese.Bindings{}
+
+	for _, element := range list {
+		newBinding := binding.Copy()
+		newBinding.Set(termVar, element)
+		newBindings = append(newBindings, newBinding)
+	}
+
+	return newBindings
 }

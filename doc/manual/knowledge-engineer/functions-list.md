@@ -1,18 +1,18 @@
 # List functions
 
-## List make
+## Make list
 
 Creates a new list, based on existing variables with multiple bindings. The values of `X`, `Y` and `Z` are added to the list, and they are removed from the bindings. The resulting bindings are deduplicated.
 
-    go:list_make(List)
-    go:list_make(List, X, Y, Z, ...)
+    go:make_list(List)
+    go:make_list(List, X, Y, Z, ...)
     
 * `List`: a variable that will contain the list
 * `X`, `Y`, `Z`: variables with one or more values
 
 Example: 
 
-When calling `go:list_make(List, X)` with bindings 
+When calling `go:make_list(List, X)` with bindings 
 
     [{X: 2, Y: 1}{X: 3}{}] 
 
@@ -83,16 +83,26 @@ Puts the index of the occurrence of `E` in `Index`. If there are more occurrence
  
      go:list_index(List, E, Index)
      
- * `List`: a list
- * `E`: any term
- * `Index`: an variable that will contain an integer
+* `List`: a list
+* `E`: any term
+* `Index`: an variable that will contain an integer
  
 ## List get
  
-Puts the Index'th term in E 
+Puts the `Index`'th term in `E` 
  
     go:list_index(List, Index, E)
      
- * `List`: a list
- * `Index`: an integer
- * `E`: a variable that will contain the term
+* `List`: a list
+* `Index`: an integer
+* `E`: a variable that will contain the term
+
+## List expand
+
+Creates a new binding for each of the elements of `List`
+
+    go:list_expand(List, E)
+    
+* `List`: a list
+* `E`: a variable that will contain a term
+

@@ -1,6 +1,7 @@
 [
     object(E1) :- block(E1);
     object(E1) :- pyramid(E1);
+    object(E1) :- box(E1);
     hold(P1, E1, E2) :- grasping(E1, E2);
     you(E1) :- named(E1, 'SHRDLU');
     i(E1) :- named(E1, 'YOU');

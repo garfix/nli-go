@@ -19,7 +19,8 @@
         do_clear_hand(_)
         go:quant_ordered_list(QBlocks, &by_easiness, List)
         go:list_order(List, &by_size, SortedList)
-        do_find_space_on_table(X, Y)
+        go:list_get(List, 0, BaseBlock)
+        do_find_space_on_table(BaseBlock, X, Y)
         stack_up_proper(SortedList, X, Y);
 
     stack_up_proper(List1, X, Y) :-

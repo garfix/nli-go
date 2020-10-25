@@ -1,3 +1,11 @@
+# 2020-10-25
+
+Bindings should be a set. It must contain each binding only once. This should be enforced in code.
+
+I just found out that a single procedure call may yield the same value many times, and this causes the following procedures to be excuted just as many times.
+
+The `UniqueBindings` function seems to be very heavy, however.
+
 # 2020-10-22
 
 Starting to appreciate the "Let it crash" coding style

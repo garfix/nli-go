@@ -92,10 +92,10 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 		if len(newBindings) == 0 {
 			break
 		}
-	}
 
-	// remove duplicates because they cause unnecessary work and they cause problems for the generator
-	newBindings = newBindings.UniqueBindings()
+		// remove duplicates because they cause unnecessary work and they cause problems for the generator
+		newBindings = newBindings.UniqueBindings()
+	}
 
 	solver.log.EndProduction("Solve Set", newBindings.String())
 
@@ -149,7 +149,7 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 		}
 	}
 
-	solver.log.EndProduction("Solve Relation", fmt.Sprint(newBindings))
+	solver.log.EndProduction("Solve Relation", relation.String() + ": " + fmt.Sprint(newBindings))
 
 	return newBindings
 }
@@ -195,7 +195,7 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 	// do assert / retract
 	newBindings = append(newBindings, solver.modifyKnowledgeBase(relation, simpleBinding)...)
 
-	solver.log.EndProduction("Solve Simple Binding", fmt.Sprint(newBindings))
+	solver.log.EndProduction("Solve Simple Binding", relation.String() + ": " + fmt.Sprint(newBindings))
 
 	// compose the result set
 	completedBindings := mentalese.Bindings{}

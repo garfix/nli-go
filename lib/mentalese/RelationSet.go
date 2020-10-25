@@ -145,7 +145,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	for _, variable  := range variables {
 		_, found := importBinding.Get(variable)
 		if !found {
-			importBinding.Set(variable, createVariable())
+			importBinding.Set(variable, createVariable(variable))
 		}
 	}
 
@@ -154,11 +154,24 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	return set.BindSingle(importBinding)
 }
 
-var i = 0
 
-func createVariable() Term {
-	i++
-	return NewTermVariable("Gen" + strconv.Itoa(i))
+
+var variables map[string]int
+
+func createVariable(initial string) Term {
+
+	if variables == nil {
+		variables = map[string]int{}
+	}
+
+	_, present := variables[initial]
+	if !present {
+		variables[initial] = 1
+	} else {
+		variables[initial]++
+	}
+
+	return NewTermVariable(initial + "$" + strconv.Itoa(variables[initial]))
 }
 
 
@@ -172,7 +185,7 @@ func (relations RelationSet) InstantiateUnboundVariables(binding Binding) Relati
 	for _, inputVariable := range inputVariables {
 		_, found := binding.Get(inputVariable)
 		if !found {
-			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), createVariable())
+			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), createVariable(inputVariable))
 		}
 	}
 

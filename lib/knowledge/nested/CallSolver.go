@@ -42,10 +42,6 @@ func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation,
 			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
 		}
 		elementBindings := base.solver.SolveRelationSet(children, mentalese.Bindings{scopedBinding })
-		if len(elementBindings) == 0 {
-			newBindings = mentalese.Bindings{}
-			break
-		}
 		if !variableTerm.IsAnonymousVariable() {
 			elementBindings = elementBindings.FilterOutVariablesByName([]string{ variable })
 		}

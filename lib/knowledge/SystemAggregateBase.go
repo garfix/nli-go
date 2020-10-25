@@ -22,7 +22,7 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateFirst,
 		mentalese.PredicateExists,
 		mentalese.PredicateMakeAnd,
-		mentalese.PredicateListMake,
+		mentalese.PredicateMakeList,
 	}
 
 	for _, p := range predicates {
@@ -188,7 +188,7 @@ func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings ment
 		newBindings = base.exists(input, bindings)
 	case mentalese.PredicateMakeAnd:
 		newBindings = base.makeAnd(input, bindings)
-	case mentalese.PredicateListMake:
+	case mentalese.PredicateMakeList:
 		newBindings = base.listMake(input, bindings)
 	default:
 		found = false

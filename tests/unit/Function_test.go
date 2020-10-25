@@ -76,7 +76,7 @@ func TestAggregateFunctions(t *testing.T) {
 		{"go:first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
 		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
 		{"go:exists()", "[]", "[]"},
-		{"go:list_make(List, X, Y)", "[{X: 2, Y: 1, E: 5}{X: 3}{}{E: 4}{E: 4}]", "[{E:5, List:[2,3,1]}{List:[2,3,1]}{E:4, List:[2,3,1]}]"},
+		{"go:make_list(List, X, Y)", "[{X: 2, Y: 1, E: 5}{X: 3}{}{E: 4}{E: 4}]", "[{E:5, List:[2,3,1]}{List:[2,3,1]}{E:4, List:[2,3,1]}]"},
 	}
 
 	for _, test := range tests {
@@ -183,6 +183,7 @@ func TestListFunctions(t *testing.T) {
 		{"go:list_index([`:B`, `:C`, `:A`, `:B`, `:C`], `:B`, I)", "{X: 1}", "[{X:1, I:0}{X:1, I:3}]"},
 		{"go:list_length([`:B`, `:C`, `:A`, `:B`, `:C`], L)", "{X: 1}", "[{X:1, L:5}]"},
 		{"go:list_get([`:B`, `:C`, `:A`, `:B`, `:C`], 1, V)", "{X: 1}", "[{X:1, V:`:C`}]"},
+		{"go:list_expand([1, 2, 2], E)", "{X: 1}", "[{X:1, E:1}{X:1, E:2}{X:1, E:2}]"},
 	}
 
 	for _, test := range tests {

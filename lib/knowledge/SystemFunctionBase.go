@@ -1,6 +1,7 @@
 package knowledge
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -37,6 +38,7 @@ func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
 		mentalese.PredicateMin,
 		mentalese.PredicateDateToday,
 		mentalese.PredicateDateSubtractYears,
+		mentalese.PredicateLog,
 	}
 
 	for _, p := range predicates {
@@ -378,6 +380,27 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 	return newBinding, true
 }
 
+func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	log := ""
+	sep := ""
+
+	for i, argument := range input.Arguments {
+		if argument.IsVariable() {
+			log += sep + argument.TermValue + ": " + bound.Arguments[i].TermValue
+		} else {
+			log += sep + bound.Arguments[i].String()
+		}
+		sep = ";\t"
+	}
+
+	fmt.Println(log)
+
+	return binding, true
+}
+
 func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
 
 	newBinding := binding
@@ -419,6 +442,8 @@ func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mental
 		newBinding, success = base.dateToday(input, binding)
 	case mentalese.PredicateDateSubtractYears:
 		newBinding, success = base.dateSubtractYears(input, binding)
+	case mentalese.PredicateLog:
+		newBinding, success = base.debug(input, binding)
 	default:
 		found = false
 	}

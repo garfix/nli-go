@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/tidwall/pinhole"
 	"image/color"
 	"nli-go/lib/common"
@@ -108,7 +109,29 @@ func TestBlocksWorld(t *testing.T) {
 		}
 	}
 
+	//createGrid(system)
+
 	createImage(system)
+}
+
+func createGrid(system *global.System) {
+	g := [20][20]string{}
+	for _, binding := range system.Query("dom:grid(fixed, H, V, 1)") {
+		//fmt.Println(binding.String())
+		h, _ := strconv.Atoi(binding.MustGet("H").TermValue)
+		v, _ := strconv.Atoi(binding.MustGet("V").TermValue)
+		g[v][h]="x"
+	}
+	for h := 9; h < 20; h++ {
+		for v := 0; v < 10; v++ {
+			if g[v][19-h] == "x" {
+				fmt.Print("x")
+			} else {
+				fmt.Print(".")
+			}
+		}
+		fmt.Println("")
+	}
 }
 
 func createImage(system *global.System) {

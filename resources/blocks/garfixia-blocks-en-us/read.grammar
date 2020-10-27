@@ -66,7 +66,7 @@
     { rule: adjective(E1) -> 'green',                                      sense: dom:green(E1) }
     { rule: adjective(E1) -> 'big',                                        sense: dom:big(E1) }
     { rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
-    { rule: adjective(E1) -> 'large',                                      sense: dom:big(E1) }
+    { rule: adjective(E1) -> 'large',                                      sense: dom:large(E1) }
 
     { rule: pp(E1) -> 'in' np(E2),                                         sense: go:quant_check($np, dom:contain(_, E2, E1)) }
 

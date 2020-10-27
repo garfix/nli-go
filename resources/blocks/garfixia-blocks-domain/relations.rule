@@ -9,6 +9,7 @@
     height(E, H) :- size(E, _, _, H);
     width(E, W) :- size(E, W, _, _);
     big(E) :- size(E, Width, Length, Height) go:greater_than(Width, 128) go:greater_than(Length, 128) go:greater_than(Height, 128);
+    large(E) :- size(E, Width, Length, Height) go:greater_than(Height, 128);
     small(E) :- size(E, Width, Length, Height) go:less_than(Width, 128) go:less_than(Length, 128) go:less_than(Height, 128);
     volume(E, V) :- go:if_then_else( big(E), go:unify(V, big), go:unify(V, small));
     cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);

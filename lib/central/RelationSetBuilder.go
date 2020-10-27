@@ -10,11 +10,11 @@ func NewRelationSetBuilder() *RelationSetBuilder {
 	return &RelationSetBuilder{}
 }
 
-func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, bindings mentalese.Bindings) mentalese.RelationSet {
+func (builder *RelationSetBuilder) Build(template mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
 
 	newSet := mentalese.RelationSet{}
 
-	if len(bindings) == 0 {
+	if bindings.IsEmpty() {
 		newSet = template
 	} else {
 

@@ -108,16 +108,16 @@ func (term Term) Equals(otherTerm Term) bool {
 	if term.TermEntityType != otherTerm.TermEntityType {
 		return false
 	}
-	if term.TermType == TermTypeRelationSet {
+	switch term.TermType {
+	case TermTypeRelationSet:
 		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
-	}
-	if term.TermType == TermTypeRule {
+	case TermTypeRule:
 		return term.TermValueRule.Equals(otherTerm.TermValueRule)
-	}
-	if term.TermType == TermTypeList {
+	case TermTypeList:
 		return term.TermValueList.Equals(otherTerm.TermValueList)
+	default:
+		return term.TermValue == otherTerm.TermValue
 	}
-	return term.TermValue == otherTerm.TermValue
 }
 
 func (term Term) UsesVariable(variable string) bool {

@@ -273,11 +273,11 @@ func (relations RelationSet) processIncludes(relation Relation, binding Binding)
 }
 
 // Returns new relation sets, that have all variables bound to bindings
-func (set RelationSet) BindRelationSetMultipleBindings(bindings Bindings) []RelationSet {
+func (set RelationSet) BindRelationSetMultipleBindings(bindings BindingSet) []RelationSet {
 
 	boundRelationSets := []RelationSet{}
 
-	for _, binding := range bindings {
+	for _, binding := range bindings.GetAll() {
 		boundRelationSets = append(boundRelationSets, set.BindSingle(binding))
 	}
 

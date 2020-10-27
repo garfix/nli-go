@@ -42,9 +42,9 @@ func (system *System) StoreDialogContext(sessionDataPath string) {
 }
 
 // Low-level function to inspect the internal state of the system
-func (system *System) Query(relations string) mentalese.Bindings {
+func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	return system.solver.SolveRelationSet(set, mentalese.Bindings{})
+	return system.solver.SolveRelationSet(set, mentalese.NewBindingSet())
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {
@@ -103,7 +103,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		}
 
 		if !system.log.IsDone() {
-			answerRelations = system.answerer.Answer(requestRelations, []mentalese.Binding{nameBinding})
+			answerRelations = system.answerer.Answer(requestRelations, mentalese.InitBindingSet(nameBinding))
 			system.log.AddProduction("Answer", answerRelations.String())
 			system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 		}

@@ -125,11 +125,10 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := solver.SolveRelationSet(mentalese.RelationSet{ quant }, mentalese.Bindings{ binding })
-		result = result.UniqueBindings()
+		result := solver.SolveRelationSet(mentalese.RelationSet{ quant }, mentalese.InitBindingSet(binding))
 
 		resultString := ""
-		for _, result := range result {
+		for _, result := range result.GetAll() {
 			resultString += result.String()
 		}
 

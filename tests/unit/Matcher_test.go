@@ -154,9 +154,9 @@ func TestMatchRelationToSet(t *testing.T) {
 
 		resultBindings, resultIndexes := matcher.MatchRelationToSet(needle, haystack, binding)
 
-		bindingsOk := len(wantBindings) == len(resultBindings)
-		for i, resultBinding := range resultBindings {
-			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings[i])
+		bindingsOk := wantBindings.GetLength() == resultBindings.GetLength()
+		for i, resultBinding := range resultBindings.GetAll() {
+			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings.Get(i))
 		}
 
 		indexesOk := len(wantIndexes) == len(resultIndexes)
@@ -210,9 +210,9 @@ func TestMatchSequenceToSet(t *testing.T) {
 		wantMatch := test.wantMatch
 		resultBindings, resultMatch := matcher.MatchSequenceToSet(needle, haystack, binding)
 
-		bindingsOk := len(wantBindings) == len(resultBindings)
-		for i, resultBinding := range resultBindings {
-			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings[i])
+		bindingsOk := wantBindings.GetLength() == resultBindings.GetLength()
+		for i, resultBinding := range resultBindings.GetAll() {
+			bindingsOk = bindingsOk && resultBinding.Equals(wantBindings.Get(i))
 		}
 
 		if !bindingsOk || wantMatch != resultMatch {

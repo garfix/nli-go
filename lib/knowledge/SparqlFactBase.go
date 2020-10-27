@@ -99,13 +99,13 @@ func (factBase *SparqlFactBase) GetSharedId(inId string, entityType string) stri
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
 	relation = relation.BindSingle(binding)
 
-	bindings := mentalese.Bindings{}
+	bindings := mentalese.NewBindingSet()
 
 	if len(relation.Arguments) != 2 {
 		factBase.log.AddError("Relation does not have exactly two arguments: " + relation.String())
@@ -124,9 +124,9 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 	return bindings
 }
 
-func (factBase *SparqlFactBase) doQuery(relation mentalese.Relation) mentalese.Bindings {
+func (factBase *SparqlFactBase) doQuery(relation mentalese.Relation) mentalese.BindingSet {
 
-	bindings := mentalese.Bindings{}
+	bindings := mentalese.NewBindingSet()
 	sparqlResponse := sparqlResponse{}
 
 	query := factBase.createQuery(relation)
@@ -254,9 +254,9 @@ func (factBase *SparqlFactBase) callSparql(query string) sparqlResponse {
 	return sparqlResponse
 }
 
-func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relation,  sparqlResponse sparqlResponse) mentalese.Bindings {
+func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relation,  sparqlResponse sparqlResponse) mentalese.BindingSet {
 
-	bindings := mentalese.Bindings{}
+	bindings := mentalese.NewBindingSet()
 
 	for _, resultBinding := range sparqlResponse.Results.Bindings {
 
@@ -280,7 +280,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 			}
 		}
 
-		bindings = append(bindings, binding)
+		bindings.Add(binding)
 
 		next:
 	}

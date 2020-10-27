@@ -1,13 +1,6 @@
 # Todo
 
-- go:list_make()
-- go:list_deduplicate
-- go:list_sort
-- go:list_index
-- go:list_length
-- go:list_get
-
-- local variables (mutable)
+- bindings -> bindingset (unique bindings)
 - functions calls for arguments
 - typed arguments
 - operators

@@ -91,7 +91,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		}
 		relationizer := earley.NewRelationizer(log)
 		input, _ := relationizer.Relationize(trees[0], nameResolver)
-		result := solver.SolveRelationSet(input, mentalese.Bindings{})
+		result := solver.SolveRelationSet(input, mentalese.NewBindingSet())
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)
 			print(log.String())

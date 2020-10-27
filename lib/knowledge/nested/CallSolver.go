@@ -5,16 +5,16 @@ import (
 	"strconv"
 )
 
-func (base *SystemNestedStructureBase) Call(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) Call(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(child, mentalese.Bindings{ binding })
+	newBindings := base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
 
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -24,7 +24,7 @@ func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation,
 	variable := variableTerm.TermValue
 	children := relation.Arguments[3].TermValueRelationSet
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 
 	start, err := strconv.Atoi(startTerm)
 	if err != nil {
@@ -41,11 +41,11 @@ func (base *SystemNestedStructureBase) RangeForeach(relation mentalese.Relation,
 		if !variableTerm.IsAnonymousVariable() {
 			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
 		}
-		elementBindings := base.solver.SolveRelationSet(children, mentalese.Bindings{scopedBinding })
+		elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
 		if !variableTerm.IsAnonymousVariable() {
 			elementBindings = elementBindings.FilterOutVariablesByName([]string{ variable })
 		}
-		newBindings = append(newBindings, elementBindings...)
+		newBindings.AddMultiple(elementBindings)
 	}
 
 	return newBindings

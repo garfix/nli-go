@@ -74,14 +74,14 @@ func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
 //  { X: john, Z: jack, Y: billy }
 //  { X: john, Z: jack, Y: bob }
 // ]
-func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.Bindings) mentalese.Bindings {
+func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	solver.log.StartProduction("Solve Set", set.String() + " " + bindings.String())
 
 	for _, relation := range set {
 		if !solver.isPredicateSupported(relation.Predicate) {
 			solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
-			return mentalese.Bindings{}
+			return mentalese.NewBindingSet()
 		}
 	}
 
@@ -89,12 +89,9 @@ func (solver ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings
 	for _, relation := range set {
 		newBindings = solver.solveSingleRelationMultipleBindings(relation, newBindings)
 
-		if len(newBindings) == 0 {
+		if newBindings.IsEmpty() {
 			break
 		}
-
-		// remove duplicates because they cause unnecessary work and they cause problems for the generator
-		newBindings = newBindings.UniqueBindings()
 	}
 
 	solver.log.EndProduction("Solve Set", newBindings.String())
@@ -120,13 +117,13 @@ func (solver ProblemSolver) isPredicateSupported(predicate string) bool {
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentalese.Relation, bindings []mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	solver.log.StartProduction("Solve Relation", relation.String() + " " + fmt.Sprint(bindings))
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 	multiFound := false
-	aggregateBindings := mentalese.Bindings{}
+	aggregateBindings := mentalese.NewBindingSet()
 
 	// Note: aggregate base relations are currently the only ones whose bindings are not limited to the variables of the arguments
 	// As long as these relations are simple, this is not a problem.
@@ -140,11 +137,11 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 
 	if !multiFound {
 
-		if len(bindings) == 0 {
+		if bindings.IsEmpty() {
 			newBindings = solver.solveSingleRelationSingleBinding(relation, mentalese.NewScopedBinding(solver.scopeStack.GetCurrentScope()))
 		} else {
-			for _, binding := range bindings {
-				newBindings = append(newBindings, solver.solveSingleRelationSingleBinding(relation, binding)...)
+			for _, binding := range bindings.GetAll() {
+				newBindings.AddMultiple(solver.solveSingleRelationSingleBinding(relation, binding))
 			}
 		}
 	}
@@ -160,60 +157,60 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.Relation, binding mentalese.Binding) []mentalese.Binding {
+func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	relationVariables := relation.GetVariableNames()
 	simpleBinding := binding.FilterVariablesByName(relationVariables)
 
 	solver.log.StartProduction("Solve Simple Binding", relation.String() + " " + fmt.Sprint(simpleBinding))
 
-	newBindings := mentalese.Bindings{ }
+	newBindings := mentalese.NewBindingSet()
 
 	// go through all fact bases
 	for _, factBase := range solver.factBases {
-		newBindings = append(newBindings, solver.FindFacts(factBase, relation, simpleBinding)...)
+		newBindings.AddMultiple(solver.FindFacts(factBase, relation, simpleBinding))
 	}
 
 	// go through all rule bases
 	for _, ruleBase := range solver.ruleBases {
-		newBindings = append(newBindings, solver.solveSingleRelationSingleBindingSingleRuleBase(relation, simpleBinding, ruleBase)...)
+		newBindings.AddMultiple(solver.solveSingleRelationSingleBindingSingleRuleBase(relation, simpleBinding, ruleBase))
 	}
 
 	// go through all function bases
 	for _, functionBase := range solver.functionBases {
 		resultBinding, functionFound, success := functionBase.Execute(relation, simpleBinding)
 		if functionFound && success {
-			newBindings = append(newBindings, resultBinding)
+			newBindings.Add(resultBinding)
 		}
 	}
 
 	// go through all nested structure bases
 	for _, nestedStructureBase := range solver.nestedStructureBases {
-		newBindings = append(newBindings, nestedStructureBase.SolveNestedStructure(relation, simpleBinding)...)
+		newBindings.AddMultiple(nestedStructureBase.SolveNestedStructure(relation, simpleBinding))
 	}
 
 	// do assert / retract
-	newBindings = append(newBindings, solver.modifyKnowledgeBase(relation, simpleBinding)...)
+	newBindings.AddMultiple(solver.modifyKnowledgeBase(relation, simpleBinding))
 
 	solver.log.EndProduction("Solve Simple Binding", relation.String() + ": " + fmt.Sprint(newBindings))
 
 	// compose the result set
-	completedBindings := mentalese.Bindings{}
-	for _, newBinding := range newBindings {
+	completedBindings := mentalese.NewBindingSet()
+	for _, newBinding := range newBindings.GetAll() {
 		// remove temporary variables
 		essentialResultBinding := newBinding.FilterVariablesByName(relationVariables)
 		// combine the source binding with the clean results
 		completedBinding := binding.Merge(essentialResultBinding)
-		completedBindings = append(completedBindings, completedBinding)
+		completedBindings.Add(completedBinding)
 	}
 
 	return completedBindings
 }
 
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
-func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	dbBindings := mentalese.Bindings{}
+	dbBindings := mentalese.NewBindingSet()
 
 	for _, ds2db := range factBase.GetReadMappings() {
 
@@ -230,22 +227,22 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation ment
 		relevantBinding := localIdBinding.Select(dbRelations.GetVariableNames())
 		newDbBindings := solver.solveMultipleRelationSingleFactBase(dbRelations, relevantBinding, factBase)
 
-		for _, newDbBinding := range newDbBindings {
+		for _, newDbBinding := range newDbBindings.GetAll() {
 
 			dbBinding := activeBinding.Merge(newDbBinding)
 
 			combinedBinding := localIdBinding.Merge(dbBinding.Select(relation.GetVariableNames()))
 			sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
-			dbBindings = append(dbBindings, sharedBinding)
+			dbBindings.Add(sharedBinding)
 		}
 	}
 
 	return dbBindings
 }
 
-func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Bindings {
+func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.BindingSet {
 
-	sequenceBindings := mentalese.Bindings{ binding }
+	sequenceBindings := mentalese.InitBindingSet(binding)
 
 	for _, relation := range relations {
 		sequenceBindings = solver.solveSingleRelationSingleFactBase(relation, sequenceBindings, factBase)
@@ -254,14 +251,14 @@ func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []ment
 	return sequenceBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.Bindings, factBase knowledge.FactBase) mentalese.Bindings {
+func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase knowledge.FactBase) mentalese.BindingSet {
 
 	solver.log.StartProduction("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
 
-	relationBindings := mentalese.Bindings{}
+	relationBindings := mentalese.NewBindingSet()
 
 	multiFound := false
-	aggregateBindings := mentalese.Bindings{}
+	aggregateBindings := mentalese.NewBindingSet()
 
 	for _, aggregateBase := range solver.aggregateBases {
 		aggregateBindings, multiFound = aggregateBase.Execute(relation, bindings)
@@ -273,14 +270,14 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 
 	if !multiFound {
 
-		for _, binding := range bindings {
+		for _, binding := range bindings.GetAll() {
 
 			resultBindings := factBase.MatchRelationToDatabase(relation, binding)
 
 			// found bindings must be extended with the bindings already present
-			for _, resultBinding := range resultBindings {
+			for _, resultBinding := range resultBindings.GetAll() {
 				newRelationBinding := binding.Merge(resultBinding)
-				relationBindings = append(relationBindings, newRelationBinding)
+				relationBindings.Add(newRelationBinding)
 			}
 		}
 	}
@@ -342,9 +339,9 @@ func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, 
 	return newBinding
 }
 
-func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	newBindings := mentalese.Bindings{ }
+	newBindings := mentalese.NewBindingSet()
 
 	if len(relation.Arguments) == 0 { return newBindings }
 
@@ -360,16 +357,16 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 					solver.modifier.Assert(singleRelation, factBase)
 				} else {
 					solver.log.AddError("Cannot assert unbound relation " + singleRelation.String())
-					return mentalese.Bindings{}
+					return mentalese.NewBindingSet()
 				}
 				binding = solver.replaceLocalIdBySharedId(binding, factBase)
-				newBindings = append(newBindings, binding)
+				newBindings.Add(binding)
 			}
 		} else if argument.IsRule() {
 			for _, ruleBase := range solver.ruleBases {
 				rule := relation.Arguments[0].TermValueRule.BindSingle(binding)
 				ruleBase.Assert(rule)
-				newBindings = append(newBindings, binding)
+				newBindings.Add(binding)
 				//  only add the rule to a single rulebase
 				break
 			}
@@ -383,7 +380,7 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 				boundRelation := relation.BindSingle(localIdBinding)
 				solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], factBase)
 				binding = solver.replaceLocalIdBySharedId(binding, factBase)
-				newBindings = append(newBindings, binding)
+				newBindings.Add(binding)
 			}
 		}
 	}
@@ -397,11 +394,11 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase knowledge.RuleBase) mentalese.Bindings {
+func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase knowledge.RuleBase) mentalese.BindingSet {
 
 	inputVariables := goalRelation.GetVariableNames()
 
-	goalBindings := mentalese.Bindings{}
+	goalBindings := mentalese.NewBindingSet()
 
 	// match rules from the rule base to the goalRelation
 	sourceSubgoalSets, _ := ruleBase.Bind(goalRelation, binding)
@@ -412,17 +409,17 @@ func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalR
 		solver.scopeStack.Push(scope)
 
 		scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
-		subgoalResultBindings := mentalese.Bindings{ scopedBinding }
+		subgoalResultBindings := mentalese.InitBindingSet(scopedBinding)
 
 		for _, subGoal := range sourceSubgoalSet {
 
 			subgoalResultBindings = solver.SolveRelationSet([]mentalese.Relation{subGoal}, subgoalResultBindings)
-			if len(subgoalResultBindings) == 0 {
+			if subgoalResultBindings.IsEmpty() {
 				break
 			}
 		}
 
-		for _, subgoalResultBinding := range subgoalResultBindings {
+		for _, subgoalResultBinding := range subgoalResultBindings.GetAll() {
 
 			// filter out the input variables
 			filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
@@ -430,7 +427,7 @@ func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalR
 			// make sure all variables of the original binding are present
 			goalBinding := scopedBinding.Merge(filteredBinding)
 
-			goalBindings = append(goalBindings, goalBinding)
+			goalBindings.Add(goalBinding)
 		}
 
 		solver.scopeStack.Pop()

@@ -123,7 +123,7 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 			matchBindings, match := generator.matcher.MatchSequenceToSet(rule.Sense, sentenceSense, binding)
 
 			if match {
-				binding = matchBindings[0]
+				binding = matchBindings.Get(0)
 				resultRule = rule
 				found = true
 			}

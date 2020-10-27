@@ -67,7 +67,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := solver.SolveRelationSet(mentalese.RelationSet{ goal }, mentalese.Bindings{ binding }).String()
+		resultBindings := solver.SolveRelationSet(mentalese.RelationSet{ goal }, mentalese.InitBindingSet(binding)).String()
 
 		if !log.IsOk() {
 			t.Errorf(log.String())

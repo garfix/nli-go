@@ -56,7 +56,7 @@ func (base *SystemNestedStructureBase) compare(id1 mentalese.Term, id2 mentalese
 	b.Set("E1", id1)
 	b.Set("E2", id2)
 
-	bindings := base.solver.SolveRelationSet(mentalese.RelationSet{ relation }, mentalese.Bindings{ b })
+	bindings := base.solver.SolveRelationSet(mentalese.RelationSet{ relation }, mentalese.InitBindingSet(b))
 	values := bindings.GetDistinctValues("R")
 
 	if len(values) != 1 {

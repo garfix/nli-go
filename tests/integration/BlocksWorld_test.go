@@ -116,7 +116,7 @@ func TestBlocksWorld(t *testing.T) {
 
 func createGrid(system *global.System) {
 	g := [20][20]string{}
-	for _, binding := range system.Query("dom:grid(fixed, H, V, 1)") {
+	for _, binding := range system.Query("dom:grid(fixed, H, V, 1)").GetAll() {
 		//fmt.Println(binding.String())
 		h, _ := strconv.Atoi(binding.MustGet("H").TermValue)
 		v, _ := strconv.Atoi(binding.MustGet("V").TermValue)
@@ -145,7 +145,7 @@ func createImage(system *global.System) {
 	scale := 500.0
 	zScale := 1200.0
 
-	for _, binding := range data {
+	for _, binding := range data.GetAll() {
 
 		p.Begin()
 

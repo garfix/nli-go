@@ -28,13 +28,13 @@ func (ruleBase *InMemoryRuleBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.Bindings) {
+func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.BindingSet) {
 
 	ruleBase.log.StartDebug("RuleBase BindSingle", goal)
 
 	matcher := mentalese.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
-	subgoalBindings := mentalese.Bindings{}
+	subgoalBindings := mentalese.NewBindingSet()
 
 	for _, rule := range ruleBase.rules {
 
@@ -45,7 +45,7 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentales
 			boundRule := rule.BindSingle(bBinding)
 			boundRule = boundRule.InstantiateUnboundVariables(aBinding)
 			subgoalRelationSets = append(subgoalRelationSets, boundRule.Pattern)
-			subgoalBindings = append(subgoalBindings, aBinding)
+			subgoalBindings.Add(aBinding)
 		}
 	}
 

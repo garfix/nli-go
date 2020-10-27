@@ -4,80 +4,81 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	scope := notRelation.Arguments[mentalese.NotScopeIndex].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(scope, mentalese.Bindings{ binding })
-	resultBindings := mentalese.Bindings{}
+	newBindings := base.solver.SolveRelationSet(scope, mentalese.InitBindingSet(binding))
+	resultBindings := mentalese.NewBindingSet()
 
-	if len(newBindings) > 0 {
-		resultBindings = mentalese.Bindings{}
+	if !newBindings.IsEmpty() {
+		resultBindings = mentalese.NewBindingSet()
 	} else {
-		resultBindings = mentalese.Bindings{ binding }
+		resultBindings.Add(binding)
 	}
 
 	return resultBindings
 }
 
-func (base *SystemNestedStructureBase) SolveAnd(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveAnd(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := andRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := andRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
-	newBindings := mentalese.Bindings{binding}
+	newBindings := mentalese.InitBindingSet(binding)
 
 	newBindings = base.solver.SolveRelationSet(first, newBindings)
 
-	if len(newBindings) > 0 {
+	if !newBindings.IsEmpty() {
 		newBindings = base.solver.SolveRelationSet(second, newBindings)
 	}
 
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
-	newBindings := mentalese.Bindings{binding}
+	newBindings := mentalese.InitBindingSet(binding)
 
 	firstBindings := base.solver.SolveRelationSet(first, newBindings)
 	secondBindings := base.solver.SolveRelationSet(second, newBindings)
 
-	result := append(firstBindings, secondBindings...)
+	result := firstBindings.Copy()
+	result.AddMultiple(secondBindings)
 
-	return result.UniqueBindings()
+	return result
 }
 
-func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(first, mentalese.Bindings{ binding })
+	newBindings := base.solver.SolveRelationSet(first, mentalese.InitBindingSet(binding))
 
-	if len(newBindings) == 0 {
-		newBindings = base.solver.SolveRelationSet(second, mentalese.Bindings{ binding })
+	if newBindings.IsEmpty() {
+		newBindings = base.solver.SolveRelationSet(second, mentalese.InitBindingSet(binding))
 	}
 
 	return newBindings
 }
 
 
-func (base *SystemNestedStructureBase) SolveIfThenElse(ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveIfThenElse(ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	condition := ifThenElse.Arguments[0].TermValueRelationSet
 	action := ifThenElse.Arguments[1].TermValueRelationSet
 	alternative := ifThenElse.Arguments[2].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(condition, mentalese.Bindings{ binding })
+	newBindings := base.solver.SolveRelationSet(condition, mentalese.InitBindingSet(binding))
 
-	if len(newBindings) > 0 {
+	if !newBindings.IsEmpty() {
 		newBindings = base.solver.SolveRelationSet(action, newBindings )
 	} else {
-		newBindings = base.solver.SolveRelationSet(alternative, mentalese.Bindings{ binding } )
+		newBindings = base.solver.SolveRelationSet(alternative, mentalese.InitBindingSet(binding))
 	}
 
 	return newBindings

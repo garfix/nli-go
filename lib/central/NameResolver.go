@@ -181,7 +181,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 
 		bindings := resolver.solver.FindFacts(factBase, entityInfo.Name, b)
 
-		for _, binding := range bindings {
+		for _, binding := range bindings.GetAll() {
 
 			id, _ := binding.Get(mentalese.IdVar)
 			information := entityType
@@ -202,7 +202,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 				b.Set(mentalese.IdVar, mentalese.NewTermId(id.TermValue, entityType))
 				bindings2 := resolver.solver.FindFacts(factBase, relationSet, b)
 
-				for _, binding2 := range bindings2 {
+				for _, binding2 := range bindings2.GetAll() {
 					value, _ := binding2.Get(mentalese.ValueVar)
 					information += "; " + infoType + ": " + value.TermValue
 					// DBPedia sometimes returns multiple results for a date, while there should be only one

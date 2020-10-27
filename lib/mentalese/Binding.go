@@ -276,8 +276,12 @@ func (b Binding) Equals(c Binding) bool {
 		return false
 	}
 
-	for key, value := range b.k2v {
-		if !c.k2v[key].Equals(value) {
+	for key, bValue := range b.k2v {
+		cValue, found := c.k2v[key]
+		if !found {
+			return false
+		}
+		if !cValue.Equals(bValue) {
 			return false
 		}
 	}

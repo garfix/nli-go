@@ -142,11 +142,11 @@ func (relation Relation) BindSingle(binding Binding) Relation {
 }
 
 // Returns multiple relations, that has all variables bound to bindings
-func (relation Relation) BindMultiple(bindings Bindings) []Relation {
+func (relation Relation) BindMultiple(bindings BindingSet) []Relation {
 
 	boundRelations := []Relation{}
 
-	for _, binding := range bindings {
+	for _, binding := range bindings.GetAll() {
 		boundRelations = append(boundRelations, relation.BindSingle(binding))
 	}
 

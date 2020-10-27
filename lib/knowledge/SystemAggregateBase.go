@@ -33,34 +33,34 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "--", base.log) {
-		return mentalese.Bindings{}
+		return mentalese.NewBindingSet()
 	}
 
 	subjectVariable := input.Arguments[0].TermValue
 	numberArgumentValue := input.Arguments[1].TermValue
 	number :=  bindings.GetDistinctValueCount(subjectVariable)
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 
 	if input.Arguments[1].IsVariable() {
-		for _, binding := range bindings {
+		for _, binding := range bindings.GetAll() {
 			newBinding := binding.Copy()
 			newBinding.Set(numberArgumentValue, mentalese.NewTermString(strconv.Itoa(number)))
-			newBindings = append(newBindings, newBinding)
+			newBindings.Add(newBinding)
 		}
 	} else {
 		assertedNumber, err := strconv.Atoi(numberArgumentValue)
 		if err != nil {
 			base.log.AddError("The second argument of number_of() needs to be an integer")
-			newBindings = mentalese.Bindings{}
+			newBindings = mentalese.NewBindingSet()
 		} else {
 			if number == assertedNumber {
 				newBindings = bindings
 			} else {
-				newBindings = mentalese.Bindings{}
+				newBindings = mentalese.NewBindingSet()
 			}
 		}
 	}
@@ -68,42 +68,42 @@ func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings men
 	return newBindings
 }
 
-func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v", base.log) {
-		return mentalese.Bindings{}
+		return mentalese.NewBindingSet()
 	}
 
 	subjectVariable := input.Arguments[0].TermValue
 	distinctValues := bindings.GetDistinctValues(subjectVariable)
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 	if len(distinctValues) == 0 {
 		newBindings = bindings
 	} else {
-		for _, binding := range bindings {
+		for _, binding := range bindings.GetAll() {
 			newBinding := binding.Copy()
 			newBinding.Set(subjectVariable, distinctValues[0])
-			newBindings = append(newBindings, newBinding)
+			newBindings.Add(newBinding)
 		}
 	}
 
 	return newBindings
 }
 
-func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "", base.log) {
-		return mentalese.Bindings{}
+		return mentalese.NewBindingSet()
 	}
 
 	return bindings
 }
 
-func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "vv", base.log) {
-		return mentalese.Bindings{}
+		return mentalese.NewBindingSet()
 	}
 
 	entityVar := input.Arguments[0].TermValue
@@ -133,20 +133,20 @@ func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings ment
 		}
 	}
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 
-	for _, binding := range bindings {
+	for _, binding := range bindings.GetAll() {
 		newBinding := binding.Copy()
 		newBinding.Set(andVar, mentalese.NewTermRelationSet(mentalese.RelationSet{ relation }))
-		newBindings = append(newBindings, newBinding)
+		newBindings.Add(newBinding)
 	}
 
 	return newBindings
 }
 
-func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings mentalese.Bindings) mentalese.Bindings {
+func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 	if !Validate(input, "V", base.log) {
-		return mentalese.Bindings{}
+		return mentalese.NewBindingSet()
 	}
 
 	listVar := input.Arguments[0].TermValue
@@ -164,17 +164,17 @@ func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings men
 
 	listTerm := mentalese.NewTermList(list)
 
-	newBindings := mentalese.Bindings{}
-	for _, binding := range bindings {
+	newBindings := mentalese.NewBindingSet()
+	for _, binding := range bindings.GetAll() {
 		newBinding := binding.Copy()
 		newBinding.Set(listVar, listTerm)
 		newBinding = newBinding.FilterOutVariablesByName(variables)
-		newBindings = append(newBindings, newBinding)
+		newBindings.Add(newBinding)
 	}
-	return newBindings.UniqueBindings()
+	return newBindings
 }
 
-func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.Bindings) (mentalese.Bindings, bool) {
+func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := bindings
 	found := true

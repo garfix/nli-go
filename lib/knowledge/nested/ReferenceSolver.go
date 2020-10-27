@@ -2,12 +2,12 @@ package nested
 
 import "nli-go/lib/mentalese"
 
-func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
 
-	newBindings := mentalese.Bindings{}
+	newBindings := mentalese.NewBindingSet()
 
 	for _, group := range *base.dialogContext.AnaphoraQueue {
 
@@ -20,7 +20,7 @@ func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Rel
 
 		// empty set ("it")
 		if len(set) == 0 {
-			newBindings = mentalese.Bindings{ refBinding }
+			newBindings = mentalese.InitBindingSet(refBinding)
 			break
 		}
 
@@ -28,8 +28,8 @@ func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Rel
 			continue
 		}
 
-		testRangeBindings := base.solver.SolveRelationSet(set, mentalese.Bindings{refBinding})
-		if len(testRangeBindings) == 1 {
+		testRangeBindings := base.solver.SolveRelationSet(set, mentalese.InitBindingSet(refBinding))
+		if testRangeBindings.GetLength() == 1 {
 			newBindings = testRangeBindings
 			break
 		}
@@ -38,22 +38,22 @@ func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Rel
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) SolveDefiniteReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveDefiniteReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
 
 	newBindings := base.SolveBackReference(relation, binding)
 
-	if len(newBindings) == 0 {
-		newBindings = base.solver.SolveRelationSet(set, mentalese.Bindings{binding})
+	if newBindings.IsEmpty() {
+		newBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(binding))
 
-		if len(newBindings) > 1 {
+		if newBindings.GetLength() > 1 {
 			rangeIndex, found := base.rangeIndexClarification(newBindings, variable)
 			if found {
-				newBindings = newBindings[rangeIndex:rangeIndex + 1]
+				newBindings = mentalese.InitBindingSet(newBindings.Get(rangeIndex))
 			} else {
-				return mentalese.Bindings{}
+				return mentalese.NewBindingSet()
 			}
 		}
 	}

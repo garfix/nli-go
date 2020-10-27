@@ -111,13 +111,13 @@ func (factBase *MySqlFactBase) AddTableDescription(predicate string, tableName s
 
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
-func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
 	relation = relation.BindSingle(binding)
 
-	dbBindings := mentalese.Bindings{}
+	dbBindings := mentalese.NewBindingSet()
 	description := factBase.tableDescriptions[relation.Predicate]
 	columns := description.columns
 	tableName := description.tableName
@@ -172,7 +172,7 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 				}
 			}
 
-			dbBindings = append(dbBindings, binding)
+			dbBindings.Add(binding)
 		}
 	}
 
@@ -191,7 +191,7 @@ func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
 
 	// check if relation already present; do not duplicate!
 	existingBindings := factBase.MatchRelationToDatabase(relation, mentalese.NewBinding())
-	if len(existingBindings) > 0 { return }
+	if !existingBindings.IsEmpty() { return }
 
 	description := factBase.tableDescriptions[relation.Predicate]
 	columns := description.columns

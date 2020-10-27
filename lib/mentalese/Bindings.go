@@ -1,12 +1,45 @@
 package mentalese
 
-type Bindings []Binding
+type BindingSet struct {
+	bindings *[]Binding
+}
 
-func (bindings Bindings) String() string {
+func NewBindingSet() BindingSet{
+	return BindingSet{ bindings: &[]Binding{} }
+}
+
+func InitBindingSet(binding Binding) BindingSet{
+	return BindingSet{ bindings: &[]Binding{ binding } }
+}
+
+func (set BindingSet) Add(binding Binding) {
+	for _, b := range *set.bindings {
+		if b.Equals(binding) {
+			return
+		}
+	}
+	*set.bindings = append(*set.bindings, binding)
+}
+
+func (set BindingSet) AddMultiple(bindingSet BindingSet) {
+	for _, binding := range *bindingSet.bindings {
+		set.Add(binding)
+	}
+}
+
+func (set BindingSet) Copy() BindingSet {
+	newSet := BindingSet{ bindings: &[]Binding{} }
+	for _, binding := range *set.bindings {
+		*newSet.bindings = append(*newSet.bindings, binding.Copy())
+	}
+	return newSet
+}
+
+func (set BindingSet) String() string {
 	str := ""
 	sep := ""
 
-	for _, binding := range bindings {
+	for _, binding := range *set.bindings {
 		str += sep + binding.String()
 		sep = " "
 	}
@@ -14,11 +47,27 @@ func (bindings Bindings) String() string {
 	return "[" + str + "]"
 }
 
-func (bindings Bindings) GetIds(variable string) []Term {
+func (set BindingSet) GetAll() []Binding {
+	return *set.bindings
+}
+
+func (set BindingSet) Get(index int) Binding {
+	return (*set.bindings)[index]
+}
+
+func (set BindingSet) GetLength() int {
+	return len(*set.bindings)
+}
+
+func (set BindingSet) IsEmpty() bool {
+	return len(*set.bindings) == 0
+}
+
+func (set BindingSet) GetIds(variable string) []Term {
 	idMap := map[string]bool{}
 	ids := []Term{}
 
-	for _, binding := range bindings {
+	for _, binding := range *set.bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -35,11 +84,11 @@ func (bindings Bindings) GetIds(variable string) []Term {
 	return ids
 }
 
-func (bindings Bindings) GetDistinctValueCount(variable string) int {
+func (set BindingSet) GetDistinctValueCount(variable string) int {
 	idMap := map[string]bool{}
 	count := 0
 
-	for _, binding := range bindings {
+	for _, binding := range *set.bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -55,11 +104,11 @@ func (bindings Bindings) GetDistinctValueCount(variable string) int {
 	return count
 }
 
-func (bindings Bindings) GetDistinctValues(variable string) []Term {
+func (set BindingSet) GetDistinctValues(variable string) []Term {
 	idMap := map[string]bool{}
 	values := []Term{}
 
-	for _, binding := range bindings {
+	for _, binding := range *set.bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -75,41 +124,23 @@ func (bindings Bindings) GetDistinctValues(variable string) []Term {
 	return values
 }
 
-func (s Bindings) FilterVariablesByName(variableNames []string) Bindings {
-	newBindings := []Binding{}
+func (s BindingSet) FilterVariablesByName(variableNames []string) BindingSet {
+	newBindings := NewBindingSet()
 
-	for _, binding := range s {
-		newBindings = append(newBindings, binding.FilterVariablesByName(variableNames))
+	for _, binding := range *s.bindings {
+		newBindings.Add(binding.FilterVariablesByName(variableNames))
 	}
 
 	return newBindings
 }
 
 
-func (s Bindings) FilterOutVariablesByName(variableNames []string) Bindings {
-	newBindings := []Binding{}
+func (s BindingSet) FilterOutVariablesByName(variableNames []string) BindingSet {
+	newBindings := NewBindingSet()
 
-	for _, binding := range s {
-		newBindings = append(newBindings, binding.FilterOutVariablesByName(variableNames))
+	for _, binding := range *s.bindings {
+		newBindings.Add(binding.FilterOutVariablesByName(variableNames))
 	}
 
 	return newBindings
-}
-
-// Returns copy of bindings that contains each Binding only once
-func (s Bindings) UniqueBindings() Bindings {
-	uniqueBindings := Bindings{}
-	for _, binding := range s {
-		found := false
-		for _, uniqueBinding := range uniqueBindings {
-			if uniqueBinding.Equals(binding) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			uniqueBindings = append(uniqueBindings, binding)
-		}
-	}
-	return uniqueBindings
 }

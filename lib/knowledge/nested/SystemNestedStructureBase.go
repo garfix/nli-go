@@ -60,42 +60,42 @@ func (base *SystemNestedStructureBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemNestedStructureBase) sort(input mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) sort(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	if !knowledge.Validate(input, "va", base.log) {
-		return nil
+		return mentalese.NewBindingSet()
 	}
 
-	return mentalese.Bindings{ binding }
+	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemNestedStructureBase) intent(input mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) intent(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
 	if !knowledge.Validate(bound, "a*", base.log) {
-		return nil
+		return mentalese.NewBindingSet()
 	}
 
-	return mentalese.Bindings{ binding }
+	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemNestedStructureBase) SolveLet(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
+func (base *SystemNestedStructureBase) SolveLet(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "**", base.log) { return nil }
+	if !knowledge.Validate(bound, "**", base.log) { return mentalese.NewBindingSet() }
 
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
 	variables := base.solver.GetCurrentScope().GetVariables()
 	(*variables).Set(variable, value)
 
-	return mentalese.Bindings{ binding }
+	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.Relation, binding mentalese.Binding) mentalese.Bindings {
-	var newBindings mentalese.Bindings
+func (base *SystemNestedStructureBase) SolveNestedStructure(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	newBindings := mentalese.NewBindingSet()
 
 	if relation.Predicate == mentalese.PredicateIntent {
 

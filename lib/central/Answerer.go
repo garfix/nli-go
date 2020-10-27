@@ -35,7 +35,7 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 
 // goal e.g. [ question(Q) child(S, O) SharedId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
 // return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
-func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.Bindings) mentalese.RelationSet {
+func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
 
 	answerer.log.StartDebug("Answer")
 
@@ -61,7 +61,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, bindings)
 
 			// no results? try the next solution (if there is one)
-			if len(resultBindings) == 0 {
+			if resultBindings.IsEmpty() {
 				if i < len(allSolutions) - 1 {
 					continue
 				}
@@ -79,7 +79,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			for _, response := range solution.Responses {
 				if !response.Condition.IsEmpty() {
 					conditionBindings := answerer.solver.SolveRelationSet(response.Condition, resultBindings)
-					if len(conditionBindings) == 0 {
+					if conditionBindings.IsEmpty() {
 						continue
 					} else {
 						conditionedBindings = conditionBindings
@@ -128,7 +128,7 @@ func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.S
 		bindings, found := answerer.matcher.MatchSequenceToSet(aSolution.Condition, unScopedGoal, mentalese.NewBinding())
 		if found {
 
-			for _, binding := range bindings {
+			for _, binding := range bindings.GetAll() {
 				boundSolution := aSolution.BindSingle(binding)
 				solutions = append(solutions, boundSolution)
 			}

@@ -600,9 +600,9 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 }
 
 // [{A:1, B:2} {C:'hello', D:'goodbye'}]
-func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex int) (mentalese.Bindings, int, bool) {
+func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex int) (mentalese.BindingSet, int, bool) {
 
-	bindings := mentalese.Bindings{}
+	bindings := mentalese.NewBindingSet()
 	ok := true
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
@@ -610,7 +610,7 @@ func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex in
 	for ok {
 		binding, newStartIndex, bindingFound := parser.parseBinding(tokens, startIndex)
 		if bindingFound {
-			bindings = append(bindings, binding)
+			bindings.Add(binding)
 			startIndex = newStartIndex
 		} else {
 			break

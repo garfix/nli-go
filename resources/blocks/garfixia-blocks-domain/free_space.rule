@@ -73,6 +73,7 @@
 /*go:log(ColIndex, ColSpan)*/
             go:let(PrevY, StartY)
             go:let(SpanHeight, 0)
+/*go:log(ColIndex)*/
             go:range_foreach(0, LastRow, RowIndex,
 /*go:log(StartY)*/
                 go:add(RowIndex, 1, LineIndex)
@@ -101,25 +102,19 @@
     ;
 
     find_span(Width, VerLines, ColIndex, ColSpan) :-
-        go:let(ColSpan1, 0)
-        go:let(ColEnd, 0)
+        go:let(ColSpan, 0)
 
         go:list_get(VerLines, ColIndex, X1)
-        go:add(X1, Width, X2)
 
-        go:list_length(VerLines, ListLength)
-        go:subtract(ListLength, 1, ColEnd)
-
-        go:range_foreach(ColIndex, ColEnd, I,
-            go:list_get(VerLines, I, L)
-            go:less_than_equals(L, X2)
-            go:add(ColSpan1, 1, ColSpan1)
+        go:list_foreach(VerLines, L,
+            go:subtract(L, X1, W)
+            go:greater_than_equals(W, Width)
+            go:equals(ColSpan, 0)
+            go:list_index(VerLines, L, LineIndex)
+            go:subtract(LineIndex, ColIndex, ColSpan)
         )
 
-        go:greater_than(ColSpan1, 0)
-        go:add(ColIndex, ColSpan1, ColTotal)
-        go:less_than(ColTotal, ListLength)
-        go:unify(ColSpan, ColSpan1)
+        go:greater_than(ColSpan, 0)
     ;
 
     span_free(ColStart, ColSpan, RowIndex, Grid) :-

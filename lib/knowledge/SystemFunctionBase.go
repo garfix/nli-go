@@ -389,7 +389,7 @@ func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentales
 
 	for i, argument := range input.Arguments {
 		if argument.IsVariable() {
-			log += sep + argument.TermValue + ": " + bound.Arguments[i].TermValue
+			log += sep + argument.TermValue + ": " + bound.Arguments[i].String()
 		} else {
 			log += sep + bound.Arguments[i].String()
 		}

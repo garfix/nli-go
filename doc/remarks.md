@@ -1,3 +1,44 @@
+# 2020-10-27
+
+I turned bindings into a proper set: BindingSet. Checking for uniqueness is done in the `Add()` function. This check proved very heavy in the aggregation question of DBPedia. It now took 14 seconds, as compared to 1 second before.
+
+It took me a while to come up with a good solution for this, but I found it in using a hashmap using the serialized representation `String()` of a binding as key. Checking for membership in the set is now O(1), which is great.
+
+Since a binding may contain to pointer to a scope that changes, one might think that it's wrong to fix the serialization of a binding (which contains part of the scope's contents) at any time. However, fixing the scope at that point in time is a good thing, because, if scoped variables are relevant, than their value _at a given time_ is exactly what matters.
+
+In a mathematical set, the order of the elements doesn't matter. In the case of the bindings, the order does matter, even if it is only for testing, to get the same responses each time (i.e. "Madonna and Penn" and not "Penn and Madonna"), so I kept the ordering in tact.
+
+===
+
+My app does not return the blue block in the answer to interaction 19. I found out that this is because the blue block isn't considered "large". My interpretation of "large" was the same as that of "big", that is: all dimensions must be greater than 128. Cf SHRDLU:
+
+    (DEFS LARGE 
+        SEMANTICS ((MEASURE (MEASURE DIMENSION:
+                     #SIZE
+                     RESTRICTIONS:
+                     (#PHYSOB)
+                     DIRECTION:
+                     T))
+               (ADJ (OBJECT 
+                (MARKERS: (#PHYSOB #BIG) 
+                 PROCEDURE: ((#MORE #SIZE *** (128. 128.
+                                    128.))))))
+    )   FEATURES (ADJ))
+
+And the length of the blue block is only 100. I added a procudure for "large" that simply says: height > 128. This will do for now.
+
+The app now replies:
+
+    Yes, the red block, the large green cube which supports the red cube and the blue block 
+    
+which is correct. However the answer SHRDLU gave is
+
+    Yes, three of them: a large red one, a large green cube and a blue one
+    
+So there is some work to be done.
+
+I also so that SHRDLU doesn't actually build the stack on the location of the largest block. It is located in a bit of a different location.    
+
 # 2020-10-25
 
 Bindings should be a set. It must contain each binding only once. This should be enforced in code.

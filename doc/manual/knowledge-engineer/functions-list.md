@@ -42,10 +42,14 @@ The order relation takes two entities and returns a negative number, 0, or a pos
 
 Binds each of the values of list to `Variable`, and executes `Scope` for each value.
 
-    list_foreach(List, Variable, Scope)
+There are two variants: one that binds a variable `ElementVar` each iteration, and one that also bindings an index (0, 1, 2, ...) 
+
+    list_foreach(List, ElementVar, Scope)
+    list_foreach(List, IndexVar, ElementVar, Scope)
     
 * `List`: a list
-* `Variable`: a variable
+* `IndexVar`: a variable
+* `ElementVar`: a variable
 * `Scope`: a relation set
 
 ## List deduplicate

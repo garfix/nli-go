@@ -106,12 +106,11 @@
 
         go:list_get(VerLines, ColIndex, X1)
 
-        go:list_foreach(VerLines, L,
-            go:subtract(L, X1, W)
+        go:list_foreach(VerLines, Index, Line,
+            go:subtract(Line, X1, W)
             go:greater_than_equals(W, Width)
             go:equals(ColSpan, 0)
-            go:list_index(VerLines, L, LineIndex)
-            go:subtract(LineIndex, ColIndex, ColSpan)
+            go:subtract(Index, ColIndex, ColSpan)
         )
 
         go:greater_than(ColSpan, 0)

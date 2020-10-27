@@ -27,20 +27,36 @@ func (base *SystemNestedStructureBase) SolveListOrder(relation mentalese.Relatio
 func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
-
-	if !knowledge.Validate(bound, "lvr", base.log) { return mentalese.NewBindingSet() }
-
-	list := bound.Arguments[0].TermValueList
-	variable := relation.Arguments[1].TermValue
-	scope := relation.Arguments[2].TermValueRelationSet
-
 	newBindings := mentalese.NewBindingSet()
 
-	for _, element := range list {
-		scopedBinding := binding.Copy()
-		scopedBinding.Set(variable, element)
-		elementBindings := base.solver.SolveRelationSet(scope, mentalese.InitBindingSet(scopedBinding))
-		newBindings.AddMultiple(elementBindings)
+	if len(relation.Arguments) == 3 {
+
+		list := bound.Arguments[0].TermValueList
+		elementVar := relation.Arguments[1].TermValue
+		scope := relation.Arguments[2].TermValueRelationSet
+
+		for _, element := range list {
+			scopedBinding := binding.Copy()
+			scopedBinding.Set(elementVar, element)
+			elementBindings := base.solver.SolveRelationSet(scope, mentalese.InitBindingSet(scopedBinding))
+			newBindings.AddMultiple(elementBindings)
+		}
+
+	} else if len(relation.Arguments) == 4 {
+
+		list := bound.Arguments[0].TermValueList
+		indexVar := relation.Arguments[1].TermValue
+		elementVar := relation.Arguments[2].TermValue
+		scope := relation.Arguments[3].TermValueRelationSet
+
+		for index, element := range list {
+			scopedBinding := binding.Copy()
+			scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
+			scopedBinding.Set(elementVar, element)
+			elementBindings := base.solver.SolveRelationSet(scope, mentalese.InitBindingSet(scopedBinding))
+			elementBindings = elementBindings.FilterOutVariablesByName([]string{indexVar, elementVar})
+			newBindings.AddMultiple(elementBindings)
+		}
 	}
 
 	return newBindings

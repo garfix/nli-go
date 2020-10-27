@@ -393,7 +393,7 @@ func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentales
 		} else {
 			log += sep + bound.Arguments[i].String()
 		}
-		sep = ";\t"
+		sep = "\t"
 	}
 
 	fmt.Println(log)

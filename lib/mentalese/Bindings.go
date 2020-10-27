@@ -2,22 +2,22 @@ package mentalese
 
 type BindingSet struct {
 	bindings *[]Binding
+	lookup *map[string]bool
 }
 
 func NewBindingSet() BindingSet{
-	return BindingSet{ bindings: &[]Binding{} }
+	return BindingSet{ bindings: &[]Binding{}, lookup: &map[string]bool{} }
 }
 
 func InitBindingSet(binding Binding) BindingSet{
-	return BindingSet{ bindings: &[]Binding{ binding } }
+	return BindingSet{ bindings: &[]Binding{ binding }, lookup: &map[string]bool{} }
 }
 
 func (set BindingSet) Add(binding Binding) {
-	for _, b := range *set.bindings {
-		if b.Equals(binding) {
-			return
-		}
-	}
+	serialized := binding.String()
+	_, found := (*set.lookup)[serialized]
+	if found { return }
+	(*set.lookup)[serialized] = true
 	*set.bindings = append(*set.bindings, binding)
 }
 
@@ -28,9 +28,9 @@ func (set BindingSet) AddMultiple(bindingSet BindingSet) {
 }
 
 func (set BindingSet) Copy() BindingSet {
-	newSet := BindingSet{ bindings: &[]Binding{} }
+	newSet := NewBindingSet()
 	for _, binding := range *set.bindings {
-		*newSet.bindings = append(*newSet.bindings, binding.Copy())
+		newSet.Add(binding)
 	}
 	return newSet
 }
@@ -133,7 +133,6 @@ func (s BindingSet) FilterVariablesByName(variableNames []string) BindingSet {
 
 	return newBindings
 }
-
 
 func (s BindingSet) FilterOutVariablesByName(variableNames []string) BindingSet {
 	newBindings := NewBindingSet()

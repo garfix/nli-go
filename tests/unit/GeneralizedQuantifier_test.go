@@ -5,7 +5,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
@@ -57,7 +57,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
-	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)

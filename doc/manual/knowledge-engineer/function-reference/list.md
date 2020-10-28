@@ -26,7 +26,7 @@ As you can see the values are added, first in order of argument appearance, and 
 
 Creates a new list, based on an existing list, but ordered by an order function.
 
-    list_order(List, &OrderFunction, NewList)
+    go:list_order(List, &OrderFunction, NewList)
     
 * `List`: a list
 * `OrderFunction`: a reference to a rule that functions as an order function
@@ -36,7 +36,7 @@ The order relation takes two entities and returns a negative number, 0, or a pos
     
     by_easiness(E1, E2, R) :- if_then_else( cleartop(E1), unify(R, 1), unify(R, 0) );
     
-    list_order(List, &by_easiness, NewList)
+    go:list_order(List, &by_easiness, NewList)
 
 ## List foreach
 
@@ -44,8 +44,8 @@ Binds each of the values of list to `Variable`, and executes `Scope` for each va
 
 There are two variants: one that binds a variable `ElementVar` each iteration, and one that also bindings an index (0, 1, 2, ...) 
 
-    list_foreach(List, ElementVar, Scope)
-    list_foreach(List, IndexVar, ElementVar, Scope)
+    go:list_foreach(List, ElementVar, Scope)
+    go:list_foreach(List, IndexVar, ElementVar, Scope)
     
 * `List`: a list
 * `IndexVar`: a variable

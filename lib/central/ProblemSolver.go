@@ -15,8 +15,8 @@ type ProblemSolver struct {
 	factBases            []api.FactBase
 	ruleBases            []api.RuleBase
 	functionBases        []api.FunctionBase
-	aggregateBases       []api.AggregateBase
-	nestedStructureBases []api.NestedStructureBase
+	aggregateBases       []api.AggregateFunctionBase
+	nestedStructureBases []api.SolverFunctionBase
 	scopeStack           *mentalese.ScopeStack
 	matcher              *RelationMatcher
 	modifier             *FactBaseModifier
@@ -30,7 +30,7 @@ func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, lo
 		factBases:      []api.FactBase{},
 		ruleBases:      []api.RuleBase{},
 		functionBases:  []api.FunctionBase{},
-		aggregateBases: []api.AggregateBase{},
+		aggregateBases: []api.AggregateFunctionBase{},
 		scopeStack: 	mentalese.NewScopeStack(),
 		matcher:        matcher,
 		modifier:       NewFactBaseModifier(log),
@@ -54,12 +54,12 @@ func (solver *ProblemSolver) AddRuleBase(ruleBase api.RuleBase) {
 	solver.knowledgeBases = append(solver.knowledgeBases, ruleBase)
 }
 
-func (solver *ProblemSolver) AddMultipleBindingsBase(source api.AggregateBase) {
+func (solver *ProblemSolver) AddMultipleBindingsBase(source api.AggregateFunctionBase) {
 	solver.aggregateBases = append(solver.aggregateBases, source)
 	solver.knowledgeBases = append(solver.knowledgeBases, source)
 }
 
-func (solver *ProblemSolver) AddNestedStructureBase(base api.NestedStructureBase) {
+func (solver *ProblemSolver) AddNestedStructureBase(base api.SolverFunctionBase) {
 	solver.nestedStructureBases = append(solver.nestedStructureBases, base)
 	solver.knowledgeBases = append(solver.knowledgeBases, base)
 }
@@ -186,7 +186,7 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 
 	// go through all nested structure bases
 	for _, nestedStructureBase := range solver.nestedStructureBases {
-		newBindings.AddMultiple(nestedStructureBase.SolveNestedStructure(relation, simpleBinding))
+		newBindings.AddMultiple(nestedStructureBase.Execute(relation, simpleBinding))
 	}
 
 	// do assert / retract

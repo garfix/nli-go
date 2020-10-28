@@ -1,4 +1,4 @@
-package nested
+package function
 
 import (
 	"nli-go/lib/knowledge"
@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (base *SystemNestedStructureBase) SolveListOrder(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listOrder(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -24,7 +24,7 @@ func (base *SystemNestedStructureBase) SolveListOrder(relation mentalese.Relatio
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 	newBindings := mentalese.NewBindingSet()
@@ -62,7 +62,7 @@ func (base *SystemNestedStructureBase) SolveListForeach(relation mentalese.Relat
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) listDeduplicate(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listDeduplicate(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -78,7 +78,7 @@ func (base *SystemNestedStructureBase) listDeduplicate(relation mentalese.Relati
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemNestedStructureBase) listSort(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listSort(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -98,7 +98,7 @@ func (base *SystemNestedStructureBase) listSort(relation mentalese.Relation, bin
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemNestedStructureBase) listIndex(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listIndex(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -121,7 +121,7 @@ func (base *SystemNestedStructureBase) listIndex(relation mentalese.Relation, bi
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) listGet(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listGet(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -148,7 +148,7 @@ func (base *SystemNestedStructureBase) listGet(relation mentalese.Relation, bind
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemNestedStructureBase) listLength(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listLength(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -164,7 +164,7 @@ func (base *SystemNestedStructureBase) listLength(relation mentalese.Relation, b
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemNestedStructureBase) listExpand(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listExpand(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 

@@ -4,7 +4,7 @@ Find all entities specified by a `quant` (minimally), assign each of them in tur
 
 Fails as soon as a scope returns no results. 
 
-    quant_foreach(Quant ..., Scope)
+    go:quant_foreach(Quant ..., Scope)
     
 * `Quant`: a quant
 * `Scope`: a relation set    
@@ -15,7 +15,7 @@ Check [quantification](quantification.md) for more information.
 
 Find all entities specified by `Quants`, check if the number of entities that pass `Scope` is the same as specified by the quantifier of `Quant`. 
 
-    quant_check(Quants, Scope)
+    go:quant_check(Quants, Scope)
     
 * `Quants`: one or more quants
 * `Scope`: a relation set      
@@ -26,7 +26,7 @@ Check [quantification](quantification.md) for more information.
 
 Creates a new quant, based on an existing quant, but extended with an order function. If the original quant already had an order, it will be replaced.
 
-    quant_ordered_list(Quant, &OrderFunction, List)
+    go:quant_ordered_list(Quant, &OrderFunction, List)
     
 * `Quant`: a `quant` relation
 * `OrderFunction`: a reference to a rule that functions as an order function
@@ -40,4 +40,4 @@ The order relation takes two entities and returns a negative number, 0, or a pos
     
     by_easiness(E1, E2, R) :- if_then_else( cleartop(E1), unify(R, 1), unify(R, 0) );
     
-    quant_ordered_list(Quant, &by_easyness, List) 
+    go:quant_ordered_list(Quant, &by_easyness, List) 

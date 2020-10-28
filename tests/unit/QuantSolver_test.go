@@ -5,7 +5,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
 	"testing"
 )
@@ -112,7 +112,7 @@ func TestQuantSolver(t *testing.T) {
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)

@@ -4,7 +4,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
 	"testing"
 )
@@ -107,7 +107,7 @@ func TestControlFunctions(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -127,7 +127,7 @@ func TestControlFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+		resultBindings := nestedBase.Execute(input, binding)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -168,7 +168,7 @@ func TestListFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
 	tests := []struct {
 		input      string
 		binding     string
@@ -193,7 +193,7 @@ func TestListFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+		resultBindings := nestedBase.Execute(input, binding)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -237,7 +237,7 @@ func TestQuantFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
 	tests := []struct {
 		input      string
 		binding     string
@@ -319,7 +319,7 @@ func TestQuantFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.SolveNestedStructure(input, binding)
+		resultBindings := nestedBase.Execute(input, binding)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("got %v, want %v", resultBindings, wantBindings)

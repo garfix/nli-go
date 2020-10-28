@@ -8,7 +8,7 @@ import (
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
@@ -98,7 +98,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	systemAggregateBase := knowledge.NewSystemAggregateBase("System-aggregate", builder.log)
 	solver.AddMultipleBindingsBase(systemAggregateBase)
 
-	nestedStructureBase := nested.NewSystemNestedStructureBase(solver, system.dialogContext, system.meta, builder.log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)
 
 	shellBase := knowledge.NewShellBase("shell", builder.log)

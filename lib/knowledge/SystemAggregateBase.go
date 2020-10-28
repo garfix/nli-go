@@ -6,17 +6,17 @@ import (
 	"strconv"
 )
 
-type SystemAggregateBase struct {
+type SystemAggregateFunctionBase struct {
 	KnowledgeBaseCore
 	rules []mentalese.Rule
 	log   *common.SystemLog
 }
 
-func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregateBase {
-	return &SystemAggregateBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
+func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregateFunctionBase {
+	return &SystemAggregateFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
+func (base *SystemAggregateFunctionBase) HandlesPredicate(predicate string) bool {
 	predicates := []string{
 		mentalese.PredicateNumberOf,
 		mentalese.PredicateFirst,
@@ -33,7 +33,30 @@ func (base *SystemAggregateBase) HandlesPredicate(predicate string) bool {
 	return false
 }
 
-func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemAggregateFunctionBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+
+	newBindings := bindings
+	found := true
+
+	switch input.Predicate {
+	case mentalese.PredicateNumberOf:
+		newBindings = base.numberOf(input, bindings)
+	case mentalese.PredicateFirst:
+		newBindings = base.first(input, bindings)
+	case mentalese.PredicateExists:
+		newBindings = base.exists(input, bindings)
+	case mentalese.PredicateMakeAnd:
+		newBindings = base.makeAnd(input, bindings)
+	case mentalese.PredicateMakeList:
+		newBindings = base.makeList(input, bindings)
+	default:
+		found = false
+	}
+
+	return newBindings, found
+}
+
+func (base *SystemAggregateFunctionBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "--", base.log) {
 		return mentalese.NewBindingSet()
@@ -68,7 +91,7 @@ func (base *SystemAggregateBase) numberOf(input mentalese.Relation, bindings men
 	return newBindings
 }
 
-func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemAggregateFunctionBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v", base.log) {
 		return mentalese.NewBindingSet()
@@ -91,7 +114,7 @@ func (base *SystemAggregateBase) first(input mentalese.Relation, bindings mental
 	return newBindings
 }
 
-func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemAggregateFunctionBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "", base.log) {
 		return mentalese.NewBindingSet()
@@ -100,7 +123,7 @@ func (base *SystemAggregateBase) exists(input mentalese.Relation, bindings menta
 	return bindings
 }
 
-func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemAggregateFunctionBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "vv", base.log) {
 		return mentalese.NewBindingSet()
@@ -144,7 +167,7 @@ func (base *SystemAggregateBase) makeAnd(input mentalese.Relation, bindings ment
 	return newBindings
 }
 
-func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemAggregateFunctionBase) makeList(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 	if !Validate(input, "V", base.log) {
 		return mentalese.NewBindingSet()
 	}
@@ -172,27 +195,4 @@ func (base *SystemAggregateBase) listMake(input mentalese.Relation, bindings men
 		newBindings.Add(newBinding)
 	}
 	return newBindings
-}
-
-func (base *SystemAggregateBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
-
-	newBindings := bindings
-	found := true
-
-	switch input.Predicate {
-	case mentalese.PredicateNumberOf:
-		newBindings = base.numberOf(input, bindings)
-	case mentalese.PredicateFirst:
-		newBindings = base.first(input, bindings)
-	case mentalese.PredicateExists:
-		newBindings = base.exists(input, bindings)
-	case mentalese.PredicateMakeAnd:
-		newBindings = base.makeAnd(input, bindings)
-	case mentalese.PredicateMakeList:
-		newBindings = base.listMake(input, bindings)
-	default:
-		found = false
-	}
-
-	return newBindings, found
 }

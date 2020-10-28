@@ -8,14 +8,14 @@ Rules are written to a rulebase.
 
 Writes a relation to the database or adds a rule to the rule base.  
 
-    assert(P)
+    go:assert(P)
     
 * `P`: a relation (i.e. father(`luke`, `darth`))
 
 The relation is offered to all fact bases; but only the ones that have the relation defined as head in their write map will write it. But only after the relation is converted to one or more rows of database tables.
 
 
-    assert(R)
+    go:assert(R)
 
 * `R`: a rule (i.e. fly(X) :- bird(X))
 
@@ -31,7 +31,7 @@ See [common-sense-reasoning](common-sense-reasoning.md) for examples of default 
 
 Deletes a relation from the database  
 
-    retract(P)
+    go:retract(P)
     
 * `P`: a relation (i.e. father(`luke`, `darth`))
 

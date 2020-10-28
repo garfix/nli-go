@@ -1,3 +1,12 @@
+# 2020-10-28
+
+I used the database to store the 2D grid of the space algorithm. This is not good practise, so I want a n-dimensional datatype and I want it to be sparse. Let's call it matrix. Let's specify a default value.
+
+    go:make_matrix(M1, 0, 1000, 1000, 1000)
+    go:matrix_get(M1, 513, 811, 12)
+    go:matrix_set(M1, 513, 811, 12, Value)
+
+
 # 2020-10-27
 
 I turned bindings into a proper set: BindingSet. Checking for uniqueness is done in the `Add()` function. This check proved very heavy in the aggregation question of DBPedia. It now took 14 seconds, as compared to 1 second before.
@@ -37,7 +46,11 @@ which is correct. However the answer SHRDLU gave is
     
 So there is some work to be done.
 
-I also so that SHRDLU doesn't actually build the stack on the location of the largest block. It is located in a bit of a different location.    
+I also so that SHRDLU doesn't actually build the stack on the location of the largest block. It is located in a bit of a different location.
+
+===
+
+Note: I remove the iterator variables from the result bindings in foreach loops, to reduce the number of unnecessary bindings.    
 
 # 2020-10-25
 

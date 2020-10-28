@@ -1,4 +1,4 @@
-package nested
+package function
 
 // https://en.wikipedia.org/wiki/Quicksort
 
@@ -7,12 +7,12 @@ import (
 	"strconv"
 )
 
-func (base *SystemNestedStructureBase) entityQuickSort(ids []mentalese.Term, orderFunction string) []mentalese.Term {
+func (base *SystemSolverFunctionBase) entityQuickSort(ids []mentalese.Term, orderFunction string) []mentalese.Term {
 	base.entityQuickSortRange(&ids, 0, len(ids) - 1, orderFunction)
 	return ids
 }
 
-func (base *SystemNestedStructureBase) entityQuickSortRange(ids *[]mentalese.Term, lo int, hi int, orderFunction string) {
+func (base *SystemSolverFunctionBase) entityQuickSortRange(ids *[]mentalese.Term, lo int, hi int, orderFunction string) {
 	if lo < hi {
 		p := base.partition(ids, lo, hi, orderFunction)
 		base.entityQuickSortRange(ids, lo, p, orderFunction)
@@ -20,7 +20,7 @@ func (base *SystemNestedStructureBase) entityQuickSortRange(ids *[]mentalese.Ter
 	}
 }
 
-func (base *SystemNestedStructureBase) partition(ids *[]mentalese.Term, lo int, hi int, orderFunction string) int {
+func (base *SystemSolverFunctionBase) partition(ids *[]mentalese.Term, lo int, hi int, orderFunction string) int {
 	pivot := (hi + lo) / 2
 	pivotId := (*ids)[pivot]
 	i := lo - 1
@@ -44,7 +44,7 @@ func (base *SystemNestedStructureBase) partition(ids *[]mentalese.Term, lo int, 
 	}
 }
 
-func (base *SystemNestedStructureBase) compare(id1 mentalese.Term, id2 mentalese.Term, orderFunction string) int {
+func (base *SystemSolverFunctionBase) compare(id1 mentalese.Term, id2 mentalese.Term, orderFunction string) int {
 
 	relation := mentalese.NewRelation(true, orderFunction, []mentalese.Term{
 		mentalese.NewTermVariable("E1"),

@@ -1,10 +1,10 @@
-package nested
+package function
 
 import (
 	"nli-go/lib/mentalese"
 )
 
-func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) not(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	scope := notRelation.Arguments[mentalese.NotScopeIndex].TermValueRelationSet
 
@@ -20,7 +20,7 @@ func (base *SystemNestedStructureBase) SolveNot(notRelation mentalese.Relation, 
 	return resultBindings
 }
 
-func (base *SystemNestedStructureBase) SolveAnd(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) and(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := andRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := andRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
@@ -36,7 +36,7 @@ func (base *SystemNestedStructureBase) SolveAnd(andRelation mentalese.Relation, 
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) or(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
@@ -52,7 +52,7 @@ func (base *SystemNestedStructureBase) SolveOr(orRelation mentalese.Relation, bi
 	return result
 }
 
-func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) xor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
@@ -66,20 +66,3 @@ func (base *SystemNestedStructureBase) SolveXor(orRelation mentalese.Relation, b
 	return newBindings
 }
 
-
-func (base *SystemNestedStructureBase) SolveIfThenElse(ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	condition := ifThenElse.Arguments[0].TermValueRelationSet
-	action := ifThenElse.Arguments[1].TermValueRelationSet
-	alternative := ifThenElse.Arguments[2].TermValueRelationSet
-
-	newBindings := base.solver.SolveRelationSet(condition, mentalese.InitBindingSet(binding))
-
-	if !newBindings.IsEmpty() {
-		newBindings = base.solver.SolveRelationSet(action, newBindings )
-	} else {
-		newBindings = base.solver.SolveRelationSet(alternative, mentalese.InitBindingSet(binding))
-	}
-
-	return newBindings
-}

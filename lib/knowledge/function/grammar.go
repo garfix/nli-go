@@ -1,8 +1,22 @@
-package nested
+package function
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
+)
 
-func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) intent(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "a*", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *SystemSolverFunctionBase) backReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
@@ -38,12 +52,12 @@ func (base *SystemNestedStructureBase) SolveBackReference(relation mentalese.Rel
 	return newBindings
 }
 
-func (base *SystemNestedStructureBase) SolveDefiniteReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) definiteReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
 
-	newBindings := base.SolveBackReference(relation, binding)
+	newBindings := base.backReference(relation, binding)
 
 	if newBindings.IsEmpty() {
 		newBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(binding))

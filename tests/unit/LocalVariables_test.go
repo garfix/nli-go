@@ -5,7 +5,7 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/knowledge/nested"
+	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
 	"testing"
 )
@@ -35,7 +35,7 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := nested.NewSystemNestedStructureBase(solver, dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	solver.AddNestedStructureBase(nestedBase)
 	rules := parser.CreateRules(`[
 		pow(Base, Number, Pow) :- 

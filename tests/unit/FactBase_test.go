@@ -39,7 +39,7 @@ func TestFactBase(t *testing.T) {
 
 	writeMap := parser.CreateRules(`[]`)
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)

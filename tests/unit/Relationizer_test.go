@@ -42,7 +42,7 @@ func TestRelationizer(t *testing.T) {
 
 	log := common.NewSystemLog(false)
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)

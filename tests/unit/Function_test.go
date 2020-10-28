@@ -100,7 +100,7 @@ func TestAggregateFunctions(t *testing.T) {
 func TestControlFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 
@@ -142,7 +142,7 @@ func TestControlFunctions(t *testing.T) {
 func TestListFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
@@ -208,7 +208,7 @@ func TestListFunctions(t *testing.T) {
 func TestQuantFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()

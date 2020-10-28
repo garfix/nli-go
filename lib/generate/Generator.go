@@ -2,17 +2,18 @@ package generate
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 )
 
 type Generator struct {
-	matcher *mentalese.RelationMatcher
+	matcher *central.RelationMatcher
 	log     *common.SystemLog
 }
 
-func NewGenerator(log *common.SystemLog, matcher *mentalese.RelationMatcher) *Generator {
+func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Generator {
 	return &Generator{
 		matcher: matcher,
 		log: log,

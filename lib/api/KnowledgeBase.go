@@ -1,4 +1,4 @@
-package knowledge
+package api
 
 type KnowledgeBase interface {
 

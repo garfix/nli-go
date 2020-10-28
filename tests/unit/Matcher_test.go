@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
@@ -11,7 +12,7 @@ func TestMatchTwoTerms(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	tests := []struct {
 		needle      string
 		haystack    string
@@ -76,7 +77,7 @@ func TestMatchTwoRelations(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	tests := []struct {
 		needle      string
 		haystack    string
@@ -121,7 +122,7 @@ func TestMatchRelationToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`
 		gender('Luke', male) 
 		gender('George', male) 
@@ -174,7 +175,7 @@ func TestMatchSequenceToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`
 		gender('Luke', male)
 		gender('George', male)

@@ -2,8 +2,8 @@ package central
 
 import (
 	"fmt"
+	"nli-go/lib/api"
 	"nli-go/lib/common"
-	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
 
@@ -11,26 +11,26 @@ import (
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
-	knowledgeBases		 []knowledge.KnowledgeBase
-	factBases            []knowledge.FactBase
-	ruleBases            []knowledge.RuleBase
-	functionBases        []knowledge.FunctionBase
-	aggregateBases       []knowledge.AggregateBase
-	nestedStructureBases []knowledge.NestedStructureBase
+	knowledgeBases		 []api.KnowledgeBase
+	factBases            []api.FactBase
+	ruleBases            []api.RuleBase
+	functionBases        []api.FunctionBase
+	aggregateBases       []api.AggregateBase
+	nestedStructureBases []api.NestedStructureBase
 	scopeStack           *mentalese.ScopeStack
-	matcher              *mentalese.RelationMatcher
+	matcher              *RelationMatcher
 	modifier             *FactBaseModifier
 	dialogContext        *DialogContext
 	log                  *common.SystemLog
 }
 
-func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
+func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
-		knowledgeBases: []knowledge.KnowledgeBase{},
-		factBases:      []knowledge.FactBase{},
-		ruleBases:      []knowledge.RuleBase{},
-		functionBases:  []knowledge.FunctionBase{},
-		aggregateBases: []knowledge.AggregateBase{},
+		knowledgeBases: []api.KnowledgeBase{},
+		factBases:      []api.FactBase{},
+		ruleBases:      []api.RuleBase{},
+		functionBases:  []api.FunctionBase{},
+		aggregateBases: []api.AggregateBase{},
 		scopeStack: 	mentalese.NewScopeStack(),
 		matcher:        matcher,
 		modifier:       NewFactBaseModifier(log),
@@ -39,27 +39,27 @@ func NewProblemSolver(matcher *mentalese.RelationMatcher, dialogContext *DialogC
 	}
 }
 
-func (solver *ProblemSolver) AddFactBase(factBase knowledge.FactBase) {
+func (solver *ProblemSolver) AddFactBase(factBase api.FactBase) {
 	solver.factBases = append(solver.factBases, factBase)
 	solver.knowledgeBases = append(solver.knowledgeBases, factBase)
 }
 
-func (solver *ProblemSolver) AddFunctionBase(functionBase knowledge.FunctionBase) {
+func (solver *ProblemSolver) AddFunctionBase(functionBase api.FunctionBase) {
 	solver.functionBases = append(solver.functionBases, functionBase)
 	solver.knowledgeBases = append(solver.knowledgeBases, functionBase)
 }
 
-func (solver *ProblemSolver) AddRuleBase(ruleBase knowledge.RuleBase) {
+func (solver *ProblemSolver) AddRuleBase(ruleBase api.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, ruleBase)
 	solver.knowledgeBases = append(solver.knowledgeBases, ruleBase)
 }
 
-func (solver *ProblemSolver) AddMultipleBindingsBase(source knowledge.AggregateBase) {
+func (solver *ProblemSolver) AddMultipleBindingsBase(source api.AggregateBase) {
 	solver.aggregateBases = append(solver.aggregateBases, source)
 	solver.knowledgeBases = append(solver.knowledgeBases, source)
 }
 
-func (solver *ProblemSolver) AddNestedStructureBase(base knowledge.NestedStructureBase) {
+func (solver *ProblemSolver) AddNestedStructureBase(base api.NestedStructureBase) {
 	solver.nestedStructureBases = append(solver.nestedStructureBases, base)
 	solver.knowledgeBases = append(solver.knowledgeBases, base)
 }
@@ -208,7 +208,7 @@ func (solver ProblemSolver) solveSingleRelationSingleBinding(relation mentalese.
 }
 
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
-func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (solver ProblemSolver) FindFacts(factBase api.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	dbBindings := mentalese.NewBindingSet()
 
@@ -240,7 +240,7 @@ func (solver ProblemSolver) FindFacts(factBase knowledge.FactBase, relation ment
 	return dbBindings
 }
 
-func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase knowledge.FactBase) mentalese.BindingSet {
+func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase api.FactBase) mentalese.BindingSet {
 
 	sequenceBindings := mentalese.InitBindingSet(binding)
 
@@ -251,7 +251,7 @@ func (solver ProblemSolver) solveMultipleRelationSingleFactBase(relations []ment
 	return sequenceBindings
 }
 
-func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase knowledge.FactBase) mentalese.BindingSet {
+func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
 
 	solver.log.StartProduction("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
 
@@ -287,7 +287,7 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 	return relationBindings
 }
 
-func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.NewScopedBinding(binding.GetScope())
 
@@ -313,7 +313,7 @@ func (solver ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding
 	return newBinding
 }
 
-func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase knowledge.FactBase) mentalese.Binding {
+func (solver ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.NewScopedBinding(binding.GetScope())
 
@@ -394,7 +394,7 @@ func (solver ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bin
 //  { {X='john', Y='jack', Z='joe'} }
 //  { {X='bob', Y='jonathan', Z='bill'} }
 // }
-func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase knowledge.RuleBase) mentalese.BindingSet {
+func (solver ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) mentalese.BindingSet {
 
 	inputVariables := goalRelation.GetVariableNames()
 

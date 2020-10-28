@@ -3,7 +3,7 @@ package central
 import "nli-go/lib/mentalese"
 
 type RelationSetBuilder struct {
-	matcher    *mentalese.RelationMatcher
+	matcher    *RelationMatcher
 }
 
 func NewRelationSetBuilder() *RelationSetBuilder {

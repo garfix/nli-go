@@ -51,7 +51,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	]`)
 	writeMap := internalGrammarParser.CreateRules(`[]`)
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)

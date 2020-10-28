@@ -10,13 +10,13 @@ import (
 // It uses Solution structures to determine how to act
 type Answerer struct {
 	solutions []mentalese.Solution
-	matcher   *mentalese.RelationMatcher
+	matcher   *RelationMatcher
 	solver    *ProblemSolver
 	builder   *RelationSetBuilder
 	log       *common.SystemLog
 }
 
-func NewAnswerer(matcher *mentalese.RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
+func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
 
 	builder := NewRelationSetBuilder()
 
@@ -40,7 +40,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 	answerer.log.StartDebug("Answer")
 
 	answer := mentalese.RelationSet{}
-	transformer := mentalese.NewRelationTransformer(answerer.matcher, answerer.log)
+	transformer := NewRelationTransformer(answerer.matcher, answerer.log)
 
 	allSolutions := answerer.findSolutions(goal)
 

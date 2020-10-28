@@ -14,7 +14,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)

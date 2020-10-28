@@ -40,7 +40,7 @@ func TestSolver(t *testing.T) {
 
 	writeMap := parser.CreateRules(`[]`)
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 
@@ -164,7 +164,7 @@ func TestMissingHandlerError(t *testing.T) {
 	facts := mentalese.RelationSet{}
 	readMap := parser.CreateRules(`[]`)
 	writeMap := parser.CreateRules(`[]`)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 
 	dialogContext := central.NewDialogContext()

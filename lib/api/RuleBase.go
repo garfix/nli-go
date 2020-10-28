@@ -1,4 +1,4 @@
-package knowledge
+package api
 
 import "nli-go/lib/mentalese"
 

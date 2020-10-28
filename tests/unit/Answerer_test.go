@@ -92,7 +92,7 @@ func TestAnswerer(t *testing.T) {
 		}
 	]`)
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, ds2db, ds2dbWrite, log)
 	systemAggregateBase := knowledge.NewSystemAggregateBase("system-aggregate", log)

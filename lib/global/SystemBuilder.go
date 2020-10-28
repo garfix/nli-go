@@ -82,7 +82,7 @@ func (builder *systemBuilder) build(system *System) {
 func (builder *systemBuilder) buildBasic(system *System) {
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", builder.log)
-	matcher := mentalese.NewRelationMatcher(builder.log)
+	matcher := central.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
 

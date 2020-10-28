@@ -1,7 +1,9 @@
-package mentalese
+package central
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
+	"nli-go/lib/mentalese"
 )
 
 // This class matches relations to other relations and reports their bindings
@@ -14,7 +16,7 @@ import (
 // haystack: the base of relations that serve as matching candidates
 
 type RelationMatcher struct {
-	functionBases []FunctionBase
+	functionBases []api.FunctionBase
 	log           *common.SystemLog
 }
 
@@ -22,20 +24,20 @@ func NewRelationMatcher(log *common.SystemLog) *RelationMatcher {
 	return &RelationMatcher{log: log}
 }
 
-func (matcher *RelationMatcher) AddFunctionBase(functionBase FunctionBase) {
+func (matcher *RelationMatcher) AddFunctionBase(functionBase api.FunctionBase) {
 	matcher.functionBases = append(matcher.functionBases, functionBase)
 }
 
 type solutionNode struct {
-	Binding Binding
+	Binding mentalese.Binding
 	Indexes []int
 }
 
-func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, haystackSet RelationSet, binding Binding) (BindingSet, bool) {
+func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence mentalese.RelationSet, haystackSet mentalese.RelationSet, binding mentalese.Binding) (mentalese.BindingSet, bool) {
 
 	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
-	newBindings := NewBindingSet()
+	newBindings := mentalese.NewBindingSet()
 
 	match := true
 
@@ -89,10 +91,10 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence RelationSet, h
 
 // functions like join(N, ' ', F, I, L)
 // returns a binding with only one variable
-func (matcher *RelationMatcher) ExecuteFunction(needleRelation Relation, binding Binding) (Binding, bool, bool) {
+func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
 
-	newBinding := NewBinding()
-	resultBinding := NewBinding()
+	newBinding := mentalese.NewBinding()
+	resultBinding := mentalese.NewBinding()
 	functionFound := false
 	success := false
 
@@ -109,11 +111,11 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation Relation, binding
 
 // Matches a single relation to a relation set
 // Returns multiple bindings
-func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, haystackSet RelationSet, binding Binding) (BindingSet, []int) {
+func (matcher *RelationMatcher) MatchRelationToSet(needleRelation mentalese.Relation, haystackSet mentalese.RelationSet, binding mentalese.Binding) (mentalese.BindingSet, []int) {
 
 	matcher.log.StartDebug("matchRelationToSet", needleRelation, haystackSet, binding)
 
-	newBindings := NewBindingSet()
+	newBindings := mentalese.NewBindingSet()
 	indexes := []int{}
 
 	for i, haystackRelation := range haystackSet {
@@ -132,7 +134,7 @@ func (matcher *RelationMatcher) MatchRelationToSet(needleRelation Relation, hays
 }
 
 // Matches needleRelation to haystackRelation, using Binding
-func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, haystackRelation Relation, binding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) MatchTwoRelations(needleRelation mentalese.Relation, haystackRelation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	newBinding := binding.Copy()
 	match := true
@@ -165,7 +167,7 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation Relation, hayst
 
 
 // Extends the Binding with new variable bindings for the variables of subjectArgument
-func (matcher *RelationMatcher) MatchTerm(subjectArgument Term, patternArgument Term, subjectBinding Binding) (Binding, bool) {
+func (matcher *RelationMatcher) MatchTerm(subjectArgument mentalese.Term, patternArgument mentalese.Term, subjectBinding mentalese.Binding) (mentalese.Binding, bool) {
 
 	success := false
 

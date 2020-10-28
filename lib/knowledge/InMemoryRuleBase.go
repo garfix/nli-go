@@ -1,6 +1,7 @@
 package knowledge
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -32,7 +33,7 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentales
 
 	ruleBase.log.StartDebug("RuleBase BindSingle", goal)
 
-	matcher := mentalese.NewRelationMatcher(ruleBase.log)
+	matcher := central.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
 	subgoalBindings := mentalese.NewBindingSet()
 

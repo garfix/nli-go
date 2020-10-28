@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -22,13 +23,13 @@ type SparqlFactBase struct {
 	ds2db           []mentalese.Rule
 	names           mentalese.ConfigMap
 	sharedIds 		SharedIds
-	matcher         *mentalese.RelationMatcher
+	matcher         *central.RelationMatcher
 	queryCount      int
 	doCache         bool
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *mentalese.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *central.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},

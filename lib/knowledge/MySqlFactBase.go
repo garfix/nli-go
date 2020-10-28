@@ -4,6 +4,7 @@ package knowledge
 // go get github.com/go-sql-driver/mysql
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/mentalese"
 )
 import "database/sql"
@@ -20,7 +21,7 @@ type MySqlFactBase struct {
 	readMap           []mentalese.Rule
 	writeMap           []mentalese.Rule
 	sharedIds         SharedIds
-	matcher           *mentalese.RelationMatcher
+	matcher           *central.RelationMatcher
 	log               *common.SystemLog
 }
 
@@ -29,7 +30,7 @@ type tableDescription struct {
 	columns []string
 }
 
-func NewMySqlFactBase(name string, username string, password string, database string, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *MySqlFactBase {
+func NewMySqlFactBase(name string, username string, password string, database string, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *MySqlFactBase {
 
 	db, _ := sql.Open("mysql", username+":"+password+"@/"+database)
 	err := db.Ping()

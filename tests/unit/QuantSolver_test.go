@@ -101,12 +101,12 @@ func TestQuantSolver(t *testing.T) {
 		},
 	}
 
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(mentalese.NewRelationMatcher(log), dialogContext, log)
+	solver := central.NewProblemSolver(central.NewRelationMatcher(log), dialogContext, log)
 	solver.AddFactBase(factBase1)
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)

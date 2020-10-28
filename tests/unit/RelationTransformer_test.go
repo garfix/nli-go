@@ -1,9 +1,9 @@
 package tests
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/mentalese"
 	"testing"
 )
 
@@ -11,8 +11,8 @@ func TestRelationTransformer(t *testing.T) {
 
 	log := common.NewSystemLog(false)
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher(log)
-	transformer := mentalese.NewRelationTransformer(matcher, log)
+	matcher := central.NewRelationMatcher(log)
+	transformer := central.NewRelationTransformer(matcher, log)
 
 	// "name all customers"
 	relationSet := parser.CreateRelationSet(`
@@ -66,8 +66,8 @@ func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 
 	log := common.NewSystemLog(false)
 	parser := importer.NewInternalGrammarParser()
-	matcher := mentalese.NewRelationMatcher(log)
-	transformer := mentalese.NewRelationTransformer(matcher, log)
+	matcher := central.NewRelationMatcher(log)
+	transformer := central.NewRelationTransformer(matcher, log)
 
 	relationSet := parser.CreateRelationSet(`
 		quant(E1, isa(E1, ball), D1, isa(D1, every), none)

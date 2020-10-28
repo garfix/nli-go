@@ -1,8 +1,8 @@
 package central
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
-	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"sort"
 )
@@ -11,12 +11,12 @@ import (
 type NameResolver struct {
 	solver 			*ProblemSolver
 	meta 			*mentalese.Meta
-	matcher 		*mentalese.RelationMatcher
+	matcher 		*RelationMatcher
 	log 			*common.SystemLog
 	dialogContext   *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, matcher *mentalese.RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, matcher *RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
 		solver:      	solver,
 		meta: 			meta,
@@ -165,7 +165,7 @@ func (resolver *NameResolver) ResolveName(name string, entityType string) []Name
 	return factBaseNameInformations
 }
 
-func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityType string, factBase knowledge.FactBase) []NameInformation {
+func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityType string, factBase api.FactBase) []NameInformation {
 
 	var nameInformations []NameInformation
 

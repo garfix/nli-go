@@ -22,7 +22,7 @@ type System struct {
 	parser                *earley.Parser
 	meta                  *mentalese.Meta
 	relationizer          *earley.Relationizer
-	matcher               *mentalese.RelationMatcher
+	matcher               *central.RelationMatcher
 	solver                *central.ProblemSolver
 	answerer              *central.Answerer
 	generator             *generate.Generator

@@ -1,6 +1,7 @@
 package knowledge
 
 import (
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -12,11 +13,11 @@ type InMemoryFactBase struct {
 	writeMap  []mentalese.Rule
 	entities  mentalese.Entities
 	sharedIds SharedIds
-	matcher   *mentalese.RelationMatcher
+	matcher   *central.RelationMatcher
 	log       *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *mentalese.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *InMemoryFactBase {
 	return &InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
 		facts:             facts,

@@ -1,6 +1,5 @@
 # Todo
 
-- bindings -> bindingset (unique bindings)
 - functions calls for arguments
 - typed arguments
 - operators
@@ -19,11 +18,7 @@
 * use relations as functions (with special role for the last parameter as the return value)
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
-
-* (?) to_list(E1)
-    collect all distinct values of E1 into a list, replace the value of E1 in all bindings with this list; remove duplicate bindings
-    not yet needed; maybe postpone
-    
+   
 ## generation of multiple entities
 
 Replace `make_and()` by a `make_list()` and add list unification syntax
@@ -64,7 +59,6 @@ But I don't like `to_list` because it must change the variable E and this is aga
 
 ## Misc
 
-* Separate interfaces (api) from implementations (model)
 * Blocks World examples
 
 ## Rules

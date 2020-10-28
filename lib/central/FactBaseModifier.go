@@ -1,22 +1,22 @@
 package central
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
-	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
 
 type FactBaseModifier struct {
-	matcher *mentalese.RelationMatcher
+	matcher *RelationMatcher
 }
 
 func NewFactBaseModifier(log *common.SystemLog) *FactBaseModifier {
 	return &FactBaseModifier{
-		matcher: mentalese.NewRelationMatcher(log),
+		matcher: NewRelationMatcher(log),
 	}
 }
 
-func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase knowledge.FactBase) {
+func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase api.FactBase) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
@@ -32,7 +32,7 @@ func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase kn
 	}
 }
 
-func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase knowledge.FactBase) {
+func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase api.FactBase) {
 
 	for _, mapping := range factBase.GetWriteMappings() {
 

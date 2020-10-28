@@ -2,11 +2,11 @@ package tests
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"nli-go/lib/mentalese"
 	"strings"
 	"testing"
 )
@@ -26,7 +26,7 @@ func TestGenerator(t *testing.T) {
 		{ rule: verb(E) -> 'kissed',		      condition: predication(E, kiss) }
 		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
 	]`)
-	matcher := mentalese.NewRelationMatcher(log)
+	matcher := central.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
 	generator := generate.NewGenerator(log, matcher)
 

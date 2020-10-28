@@ -2,6 +2,7 @@ package knowledge
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -11,12 +12,12 @@ import (
 
 type SystemFunctionBase struct {
 	KnowledgeBaseCore
-	matcher *mentalese.RelationMatcher
+	matcher *central.RelationMatcher
 	log *common.SystemLog
 }
 
 func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBase {
-	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: mentalese.NewRelationMatcher(log) }
+	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: central.NewRelationMatcher(log) }
 }
 
 func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {

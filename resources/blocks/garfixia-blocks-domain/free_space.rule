@@ -64,14 +64,10 @@ go:log('start', E1)
         go:list_foreach(VerLines, ColIndex, X,
             go:list_get(HorLines, 0, StartY)
             find_span(Width, VerLines, ColIndex, ColSpan)
-            go:let(PrevY, StartY)
-            go:let(SpanHeight, 0)
             go:list_foreach(HorLines, LineIndex, Y2,
                 go:greater_than(LineIndex, 0)
-                go:list_get(HorLines, LineIndex, Y2)
-
+                go:subtract(LineIndex, 1, RowIndex)
                 go:if_then_else(
-                    go:subtract(LineIndex, 1, RowIndex)
                     span_free(ColIndex, ColSpan, RowIndex, Grid),
 
                     go:subtract(Y2, StartY, SpanHeight)
@@ -80,10 +76,8 @@ go:log('start', E1)
                     go:let(A1, X)
                     go:let(B1, StartY),
 
-                    go:let(SpanHeight, 0)
                     go:let(StartY, Y2)
                 )
-                go:let(PrevY, Y2)
             )
         )
 

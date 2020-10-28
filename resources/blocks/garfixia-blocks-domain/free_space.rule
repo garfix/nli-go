@@ -1,12 +1,19 @@
 [
     /*
-        Inspired by
-        https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
+        Inspired by https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
+
+        Finds an area big enough to house an object E1 within the boundaries of Container.
+        First it collects all left and right boundaries of all objects in Container, together with the container boundary, and places them in VerLines.
+        It does the same for the upper and lower boundaries and places them in HorLines.
+        Then it creates a grid from these lines and fills the occupied places with 1.
+        To actually determine the free space, it goes through all columns.
+        For each column, it calculates the number of columns to the right needed to house the width of E1 (the "span").
+        Within the column, for each row, it finds out if the span is free, and accumulates the length of the row.
+        Once the accumulated length is big enough for the length of the object E1, the space is found.
     */
 
     /* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
     do_find_free_space(Container, E1, X1, Y1) :-
-go:log('start', E1)
         rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
         do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines)
         do_init_grid(fixed, Objects, HorLines, VerLines)
@@ -70,8 +77,8 @@ go:log('start', E1)
                 go:if_then_else(
                     span_free(ColIndex, ColSpan, RowIndex, Grid),
 
-                    go:subtract(Y2, StartY, SpanHeight)
-                    go:greater_than_equals(SpanHeight, Length)
+                    go:subtract(Y2, StartY, SpanLength)
+                    go:greater_than_equals(SpanLength, Length)
                     go:equals(A1, -1)
                     go:let(A1, X)
                     go:let(B1, StartY),
@@ -113,7 +120,7 @@ go:log('start', E1)
                 none
             )
         )
-/*go:log(ColStart, ColSpan, RowIndex, Success)*/
+
         go:equals(Success, true)
     ;
 

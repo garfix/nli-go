@@ -95,8 +95,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	systemAggregateBase := knowledge.NewSystemAggregateBase("System-aggregate", builder.log)
-	solver.AddMultipleBindingsBase(systemAggregateBase)
+	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
+	solver.AddMultipleBindingsBase(systemMultiBindingBase)
 
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
 	solver.AddNestedStructureBase(nestedStructureBase)

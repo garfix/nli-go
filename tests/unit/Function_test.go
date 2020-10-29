@@ -63,7 +63,7 @@ func TestFunctions(t *testing.T) {
 func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	aggregateBase := knowledge.NewSystemAggregateBase("name", log)
+	aggregateBase := knowledge.NewSystemMultiBindingBase("name", log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string

@@ -2,6 +2,7 @@ package api
 
 import "nli-go/lib/mentalese"
 
+// Knowledge base that retrieves, assets and retracts single facts
 type FactBase interface {
 	KnowledgeBase
 	MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet

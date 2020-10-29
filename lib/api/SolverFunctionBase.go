@@ -2,7 +2,7 @@ package api
 
 import "nli-go/lib/mentalese"
 
-// nested query structures (quant, or)
+// A function base whose predicates cannot be used everywhere, only in the solving process
 type SolverFunctionBase interface {
 	KnowledgeBase
 	Execute(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet

@@ -1,4 +1,4 @@
-# List functions
+# List predicates
 
 ## Make list
 

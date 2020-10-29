@@ -1,10 +1,10 @@
-# Multi-binding aggregate functions
+# Multi-binding predicates
 
-Aggregate functions make use of the fact that at any time variables may be bound to several values, in different bindings.
+These predicates take all current bindings as input, and replace these with new bindings.
 
-These are some built-in functions from `SystemAggregateBase` for use in when solving problems.
+These are some built-in functions from `SystemMultiBindingBase` for use in when solving problems.
 
-## go:number_of
+## number_of
 
 Counts the number of distinct values of `Var` in the bindings, and places the result in the `Number` value of each of the bindings. Or, if `Number` is a value, checks if this value matches the actual number of distinct values in the bindings.
 
@@ -44,3 +44,7 @@ returns `[{Name:'Babbage'}]`
 Checks if there currently are any bindings. The function doesn't actually do anything. It is a filler for the condition clause in a solution.
 
     go:exists()
+
+## other predicates
+
+[`make_list`](list.md) also takes multiple bindings.

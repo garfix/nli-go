@@ -6,17 +6,17 @@ import (
 	"strconv"
 )
 
-type SystemAggregateFunctionBase struct {
+type SystemMultiBindingFunctionBase struct {
 	KnowledgeBaseCore
 	rules []mentalese.Rule
 	log   *common.SystemLog
 }
 
-func NewSystemAggregateBase(name string, log *common.SystemLog) *SystemAggregateFunctionBase {
-	return &SystemAggregateFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
+func NewSystemMultiBindingBase(name string, log *common.SystemLog) *SystemMultiBindingFunctionBase {
+	return &SystemMultiBindingFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (base *SystemAggregateFunctionBase) HandlesPredicate(predicate string) bool {
+func (base *SystemMultiBindingFunctionBase) HandlesPredicate(predicate string) bool {
 	predicates := []string{
 		mentalese.PredicateNumberOf,
 		mentalese.PredicateFirst,
@@ -33,7 +33,7 @@ func (base *SystemAggregateFunctionBase) HandlesPredicate(predicate string) bool
 	return false
 }
 
-func (base *SystemAggregateFunctionBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (base *SystemMultiBindingFunctionBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := bindings
 	found := true
@@ -56,7 +56,7 @@ func (base *SystemAggregateFunctionBase) Execute(input mentalese.Relation, bindi
 	return newBindings, found
 }
 
-func (base *SystemAggregateFunctionBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "--", base.log) {
 		return mentalese.NewBindingSet()
@@ -91,7 +91,7 @@ func (base *SystemAggregateFunctionBase) numberOf(input mentalese.Relation, bind
 	return newBindings
 }
 
-func (base *SystemAggregateFunctionBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v", base.log) {
 		return mentalese.NewBindingSet()
@@ -114,7 +114,7 @@ func (base *SystemAggregateFunctionBase) first(input mentalese.Relation, binding
 	return newBindings
 }
 
-func (base *SystemAggregateFunctionBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "", base.log) {
 		return mentalese.NewBindingSet()
@@ -123,7 +123,7 @@ func (base *SystemAggregateFunctionBase) exists(input mentalese.Relation, bindin
 	return bindings
 }
 
-func (base *SystemAggregateFunctionBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "vv", base.log) {
 		return mentalese.NewBindingSet()
@@ -167,7 +167,7 @@ func (base *SystemAggregateFunctionBase) makeAnd(input mentalese.Relation, bindi
 	return newBindings
 }
 
-func (base *SystemAggregateFunctionBase) makeList(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) makeList(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 	if !Validate(input, "V", base.log) {
 		return mentalese.NewBindingSet()
 	}

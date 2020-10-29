@@ -1,4 +1,6 @@
-# Control functions
+# Control predicates
+
+These predicates just affect the flow of data in an application.
 
 ## Let
 

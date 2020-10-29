@@ -81,16 +81,6 @@ func (base *SystemSolverFunctionBase) Execute(relation mentalese.Relation, bindi
 	case mentalese.PredicateQuantOrderedList:
 		newBindings = base.quantOrderedList(relation, binding)
 
-	// boolean
-	case mentalese.PredicateAnd:
-		newBindings = base.and(relation, binding)
-	case mentalese.PredicateXor:
-		newBindings = base.xor(relation, binding)
-	case mentalese.PredicateOr:
-		newBindings = base.or(relation, binding)
-	case mentalese.PredicateNot:
-		newBindings = base.not(relation, binding)
-
 	// control
 	case mentalese.PredicateIfThenElse:
 		newBindings = base.ifThenElse(relation, binding)
@@ -100,6 +90,14 @@ func (base *SystemSolverFunctionBase) Execute(relation mentalese.Relation, bindi
 		newBindings = base.rangeForEach(relation, binding)
 	case mentalese.PredicateCall:
 		newBindings = base.call(relation, binding)
+	case mentalese.PredicateAnd:
+		newBindings = base.and(relation, binding)
+	case mentalese.PredicateXor:
+		newBindings = base.xor(relation, binding)
+	case mentalese.PredicateOr:
+		newBindings = base.or(relation, binding)
+	case mentalese.PredicateNot:
+		newBindings = base.not(relation, binding)
 
 	//list
 	case mentalese.PredicateListOrder:

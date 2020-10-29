@@ -1,3 +1,7 @@
+# Grammar predicates
+
+Predicates that can be used in the sense of grammar rules.
+
 ## Intent
 
 This relation is used by solutions to recognize types of problems.

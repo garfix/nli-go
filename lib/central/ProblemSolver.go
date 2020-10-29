@@ -11,11 +11,11 @@ import (
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
-	knowledgeBases		 []api.KnowledgeBase
+	knowledgeBases       []api.KnowledgeBase
 	factBases            []api.FactBase
 	ruleBases            []api.RuleBase
 	functionBases        []api.FunctionBase
-	aggregateBases       []api.AggregateFunctionBase
+	multiBindingBases    []api.MultiBindingBase
 	nestedStructureBases []api.SolverFunctionBase
 	scopeStack           *mentalese.ScopeStack
 	matcher              *RelationMatcher
@@ -26,16 +26,16 @@ type ProblemSolver struct {
 
 func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
 	return &ProblemSolver{
-		knowledgeBases: []api.KnowledgeBase{},
-		factBases:      []api.FactBase{},
-		ruleBases:      []api.RuleBase{},
-		functionBases:  []api.FunctionBase{},
-		aggregateBases: []api.AggregateFunctionBase{},
-		scopeStack: 	mentalese.NewScopeStack(),
-		matcher:        matcher,
-		modifier:       NewFactBaseModifier(log),
-		dialogContext:  dialogContext,
-		log:            log,
+		knowledgeBases:    []api.KnowledgeBase{},
+		factBases:         []api.FactBase{},
+		ruleBases:         []api.RuleBase{},
+		functionBases:     []api.FunctionBase{},
+		multiBindingBases: []api.MultiBindingBase{},
+		scopeStack:        mentalese.NewScopeStack(),
+		matcher:           matcher,
+		modifier:          NewFactBaseModifier(log),
+		dialogContext:     dialogContext,
+		log:               log,
 	}
 }
 
@@ -54,8 +54,8 @@ func (solver *ProblemSolver) AddRuleBase(ruleBase api.RuleBase) {
 	solver.knowledgeBases = append(solver.knowledgeBases, ruleBase)
 }
 
-func (solver *ProblemSolver) AddMultipleBindingsBase(source api.AggregateFunctionBase) {
-	solver.aggregateBases = append(solver.aggregateBases, source)
+func (solver *ProblemSolver) AddMultipleBindingsBase(source api.MultiBindingBase) {
+	solver.multiBindingBases = append(solver.multiBindingBases, source)
 	solver.knowledgeBases = append(solver.knowledgeBases, source)
 }
 
@@ -127,7 +127,7 @@ func (solver ProblemSolver) solveSingleRelationMultipleBindings(relation mentale
 
 	// Note: aggregate base relations are currently the only ones whose bindings are not limited to the variables of the arguments
 	// As long as these relations are simple, this is not a problem.
-	for _, aggregateBase := range solver.aggregateBases {
+	for _, aggregateBase := range solver.multiBindingBases {
 		aggregateBindings, multiFound = aggregateBase.Execute(relation, bindings)
 		if multiFound {
 			newBindings = aggregateBindings
@@ -260,7 +260,7 @@ func (solver ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese
 	multiFound := false
 	aggregateBindings := mentalese.NewBindingSet()
 
-	for _, aggregateBase := range solver.aggregateBases {
+	for _, aggregateBase := range solver.multiBindingBases {
 		aggregateBindings, multiFound = aggregateBase.Execute(relation, bindings)
 		if multiFound {
 			relationBindings = aggregateBindings

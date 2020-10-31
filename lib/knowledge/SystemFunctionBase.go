@@ -2,6 +2,7 @@ package knowledge
 
 import (
 	"fmt"
+	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
@@ -20,84 +21,31 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: central.NewRelationMatcher(log) }
 }
 
-func (base *SystemFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{
-		mentalese.PredicateSplit,
-		mentalese.PredicateJoin,
-		mentalese.PredicateConcat,
-		mentalese.PredicateGreaterThan,
-		mentalese.PredicateLessThan,
-		mentalese.PredicateGreaterThanEquals,
-		mentalese.PredicateLessThanEquals,
-		mentalese.PredicateEquals,
-		mentalese.PredicateNotEquals,
-		mentalese.PredicateCompare,
-		mentalese.PredicateUnify,
-		mentalese.PredicateAdd,
-		mentalese.PredicateSubtract,
-		mentalese.PredicateMultiply,
-		mentalese.PredicateMin,
-		mentalese.PredicateDateToday,
-		mentalese.PredicateDateSubtractYears,
-		mentalese.PredicateLog,
-	}
-
-	for _, p := range predicates {
-		if p == predicate {
-			return true
-		}
-	}
-	return false
+func (base *SystemFunctionBase) GetFunctions1(predicate string) api.SimpleFunction {
+	return nil
 }
 
-func (base *SystemFunctionBase) Execute(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
-
-	newBinding := binding
-	found := true
-	success := true
-
-	switch input.Predicate {
-	case mentalese.PredicateSplit:
-		newBinding, success = base.split(input, binding)
-	case mentalese.PredicateJoin:
-		newBinding, success = base.join(input, binding)
-	case mentalese.PredicateConcat:
-		newBinding, success = base.concat(input, binding)
-	case mentalese.PredicateGreaterThan:
-		newBinding, success = base.greaterThan(input, binding)
-	case mentalese.PredicateLessThan:
-		newBinding, success = base.lessThan(input, binding)
-	case mentalese.PredicateGreaterThanEquals:
-		newBinding, success = base.greaterThanEquals(input, binding)
-	case mentalese.PredicateLessThanEquals:
-		newBinding, success = base.lessThanEquals(input, binding)
-	case mentalese.PredicateAdd:
-		newBinding, success = base.add(input, binding)
-	case mentalese.PredicateSubtract:
-		newBinding, success = base.subtract(input, binding)
-	case mentalese.PredicateMultiply:
-		newBinding, success = base.multiply(input, binding)
-	case mentalese.PredicateMin:
-		newBinding, success = base.min(input, binding)
-	case mentalese.PredicateEquals:
-		newBinding, success = base.equals(input, binding)
-	case mentalese.PredicateCompare:
-		newBinding, success = base.compare(input, binding)
-	case mentalese.PredicateNotEquals:
-		newBinding, success = base.notEquals(input, binding)
-	case mentalese.PredicateUnify:
-		newBinding, success = base.unify(input, binding)
-	case mentalese.PredicateDateToday:
-		newBinding, success = base.dateToday(input, binding)
-	case mentalese.PredicateDateSubtractYears:
-		newBinding, success = base.dateSubtractYears(input, binding)
-	case mentalese.PredicateLog:
-		newBinding, success = base.debug(input, binding)
-	default:
-		found = false
+func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
+	return map[string]api.SimpleFunction{
+		mentalese.PredicateSplit: base.split,
+		mentalese.PredicateJoin: base.join,
+		mentalese.PredicateConcat: base.concat,
+		mentalese.PredicateGreaterThan: base.greaterThan,
+		mentalese.PredicateLessThan: base.lessThan,
+		mentalese.PredicateGreaterThanEquals: base.greaterThanEquals,
+		mentalese.PredicateLessThanEquals: base.lessThanEquals,
+		mentalese.PredicateEquals: base.equals,
+		mentalese.PredicateNotEquals: base.notEquals,
+		mentalese.PredicateCompare: base.compare,
+		mentalese.PredicateUnify: base.unify,
+		mentalese.PredicateAdd: base.add,
+		mentalese.PredicateSubtract: base.subtract,
+		mentalese.PredicateMultiply: base.multiply,
+		mentalese.PredicateMin: base.min,
+		mentalese.PredicateDateToday: base.dateToday,
+		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
+		mentalese.PredicateLog: base.debug,
 	}
-
-	return newBinding, found, success
 }
 
 func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
@@ -451,4 +399,3 @@ func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentales
 
 	return binding, true
 }
-

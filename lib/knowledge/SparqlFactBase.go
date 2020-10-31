@@ -45,15 +45,6 @@ func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matc
 	}
 }
 
-func (factBase *SparqlFactBase) HandlesPredicate(predicate string) bool {
-	for _, rule := range factBase.ds2db {
-		if rule.Goal.Predicate == predicate {
-			return true
-		}
-	}
-	return false
-}
-
 func (factBase *SparqlFactBase) GetReadMappings() []mentalese.Rule {
 	return factBase.ds2db
 }

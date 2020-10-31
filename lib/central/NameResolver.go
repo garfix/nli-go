@@ -158,7 +158,7 @@ func (resolver *NameResolver) ResolveName(name string, entityType string) []Name
 
 	factBaseNameInformations := []NameInformation{}
 
-	for _, factBase := range resolver.solver.factBases {
+	for _, factBase := range resolver.solver.index.factBases {
 		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, entityType, factBase)...)
 	}
 

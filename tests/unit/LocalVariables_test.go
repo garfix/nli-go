@@ -36,7 +36,7 @@ func TestLocalVariables(t *testing.T) {
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
 	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
-	solver.AddNestedStructureBase(nestedBase)
+	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`[
 		pow(Base, Number, Pow) :- 
 			go:let(Result, 1)

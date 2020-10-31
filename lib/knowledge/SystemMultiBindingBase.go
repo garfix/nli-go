@@ -1,6 +1,7 @@
 package knowledge
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -16,44 +17,14 @@ func NewSystemMultiBindingBase(name string, log *common.SystemLog) *SystemMultiB
 	return &SystemMultiBindingFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
 }
 
-func (base *SystemMultiBindingFunctionBase) HandlesPredicate(predicate string) bool {
-	predicates := []string{
-		mentalese.PredicateNumberOf,
-		mentalese.PredicateFirst,
-		mentalese.PredicateExists,
-		mentalese.PredicateMakeAnd,
-		mentalese.PredicateMakeList,
+func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiBindingFunction {
+	return map[string]api.MultiBindingFunction{
+		mentalese.PredicateNumberOf: base.numberOf,
+		mentalese.PredicateFirst: base.first,
+		mentalese.PredicateExists: base.exists,
+		mentalese.PredicateMakeAnd: base.makeAnd,
+		mentalese.PredicateMakeList: base.makeList,
 	}
-
-	for _, p := range predicates {
-		if p == predicate {
-			return true
-		}
-	}
-	return false
-}
-
-func (base *SystemMultiBindingFunctionBase) Execute(input mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
-
-	newBindings := bindings
-	found := true
-
-	switch input.Predicate {
-	case mentalese.PredicateNumberOf:
-		newBindings = base.numberOf(input, bindings)
-	case mentalese.PredicateFirst:
-		newBindings = base.first(input, bindings)
-	case mentalese.PredicateExists:
-		newBindings = base.exists(input, bindings)
-	case mentalese.PredicateMakeAnd:
-		newBindings = base.makeAnd(input, bindings)
-	case mentalese.PredicateMakeList:
-		newBindings = base.makeList(input, bindings)
-	default:
-		found = false
-	}
-
-	return newBindings, found
 }
 
 func (base *SystemMultiBindingFunctionBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {

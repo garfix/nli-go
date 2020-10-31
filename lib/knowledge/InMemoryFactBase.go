@@ -29,18 +29,6 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *cent
 	}
 }
 
-func (factBase *InMemoryFactBase) HandlesPredicate(predicate string) bool {
-	for _, rule := range factBase.readMap {
-		if rule.Goal.Predicate == predicate {
-			return true
-		}
-	}
-	if len(factBase.writeMap) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
-		return true
-	}
-	return false
-}
-
 func (factBase *InMemoryFactBase) GetReadMappings() []mentalese.Rule {
 	return factBase.readMap
 }

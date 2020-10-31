@@ -20,18 +20,15 @@ func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.System
 	}
 }
 
-func (ruleBase *InMemoryRuleBase) HandlesPredicate(predicate string) bool {
+func (ruleBase *InMemoryRuleBase) GetPredicates() []string {
+	predicates := []string{}
 	for _, rule := range ruleBase.rules {
-		if rule.Goal.Predicate == predicate {
-			return true
-		}
+		predicates = append(predicates, rule.Goal.Predicate)
 	}
-	return false
+	return predicates
 }
 
 func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.BindingSet) {
-
-	ruleBase.log.StartDebug("RuleBase BindSingle", goal)
 
 	matcher := central.NewRelationMatcher(ruleBase.log)
 	subgoalRelationSets := []mentalese.RelationSet{}
@@ -49,8 +46,6 @@ func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentales
 			subgoalBindings.Add(aBinding)
 		}
 	}
-
-	ruleBase.log.EndDebug("RuleBase BindSingle", subgoalRelationSets, subgoalBindings)
 
 	return subgoalRelationSets, subgoalBindings
 }

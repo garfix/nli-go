@@ -3,6 +3,7 @@ package function
 import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
+	"os/exec"
 	"strconv"
 )
 
@@ -81,4 +82,58 @@ func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, 
 	}
 
 	return newBindings
+}
+
+func (base *SystemSolverFunctionBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "S", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	command := bound.Arguments[0].TermValue
+	args := []string{}
+	for i := range bound.Arguments {
+		if i == 0 { continue }
+		args = append(args, bound.Arguments[i].TermValue)
+	}
+	cmd := exec.Command(command, args...)
+	_, err := cmd.Output()
+	if err != nil {
+		base.log.AddError(err.Error())
+	}
+
+	newBinding := binding.Copy()
+
+	return mentalese.InitBindingSet( newBinding )
+}
+
+
+func (base *SystemSolverFunctionBase) execResponse(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+	responseVar := input.Arguments[0].TermValue
+
+	if !knowledge.Validate(bound, "vS", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	command := bound.Arguments[1].TermValue
+	args := []string{}
+	for i := range bound.Arguments {
+		if i < 2 { continue }
+		args = append(args, bound.Arguments[i].TermValue)
+	}
+	cmd := exec.Command(command, args...)
+	output, err := cmd.Output()
+	if err != nil {
+		base.log.AddError(err.Error())
+	}
+
+	newBinding := binding.Copy()
+
+	newBinding.Set(responseVar, mentalese.NewTermString(string(output)))
+
+	return mentalese.InitBindingSet( newBinding )
 }

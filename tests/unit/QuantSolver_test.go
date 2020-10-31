@@ -113,10 +113,10 @@ func TestQuantSolver(t *testing.T) {
 	solver.AddFunctionBase(systemFunctionBase)
 
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
-	solver.AddNestedStructureBase(nestedStructureBase)
+	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)
-	solver.AddMultipleBindingsBase(aggregateBase)
+	solver.AddMultipleBindingBase(aggregateBase)
 
 	for _, test := range tests {
 

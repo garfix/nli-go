@@ -18,6 +18,7 @@
 * use relations as functions (with special role for the last parameter as the return value)
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
+* rule bases now must always accept the writing of new rules; make this optional
    
 ## generation of multiple entities
 

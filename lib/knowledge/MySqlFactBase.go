@@ -50,18 +50,6 @@ func NewMySqlFactBase(name string, username string, password string, database st
 	}
 }
 
-func (factBase *MySqlFactBase) HandlesPredicate(predicate string) bool {
-	for _, rule := range factBase.readMap {
-		if rule.Goal.Predicate == predicate {
-			return true
-		}
-	}
-	if len(factBase.writeMap) > 0 && (predicate == mentalese.PredicateAssert || predicate == mentalese.PredicateRetract) {
-		return true
-	}
-	return false
-}
-
 func (factBase *MySqlFactBase) GetReadMappings() []mentalese.Rule {
 	return factBase.readMap
 }
@@ -113,8 +101,6 @@ func (factBase *MySqlFactBase) AddTableDescription(predicate string, tableName s
 // Matches needleRelation to all relations in the database
 // Returns a set of bindings
 func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	factBase.log.StartDebug("MatchRelationToDatabase", relation)
 
 	relation = relation.BindSingle(binding)
 
@@ -177,14 +163,10 @@ func (factBase *MySqlFactBase) MatchRelationToDatabase(relation mentalese.Relati
 		}
 	}
 
-	factBase.log.EndDebug("MatchRelationToDatabase", dbBindings)
-
 	return dbBindings
 }
 
 func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
-
-	factBase.log.StartDebug("Assert", relation)
 
 	argCount := len(relation.Arguments)
 
@@ -218,12 +200,9 @@ func (factBase *MySqlFactBase) Assert(relation mentalese.Relation) {
 		factBase.log.AddError(err.Error())
 	}
 
-	factBase.log.EndDebug("Assert", relation)
 }
 
 func (factBase *MySqlFactBase) Retract(relation mentalese.Relation) {
-
-	factBase.log.StartDebug("Retract", relation)
 
 	argCount := len(relation.Arguments)
 
@@ -252,6 +231,4 @@ func (factBase *MySqlFactBase) Retract(relation mentalese.Relation) {
 	if err != nil {
 		factBase.log.AddError("Error on querying MySQL: " + err.Error())
 	}
-
-	factBase.log.EndDebug("Retract", relation)
 }

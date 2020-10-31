@@ -12,46 +12,50 @@ import (
 func TestFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	parser := importer.NewInternalGrammarParser()
+	context := central.NewDialogContext()
+	matcher := central.NewRelationMatcher(log)
+	solver := central.NewProblemSolver(matcher, context, log)
+	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	solver.AddFunctionBase(functionBase)
 	tests := []struct {
 		input      string
 		binding     string
-		wantBinding string
+		wantBindings string
 	}{
-		{"go:split(W1, '-', S1, S2)", "{W1:'aap-noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
-		{"go:join(W1, '-', S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aap-noot'}"},
-		{"go:concat(W1, S1, S2)", "{S1:'aap', S2:'noot'}", "{S1:'aap', S2:'noot', W1:'aapnoot'}"},
-		{"go:greater_than(2, 1)", "{E1:1}", "{E1:1}"},
-		{"go:greater_than(1, 2)", "{E1:1}", "{}"},
-		{"go:less_than(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
-		{"go:add(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'3'}"},
-		{"go:subtract(E1, E2, S)", "{E1:1, E2:2}", "{E1:1, E2:2, S:'-1'}"},
-		{"go:not_equals(E1, E2)", "{E1:1, E2:2}", "{E1:1, E2:2}"},
-		{"go:not_equals(E1, E2)", "{E1:2, E2:2}", "{}"},
-		{"go:equals(E1, E2)", "{E1:1, E2:2}", "{}"},
-		{"go:equals(E1, E2)", "{E1:2, E2:2}", "{E1:2, E2:2}"},
-		{"go:unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "{R1:5, R2:5}"},
-		{"go:unify(X, 0)", "{Z:0}", "{X:0, Z:0}"},
-		{"go:unify(0, Y)", "{Z:0}", "{Y:0, Z:0}"},
-		{"go:date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "{S:'50'}"},
-		{"go:date_subtract_years('2020-12-22', '1969-11-24', S)", "{}", "{S:'51'}"},
-		{"go:date_subtract_years('2020-07-01', '2020-06-01', S)", "{}", "{S:'0'}"},
-		{"go:date_subtract_years('2020-07-01', '2020-08-01', S)", "{}", "{S:'-1'}"},
-		{"go:date_subtract_years('2020-07-01', '2021-01-01', S)", "{}", "{S:'-1'}"},
-		{"go:date_subtract_years('2020-07-01', '2021-08-01', S)", "{}", "{S:'-2'}"},
+		{"go:split(W1, '-', S1, S2)", "{W1:'aap-noot'}", "[{S1:'aap', S2:'noot', W1:'aap-noot'}]"},
+		{"go:join(W1, '-', S1, S2)", "{S1:'aap', S2:'noot'}", "[{S1:'aap', S2:'noot', W1:'aap-noot'}]"},
+		{"go:concat(W1, S1, S2)", "{S1:'aap', S2:'noot'}", "[{S1:'aap', S2:'noot', W1:'aapnoot'}]"},
+		{"go:greater_than(2, 1)", "{E1:1}", "[{E1:1}]"},
+		{"go:greater_than(1, 2)", "{E1:1}", "[]"},
+		{"go:less_than(E1, E2)", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
+		{"go:add(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'3'}]"},
+		{"go:subtract(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'-1'}]"},
+		{"go:not_equals(E1, E2)", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
+		{"go:not_equals(E1, E2)", "{E1:2, E2:2}", "[]"},
+		{"go:equals(E1, E2)", "{E1:1, E2:2}", "[]"},
+		{"go:equals(E1, E2)", "{E1:2, E2:2}", "[{E1:2, E2:2}]"},
+		{"go:unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "[{R1:5, R2:5}]"},
+		{"go:unify(X, 0)", "{Z:0}", "[{X:0, Z:0}]"},
+		{"go:unify(0, Y)", "{Z:0}", "[{Y:0, Z:0}]"},
+		{"go:date_subtract_years('2020-04-22', '1969-11-24', S)", "{}", "[{S:'50'}]"},
+		{"go:date_subtract_years('2020-12-22', '1969-11-24', S)", "{}", "[{S:'51'}]"},
+		{"go:date_subtract_years('2020-07-01', '2020-06-01', S)", "{}", "[{S:'0'}]"},
+		{"go:date_subtract_years('2020-07-01', '2020-08-01', S)", "{}", "[{S:'-1'}]"},
+		{"go:date_subtract_years('2020-07-01', '2021-01-01', S)", "{}", "[{S:'-1'}]"},
+		{"go:date_subtract_years('2020-07-01', '2021-08-01', S)", "{}", "[{S:'-2'}]"},
 	}
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 		binding := parser.CreateBinding(test.binding)
-		wantBinding := parser.CreateBinding(test.wantBinding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBinding, _, _ := functionBase.Execute(input, binding)
+		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
 
-		if !resultBinding.Equals(wantBinding) {
-			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBinding, wantBinding)
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings.Get(0), wantBindings)
 		}
 	}
 
@@ -63,7 +67,11 @@ func TestFunctions(t *testing.T) {
 func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	aggregateBase := knowledge.NewSystemMultiBindingBase("name", log)
+	context := central.NewDialogContext()
+	matcher := central.NewRelationMatcher(log)
+	solver := central.NewProblemSolver(matcher, context, log)
+	multiBindingBase := knowledge.NewSystemMultiBindingBase("name", log)
+	solver.AddMultipleBindingBase(multiBindingBase)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -81,11 +89,11 @@ func TestAggregateFunctions(t *testing.T) {
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 		bindings := parser.CreateBindings(test.bindings)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings, _ := aggregateBase.Execute(input, bindings)
+		resultBindings := solver.SolveRelationSet(input, bindings)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, bindings, resultBindings, wantBindings)
@@ -108,6 +116,7 @@ func TestControlFunctions(t *testing.T) {
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
 	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
+	solver.AddSolverFunctionBase(nestedBase)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -123,11 +132,11 @@ func TestControlFunctions(t *testing.T) {
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.Execute(input, binding)
+		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -169,6 +178,7 @@ func TestListFunctions(t *testing.T) {
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
 	solver.AddRuleBase(ruleBase)
 	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
+	solver.AddSolverFunctionBase(nestedBase)
 	tests := []struct {
 		input      string
 		binding     string
@@ -189,11 +199,11 @@ func TestListFunctions(t *testing.T) {
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.Execute(input, binding)
+		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -238,6 +248,7 @@ func TestQuantFunctions(t *testing.T) {
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, log)
 	solver.AddRuleBase(ruleBase)
 	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
+	solver.AddSolverFunctionBase(nestedBase)
 	tests := []struct {
 		input      string
 		binding     string
@@ -315,11 +326,11 @@ func TestQuantFunctions(t *testing.T) {
 
 	for _, test := range tests {
 
-		input := parser.CreateRelation(test.input)
+		input := parser.CreateRelationSet(test.input)
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := nestedBase.Execute(input, binding)
+		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("got %v, want %v", resultBindings, wantBindings)

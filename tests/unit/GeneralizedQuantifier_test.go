@@ -58,7 +58,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
-	solver.AddNestedStructureBase(nestedStructureBase)
+	solver.AddSolverFunctionBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
@@ -91,7 +91,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		}
 		relationizer := earley.NewRelationizer(log)
 		input, _ := relationizer.Relationize(trees[0], nameResolver)
-		result := solver.SolveRelationSet(input, mentalese.NewBindingSet())
+		result := solver.SolveRelationSet(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)
 			print(log.String())

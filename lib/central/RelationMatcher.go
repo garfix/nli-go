@@ -17,15 +17,27 @@ import (
 
 type RelationMatcher struct {
 	functionBases []api.FunctionBase
+	simpleFunctions map[string][]api.SimpleFunction
 	log           *common.SystemLog
 }
 
 func NewRelationMatcher(log *common.SystemLog) *RelationMatcher {
-	return &RelationMatcher{log: log}
+	return &RelationMatcher{
+		simpleFunctions:       map[string][]api.SimpleFunction{},
+		log: log,
+	}
 }
 
-func (matcher *RelationMatcher) AddFunctionBase(functionBase api.FunctionBase) {
-	matcher.functionBases = append(matcher.functionBases, functionBase)
+func (matcher *RelationMatcher) AddFunctionBase(base api.FunctionBase) {
+	matcher.functionBases = append(matcher.functionBases, base)
+	functions := base.GetFunctions()
+	for predicate, function := range functions {
+		_, found := matcher.simpleFunctions[predicate]
+		if !found {
+			matcher.simpleFunctions[predicate] = []api.SimpleFunction{}
+		}
+		matcher.simpleFunctions[predicate] = append(matcher.simpleFunctions[predicate], function)
+	}
 }
 
 type solutionNode struct {
@@ -34,8 +46,6 @@ type solutionNode struct {
 }
 
 func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence mentalese.RelationSet, haystackSet mentalese.RelationSet, binding mentalese.Binding) (mentalese.BindingSet, bool) {
-
-	matcher.log.StartDebug("MatchSequenceToSetWithIndexes", needleSequence, haystackSet, binding)
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -83,8 +93,6 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence mentalese.Rela
 		newBindings.Add(node.Binding)
 	}
 
-	matcher.log.EndDebug("MatchSequenceToSetWithIndexes", newBindings, match)
-
 	return newBindings, match
 }
 
@@ -98,10 +106,12 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relatio
 	functionFound := false
 	success := false
 
-	for _, functionBase := range matcher.functionBases {
-		resultBinding, functionFound, success = functionBase.Execute(needleRelation, binding)
-		if functionFound {
+	functions, found := matcher.simpleFunctions[needleRelation.Predicate]
+	if found {
+		for _, function := range functions {
+			resultBinding, success = function(needleRelation, binding)
 			newBinding = resultBinding
+			functionFound = true
 			break
 		}
 	}
@@ -112,8 +122,6 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relatio
 // Matches a single relation to a relation set
 // Returns multiple bindings
 func (matcher *RelationMatcher) MatchRelationToSet(needleRelation mentalese.Relation, haystackSet mentalese.RelationSet, binding mentalese.Binding) (mentalese.BindingSet, []int) {
-
-	matcher.log.StartDebug("matchRelationToSet", needleRelation, haystackSet, binding)
 
 	newBindings := mentalese.NewBindingSet()
 	indexes := []int{}
@@ -128,8 +136,6 @@ func (matcher *RelationMatcher) MatchRelationToSet(needleRelation mentalese.Rela
 		}
 	}
 
-	matcher.log.EndDebug("matchRelationToSet", newBindings, indexes)
-
 	return newBindings, indexes
 }
 
@@ -138,8 +144,6 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation mentalese.Relat
 
 	newBinding := binding.Copy()
 	match := true
-
-	matcher.log.StartDebug("MatchTwoRelations", needleRelation, haystackRelation, binding)
 
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
@@ -159,8 +163,6 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation mentalese.Relat
 			}
 		}
 	}
-
-	matcher.log.EndDebug("MatchTwoRelations", newBinding, match)
 
 	return newBinding, match
 }

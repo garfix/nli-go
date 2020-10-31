@@ -99,7 +99,7 @@ func TestAnswerer(t *testing.T) {
 
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	solver.AddMultipleBindingsBase(systemAggregateBase)
+	solver.AddMultipleBindingBase(systemAggregateBase)
 	solver.AddFactBase(factBase)
 
 	answerer := central.NewAnswerer(matcher, solver, log)

@@ -37,8 +37,6 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 // return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
 func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
 
-	answerer.log.StartDebug("Answer")
-
 	answer := mentalese.RelationSet{}
 	transformer := NewRelationTransformer(answerer.matcher, answerer.log)
 
@@ -110,7 +108,6 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 		}
 	}
 
-	answerer.log.EndDebug("Answer", answer)
 	return answer
 }
 
@@ -134,8 +131,6 @@ func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.S
 			}
 		}
 	}
-
-	answerer.log.EndDebug("findSolutions", solutions)
 
 	return solutions
 }

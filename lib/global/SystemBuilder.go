@@ -96,13 +96,10 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solver.AddFunctionBase(systemFunctionBase)
 
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
-	solver.AddMultipleBindingsBase(systemMultiBindingBase)
+	solver.AddMultipleBindingBase(systemMultiBindingBase)
 
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
-	solver.AddNestedStructureBase(nestedStructureBase)
-
-	shellBase := knowledge.NewShellBase("shell", builder.log)
-	solver.AddFunctionBase(shellBase)
+	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)

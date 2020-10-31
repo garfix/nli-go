@@ -1,3 +1,7 @@
+# 2020-10-31
+
+I started indexing predicate to knowledge base / knowledge base function, in the problem solver, for speed. It made the blocks world test 1/8th faster. More importantly, this allows the system to scale up to many more knowledge bases, because finding the handler for a predicate is now reduced from O(n) to O(1).
+
 # 2020-10-28
 
 I used the database to store the 2D grid of the space algorithm. This is not good practise, so I want a n-dimensional datatype and I want it to be sparse. Let's call it matrix. Let's specify a default value.

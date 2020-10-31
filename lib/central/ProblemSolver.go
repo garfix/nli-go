@@ -11,7 +11,7 @@ import (
 // and returns a set of new bindings
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
-	index    			  *ProblemSolverIndex
+	index    			  *KnowledgeBaseIndex
 	scopeStack            *mentalese.ScopeStack
 	matcher               *RelationMatcher
 	modifier              *FactBaseModifier

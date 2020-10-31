@@ -16,7 +16,7 @@ import (
 // haystack: the base of relations that serve as matching candidates
 
 type RelationMatcher struct {
-	index           *ProblemSolverIndex
+	index           *KnowledgeBaseIndex
 	log             *common.SystemLog
 }
 

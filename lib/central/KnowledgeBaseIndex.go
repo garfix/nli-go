@@ -5,7 +5,7 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-type ProblemSolverIndex struct {
+type KnowledgeBaseIndex struct {
 	factBases             []api.FactBase
 	ruleBases             []api.RuleBase
 	functionBases         []api.FunctionBase
@@ -21,8 +21,8 @@ type ProblemSolverIndex struct {
 	factWriteBases		  map[string][]api.FactBase
 }
 
-func NewProblemSolverIndex() *ProblemSolverIndex {
-	return &ProblemSolverIndex{
+func NewProblemSolverIndex() *KnowledgeBaseIndex {
+	return &KnowledgeBaseIndex{
 		factBases:         []api.FactBase{},
 		ruleBases:         []api.RuleBase{},
 		functionBases:     []api.FunctionBase{},
@@ -39,7 +39,7 @@ func NewProblemSolverIndex() *ProblemSolverIndex {
 	}
 }
 
-func (solver *ProblemSolverIndex) AddFactBase(base api.FactBase) {
+func (solver *KnowledgeBaseIndex) AddFactBase(base api.FactBase) {
 	solver.factBases = append(solver.factBases, base)
 	rules := base.GetReadMappings()
 	for _, rule := range rules {
@@ -67,7 +67,7 @@ func (solver *ProblemSolverIndex) AddFactBase(base api.FactBase) {
 	}
 }
 
-func (solver *ProblemSolverIndex) AddFunctionBase(base api.FunctionBase) {
+func (solver *KnowledgeBaseIndex) AddFunctionBase(base api.FunctionBase) {
 	solver.functionBases = append(solver.functionBases, base)
 	functions := base.GetFunctions()
 	for predicate, function := range functions {
@@ -80,7 +80,7 @@ func (solver *ProblemSolverIndex) AddFunctionBase(base api.FunctionBase) {
 	}
 }
 
-func (solver *ProblemSolverIndex) AddRuleBase(base api.RuleBase) {
+func (solver *KnowledgeBaseIndex) AddRuleBase(base api.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, base)
 	predicates := base.GetPredicates()
 	if len(predicates) > 0 {
@@ -97,7 +97,7 @@ func (solver *ProblemSolverIndex) AddRuleBase(base api.RuleBase) {
 	}
 }
 
-func (solver *ProblemSolverIndex) AddMultipleBindingBase(base api.MultiBindingBase) {
+func (solver *KnowledgeBaseIndex) AddMultipleBindingBase(base api.MultiBindingBase) {
 	solver.multiBindingBases = append(solver.multiBindingBases, base)
 	functions := base.GetFunctions()
 	for predicate, function := range functions {
@@ -110,7 +110,7 @@ func (solver *ProblemSolverIndex) AddMultipleBindingBase(base api.MultiBindingBa
 	}
 }
 
-func (solver *ProblemSolverIndex) AddSolverFunctionBase(base api.SolverFunctionBase) {
+func (solver *KnowledgeBaseIndex) AddSolverFunctionBase(base api.SolverFunctionBase) {
 	solver.solverFunctionBases = append(solver.solverFunctionBases, base)
 	functions := base.GetFunctions()
 	for predicate, function := range functions {
@@ -123,7 +123,7 @@ func (solver *ProblemSolverIndex) AddSolverFunctionBase(base api.SolverFunctionB
 	}
 }
 
-func (solver *ProblemSolverIndex) reindexRules() {
+func (solver *KnowledgeBaseIndex) reindexRules() {
 	// todo: should really reindex knownPredicates too
 	solver.ruleReadBases = map[string][]api.RuleBase{}
 	for _, base := range solver.ruleBases {

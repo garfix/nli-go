@@ -26,7 +26,7 @@
 
     { rule: child(E1) -> 'children' }
     { rule: birthday(E1) -> 'birthday' }
-    { rule: country(E1) -> 'countries' }
+    { rule: country(E1) -> 'countries',                                   sense: dom:country(E1) }
 
     { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: go:quant_check($np, dom:has_father(E2, E1)) }
     { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: go:quant_check($np, dom:has_mother(E2, E1)) }

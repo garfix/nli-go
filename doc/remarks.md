@@ -197,7 +197,7 @@ So maybe it's time for an improvement to `make_and()`.
 Interaction 19:
 
     Q: Is there a large block behind a pyramid?
-    A: Yes, three of them: a large red one, a large green cube and a blue one
+    A: Yes, three of them: a large red one, a large green cube and the blue one
 
 When I programmed this question, the first answer I got was: none.
 

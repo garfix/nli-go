@@ -24,6 +24,8 @@ func (r *SurfaceRepresentation) Create(tokens []string) string {
 			result += token
 		} else if token == "," {
 			result += token
+		} else if token == ":" {
+			result += token
 		} else if i == 0 {
 			if len(token) == 0 {
 				result += "<empty>"

@@ -141,7 +141,7 @@
     { rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }
     { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: go:intent(how_many, E1) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
-    { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),              sense: go:intent(select, E1) go:quant_check($np, $adjp) }
+    { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),              sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
     { rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: go:intent(yes_no) }
     { rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }

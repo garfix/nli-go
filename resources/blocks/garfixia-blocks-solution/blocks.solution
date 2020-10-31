@@ -69,11 +69,27 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And),
-                answer: dom:select({{ And }}) {{ N }}
+                preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+                answer: dom:select({{ And }}, Count) {{ N }}
             }
             {
-                preparation: dom:at(E1, X, Y, Z),
+                answer: dom:none()
+            }
+        ]
+    }
+
+
+    /* Is there? */
+    {
+        condition: go:intent(select_categoric, B),
+        result: B,
+        responses: [
+            {
+                condition: go:exists(),
+                preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:number_of(B, Count),
+                answer: dom:select({{ And }}, Count) {{ N }}
+            }
+            {
                 answer: dom:none()
             }
         ]
@@ -101,8 +117,8 @@
         responses: [
             {
                 condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And),
-                answer: dom:select({{ And }}) {{ N }}
+                preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+                answer: dom:select({{ And }}, Count) {{ N }}
             }
             {
                 answer: dom:result(false)

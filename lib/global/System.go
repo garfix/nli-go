@@ -44,7 +44,7 @@ func (system *System) StoreDialogContext(sessionDataPath string) {
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	return system.solver.SolveRelationSet(set, mentalese.NewBindingSet())
+	return system.solver.SolveRelationSet(set, mentalese.InitBindingSet( mentalese.NewBinding()))
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {

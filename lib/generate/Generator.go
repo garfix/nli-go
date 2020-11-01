@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
+	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 )
 
 type Generator struct {
 	matcher *central.RelationMatcher
+	parser *importer.InternalGrammarParser
 	log     *common.SystemLog
 }
 
 func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Generator {
 	return &Generator{
 		matcher: matcher,
+		parser: importer.NewInternalGrammarParser(),
 		log: log,
 	}
 }
@@ -130,6 +133,11 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 			}
 		}
 
+		// match the goal
+		if found {
+			binding, found = generator.matcher.MatchTerm(antecedentValue, generator.val2term(rule.GetAntecedentVariables()[0]), binding)
+		}
+
 		if found {
 
 			hash := generator.createRuleHash(resultRule, binding)
@@ -144,8 +152,12 @@ func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, u
 	return resultRule, binding, found
 }
 
-func (generator *Generator) createRuleHash(rule parse.GrammarRule, binding mentalese.Binding) string {
+// todo: rewrite rules should consist of relations
+func (generator *Generator) val2term(val string) mentalese.Term {
+	return generator.parser.CreateTerm(val)
+}
 
+func (generator *Generator) createRuleHash(rule parse.GrammarRule, binding mentalese.Binding) string {
 	return rule.BindSimple(binding).String()
 }
 

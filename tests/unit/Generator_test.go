@@ -18,6 +18,7 @@ func TestGenerator(t *testing.T) {
 
 	grammarRules := internalGrammarParser.CreateGenerationGrammar(`[
         { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }
+		{ rule: s(P) -> named_number(P),          condition: result(P) }
         { rule: np(E) -> proper_noun(E),          condition: name(E, Name) }
 		{ rule: proper_noun(E) -> text(Name),     condition: name(E, Name) }
         { rule: np(E) -> det(E) noun(E) }
@@ -25,6 +26,8 @@ func TestGenerator(t *testing.T) {
 		{ rule: noun(E) -> 'book',                condition: instance_of(E, book) }
 		{ rule: verb(E) -> 'kissed',		      condition: predication(E, kiss) }
 		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
+		{ rule: named_number(1) -> 'one' }
+		{ rule: named_number(2) -> 'two' }
 	]`)
 	matcher := central.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
@@ -35,6 +38,7 @@ func TestGenerator(t *testing.T) {
 		want  string
 	}{
 		{"predication(P1, marry) subject(P1, E1) object(P1, E2) name(E1, 'John') name(E2, 'Mary') grammatical_subject(E1)", "John married Mary"},
+		{"result(2)", "two"},
 	}
 
 	for _, test := range tests {

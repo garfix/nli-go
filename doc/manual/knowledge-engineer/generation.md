@@ -21,3 +21,14 @@ Sometimes it is needed to output the literal contents of a variable. When it hol
 In this case you can use `text` to include the text directly.
 
     { rule: proper_noun(E1) -> text(Name),                                        condition: name(E1, Name) }
+
+## Rule condition
+
+In some cases it's more natural to provide the condition as part of the head of the rule. In this example numbers for months are mapped to names.
+
+    { rule: month_name('01') -> 'January' }
+    { rule: month_name('02') -> 'February' }
+    { rule: month_name('03') -> 'March' }
+
+The head of `month_name` contains a string here. When the generator needs to generate text for `month_name(C)`, `month_name('02')` matches if `C` is bound to `02`.
+ 

@@ -37,7 +37,7 @@
     { rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
     { rule: describe_amount(C) -> 'two' 'things' ':',                           condition: dom:select(_, 2) }
-    { rule: describe_amount(C) -> 'three' 'of' 'them' ':',                      condition: dom:select(_, 3) }
+    { rule: describe_amount(C) -> named_number(C) 'of' 'them' ':' }
 
     { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
     { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
@@ -52,14 +52,14 @@
 
     { rule: entity(E1) -> np(E1),                                               condition: dom:description(E1) }
 
-    { rule: named_number(C) -> 'one',                                           condition: dom:a_number(1) }
-    { rule: named_number(C) -> 'two',                                           condition: dom:a_number(2) }
-    { rule: named_number(C) -> 'three',                                         condition: dom:a_number(3) }
-    { rule: named_number(C) -> 'four',                                          condition: dom:a_number(4) }
-    { rule: named_number(C) -> 'five',                                          condition: dom:a_number(5) }
-    { rule: named_number(C) -> 'six',                                           condition: dom:a_number(6) }
-    { rule: named_number(C) -> 'seven',                                         condition: dom:a_number(7) }
-    { rule: named_number(C) -> 'eight',                                         condition: dom:a_number(8) }
-    { rule: named_number(C) -> 'nine',                                          condition: dom:a_number(9) }
-    { rule: named_number(C) -> 'ten',                                           condition: dom:a_number(10) }
+    { rule: named_number(1) -> 'one' }
+    { rule: named_number(2) -> 'two' }
+    { rule: named_number(3) -> 'three' }
+    { rule: named_number(4) -> 'four' }
+    { rule: named_number(5) -> 'five' }
+    { rule: named_number(6) -> 'six' }
+    { rule: named_number(7) -> 'seven' }
+    { rule: named_number(8) -> 'eight' }
+    { rule: named_number(9) -> 'nine' }
+    { rule: named_number(10) -> 'ten' }
 ]

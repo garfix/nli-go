@@ -19,7 +19,8 @@
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
 * rule bases now must always accept the writing of new rules; make this optional
-   
+* change rewrite rules from categories with variables to relations (see also Generator)
+
 ## generation of multiple entities
 
 Replace `make_and()` by a `make_list()` and add list unification syntax

@@ -12,7 +12,6 @@
 * quant_foreach: add as second parameter the variable to which the ids must be bound 
 * agreement, especially for number, because it reduces ambiguity (reintroducing feature unification?)
 * syntax check while parsing: is the number of arguments correct?
-* remove the square brackets where they are not needed
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
 * clarification questions must be translatable (they must go through the generator)
 * use relations as functions (with special role for the last parameter as the return value)

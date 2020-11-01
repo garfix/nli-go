@@ -14,7 +14,7 @@ import (
 func TestEarleyParser(test *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	grammarRules := internalGrammarParser.CreateGrammarRules(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`
 		{ rule: s(P) -> np(E) vp(P),			sense: subject(P, E) }
 		{ rule: np(E) -> nbar(E) }
 		{ rule: np(E) -> det(D) nbar(E),      sense: determiner(E, D) }
@@ -29,7 +29,7 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: noun(E1) -> 'girl', sense: isa(E1, girl) }
 		{ rule: verb(P1) -> 'cries', sense: predication(P1, cry) }
 		{ rule: verb(P1) -> 'speaks' 'up', sense: predication(P1, speak_up) }
-	]`)
+	`)
 
 	log := common.NewSystemLog(false)
 

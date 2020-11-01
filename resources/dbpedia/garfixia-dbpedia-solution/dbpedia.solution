@@ -1,257 +1,240 @@
-[
-    /* Who married X? */
-    {
-        condition: go:intent(who, A) dom:marry(_, A, B),
-        result: A,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:make_and(A, And),
-                answer: dom:gender(B, G) dom:name(A, N) dom:married_to({{ And }}, B)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Who married X? */
+{
+    condition: go:intent(who, A) dom:marry(_, A, B),
+    result: A,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:make_and(A, And),
+            answer: dom:gender(B, G) dom:name(A, N) dom:married_to({{ And }}, B)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* Was X married to Y? */
-    {
-        condition: go:intent(yes_no) dom:marry(_, A, B),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: dom:result(true)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Was X married to Y? */
+{
+    condition: go:intent(yes_no) dom:marry(_, A, B),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            answer: dom:result(true)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* How many children had X? (counting the children) */
-    {
-        condition: go:intent(how_many, B) dom:have_child(A, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(A, Gender) go:number_of(B, Number),
-                answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* How many children had X? (counting the children) */
+{
+    condition: go:intent(how_many, B) dom:have_child(A, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(A, Gender) go:number_of(B, Number),
+            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* How many? */
-    {
-        condition: go:intent(how_many, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: go:number_of(B, Number),
-                answer: go:canned(Number)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* How many? */
+{
+    condition: go:intent(how_many, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: go:number_of(B, Number),
+            answer: go:canned(Number)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* How many children had X? (using a number-of-children attribute) */
-    {
-        condition: go:intent(how_many, B) dom:have_child(A, B),
-        transformations: [
-            dom:have_child(A, B) :- dom:have_n_children(A, Number);
-        ],
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(A, Gender),
-                answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* How many children had X? (using a number-of-children attribute) */
+{
+    condition: go:intent(how_many, B) dom:have_child(A, B),
+    transformations:
+        dom:have_child(A, B) :- dom:have_n_children(A, Number);
+    ,
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(A, Gender),
+            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* Who was X's father? */
-    {
-        condition: go:intent(who, B) dom:has_father(A, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
-                answer: dom:gender(A, Gender) dom:name(B, N) dom:has_father(A, B)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Who was X's father? */
+{
+    condition: go:intent(who, B) dom:has_father(A, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
+            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_father(A, B)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* Who was X's mother? */
-    {
-        condition: go:intent(who, B) dom:has_mother(A, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
-                answer: dom:gender(A, Gender) dom:name(B, N) dom:has_mother(A, B)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Who was X's mother? */
+{
+    condition: go:intent(who, B) dom:has_mother(A, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
+            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_mother(A, B)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* When was X born? */
-    {
-        condition: go:intent(when, P1) dom:bear(P1, A, B),
-        transformations: [
-            dom:bear(P1, A, B) :- dom:birth_date(B, Ymd);
-        ],
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(B, Gender) go:split(Ymd, '-', Year, Month, Day),
-                answer: dom:gender(B, Gender) dom:birth_date(B, D) dom:date(D, Day, Month, Year)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* When was X born? */
+{
+    condition: go:intent(when, P1) dom:bear(P1, A, B),
+    transformations:
+        dom:bear(P1, A, B) :- dom:birth_date(B, Ymd);
+    ,
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(B, Gender) go:split(Ymd, '-', Year, Month, Day),
+            answer: dom:gender(B, Gender) dom:birth_date(B, D) dom:date(D, Day, Month, Year)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* When did X die? */
-    {
-        condition: go:intent(when, P1) dom:die(P1, A),
-        transformations: [
-            dom:die(P1, A) :- dom:death_date(A, Ymd);
-        ],
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:gender(A, Gender) go:split(Ymd, '-', Year, Month, Day),
-                answer: dom:gender(A, Gender) dom:death_date(A, D) dom:date(D, Day, Month, Year)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* When did X die? */
+{
+    condition: go:intent(when, P1) dom:die(P1, A),
+    transformations:
+        dom:die(P1, A) :- dom:death_date(A, Ymd);
+    ,
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:gender(A, Gender) go:split(Ymd, '-', Year, Month, Day),
+            answer: dom:gender(A, Gender) dom:death_date(A, D) dom:date(D, Day, Month, Year)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* When? */
-    {
-        condition: go:intent(when, Ymd),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: go:split(Ymd, '-', Year, Month, Day),
-                answer: dom:date(D, Day, Month, Year) dom:root(D)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* When? */
+{
+    condition: go:intent(when, Ymd),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: go:split(Ymd, '-', Year, Month, Day),
+            answer: dom:date(D, Day, Month, Year) dom:root(D)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* Who is the husband of X? */
-    /* Who is the wife of X? */
-    {
-        condition: go:intent(who, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:name(B, N, canonical_name) go:make_and(B, And),
-                answer: dom:name(B, N)  dom:root({{ And }})
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Who is the husband of X? */
+/* Who is the wife of X? */
+{
+    condition: go:intent(who, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:name(B, N, canonical_name) go:make_and(B, And),
+            answer: dom:name(B, N)  dom:root({{ And }})
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* Who is X? */
-    {
-        condition: go:intent(describe, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:long_description(B, D),
-                answer: go:canned(D)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Who is X? */
+{
+    condition: go:intent(describe, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:long_description(B, D),
+            answer: go:canned(D)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* What is the population of X? */
-    {
-        condition: go:intent(what, B) dom:has_population(E1, B),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: go:canned(B)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* What is the population of X? */
+{
+    condition: go:intent(what, B) dom:has_population(E1, B),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            answer: go:canned(B)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* What is the capital of X? */
-    {
-        condition: go:intent(what, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:label(B, L),
-                answer: go:canned(L)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* What is the capital of X? */
+{
+    condition: go:intent(what, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:label(B, L),
+            answer: go:canned(L)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 
-    /* How old is X? */
-    {
-        condition: go:intent(how_old, E1),
-        transformations: [
-            go:intent(how_old, E1) :- dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth);
-        ],
-        result: _,
-        responses: [
-            {
-                condition: dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) go:less_than(YearsSinceDeath, 0),
-                preparation: dom:gender(E1, Gender) go:date_subtract_years(DeathDate, BirthDate, Age) go:split(BirthDate, '-', Year1, Month1, Day1) go:split(DeathDate, '-', Year2, Month2, Day2),
-                answer: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
-            }
-            {
-                condition: go:exists(),
-                preparation: dom:gender(E1, Gender) go:split(BirthDate, '-', Year, Month, Day),
-                answer: dom:report_age_alive(E1, YearsSinceBirth, BirthDate) dom:gender(E1, Gender) dom:date(BirthDate, Day, Month, Year)
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
-]
+/* How old is X? */
+{
+    condition: go:intent(how_old, E1),
+    transformations:
+        go:intent(how_old, E1) :- dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth);
+    ,
+    result: _,
+    responses:
+        {
+            condition: dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) go:less_than(YearsSinceDeath, 0),
+            preparation: dom:gender(E1, Gender) go:date_subtract_years(DeathDate, BirthDate, Age) go:split(BirthDate, '-', Year1, Month1, Day1) go:split(DeathDate, '-', Year2, Month2, Day2),
+            answer: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
+        }
+        {
+            condition: go:exists(),
+            preparation: dom:gender(E1, Gender) go:split(BirthDate, '-', Year, Month, Day),
+            answer: dom:report_age_alive(E1, YearsSinceBirth, BirthDate) dom:gender(E1, Gender) dom:date(BirthDate, Day, Month, Year)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}

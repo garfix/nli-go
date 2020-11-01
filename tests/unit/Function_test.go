@@ -156,19 +156,19 @@ func TestListFunctions(t *testing.T) {
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
-	rules := parser.CreateRules(`[
+	rules := parser.CreateRules(`
 		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) go:compare(Name1, Name2, R);
-	]`)
+	`)
 	facts := parser.CreateRelationSet("" +
 		"person(`:C`, 'Charles') " +
 		"person(`:D`, 'Duncan') " +
 		"person(`:B`, 'Bernhard') " +
 		"person(`:E`, 'Edward') " +
 		"person(`:A`, 'Abraham') ")
-	readMap := parser.CreateRules(`[
+	readMap := parser.CreateRules(`
 		person(E, Name) :- person(E, Name);
-	]`)
-	writeMap := parser.CreateRules(`[]`)
+	`)
+	writeMap := []mentalese.Rule{}
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
@@ -223,22 +223,22 @@ func TestQuantFunctions(t *testing.T) {
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
-	rules := parser.CreateRules(`[
+	rules := parser.CreateRules(`
 		by_name(E1, E2, R) :- person(E1, Name1) person(E2, Name2) go:compare(Name1, Name2, R);
-	]`)
+	`)
 	facts := parser.CreateRelationSet("" +
 		"person(`:C`, 'Charles') " +
 		"person(`:D`, 'Duncan') " +
 		"person(`:B`, 'Bernhard') " +
 		"person(`:E`, 'Edward') " +
 		"person(`:A`, 'Abraham') ")
-	readMap := parser.CreateRules(`[
+	readMap := parser.CreateRules(`
 		person(E, Name) :- person(E, Name);
 		person_named_abraham(E) :- person(E, 'Abraham');
 		person_named_bernhard(E) :- person(E, 'Bernhard');
 		person_named_edward(E) :- person(E, 'Edward');
-	]`)
-	writeMap := parser.CreateRules(`[]`)
+	`)
+	writeMap := []mentalese.Rule{}
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)

@@ -41,7 +41,7 @@ returns `[{Name:'Babbage'}]`
     
 ## exists
 
-Checks if there currently are any bindings. The function doesn't actually do anything. It is a filler for the condition clause in a solution.
+Checks if there currently are any bindings. The function doesn't actually do anything. It is a filler for the condition clause in a solution. This function can only be used in the condition of a solution, because this is the only relation set that is executed even with zero bindings.
 
     go:exists()
 

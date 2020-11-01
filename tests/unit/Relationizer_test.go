@@ -13,7 +13,7 @@ func TestRelationizer(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammarRules := internalGrammarParser.CreateGrammarRules(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`
 
 		{ rule: dp(D1) -> determiner(D1) }
 	
@@ -38,7 +38,7 @@ func TestRelationizer(t *testing.T) {
 		{ rule: preposition(P1) -> 'on', sense: isa(P1, on) }
 	    { rule: noun(E1) -> 'ground', sense: isa(E1, ground) }
 	
-	]`)
+	`)
 
 	log := common.NewSystemLog(false)
 

@@ -104,7 +104,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-				t.Error(log.String())
+				t.Error(log.GetErrors())
 			}
 		}
 	}

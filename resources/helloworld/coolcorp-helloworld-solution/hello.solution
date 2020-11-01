@@ -1,15 +1,12 @@
-[
-    {
-        condition: go:intent(start_conversation) dom:hello(),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: go:canned('Welcome!')
-            }
-            {
-                answer: go:canned('Not welcome')
-            }
-        ]
-    }
-]
+{
+    condition: go:intent(start_conversation) dom:hello(),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            answer: go:canned('Welcome!')
+        }
+        {
+            answer: go:canned('Not welcome')
+        }
+}

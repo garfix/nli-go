@@ -26,18 +26,18 @@ func TestLocalVariables(t *testing.T) {
 		parent(sue, cyrill)
 		sibling(alice, bob)
 	`)
-	readMap := parser.CreateRules(`[
+	readMap := parser.CreateRules(`
 		parent(A, B) :- parent(A, B);
 		sibling(A, B) :- sibling(A, B);
-	]`)
-	writeMap := parser.CreateRules(`[]`)
+	`)
+	writeMap := []mentalese.Rule{}
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
 	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
-	rules := parser.CreateRules(`[
+	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :- 
 			go:let(Result, 1)
 			go:range_foreach(1, Number, _,
@@ -58,7 +58,7 @@ func TestLocalVariables(t *testing.T) {
 			go:multiply(X, In, Out)
 		;
 	
-	]`)
+	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
 	solver.AddRuleBase(ruleBase)
 

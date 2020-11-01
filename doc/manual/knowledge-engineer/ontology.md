@@ -27,31 +27,23 @@ Although there are also relations in the databases you use, try to design the re
 The relations should model the way users think about the domain.
 
 Each relation has a predicate and some arguments. The arguments are slots for entities and you need to specify their
-types. This is done in predicates.json:
+types. This is done in predicates.relation:
 
-    {
-      "write": {"entityTypes": ["person", "work"] }
-    }
+    write(person, work)
 
 Currently you only need to do this for entities that have names that need to be looked up in the database.
 
-You also need to specify entities.json
+You also need to specify entities.yml
 
-    {
-      "person": {
-        "name": "[person_name(Id, Name)]",
-        "knownby": {
-          "description": "[description(Id, Value)]"
-        }
-      },
-      "country": {
-        "name": "[country_name(Id, Name)]",
-        "knownby": {
-          "label": "[label(Id, Value)]",
-          "founding_date": "[founding_date(Id, Value)]"
-        }
-      }
-    }
+    person:
+      name: person_name(Id, Name)
+      knownby:
+        description: description(Id, Value)
+    country:
+      name: country_name(Id, Name)
+      knownby:
+        label: label(Id, Value)
+        founding_date: founding_date(Id, Value)
 
 You can see where the entity types pop up.
 

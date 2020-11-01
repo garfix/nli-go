@@ -1,65 +1,63 @@
-[
-    { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
-    { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(_, E1, E2) }
+{ rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
+{ rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(_, E1, E2) }
 
-    { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
-    { rule: qp(E1) -> 'the' }
+{ rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
+{ rule: qp(E1) -> 'the' }
 
-    { rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:volume(E1, V) }
-    { rule: nbar(E1) -> color(E1) nbar(E1),                                     condition: dom:color(E1, C) }
-    { rule: nbar(E1) -> noun(E1) }
+{ rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:volume(E1, V) }
+{ rule: nbar(E1) -> color(E1) nbar(E1),                                     condition: dom:color(E1, C) }
+{ rule: nbar(E1) -> noun(E1) }
 
-    { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
-    { rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
-    { rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
-    { rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }
-    { rule: noun(E1) -> 'box',                                                  condition: dom:shape(E1, box) }
-    { rule: noun(E1) -> 'table',                                                condition: dom:shape(E1, table) }
+{ rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
+{ rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
+{ rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
+{ rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }
+{ rule: noun(E1) -> 'box',                                                  condition: dom:shape(E1, box) }
+{ rule: noun(E1) -> 'table',                                                condition: dom:shape(E1, table) }
 
-    { rule: color(E1) -> 'red',                                                 condition: dom:color(E1, red) }
-    { rule: color(E1) -> 'green',                                               condition: dom:color(E1, green) }
-    { rule: color(E1) -> 'blue',                                                condition: dom:color(E1, blue) }
+{ rule: color(E1) -> 'red',                                                 condition: dom:color(E1, red) }
+{ rule: color(E1) -> 'green',                                               condition: dom:color(E1, green) }
+{ rule: color(E1) -> 'blue',                                                condition: dom:color(E1, blue) }
 
-    { rule: volume(E1) -> 'large',                                              condition: dom:volume(E1, big) }
-    { rule: volume(E1) -> 'small',                                              condition: dom:volume(E1, small) }
+{ rule: volume(E1) -> 'large',                                              condition: dom:volume(E1, big) }
+{ rule: volume(E1) -> 'small',                                              condition: dom:volume(E1, small) }
 
-    { rule: s(S1) -> boolean(S1),                                               condition: dom:result(S1) }
-    { rule: boolean(B1) -> 'yes',                                               condition: dom:result(true) }
-    { rule: boolean(B1) -> 'no',                                                condition: dom:result(false) }
+{ rule: s(S1) -> boolean(S1),                                               condition: dom:result(S1) }
+{ rule: boolean(B1) -> 'yes',                                               condition: dom:result(true) }
+{ rule: boolean(B1) -> 'no',                                                condition: dom:result(false) }
 
-    { rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
-    { rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
+{ rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
+{ rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
 
-    { rule: s(S1) -> entities(S1),                                              condition: dom:root(go:and(S1, _))  }
-    { rule: s(S1) -> 'yes' ',' entities(S1),                                    condition: dom:select(go:and(S1, _), 1)  }
-    { rule: s(S1) -> 'yes' ',' describe_amount(Count) entities(S1),             condition: dom:select(go:and(S1, _), Count)  }
-    { rule: s(S1) -> 'yes' ',' 'by' entities(S1),                               condition: dom:select_subject(go:and(S1, _)) }
-    { rule: s(S1) -> 'none',                                                    condition: dom:none() }
+{ rule: s(S1) -> entities(S1),                                              condition: dom:root(go:and(S1, _))  }
+{ rule: s(S1) -> 'yes' ',' entities(S1),                                    condition: dom:select(go:and(S1, _), 1)  }
+{ rule: s(S1) -> 'yes' ',' describe_amount(Count) entities(S1),             condition: dom:select(go:and(S1, _), Count)  }
+{ rule: s(S1) -> 'yes' ',' 'by' entities(S1),                               condition: dom:select_subject(go:and(S1, _)) }
+{ rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
-    { rule: describe_amount(C) -> 'two' 'things' ':',                           condition: dom:select(_, 2) }
-    { rule: describe_amount(C) -> named_number(C) 'of' 'them' ':' }
+{ rule: describe_amount(C) -> 'two' 'things' ':',                           condition: dom:select(_, 2) }
+{ rule: describe_amount(C) -> named_number(C) 'of' 'them' ':' }
 
-    { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
-    { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
-    { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
+{ rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
+{ rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
+{ rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-    { rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _))  }
-    { rule: entities(E1) -> entity(E1),                                         condition: go:and(E1, E1) }
-    { rule: entities(E1) -> entity(E1) ',' entities(E2),                        condition: go:and(E1, go:and(E2, _)) }
-    { rule: entities(E1) -> entity(E1) 'and' entities(E2),                      condition: go:and(E1, E2) }
-    { rule: entities(E1) -> entity(E1),                                         condition: go:and(_, E1) }
-    { rule: entities(E1) -> entity(E1) }
+{ rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _))  }
+{ rule: entities(E1) -> entity(E1),                                         condition: go:and(E1, E1) }
+{ rule: entities(E1) -> entity(E1) ',' entities(E2),                        condition: go:and(E1, go:and(E2, _)) }
+{ rule: entities(E1) -> entity(E1) 'and' entities(E2),                      condition: go:and(E1, E2) }
+{ rule: entities(E1) -> entity(E1),                                         condition: go:and(_, E1) }
+{ rule: entities(E1) -> entity(E1) }
 
-    { rule: entity(E1) -> np(E1),                                               condition: dom:description(E1) }
+{ rule: entity(E1) -> np(E1),                                               condition: dom:description(E1) }
 
-    { rule: named_number(1) -> 'one' }
-    { rule: named_number(2) -> 'two' }
-    { rule: named_number(3) -> 'three' }
-    { rule: named_number(4) -> 'four' }
-    { rule: named_number(5) -> 'five' }
-    { rule: named_number(6) -> 'six' }
-    { rule: named_number(7) -> 'seven' }
-    { rule: named_number(8) -> 'eight' }
-    { rule: named_number(9) -> 'nine' }
-    { rule: named_number(10) -> 'ten' }
-]
+{ rule: named_number(1) -> 'one' }
+{ rule: named_number(2) -> 'two' }
+{ rule: named_number(3) -> 'three' }
+{ rule: named_number(4) -> 'four' }
+{ rule: named_number(5) -> 'five' }
+{ rule: named_number(6) -> 'six' }
+{ rule: named_number(7) -> 'seven' }
+{ rule: named_number(8) -> 'eight' }
+{ rule: named_number(9) -> 'nine' }
+{ rule: named_number(10) -> 'ten' }

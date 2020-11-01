@@ -17,7 +17,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	grammarRules := internalGrammarParser.CreateGrammarRules(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`
 		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: go:quantifier(Result, Range, $quantifier) }
 		{ rule: quantifier(Result, Range) -> 'all', 						sense: go:equals(Result, Range) } 
 		{ rule: quantifier(Result, Range) -> 'some', 						sense: go:greater_than(Result, 0) }
@@ -32,7 +32,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		{ rule: nbar(E1) -> 'books', 										sense: book(E1) }
 		{ rule: np(E1) -> qp(_) nbar(E1), 									sense: go:quant($qp, E1, $nbar) }
 		{ rule: s(S1) -> 'did' 'abraham' 'read' np(E1),     				sense: go:quant_check($np, read('abraham', E1)) }
-	]`)
+	`)
 
 	facts := internalGrammarParser.CreateRelationSet(`
 		book('Dracula')
@@ -45,11 +45,11 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		read('sarah', 'Dracula')
 	`)
 
-	readMap := internalGrammarParser.CreateRules(`[
+	readMap := internalGrammarParser.CreateRules(`
 		book(A) :- book(A);
 		read(A, B) :- read(A, B);
-	]`)
-	writeMap := internalGrammarParser.CreateRules(`[]`)
+	`)
+	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()

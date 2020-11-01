@@ -32,12 +32,12 @@ func TestFactBase(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	readMap := parser.CreateRules(`[
+	readMap := parser.CreateRules(`
 		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
-	]`)
+	`)
 
-	writeMap := parser.CreateRules(`[]`)
+	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)

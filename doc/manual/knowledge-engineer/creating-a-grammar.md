@@ -62,7 +62,7 @@ A declarative sentence states something to be the case. The aim of the sentence 
 
 Let's start with simple declarative sentences. This one handles sentences like: "all red blocks are mine"
 
-    { rule: declarative(P1) -> np(E1) copula(_) np(E2),         sense: assert( own(A, B) :- quant_check($np1, quant_check($np2, [equals(A, E2) equals(B, E1)]))) }        
+    { rule: declarative(P1) -> np(E1) copula(_) np(E2),         sense: assert( own(A, B) :- quant_check($np1, quant_check($np2, equals(A, E2) equals(B, E1)))) }        
 
 A `copula` is a verb like "is" and "are" when it has no meaning of its own in the sentence. In the sense you can see the `assert` relation whose single argument is a rule. When this declarative is executed, the `assert` adds a rule to a rule base (the first rule base known to the system). 
 
@@ -134,7 +134,7 @@ A pronoun refers to an entity and can be represented thus:
           
     { rule: pronoun(E1) -> 'you',                                          sense: you(E1) }
     { rule: pronoun(E1) -> 'i',                                            sense: i(E1) }
-    { rule: pronoun(E1) -> 'it',                                           sense: back_reference(E1, []) }
+    { rule: pronoun(E1) -> 'it',                                           sense: back_reference(E1, none) }
     
 ## Proper nouns
 
@@ -146,7 +146,7 @@ Here are the basics:
     { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
     { rule: proper_noun_group(N1) -> proper_noun(N1) }
 
-    { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, []) }
+    { rule: np(E1) -> proper_noun_group(E1),                              sense: quant(quantifier(Result, Range, equals(Result, Range)), E1, none) }
     
 Since this is an NP, it needs a quantifer; let's use the all-quantor.
 

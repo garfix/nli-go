@@ -32,18 +32,18 @@ func TestAnswerer(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	ds2db := parser.CreateRules(`[
+	ds2db := parser.CreateRules(`
 		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
-	]`)
+	`)
 
-	ds2dbWrite := parser.CreateRules(`[]`)
+	ds2dbWrite := []mentalese.Rule{}
 
-	solutions := parser.CreateSolutions(`[
+	solutions := parser.CreateSolutions(`
 		{
 			condition: write(PersonName, BookName) publish(PubName, BookName),
 			result: _,
-			responses: [
+			responses: 
 				{
 					condition: go:exists(),
 					answer: book(BookName)
@@ -51,11 +51,11 @@ func TestAnswerer(t *testing.T) {
 				{
 					answer: none()
 				}
-			]
-		} {
+		} 
+		{
 			condition: write(Person, Book) go:number_of(Book, N),
 			result: _,
-			responses: [
+			responses: 
 				{
 					condition: go:exists(),
 					answer: focus(N)
@@ -63,11 +63,11 @@ func TestAnswerer(t *testing.T) {
 				{
 					answer: none()
 				}
-			]
-		} {
+		} 
+		{
 			condition: write(X, Y),
 			result: _,
-			responses: [
+			responses: 
 				{
 					condition: go:exists(),
 					answer: write(X, Y)
@@ -75,11 +75,11 @@ func TestAnswerer(t *testing.T) {
 				{
 					answer: none()
 				}
-			]
-		} {
+		} 
+		{
 			condition: publish(A, B),
 			result: _,
-			responses: [
+			responses: 
 				{
 					condition: go:exists(),
 					preparation: write(C, B),
@@ -88,9 +88,8 @@ func TestAnswerer(t *testing.T) {
 				{
 					answer: none()
 				}
-			]
 		}
-	]`)
+	`)
 
 	matcher := central.NewRelationMatcher(log)
 

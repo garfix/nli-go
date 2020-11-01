@@ -8,10 +8,10 @@ Here is an example that contains all sections of a solution:
 ~~~
     {
         condition: question(_) how_many(B) have_child(A, B),
-        transformations: [
+        transformations: 
             have_child(A, B) => have_n_children(A, Number);
-        ],
-        responses: [
+        ,
+        responses: 
             {
                 condition: exists(),
                 preparation: gender(A, Gender),
@@ -20,7 +20,6 @@ Here is an example that contains all sections of a solution:
             {
                 answer: dont_know()
             }
-        ]
     }
 ~~~
 
@@ -53,7 +52,7 @@ To use a canned response, use "canned()" in the answer of a solution, like this:
 
     {
         condition: question() who(B),
-        responses: [
+        responses: 
             {
                 condition: exists(),
                 answer: canned(D)
@@ -61,7 +60,6 @@ To use a canned response, use "canned()" in the answer of a solution, like this:
             {
                 answer: dont_know()
             }
-        ]
     }
 
 As you see the "answer" in the solution contains the single relation "canned()". When that happens, the contents of its variable will be used as the response.

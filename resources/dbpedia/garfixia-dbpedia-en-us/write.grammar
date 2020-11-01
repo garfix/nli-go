@@ -1,79 +1,77 @@
-[
-    { rule: s(S1) -> boolean(S1),                                                 condition: dom:result(S1) }
-    { rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: dom:married_to(E1, E2) }
-    { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2),
-                                                                                  condition: dom:has_father(E1, E2) }
-    { rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2),
-                                                                                  condition: dom:has_mother(E1, E2) }
-    { rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                      condition: dom:have_child(E1, E2) go:count(E2, N) }
-    { rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) 'on' date_formatted(D2),     condition: dom:birth_date(D1, D2) }
-    { rule: s(S1) -> subject(E1) die(S1) 'on' date_formatted(D2),                 condition: dom:death_date(D1, D2) }
-    { rule: s(S1) -> entities(S1),                                                condition: dom:root(go:and(S1, _))  }
-    { rule: s(S1) -> date_formatted(D2),                                          condition: dom:root(D1) dom:date(D1, Y, M, D) }
+{ rule: s(S1) -> boolean(S1),                                                 condition: dom:result(S1) }
+{ rule: s(S1) -> subject(E1) marry(P1) object(E2),                            condition: dom:married_to(E1, E2) }
+{ rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) father(E2),
+                                                                              condition: dom:has_father(E1, E2) }
+{ rule: s(S1) -> subject(E2) aux_be(P1) possessive_personal_pronoun(E1) mother(E2),
+                                                                              condition: dom:has_mother(E1, E2) }
+{ rule: s(S1) -> subject(E1) have(S1) text(N) child(E2),                      condition: dom:have_child(E1, E2) go:count(E2, N) }
+{ rule: s(S1) -> subject(E1) aux_be(S1) bear(S1) 'on' date_formatted(D2),     condition: dom:birth_date(D1, D2) }
+{ rule: s(S1) -> subject(E1) die(S1) 'on' date_formatted(D2),                 condition: dom:death_date(D1, D2) }
+{ rule: s(S1) -> entities(S1),                                                condition: dom:root(go:and(S1, _))  }
+{ rule: s(S1) -> date_formatted(D2),                                          condition: dom:root(D1) dom:date(D1, Y, M, D) }
 
-    { rule: s(S1) -> subject(E1) 'is' text(Age) year(Age) old(E1) '(' bear(S1) 'on' date_formatted(BirthDate) ')',
-                                                                                  condition: dom:report_age_alive(E1, Age, BirthDate) }
+{ rule: s(S1) -> subject(E1) 'is' text(Age) year(Age) old(E1) '(' bear(S1) 'on' date_formatted(BirthDate) ')',
+                                                                              condition: dom:report_age_alive(E1, Age, BirthDate) }
 
-    { rule: s(S1) -> subject(E1) 'was' text(Age) year(Age) old(E1)
-        '(' bear(S1) 'on' date_formatted(BirthDate) ';'
-        die(S1) 'on' date_formatted(DeathDate) ')',
-                                                                                  condition: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) }
+{ rule: s(S1) -> subject(E1) 'was' text(Age) year(Age) old(E1)
+    '(' bear(S1) 'on' date_formatted(BirthDate) ';'
+    die(S1) 'on' date_formatted(DeathDate) ')',
+                                                                              condition: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) }
 
-    { rule: subject(E) -> subjective_personal_pronoun(E),                         condition: dom:gender(E, _) }
-    { rule: subject(E) -> entities(E) }
+{ rule: subject(E) -> subjective_personal_pronoun(E),                         condition: dom:gender(E, _) }
+{ rule: subject(E) -> entities(E) }
 
-    { rule: object(E) -> objective_personal_pronoun(E),                           condition: dom:gender(E, _) }
-    { rule: object(E) -> entities(E) }
+{ rule: object(E) -> objective_personal_pronoun(E),                           condition: dom:gender(E, _) }
+{ rule: object(E) -> entities(E) }
 
-    { rule: date_formatted(Date) -> month_name(M) text(D) ',' text(Y),         condition: dom:date(Date, D, M, Y) }
+{ rule: date_formatted(Date) -> month_name(M) text(D) ',' text(Y),         condition: dom:date(Date, D, M, Y) }
 
-    { rule: entities(And) -> entities(E1),                                        condition: go:unify(And, go:and(E1, _))  }
-    { rule: entities(E1) -> entity(E1),                                           condition: go:and(E1, E1) }
-    { rule: entities(E1) -> entity(E1) ',' entities(E2),                          condition: go:and(E1, go:and(E2, _)) }
-    { rule: entities(E1) -> entity(E1) 'and' entities(E2),                        condition: go:and(E1, E2) }
-    { rule: entities(E1) -> entity(E1),                                           condition: go:and(_, E1) }
-    { rule: entities(E1) -> entity(E1) }
+{ rule: entities(And) -> entities(E1),                                        condition: go:unify(And, go:and(E1, _))  }
+{ rule: entities(E1) -> entity(E1),                                           condition: go:and(E1, E1) }
+{ rule: entities(E1) -> entity(E1) ',' entities(E2),                          condition: go:and(E1, go:and(E2, _)) }
+{ rule: entities(E1) -> entity(E1) 'and' entities(E2),                        condition: go:and(E1, E2) }
+{ rule: entities(E1) -> entity(E1),                                           condition: go:and(_, E1) }
+{ rule: entities(E1) -> entity(E1) }
 
-    { rule: entity(E1) -> proper_noun(E1) }
+{ rule: entity(E1) -> proper_noun(E1) }
 
-    { rule: proper_noun(E1) -> text(Name),                                        condition: dom:name(E1, Name) }
+{ rule: proper_noun(E1) -> text(Name),                                        condition: dom:name(E1, Name) }
 
-    { rule: boolean(B1) -> 'yes',                                                 condition: dom:result(true) }
-    { rule: boolean(B1) -> 'no',                                                  condition: dom:result(false) }
+{ rule: boolean(B1) -> 'yes',                                                 condition: dom:result(true) }
+{ rule: boolean(B1) -> 'no',                                                  condition: dom:result(false) }
 
-    { rule: have(P1) -> 'has' }
-    { rule: marry(P1) -> 'married' }
-    { rule: bear(P1) -> 'born' }
-    { rule: die(P1) -> 'died' }
+{ rule: have(P1) -> 'has' }
+{ rule: marry(P1) -> 'married' }
+{ rule: bear(P1) -> 'born' }
+{ rule: die(P1) -> 'died' }
 
-    { rule: aux_be(P1) -> 'was' }
+{ rule: aux_be(P1) -> 'was' }
 
-    { rule: father(E1) -> 'father' }
-    { rule: mother(E1) -> 'mother' }
-    { rule: child(E1) -> 'children' }
-    { rule: year(E1) -> 'year',                                                   condition: go:equals(E1, 1) }
-    { rule: year(E1) -> 'years' }
-    { rule: old(E1) -> 'old' }
+{ rule: father(E1) -> 'father' }
+{ rule: mother(E1) -> 'mother' }
+{ rule: child(E1) -> 'children' }
+{ rule: year(E1) -> 'year',                                                   condition: go:equals(E1, 1) }
+{ rule: year(E1) -> 'years' }
+{ rule: old(E1) -> 'old' }
 
-    { rule: possessive_personal_pronoun(E) -> 'his',	                          condition: dom:gender(E, male) }
-    { rule: possessive_personal_pronoun(E) -> 'her',	                          condition: dom:gender(E, female) }
+{ rule: possessive_personal_pronoun(E) -> 'his',	                          condition: dom:gender(E, male) }
+{ rule: possessive_personal_pronoun(E) -> 'her',	                          condition: dom:gender(E, female) }
 
-    { rule: objective_personal_pronoun(E) -> 'him',	                              condition: dom:gender(E, male) }
-    { rule: objective_personal_pronoun(E) -> 'her',	                              condition: dom:gender(E, female) }
+{ rule: objective_personal_pronoun(E) -> 'him',	                              condition: dom:gender(E, male) }
+{ rule: objective_personal_pronoun(E) -> 'her',	                              condition: dom:gender(E, female) }
 
-    { rule: subjective_personal_pronoun(E) -> 'he',	                              condition: dom:gender(E, male) }
-    { rule: subjective_personal_pronoun(E) -> 'she',	                          condition: dom:gender(E, female) }
+{ rule: subjective_personal_pronoun(E) -> 'he',	                              condition: dom:gender(E, male) }
+{ rule: subjective_personal_pronoun(E) -> 'she',	                          condition: dom:gender(E, female) }
 
-    { rule: month_name('01') -> 'January' }
-    { rule: month_name('02') -> 'February' }
-    { rule: month_name('03') -> 'March' }
-    { rule: month_name('04') -> 'April' }
-    { rule: month_name('05') -> 'May' }
-    { rule: month_name('06') -> 'June' }
-    { rule: month_name('07') -> 'July' }
-    { rule: month_name('08') -> 'August' }
-    { rule: month_name('09') -> 'September' }
-    { rule: month_name('10') -> 'October' }
-    { rule: month_name('11') -> 'November' }
-    { rule: month_name('12') -> 'December' }
-]
+{ rule: month_name('01') -> 'January' }
+{ rule: month_name('02') -> 'February' }
+{ rule: month_name('03') -> 'March' }
+{ rule: month_name('04') -> 'April' }
+{ rule: month_name('05') -> 'May' }
+{ rule: month_name('06') -> 'June' }
+{ rule: month_name('07') -> 'July' }
+{ rule: month_name('08') -> 'August' }
+{ rule: month_name('09') -> 'September' }
+{ rule: month_name('10') -> 'October' }
+{ rule: month_name('11') -> 'November' }
+{ rule: month_name('12') -> 'December' }

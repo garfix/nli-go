@@ -1,12 +1,9 @@
-[
-    {
-        condition: go:intent(calc, E1),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: go:canned(E1)
-            }
-        ]
-    }
-]
+{
+    condition: go:intent(calc, E1),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            answer: go:canned(E1)
+        }
+}

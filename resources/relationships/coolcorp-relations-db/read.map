@@ -1,8 +1,6 @@
-[
-    dom:marry(_, A, B) :- marriages(A, B, _);
-    dom:name(A, N) :- person(A, N, _, _);
-    dom:parent(P, C) :- parent(P, C);
-    dom:have_child(P, C) :- parent(P, C);
-    dom:gender(A, male) :- person(A, _, 'M', _);
-    dom:gender(A, female) :- person(A, _, 'F', _);
-]
+dom:marry(_, A, B) :- marriages(A, B, _);
+dom:name(A, N) :- person(A, N, _, _);
+dom:parent(P, C) :- parent(P, C);
+dom:have_child(P, C) :- parent(P, C);
+dom:gender(A, male) :- person(A, _, 'M', _);
+dom:gender(A, female) :- person(A, _, 'F', _);

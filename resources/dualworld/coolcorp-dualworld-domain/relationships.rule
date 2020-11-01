@@ -1,3 +1,1 @@
-[
-    has_grandfather(A, C) :- has_parent(A, B) has_parent(B, C);
-]
+has_grandfather(A, C) :- has_parent(A, B) has_parent(B, C);

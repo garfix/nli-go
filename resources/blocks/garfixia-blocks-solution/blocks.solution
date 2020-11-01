@@ -1,156 +1,154 @@
-[
-    /* Any command */
-    {
-        condition: go:intent(command),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: go:canned('OK')
-            }
-            {
-                answer: go:canned('I can\'t')
-            }
-        ]
-    }
+/* Any command */
+{
+    condition: go:intent(command),
+    result: _,
+    responses: 
+        {
+            condition: go:exists(),
+            answer: go:canned('OK')
+        }
+        {
+            answer: go:canned('I can\'t')
+        }
+    
+}
 
-    /* What? */
-    {
-        condition: go:intent(what, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And),
-                answer: dom:root({{ And }}) {{ N }}
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* What? */
+{
+    condition: go:intent(what, B),
+    result: B,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe(B, N) go:make_and(B, And),
+            answer: dom:root({{ And }}) {{ N }}
+        }
+        {
+            answer: dom:dont_know()
+        }
+    
+}
 
-    /* Which? */
-    {
-        condition: go:intent(which, A),
-        result: A,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe(A, Desc),
-                answer: dom:root(A) {{ Desc }}
-            }
-            {
-                answer: dom:dont_know()
-            }
-        ]
-    }
+/* Which? */
+{
+    condition: go:intent(which, A),
+    result: A,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe(A, Desc),
+            answer: dom:root(A) {{ Desc }}
+        }
+        {
+            answer: dom:dont_know()
+        }
+    
+}
 
-    /* How many? */
-    {
-        condition: go:intent(how_many, E1),
-        result: E1,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: go:number_of(E1, N),
-                answer: dom:a_number(N)
-            }
-            {
-                answer: dom:none()
-            }
-        ]
-    }
+/* How many? */
+{
+    condition: go:intent(how_many, E1),
+    result: E1,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: go:number_of(E1, N),
+            answer: dom:a_number(N)
+        }
+        {
+            answer: dom:none()
+        }
+    
+}
 
-    /* Is one? */
-    {
-        condition: go:intent(select, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
-                answer: dom:select({{ And }}, Count) {{ N }}
-            }
-            {
-                answer: dom:none()
-            }
-        ]
-    }
+/* Is one? */
+{
+    condition: go:intent(select, B),
+    result: B,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+            answer: dom:select({{ And }}, Count) {{ N }}
+        }
+        {
+            answer: dom:none()
+        }
+    
+}
 
 
-    /* Is there? */
-    {
-        condition: go:intent(select_categoric, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:number_of(B, Count),
-                answer: dom:select({{ And }}, Count) {{ N }}
-            }
-            {
-                answer: dom:none()
-            }
-        ]
-    }
+/* Is there? */
+{
+    condition: go:intent(select_categoric, B),
+    result: B,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:number_of(B, Count),
+            answer: dom:select({{ And }}, Count) {{ N }}
+        }
+        {
+            answer: dom:none()
+        }
+    
+}
 
-    /* Is supported? Yes, by ... */
-    {
-        condition: go:intent(select_subject, B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And),
-                answer: dom:select_subject({{ And }}) {{ N }}
-            }
-            {
-                answer: dom:none()
-            }
-        ]
-    }
-    /* Do I own? Yes: these things */
-    {
-        condition: go:intent(yes_no) dom:own(_, B) dom:object(B),
-        result: B,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
-                answer: dom:select({{ And }}, Count) {{ N }}
-            }
-            {
-                answer: dom:result(false)
-            }
-        ]
-    }
-    {
-        condition: go:intent(yes_no),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: dom:result(true)
-            }
-            {
-                answer: dom:result(false)
-            }
-        ]
-    }
+/* Is supported? Yes, by ... */
+{
+    condition: go:intent(select_subject, B),
+    result: B,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe(B, N) go:make_and(B, And),
+            answer: dom:select_subject({{ And }}) {{ N }}
+        }
+        {
+            answer: dom:none()
+        }
+    
+}
+/* Do I own? Yes: these things */
+{
+    condition: go:intent(yes_no) dom:own(_, B) dom:object(B),
+    result: B,
+    responses: 
+        {
+            condition: go:exists(),
+            preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+            answer: dom:select({{ And }}, Count) {{ N }}
+        }
+        {
+            answer: dom:result(false)
+        }
+    
+}
+{
+    condition: go:intent(yes_no),
+    result: _,
+    responses: 
+        {
+            condition: go:exists(),
+            answer: dom:result(true)
+        }
+        {
+            answer: dom:result(false)
+        }
+    
+}
 
-    /* Declaration */
-    {
-        condition: go:intent(declaration),
-        result: _,
-        responses: [
-            {
-                condition: go:exists(),
-                answer: dom:understand()
-            }
-            {
-                answer: dom:dont_understand()
-            }
-        ]
-    }
-]
+/* Declaration */
+{
+    condition: go:intent(declaration),
+    result: _,
+    responses: 
+        {
+            condition: go:exists(),
+            answer: dom:understand()
+        }
+        {
+            answer: dom:dont_understand()
+        }
+    
+}

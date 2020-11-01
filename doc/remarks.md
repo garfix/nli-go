@@ -1,3 +1,9 @@
+# 2020-11-01
+
+Extended generation with head conditions; see generation.md
+
+Removed most of the syntactic brackets `[ ]` where they were not necessary: in code declrations. Brackets are now only used with bindings and lists. 
+
 # 2020-10-31
 
 I started indexing predicate to knowledge base / knowledge base function, in the problem solver, for speed. It made the blocks world test 1/8th faster. More importantly, this allows the system to scale up to many more knowledge bases, because finding the handler for a predicate is now reduced from O(n) to O(1).

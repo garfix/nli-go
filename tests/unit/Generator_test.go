@@ -16,7 +16,7 @@ func TestGenerator(t *testing.T) {
 	internalGrammarParser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog(false)
 
-	grammarRules := internalGrammarParser.CreateGenerationGrammar(`[
+	grammarRules := internalGrammarParser.CreateGenerationGrammar(`
         { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }
 		{ rule: s(P) -> named_number(P),          condition: result(P) }
         { rule: np(E) -> proper_noun(E),          condition: name(E, Name) }
@@ -28,7 +28,7 @@ func TestGenerator(t *testing.T) {
 		{ rule: verb(E) -> 'married',		      condition: predication(E, marry) }
 		{ rule: named_number(1) -> 'one' }
 		{ rule: named_number(2) -> 'two' }
-	]`)
+	`)
 	matcher := central.NewRelationMatcher(log)
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
 	generator := generate.NewGenerator(log, matcher)

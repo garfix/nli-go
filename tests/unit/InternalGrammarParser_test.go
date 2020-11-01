@@ -3,6 +3,7 @@ package tests
 import (
 	"fmt"
 	"nli-go/lib/importer"
+	"nli-go/lib/parse"
 	"testing"
 )
 
@@ -23,9 +24,7 @@ func TestInternalGrammarParser(t *testing.T) {
 
 	// =====================================================
 
-	grammar := parser.CreateGrammarRules("[" +
-		"{ rule: s(P) -> np(E) vp(P),         sense: subject(P, E) }" +
-		"]")
+	grammar := parser.CreateGrammarRules("{ rule: s(P) -> np(E) vp(P),         sense: subject(P, E) }")
 
 	rules := grammar.FindRules("s", 1)
 	if len(rules) == 0 {
@@ -48,10 +47,9 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error(fmt.Printf("Error in number of sense relations: %d", len(rules[0].Sense)))
 	}
 
-	grammar = parser.CreateGrammarRules("[" +
+	grammar = parser.CreateGrammarRules(
 		"{ rule: s(P) -> np(E) vp(P),    sense: subject(P, E) }" +
-		"{ rule: np(P) -> nbar(E) }" +
-		"]")
+		"{ rule: np(P) -> nbar(E) }")
 
 	rules = grammar.FindRules("s", 1)
 	if len(rules) != 1 {
@@ -62,7 +60,7 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error("No rules found")
 	}
 
-	grammar = parser.CreateGrammarRules("[]")
+	grammar = &parse.GrammarRules{}
 
 	parser.CreateRelationSet("assert(at(5, 3))")
 	parser.CreateRelationSet("learn(own(X, Y) :- fish(Y))")

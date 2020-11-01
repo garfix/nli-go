@@ -1,26 +1,24 @@
-[
-    { rule: number(N1) -> /^[0-9]+/ }
-    { rule: number(N1) -> 'one',                                sense: go:unify(N1, 1) }
-    { rule: number(N1) -> 'two',                                sense: go:unify(N1, 2) }
-    { rule: number(N1) -> 'three',                              sense: go:unify(N1, 3) }
-    { rule: number(N1) -> 'four',                               sense: go:unify(N1, 4) }
-    { rule: number(N1) -> 'five',                               sense: go:unify(N1, 5) }
-    { rule: number(N1) -> 'six',                                sense: go:unify(N1, 6) }
-    { rule: number(N1) -> 'seven',                              sense: go:unify(N1, 7) }
-    { rule: number(N1) -> 'eight',                              sense: go:unify(N1, 8) }
-    { rule: number(N1) -> 'nine',                               sense: go:unify(N1, 9) }
-    { rule: number(N1) -> 'ten',                                sense: go:unify(N1, 10) }
+{ rule: number(N1) -> /^[0-9]+/ }
+{ rule: number(N1) -> 'one',                                sense: go:unify(N1, 1) }
+{ rule: number(N1) -> 'two',                                sense: go:unify(N1, 2) }
+{ rule: number(N1) -> 'three',                              sense: go:unify(N1, 3) }
+{ rule: number(N1) -> 'four',                               sense: go:unify(N1, 4) }
+{ rule: number(N1) -> 'five',                               sense: go:unify(N1, 5) }
+{ rule: number(N1) -> 'six',                                sense: go:unify(N1, 6) }
+{ rule: number(N1) -> 'seven',                              sense: go:unify(N1, 7) }
+{ rule: number(N1) -> 'eight',                              sense: go:unify(N1, 8) }
+{ rule: number(N1) -> 'nine',                               sense: go:unify(N1, 9) }
+{ rule: number(N1) -> 'ten',                                sense: go:unify(N1, 10) }
 
-    /* Building an expression according to the Precedence climbing method */
-    /* https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method */
+/* Building an expression according to the Precedence climbing method */
+/* https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method */
 
-    { rule: primary(E1) -> number(E1) }
-    { rule: product(E1) -> product(E2) 'times' product(E3),     sense: go:multiply(E2, E3, E1) }
-    { rule: product(E1) -> primary(E1) }
-    { rule: sum(E1) -> sum(E2) 'plus' sum(E3),                  sense: go:add(E2, E3, E1) }
-    { rule: sum(E1) -> sum(E2) 'minus' sum(E3),                 sense: go:subtract(E2, E3, E1) }
-    { rule: sum(E1) -> product(E1) }
-    { rule: expr(E1) -> sum(E1) }
+{ rule: primary(E1) -> number(E1) }
+{ rule: product(E1) -> product(E2) 'times' product(E3),     sense: go:multiply(E2, E3, E1) }
+{ rule: product(E1) -> primary(E1) }
+{ rule: sum(E1) -> sum(E2) 'plus' sum(E3),                  sense: go:add(E2, E3, E1) }
+{ rule: sum(E1) -> sum(E2) 'minus' sum(E3),                 sense: go:subtract(E2, E3, E1) }
+{ rule: sum(E1) -> product(E1) }
+{ rule: expr(E1) -> sum(E1) }
 
-    { rule: s(P) -> 'what' 'is' expr(E1),                       sense: go:intent(calc, E1) }
-]
+{ rule: s(P) -> 'what' 'is' expr(E1),                       sense: go:intent(calc, E1) }

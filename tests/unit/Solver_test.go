@@ -33,12 +33,12 @@ func TestSolver(t *testing.T) {
 		person(11, 'Onslow Bigbrain')
 	`)
 
-	readMap := parser.CreateRules(`[
+	readMap := parser.CreateRules(`
 		write(PersonName, BookName) :- book(BookId, BookName, _) author(PersonId, BookId) person(PersonId, PersonName);
 		publish(PubName, BookName) :- book(BookId, BookName, PubId) publisher(PubId, PubName);
-	]`)
+	`)
 
-	writeMap := parser.CreateRules(`[]`)
+	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
 
@@ -114,9 +114,9 @@ func TestSolver(t *testing.T) {
 		}
 	}
 
-	rules2 := parser.CreateRules(`[
+	rules2 := parser.CreateRules(`
 		indirect_link(A, B) :- link(A, C) link(C, B);
-	]`)
+	`)
 
 	facts2 := parser.CreateRelationSet(`
 		link('red', 'blue')
@@ -124,9 +124,9 @@ func TestSolver(t *testing.T) {
 		link('blue', 'yellow')
 	`)
 
-	readMap2 := parser.CreateRules(`[
+	readMap2 := parser.CreateRules(`
 		link(A, B) :- link(A, B);
-	]`)
+	`)
 
 	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
@@ -162,8 +162,8 @@ func TestMissingHandlerError(t *testing.T) {
 	log := common.NewSystemLog(false)
 
 	facts := mentalese.RelationSet{}
-	readMap := parser.CreateRules(`[]`)
-	writeMap := parser.CreateRules(`[]`)
+	readMap := []mentalese.Rule{}
+	writeMap := []mentalese.Rule{}
 	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 

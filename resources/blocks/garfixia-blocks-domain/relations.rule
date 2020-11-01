@@ -1,20 +1,18 @@
-[
-    object(E1) :- block(E1);
-    object(E1) :- pyramid(E1);
-    object(E1) :- box(E1);
-    hold(P1, E1, E2) :- grasping(E1, E2);
-    you(E1) :- named(E1, 'SHRDLU');
-    i(E1) :- named(E1, 'YOU');
-    tell(P1, P2) :- go:call(P2);
-    height(E, H) :- size(E, _, _, H);
-    width(E, W) :- size(E, W, _, _);
-    big(E) :- size(E, Width, Length, Height) go:greater_than(Width, 128) go:greater_than(Length, 128) go:greater_than(Height, 128);
-    large(E) :- size(E, Width, Length, Height) go:greater_than(Height, 128);
-    small(E) :- size(E, Width, Length, Height) go:less_than(Width, 128) go:less_than(Length, 128) go:less_than(Height, 128);
-    volume(E, V) :- go:if_then_else( big(E), go:unify(V, big), go:unify(V, small));
-    cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);
-    taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
-    narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
-    shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );
-    behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);
-]
+object(E1) :- block(E1);
+object(E1) :- pyramid(E1);
+object(E1) :- box(E1);
+hold(P1, E1, E2) :- grasping(E1, E2);
+you(E1) :- named(E1, 'SHRDLU');
+i(E1) :- named(E1, 'YOU');
+tell(P1, P2) :- go:call(P2);
+height(E, H) :- size(E, _, _, H);
+width(E, W) :- size(E, W, _, _);
+big(E) :- size(E, Width, Length, Height) go:greater_than(Width, 128) go:greater_than(Length, 128) go:greater_than(Height, 128);
+large(E) :- size(E, Width, Length, Height) go:greater_than(Height, 128);
+small(E) :- size(E, Width, Length, Height) go:less_than(Width, 128) go:less_than(Length, 128) go:less_than(Height, 128);
+volume(E, V) :- go:if_then_else( big(E), go:unify(V, big), go:unify(V, small));
+cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);
+taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
+narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
+shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );
+behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);

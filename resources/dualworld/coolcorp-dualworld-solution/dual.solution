@@ -1,16 +1,13 @@
-[
-    {
-        condition: go:intent(which, E1),
-        result: E1,
-        responses: [
-            {
-                condition: go:exists(),
-                preparation: dom:work_name(E1, Name),
-                answer: go:canned(Name)
-            }
-            {
-                answer: go:canned('I don\'t know')
-            }
-        ]
-    }
-]
+{
+    condition: go:intent(which, E1),
+    result: E1,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:work_name(E1, Name),
+            answer: go:canned(Name)
+        }
+        {
+            answer: go:canned('I don\'t know')
+        }
+}

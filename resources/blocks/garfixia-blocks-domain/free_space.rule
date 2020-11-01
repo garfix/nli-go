@@ -1,127 +1,124 @@
-[
-    /*
-        Inspired by https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
+/*
+    Inspired by https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
 
-        Finds an area big enough to house an object E1 within the boundaries of Container.
-        First it collects all left and right boundaries of all objects in Container, together with the container boundary, and places them in VerLines.
-        It does the same for the upper and lower boundaries and places them in HorLines.
-        Then it creates a grid from these lines and fills the occupied places with 1.
-        To actually determine the free space, it goes through all columns.
-        For each column, it calculates the number of columns to the right needed to house the width of E1 (the "span").
-        Within the column, for each row, it finds out if the span is free, and accumulates the length of the row.
-        Once the accumulated length is big enough for the length of the object E1, the space is found.
-    */
+    Finds an area big enough to house an object E1 within the boundaries of Container.
+    First it collects all left and right boundaries of all objects in Container, together with the container boundary, and places them in VerLines.
+    It does the same for the upper and lower boundaries and places them in HorLines.
+    Then it creates a grid from these lines and fills the occupied places with 1.
+    To actually determine the free space, it goes through all columns.
+    For each column, it calculates the number of columns to the right needed to house the width of E1 (the "span").
+    Within the column, for each row, it finds out if the span is free, and accumulates the length of the row.
+    Once the accumulated length is big enough for the length of the object E1, the space is found.
+*/
 
-    /* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
-    do_find_free_space(Container, E1, X1, Y1) :-
-        rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
-        do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines)
-        do_init_grid(fixed, Objects, HorLines, VerLines)
-        do_find_free_position(E1, fixed, HorLines, VerLines, X1, Y1)
-    ;
+/* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
+do_find_free_space(Container, E1, X1, Y1) :-
+    rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
+    do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines)
+    do_init_grid(fixed, Objects, HorLines, VerLines)
+    do_find_free_position(E1, fixed, HorLines, VerLines, X1, Y1)
+;
 
-    rectangle(R1, X1, X2, Y1, Y2) :-
-        at(R1, X1, Y1, _)
-        size(R1, Width, Length, _)
-        go:add(X1, Width, X2)
-        go:add(Y1, Length, Y2)
-    ;
+rectangle(R1, X1, X2, Y1, Y2) :-
+    at(R1, X1, Y1, _)
+    size(R1, Width, Length, _)
+    go:add(X1, Width, X2)
+    go:add(Y1, Length, Y2)
+;
 
-    do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines) :-
-        rectangle(O1, X1, X2, Y1, Y2)
-        go:not_equals(O1, Container)
-        object(O1)
-        go:greater_than_equals(X2, BoundX1)
-        go:less_than_equals(X1, BoundX2)
-        go:greater_than_equals(Y2, BoundY1)
-        go:less_than_equals(Y1, BoundY2)
-        go:make_list(Objects, O1)
-        go:make_list(V1, BoundX1, X1, X2, BoundX2)
-        go:make_list(H1, BoundY1, Y1, Y2, BoundY2)
-        go:list_deduplicate(V1, V2)
-        go:list_deduplicate(H1, H2)
-        go:list_sort(V2, VerLines)
-        go:list_sort(H2, HorLines)
-    ;
+do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines) :-
+    rectangle(O1, X1, X2, Y1, Y2)
+    go:not_equals(O1, Container)
+    object(O1)
+    go:greater_than_equals(X2, BoundX1)
+    go:less_than_equals(X1, BoundX2)
+    go:greater_than_equals(Y2, BoundY1)
+    go:less_than_equals(Y1, BoundY2)
+    go:make_list(Objects, O1)
+    go:make_list(V1, BoundX1, X1, X2, BoundX2)
+    go:make_list(H1, BoundY1, Y1, Y2, BoundY2)
+    go:list_deduplicate(V1, V2)
+    go:list_deduplicate(H1, H2)
+    go:list_sort(V2, VerLines)
+    go:list_sort(H2, HorLines)
+;
 
-    do_init_grid(Grid, Objects, HorLines, VerLines) :-
-        go:retract( grid(Grid, _, _, _) )
-        go:list_expand(Objects, O1)
-        rectangle(O1, X1, X2, Y1, Y2)
-        go:list_index(VerLines, X1, V1)
-        go:list_index(VerLines, X2, V2)
-        go:list_index(HorLines, Y1, H1)
-        go:list_index(HorLines, Y2, H2)
-        go:subtract(V2, 1, V2Min)
-        go:subtract(H2, 1, H2Min)
-        go:range_foreach(V1, V2Min, V,
-            go:range_foreach(H1, H2Min, H,
-                 go:assert( grid(Grid, H, V, 1) )
-            )
+do_init_grid(Grid, Objects, HorLines, VerLines) :-
+    go:retract( grid(Grid, _, _, _) )
+    go:list_expand(Objects, O1)
+    rectangle(O1, X1, X2, Y1, Y2)
+    go:list_index(VerLines, X1, V1)
+    go:list_index(VerLines, X2, V2)
+    go:list_index(HorLines, Y1, H1)
+    go:list_index(HorLines, Y2, H2)
+    go:subtract(V2, 1, V2Min)
+    go:subtract(H2, 1, H2Min)
+    go:range_foreach(V1, V2Min, V,
+        go:range_foreach(H1, H2Min, H,
+             go:assert( grid(Grid, H, V, 1) )
         )
-    ;
+    )
+;
 
-    do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
-        go:let(A1, -1)
-        go:let(B1, -1)
-        go:let(StartY, -1)
+do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
+    go:let(A1, -1)
+    go:let(B1, -1)
+    go:let(StartY, -1)
 
-        size(E1, Width, Length, _)
+    size(E1, Width, Length, _)
 
-        go:list_foreach(VerLines, ColIndex, X,
-            go:list_get(HorLines, 0, StartY)
-            find_span(Width, VerLines, ColIndex, ColSpan)
-            go:add(ColIndex, ColSpan, V1)
-            go:subtract(V1, 1, ColEnd)
-            go:list_foreach(HorLines, LineIndex, Y2,
-                go:greater_than(LineIndex, 0)
-                go:subtract(LineIndex, 1, RowIndex)
-                go:if_then_else(
-                    span_free(ColIndex, ColEnd, RowIndex, Grid),
-
-                    go:subtract(Y2, StartY, SpanLength)
-                    go:greater_than_equals(SpanLength, Length)
-                    go:equals(A1, -1)
-                    go:let(A1, X)
-                    go:let(B1, StartY),
-
-                    go:let(StartY, Y2)
-                )
-            )
-        )
-
-        go:not_equals(A1, -1)
-        go:unify(ResultX, A1)
-        go:unify(ResultY, B1)
-    ;
-
-    find_span(Width, VerLines, ColIndex, ColSpan) :-
-        go:let(ColSpan, 0)
-
-        go:list_get(VerLines, ColIndex, X1)
-
-        go:list_foreach(VerLines, Index, Line,
-            go:subtract(Line, X1, W)
-            go:greater_than_equals(W, Width)
-            go:equals(ColSpan, 0)
-            go:subtract(Index, ColIndex, ColSpan)
-        )
-
-        go:greater_than(ColSpan, 0)
-    ;
-
-    span_free(ColStart, ColEnd, RowIndex, Grid) :-
-        go:let(Success, true)
-
-        go:range_foreach(ColStart, ColEnd, ColIndex,
+    go:list_foreach(VerLines, ColIndex, X,
+        go:list_get(HorLines, 0, StartY)
+        find_span(Width, VerLines, ColIndex, ColSpan)
+        go:add(ColIndex, ColSpan, V1)
+        go:subtract(V1, 1, ColEnd)
+        go:list_foreach(HorLines, LineIndex, Y2,
+            go:greater_than(LineIndex, 0)
+            go:subtract(LineIndex, 1, RowIndex)
             go:if_then_else(
-                grid(Grid, RowIndex, ColIndex, 1),
-                go:let(Success, false),
-                none
+                span_free(ColIndex, ColEnd, RowIndex, Grid),
+
+                go:subtract(Y2, StartY, SpanLength)
+                go:greater_than_equals(SpanLength, Length)
+                go:equals(A1, -1)
+                go:let(A1, X)
+                go:let(B1, StartY),
+
+                go:let(StartY, Y2)
             )
         )
+    )
 
-        go:equals(Success, true)
-    ;
+    go:not_equals(A1, -1)
+    go:unify(ResultX, A1)
+    go:unify(ResultY, B1)
+;
 
-]
+find_span(Width, VerLines, ColIndex, ColSpan) :-
+    go:let(ColSpan, 0)
+
+    go:list_get(VerLines, ColIndex, X1)
+
+    go:list_foreach(VerLines, Index, Line,
+        go:subtract(Line, X1, W)
+        go:greater_than_equals(W, Width)
+        go:equals(ColSpan, 0)
+        go:subtract(Index, ColIndex, ColSpan)
+    )
+
+    go:greater_than(ColSpan, 0)
+;
+
+span_free(ColStart, ColEnd, RowIndex, Grid) :-
+    go:let(Success, true)
+
+    go:range_foreach(ColStart, ColEnd, ColIndex,
+        go:if_then_else(
+            grid(Grid, RowIndex, ColIndex, 1),
+            go:let(Success, false),
+            none
+        )
+    )
+
+    go:equals(Success, true)
+;

@@ -34,14 +34,14 @@ func TestQuantSolver(t *testing.T) {
 		have_child(8, 10)
 	`)
 
-	readMap := internalGrammarParser.CreateRules(`[
+	readMap := internalGrammarParser.CreateRules(`
 		is_person(Id) :- person(Id, _, _, _);
 		have_child(A, B) :- have_child(A, B);
 		isa(A, parent) :- have_child(A, _);
 		isa(A, child) :- have_child(_, A);
-	]`)
+	`)
 
-	writeMap := internalGrammarParser.CreateRules(`[]`)
+	writeMap := []mentalese.Rule{}
 
 	tests := []struct {
 		quant   string

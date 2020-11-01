@@ -16,9 +16,9 @@ It starts with a sense from a rule; here: marry(P1, E1, E2)
 
     { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
 
-It introduces two noun phrases (E1 and E2). You define their types in predicates.json:
+It introduces two noun phrases (E1 and E2). You define their types in predicates.relation:
 
-    "marry": { "entityTypes": ["event", "person", "person"] },
+    marry(event, person, person)
 
 Both noun phrases are persons. This type of definition is called s-selection (semantic selection of predicate
 arguments).

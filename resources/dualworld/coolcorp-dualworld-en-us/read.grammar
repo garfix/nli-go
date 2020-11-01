@@ -1,21 +1,19 @@
-[
-    { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
+{ rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
 
-    { rule: qp(_) -> quantifier(Result, Range),                             sense: go:quantifier(Result, Range, $quantifier) }
-    { rule: quantifier(Result, Range) -> 'the',                             sense: go:equals(Result, 1) }
+{ rule: qp(_) -> quantifier(Result, Range),                             sense: go:quantifier(Result, Range, $quantifier) }
+{ rule: quantifier(Result, Range) -> 'the',                             sense: go:equals(Result, 1) }
 
-    { rule: np(E1) -> proper_noun_group(E1) }
-    { rule: np(R1) -> qp(_) nbar(R1),                                       sense: go:quant($qp, R1, $nbar) }
-    { rule: np(E1) -> nbar(E1) }
+{ rule: np(E1) -> proper_noun_group(E1) }
+{ rule: np(R1) -> qp(_) nbar(R1),                                       sense: go:quant($qp, R1, $nbar) }
+{ rule: np(E1) -> nbar(E1) }
 
-    { rule: noun(E1) -> 'poem',                                             sense: dom:poem(E1) }
+{ rule: noun(E1) -> 'poem',                                             sense: dom:poem(E1) }
 
-    { rule: nbar(E1) -> noun(E1),                                           sense: go:quant(go:quantifier(Result, Range, go:greater_than(Result, 0)), E1, $noun) }
-    { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: dom:has_grandfather(E2, E1) }
+{ rule: nbar(E1) -> noun(E1),                                           sense: go:quant(go:quantifier(Result, Range, go:greater_than(Result, 0)), E1, $noun) }
+{ rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: dom:has_grandfather(E2, E1) }
 
-    { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: go:quant_check($np1, go:quant_check($np2, dom:write(E2, E1))) }
+{ rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: go:quant_check($np1, go:quant_check($np2, dom:write(E2, E1))) }
 
-    { rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: go:intent(which, E1) }
+{ rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: go:intent(which, E1) }
 
-    { rule: s(S1) -> interrogative(S1) '?' }
-]
+{ rule: s(S1) -> interrogative(S1) '?' }

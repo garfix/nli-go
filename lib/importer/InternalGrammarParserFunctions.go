@@ -12,8 +12,6 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 	rules := []mentalese.Rule{}
 	ok := true
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
 	for startIndex < len(tokens) {
 		rule := mentalese.Rule{}
 		rule, startIndex, ok = parser.parseRule(tokens, startIndex)
@@ -27,9 +25,7 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 		rules = append(rules, rule)
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return rules, startIndex, ok
+	return rules, startIndex, len(rules) > 0
 }
 
 func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
@@ -58,8 +54,6 @@ func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex i
 	solutions := []mentalese.Solution{}
 	ok := true
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
 	for startIndex < len(tokens) {
 		solution := mentalese.Solution{}
 		solution, startIndex, ok = parser.parseSolution(tokens, startIndex)
@@ -70,9 +64,7 @@ func (parser *InternalGrammarParser) parseSolutions(tokens []Token, startIndex i
 		}
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return solutions, startIndex, ok
+	return solutions, startIndex, len(solutions) > 0
 }
 
 func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, parseCustomValue func(tokens []Token, startIndex int, key string) (int, bool, bool)) (int, bool) {
@@ -154,8 +146,6 @@ func (parser *InternalGrammarParser) parseResponses(tokens []Token, startIndex i
 	handlers := []mentalese.ResultHandler{}
 	ok := true
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
-
 	for startIndex < len(tokens) {
 		rule := mentalese.ResultHandler{}
 		rule, startIndex, ok = parser.parseResultHandler(tokens, startIndex)
@@ -166,9 +156,7 @@ func (parser *InternalGrammarParser) parseResponses(tokens []Token, startIndex i
 		}
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return handlers, startIndex, ok
+	return handlers, startIndex, len(handlers) > 0
 }
 
 func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startIndex int) (mentalese.ResultHandler, int, bool) {
@@ -207,42 +195,40 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 
 	grammar := parse.NewGrammarRules()
 	ok := true
+	found := false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 	for ok {
 		rule, newStartIndex, ruleFound := parser.parseGrammarRule(tokens, startIndex)
 		if ruleFound {
 			grammar.AddRule(rule)
 			startIndex = newStartIndex
+			found = true
 		} else {
 			ok = false
 		}
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return grammar, startIndex, ok
+	return grammar, startIndex, found
 }
 
 func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*parse.GrammarRules, int, bool) {
 
 	grammar := parse.NewGrammarRules()
 	ok := true
+	found := false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
 	for ok {
 		rule, newStartIndex, ruleFound := parser.parseGenerationGrammarRule(tokens, startIndex)
 		if ruleFound {
 			grammar.AddRule(rule)
 			startIndex = newStartIndex
+			found = true
 		} else {
 			ok = false
 		}
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-
-	return grammar, startIndex, ok
+	return grammar, startIndex, found
 }
 
 // rule: s(S) -> np(E) vp(S), sense: declaration(S) object(S, E);

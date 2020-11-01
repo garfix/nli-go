@@ -13,7 +13,7 @@ func TestFillerStack(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
 
-	grammarRules := internalGrammarParser.CreateGrammarRules(`[
+	grammarRules := internalGrammarParser.CreateGrammarRules(`
 
 		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),						sense: which(E1) quant_check($np, $dep_vp) }
 		{ rule: np(E1) -> nbar(E1), 										sense: quant(_, some(_), E1, $nbar) }
@@ -27,7 +27,7 @@ func TestFillerStack(t *testing.T) {
 		{ rule: adverb(A1) -> 'easiest', 									sense: easiest(A1) }
 		{ rule: noun(E1) -> 'babies', 										sense: baby(E1) }
 		{ rule: noun(E1) -> 'toys',											sense: toy(E1) }
-	]`)
+	`)
 
 	log := common.NewSystemLog(true)
 

@@ -69,7 +69,7 @@ Imagine the sentence: "Did all these men marry two women?". Resolving this quest
 `quant_check` says: apply the quants from the right-hand positions 1 (`$np1`), which is the sense of the `np(E1)` and 4 (`$np2`) and use them in that order. When the sense is built, the result looks like this:
 
     quant_check(
-        quant(Q1, E1, [...]), 
+        quant(Q1, E1, ...), 
         marry(P1, E1, E2)
     )     
 

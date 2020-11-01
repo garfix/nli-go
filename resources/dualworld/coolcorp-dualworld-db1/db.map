@@ -1,4 +1,2 @@
-[
-    dom:person_name(Id, Name) :- name(Id, Name);
-    dom:has_parent(Child, Parent) :- has_parent(Child, Parent);
-]
+dom:person_name(Id, Name) :- name(Id, Name);
+dom:has_parent(Child, Parent) :- has_parent(Child, Parent);

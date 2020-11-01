@@ -206,29 +206,7 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 
 		for _, argument := range relation.Arguments {
 
-			relationArgument := argument
-
-			if argument.IsRelationSet() {
-
-				relationArgument.TermValueRelationSet = relationArgument.TermValueRelationSet.ReplaceTerm(from, to)
-
-			} else if argument.IsRule() {
-
-				newGoals := RelationSet{relationArgument.TermValueRule.Goal}.ReplaceTerm(from, to)
-				newPattern := relationArgument.TermValueRule.Pattern.ReplaceTerm(from, to)
-				newRule := Rule{Goal: newGoals[0], Pattern: newPattern}
-				relationArgument.TermValueRule = newRule
-
-			} else if argument.IsList() {
-				panic("to be implemented")
-			} else {
-
-				if argument.Equals(from) {
-					relationArgument = to.Copy()
-				} else {
-					relationArgument = argument
-				}
-			}
+			relationArgument := argument.ReplaceTerm(from, to)
 
 			arguments = append(arguments, relationArgument)
 		}

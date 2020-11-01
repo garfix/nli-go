@@ -22,6 +22,16 @@ the resulting bindings will be
     
 As you can see the values are added, first in order of argument appearance, and second in order of binding appearance. First `X` is added as `2` and `3`; then `Y` is added as `1`.
 
+## List append
+
+Creates a new list from an existing list and adds an element to the end.
+
+    go:list_append(List, Element, NewList)
+    
+* `List`: a list
+* `Element`: any term
+* `NewList`: a variable (that will be bound to the ordered list)
+
 ## List order
 
 Creates a new list, based on an existing list, but ordered by an order function.

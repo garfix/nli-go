@@ -223,7 +223,24 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument mentalese.Term, patter
 
 	} else if subjectArgument.IsList() {
 
-		panic("to be implemented")
+		newBinding := subjectBinding.Copy()
+
+		if patternArgument.IsVariable() {
+			success = true
+		} else if patternArgument.IsList() {
+			success = true
+			if len(subjectArgument.TermValueList) == len(patternArgument.TermValueList) {
+				for i, subjectElement := range  subjectArgument.TermValueList {
+					patternElement := patternArgument.TermValueList[i]
+					newBinding, success = matcher.MatchTerm(subjectElement, patternElement, newBinding)
+					if !success { break }
+				}
+			} else {
+				success = false
+			}
+		}
+
+		return newBinding, success
 
 	} else {
 

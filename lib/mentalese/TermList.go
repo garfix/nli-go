@@ -15,6 +15,12 @@ func (list TermList) Equals(otherList TermList) bool {
 	return true
 }
 
+func (list TermList) Append(term Term) TermList {
+	newList := list.Copy()
+	newList = append(newList, term)
+	return newList
+}
+
 func (list TermList) UsesVariable(variable string) bool {
 	for _, element := range list {
 		if element.UsesVariable(variable) { return true }
@@ -77,6 +83,14 @@ func (list TermList) GetValues() []string {
 		values = append(values, e.TermValue)
 	}
 	return values
+}
+
+func (list TermList) ReplaceTerm(from Term, to Term) TermList {
+	newList := TermList{}
+	for _, element := range list {
+		newList = append(newList, element.ReplaceTerm(from, to))
+	}
+	return newList
 }
 
 func (list TermList) Sort() (TermList, bool) {

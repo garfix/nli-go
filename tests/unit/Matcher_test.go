@@ -36,6 +36,7 @@ func TestMatchTwoTerms(t *testing.T) {
 		{"E1", "/deer/", "{}", "{E1: /deer/}", true},
 		{"E1", "'grass'", "{}", "{E1: 'grass'}", true},
 		{"E1", "son_of(blagger)", "{}", "{E1: son_of(blagger)}", true},
+		{"E1", "[a, b]]", "{}", "{E1: [a, b]}", true},
 		{"E1", "_", "{}", "{}", true},
 
 		// bind variable to anything, with bindings
@@ -55,6 +56,13 @@ func TestMatchTwoTerms(t *testing.T) {
 		{"atom1", "atom2", "{E1: 123}", "{E1: 123}", false},
 		{"atom1", "X1", "{E1: 123}", "{E1: 123}", true},
 		{"atom1", "_", "{E1: 123}", "{E1: 123}", true},
+
+		// bind two lists
+		{"[]", "[]", "{E1: 123}", "{E1: 123}", true},
+		{"[a, b]", "3", "{E1: 123}", "{E1: 123}", false},
+		{"[a, b]", "[a]", "{E1: 123}", "{E1: 123}", false},
+		{"[a, b]", "[a, c]", "{E1: 123}", "{E1: 123}", false},
+		{"[a, X]", "[a, b]", "{E1: 123}", "{E1: 123, X: b}", true},
 	}
 
 	for _, test := range tests {

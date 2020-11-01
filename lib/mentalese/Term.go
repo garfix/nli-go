@@ -187,8 +187,6 @@ func (term Term) Copy() Term {
 	return newTerm
 }
 
-var x = 1000
-
 func (term Term) Bind(binding Binding) Term {
 	arg := term
 	if term.IsVariable() {
@@ -204,6 +202,37 @@ func (term Term) Bind(binding Binding) Term {
 		arg.TermValueList = term.TermValueList.Bind(binding)
 	}
 	return arg
+}
+
+func (term Term) ReplaceTerm(from Term, to Term) Term {
+
+	relationArgument := term
+
+	if term.IsRelationSet() {
+
+		relationArgument.TermValueRelationSet = relationArgument.TermValueRelationSet.ReplaceTerm(from, to)
+
+	} else if term.IsRule() {
+
+		newGoals := RelationSet{relationArgument.TermValueRule.Goal}.ReplaceTerm(from, to)
+		newPattern := relationArgument.TermValueRule.Pattern.ReplaceTerm(from, to)
+		newRule := Rule{Goal: newGoals[0], Pattern: newPattern}
+		relationArgument.TermValueRule = newRule
+
+	} else if term.IsList() {
+
+		relationArgument.TermValueList = relationArgument.TermValueList.ReplaceTerm(from, to)
+
+	} else {
+
+		if term.Equals(from) {
+			relationArgument = to.Copy()
+		} else {
+			relationArgument = term
+		}
+	}
+
+	return relationArgument
 }
 
 // If term is a variable, and occurs in binding, returns its binding

@@ -53,6 +53,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		
 		// list
 		mentalese.PredicateListOrder: base.listOrder,
+		mentalese.PredicateListAppend: base.listAppend,
 		mentalese.PredicateListForeach: base.listForeach,
 		mentalese.PredicateListDeduplicate: base.listDeduplicate,
 		mentalese.PredicateListSort: base.listSort,

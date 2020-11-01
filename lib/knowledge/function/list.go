@@ -24,6 +24,24 @@ func (base *SystemSolverFunctionBase) listOrder(relation mentalese.Relation, bin
 	return mentalese.InitBindingSet(newBinding)
 }
 
+func (base *SystemSolverFunctionBase) listAppend(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "l*v", base.log) { return mentalese.NewBindingSet() }
+
+	list := bound.Arguments[0].TermValueList
+	element := bound.Arguments[1]
+	listVariable := relation.Arguments[2].TermValue
+
+	newList := list.Copy()
+	newList = newList.Append(element)
+
+	newBinding := binding.Copy()
+	newBinding.Set(listVariable, mentalese.NewTermList(newList))
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *SystemSolverFunctionBase) listForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

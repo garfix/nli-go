@@ -4,6 +4,21 @@ Extended generation with head conditions; see generation.md
 
 Removed most of the syntactic brackets `[ ]` where they were not necessary: in code declrations. Brackets are now only used with bindings and lists. 
 
+===
+
+Proper functions. New syntax. Implemented as a rule with property "function" true. Adding the `return` keyword. It places the value in the current scope's `returnValue`. The solver must check if this value is set and then not continue. Function call is a term???
+
+    square(X) {
+        go:multiply(X, X, R)
+        return R
+    }
+
+Implementation may be as follows: on solving a relation, the solver may start by inspecting the arguments. If an argument is a function call, it may be replaced by its return value.
+
+=== 
+
+Introduced `break()` to break a loop. It's not finished, but it works already very well on the free space algorithm. Brought down the blocks world tests from 3 seconds to 1 second.
+
 # 2020-10-31
 
 I started indexing predicate to knowledge base / knowledge base function, in the problem solver, for speed. It made the blocks world test 1/8th faster. More importantly, this allows the system to scale up to many more knowledge bases, because finding the handler for a predicate is now reduced from O(n) to O(1).

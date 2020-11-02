@@ -65,6 +65,7 @@ const PredicateDateToday = "go_date_today"
 const PredicateDateSubtractYears = "go_date_subtract_years"
 const PredicateSem = "go_sem"
 const PredicateLog = "go_log"
+const PredicateBreak = "go_break"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

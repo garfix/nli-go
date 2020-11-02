@@ -16,6 +16,12 @@ func (base *SystemSolverFunctionBase) let(relation mentalese.Relation, binding m
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
 	variables := base.solver.GetCurrentScope().GetVariables()
+
+	if !relation.Arguments[0].IsVariable() {
+		base.log.AddError("Let: variable already in use. Value: " + variable)
+		return mentalese.NewBindingSet()
+	}
+
 	(*variables).Set(variable, value)
 
 	return mentalese.InitBindingSet(binding)
@@ -56,6 +62,7 @@ func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, 
 	variableTerm := relation.Arguments[2]
 	variable := variableTerm.TermValue
 	children := relation.Arguments[3].TermValueRelationSet
+	scope := base.solver.GetCurrentScope()
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -79,9 +86,24 @@ func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, 
 			elementBindings = elementBindings.FilterOutVariablesByName([]string{ variable })
 		}
 		newBindings.AddMultiple(elementBindings)
+		if base.solver.GetCurrentScope().IsBreaked() {
+			scope.SetBreaked(false)
+			break
+		}
 	}
 
 	return newBindings
+}
+
+func (base *SystemSolverFunctionBase) doBreak(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
+
+	base.solver.GetCurrentScope().SetBreaked(true)
+
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *SystemSolverFunctionBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

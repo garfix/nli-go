@@ -86,3 +86,11 @@ Example:
     go:range_foreach(1, 10, I,
         go:multiply(Result, I, Result)
     )     
+
+## Break
+
+Breaks a loop.
+
+    go:break()
+    
+    

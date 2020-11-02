@@ -70,6 +70,10 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 		if newBindings.IsEmpty() {
 			break
 		}
+		// check for break
+		if solver.scopeStack.GetCurrentScope().IsBreaked() {
+			break
+		}
 	}
 
 	//solver.log.EndProduction("Solve Set", newBindings.String())

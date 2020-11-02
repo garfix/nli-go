@@ -102,3 +102,11 @@ the database.
 ## Second order (nested) functions
 
 Some relations take relation sets as their arguments. Read about them [here](functions-nested)
+
+
+## The relation "spouse" is bidirectional, how do I deal with it?
+
+You can add two lines to a .map file for a knowledge base:
+
+    married_to(A, B) :- spouse(A, B);
+    married_to(A, B) :- spouse(B, A);

@@ -27,7 +27,7 @@ func TestDBPedia(t *testing.T) {
 	}{
 		{
 			{"How many children has Madonna?", "She has 4 children", "", ""},
-			//{"How old is she", "She is 62 years old ( born on August 16, 1958 )", "", ""},
+			{"How old is she", "She is 62 years old ( born on August 16, 1958 )", "", ""},
 			//{"When is her birthday?", "August 16, 1958", "", ""},
 		},
 		{

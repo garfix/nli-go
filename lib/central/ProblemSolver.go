@@ -14,15 +14,18 @@ type ProblemSolver struct {
 	index    			  *KnowledgeBaseIndex
 	scopeStack            *mentalese.ScopeStack
 	matcher               *RelationMatcher
+	variableGenerator     *mentalese.VariableGenerator
 	modifier              *FactBaseModifier
 	dialogContext         *DialogContext
 	log                   *common.SystemLog
 }
 
 func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
+	variableGenerator := mentalese.NewVariableGenerator()
 	return &ProblemSolver{
 		index: 			   NewProblemSolverIndex(),
-		modifier:          NewFactBaseModifier(log),
+		variableGenerator: variableGenerator,
+		modifier:          NewFactBaseModifier(log, variableGenerator),
 		scopeStack:        mentalese.NewScopeStack(),
 		matcher:           matcher,
 		dialogContext:     dialogContext,
@@ -203,7 +206,7 @@ func (solver *ProblemSolver) FindFacts(factBase api.FactBase, relation mentalese
 		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
-		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2)
+		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2, solver.variableGenerator)
 
 		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 
@@ -395,7 +398,15 @@ func (solver *ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goal
 	goalBindings := mentalese.NewBindingSet()
 
 	// match rules from the rule base to the goalRelation
-	sourceSubgoalSets, _ := ruleBase.Bind(goalRelation, binding)
+	rules := ruleBase.GetRules(goalRelation, binding)
+	sourceSubgoalSets := []mentalese.RelationSet{}
+	for _, rule := range rules {
+		aBinding, _ := solver.matcher.MatchTwoRelations(goalRelation, rule.Goal, binding)
+		bBinding, _ := solver.matcher.MatchTwoRelations(rule.Goal, goalRelation, mentalese.NewBinding())
+		boundRule := rule.BindSingle(bBinding)
+		boundRule = boundRule.InstantiateUnboundVariables(aBinding, solver.variableGenerator)
+		sourceSubgoalSets = append(sourceSubgoalSets, boundRule.Pattern)
+	}
 
 	for _, sourceSubgoalSet := range sourceSubgoalSets {
 

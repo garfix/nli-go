@@ -14,10 +14,10 @@ func (rule Rule) BindSingle(binding Binding) Rule {
 	}
 }
 
-func (rule Rule) InstantiateUnboundVariables(binding Binding) Rule {
+func (rule Rule) InstantiateUnboundVariables(binding Binding, variableGenerator *VariableGenerator) Rule {
 	newRule := Rule{}
 	newRule.Goal = rule.Goal
-	newRule.Pattern = rule.Pattern.InstantiateUnboundVariables(binding)
+	newRule.Pattern = rule.Pattern.InstantiateUnboundVariables(binding, variableGenerator)
 	return newRule
 }
 

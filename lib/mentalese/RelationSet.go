@@ -2,7 +2,6 @@ package mentalese
 
 import (
 	"nli-go/lib/common"
-	"strconv"
 )
 
 // An array of relations
@@ -134,7 +133,7 @@ func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 // set contains variables A, B, and C
 // binding: A: X, C: Z
 // resulting set contains X (for A), Z (for C) and X22 (a new variable)
-func (set RelationSet) ImportBinding(binding Binding) RelationSet {
+func (set RelationSet) ImportBinding(binding Binding, generator *VariableGenerator) RelationSet {
 
 	importBinding := binding.Copy()
 
@@ -145,7 +144,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	for _, variable  := range variables {
 		_, found := importBinding.Get(variable)
 		if !found {
-			importBinding.Set(variable, createVariable(variable))
+			importBinding.Set(variable, generator.GenerateVariable(variable))
 		}
 	}
 
@@ -154,30 +153,7 @@ func (set RelationSet) ImportBinding(binding Binding) RelationSet {
 	return set.BindSingle(importBinding)
 }
 
-
-
-var variables map[string]int
-
-func createVariable(initial string) Term {
-
-	if variables == nil {
-		variables = map[string]int{}
-	}
-
-	_, present := variables[initial]
-	if !present {
-		variables[initial] = 1
-	} else {
-		variables[initial]++
-	}
-
-	return NewTermVariable(initial + "$" + strconv.Itoa(variables[initial]))
-}
-
-
-
-
-func (relations RelationSet) InstantiateUnboundVariables(binding Binding) RelationSet {
+func (relations RelationSet) InstantiateUnboundVariables(binding Binding, variableGenerator *VariableGenerator) RelationSet {
 	inputVariables := relations.GetVariableNames()
 
 	newRelations := relations
@@ -185,13 +161,12 @@ func (relations RelationSet) InstantiateUnboundVariables(binding Binding) Relati
 	for _, inputVariable := range inputVariables {
 		_, found := binding.Get(inputVariable)
 		if !found {
-			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), createVariable(inputVariable))
+			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), variableGenerator.GenerateVariable(inputVariable))
 		}
 	}
 
 	return newRelations
 }
-
 
 // Replaces all occurrences in relationTemplates from from to to
 func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {

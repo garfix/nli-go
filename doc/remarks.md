@@ -1,3 +1,7 @@
+# 2020-11-02
+
+Finished `go:break()`. It breaks `go:list_foreach()` and `go:range_foreach()` loops. Very nice to have. Quite simple to implement if you have the scope stack available.
+
 # 2020-11-01
 
 Extended generation with head conditions; see generation.md

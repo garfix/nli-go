@@ -7,11 +7,12 @@ import (
 
 type SenseBuilder struct {
 	varIndexCounter map[string]int
-	constantCounter int
 }
 
 func NewSenseBuilder() SenseBuilder {
-	return SenseBuilder{varIndexCounter: map[string]int{}, constantCounter: 1}
+	return SenseBuilder{
+		varIndexCounter: map[string]int{},
+	}
 }
 
 // Returns a new variable name

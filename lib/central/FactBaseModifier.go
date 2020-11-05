@@ -8,11 +8,13 @@ import (
 
 type FactBaseModifier struct {
 	matcher *RelationMatcher
+	variableGenerator *mentalese.VariableGenerator
 }
 
-func NewFactBaseModifier(log *common.SystemLog) *FactBaseModifier {
+func NewFactBaseModifier(log *common.SystemLog, variableGenerator *mentalese.VariableGenerator) *FactBaseModifier {
 	return &FactBaseModifier{
 		matcher: NewRelationMatcher(log),
+		variableGenerator: variableGenerator,
 	}
 }
 
@@ -23,7 +25,7 @@ func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase ap
 		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
-		dbRelations := mapping.Pattern.ImportBinding(activeBinding2)
+		dbRelations := mapping.Pattern.ImportBinding(activeBinding2, modifier.variableGenerator)
 
 		for _, replacementRelation := range dbRelations {
 
@@ -39,7 +41,7 @@ func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase a
 		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
-		dbRelations := mapping.Pattern.ImportBinding(activeBinding2)
+		dbRelations := mapping.Pattern.ImportBinding(activeBinding2, modifier.variableGenerator)
 
 		for _, replacementRelation := range dbRelations {
 

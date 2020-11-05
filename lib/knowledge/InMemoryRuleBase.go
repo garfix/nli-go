@@ -28,26 +28,21 @@ func (ruleBase *InMemoryRuleBase) GetPredicates() []string {
 	return predicates
 }
 
-func (ruleBase *InMemoryRuleBase) Bind(goal mentalese.Relation, binding mentalese.Binding) ([]mentalese.RelationSet, mentalese.BindingSet) {
+func (ruleBase *InMemoryRuleBase) GetRules(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Rule {
 
 	matcher := central.NewRelationMatcher(ruleBase.log)
-	subgoalRelationSets := []mentalese.RelationSet{}
-	subgoalBindings := mentalese.NewBindingSet()
+	rules := []mentalese.Rule{}
 
 	for _, rule := range ruleBase.rules {
 
 		// match goal
-		aBinding, match := matcher.MatchTwoRelations(goal, rule.Goal, binding)
+		_, match := matcher.MatchTwoRelations(goal, rule.Goal, binding)
 		if match {
-			bBinding, _ := matcher.MatchTwoRelations(rule.Goal, goal, mentalese.NewBinding())
-			boundRule := rule.BindSingle(bBinding)
-			boundRule = boundRule.InstantiateUnboundVariables(aBinding)
-			subgoalRelationSets = append(subgoalRelationSets, boundRule.Pattern)
-			subgoalBindings.Add(aBinding)
+			rules = append(rules, rule)
 		}
 	}
 
-	return subgoalRelationSets, subgoalBindings
+	return rules
 }
 
 func (ruleBase *InMemoryRuleBase) Assert(rule mentalese.Rule) {

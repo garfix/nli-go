@@ -1,5 +1,6 @@
 package tests
 import (
+	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
@@ -187,6 +188,15 @@ func TestListFunctions(t *testing.T) {
 		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], I, E, go:unify(F, E) go:unify(G, I))", "{}", "[{F:`:B`, G: 0} {F:`:C`, G: 1} {F:`:A`, G: 2}]"},
+		//{`
+		//	go:let(C, 0) go:list_foreach([1,2,3], I, E,
+		//		go:list_foreach([1,2,3], J, F,
+		//			go:add(C, 1, C) go:add(C, 2, C) go:break() go:add(C, 4, C)
+		//		)
+		//		go:add(C, 8, C)
+		//		go:equals(E, 2)
+		//		go:break()
+		//	)`, "{A: 5}", "[{A: 5, C: 22}]"},
 		{"go:list_deduplicate(ListA, ListB)", "{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`]}", "[{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`],ListB:[`:B`, `:C`, `:A`]}]"},
 		{"go:list_sort(ListA, ListB)", "{ListA:['B', 'C', 'A', 'B', 'C']}", "[{ListA:['B', 'C', 'A', 'B', 'C'],ListB:['A', 'B', 'B', 'C', 'C']}]"},
 		{"go:list_sort(ListA, ListB)", "{ListA:[2, 3, 12, 1, 2, 3]}", "[{ListA:[2, 3, 12, 1, 2, 3],ListB:[1, 2, 2, 3, 3, 12]}]"},
@@ -199,6 +209,8 @@ func TestListFunctions(t *testing.T) {
 
 	for _, test := range tests {
 
+		log.Clear()
+
 		input := parser.CreateRelationSet(test.input)
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
@@ -207,6 +219,7 @@ func TestListFunctions(t *testing.T) {
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
+			fmt.Println(log.String())
 		}
 	}
 

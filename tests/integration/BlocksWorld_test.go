@@ -6,7 +6,6 @@ import (
 	"image/color"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
-	"os"
 	"strconv"
 	"testing"
 )
@@ -19,9 +18,8 @@ import (
 //
 func TestBlocksWorld(t *testing.T) {
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/blocks", log)
-	sessionId := "1"
-	actualSessionPath := common.AbsolutePath(common.Dir(), "sessions/" + sessionId + ".json")
+	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
+	sessionId := "blocks-demo"
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
@@ -84,7 +82,7 @@ func TestBlocksWorld(t *testing.T) {
 		},
 	}
 
-	_ = os.Remove(actualSessionPath)
+	system.RemoveDialogContext(sessionId)
 
 	for _, session := range tests {
 
@@ -92,7 +90,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			system.PopulateDialogContext(actualSessionPath, false)
+			system.PopulateDialogContext(sessionId, false)
 
 			answer, options := system.Answer(test.question)
 
@@ -100,7 +98,7 @@ func TestBlocksWorld(t *testing.T) {
 				answer += options.String()
 			}
 
-			system.StoreDialogContext(actualSessionPath)
+			system.StoreDialogContext(sessionId)
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

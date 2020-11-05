@@ -9,7 +9,7 @@ import (
 func TestRelationships(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/relationships", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/relationships", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

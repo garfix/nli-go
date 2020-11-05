@@ -11,7 +11,7 @@ import (
 func TestShell(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/shell", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/shell", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
@@ -23,7 +23,7 @@ func TestShell(t *testing.T) {
 		answer   string
 	}{
 		{"List files", "OK"},
-		{"List files resources", "session-2.json"},
+		{"List files resources", "Shell_test.txt"},
 	}
 
 	for _, test := range tests {

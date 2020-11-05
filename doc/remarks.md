@@ -1,3 +1,7 @@
+# 2020-11-05
+
+Uniformized the directory where all generated files are stored. It is now always the `var` directory, except when you specify another directory. The `session`, `log` and `sparql-cache` directories are located within `var`.
+
 # 2020-11-02
 
 Finished `go:break()`. It breaks `go:list_foreach()` and `go:range_foreach()` loops. Very nice to have. Quite simple to implement if you have the scope stack available.

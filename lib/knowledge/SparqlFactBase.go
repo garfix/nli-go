@@ -18,6 +18,7 @@ const MaxQueries = 200
 
 type SparqlFactBase struct {
 	KnowledgeBaseCore
+	cacheDir		string
 	baseUrl         string
 	defaultGraphUri string
 	ds2db           []mentalese.Rule
@@ -29,10 +30,11 @@ type SparqlFactBase struct {
 	log             *common.SystemLog
 }
 
-func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *central.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, log *common.SystemLog) *SparqlFactBase {
+func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *central.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, cacheDir string, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
+		cacheDir:          cacheDir,
 		baseUrl:           baseUrl,
 		defaultGraphUri:   defaultGraphUri,
 		ds2db:             ds2db,

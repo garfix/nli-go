@@ -29,16 +29,20 @@ type System struct {
 	surfacer              *generate.SurfaceRepresentation
 }
 
-func (system *System) PopulateDialogContext(sessionDataPath string, clearWhenCorrupt bool) {
-	system.dialogContextStorage.Read(sessionDataPath, system.dialogContext, clearWhenCorrupt)
+func (system *System) PopulateDialogContext(sessionId string, clearWhenCorrupt bool) {
+	system.dialogContextStorage.Read(sessionId, system.dialogContext, clearWhenCorrupt)
 }
 
 func (system *System) ClearDialogContext() {
 	system.dialogContext.Initialize()
 }
 
-func (system *System) StoreDialogContext(sessionDataPath string) {
-	system.dialogContextStorage.Write(sessionDataPath, system.dialogContext)
+func (system *System) StoreDialogContext(sessionId string) {
+	system.dialogContextStorage.Write(sessionId, system.dialogContext)
+}
+
+func (system *System) RemoveDialogContext(sessionId string) {
+	system.dialogContextStorage.Remove(sessionId)
 }
 
 // Low-level function to inspect the internal state of the system

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"os"
-	"path/filepath"
 	"strconv"
 )
 
@@ -14,9 +13,7 @@ func (factBase *SparqlFactBase) doCachedQuery(query string) sparqlResponse {
 
 	sparqlResponse := sparqlResponse{}
 	queryHash := fmt.Sprintf("%x", md5.Sum([]byte(query)))
-	executable, _ := os.Executable()
-	executablePath := filepath.Dir(executable)
-	cacheDir := common.AbsolutePath(executablePath, "cache")
+	cacheDir := factBase.cacheDir
 	queryCachePath := cacheDir + "/" + queryHash + ".json"
 
 	_, err := os.Stat(cacheDir)

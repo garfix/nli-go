@@ -10,7 +10,7 @@ import (
 func TestDualWorld(t *testing.T) {
 
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/dualworld", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/dualworld", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

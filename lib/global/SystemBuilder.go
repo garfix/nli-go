@@ -19,34 +19,39 @@ import (
 type systemBuilder struct {
 	log                *common.SystemLog
 	baseDir            string
+	varDir			   string
 	parser             *importer.InternalGrammarParser
 	loadedModules      []string
 	applicationAliases map[string]string
 }
 
-func NewSystem(systemPath string, log *common.SystemLog) *System {
+// systemDir: absolute base dir of the interaction system
+// cacheDir: absolute base dir of all output files
+// log: the log file that will store progress and errors
+func NewSystem(systemDir string, varDir string, log *common.SystemLog) *System {
 
 	system := &System{ log: log }
 
-	absolutePath, err := filepath.Abs(systemPath)
+	absolutePath, err := filepath.Abs(systemDir)
 	if err != nil {
 		log.AddError(err.Error())
 		return system
 	}
 
-	builder := newSystemBuilder(absolutePath, log)
+	builder := newSystemBuilder(absolutePath, varDir, log)
 	builder.build(system)
 
 	return system
 }
 
-func newSystemBuilder(baseDir string, log *common.SystemLog) *systemBuilder {
+func newSystemBuilder(baseDir string, varDir string, log *common.SystemLog) *systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
 	return &systemBuilder {
 		baseDir: baseDir,
+		varDir:  varDir,
 		parser:  parser,
 		log:     log,
 	}
@@ -74,8 +79,8 @@ func (builder *systemBuilder) build(system *System) {
 	}
 
 	builder.loadedModules = []string{ "go" }
-	for alias, moduleSpec := range config.Uses {
-		builder.loadModule(moduleSpec, alias, &indexes, system)
+	for _, moduleSpec := range config.Uses {
+		builder.loadModule(moduleSpec, &indexes, system)
 	}
 }
 
@@ -102,7 +107,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solver = solver
-	system.dialogContextStorage = NewDialogContextFileStorage(builder.log)
+	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
 	system.nameResolver = central.NewNameResolver(solver, system.meta, matcher, builder.log, system.dialogContext)
 	system.parser = earley.NewParser(system.nameResolver, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
@@ -156,7 +161,7 @@ func (builder *systemBuilder) AddSorts(path string, system *System) bool {
 	return true
 }
 
-func (builder *systemBuilder) loadModule(moduleSpec string, alias string, indexes *map[string]index, system *System) {
+func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]index, system *System) {
 
 	parts := strings.Split(moduleSpec, ":")
 	if len(parts) != 2 {
@@ -224,7 +229,7 @@ func (builder *systemBuilder) createAliasMap(index index, moduleName string) map
 
 func (builder *systemBuilder) loadDependentModules(index index, indexes *map[string]index, system *System) {
 	for _, moduleSpec := range index.Uses {
-		builder.loadModule(moduleSpec, "", indexes, system)
+		builder.loadModule(moduleSpec, indexes, system)
 	}
 }
 
@@ -467,7 +472,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.log)
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.varDir + "/sparql-cache", builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {

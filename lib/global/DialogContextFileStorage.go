@@ -8,26 +8,32 @@ import (
 )
 
 type DialogContextFileStorage struct {
-	log *common.SystemLog
+	cacheDir string
+	log      *common.SystemLog
 }
 
-func NewDialogContextFileStorage(log *common.SystemLog) *DialogContextFileStorage {
-	return &DialogContextFileStorage{ log: log }
+func NewDialogContextFileStorage(varDir string, log *common.SystemLog) *DialogContextFileStorage {
+	return &DialogContextFileStorage{
+		cacheDir: varDir,
+		log:      log,
+	}
 }
 
-func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogContext *central.DialogContext, clearWhenCorrupt bool) {
+func (storage DialogContextFileStorage) Read(sessionId string, dialogContext *central.DialogContext, clearWhenCorrupt bool) {
 
-	if dialogContextPath == "" {
+	if sessionId == "" {
 		return
 	}
 
-	_, err := os.Stat(dialogContextPath)
+	sessionPath := storage.cacheDir + "/" + sessionId + ".json"
+
+	_, err := os.Stat(sessionPath)
 	if os.IsNotExist(err) {
 		// session file does not exist yet; it will be created when the session ends
 		return
 	}
 
-	dialogContextJson, err := common.ReadFile(dialogContextPath)
+	dialogContextJson, err := common.ReadFile(sessionPath)
 	if err != nil {
 		storage.log.AddError(err.Error())
 		return
@@ -42,11 +48,13 @@ func (storage DialogContextFileStorage) Read(dialogContextPath string, dialogCon
 	}
 }
 
-func (storage DialogContextFileStorage) Write(dialogContextPath string, dialogContext *central.DialogContext) {
+func (storage DialogContextFileStorage) Write(sessionId string, dialogContext *central.DialogContext) {
 
-	if dialogContextPath == "" {
+	if sessionId == "" {
 		return
 	}
+
+	sessionPath := storage.cacheDir + "/" + sessionId + ".json"
 
 	jsonBytes, err := json.Marshal(dialogContext)
 	if err != nil {
@@ -56,9 +64,37 @@ func (storage DialogContextFileStorage) Write(dialogContextPath string, dialogCo
 
 	jsonString := string(jsonBytes)
 
-	err = common.WriteFile(dialogContextPath, jsonString)
+	_, err = os.Stat(storage.cacheDir)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(storage.cacheDir, 0777)
+		if err != nil {
+			storage.log.AddError("Error creating cache dir " + storage.cacheDir + " (" + err.Error() + ")")
+			return
+		}
+	}
+
+
+	err = common.WriteFile(sessionPath, jsonString)
 	if err != nil {
-		storage.log.AddError("Error writing dialog context file " + dialogContextPath + " (" + err.Error() + ")")
+		storage.log.AddError("Error writing dialog context file " + sessionPath + " (" + err.Error() + ")")
 		return
+	}
+}
+
+func (storage DialogContextFileStorage) Remove(sessionId string) {
+
+	if sessionId == "" {
+		return
+	}
+
+	sessionPath := storage.cacheDir + "/" + sessionId + ".json"
+
+	_, err := os.Stat(sessionPath)
+	if err == nil {
+		err = os.Remove(sessionPath)
+		if err != nil {
+			storage.log.AddError("Error removing session file " + sessionPath + " (" + err.Error() + ")")
+			return
+		}
 	}
 }

@@ -28,17 +28,20 @@ func main() {
 	var sessionId = ""
 	var absSessionPath = ""
 	var configPath = ""
+	var variableDir = ""
 	var returnType = ""
 
 	flag.BoolVar(&interactive, "i", false, "Interative: start a session with NLI-GO")
 	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog session")
 	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to the root directory of an application")
+	flag.StringVar(&variableDir, "d", "", "Directory: (relative) path to the directory where caches and sessions are stored (default ./var)")
 	flag.StringVar(&returnType, "r", "text", "Return type: text / json")
 
 	flag.Parse()
 
 	if len(flag.Args()) == 0 && flag.NFlag() == 0 {
-		fmt.Println("Use nli [-i] [-s <session_id>] [-r JSON] -c </path/to/application> <full sentence>")
+		fmt.Println("Use:")
+		fmt.Println(" nli -c </path/to/application> [-i] [-s <session_id>] [-r JSON] [-d </path/to/generated/output>] <full sentence>")
 		fmt.Println("")
 		fmt.Println("Single question:")
 		fmt.Println("    bin/nli -c resources/blocks \"Does the green block support a pyramid?\"")
@@ -54,24 +57,27 @@ func main() {
 	sentence := flag.Arg(0)
 	workingDir, _ := os.Getwd()
 	absConfigPath := common.AbsolutePath(workingDir, configPath)
+
+	if variableDir == "" {
+		variableDir = workingDir + "/var"
+	} else {
+		variableDir, _ = filepath.Abs(variableDir)
+		variableDir = filepath.Clean(variableDir)
+	}
+
 	log := common.NewSystemLog(false)
-	system := global.NewSystem(absConfigPath, log)
+	system := global.NewSystem(absConfigPath, variableDir, log)
 
 	// load dialog context
 	if sessionId != "" {
-
-		executable, _ := os.Executable()
-		executablePath := filepath.Dir(executable)
-
-		absSessionPath = common.AbsolutePath(executablePath, "sessions/" + sessionId + ".json")
-		system.PopulateDialogContext(absSessionPath, true)
+		system.PopulateDialogContext(sessionId, true)
 	}
 
 	if log.IsOk() {
 		if interactive {
 			goInteractive(system, log, absSessionPath, configPath, returnType)
 		} else {
-			singleLine(system, log, sentence, absSessionPath, returnType)
+			singleLine(system, log, sentence, sessionId, returnType)
 		}
 	}
 
@@ -80,14 +86,14 @@ func main() {
 	}
 }
 
-func singleLine(system *global.System, log *common.SystemLog, sentence string, absSessionPath string, returnType string) (string, *common.Options) {
+func singleLine(system *global.System, log *common.SystemLog, sentence string, sessionId string, returnType string) (string, *common.Options) {
 
 	// the actual system call
 	answer, options := system.Answer(sentence)
 
 	// store dialog context for next call
-	if absSessionPath != "" {
-		system.StoreDialogContext(absSessionPath)
+	if sessionId != "" {
+		system.StoreDialogContext(sessionId)
 	}
 
 	response := createResponseString(log, answer, options, returnType)

@@ -1,7 +1,4 @@
 <?php
-/**
- * Calls "nli answer" and echoes the result in JSON.
- */
 
 $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : "";
 
@@ -10,7 +7,8 @@ $sessionId = session_id();
 
 $command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/dbpedia';
-$fullCommand = sprintf('%s -s %s -c %s -r json "%s"', $command, $sessionId, $configPath, $query);
+$varDir = __DIR__ . '/../var';
+$fullCommand = sprintf('%s -s %s -c %s -d %s -r json "%s"', $command, $sessionId, $configPath, $varDir, $query);
 $start = microtime(true);
 
 $process = exec($fullCommand, $output);
@@ -19,7 +17,7 @@ $end = microtime(true);
 $duration = sprintf("%.2f", $end - $start);
 $result = json_decode(implode($output), true);
 
-$handle = fopen(__DIR__ . '/log/' . date('Y-m') . '-queries.log', 'a');
+$handle = fopen(__DIR__ . '/../var/log/' . date('Y-m') . '-queries.log', 'a');
 
 $answer = $result['Answer'];
 $optionKeys = $result['OptionKeys'];

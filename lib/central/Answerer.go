@@ -50,7 +50,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 		for i, solution := range allSolutions {
 
-			answerer.log.AddProduction("Solution", solution.Condition.String())
+			answerer.log.AddDebug("Solution", solution.Condition.String())
 
 			// apply transformation, if available
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
@@ -113,8 +113,6 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 // Returns the solutions whose condition matches the goal, and a set of bindings per solution
 func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.Solution {
-
-	answerer.log.StartDebug("findSolutions", goal)
 
 	var solutions []mentalese.Solution
 

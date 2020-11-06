@@ -24,6 +24,10 @@ func NewSystemLog(debugOn bool) *SystemLog {
 	return &log
 }
 
+func (log *SystemLog) Active() bool {
+	return log.debugOn
+}
+
 func (log *SystemLog) Clear() {
 	log.productions = []string{}
 	log.debugLines = []string{}
@@ -42,29 +46,32 @@ func (log *SystemLog) DisableDebug() {
 	log.debugOn = true
 }
 
-func (log *SystemLog) ToggleDebug() {
-	log.debugOn = !log.debugOn
-}
-
 func (log *SystemLog) AddProduction(name string, production string) {
-	stmt := strings.Repeat("| ", log.debugDepth) + name + ": " + production + " "
+	stmt := name + ": " + production + " "
 	log.productions = append(log.productions, stmt)
 }
 
-func (log *SystemLog) StartProduction(name string, production string) {
-	log.AddProduction("╭ " + name, production)
-	log.debugDepth++
+func (log *SystemLog) AddDebug(name string, production string) {
+	stmt := strings.Repeat("| ", log.debugDepth) + name + ": " + production + " "
+	log.debugLines = append(log.debugLines, stmt)
 }
 
-func (log *SystemLog) EndProduction(name string, production string) {
+func (log *SystemLog) StartDebug(name string, production string) bool {
+	log.AddDebug("╭ " + name, production)
+	log.debugDepth++
+	return true
+}
+
+func (log *SystemLog) EndDebug(name string, production string) bool {
 	log.debugDepth--
-	log.AddProduction("╰ " + name, production)
+	log.AddDebug("╰ " + name, production)
+	return true
 }
 
 func (log *SystemLog) AddError(error string) {
 	log.ok = false
 	log.errors = append(log.errors, error)
-	log.AddProduction("ERROR", error)
+	log.AddDebug("ERROR", error)
 }
 
 func (log *SystemLog) SetClarificationRequest(question string, options *Options) {
@@ -86,39 +93,6 @@ func (log *SystemLog) IsOk() bool {
 
 func (log *SystemLog) IsDone() bool {
 	return !log.ok || log.clarificationQuestion != ""
-}
-
-func (log *SystemLog) StartDebug(text string, vals ...interface{}) {
-
-	if !log.debugOn {
-		return
-	}
-
-	stmt := strings.Repeat("  ", log.debugDepth) + text + " "
-	for _, val := range vals {
-		stmt += fmt.Sprintf("%v", val) + " "
-	}
-
-	log.debugLines = append(log.debugLines, stmt)
-	log.debugDepth++
-}
-
-func (log *SystemLog) EndDebug(text string, vals ...interface{}) {
-
-	if !log.debugOn {
-		return
-	}
-
-	if log.debugDepth > 0 {
-		log.debugDepth--
-	}
-
-	stmt := strings.Repeat("  ", log.debugDepth) + text + " "
-	for _, val := range vals {
-		stmt += fmt.Sprintf("%v", val) + " "
-	}
-
-	log.debugLines = append(log.debugLines, stmt)
 }
 
 func (log *SystemLog) GetDebugLines() []string {

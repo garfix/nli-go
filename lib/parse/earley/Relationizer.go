@@ -34,8 +34,6 @@ func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolve
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
 func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
 
-	relationizer.log.StartDebug("extractSenseFromNode", antecedentVariables, node.rule, node.rule.Sense)
-
 	nameBinding := mentalese.NewBinding()
 	constantBinding := mentalese.NewBinding()
 	relationSet := mentalese.RelationSet{}
@@ -77,8 +75,6 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 
-	relationizer.log.EndDebug("extractSenseFromNode", relationSet)
-
 	return relationSet, nameBinding, constantBinding
 }
 
@@ -86,8 +82,6 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 // Special case: if parentSet contains relation set placeholders [], like `quantification(X, [], Y, [])`, then these placeholders
 // will be filled with the child set of the preceding variable
 func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule parse.GrammarRule) mentalese.RelationSet {
-
-	relationizer.log.StartDebug("processChildRelations", parentSet, childSets, rule)
 
 	referencedChildrenIndexes := []int{}
 	compoundRelations := mentalese.RelationSet{}
@@ -107,8 +101,6 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 		}
 	}
 	combination = append(restChildrenRelations, combination...)
-
-	relationizer.log.EndDebug("processChildRelations", combination)
 
 	return combination
 }
@@ -161,8 +153,6 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 
 		newParentRelationSet = mentalese.RelationSet{ newParentRelation}
 	}
-
-	relationizer.log.EndDebug("includeChildSenses", newParentRelationSet, childIndexes)
 
 	return newParentRelationSet, childIndexes
 }

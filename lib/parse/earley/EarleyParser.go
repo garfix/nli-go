@@ -31,7 +31,7 @@ func NewParser(nameResolver *central.NameResolver, meta *mentalese.Meta, log *co
 // Returns parse tree roots
 func (parser *Parser) Parse(grammarRules *parse.GrammarRules, words []string) []ParseTreeNode {
 
-	parser.log.StartDebug("Parse", words)
+	if parser.log.Active() { parser.log.StartDebug("Parse", strings.Join(words, ",")) }
 
 	chart := parser.buildChart(grammarRules, words)
 
@@ -50,7 +50,13 @@ func (parser *Parser) Parse(grammarRules *parse.GrammarRules, words []string) []
 		}
 	}
 
-	parser.log.EndDebug("Parse", rootNodes)
+	if parser.log.Active() {
+		str := ""
+		for _, node := range rootNodes {
+			str += " " + node.String()
+		}
+		parser.log.EndDebug("Parse", str)
+	}
 
 	return rootNodes
 }
@@ -58,13 +64,15 @@ func (parser *Parser) Parse(grammarRules *parse.GrammarRules, words []string) []
 // The body of Earley's algorithm
 func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []string) (*chart) {
 
-	parser.log.StartDebug("createChart", words)
+	if parser.log.Active() { parser.log.StartDebug("createChart", strings.Join(words, ", ")) }
 
 	chart := newChart(words)
 	wordCount := len(words)
 
 	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeRelation }, []string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{}), [][]string{{""}, {""}}, 1, 0, 0)
-	parser.log.EndDebug("initial:", initialState.ToString(chart))
+
+	if parser.log.Active() { parser.log.AddDebug("initial:", initialState.ToString(chart)) }
+
 	chart.enqueue(initialState, 0)
 
 	// go through all word positions in the sentence
@@ -76,7 +84,7 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 			// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 			state := chart.states[i][j]
 
-			parser.log.EndDebug("do:", state.ToString(chart))
+			if parser.log.Active() { parser.log.AddDebug("do:", state.ToString(chart)) }
 
 			// check if the entry is parsed completely
 			if state.isIncomplete() {
@@ -100,7 +108,7 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 		}
 	}
 
-	parser.log.EndDebug("createChart")
+	if parser.log.Active() { parser.log.EndDebug("createChart", "") }
 
 	return chart
 }
@@ -125,7 +133,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
-		parser.log.EndDebug("predict:", predictedState.ToString(chart))
+		if parser.log.Active() { parser.log.AddDebug("predict", predictedState.ToString(chart)) }
 	}
 }
 
@@ -169,7 +177,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		scannedState.nameInformations = nameInformations
 		chart.enqueue(scannedState, endWordIndex+1)
 
-		parser.log.EndDebug("scanned:", scannedState.ToString(chart), endWord)
+		if parser.log.Active() { parser.log.AddDebug("scanned", scannedState.ToString(chart) + " " + endWord) }
 	}
 }
 
@@ -224,10 +232,14 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 		advancedState.parentIds = append(common.IntArrayCopy(chartedState.parentIds), completedState.id)
 
-		parser.log.EndDebug("advanced:", advancedState.ToString(chart))
+		if parser.log.Active() { parser.log.AddDebug("advanced", advancedState.ToString(chart)) }
 
 		f := chart.enqueue(advancedState, completedState.endWordIndex)
 
-		parser.log.EndDebug("found:", f)
+		if parser.log.Active() {
+			str := "no"
+			if f { str = "yes" }
+			parser.log.AddDebug("found", str)
+		}
 	}
 }

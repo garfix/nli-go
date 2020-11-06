@@ -254,7 +254,7 @@ func (base *SystemSolverFunctionBase) solveQuantifiedRelations(find mentalese.Re
 
 func (base *SystemSolverFunctionBase) solveQuants(quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
 
-	base.log.StartProduction("Quant", quant.String())
+	if base.log.Active() { base.log.StartDebug("Quant", quant.String()) }
 
 	result := mentalese.NewBindingSet()
 
@@ -279,7 +279,7 @@ func (base *SystemSolverFunctionBase) solveQuants(quant mentalese.Relation, scop
 
 	}
 
-	base.log.EndProduction("Quant", result.String())
+	if base.log.Active() { base.log.EndDebug("Quant", result.String()) }
 
 	return result
 }
@@ -385,7 +385,7 @@ func (base *SystemSolverFunctionBase) tryQuantifier(quant mentalese.Relation, ra
 	// special case: the existential quantifier `some`
 	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.AtomSome {
 		if scopeCount == 0 {
-			base.log.AddProduction("Do/Find", "Quantifier Some mismatch: no results")
+			if base.log.Active() { base.log.AddDebug("Do/Find", "Quantifier Some mismatch: no results") }
 			return false
 		} else {
 			return true
@@ -425,10 +425,12 @@ func (base *SystemSolverFunctionBase) tryQuantifier(quant mentalese.Relation, ra
 	success := !quantifierBindings.IsEmpty()
 
 	if !success {
-		base.log.AddProduction("Do/Find", "Quantifier mismatch")
-		base.log.AddProduction("Do/Find", "  Range count: "+rangeCountVariable+" = "+strconv.Itoa(rangeCount))
-		base.log.AddProduction("Do/Find", "  Scope count: "+scopeCountVariable+" = "+strconv.Itoa(scopeCount))
-		base.log.AddProduction("Do/Find", "  Quantifier check: "+quantifierSet.String())
+		if base.log.Active() {
+			base.log.AddDebug("Do/Find", "Quantifier mismatch")
+			base.log.AddDebug("Do/Find", "  Range count: "+rangeCountVariable+" = "+strconv.Itoa(rangeCount))
+			base.log.AddDebug("Do/Find", "  Scope count: "+scopeCountVariable+" = "+strconv.Itoa(scopeCount))
+			base.log.AddDebug("Do/Find", "  Quantifier check: "+quantifierSet.String())
+		}
 	}
 
 	return success

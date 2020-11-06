@@ -1,3 +1,7 @@
+# 2020-11-06
+
+Changed logging: debug lines are now only calculated when debug is on. This is important because log line calculation took up 25% of processing time.
+
 # 2020-11-05
 
 Uniformized the directory where all generated files are stored. It is now always the `var` directory, except when you specify another directory. The `session`, `log` and `sparql-cache` directories are located within `var`.

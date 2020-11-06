@@ -79,7 +79,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	answerWords := []string{}
 	nameBinding := mentalese.NewBinding()
 
-	system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
+	if system.log.Active() { system.log.AddDebug("Anaphora queue", system.dialogContext.AnaphoraQueue.String()) }
 
 	for _, grammar := range system.grammars {
 

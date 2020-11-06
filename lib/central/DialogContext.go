@@ -1,6 +1,6 @@
 package central
 
-const MaxSizeAnaphoraQueue = 10;
+const MaxSizeAnaphoraQueue = 10
 
 // The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
 // It may also be used to data relations that may be needed in the next call of the library (within the same session)

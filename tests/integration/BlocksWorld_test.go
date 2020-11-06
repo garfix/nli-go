@@ -12,19 +12,7 @@ import (
 
 // Mimics some of SHRDLU's functions, but in the nli-go way
 
-// Using Pinhole https://github.com/tidwall/pinhole to render the scene to a png
-//
-// go get -u github.com/tidwall/pinhole
-//
 func TestBlocksWorld(t *testing.T) {
-	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
-	sessionId := "blocks-demo"
-
-	if !log.IsOk() {
-		t.Errorf(log.String())
-		return
-	}
 
 	var tests = [][]struct {
 		question      string
@@ -82,6 +70,15 @@ func TestBlocksWorld(t *testing.T) {
 		},
 	}
 
+	log := common.NewSystemLog(false)
+	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
+	sessionId := "blocks-demo"
+
+	if !log.IsOk() {
+		t.Errorf(log.String())
+		return
+	}
+
 	system.RemoveDialogContext(sessionId)
 
 	for _, session := range tests {
@@ -101,8 +98,8 @@ func TestBlocksWorld(t *testing.T) {
 			system.StoreDialogContext(sessionId)
 
 			if answer != test.answer {
-				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-				t.Error(log.GetErrors())
+				t.Errorf("Test relationships:\nGOT:\n%v\nWANT:\n%v", answer, test.answer)
+				t.Error(log.String())
 			}
 		}
 	}
@@ -132,6 +129,10 @@ func createGrid(system *global.System) {
 	}
 }
 
+// Using Pinhole https://github.com/tidwall/pinhole to render the scene to a png
+//
+// go get -u github.com/tidwall/pinhole
+//
 func createImage(system *global.System) {
 
 	p := pinhole.New()

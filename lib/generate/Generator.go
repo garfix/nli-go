@@ -36,11 +36,11 @@ func (generator *Generator) Generate(grammarRules *parse.GrammarRules, sentenceS
 	// convert variables to constants
 	boundSense := sentenceSense.ConvertVariablesToConstants()
 
-	generator.log.AddProduction("Constants", fmt.Sprintf("%v", boundSense))
+	generator.log.AddDebug("Constants", fmt.Sprintf("%v", boundSense))
 
 	boundSense = boundSense.ExpandChildren()
 
-	generator.log.AddProduction("Unscoped 2", fmt.Sprintf("%v", boundSense))
+	generator.log.AddDebug("Unscoped 2", fmt.Sprintf("%v", boundSense))
 
 	return generator.GenerateNode(grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense)
 }
@@ -52,7 +52,7 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 
 	words := []string{}
 
-	generator.log.StartProduction("Generate", fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
+	if generator.log.Active() { generator.log.StartDebug("Generate", fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue)) }
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
@@ -60,7 +60,7 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 
 	if ok {
 
-		generator.log.AddProduction("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String()))
+		if generator.log.Active() { generator.log.AddDebug("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String())) }
 
 		for i, consequentCategory := range rule.GetConsequents() {
 			consequentValue := generator.getConsequentValue(rule, i, binding)
@@ -74,7 +74,7 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 		rule, binding, ok = generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 	}
 
-	generator.log.EndProduction("Generate", fmt.Sprintf("%v", words))
+	if generator.log.Active() { generator.log.EndDebug("Generate", fmt.Sprintf("%v", words)) }
 
 	return words
 }

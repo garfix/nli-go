@@ -65,7 +65,7 @@ func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
 // ]
 func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	//solver.log.StartProduction("Solve Set", set.String() + " " + bindings.String())
+	if solver.log.Active() { solver.log.StartDebug("Solve Set", set.String() + " " + bindings.String()) }
 
 	newBindings := bindings
 	for _, relation := range set {
@@ -79,7 +79,7 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 		}
 	}
 
-	//solver.log.EndProduction("Solve Set", newBindings.String())
+	if solver.log.Active() { solver.log.EndDebug("Solve Set", newBindings.String()) }
 
 	return newBindings
 }
@@ -95,7 +95,7 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 // }
 func (solver *ProblemSolver) solveSingleRelationMultipleBindings(relation mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	solver.log.StartProduction("Solve Relation", relation.String() + " " + fmt.Sprint(bindings))
+	if solver.log.Active() { solver.log.StartDebug("Solve Relation", relation.String() + " " + fmt.Sprint(bindings)) }
 
 	newBindings := mentalese.NewBindingSet()
 	multiFound := false
@@ -120,7 +120,7 @@ func (solver *ProblemSolver) solveSingleRelationMultipleBindings(relation mental
 		}
 	}
 
-	solver.log.EndProduction("Solve Relation", relation.String() + ": " + fmt.Sprint(newBindings))
+	if solver.log.Active() { solver.log.EndDebug("Solve Relation", relation.String() + ": " + fmt.Sprint(newBindings)) }
 
 	return newBindings
 }
@@ -136,7 +136,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleBinding(relation mentalese
 	relationVariables := relation.GetVariableNames()
 	simpleBinding := binding.FilterVariablesByName(relationVariables)
 
-	solver.log.StartProduction("Solve Simple Binding", relation.String() + " " + fmt.Sprint(simpleBinding))
+	if solver.log.Active() { solver.log.StartDebug("Solve Simple Binding", relation.String() + " " + fmt.Sprint(simpleBinding)) }
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -178,7 +178,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleBinding(relation mentalese
 	// do assert / retract
 	newBindings.AddMultiple(solver.modifyKnowledgeBase(relation, simpleBinding))
 
-	solver.log.EndProduction("Solve Simple Binding", relation.String() + ": " + fmt.Sprint(newBindings))
+	if solver.log.Active() { solver.log.EndDebug("Solve Simple Binding", relation.String() + ": " + fmt.Sprint(newBindings)) }
 
 	// compose the result set
 	completedBindings := mentalese.NewBindingSet()
@@ -239,7 +239,7 @@ func (solver *ProblemSolver) solveMultipleRelationSingleFactBase(relations []men
 
 func (solver *ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
 
-	solver.log.StartProduction("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String())
+	if solver.log.Active() { solver.log.StartDebug("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String()) }
 
 	relationBindings := mentalese.NewBindingSet()
 
@@ -270,7 +270,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleFactBase(relation mentales
 		}
 	}
 
-	solver.log.EndProduction("Database" + " " + factBase.GetName(), relationBindings.String())
+	if solver.log.Active() { solver.log.EndDebug("Database" + " " + factBase.GetName(), relationBindings.String()) }
 
 	return relationBindings
 }

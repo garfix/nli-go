@@ -1,5 +1,8 @@
 ## 2020-11-08
 
+I completed conversation 20, by introducing the sortal reference ("one" means "block") I described yesterday.
+
+Renamed entities.yml to sorts.yml and "entity type" to "sort".
 
 # 2020-11-07
 
@@ -19,7 +22,7 @@ What needs to be done is this: the word "one" must be treated as a back referenc
 - A variant on the function `back_reference()` for sorts `sortal_back_reference()` 
 - "one" will have sense `sortal_back_reference()`   
 - `sortal_back_reference()` searches in the anaphora queue for the last sort (`block`)
-- in the file `entities.yml` it can find the predicate to use for sort `block`, namely: `block(E1)`
+- in the file `sorts.yml` it can find the predicate to use for sort `block`, namely: `block(E1)`
 - this predicate is used to find the block
 
 # 2020-11-06

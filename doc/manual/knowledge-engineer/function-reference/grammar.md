@@ -91,7 +91,7 @@ A back reference to locate a concrete sort for an entity. For example: "one" in 
     
 * `E1`: a variable
 
-This function goes though the anaphora queue to find the most recently used sort (for example: "block"); then finds the relation set that belongs to this sort (from the "Entity" field in `entities.yml`) and executes this relation set (with its Id variable replaced by E1 in this example). The result of this relation set is the result of this function.
+This function goes though the anaphora queue to find the most recently used sort (for example: "block"); then finds the relation set that belongs to this sort (from the "Entity" field in `sorts.yml`) and executes this relation set (with its Id variable replaced by E1 in this example). The result of this relation set is the result of this function.
 
 In this example `back_sortal_reference` will find the sort of E1, and resolve this into a concrete relation set (like `block(E1)`):
 

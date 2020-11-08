@@ -284,14 +284,14 @@ func (solver *ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Bindin
 
 		if value.IsId() {
 			sharedId := value.TermValue
-			entityType := value.TermEntityType
-			if entityType != "" {
-				localId := factBase.GetLocalId(sharedId, entityType)
+			sort := value.TermSort
+			if sort != "" {
+				localId := factBase.GetLocalId(sharedId, sort)
 				if localId == "" {
-					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, entityType, factBase.GetName()))
+					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, sort, factBase.GetName()))
 					return newBinding
 				}
-				newValue = mentalese.NewTermId(localId, entityType)
+				newValue = mentalese.NewTermId(localId, sort)
 			}
 		}
 
@@ -310,14 +310,14 @@ func (solver *ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding,
 
 		if value.IsId() {
 			localId := value.TermValue
-			entityType := value.TermEntityType
-			if entityType != "" {
-				sharedId := factBase.GetSharedId(localId, entityType)
+			sort := value.TermSort
+			if sort != "" {
+				sharedId := factBase.GetSharedId(localId, sort)
 				if sharedId == "" {
-					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, entityType, factBase.GetName()))
+					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, sort, factBase.GetName()))
 					return newBinding
 				}
-				newValue = mentalese.NewTermId(sharedId, entityType)
+				newValue = mentalese.NewTermId(sharedId, sort)
 			}
 		}
 

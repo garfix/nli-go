@@ -10,6 +10,6 @@ type FactBase interface {
 	Retract(relation mentalese.Relation)
 	GetReadMappings() []mentalese.Rule
 	GetWriteMappings() []mentalese.Rule
-	GetLocalId(sharedId string, entityType string) string
-	GetSharedId(localId string, entityType string) string
+	GetLocalId(sharedId string, sort string) string
+	GetSharedId(localId string, sort string) string
 }

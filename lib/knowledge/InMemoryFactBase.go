@@ -41,13 +41,13 @@ func (factBase *InMemoryFactBase) SetSharedIds(sharedIds SharedIds) {
 	factBase.sharedIds = sharedIds
 }
 
-func (factBase *InMemoryFactBase) GetLocalId(inId string, entityType string) string {
+func (factBase *InMemoryFactBase) GetLocalId(inId string, sort string) string {
 	outId := ""
 
-	_, found := factBase.sharedIds[entityType]
+	_, found := factBase.sharedIds[sort]
 	if !found { return inId }
 
-	for localId, sharedId := range factBase.sharedIds[entityType] {
+	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == sharedId {
 			outId = localId
 			break
@@ -57,13 +57,13 @@ func (factBase *InMemoryFactBase) GetLocalId(inId string, entityType string) str
 	return outId
 }
 
-func (factBase *InMemoryFactBase) GetSharedId(inId string, entityType string) string {
+func (factBase *InMemoryFactBase) GetSharedId(inId string, sort string) string {
 	outId := ""
 
-	_, found := factBase.sharedIds[entityType]
+	_, found := factBase.sharedIds[sort]
 	if !found { return inId }
 
-	for localId, sharedId := range factBase.sharedIds[entityType] {
+	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == localId {
 			outId = sharedId
 			break

@@ -8,7 +8,7 @@ The semantic modelling of the world in an NLI system is called an ontology. It h
 
 ## Entity types
 
-Any entity you are using has a type: the entity type. Each entity type needs a simple identifier, like
+Any entity you are using has a type: the sort. Each entity type needs a simple identifier, like
 
     person
     work
@@ -33,7 +33,7 @@ types. This is done in predicates.relation:
 
 Currently you only need to do this for entities that have names that need to be looked up in the database.
 
-You also need to specify entities.yml
+You also need to specify sorts.yml
 
     person:
       name: person_name(Id, Name)
@@ -45,7 +45,7 @@ You also need to specify entities.yml
         label: label(Id, Value)
         founding_date: founding_date(Id, Value)
 
-You can see where the entity types pop up.
+You can see where the sorts pop up.
 
 The "name" specifies the relations you need to look up a name (proper noun) in the database.
 
@@ -59,7 +59,7 @@ An id identifies an entity and looks like this
 
 In general:
 
-    `entity type:shared-id`
+    `sort:shared-id`
 
 When the entity only exists in a single database, `shared-id` is simply the primary key for the entity in the database.
 

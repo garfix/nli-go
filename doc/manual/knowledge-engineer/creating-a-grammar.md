@@ -152,7 +152,7 @@ Since this is an NP, it needs a quantifer; let's use the all-quantor.
 
 The group exists of 1, 2 or 3 words, hence 3 rules. Do not use recursion. This is a heavy operation that uses much database access, so we don't want to try more words than necessary.
 
-At the moment the `proper_noun_group` is processed, the parser has received top-down information about the entity type of the holder of the name. The parser knows that it is the name of a person. How? 
+At the moment the `proper_noun_group` is processed, the parser has received top-down information about the sort of the holder of the name. The parser knows that it is the name of a person. How? 
 
 Let's have an example:
 
@@ -162,7 +162,7 @@ Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also s
 
     has_daughter(person, person)
     
-With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (entities.yml) to understand how to query the name in the knowledge base:
+With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (sorts.yml) to understand how to query the name in the knowledge base:
 
      person:
         name: person_name(Id, Name)

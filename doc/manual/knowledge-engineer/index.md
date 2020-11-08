@@ -13,7 +13,7 @@ In this system you convert sentences in natural language to a semantic represent
 
 ## Sort hierarchy
 
-Optionally you can build a hierarchy of entity types, or "sorts" as they are usually called, that captures the ontology of the domain. 
+Optionally you can build a hierarchy of sorts that captures the ontology of the domain. 
 
 ## Modules and namespaces
 

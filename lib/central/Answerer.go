@@ -67,7 +67,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 			group := EntityReferenceGroup{}
 			for _, id := range resultBindings.GetIds(solution.Result.TermValue) {
-				group = append(group, CreateEntityReference(id.TermValue, id.TermEntityType))
+				group = append(group, CreateEntityReference(id.TermValue, id.TermSort))
 			}
 			answerer.solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 

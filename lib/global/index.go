@@ -18,9 +18,9 @@ type index struct {
 	Username        string
 	Password        string
 	Tables          []table
-	Entities        string
+	Sorts           string
 	Predicates      string
-	Sorts			string
+	Subsorts        string
 	TokenExpression string
 }
 

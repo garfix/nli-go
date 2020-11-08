@@ -3,52 +3,52 @@ package mentalese
 // maps a predicate to information about a relation
 type Meta struct {
 	predicates map[string]PredicateInfo
-	entities   Entities
+	sorts      Entities
 	subSorts   map[string][]string
 }
 
-// for each argument an entity type
+// for each argument a sort
 type PredicateInfo struct {
-	EntityTypes []string
+	Sorts []string
 }
 
 func NewMeta() *Meta {
 	return &Meta{
 		predicates: map[string]PredicateInfo{},
-		entities:   Entities{},
+		sorts:      Entities{},
 		subSorts:   map[string][]string{},
 	}
 }
 
-func (meta Meta) AddPredicate(name string, entityTypes []string) {
+func (meta Meta) AddPredicate(name string, sorts []string) {
 	meta.predicates[name] = PredicateInfo{
-		EntityTypes: entityTypes,
+		Sorts: sorts,
 	}
 }
 
-func (meta Meta) AddEntityInfo(name string, entityInfo EntityInfo) {
-	meta.entities[name] = entityInfo
+func (meta Meta) AddSortInfo(name string, info SortInfo) {
+	meta.sorts[name] = info
 }
 
-func (meta Meta) GetEntityType(predicate string, argumentIndex int) string {
+func (meta Meta) GetSort(predicate string, argumentIndex int) string {
 
 	pred, found := meta.predicates[predicate]
 	if found {
-		return pred.EntityTypes[argumentIndex]
+		return pred.Sorts[argumentIndex]
 	}
 	return ""
 }
 
-func (meta Meta) GetEntities() Entities {
-	return meta.entities
+func (meta Meta) GetSorts() Entities {
+	return meta.sorts
 }
 
-func (meta Meta) GetSortInfo(sort string) (EntityInfo, bool) {
-	info, found := meta.entities[sort]
+func (meta Meta) GetSortInfo(sort string) (SortInfo, bool) {
+	info, found := meta.sorts[sort]
 	return info, found
 }
 
-func (meta Meta) AddSort(superSort string, subSort string) {
+func (meta Meta) AddSubSort(superSort string, subSort string) {
 
 	_, found := meta.subSorts[subSort]
 	if !found {

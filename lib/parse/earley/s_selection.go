@@ -52,7 +52,7 @@ func getTypeFromSense(meta *mentalese.Meta, variable string, sense mentalese.Rel
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
 
-				sType = meta.GetEntityType(relation.Predicate, i)
+				sType = meta.GetSort(relation.Predicate, i)
 				if sType != "" {
 					goto end
 				}

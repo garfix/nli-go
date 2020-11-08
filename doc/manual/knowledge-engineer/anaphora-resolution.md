@@ -17,7 +17,7 @@ To resolve an abstract noun like "one" (as in "Put a small one onto the green cu
 
     { rule: noun(E1) -> 'one',                                           sense: go:sortal_back_reference(E1, none) }
     
-When the `sortal_back_reference` is processed, it looks into the anaphora queue for the sort of the latest referent. When this sort is, say, `block`, the function will look for the `entity` relation set that belongs to the sort. Located in `entities.yml` you will write   
+When the `sortal_back_reference` is processed, it looks into the anaphora queue for the sort of the latest referent. When this sort is, say, `block`, the function will look for the `entity` relation set that belongs to the sort. Located in `sorts.yml` you will write   
 
     block:
       entity: block(Id)  

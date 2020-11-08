@@ -29,13 +29,13 @@ func TestMeta(t *testing.T) {
 
 	meta := mentalese.NewMeta()
 
-	meta.AddSort("mammal", "cow")
-	meta.AddSort("mammal", "cat")
-	meta.AddSort("animal", "mammal")
-	meta.AddSort("living_thing", "animal")
-	meta.AddSort("entity", "living_thing")
-	meta.AddSort("thing", "entity")
-	meta.AddSort("entity", "thing")
+	meta.AddSubSort("mammal", "cow")
+	meta.AddSubSort("mammal", "cat")
+	meta.AddSubSort("animal", "mammal")
+	meta.AddSubSort("living_thing", "animal")
+	meta.AddSubSort("entity", "living_thing")
+	meta.AddSubSort("thing", "entity")
+	meta.AddSubSort("entity", "thing")
 
 	for _, test := range tests {
 

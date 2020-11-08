@@ -361,7 +361,7 @@ func (base *SystemSolverFunctionBase) solveScope(quant mentalese.Relation, scope
 
 		value, found := rangeBinding.Get(rangeVariable)
 		if found && value.IsId() {
-			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermEntityType) }
+			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort) }
 			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 
@@ -436,24 +436,19 @@ func (base *SystemSolverFunctionBase) tryQuantifier(quant mentalese.Relation, ra
 	return success
 }
 
-func (base *SystemSolverFunctionBase) quickAcceptabilityCheck(variable string, entityType string, relations mentalese.RelationSet) bool {
+func (base *SystemSolverFunctionBase) quickAcceptabilityCheck(variable string, sort string, relations mentalese.RelationSet) bool {
 
 	accepted := false
 
 	for _, relation := range relations {
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() && argument.TermValue == variable {
-				argumentEntityType := base.meta.GetEntityType(relation.Predicate, i)
+				argumentEntityType := base.meta.GetSort(relation.Predicate, i)
 
-				if argumentEntityType == "" || base.meta.MatchesSort(argumentEntityType, entityType) {
+				if argumentEntityType == "" || base.meta.MatchesSort(argumentEntityType, sort) {
 					accepted = true
 					break
 				}
-
-				//if  argumentEntityType == "" || argumentEntityType == entityType {
-				//	accepted = true
-				//	break
-				//}
 			}
 		}
 	}

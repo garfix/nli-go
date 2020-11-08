@@ -613,7 +613,7 @@ func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex in
 func (parser *InternalGrammarParser) parseId(tokens []Token, startIndex int) (string, string, int, bool) {
 
 	id := ""
-	entityType := ""
+	sort := ""
 
 	token, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_id)
 	if ok {
@@ -622,12 +622,12 @@ func (parser *InternalGrammarParser) parseId(tokens []Token, startIndex int) (st
 			ok = false
 		} else {
 			startIndex = newStartIndex
-			entityType = token[0:i]
+			sort = token[0:i]
 			id = token[i+1:]
 		}
 	}
 
-	return id, entityType, startIndex, ok
+	return id, sort, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parsePlaceholder(tokens []Token, startIndex int, positive bool) (mentalese.Relation, int, bool) {
@@ -773,12 +773,12 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 	}
 	{
 		id := ""
-		entityType := ""
-		id, entityType, startIndex, ok = parser.parseId(tokens, startIndex)
+		sort := ""
+		id, sort, startIndex, ok = parser.parseId(tokens, startIndex)
 		if ok {
 			term.TermType = mentalese.TermTypeId
 			term.TermValue = id
-			term.TermEntityType = entityType
+			term.TermSort = sort
 			goto end
 		}
 	}

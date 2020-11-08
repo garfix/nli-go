@@ -137,6 +137,6 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 
 func (system System) storeNamedEntities(binding mentalese.Binding) {
 	 for _, value := range binding.GetAll() {
-		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermEntityType) })
+		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort) })
 	 }
 }

@@ -6,7 +6,7 @@
  * predicates are snake_cased
  * atoms are snake_cased
  * string constants: use single quotes: 'De Nachtwacht'; also numbers: '25' '1.5'
- * id: entity type and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
+ * id: sort and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
  
  ## Terms
  

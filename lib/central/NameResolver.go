@@ -151,15 +151,15 @@ func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInf
 
 type nameInfo struct {
 	name string
-	entityType string
+	sort string
 }
 
-func (resolver *NameResolver) ResolveName(name string, entityType string) []NameInformation {
+func (resolver *NameResolver) ResolveName(name string, sort string) []NameInformation {
 
 	factBaseNameInformations := []NameInformation{}
 
 	for _, factBase := range resolver.solver.index.factBases {
-		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, entityType, factBase)...)
+		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, sort, factBase)...)
 	}
 
 	return factBaseNameInformations
@@ -169,10 +169,10 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 
 	var nameInformations []NameInformation
 
-	// go through all entity types
-	for entityType, entityInfo := range resolver.meta.GetEntities() {
+	// go through all sorts
+	for aSort, entityInfo := range resolver.meta.GetSorts() {
 
-		if inducedEntityType != "entity" && inducedEntityType != "" && !resolver.meta.MatchesSort(inducedEntityType, entityType) {
+		if inducedEntityType != "entity" && inducedEntityType != "" && !resolver.meta.MatchesSort(inducedEntityType, aSort) {
 			continue
 		}
 
@@ -184,7 +184,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 		for _, binding := range bindings.GetAll() {
 
 			id, _ := binding.Get(mentalese.IdVar)
-			information := entityType
+			information := aSort
 
 			// sort because the resulting strings must not be in random order
 			sortedInfoTypes := []string{}
@@ -199,7 +199,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 
 				// create a relation set for each field that gives Information about this name
 				b := mentalese.NewBinding()
-				b.Set(mentalese.IdVar, mentalese.NewTermId(id.TermValue, entityType))
+				b.Set(mentalese.IdVar, mentalese.NewTermId(id.TermValue, aSort))
 				bindings2 := resolver.solver.FindFacts(factBase, relationSet, b)
 
 				for _, binding2 := range bindings2.GetAll() {
@@ -213,7 +213,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityTy
 			nameInformations = append(nameInformations, NameInformation{
 				Name:         name,
 				DatabaseName: factBase.GetName(),
-				EntityType:   id.TermEntityType,
+				EntityType:   id.TermSort,
 				SharedId:     id.TermValue,
 				Information:  information,
 			})

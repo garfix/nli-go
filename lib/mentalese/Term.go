@@ -9,10 +9,10 @@ import (
 type Term struct {
 	TermType             string
 	TermValue            string
-	TermEntityType		 string
+	TermSort             string
 	TermValueRelationSet RelationSet
 	TermValueRule        Rule
-	TermValueList		 TermList
+	TermValueList        TermList
 }
 
 const TermTypeVariable = "variable"
@@ -49,8 +49,8 @@ func NewTermRule(rule Rule) Term {
 	return Term{ TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: rule}
 }
 
-func NewTermId(id string, entityType string) Term {
-	return Term{ TermType: TermTypeId, TermValue: id, TermEntityType: entityType, TermValueRelationSet: nil}
+func NewTermId(id string, sort string) Term {
+	return Term{ TermType: TermTypeId, TermValue: id, TermSort: sort, TermValueRelationSet: nil}
 }
 
 func NewTermList(list TermList) Term {
@@ -105,7 +105,7 @@ func (term Term) Equals(otherTerm Term) bool {
 	if term.TermType != otherTerm.TermType {
 		return false
 	}
-	if term.TermEntityType != otherTerm.TermEntityType {
+	if term.TermSort != otherTerm.TermSort {
 		return false
 	}
 	switch term.TermType {
@@ -169,14 +169,14 @@ func (term Term) ConvertVariablesToConstants() Term {
 }
 
 func (term Term) AsKey() string {
-	return fmt.Sprintf("%d/%s/%s", term.TermType, term.TermValue, term.TermEntityType)
+	return fmt.Sprintf("%d/%s/%s", term.TermType, term.TermValue, term.TermSort)
 }
 
 func (term Term) Copy() Term {
 	newTerm := Term{}
 	newTerm.TermType = term.TermType
 	newTerm.TermValue = term.TermValue
-	newTerm.TermEntityType = term.TermEntityType
+	newTerm.TermSort = term.TermSort
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	} else if term.IsRule() {
@@ -276,7 +276,7 @@ func (term Term) String() string {
 	case TermTypeRule:
 		s = term.TermValueRule.String()
 	case TermTypeId:
-		s = "`" + term.TermEntityType + ":" + term.TermValue + "`"
+		s = "`" + term.TermSort + ":" + term.TermValue + "`"
 	case TermTypeList:
 		s = term.TermValueList.String()
 	default:

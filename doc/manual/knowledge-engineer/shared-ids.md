@@ -68,7 +68,7 @@ When a shared id is expected but not found, the system will show an exception.
 
 ## When to use shared ids
 
-Only when you have entity types that are located in multiple databases with distinct ids, you will need shared ids.
+Only when you have sorts that are located in multiple databases with distinct ids, you will need shared ids.
 If this is not the case, the system will simple use the local database ids as shared ids.
 
 ## How do I create the shared-id JSON files?

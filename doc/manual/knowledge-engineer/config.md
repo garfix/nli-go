@@ -58,8 +58,8 @@ A sample index.yml:
 
     rules: [dbpedia.rule]
     predicates: predicates.relation
-    sorts: predicates.sort
-    entities: entities.yml
+    subsorts: predicates.sort
+    sorts: sorts.yml
     
 All of these are optional.     
 
@@ -89,8 +89,8 @@ Currently sorts are only needed to locate proper names in databases. It helps to
 
 This file contains domain specific predicates, the ones that are used in transformation files.
 
-Here you can specify the sorts of the arguments. These sorts are used for name resolution. If a name is used in the sentence, the system uses the entities file to look up the names. At the same time it will look at the relations and the predicates file.
-From this it will find out what entity type belongs to the name. It will then only look for names that belong to this sort.
+Here you can specify the sorts of the arguments. These sorts are used for name resolution. If a name is used in the sentence, the system uses sorts.yml to look up the names. At the same time it will look at the relations and the predicates file.
+From this it will find out what sort belongs to the name. It will then only look for names that belong to this sort.
 
 It is optional to specify the predicates in this file. If there is no need to specify the sorts, they may be omitted.
 

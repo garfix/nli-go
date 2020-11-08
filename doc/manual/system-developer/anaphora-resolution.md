@@ -9,7 +9,7 @@ It also handles references to entities mentioned earlier within the same sentenc
 NLI-GO uses a structure called the anaphora queue to store the most recent references. The queue is located in the
 dialog context and is stored on file.
 
-The queue is simply a queue (first in first out) of entity references (id + entity type). New entities are stored on
+The queue is simply a queue (first in first out) of entity references (id + sort). New entities are stored on
 front. When the queue becomes larger than 10 items, the ones at the end fall off.
 
 More precise, it is a queue of entity reference groups. Multiple entities can be added as a single group. The result of

@@ -129,19 +129,19 @@ func (builder *systemBuilder) AddPredicates(path string, system *System) bool {
 
 		for _, relationType := range relationTypes {
 			name := strings.Replace(relationType.Predicate, ":", "_", 1)
-			entityTypes := []string{}
+			sorts := []string{}
 			for _, argument := range relationType.Arguments {
-				entityTypes = append(entityTypes, argument.TermValue)
+				sorts = append(sorts, argument.TermValue)
 			}
 
-			system.meta.AddPredicate(name, entityTypes)
+			system.meta.AddPredicate(name, sorts)
 		}
 	}
 
 	return true
 }
 
-func (builder *systemBuilder) AddSorts(path string, system *System) bool {
+func (builder *systemBuilder) AddSubSorts(path string, system *System) bool {
 
 	if path != "" {
 
@@ -154,7 +154,7 @@ func (builder *systemBuilder) AddSorts(path string, system *System) bool {
 		sortRelations := builder.parser.CreateSortRelations(content)
 
 		for _, sortRelation := range sortRelations {
-			system.meta.AddSort(sortRelation.GetSuperSort(), sortRelation.GetSubSort())
+			system.meta.AddSubSort(sortRelation.GetSuperSort(), sortRelation.GetSubSort())
 		}
 	}
 
@@ -351,8 +351,8 @@ func (builder *systemBuilder) buildDomain(index index, system *System, moduleBas
 		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
 	}
 
-	path = common.AbsolutePath(moduleBaseDir, index.Entities)
-	ok = builder.AddEntities(path, system)
+	path = common.AbsolutePath(moduleBaseDir, index.Sorts)
+	ok = builder.AddSorts(path, system)
 	if !ok {
 		return
 	}
@@ -363,8 +363,8 @@ func (builder *systemBuilder) buildDomain(index index, system *System, moduleBas
 		return
 	}
 
-	path = common.AbsolutePath(moduleBaseDir, index.Sorts)
-	ok = builder.AddSorts(path, system)
+	path = common.AbsolutePath(moduleBaseDir, index.Subsorts)
+	ok = builder.AddSubSorts(path, system)
 	if !ok {
 		return
 	}
@@ -559,14 +559,14 @@ func (builder *systemBuilder) buildWriteMap(index index, baseDir string) []menta
 	return writeMap
 }
 
-func (builder *systemBuilder) AddEntities(path string, system *System) bool {
+func (builder *systemBuilder) AddSorts(path string, system *System) bool {
 
-	entities, ok := builder.CreateEntities(path)
+	sorts, ok := builder.CreateSorts(path)
 	if !ok {
 		return false
 	}
-	for name, info := range entities {
-		system.meta.AddEntityInfo(name, info)
+	for name, info := range sorts {
+		system.meta.AddSortInfo(name, info)
 	}
 
 	return true
@@ -649,7 +649,7 @@ func (builder systemBuilder) importRuleBaseFromPath(system *System, path string)
 	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, builder.log))
 }
 
-func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bool) {
+func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool) {
 
 	entities := mentalese.Entities{}
 
@@ -694,7 +694,7 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 				}
 			}
 
-			entities[key] = mentalese.EntityInfo{
+			entities[key] = mentalese.SortInfo{
 				Name:    nameRelation,
 				Knownby: knownBy,
 				Entity:  EntityRelationSet,

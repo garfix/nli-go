@@ -23,7 +23,7 @@ It introduces two noun phrases (E1 and E2). You define their types in predicates
 Both noun phrases are persons. This type of definition is called s-selection (semantic selection of predicate
 arguments).
 
-You also need to tell the system how to find the name of such an entity type. This is done in entities.json:
+You also need to tell the system how to find the name of such a sort. This is done in entities.json:
 
     "person": {
         "name": "person_name(Id, Name)",

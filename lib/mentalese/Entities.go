@@ -1,8 +1,8 @@
 package mentalese
 
-type Entities map[string]EntityInfo
+type Entities map[string]SortInfo
 
-type EntityInfo struct {
+type SortInfo struct {
 	Name Relation
 	Knownby map[string]Relation
 	Entity RelationSet

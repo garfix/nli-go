@@ -9,6 +9,17 @@ these ids filled in. When one of these ids gives a match, this id will be used a
 In order to allow pronouns like "he", "she" and "it" in the input, you need to model pronouns in a way that reflects
 their function as a quantification:
 
-    { rule: pronoun(E1) -> it(E1),                                          sense: quant(_, the(_), E1, none) }
+    { rule: pronoun(E1) -> 'it',                                           sense: go:back_reference(E1, none) }
+    
+## Resolving abstract nouns    
 
-This basically says: by "it" I mean "the latest processed entity".
+To resolve an abstract noun like "one" (as in "Put a small one onto the green cube") to the concrete noun "block", specify "one" as a `sortal_back_reference()`
+
+    { rule: noun(E1) -> 'one',                                           sense: go:sortal_back_reference(E1, none) }
+    
+When the `sortal_back_reference` is processed, it looks into the anaphora queue for the sort of the latest referent. When this sort is, say, `block`, the function will look for the `entity` relation set that belongs to the sort. Located in `entities.yml` you will write   
+
+    block:
+      entity: block(Id)  
+
+This tells us that the sort `block` is represented by the relation (set) `block()` in the domain. The variable `Id` will be used to identify the block.

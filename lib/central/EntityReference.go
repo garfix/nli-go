@@ -1,23 +1,23 @@
 package central
 
 type EntityReference struct {
-	EntityType string
-	Id string
+	Sort string
+	Id   string
 }
 
-func CreateEntityReference(id string, entityType string) EntityReference {
+func CreateEntityReference(id string, sort string) EntityReference {
 	return EntityReference{
-		EntityType: entityType,
-		Id:         id,
+		Sort: sort,
+		Id:   id,
 	}
 }
 
 func (ref EntityReference) Equals(otherRef EntityReference) bool {
-	return ref.EntityType == otherRef.EntityType && ref.Id == otherRef.Id
+	return ref.Sort == otherRef.Sort && ref.Id == otherRef.Id
 }
 
 func (ref EntityReference) String() string {
-	return ref.EntityType + ":" + ref.Id
+	return ref.Sort + ":" + ref.Id
 }
 
 type EntityReferenceGroup []EntityReference
@@ -34,6 +34,22 @@ func (group EntityReferenceGroup) Equals(otherGroup EntityReferenceGroup) bool {
 		}
 	}
 	return eq
+}
+
+func (group EntityReferenceGroup) Deduplicate() EntityReferenceGroup {
+	newGroup := EntityReferenceGroup{}
+	for _, entity := range group {
+		found := false
+		for _, e := range newGroup {
+			if e.Equals(entity) {
+				found = true
+			}
+		}
+		if !found {
+			newGroup = append(newGroup, entity)
+		}
+	}
+	return newGroup
 }
 
 func (group EntityReferenceGroup) String() string {

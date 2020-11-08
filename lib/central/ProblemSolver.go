@@ -65,7 +65,7 @@ func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
 // ]
 func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	if solver.log.Active() { solver.log.StartDebug("Solve Set", set.String() + " " + bindings.String()) }
+	//if solver.log.Active() { solver.log.StartDebug("Solve Set", set.String() + " " + bindings.String()) }
 
 	newBindings := bindings
 	for _, relation := range set {
@@ -79,7 +79,7 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 		}
 	}
 
-	if solver.log.Active() { solver.log.EndDebug("Solve Set", newBindings.String()) }
+	//if solver.log.Active() { solver.log.EndDebug("Solve Set", newBindings.String()) }
 
 	return newBindings
 }

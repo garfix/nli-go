@@ -1,3 +1,27 @@
+## 2020-11-08
+
+
+# 2020-11-07
+
+Interaction 20 is:
+
+    H: Put a small one onto the green cube which supports a pyramid
+    C: OK
+    
+Winograd notes: "A small one" must contrast with the earlier phrase "a large block", so this means "a small block"
+
+I added the code for this interaction within 10 minutes. And the result is correct. The tall pyramid is removed from the front green block and placed elsewhere. The small red block is removed from the stack and placed on top of the green block.
+
+However, the interaction succeeded by accident. If the small pyramid had been listed before the small block in the database, this object would have been placed on the green block. The reason? "A small one" does not match any of the previous entities in the queue, since NLI-GO only uses the anaphora queue on definite references ("the" in stead of "a"). So "a small one" is not interpreted as "a small block" but more generally as "a small object". And the red cube (its `size` relation, in fact) is the first one in the database. 
+
+What needs to be done is this: the word "one" must be treated as a back reference, so that it can be resolved to the concept "block".
+
+- A variant on the function `back_reference()` for sorts `sortal_back_reference()` 
+- "one" will have sense `sortal_back_reference()`   
+- `sortal_back_reference()` searches in the anaphora queue for the last sort (`block`)
+- in the file `entities.yml` it can find the predicate to use for sort `block`, namely: `block(E1)`
+- this predicate is used to find the block
+
 # 2020-11-06
 
 Changed logging: debug lines are now only calculated when debug is on. This is important because log line calculation took up 25% of processing time.

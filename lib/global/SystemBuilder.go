@@ -671,7 +671,11 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 
 		for key, entityInfo := range entityStructure {
 
-			nameRelationSet := builder.parser.CreateRelation(entityInfo.Name)
+			nameRelation := builder.parser.CreateRelation(entityInfo.Name)
+			EntityRelationSet := mentalese.RelationSet{}
+			if entityInfo.Entity != "" {
+				EntityRelationSet = builder.parser.CreateRelationSet(entityInfo.Entity)
+			}
 
 			parseResult := builder.parser.GetLastParseResult()
 			if !parseResult.Ok {
@@ -691,8 +695,9 @@ func (builder systemBuilder) CreateEntities(path string) (mentalese.Entities, bo
 			}
 
 			entities[key] = mentalese.EntityInfo{
-				Name:    nameRelationSet,
+				Name:    nameRelation,
 				Knownby: knownBy,
+				Entity:  EntityRelationSet,
 			}
 		}
 	}

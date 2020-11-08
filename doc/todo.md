@@ -1,9 +1,5 @@
 # Todo
 
-# Break
-- in other foreach loops than list_foreach
-- test in solver:SolveRelationSet if scope.isBreaked is set, if so, discontinue
-
 - functions calls for arguments
 - typed arguments
 - operators

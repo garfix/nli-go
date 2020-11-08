@@ -28,7 +28,7 @@ func (base *SystemSolverFunctionBase) backReference(relation mentalese.Relation,
 		ref := group[0]
 
 		b := mentalese.NewBinding()
-		b.Set(variable, mentalese.NewTermId(ref.Id, ref.EntityType))
+		b.Set(variable, mentalese.NewTermId(ref.Id, ref.Sort))
 
 		refBinding := binding.Merge(b)
 
@@ -38,7 +38,7 @@ func (base *SystemSolverFunctionBase) backReference(relation mentalese.Relation,
 			break
 		}
 
-		if !base.quickAcceptabilityCheck(variable, ref.EntityType, set) {
+		if !base.quickAcceptabilityCheck(variable, ref.Sort, set) {
 			continue
 		}
 
@@ -70,6 +70,47 @@ func (base *SystemSolverFunctionBase) definiteReference(relation mentalese.Relat
 				return mentalese.NewBindingSet()
 			}
 		}
+	}
+
+	return newBindings
+}
+
+func (base *SystemSolverFunctionBase) sortalBackReference(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	variable := relation.Arguments[0].TermValue
+
+	newBindings := mentalese.NewBindingSet()
+
+	for _, group := range *base.dialogContext.AnaphoraQueue {
+
+		sort := ""
+
+		for _, ref := range group {
+			if sort == "" {
+				sort = ref.Sort
+			} else if sort != ref.Sort {
+				sort = ""
+				break
+			}
+		}
+
+		if sort == "" {
+			continue
+		}
+
+		sortInfo, found := base.meta.GetSortInfo(sort)
+		if !found {
+			continue
+		}
+
+		if sortInfo.Entity.Equals(mentalese.RelationSet{}) {
+			continue
+		}
+
+		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
+
+		newBindings = base.solver.SolveRelationSet(sortRelationSet, mentalese.InitBindingSet(binding))
+		break
 	}
 
 	return newBindings

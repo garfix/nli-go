@@ -121,6 +121,7 @@ func (log *SystemLog) String() string {
 	for _, production := range log.GetProductions() {
 		s += fmt.Sprintln(production)
 	}
+	s += "\n"
 
 	for _, debugLine := range log.debugLines {
 		s += debugLine + "\n"

@@ -1,5 +1,6 @@
 type: domain
 version: 1.0.0
+entities: entities.yml
 rules:
   - sentence.rule
   - helper.rule

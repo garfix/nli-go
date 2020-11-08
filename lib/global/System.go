@@ -79,7 +79,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	answerWords := []string{}
 	nameBinding := mentalese.NewBinding()
 
-	if system.log.Active() { system.log.AddDebug("Anaphora queue", system.dialogContext.AnaphoraQueue.String()) }
+	system.log.AddProduction("Anaphora queue before", system.dialogContext.AnaphoraQueue.String())
 
 	for _, grammar := range system.grammars {
 
@@ -94,7 +94,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 				system.log.AddError("Parser returned no parse trees")
 			} else {
 				parseTree = parseTrees[0]
-				system.log.AddProduction("Parse trees found: ", strconv.Itoa(len(parseTrees)))
+				system.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
 				system.log.AddProduction("Parser", parseTree.String())
 			}
 		}
@@ -109,7 +109,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			answerRelations = system.answerer.Answer(requestRelations, mentalese.InitBindingSet(nameBinding))
 			system.log.AddProduction("Answer", answerRelations.String())
-			system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
+			system.log.AddProduction("Anaphora queue after", system.dialogContext.AnaphoraQueue.String())
 		}
 
 		if !system.log.IsDone() {

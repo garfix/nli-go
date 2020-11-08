@@ -1,0 +1,6 @@
+block:
+  entity: block(Id)
+pyramid:
+  entity: pyramid(Id)
+box:
+  entity: box(Id)

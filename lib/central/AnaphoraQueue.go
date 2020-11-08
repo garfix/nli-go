@@ -9,6 +9,9 @@ func (queue *AnaphoraQueue) AddReferenceGroup(entityReferenceGroup EntityReferen
 		return
 	}
 
+	// remove doubles
+	entityReferenceGroup = entityReferenceGroup.Deduplicate()
+
 	// same element again? ignore
 	if len(*queue) > 0 && (*queue)[0].Equals(entityReferenceGroup) {
 		return

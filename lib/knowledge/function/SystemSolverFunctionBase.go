@@ -33,6 +33,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateIntent: base.intent,
 		mentalese.PredicateBackReference: base.backReference,
 		mentalese.PredicateDefiniteBackReference: base.definiteReference,
+		mentalese.PredicateSortalBackReference: base.sortalBackReference,
 
 		// quant
 		mentalese.PredicateQuantCheck: base.quantCheck,

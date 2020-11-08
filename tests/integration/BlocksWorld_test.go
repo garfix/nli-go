@@ -65,6 +65,8 @@ func TestBlocksWorld(t *testing.T) {
 
 			// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
 			{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
+
+			{"Put a small one onto the green cube which supports a pyramid", "OK"},
 		},
 		{
 		},
@@ -98,8 +100,8 @@ func TestBlocksWorld(t *testing.T) {
 			system.StoreDialogContext(sessionId)
 
 			if answer != test.answer {
-				t.Errorf("Test relationships:\nGOT:\n%v\nWANT:\n%v", answer, test.answer)
-				t.Error(log.String())
+				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
+				t.Errorf("\n%s", log.String())
 			}
 		}
 	}

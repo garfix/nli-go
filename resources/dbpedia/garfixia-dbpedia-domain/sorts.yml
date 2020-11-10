@@ -7,3 +7,5 @@ country:
   knownby:
     label: label(Id, Value)
     founding_date: founding_date(Id, Value)
+state:
+  name: state_name(Id, Name)

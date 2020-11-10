@@ -97,22 +97,13 @@ func (solver *ProblemSolver) solveSingleRelationMultipleBindings(relation mental
 
 	if solver.log.Active() { solver.log.StartDebug("Solve Relation", relation.String() + " " + fmt.Sprint(bindings)) }
 
-	newBindings := mentalese.NewBindingSet()
-	multiFound := false
-
 	_, found := solver.index.knownPredicates[relation.Predicate]
 	if !found {
 		solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
 		return mentalese.NewBindingSet()
 	}
 
-	functions1, f1 := solver.index.multiBindingFunctions[relation.Predicate]
-	if f1 {
-		for _, function := range functions1 {
-			newBindings = function(relation, bindings)
-			multiFound = true
-		}
-	}
+	newBindings, multiFound := solver.solveMultipleBindings(relation, bindings)
 
 	if !multiFound {
 		for _, binding := range bindings.GetAll() {
@@ -123,6 +114,22 @@ func (solver *ProblemSolver) solveSingleRelationMultipleBindings(relation mental
 	if solver.log.Active() { solver.log.EndDebug("Solve Relation", relation.String() + ": " + fmt.Sprint(newBindings)) }
 
 	return newBindings
+}
+
+func (solver *ProblemSolver) solveMultipleBindings(relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+
+	newBindings := mentalese.NewBindingSet()
+	multiFound := false
+
+	functions, found := solver.index.multiBindingFunctions[relation.Predicate]
+	if found {
+		for _, function := range functions {
+			newBindings = function(relation, bindings)
+			multiFound = true
+		}
+	}
+
+	return newBindings, multiFound
 }
 
 // goalRelation e.g. father(Y, Z)
@@ -241,26 +248,19 @@ func (solver *ProblemSolver) solveSingleRelationSingleFactBase(relation mentales
 
 	if solver.log.Active() { solver.log.StartDebug("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String()) }
 
-	relationBindings := mentalese.NewBindingSet()
-
-	multiFound := false
-	aggregateBindings := mentalese.NewBindingSet()
-
-	functions1, f1 := solver.index.multiBindingFunctions[relation.Predicate]
-	if f1 {
-		for _, function := range functions1 {
-			aggregateBindings = function(relation, bindings)
-			relationBindings = aggregateBindings
-			multiFound = true
-			break
-		}
-	}
+	relationBindings, multiFound := solver.solveMultipleBindings(relation, bindings)
+	resultBindings := mentalese.NewBindingSet()
 
 	if !multiFound {
 
 		for _, binding := range bindings.GetAll() {
 
-			resultBindings := factBase.MatchRelationToDatabase(relation, binding)
+			_, found := solver.index.simpleFunctions[relation.Predicate]
+			if found {
+				resultBindings = solver.solveSingleRelationSingleBinding(relation, binding)
+			} else {
+				resultBindings = factBase.MatchRelationToDatabase(relation, binding)
+			}
 
 			// found bindings must be extended with the bindings already present
 			for _, resultBinding := range resultBindings.GetAll() {

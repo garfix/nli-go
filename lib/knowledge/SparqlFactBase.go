@@ -170,7 +170,8 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 			} else if arg1 == "'?'" {
 				return ""
 			} else {
-				// case insensitive search
+				// Sparql does not have direct support for case insenstive search; this is a hack around that
+				// the `contains` function is optimized for search; it is much faster than regexp
 				var2 = "?name"
 				// http://docs.openlinksw.com/virtuoso/rdfpredicatessparql/
 				escA := strings.Replace(strings.Replace(arg1, "'", "\\\\'", -1), "\"", "\\\"", -1)

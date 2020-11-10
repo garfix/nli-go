@@ -38,7 +38,19 @@ with bindings
     [{Name:'Babbage'}{Name:'Charles B.'}{Name:'Charles Babbage'}]
 
 returns `[{Name:'Babbage'}]`
+
+## largest 
+
+Takes in all current bindings and removes the ones whose E value is not the largest number.
+
+    go:largest(E) 
     
+## smallest 
+
+Takes in all current bindings and removes the ones whose E value is not the smallest number.
+
+    go:smallest(E) 
+
 ## exists
 
 Checks if there currently are any bindings. The function doesn't actually do anything. It is a filler for the condition clause in a solution. This function can only be used in the condition of a solution, because this is the only relation set that is executed even with zero bindings.

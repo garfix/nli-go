@@ -20,6 +20,8 @@
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
 
 { rule: nbar(E1) -> noun(E1) }
+{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: $nbar dom:land_area(E1, Area) go:largest(Area) }
+{ rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }
 { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
 { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: go:quant_check($np, dom:has_population(E1, E2)) }
 

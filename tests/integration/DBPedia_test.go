@@ -8,15 +8,6 @@ import (
 
 func TestDBPedia(t *testing.T) {
 
-	log := common.NewSystemLog(false)
-	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", common.Dir() + "/../../var", log)
-	sessionId := "dbpedia-demo"
-
-	if !log.IsOk() {
-		t.Errorf(log.String())
-		return
-	}
-
 	var tests = [][]struct {
 		question      string
 		answer        string
@@ -58,7 +49,18 @@ func TestDBPedia(t *testing.T) {
 		},
 		{
 			{"How many countries have population above 130000000", "8"},
+			{"What is the largest state of America by area?", "Alaska"},
 		},
+	}
+
+	log := common.NewSystemLog(false)
+	//log.SetPrint(true)
+	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", common.Dir() + "/../../var", log)
+	sessionId := "dbpedia-demo"
+
+	if !log.IsOk() {
+		t.Errorf(log.String())
+		return
 	}
 
 	system.RemoveDialogContext(sessionId)

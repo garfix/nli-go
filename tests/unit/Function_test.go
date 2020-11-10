@@ -84,6 +84,8 @@ func TestAggregateFunctions(t *testing.T) {
 		{"go:number_of(W1, 3)", "[{W1:'aap'}{W1:'noot'}{W1:'noot'}]", "[]"},
 		{"go:first(Name)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Babbage'}{A:3, Name:'Babbage'}]"},
 		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
+		{"go:largest(E1)", "[{E1:5, E2:2}{E1:6, E2:3}{E1:6, E2:1}{A:1}]", "[{E1:6, E2:3}{E1:6, E2:1}{A:1}]"},
+		{"go:smallest(E1)", "[{E1:5, E2:2}{E1:6, E2:3}{E1:6, E2:1}{A:1}]", "[{E1:5, E2:2}{A:1}]"},
 		{"go:exists()", "[]", "[]"},
 		{"go:make_list(List, X, Y)", "[{X: 2, Y: 1, E: 5}{X: 3}{}{E: 4}{E: 4}]", "[{E:5, List:[2,3,1]}{List:[2,3,1]}{E:4, List:[2,3,1]}]"},
 	}

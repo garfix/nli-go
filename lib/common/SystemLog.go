@@ -7,6 +7,7 @@ import (
 
 type SystemLog struct {
 	debugOn     bool
+	printOn		bool
 	productions []string
 	debugLines  []string
 	debugDepth  int
@@ -18,10 +19,17 @@ type SystemLog struct {
 }
 
 func NewSystemLog(debugOn bool) *SystemLog {
-	log := SystemLog{ debugOn: debugOn }
+	log := SystemLog{
+		debugOn: debugOn,
+		printOn: false,
+	}
 	log.Clear()
 
 	return &log
+}
+
+func (log *SystemLog) SetPrint(on bool) {
+	log.printOn = on
 }
 
 func (log *SystemLog) Active() bool {
@@ -49,11 +57,13 @@ func (log *SystemLog) DisableDebug() {
 func (log *SystemLog) AddProduction(name string, production string) {
 	stmt := name + ": " + production + " "
 	log.productions = append(log.productions, stmt)
+	if log.printOn { fmt.Println(stmt) }
 }
 
 func (log *SystemLog) AddDebug(name string, production string) {
 	stmt := strings.Repeat("| ", log.debugDepth) + name + ": " + production + " "
 	log.debugLines = append(log.debugLines, stmt)
+	if log.printOn { fmt.Println(stmt) }
 }
 
 func (log *SystemLog) StartDebug(name string, production string) bool {

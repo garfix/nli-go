@@ -21,6 +21,8 @@ func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiB
 	return map[string]api.MultiBindingFunction{
 		mentalese.PredicateNumberOf: base.numberOf,
 		mentalese.PredicateFirst: base.first,
+		mentalese.PredicateLargest: base.largest,
+		mentalese.PredicateSmallest: base.smallest,
 		mentalese.PredicateExists: base.exists,
 		mentalese.PredicateMakeAnd: base.makeAnd,
 		mentalese.PredicateMakeList: base.makeList,
@@ -80,6 +82,93 @@ func (base *SystemMultiBindingFunctionBase) first(input mentalese.Relation, bind
 			newBinding.Set(subjectVariable, distinctValues[0])
 			newBindings.Add(newBinding)
 		}
+	}
+
+	return newBindings
+}
+
+
+func (base *SystemMultiBindingFunctionBase) largest(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+
+	if !Validate(input, "v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	if bindings.IsEmpty() {
+		return mentalese.NewBindingSet()
+	}
+
+	subjectVariable := input.Arguments[0].TermValue
+	distinctValues := bindings.GetDistinctValues(subjectVariable)
+
+	largest := 0.0
+
+	for i, value := range distinctValues {
+		value, err := strconv.ParseFloat(value.TermValue, 64)
+		if err != nil {
+			base.log.AddError("Largest takes all numbers")
+			return mentalese.NewBindingSet()
+		}
+		if i == 0 {
+			largest = value
+		} else if value > largest {
+			largest = value
+		}
+	}
+
+	newBindings := mentalese.NewBindingSet()
+	for _, binding := range bindings.GetAll() {
+		value, found := binding.Get(subjectVariable)
+		if found {
+			value, _ := strconv.ParseFloat(value.TermValue, 64)
+			if value < largest {
+				continue
+			}
+		}
+		newBindings.Add(binding)
+	}
+
+	return newBindings
+}
+
+func (base *SystemMultiBindingFunctionBase) smallest(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+
+	if !Validate(input, "v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	if bindings.IsEmpty() {
+		return mentalese.NewBindingSet()
+	}
+
+	subjectVariable := input.Arguments[0].TermValue
+	distinctValues := bindings.GetDistinctValues(subjectVariable)
+
+	smallest := 0.0
+
+	for i, value := range distinctValues {
+		value, err := strconv.ParseFloat(value.TermValue, 64)
+		if err != nil {
+			base.log.AddError("Smallest takes all numbers")
+			return mentalese.NewBindingSet()
+		}
+		if i == 0 {
+			smallest = value
+		} else if value < smallest {
+			smallest = value
+		}
+	}
+
+	newBindings := mentalese.NewBindingSet()
+	for _, binding := range bindings.GetAll() {
+		value, found := binding.Get(subjectVariable)
+		if found {
+			value, _ := strconv.ParseFloat(value.TermValue, 64)
+			if value > smallest {
+				continue
+			}
+		}
+		newBindings.Add(binding)
 	}
 
 	return newBindings

@@ -1,8 +1,101 @@
+## 2020-11-10
+
+I wrote to Terry Winograd about this project a couple of weeks ago. Today I got his reply:
+
+> Dear Patrick,
+>
+> Thanks for letting me know about your project.  Sounds like you are working hard at developing a line of development which is out of favor in today's world of machine learning.  I wish you success.
+>
+> All the best,
+>
+> --Terry Winograd
+
+This made me happy today :)
+
+I am having a go at these SEMPRE queries in a DBPedia context:
+
+
+    Here is the city with the largest area:    
+    (argmax 1 1 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The second largest city by area:    
+    (argmax 2 1 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The five largest cities by area:    
+    (argmax 1 5 (fb:type.object.type fb:location.citytown) fb:location.location.area)
+    
+    The person who has the most number of children (who, in Freebase, turns out to be Chulalongkorn with a whopping 62):    
+    (argmax 1 1 (fb:type.object.type fb:people.person) (reverse (lambda x (count (!fb:people.person.children (var x))))))
+
+My first query:
+
+What is the largest state of America by area.
+
+Remarks:
+
+- I am taking land area (as opposed to land + water area)
+- "America" is not a name in DbPedia (it is, but not the name of the USA); so I am making this explicit in the mapping
+- The connection `state-of-county` does not exist. There is a `hypernym` property that may have value `http://dbpedia.org/resource/State` but this also houses things like `http://dbpedia.org/resource/Greenberg–Hastings_cellular_automaton` so not really useful. Also Hawaii is not such a state. I am now using `http://dbpedia.org/class/yago/WikicatStatesOfTheUnitedStates` together with the hypernym. Unfortunately I am missing some states. DBPedia's relations lack strong semantics.
+
 ## 2020-11-08
 
-I completed conversation 20, by introducing the sortal reference ("one" means "block") I described yesterday.
+I completed interaction 20, by introducing the sortal reference ("one" means "block") I described yesterday.
 
 Renamed entities.yml to sorts.yml and "entity type" to "sort".
+
+===
+
+Interaction 21:
+
+    H: Put the listtlest pyramid on top of it.
+    C: OK
+    
+Winograd: Words like "little" are not in the dictionary but are either interpreted from the root forms likt "little".
+
+The meaning of the wordt "littlest" is: the smallest height. The meaning of the word "little" is: height less then 128. How can we derive the meaning of littlest from that of little?  
+
+SHRDL has a morphological analyser called Morpho. I think (!) it recognizes suffixes, like this:
+
+    ((STA WORD '(G N I)) (SETQ RD (CDDDR WORD)))
+    ((STA WORD '(D E)) (SETQ RD (CDDR WORD)))
+    ((STA WORD '(N E)) (SETQ RD (CDDR WORD)))
+    ((STA WORD '(R E)) (SETQ RD (CDDR WORD)))
+    ((STA WORD '(T S E)) (SETQ RD (CDDDR WORD)))
+
+Note the list `'(T S E)` that has the suffix `est` in reverse. How can SHRDLU know that littlest should take the smallest height; not the largest height? I think this is derived from the attribute `DIRECTION` from the definition of "little":
+
+    (DEFS LITTLE 
+        SEMANTICS ((MEASURE (MEASURE DIMENSION:
+                     #SIZE
+                     RESTRICTIONS:
+                     (#PHYSOB)
+                     DIRECTION:
+                     NIL))
+               (ADJ (OBJECT 
+                (MARKERS: (#PHYSOB #LITTLE) 
+                 PROCEDURE: ((#MORE #SIZE
+                            (128. 128. 128.)
+                            ***)))))) 
+        FEATURES (ADJ))
+    
+`DIRECTION` is `NIL`, whereas "big" has a direction of `T`:
+
+    (DEFS BIG 
+        SEMANTICS ((MEASURE (MEASURE DIMENSION:
+                     #SIZE
+                     RESTRICTIONS:
+                     (#PHYSOB)
+                     DIRECTION:
+                     T))
+               (ADJ (OBJECT 
+                (MARKERS: (#PHYSOB #BIG) 
+                 PROCEDURE: ((#MORE #SIZE *** (128. 128.
+                                    128.))))))
+    )   FEATURES (ADJ))    
+    
+SHRDLU stores information about a word in its definition; an object oriented structure.
+
+Can all _diminutives_ be characterized with a direction? How many diminiutives are there? Does it pay to create a morphological analyser for this reason alone? Is it hard to write a morphological analyser? (yes I think so!)    
 
 # 2020-11-07
 

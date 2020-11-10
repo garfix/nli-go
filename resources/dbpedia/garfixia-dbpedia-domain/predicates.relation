@@ -1,4 +1,5 @@
 has_capital(country, city)
+has_state(country, state)
 has_population(country, object)
 have_child(person, person)
 has_father(person, person)

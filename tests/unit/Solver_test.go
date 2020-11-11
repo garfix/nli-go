@@ -14,7 +14,7 @@ import (
 func TestSolver(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	facts := parser.CreateRelationSet(`
 		book(1, 'The red book', 5)
@@ -159,7 +159,7 @@ func TestSolver(t *testing.T) {
 func TestMissingHandlerError(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	facts := mentalese.RelationSet{}
 	readMap := []mentalese.Rule{}

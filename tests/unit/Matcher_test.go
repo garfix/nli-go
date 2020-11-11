@@ -11,7 +11,7 @@ import (
 func TestMatchTwoTerms(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	tests := []struct {
 		needle      string
@@ -84,7 +84,7 @@ func TestMatchTwoTerms(t *testing.T) {
 func TestMatchTwoRelations(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	tests := []struct {
 		needle      string
@@ -129,7 +129,7 @@ func TestMatchTwoRelations(t *testing.T) {
 func TestMatchRelationToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`
 		gender('Luke', male) 
@@ -182,7 +182,7 @@ func TestMatchRelationToSet(t *testing.T) {
 func TestMatchSequenceToSet(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`
 		gender('Luke', male)

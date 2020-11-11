@@ -9,7 +9,7 @@ import (
 // Test of a minimal NLI-GO application
 func TestDualWorld(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	system := global.NewSystem(common.Dir() + "/../../resources/dualworld", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {

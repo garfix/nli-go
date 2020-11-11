@@ -18,9 +18,9 @@ type SystemLog struct {
 	depth		int
 }
 
-func NewSystemLog(debugOn bool) *SystemLog {
+func NewSystemLog() *SystemLog {
 	log := SystemLog{
-		debugOn: debugOn,
+		debugOn: false,
 		printOn: false,
 	}
 	log.Clear()

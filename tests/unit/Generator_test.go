@@ -14,7 +14,7 @@ import (
 func TestGenerator(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	grammarRules := internalGrammarParser.CreateGenerationGrammar(`
         { rule: s(P) -> np(E) vp(P),              condition: grammatical_subject(E) subject(P, E) }

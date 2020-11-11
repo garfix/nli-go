@@ -31,7 +31,7 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: verb(P1) -> 'speaks' 'up', sense: predication(P1, speak_up) }
 	`)
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	rawInput := "the small shy girl speaks up"
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)

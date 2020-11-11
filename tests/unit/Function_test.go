@@ -12,7 +12,7 @@ import (
 
 func TestFunctions(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
 	context := central.NewDialogContext()
 	matcher := central.NewRelationMatcher(log)
@@ -67,7 +67,7 @@ func TestFunctions(t *testing.T) {
 
 func TestAggregateFunctions(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	context := central.NewDialogContext()
 	matcher := central.NewRelationMatcher(log)
 	solver := central.NewProblemSolver(matcher, context, log)
@@ -110,7 +110,7 @@ func TestAggregateFunctions(t *testing.T) {
 
 func TestControlFunctions(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
@@ -153,7 +153,7 @@ func TestControlFunctions(t *testing.T) {
 
 func TestListFunctions(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Meta{}
@@ -232,7 +232,7 @@ func TestListFunctions(t *testing.T) {
 
 func TestQuantFunctions(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	predicates := &mentalese.Meta{}

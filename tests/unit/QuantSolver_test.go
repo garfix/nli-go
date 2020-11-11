@@ -13,7 +13,7 @@ import (
 func TestQuantSolver(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	dbFacts := internalGrammarParser.CreateRelationSet(`
 		person(1, 'Jacqueline de Boer', 'F', '1964')

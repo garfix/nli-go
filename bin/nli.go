@@ -65,7 +65,7 @@ func main() {
 		variableDir = filepath.Clean(variableDir)
 	}
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	system := global.NewSystem(absConfigPath, variableDir, log)
 
 	// load dialog context

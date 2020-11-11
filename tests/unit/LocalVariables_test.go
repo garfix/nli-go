@@ -13,7 +13,7 @@ import (
 func TestLocalVariables(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()

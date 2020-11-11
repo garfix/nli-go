@@ -9,7 +9,7 @@ import (
 
 func TestRelationTransformer(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
 	matcher := central.NewRelationMatcher(log)
 	transformer := central.NewRelationTransformer(matcher, log)
@@ -64,7 +64,7 @@ func TestRelationTransformer(t *testing.T) {
 
 func TestRelationTransformerWithRelationSetArguments(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
 	matcher := central.NewRelationMatcher(log)
 	transformer := central.NewRelationTransformer(matcher, log)

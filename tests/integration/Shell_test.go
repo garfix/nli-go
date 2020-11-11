@@ -10,7 +10,7 @@ import (
 // Test of a minimal NLI-GO application
 func TestShell(t *testing.T) {
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	system := global.NewSystem(common.Dir() + "/../../resources/shell", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {

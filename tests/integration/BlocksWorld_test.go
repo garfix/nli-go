@@ -72,7 +72,7 @@ func TestBlocksWorld(t *testing.T) {
 		},
 	}
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
 	sessionId := "blocks-demo"
 

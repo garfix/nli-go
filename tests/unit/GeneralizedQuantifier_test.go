@@ -15,7 +15,7 @@ import (
 func TestGeneralizedQuantifier(t *testing.T) {
 
 	internalGrammarParser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	grammarRules := internalGrammarParser.CreateGrammarRules(`
 		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: go:quantifier(Result, Range, $quantifier) }

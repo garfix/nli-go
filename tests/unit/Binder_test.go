@@ -27,7 +27,7 @@ func TestBinder(t *testing.T) {
 	}
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 
 	for _, test := range tests {

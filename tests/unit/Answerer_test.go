@@ -13,7 +13,7 @@ import (
 func TestAnswerer(t *testing.T) {
 
 	parser := importer.NewInternalGrammarParser()
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	facts := parser.CreateRelationSet(`
 		book(1, 'The red book', 5)

@@ -29,7 +29,7 @@ func TestFillerStack(t *testing.T) {
 		{ rule: noun(E1) -> 'toys',											sense: toy(E1) }
 	`)
 
-	log := common.NewSystemLog(true)
+	log := common.NewSystemLog()
 
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()

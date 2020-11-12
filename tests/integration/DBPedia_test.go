@@ -49,12 +49,15 @@ func TestDBPedia(t *testing.T) {
 		},
 		{
 			{"How many countries have population above 130000000", "8"},
-			{"What is the largest state of America by area?", "Alaska"},
+		 	{"What is the largest state of America by area?", "Alaska"},
+			{"What are the two largest states of america by area?", "Texas and Alaska"},
+		},
+		{
 		},
 	}
 
-	log := common.NewSystemLog(false)
-	//log.SetPrint(true)
+	log := common.NewSystemLog()
+	log.SetDebug(true)
 	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", common.Dir() + "/../../var", log)
 	sessionId := "dbpedia-demo"
 

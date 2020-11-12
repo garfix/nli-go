@@ -1,3 +1,17 @@
+## 2020-11-11
+
+Next sentence:
+
+    What are the two largest states of America by area?
+    
+First up: `the two`. So far I have regarded a count noun as a quantifier, but I can't keep this up any longer. Although?
+
+    { rule: quantifier(Result, Range) -> 'the' number(N1),                sense: go:equals(Result, N1) }
+
+In SQL the query would be like this
+
+    SELECT name OF state ... ORDER BY area DESC LIMIT 2
+
 ## 2020-11-10
 
 I wrote to Terry Winograd about this project a couple of weeks ago. Today I got his reply:

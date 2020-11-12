@@ -208,8 +208,8 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:label(B, L),
-            answer: go:canned(L)
+            preparation:dom:label(B, L) go:make_and(B, And),
+            answer: dom:name(B, L)  dom:root({{ And }})
         }
         {
             answer: dom:dont_know()

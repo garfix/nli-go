@@ -40,7 +40,7 @@ func TestRelationizer(t *testing.T) {
 	
 	`)
 
-	log := common.NewSystemLog(false)
+	log := common.NewSystemLog()
 
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext()

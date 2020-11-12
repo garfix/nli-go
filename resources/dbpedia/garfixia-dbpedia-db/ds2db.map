@@ -11,9 +11,10 @@ dom:person_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/ontology/P
 
 dom:country_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
 dom:country_name(A, N) :- go:equals(N, 'America') go:unify(A, `:http://dbpedia.org/resource/United_States`);
+dom:country_name(A, N) :- go:equals(N, 'america') go:unify(A, `:http://dbpedia.org/resource/United_States`);
 dom:state_name(A, N) :- name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatStatesOfTheUnitedStates`);
 
-dom:name(A, N, canonical_name) :- foaf_name(A, N) go:first(N);
+dom:name(A, N, canonical_name) :- foaf_name(A, N) go:first();
 
 dom:description(A, D) :- description(A, D);
 dom:long_description(A, D) :- abstract(A, D);

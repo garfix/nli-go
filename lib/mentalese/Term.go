@@ -69,6 +69,15 @@ func (term Term) IsInteger() bool {
 	return err == nil
 }
 
+
+func (term Term) IsNumber() bool {
+	if term.TermType != TermTypeStringConstant {
+		return false
+	}
+	_, err := strconv.ParseFloat(term.TermValue, 64)
+	return err == nil
+}
+
 func (term Term) IsString() bool {
 	return term.TermType == TermTypeStringConstant
 }

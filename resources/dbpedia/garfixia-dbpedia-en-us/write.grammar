@@ -9,6 +9,7 @@
 { rule: s(S1) -> subject(E1) die(S1) 'on' date_formatted(D2),                 condition: dom:death_date(D1, D2) }
 { rule: s(S1) -> entities(S1),                                                condition: dom:root(go:and(S1, _))  }
 { rule: s(S1) -> date_formatted(D2),                                          condition: dom:root(D1) dom:date(D1, Y, M, D) }
+{ rule: s(S1) -> 'I don\'t know',                                             condition: dom:dont_know() }
 
 { rule: s(S1) -> subject(E1) 'is' text(Age) year(Age) old(E1) '(' bear(S1) 'on' date_formatted(BirthDate) ')',
                                                                               condition: dom:report_age_alive(E1, Age, BirthDate) }

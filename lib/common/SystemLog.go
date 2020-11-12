@@ -46,12 +46,8 @@ func (log *SystemLog) Clear() {
 	log.ok = true
 }
 
-func (log *SystemLog) EnableDebug() {
-	log.debugOn = true
-}
-
-func (log *SystemLog) DisableDebug() {
-	log.debugOn = true
+func (log *SystemLog) SetDebug(on bool) {
+	log.debugOn = on
 }
 
 func (log *SystemLog) AddProduction(name string, production string) {

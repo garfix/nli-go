@@ -1,7 +1,7 @@
 /* quantification */
 
 { rule: qp(_) -> quantifier(Result, Range),                           sense: go:quantifier(Result, Range, $quantifier) }
-{ rule: quantifier(Result, Range) -> 'the',                           sense: go:equals(Result, 1) }
+{ rule: quantifier(Result, Range) -> 'the',                           sense: go:greater_than(Result, 0) }
 
 /* noun */
 
@@ -20,14 +20,20 @@
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
 
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: $nbar dom:land_area(E1, Area) go:largest(Area) }
+{ rule: nbar(E1) -> 'largest' nbar(E1),                               sense: go:largest(Area) }
+{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: dom:land_area(E1, Area) go:sort(Area) go:last() }
+{ rule: nbar(E1) -> number(N1) 'largest' nbar(E1) 'by' 'area',        sense: dom:land_area(E1, Area) go:sort(Area) go:last(N1) }
 { rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }
+{ rule: nbar(E2) -> 'states' 'of' np(E1),                             sense: go:quant_check($np, dom:has_state(E1, E2)) }
 { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
 { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: go:quant_check($np, dom:has_population(E1, E2)) }
 
-{ rule: child(E1) -> 'children' }
-{ rule: birthday(E1) -> 'birthday' }
-{ rule: country(E1) -> 'countries',                                   sense: dom:country(E1) }
+{ rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
+{ rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: go:quant_check($np, dom:has_son(E2, E1)) }
+{ rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: go:quant_check($np, dom:has_father(E2, E1)) }
+{ rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: go:quant_check($np, dom:has_mother(E2, E1)) }
+{ rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: go:quant_check($np, dom:has_wife(E2, E1)) }
+{ rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: go:quant_check($np, dom:has_husband(E2, E1)) }
 
 { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: go:quant_check($np, dom:has_father(E2, E1)) }
 { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: go:quant_check($np, dom:has_mother(E2, E1)) }
@@ -36,12 +42,9 @@
 { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'wife',            sense: go:quant_check($np, dom:has_wife(E2, E1)) }
 { rule: np_poss(E1) -> np(E2) possessive_marker(_) 'husband',         sense: go:quant_check($np, dom:has_husband(E2, E1)) }
 
-{ rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
-{ rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: go:quant_check($np, dom:has_son(E2, E1)) }
-{ rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: go:quant_check($np, dom:has_father(E2, E1)) }
-{ rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: go:quant_check($np, dom:has_mother(E2, E1)) }
-{ rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: go:quant_check($np, dom:has_wife(E2, E1)) }
-{ rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: go:quant_check($np, dom:has_husband(E2, E1)) }
+{ rule: child(E1) -> 'children' }
+{ rule: birthday(E1) -> 'birthday' }
+{ rule: country(E1) -> 'countries',                                   sense: dom:country(E1) }
 
 /* verb */
 
@@ -54,7 +57,9 @@
 { rule: have(P1) -> 'has' }
 
 { rule: copula(P1) -> 'is' }
+{ rule: copula(P1) -> 'are' }
 { rule: copula(P1) -> 'was' }
+{ rule: copula(P1) -> 'were' }
 
 { rule: aux_be(P1) -> 'is' }
 { rule: aux_be(P1) -> 'was' }
@@ -63,6 +68,7 @@
 /* misc */
 
 { rule: number(N1) -> /^[0-9]+/ }
+{ rule: number(N1) -> 'two',                                            sense: go:unify(N1, 2) }
 
 { rule: possessive_marker(P) -> '\'' 's' }
 

@@ -20,13 +20,14 @@ func NewSystemMultiBindingBase(name string, log *common.SystemLog) *SystemMultiB
 func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiBindingFunction {
 	return map[string]api.MultiBindingFunction{
 		mentalese.PredicateNumberOf: base.numberOf,
-		mentalese.PredicateFirst: base.first,
-		mentalese.PredicateLast: base.last,
-		mentalese.PredicateSort: base.sort,
-		mentalese.PredicateLargest: base.largest,
+		mentalese.PredicateFirst:    base.first,
+		mentalese.PredicateLast:     base.last,
+		mentalese.PredicateGet:      base.get,
+		mentalese.PredicateOrder:    base.order,
+		mentalese.PredicateLargest:  base.largest,
 		mentalese.PredicateSmallest: base.smallest,
-		mentalese.PredicateExists: base.exists,
-		mentalese.PredicateMakeAnd: base.makeAnd,
+		mentalese.PredicateExists:   base.exists,
+		mentalese.PredicateMakeAnd:  base.makeAnd,
 		mentalese.PredicateMakeList: base.makeList,
 	}
 }
@@ -70,22 +71,22 @@ func (base *SystemMultiBindingFunctionBase) first(input mentalese.Relation, bind
 
 	length := 0
 
+	if bindings.IsEmpty() {
+		return bindings
+	}
+
+	bound := input.BindSingle(bindings.Get(0))
+
 	if len(input.Arguments) == 0 {
 		length = 1
 	} else if len(input.Arguments) == 1 {
-		distinct := bindings.GetDistinctValues(input.Arguments[0].TermValue)
 
-		if len(distinct) != 1 {
-			base.log.AddError("First argument of `first` must have a single value")
-			return mentalese.NewBindingSet()
-		}
-
-		value, err := strconv.Atoi(distinct[0].TermValue)
-		if err != nil {
+		intValue, ok := bound.Arguments[0].GetIntValue()
+		if !ok {
 			base.log.AddError("First argument of `first` must be an integer")
 			return mentalese.NewBindingSet()
 		}
-		length = value
+		length = intValue
 	} else {
 		base.log.AddError("`first` takes at most one argument")
 		return mentalese.NewBindingSet()
@@ -116,23 +117,22 @@ func (base *SystemMultiBindingFunctionBase) last(input mentalese.Relation, bindi
 
 	length := 0
 
+	if bindings.IsEmpty() {
+		return bindings
+	}
+
+	bound := input.BindSingle(bindings.Get(0))
+
 	if len(input.Arguments) == 0 {
 		length = 1
 	} else if len(input.Arguments) == 1 {
 
-		distinct := bindings.GetDistinctValues(input.Arguments[0].TermValue)
-
-		if len(distinct) != 1 {
-			base.log.AddError("First argument of `last` must have a single value")
-			return mentalese.NewBindingSet()
-		}
-
-		value, err := strconv.Atoi(distinct[0].TermValue)
-		if err != nil {
+		intValue, ok := bound.Arguments[0].GetIntValue()
+		if !ok {
 			base.log.AddError("First argument of `last` must be an integer")
 			return mentalese.NewBindingSet()
 		}
-		length = value
+		length = intValue
 	} else {
 		base.log.AddError("`last` takes at most one argument")
 		return mentalese.NewBindingSet()
@@ -155,18 +155,87 @@ func (base *SystemMultiBindingFunctionBase) last(input mentalese.Relation, bindi
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) sort(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) get(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	if !Validate(input, "v", base.log) {
+	start := 0
+	length := 1
+
+	if bindings.IsEmpty() {
+		return bindings
+	}
+
+	bound := input.BindSingle(bindings.Get(0))
+
+	if len(input.Arguments) < 1 || len(input.Arguments) > 2 {
+		base.log.AddError("`get` takes one or two arguments")
 		return mentalese.NewBindingSet()
 	}
 
+	{
+		intValue, ok := bound.Arguments[0].GetIntValue()
+		if !ok {
+			base.log.AddError("First argument of `get` must be an integer")
+			return mentalese.NewBindingSet()
+		}
+
+		start = intValue
+	}
+
+	if len(input.Arguments) == 2 {
+
+		intValue, ok := bound.Arguments[1].GetIntValue()
+		if !ok {
+			base.log.AddError("Second argument of `get` must be an integer")
+			return mentalese.NewBindingSet()
+		}
+
+		length = intValue
+	}
+
+	newBindings := mentalese.NewBindingSet()
+	all := bindings.GetAll()
+	for i := start; i < start + length; i++ {
+		if i < 0 {
+			continue
+		}
+		if i >= len(all) {
+			break
+		}
+		newBinding := all[i].Copy()
+		newBindings.Add(newBinding)
+	}
+
+	return newBindings
+}
+
+func (base *SystemMultiBindingFunctionBase) order(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+
+	if !Validate(input, "v*", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	if bindings.IsEmpty() {
+		return mentalese.NewBindingSet()
+	}
+
+	bound := input.BindSingle(bindings.Get(0))
+
 	subjectVariable := input.Arguments[0].TermValue
+	direction := bound.Arguments[1].TermValue
+
+	if direction != mentalese.AtomAsc && direction != mentalese.AtomDesc {
+		base.log.AddError("Direction of `order` must be either asc or desc")
+		return mentalese.NewBindingSet()
+	}
 
 	newBindings, ok := bindings.Sort(subjectVariable)
 	if !ok {
-		base.log.AddError("`sort` variable should contain only integers or strings")
+		base.log.AddError("`order` variable should contain only integers or strings")
 		return mentalese.NewBindingSet()
+	}
+
+	if direction == mentalese.AtomDesc {
+		newBindings = newBindings.Reverse()
 	}
 
 	return newBindings

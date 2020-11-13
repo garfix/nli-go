@@ -262,7 +262,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 			if relation.Arguments[i].IsVariable() {
 
 				if variable.Type == "uri" {
-					// todo look up sort from db predicates
+					// todo look up order from db predicates
 					sort := ""
 					binding.Set(relation.Arguments[i].TermValue, mentalese.NewTermId(variable.Value, sort))
 				} else {

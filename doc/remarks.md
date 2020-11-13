@@ -1,3 +1,18 @@
+## 2020-11-13
+
+I did
+
+    What is the second largest state of america by area?"
+    
+by adding the functions
+
+    go:order(Var, Dir)
+    go:get(Start, Count)
+    
+that work on result bindings. Here is the main grammar rule:
+
+    { rule: nbar(E1) -> ordinal(N1) 'largest' nbar(E1) 'by' 'area',       sense: dom:land_area(E1, Area) go:order(Area, desc) go:subtract(N1, 1, I1) go:get(I1) }       
+
 ## 2020-11-11
 
 Next sentence:

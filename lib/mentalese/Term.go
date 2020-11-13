@@ -69,6 +69,13 @@ func (term Term) IsInteger() bool {
 	return err == nil
 }
 
+func (term Term) GetIntValue() (int, bool) {
+	if term.TermType != TermTypeStringConstant {
+		return -1, false
+	}
+	value, err := strconv.Atoi(term.TermValue)
+	return value, err == nil
+}
 
 func (term Term) IsNumber() bool {
 	if term.TermType != TermTypeStringConstant {
@@ -76,6 +83,14 @@ func (term Term) IsNumber() bool {
 	}
 	_, err := strconv.ParseFloat(term.TermValue, 64)
 	return err == nil
+}
+
+func (term Term) GetNumber() (float64, bool) {
+	if term.TermType != TermTypeStringConstant {
+		return -1, false
+	}
+	value, err := strconv.ParseFloat(term.TermValue, 64)
+	return value, err == nil
 }
 
 func (term Term) IsString() bool {

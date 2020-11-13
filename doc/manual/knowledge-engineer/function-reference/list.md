@@ -103,9 +103,9 @@ Puts the index of the occurrence of `E` in `Index`. If there are more occurrence
  
 ## List get
  
-Puts the `Index`'th term in `E` 
+Loads the `Index`'th term in `E` 
  
-    go:list_index(List, Index, E)
+    go:list_get(List, Index, E)
      
 * `List`: a list
 * `Index`: an integer

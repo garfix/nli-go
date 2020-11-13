@@ -20,9 +20,9 @@
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
 
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'largest' nbar(E1),                               sense: go:largest(Area) }
-{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: dom:land_area(E1, Area) go:sort(Area) go:last() }
-{ rule: nbar(E1) -> number(N1) 'largest' nbar(E1) 'by' 'area',        sense: dom:land_area(E1, Area) go:sort(Area) go:last(N1) }
+{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: dom:land_area(E1, Area) go:order(Area, asc) go:last() }
+{ rule: nbar(E1) -> number(N1) 'largest' nbar(E1) 'by' 'area',        sense: dom:land_area(E1, Area) go:order(Area, asc) go:last(N1) }
+{ rule: nbar(E1) -> ordinal(N1) 'largest' nbar(E1) 'by' 'area',       sense: dom:land_area(E1, Area) go:order(Area, desc) go:subtract(N1, 1, I1) go:get(I1) }
 { rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }
 { rule: nbar(E2) -> 'states' 'of' np(E1),                             sense: go:quant_check($np, dom:has_state(E1, E2)) }
 { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
@@ -69,6 +69,7 @@
 
 { rule: number(N1) -> /^[0-9]+/ }
 { rule: number(N1) -> 'two',                                            sense: go:unify(N1, 2) }
+{ rule: ordinal(N1) -> 'second',                                        sense: go:unify(N1, 2) }
 
 { rule: possessive_marker(P) -> '\'' 's' }
 

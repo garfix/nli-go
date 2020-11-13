@@ -42,7 +42,8 @@ const PredicateSortalBackReference = "go_sortal_back_reference"
 const PredicateNumberOf = "go_number_of"
 const PredicateFirst = "go_first"
 const PredicateLast = "go_last"
-const PredicateSort = "go_sort"
+const PredicateGet = "go_get"
+const PredicateOrder = "go_order"
 const PredicateLargest = "go_largest"
 const PredicateSmallest = "go_smallest"
 const PredicateExists = "go_exists"
@@ -77,6 +78,8 @@ const CategoryProperNoun = "proper_noun"
 
 const AtomNone = "none"
 const AtomSome = "some"
+const AtomAsc = "asc"
+const AtomDesc = "desc"
 
 const QuantifierResultCountVariableIndex = 0
 const QuantifierRangeCountVariableIndex = 1

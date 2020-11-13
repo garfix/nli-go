@@ -87,13 +87,17 @@ func TestAggregateFunctions(t *testing.T) {
 		{"go:first(4)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]"},
 		{"go:last(2)", "[{A:1, Name:'Babbage'}{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]", "[{A:2, Name:'Charles B.'}{A:3, Name:'Charles Babbage'}]"},
 		{"go:first(1)", "[]", "[]"},
+		{"go:get(1)", "[{A:1}{A:2}{A:3}]", "[{A:2}]"},
+		{"go:get(0,2)", "[{A:1}{A:2}{A:3}]", "[{A:1}{A:2}]"},
+		{"go:get(0,5)", "[{A:1}{A:2}{A:3}]", "[{A:1}{A:2}{A:3}]"},
 		{"go:exists()", "[{E1:1}{E1:2}]", "[{E1:1}{E1:2}]"},
 		{"go:largest(E1)", "[{E1:5, E2:2}{E1:6, E2:3}{E1:6, E2:1}{A:1}]", "[{E1:6, E2:3}{E1:6, E2:1}{A:1}]"},
 		{"go:smallest(E1)", "[{E1:5, E2:2}{E1:6, E2:3}{E1:6, E2:1}{A:1}]", "[{E1:5, E2:2}{A:1}]"},
 		{"go:exists()", "[]", "[]"},
 		{"go:make_list(List, X, Y)", "[{X: 2, Y: 1, E: 5}{X: 3}{}{E: 4}{E: 4}]", "[{E:5, List:[2,3,1]}{List:[2,3,1]}{E:4, List:[2,3,1]}]"},
-		{"go:sort(E)", "[{E:3, X:a}{E:1, X:b}{E:5, X:c}]", "[{E:1, X:b}{E:3, X:a}{E:5, X:c}]"},
-		{"go:sort(E)", "[{E:'cobra', X:a}{E:'ape', X:b}{E:'eagle', X:c}]", "[{E:'ape', X:b}{E:'cobra', X:a}{E:'eagle', X:c}]"},
+		{"go:order(E, asc)", "[{E:3, X:a}{E:1, X:b}{E:5, X:c}]", "[{E:1, X:b}{E:3, X:a}{E:5, X:c}]"},
+		{"go:order(E, asc)", "[{E:'cobra', X:a}{E:'ape', X:b}{E:'eagle', X:c}]", "[{E:'ape', X:b}{E:'cobra', X:a}{E:'eagle', X:c}]"},
+		{"go:order(E, desc)", "[{E:'cobra', X:a}{E:'ape', X:b}{E:'eagle', X:c}]", "[{E:'eagle', X:c}{E:'cobra', X:a}{E:'ape', X:b}]"},
 	}
 
 	for _, test := range tests {

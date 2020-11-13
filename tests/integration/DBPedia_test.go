@@ -51,6 +51,7 @@ func TestDBPedia(t *testing.T) {
 			{"How many countries have population above 130000000", "8"},
 		 	{"What is the largest state of America by area?", "Alaska"},
 			{"What are the two largest states of america by area?", "Texas and Alaska"},
+			{"What is the second largest state of america by area?", "Texas"},
 		},
 		{
 		},

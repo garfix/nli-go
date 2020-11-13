@@ -29,8 +29,7 @@ If true, returns the original bindings. If false, returns an empty set.
 
 ## first
 
-Picks the first value of the variable and uses that for all bindings. Can be used when the database returns several values and one of them is enough for you.
-Use `Length` to extract `Length` first values.
+Picks only the first binding of the results. Use `Length` to extract `Length` first bindings.
 
     go:first()
     go:first(Length) 
@@ -43,10 +42,23 @@ returns `[{Name:'Babbage'}]`
 
 ## last
 
-Picks the last value of the variable and uses that for all bindings. Use `Length` to extract `Length` first values.
+Picks only the last binding. Use `Length` to extract `Length` last bindings.
 
     go:last()
     go:last(Length) 
+    
+with bindings 
+    
+    [{Name:'Babbage'}{Name:'Charles B.'}{Name:'Charles Babbage'}]
+
+returns `[{Name:'Charles Babbage'}]`
+
+## get
+
+Picks the `N-1`th binding. Use `Length` to extract `Length` bindings, starting with the `N-1`th.
+
+    go:get()
+    go:get(Length) 
     
 with bindings 
     
@@ -66,11 +78,12 @@ Takes in all current bindings and removes the ones whose E value is not the smal
 
     go:smallest(E) 
     
-## sort 
+## order 
 
-Sorts the bindings by the values of the variable `E`
+Sorts the bindings by the values of the variable `E`, either ascending (`asc`) or descending (`desc`):
 
-    go:sort(E)    
+    go:order(E, asc)    
+    go:order(E, desc)
     
 Values of E must be either all numbers, or all strings.    
 

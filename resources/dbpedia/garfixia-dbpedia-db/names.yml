@@ -17,6 +17,7 @@ abstract: http://dbpedia.org/ontology/abstract
 label: http://www.w3.org/2000/01/rdf-schema#label
 population_total: http://dbpedia.org/ontology/populationTotal
 population_census: http://dbpedia.org/property/populationCensus
+population_2010: http://dbpedia.org/property/2010pop
 land_area: http://dbpedia.org/ontology/areaLand
 hypernym: http://purl.org/linguistics/gold/hypernym
 country: http://dbpedia.org/ontology/country

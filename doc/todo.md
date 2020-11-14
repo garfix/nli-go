@@ -9,6 +9,10 @@
 - extend a module with another module
 - interactive: arrow up/down for history
 
+* database mappings: allow a rule to be used only for given sorts; for performance
+* binding set -> results
+* better validation for built-in functions; especially multi-binding ones
+* rewrite all rebinding cases; make them simpler and easier to understand  
 * quant_foreach: add as second parameter the variable to which the ids must be bound 
 * agreement, especially for number, because it reduces ambiguity (reintroducing feature unification?)
 * syntax check while parsing: is the number of arguments correct?

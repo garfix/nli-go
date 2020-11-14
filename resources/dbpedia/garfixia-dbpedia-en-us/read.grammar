@@ -18,7 +18,7 @@
 { rule: nbar(E1) -> ordinal(N1) 'largest' aggregation(E1, Q1),        sense: go:order(Q1, desc) go:subtract(N1, 1, I1) go:get(I1) }
 
 { rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'area',                  sense: dom:land_area(E1, Q1) }
-{ rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'population',            sense: dom:has_population(E1, Pop) }
+{ rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'population',            sense: dom:has_population(E1, Q1) }
 
 { rule: nbar(E1) -> noun(E1) }
 { rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }
@@ -67,7 +67,9 @@
 
 { rule: number(N1) -> /^[0-9]+/ }
 { rule: number(N1) -> 'two',                                            sense: go:unify(N1, 2) }
+{ rule: number(N1) -> 'three',                                          sense: go:unify(N1, 3) }
 { rule: ordinal(N1) -> 'second',                                        sense: go:unify(N1, 2) }
+{ rule: ordinal(N1) -> 'third',                                         sense: go:unify(N1, 3) }
 
 { rule: possessive_marker(P) -> '\'' 's' }
 

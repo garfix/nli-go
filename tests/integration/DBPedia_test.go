@@ -52,6 +52,9 @@ func TestDBPedia(t *testing.T) {
 		 	{"What is the largest state of America by area?", "Alaska"},
 			{"What are the two largest states of america by area?", "Texas and Alaska"},
 			{"What is the second largest state of america by area?", "Texas"},
+			{"What is the largest state of America by population?", "California"},
+			// what is america's largest state?
+			// oldest son?
 		},
 		{
 		},

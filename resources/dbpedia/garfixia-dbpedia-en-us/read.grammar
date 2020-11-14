@@ -26,19 +26,25 @@
 { rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
 { rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: go:quant_check($np, dom:has_population(E1, E2)) }
 
-{ rule: nbar(E1) -> 'daughter' 'of' np(E2),                           sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
-{ rule: nbar(E1) -> 'son' 'of' np(E2),                                sense: go:quant_check($np, dom:has_son(E2, E1)) }
-{ rule: nbar(E1) -> 'father' 'of' np(E2),                             sense: go:quant_check($np, dom:has_father(E2, E1)) }
-{ rule: nbar(E1) -> 'mother' 'of' np(E2),                             sense: go:quant_check($np, dom:has_mother(E2, E1)) }
-{ rule: nbar(E1) -> 'wife' 'of' np(E2),                               sense: go:quant_check($np, dom:has_wife(E2, E1)) }
-{ rule: nbar(E1) -> 'husband' 'of' np(E2),                            sense: go:quant_check($np, dom:has_husband(E2, E1)) }
+/* son of X */
+{ rule: nbar(E1) -> relation(E2, E1) 'of' np(E2),                     sense: go:quant_check($np, $relation) }
+/* X's son */
+{ rule: np_poss(E1) -> np(E2) possessive_marker(_) relation(E2, E1),  sense: go:quant_check($np, $relation) }
 
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'father',          sense: go:quant_check($np, dom:has_father(E2, E1)) }
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'mother',          sense: go:quant_check($np, dom:has_mother(E2, E1)) }
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'daughter',        sense: go:quant_check($np, dom:has_daughter(E2, E1)) }
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'son',             sense: go:quant_check($np, dom:has_son(E2, E1)) }
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'wife',            sense: go:quant_check($np, dom:has_wife(E2, E1)) }
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) 'husband',         sense: go:quant_check($np, dom:has_husband(E2, E1)) }
+{ rule: relation(E1, E2) -> 'largest' aggregation(E1, E2, Q1),              sense: go:order(Q1, asc) go:last() }
+{ rule: relation(E1, E2) -> number(N1) 'largest' aggregation(E1, E2, Q1),   sense: go:order(Q1, asc) go:last(N1) }
+{ rule: relation(E1, E2) -> ordinal(N1) 'largest' aggregation(E1, E2, Q1),  sense: go:order(Q1, desc) go:subtract(N1, 1, I1) go:get(I1) }
+
+{ rule: aggregation(E1, E2, Q1) -> relation(E1, E2) 'by' 'area',      sense: dom:land_area(E2, Q1) }
+{ rule: aggregation(E1, E2, Q1) -> relation(E1, E2) 'by' 'population',sense: dom:has_population(E2, Q1) }
+
+{ rule: relation(E1, E2) -> 'state',                                  sense: dom:has_state(E1, E2) }
+{ rule: relation(E1, E2) -> 'daughter',                               sense: dom:has_daughter(E1, E2) }
+{ rule: relation(E1, E2) -> 'son',                                    sense: dom:has_son(E1, E2) }
+{ rule: relation(E1, E2) -> 'wife',                                   sense: dom:has_wife(E1, E2) }
+{ rule: relation(E1, E2) -> 'husband',                                sense: dom:has_husband(E1, E2) }
+{ rule: relation(E1, E2) -> 'father',                                 sense: dom:has_father(E1, E2) }
+{ rule: relation(E1, E2) -> 'mother',                                 sense: dom:has_mother(E1, E2) }
 
 { rule: child(E1) -> 'children' }
 { rule: birthday(E1) -> 'birthday' }
@@ -94,6 +100,7 @@
 { rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: go:intent(describe, E1) dom:person(E1) }
 { rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np_poss(E1),    sense: go:intent(who, E1) }
 { rule: interrogative(P1) -> 'who' copula(_) np_poss(E1),               sense: go:intent(who, E1) dom:person(E1) }
+{ rule: interrogative(P1) -> 'what' copula(_) np_poss(E1),              sense: go:intent(what, E1) }
 { rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: go:intent(when, P1) }
 { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: go:intent(how_many, E1) }
 { rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: go:quant_check($np, go:intent(how_old, E1)) dom:person(E1) }

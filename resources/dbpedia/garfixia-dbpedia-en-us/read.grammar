@@ -13,10 +13,12 @@
                                                                         go:quantifier(Result, Range, go:equals(Result, 1)),
                                                                         E1, go:back_reference(E1, dom:gender(E1, male))) }
 
-{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'area',                   sense: dom:land_area(E1, Area) go:order(Area, asc) go:last() }
-{ rule: nbar(E1) -> number(N1) 'largest' nbar(E1) 'by' 'area',        sense: dom:land_area(E1, Area) go:order(Area, asc) go:last(N1) }
-{ rule: nbar(E1) -> ordinal(N1) 'largest' nbar(E1) 'by' 'area',       sense: dom:land_area(E1, Area) go:order(Area, desc) go:subtract(N1, 1, I1) go:get(I1) }
-{ rule: nbar(E1) -> 'largest' nbar(E1) 'by' 'population',             sense: dom:has_population(E1, Pop) go:order(Pop, asc) go:last() }
+{ rule: nbar(E1) -> 'largest' aggregation(E1, Q1),                    sense: go:order(Q1, asc) go:last() }
+{ rule: nbar(E1) -> number(N1) 'largest' aggregation(E1, Q1),         sense: go:order(Q1, asc) go:last(N1) }
+{ rule: nbar(E1) -> ordinal(N1) 'largest' aggregation(E1, Q1),        sense: go:order(Q1, desc) go:subtract(N1, 1, I1) go:get(I1) }
+
+{ rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'area',                  sense: dom:land_area(E1, Q1) }
+{ rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'population',            sense: dom:has_population(E1, Pop) }
 
 { rule: nbar(E1) -> noun(E1) }
 { rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }

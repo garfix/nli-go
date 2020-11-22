@@ -29,6 +29,17 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: noun(E1) -> 'girl', sense: isa(E1, girl) }
 		{ rule: verb(P1) -> 'cries', sense: predication(P1, cry) }
 		{ rule: verb(P1) -> 'speaks' 'up', sense: predication(P1, speak_up) }
+
+		{ rule: s(P) -> first(P) second(P) }
+		{ rule: first(P) -> early(P) middle(P) middle(P) }
+		{ rule: first(P) -> early(P) middle(P) }
+		{ rule: first(P) -> early(P) }
+		{ rule: second(P) -> middle(P) middle(P) last(P) }
+		{ rule: second(P) -> middle(P) last(P) }
+		{ rule: second(P) -> last(P) }
+		{ rule: early(P) -> 'a' }
+		{ rule: middle(P) -> 'b' }
+		{ rule: last(P) -> 'c' }
 	`)
 
 	log := common.NewSystemLog()
@@ -45,16 +56,49 @@ func TestEarleyParser(test *testing.T) {
 	parser := earley.NewParser(nameResolver, meta, log)
 	relationizer := earley.NewRelationizer(log)
 
-	wordArray := tokenizer.Process(rawInput)
+	{
+		wordArray := tokenizer.Process(rawInput)
 
-	trees := parser.Parse(grammarRules, wordArray)
-	relations, _ := relationizer.Relationize(trees[0], nameResolver)
+		trees := parser.Parse(grammarRules, wordArray)
 
-	if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {
-		test.Error(fmt.Sprintf("Relations: %v", relations))
+		if len(trees) != 1 {
+			test.Error(fmt.Sprintf("expected : 1 tree, found %d", len(trees)))
+			return
+		}
+
+		relations, _ := relationizer.Relationize(trees[0], nameResolver)
+
+		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {
+			test.Error(fmt.Sprintf("Relations: %v", relations))
+		}
+		if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [speaks speaks] [up up]]]]" {
+			test.Error(fmt.Sprintf("tree: %v", trees[0].String()))
+		}
 	}
-	if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [speaks speaks] [up up]]]]" {
-		test.Error(fmt.Sprintf("tree: %v", trees[0].String()))
+
+	{
+		wordArray := tokenizer.Process("a b b c")
+
+		trees := parser.Parse(grammarRules, wordArray)
+
+		if len(trees) != 3 {
+			test.Error(fmt.Sprintf("expected : 3 trees, found %d", len(trees)))
+			return
+		}
+
+		expected := []string{
+			"[s [first [early [a a]]] [second [middle [b b]] [middle [b b]] [last [c c]]]]",
+			"[s [first [early [a a]] [middle [b b]]] [second [middle [b b]] [last [c c]]]]",
+			"[s [first [early [a a]] [middle [b b]] [middle [b b]]] [second [last [c c]]]]",
+		}
+
+		for i, exp := range expected {
+			if trees[i].String() != exp {
+				test.Error(fmt.Sprintf("ERR tree %d: %v", i, trees[i].String()))
+			} else {
+				//test.Error(fmt.Sprintf("OK  tree %d: %v", i, trees[i].String()))
+			}
+		}
 	}
 }
 

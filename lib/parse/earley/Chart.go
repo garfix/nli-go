@@ -6,6 +6,7 @@ type chart struct {
 	states [][]chartState
 	words  []string
 	stateIdGenerator int
+	children map[string][][]int
 }
 
 func newChart(words []string) *chart {
@@ -13,12 +14,25 @@ func newChart(words []string) *chart {
 		states:           make([][]chartState, len(words)+1),
 		words:            words,
 		stateIdGenerator: 0,
+		children: map[string][][]int{},
 	}
 }
 
 func (chart *chart) generateId() int {
 	chart.stateIdGenerator++
 	return chart.stateIdGenerator
+}
+
+func (chart *chart) indexChildren(state chartState) {
+
+	canonical := state.Canonical()
+
+	_, found := chart.children[canonical]
+	if !found {
+		chart.children[canonical] = [][]int{}
+	}
+
+	chart.children[canonical] = append(chart.children[canonical], state.parentIds)
 }
 
 func (chart *chart) enqueue(state chartState, position int) bool {

@@ -232,6 +232,10 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 		advancedState.parentIds = append(common.IntArrayCopy(chartedState.parentIds), completedState.id)
 
+		if !advancedState.isIncomplete() {
+			chart.indexChildren(advancedState)
+		}
+
 		if parser.log.Active() { parser.log.AddDebug("advanced", advancedState.ToString(chart)) }
 
 		f := chart.enqueue(advancedState, completedState.endWordIndex)

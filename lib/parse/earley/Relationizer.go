@@ -59,7 +59,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 			mappedConsequentVariables = append(mappedConsequentVariables, variableMap[consequentVariable].TermValue)
 		}
 
-		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(childNode, nameResolver, mappedConsequentVariables)
+		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(*childNode, nameResolver, mappedConsequentVariables)
 		nameBinding = nameBinding.Merge(childNameBinding)
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)

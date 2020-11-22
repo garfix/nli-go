@@ -7,7 +7,7 @@ import (
 
 type ParseTreeNode struct {
 	category     string
-	constituents []ParseTreeNode
+	constituents []*ParseTreeNode
 	form         string
 	rule         parse.GrammarRule
 	nameInformations []central.NameInformation
@@ -17,7 +17,7 @@ func (node ParseTreeNode) IsLeafNode() bool {
 	return len(node.constituents) == 0
 }
 
-func (node ParseTreeNode) GetConstituents() []ParseTreeNode {
+func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
 	return node.constituents
 }
 

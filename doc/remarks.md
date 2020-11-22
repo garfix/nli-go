@@ -1,3 +1,74 @@
+## 2020-11-18
+
+I found out that the tree extraction routine I use doesn't work. It extracts only the first parse tree. This is all I needed up to now, but this is going to change. In "Speech and Language processing" it says:
+
+"To turn this algorithm into a parser, we must be able to extract individual parses from the chart. To do this, the representation of each state must be augmented with an additional field to store information about the completed states that generated its constituents." "Retrieving a parse tree from the chart is then merely a recursive retrieval starting with the state (or states) representing a complete S in the final chart entry."
+
+This is what I did, before. And I assumed that all completed `gamma => s` states would be available in the chart. But that's not what happens. Only the first one is stored; and that is exactly because Earley keeps track of the states it has processed. Hard to explain. Doesn't work the current way. 
+ 
+The book is from 2000.
+
+In 1986 Masaru Tomita wrote the book "Efficient Parsing for Natural Language: A Fast Algorithm for Practical Systems" that first describes Shared Packed Parse Forest (SPPF) using a competitive parsing algorithm. https://www.amazon.com/Efficient-Parsing-Natural-Language-International/dp/0898382025
+
+In 2008 Elisabeth Scott wrote a paper called "SPPF-Style Parsing From Earley Recognisers" and describes how to extract parse trees from a Earley packed forest. An algorithm called BRNGLR. https://www.sciencedirect.com/science/article/pii/S1571066108001497
+
+And apparently, the day before yesterday, Jeremy Dohmann published his thesis "Noise-skipping Earley parsing and in-order tree extraction from shared packed parse forests" with some interesting extensions. https://github.com/jcd2020/Thesis/blob/master/full_thesis.pdf
+
+I am going to read these. 
+
+## 2020-11-15
+
+I have a problem. There are two types of relational phrases: "a of b", and "b's a". Each of these has many forms:
+
+    state of X
+    father of X
+    son of X
+    capital of X
+    
+    X's state 
+    X's father
+    X's son
+    X's capital
+    
+Currently I have many rules like this
+
+{ rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
+{ rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
+    
+So I want to extract the relation in a separate rule
+
+    { rule: relation(E1, E2) -> 'capital',                                  sense: dom:has_capital(E1, E2) }
+    
+And there are more cases where the current scheme of determining sort by top down induction from sense doesn't work. In many cases the sort can not be seduced top-down while parsing, so I want another technique.
+
+I am now thinking of the following:
+
+- Have `proper_noun` match any word
+- This will create loads of parse trees
+- Order these by the number of proper nouns (less is better?) and / or the length of the proper nouns (longer is better?)    
+- For each tree:
+    - Create relations
+    - Determine the sorts of the variables; this is now easy because all relations are known (known sorts are better)
+    - only if a sort is known, find the persons in the database, otherwise, skip the parse and mention that the person is not known
+    - stop when found
+    
+So there are several aspects that help to determine the most likely parse tree:
+
+- number of proper noun groups
+- number of proper nouns per group
+- number of known sorts
+
+Can I just generate all relations for each parse tree? If so, then just take the one with all sorts complete.
+
+Note! This solution also allows me to say "I don't know X" again, which was not possible before.
+
+Suggested steps:
+
+- parse, and for each tree
+- relationize 
+- extract sorts
+- find entities by name     
+
 ## 2020-11-13
 
 I did

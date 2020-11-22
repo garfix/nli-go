@@ -47,6 +47,18 @@ func (state chartState) Equals(otherState chartState) bool {
 		true
 }
 
+func (state chartState) Canonical() string {
+	s := " " + state.rule.GetAntecedent() + " ->"
+	for _, category := range state.rule.GetConsequents() {
+		s += " " + category
+	}
+
+	s += " " + strconv.Itoa(state.startWordIndex)
+	s += "-" + strconv.Itoa(state.endWordIndex)
+
+	return s
+}
+
 func (state chartState) ToString(chart *chart) string {
 	s := strconv.Itoa(state.id) + " ["
 	s += " " + state.rule.GetAntecedent() + " ->"

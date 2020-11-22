@@ -76,26 +76,12 @@ func (ex *treeExtracter) next(tree treeInProgress) {
 		return
 	}
 
-	ex.forkOnCompletedStates(newTree)
+	ex.addChildren(newTree)
 }
 
-func (ex *treeExtracter) forkOnCompletedStates(tree treeInProgress) {
+func (ex *treeExtracter) addChildren(tree treeInProgress) {
 
-	state := tree.peek().getCurrentState()
-
-	//variants := ex.findCompletedStates(state)
-	//
-	//newTrees := ex.forkTrees(tree, len(variants))
-	//
-	//for i, variant := range variants {
-	//	newTree := newTrees[i]
-	//	ex.addChildren(newTree, variant)
-	//}
-
-	ex.addChildren(tree, state)
-}
-
-func (ex *treeExtracter) addChildren(tree treeInProgress, parentState chartState) {
+	parentState := tree.peek().getCurrentState()
 
 	allChildStates := ex.findCompletedChildStates(parentState)
 
@@ -161,50 +147,23 @@ func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 		nameInformations: state.nameInformations,
 	}
 
-	if len(state.parentIds) == 0 {
+	if len(state.children) == 0 {
 		node.form = state.rule.GetConsequent(0)
 	}
 
 	return node
 }
 
-// Find completed versions of `state`
-func (ex *treeExtracter) findCompletedStates(state chartState) []chartState {
-
-	startWordIndex := state.startWordIndex
-	endWordIndex := state.endWordIndex
-
-	completedStates := []chartState{}
-
-	for _, aState := range ex.chart.states[endWordIndex] {
-		if !aState.isIncomplete() &&
-			aState.rule.Equals(state.rule) &&
-			aState.startWordIndex == startWordIndex &&
-			aState.endWordIndex == endWordIndex {
-
-			completedStates = append(completedStates, aState)
-		}
-	}
-
-	return completedStates
-}
-
 func (ex *treeExtracter) findCompletedChildStates(state chartState) [][]chartState {
 
 	allChildStates := [][]chartState{}
 
-	rows, found := ex.chart.children[state.Canonical()]
+	rows, found := ex.chart.children[state.BasicForm()]
 	if found {
 
-		for _, row := range rows {
-			children := []chartState{}
-			for _, stateId := range row {
-				state1 := ex.stateIndex[stateId]
-				children = append(children, state1)
-			}
+		for _, children := range rows {
 			allChildStates = append(allChildStates, children)
 		}
-
 	}
 
 	return allChildStates
@@ -221,7 +180,7 @@ func findLastCompletedWordIndex(chart *chart) (int, string) {
 	for i := len(chart.states) - 1; i >= 0; i-- {
 		states := chart.states[i]
 		for _, state := range states {
-			if !state.isIncomplete() {
+			if state.complete() {
 
 				lastIndex = state.endWordIndex - 1
 				goto done

@@ -87,7 +87,7 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 			if parser.log.Active() { parser.log.AddDebug("do:", state.ToString(chart)) }
 
 			// check if the entry is parsed completely
-			if state.isIncomplete() {
+			if !state.complete() {
 
 				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
 
@@ -230,9 +230,9 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		}
 
 		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
-		advancedState.parentIds = append(common.IntArrayCopy(chartedState.parentIds), completedState.id)
+		advancedState.children = append(parser.copyChildArray(chartedState.children), completedState)
 
-		if !advancedState.isIncomplete() {
+		if advancedState.complete() {
 			chart.indexChildren(advancedState)
 		}
 
@@ -247,3 +247,12 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		}
 	}
 }
+
+func (parser *Parser) copyChildArray(children []chartState) []chartState {
+	newArray := []chartState{}
+	for _, state := range children {
+		newArray = append(newArray, state)
+	}
+	return newArray
+}
+

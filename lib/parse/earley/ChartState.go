@@ -48,10 +48,7 @@ func (state chartState) Equals(otherState chartState) bool {
 }
 
 func (state chartState) BasicForm() string {
-	s := state.rule.GetAntecedent() + " ->"
-	for _, category := range state.rule.GetConsequents() {
-		s += " " + category
-	}
+	s := state.rule.String()
 	s += " [" + strconv.Itoa(state.startWordIndex) + "-" + strconv.Itoa(state.endWordIndex) + "]"
 	return s
 }

@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const terminal = "terminal"
+
 // An implementation of Earley's top-down chart parsing algorithm as described in
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
@@ -84,8 +86,6 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 			// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 			state := chart.states[i][j]
 
-			if parser.log.Active() { parser.log.AddDebug("do:", state.ToString(chart)) }
-
 			// check if the entry is parsed completely
 			if !state.complete() {
 
@@ -121,6 +121,8 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 	nextConsequentVariables := state.rule.GetConsequentVariables(consequentIndex)
 	endWordIndex := state.endWordIndex
 
+	if parser.log.Active() { parser.log.AddDebug("predict:", state.ToString(chart)) }
+
 	// go through all rules that have the next consequent as their antecedent
 	for _, rule := range grammarRules.FindRules(nextConsequent, len(nextConsequentVariables)) {
 
@@ -133,7 +135,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
-		if parser.log.Active() { parser.log.AddDebug("predict", predictedState.ToString(chart)) }
+		if parser.log.Active() { parser.log.AddDebug("> predicted", predictedState.ToString(chart)) }
 	}
 }
 
@@ -147,37 +149,45 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	endWord := chart.words[endWordIndex]
 	nameInformations := []central.NameInformation{}
 	lexItemFound := false
+	posType := parse.PosTypeRelation
 
+	if parser.log.Active() { parser.log.AddDebug("scan:", state.ToString(chart)) }
+
+	// regular expression
 	if state.rule.GetConsequentPositionType(state.dotPosition - 1) == parse.PosTypeRegExp {
 		expression, err := regexp.Compile(nextConsequent)
 		if err == nil {
 			if expression.FindString(endWord) != "" {
 				lexItemFound = true
+				posType = parse.PosTypeRegExp
 			}
 		}
 	}
 
+	// proper noun
 	if !lexItemFound && nextConsequent == mentalese.CategoryProperNoun {
 		lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 	}
 
+	// literal word form
 	if !lexItemFound {
 		if
 		(nextConsequent == strings.ToLower(endWord)) &&
 		(len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
 			lexItemFound = true
 		}
+		posType = parse.PosTypeWordForm
 	}
 
 	if lexItemFound {
 
-		rule := parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeWordForm }, []string{nextConsequent, endWord}, [][]string{{"a"}, {"b"}}, mentalese.RelationSet{})
+		rule := parse.NewGrammarRule([]string{ posType, parse.PosTypeWordForm }, []string{nextConsequent, endWord}, [][]string{{terminal}, {terminal}}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
 		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
 		chart.enqueue(scannedState, endWordIndex+1)
 
-		if parser.log.Active() { parser.log.AddDebug("scanned", scannedState.ToString(chart) + " " + endWord) }
+		if parser.log.Active() { parser.log.AddDebug("> scanned", scannedState.ToString(chart) + " " + endWord) }
 	}
 }
 
@@ -218,6 +228,9 @@ func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []cent
 func (parser *Parser) complete(chart *chart, completedState chartState) {
 
 	completedAntecedent := completedState.rule.GetAntecedent()
+
+	if parser.log.Active() { parser.log.AddDebug("complete:", completedState.ToString(chart)) }
+
 	for _, chartedState := range chart.states[completedState.startWordIndex] {
 
 		dotPosition := chartedState.dotPosition
@@ -226,6 +239,10 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition-1) != completedAntecedent) {
+			continue
+		}
+
+		if chartedState.rule.GetConsequentPositionType(dotPosition-1) != completedState.rule.PositionTypes[0] {
 			continue
 		}
 
@@ -240,11 +257,7 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 
 		f := chart.enqueue(advancedState, completedState.endWordIndex)
 
-		if parser.log.Active() {
-			str := "no"
-			if f { str = "yes" }
-			parser.log.AddDebug("found", str)
-		}
+		if parser.log.Active() && f { parser.log.AddDebug(" > found", "") }
 	}
 }
 

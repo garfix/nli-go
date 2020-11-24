@@ -95,8 +95,6 @@ func TestEarleyParser(test *testing.T) {
 		for i, exp := range expected {
 			if trees[i].String() != exp {
 				test.Error(fmt.Sprintf("ERR tree %d: %v", i, trees[i].String()))
-			} else {
-				//test.Error(fmt.Sprintf("OK  tree %d: %v", i, trees[i].String()))
 			}
 		}
 	}

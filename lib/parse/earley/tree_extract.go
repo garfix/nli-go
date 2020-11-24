@@ -9,7 +9,6 @@ import (
 
 type treeExtracter struct {
 	trees []*ParseTreeNode
-	stateIndex map[int]chartState
 	chart *chart
 }
 
@@ -17,14 +16,7 @@ func extractTreeRoots(chart *chart) []ParseTreeNode {
 
 	extracter := &treeExtracter{
 		trees: []*ParseTreeNode{},
-		stateIndex: map[int]chartState{},
 		chart: chart,
-	}
-
-	for _, states := range chart.states {
-		for _, state := range states {
-			extracter.stateIndex[state.id] = state
-		}
 	}
 
 	extracter.extract()

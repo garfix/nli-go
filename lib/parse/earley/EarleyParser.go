@@ -66,14 +66,9 @@ func (parser *Parser) Parse(grammarRules *parse.GrammarRules, words []string) []
 // The body of Earley's algorithm
 func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []string) (*chart) {
 
-	if parser.log.Active() { parser.log.StartDebug("createChart", strings.Join(words, ", ")) }
-
 	chart := newChart(words)
 	wordCount := len(words)
-
-	initialState := newChartState(chart.generateId(), parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeRelation }, []string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{}), [][]string{{""}, {""}}, 1, 0, 0)
-
-	if parser.log.Active() { parser.log.AddDebug("initial:", initialState.ToString(chart)) }
+	initialState := chart.buildIncompleteGammaState()
 
 	chart.enqueue(initialState, 0)
 
@@ -107,8 +102,6 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 			}
 		}
 	}
-
-	if parser.log.Active() { parser.log.EndDebug("createChart", "") }
 
 	return chart
 }

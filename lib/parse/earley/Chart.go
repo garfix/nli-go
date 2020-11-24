@@ -1,5 +1,10 @@
 package earley
 
+import (
+	"nli-go/lib/mentalese"
+	"nli-go/lib/parse"
+)
+
 // Contains more than the strict chart that the Earley algorithm prescribes; it is used to hold all state of a parse.
 
 type chart struct {
@@ -16,6 +21,26 @@ func newChart(words []string) *chart {
 		stateIdGenerator: 0,
 		children: map[string][][]chartState{},
 	}
+}
+
+func (chart *chart) buildIncompleteGammaState() chartState {
+	return newChartState(
+		chart.generateId(),
+		parse.NewGrammarRule(
+			[]string{ parse.PosTypeRelation, parse.PosTypeRelation },
+			[]string{"gamma", "s"},
+			[][]string{{"G"}, {"S"}},
+			mentalese.RelationSet{},
+		),
+		[][]string{{""}, {""}},
+		1, 0, 0)
+}
+
+func (chart *chart) buildCompleteGammaState() chartState {
+	state := chart.buildIncompleteGammaState()
+	state.dotPosition = 2
+	state.endWordIndex = len(chart.words)
+	return state
 }
 
 func (chart *chart) generateId() int {

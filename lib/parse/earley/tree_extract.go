@@ -1,10 +1,5 @@
 package earley
 
-import (
-	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
-)
-
 // no backtracking! uses custom stacks
 
 type treeExtracter struct {
@@ -21,11 +16,9 @@ func extractTreeRoots(chart *chart) []ParseTreeNode {
 
 	extracter.extract()
 
+	// the sentence node is the first child
 	roots := []ParseTreeNode{}
 	for _, root := range extracter.trees {
-		if len(root.constituents) == 0 {
-			continue
-		}
 		roots = append(roots, *root.constituents[0])
 	}
 
@@ -34,14 +27,13 @@ func extractTreeRoots(chart *chart) []ParseTreeNode {
 
 func (ex *treeExtracter) extract() {
 
-	wordCount := len(ex.chart.words)
-	rule := parse.NewGrammarRule([]string{ parse.PosTypeRelation, parse.PosTypeRelation }, []string{"gamma", "s"}, [][]string{{"G"}, {"S"}}, mentalese.RelationSet{})
-	completedGammaState := newChartState(0, rule, [][]string{{""}, {""}}, 2, 0, wordCount)
+	completedGammaState := ex.chart.buildCompleteGammaState()
+
 	rootNode := &ParseTreeNode{
 		category:         "gamma",
-		constituents:     []*ParseTreeNode{},
+		constituents:     nil,
 		form:             "",
-		rule:             rule,
+		rule:             completedGammaState.rule,
 		nameInformations: nil,
 	}
 
@@ -75,9 +67,8 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 
 	parentState := tree.peek().getCurrentState()
 
-	allChildStates := ex.findCompletedChildStates(parentState)
-
-	if len(allChildStates) == 0 {
+	allChildStates, found := ex.chart.children[parentState.BasicForm()]
+	if !found {
 
 		ex.next(tree)
 
@@ -88,15 +79,13 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 		for i, childStates := range allChildStates {
 
 			newTree := newTrees[i]
-
-			childNodes := []*ParseTreeNode{}
 			parentNode := newTree.peek().getCurrentNode()
 
+			childNodes := []*ParseTreeNode{}
 			for _, childState := range childStates {
-				childNode := ex.createNode(childState)
-				childNodes = append(childNodes, childNode)
-				parentNode.constituents = append(parentNode.constituents, childNode)
+				childNodes = append(childNodes, ex.createNode(childState))
 			}
+			parentNode.constituents = childNodes
 
 			step := workingStep{
 				states:     childStates,
@@ -112,6 +101,7 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 }
 
 // create `count` clones of `tree`; the first tree is just the original
+// the new trees are registered with the tree extractor
 func (ex *treeExtracter) forkTrees(tree treeInProgress, count int) []treeInProgress {
 
 	tips := []treeInProgress{}
@@ -122,6 +112,8 @@ func (ex *treeExtracter) forkTrees(tree treeInProgress, count int) []treeInProgr
 		} else {
 			newTip := tree.clone()
 			tips = append(tips, newTip)
+
+			// register new tree
 			ex.trees = append(ex.trees, newTip.root)
 		}
 	}
@@ -129,36 +121,21 @@ func (ex *treeExtracter) forkTrees(tree treeInProgress, count int) []treeInProgr
 	return tips
 }
 
+// creates a single parse tree node
 func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 
-	node := &ParseTreeNode{
+	form := ""
+	if len(state.children) == 0 {
+		form = state.rule.GetConsequent(0)
+	}
+
+	return &ParseTreeNode{
 		category: state.rule.GetAntecedent(),
 		constituents: []*ParseTreeNode{},
-		form: "",
+		form: form,
 		rule: state.rule,
 		nameInformations: state.nameInformations,
 	}
-
-	if len(state.children) == 0 {
-		node.form = state.rule.GetConsequent(0)
-	}
-
-	return node
-}
-
-func (ex *treeExtracter) findCompletedChildStates(state chartState) [][]chartState {
-
-	allChildStates := [][]chartState{}
-
-	rows, found := ex.chart.children[state.BasicForm()]
-	if found {
-
-		for _, children := range rows {
-			allChildStates = append(allChildStates, children)
-		}
-	}
-
-	return allChildStates
 }
 
 // Returns the word that could not be parsed (or ""), and the index of the last completed word

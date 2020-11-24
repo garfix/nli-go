@@ -1,3 +1,52 @@
+## 2020-11-24
+
+I finished rewriting the parser (again!) to have it extract all parse trees. This was not a walk in the park! I had to stretch my brain for days and laying awake going though the algorithm in my mind again and again.
+
+There were two problems: the first was to get the information of the trees out of the shared forest (preferably efficiently, but I would would settle for 'just so so'). The other was to build multiple trees while walking through a shared tree structure.
+
+As I said a few days ago, "Speech and Language processing" described in brief how the parse trees should be extracted. However, this method turned out to yield only a single tree. Some literature was written on the subject by Tomita and Scott, but these algorithms are complex and I couldn't get my mind around them. So I went bacl trying to create my own solution.
+
+What I finally came up with was an extension to the solution in "Speech and Language processing". In the `completion` stage I store links to completed "child" states in the completed "parent" state. I extended this with a an array field "children" in the chart. It maps a parent-state-string to zero or more child-state-sequences.
+
+    type chart struct {
+        states [][]chartState
+        words  []string
+        stateIdGenerator int
+        children map[string][][]chartState
+    }
+
+A parent state has zero or more children. And there can be multiple instances of these. These are stored in `[][]chartState`. The `string` that forms the key of the map, is a textual representation of the parent state that holds just the rule and the start - and end word index. An example of such a key is
+
+    np(E1) -> proper_noun_group(E1) {  } [2-3]
+    
+As you can see it represents a state, but it leaves out the child states in its representation. It is an abstraction of multiple concrete parent states, all of which have the same rule and word-span.
+
+And then I had to find a way to traverse the forest and pop out trees. I had never done anything like this before. The algorithm I came up with is quite elegant I think. I just do a depth first traversal of the forest _like it had been a single tree_. But whenever it reaches a junction with multiple sets of child sets, it "forks" its process and continues with both trees "synchronously". Each new process clones the existing tree can continues to complete it. I quote "forks" because I do not actually fork the process, even though the language go would allow me to. I want this code to be portable. So what I did was in stead of using the system's stack to traverse the tree, I created a software-stack; one that I could clone along with the tree that was being built.
+
+Before the clone; C is the active node.
+
+    O
+    |\ \        [*O] - [O*C] 
+    O C D
+
+After the clone; state has two groups of children: [X] and [Y Z S]; both continue in a separate fork. Each with a separate tree and a separate stack.  
+
+    O
+    |\ \        [*O] - [O C*D] - [X]  
+    O C D
+      |
+      X
+
+    O
+    |\ \         [*O] - [O C*D] - [Y Z S*]
+    O C D
+     /|\   
+    Y Z S
+    
+Note that after the children of C are done, the process backtracks through the software stack and continues to process the next nodes (here: D).
+
+The `*` here is an index that keeps track of the child that is being processed.          
+
 ## 2020-11-18
 
 I found out that the tree extraction routine I use doesn't work. It extracts only the first parse tree. This is all I needed up to now, but this is going to change. In "Speech and Language processing" it says:

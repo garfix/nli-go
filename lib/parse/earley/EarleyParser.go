@@ -9,11 +9,9 @@ import (
 	"strings"
 )
 
-const terminal = "terminal"
-
 // An implementation of Earley's top-down chart parsing algorithm as described in
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
-// It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is complete.
+// It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is isComplete.
 
 type Parser struct {
 	nameResolver *central.NameResolver
@@ -68,9 +66,8 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 
 	chart := newChart(words)
 	wordCount := len(words)
-	initialState := chart.buildIncompleteGammaState()
 
-	chart.enqueue(initialState, 0)
+	chart.enqueue(chart.buildIncompleteGammaState(), 0)
 
 	// go through all word positions in the sentence
 	for i := 0; i <= wordCount; i++ {
@@ -78,11 +75,11 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 		// go through all chart entries in this position (entries will be added while we're in the loop)
 		for j := 0; j < len(chart.states[i]); j++ {
 
-			// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
+			// a state is a isComplete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 			state := chart.states[i][j]
 
 			// check if the entry is parsed completely
-			if !state.complete() {
+			if !state.isComplete() {
 
 				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
 
@@ -125,7 +122,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 			continue
 		}
 
-		predictedState := newChartState(chart.generateId(), rule, sSelection, 1, endWordIndex, endWordIndex)
+		predictedState := newChartState(rule, sSelection, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
 		if parser.log.Active() { parser.log.AddDebug("> predicted", predictedState.ToString(chart)) }
@@ -164,19 +161,16 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 
 	// literal word form
 	if !lexItemFound {
-		if
-		(nextConsequent == strings.ToLower(endWord)) &&
-		(len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
+		if (nextConsequent == strings.ToLower(endWord)) && (len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
 			lexItemFound = true
 		}
 		posType = parse.PosTypeWordForm
 	}
 
 	if lexItemFound {
-
 		rule := parse.NewGrammarRule([]string{ posType, parse.PosTypeWordForm }, []string{nextConsequent, endWord}, [][]string{{terminal}, {terminal}}, mentalese.RelationSet{})
 		sType := state.sSelection[state.dotPosition - 1]
-		scannedState := newChartState(chart.generateId(), rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
+		scannedState := newChartState(rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
 		scannedState.nameInformations = nameInformations
 		chart.enqueue(scannedState, endWordIndex+1)
 
@@ -222,7 +216,7 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 
 	completedAntecedent := completedState.rule.GetAntecedent()
 
-	if parser.log.Active() { parser.log.AddDebug("complete:", completedState.ToString(chart)) }
+	if parser.log.Active() { parser.log.AddDebug("isComplete:", completedState.ToString(chart)) }
 
 	for _, chartedState := range chart.states[completedState.startWordIndex] {
 
@@ -231,34 +225,24 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		sSelection := chartedState.sSelection
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition-1) != completedAntecedent) {
+		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition - 1) != completedAntecedent) {
 			continue
 		}
 
+		// check if the types match
 		if chartedState.rule.GetConsequentPositionType(dotPosition-1) != completedState.rule.PositionTypes[0] {
 			continue
 		}
 
-		advancedState := newChartState(chart.generateId(), rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
-		advancedState.children = append(parser.copyChildArray(chartedState.children), completedState)
+		// create a new state that is a dot-advancement of an older state
+		advancedState := newChartState(rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 
-		if advancedState.complete() {
-			chart.indexChildren(advancedState)
-		}
+		// add this state to the index for tree extraction
+		chart.updateAdvancedStatesIndex(completedState, advancedState)
+
+		// enqueue the new state
+		chart.enqueue(advancedState, completedState.endWordIndex)
 
 		if parser.log.Active() { parser.log.AddDebug("advanced", advancedState.ToString(chart)) }
-
-		f := chart.enqueue(advancedState, completedState.endWordIndex)
-
-		if parser.log.Active() && f { parser.log.AddDebug(" > found", "") }
 	}
 }
-
-func (parser *Parser) copyChildArray(children []chartState) []chartState {
-	newArray := []chartState{}
-	for _, state := range children {
-		newArray = append(newArray, state)
-	}
-	return newArray
-}
-

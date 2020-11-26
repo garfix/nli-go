@@ -14,12 +14,9 @@ type chartState struct {
 	endWordIndex   int
 
 	nameInformations []central.NameInformation
-
-	id       int
-	children []chartState
 }
 
-func newChartState(id int, rule parse.GrammarRule, sSelection parse.SSelection, dotPosition int, startWordIndex int, endWordIndex int) chartState {
+func newChartState(rule parse.GrammarRule, sSelection parse.SSelection, dotPosition int, startWordIndex int, endWordIndex int) chartState {
 	return chartState{
 		rule:           rule,
 		sSelection:     sSelection,
@@ -28,13 +25,14 @@ func newChartState(id int, rule parse.GrammarRule, sSelection parse.SSelection, 
 		endWordIndex:   endWordIndex,
 
 		nameInformations: []central.NameInformation{},
-
-		children: []chartState{},
-		id:       id,
 	}
 }
 
-func (state chartState) complete() bool {
+func (state chartState) isTerminal() bool {
+	return state.rule.GetAntecedentVariables()[0] == terminal
+}
+
+func (state chartState) isComplete() bool {
 
 	return state.dotPosition >= state.rule.GetConsequentCount()+1
 }
@@ -48,14 +46,19 @@ func (state chartState) Equals(otherState chartState) bool {
 }
 
 func (state chartState) BasicForm() string {
-	s := state.rule.String()
+	s := state.rule.BasicForm()
 	s += " [" + strconv.Itoa(state.startWordIndex) + "-" + strconv.Itoa(state.endWordIndex) + "]"
 	return s
 }
 
+func (state chartState) StartForm() string {
+	s := state.rule.BasicForm()
+	s += " " + strconv.Itoa(state.startWordIndex)
+	return s
+}
+
 func (state chartState) ToString(chart *chart) string {
-	s := strconv.Itoa(state.id) + " ["
-	s += " " + state.rule.GetAntecedent() + " ->"
+	s := state.rule.GetAntecedent() + " ->"
 	for i, category := range state.rule.GetConsequents() {
 		if i + 1 == state.dotPosition {
 			s += " *"
@@ -74,10 +77,5 @@ func (state chartState) ToString(chart *chart) string {
 		}
 	}
 	s += " >"
-	s += " ("
-	for _, child := range state.children {
-		s += " " + strconv.Itoa(child.id)
-	}
-	s += " )"
 	return s
 }

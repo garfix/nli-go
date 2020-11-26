@@ -129,13 +129,10 @@ func (rule GrammarRule) Copy() GrammarRule {
 	}
 }
 
-func (rule GrammarRule) String() string {
+func (rule GrammarRule) BasicForm() string {
 
-	s := ""
+	s := rule.SyntacticCategories[0] + "("
 	sep2 := ""
-
-	s += rule.SyntacticCategories[0] + "("
-	sep2 = ""
 	for _, variable := range rule.EntityVariables[0] {
 		s += sep2 + variable
 		sep2 = ", "
@@ -162,9 +159,16 @@ func (rule GrammarRule) String() string {
 		sep = " "
 	}
 
+	return s
+}
+
+func (rule GrammarRule) String() string {
+
+	s := rule.BasicForm()
+
 	s += " { "
 
-	sep = ""
+	sep := ""
 	for _, senseRelation := range rule.Sense {
 		s += sep + senseRelation.String()
 		sep = ", "

@@ -5,27 +5,28 @@ import (
 	"nli-go/lib/parse"
 )
 
-// Contains more than the strict chart that the Earley algorithm prescribes; it is used to hold all state of a parse.
+// Contains more than the strict chart that the Earley algorithm prescribes; it is used to hold all states of a parse.
+
+const terminal = "terminal"
 
 type chart struct {
-	states [][]chartState
-	words  []string
-	stateIdGenerator int
-	children map[string][][]chartState
+	words            []string
+	states           [][]chartState
+	advanced         map[string][][]chartState
+	completed        map[string][][]chartState
 }
 
 func newChart(words []string) *chart {
 	return &chart{
-		states:           make([][]chartState, len(words)+1),
 		words:            words,
-		stateIdGenerator: 0,
-		children: map[string][][]chartState{},
+		states:           make([][]chartState, len(words) + 1),
+		advanced:         map[string][][]chartState{},
+		completed:        map[string][][]chartState{},
 	}
 }
 
 func (chart *chart) buildIncompleteGammaState() chartState {
 	return newChartState(
-		chart.generateId(),
 		parse.NewGrammarRule(
 			[]string{ parse.PosTypeRelation, parse.PosTypeRelation },
 			[]string{"gamma", "s"},
@@ -43,26 +44,61 @@ func (chart *chart) buildCompleteGammaState() chartState {
 	return state
 }
 
-func (chart *chart) generateId() int {
-	chart.stateIdGenerator++
-	return chart.stateIdGenerator
-}
+func (chart *chart) updateAdvancedStatesIndex(completedState chartState, advancedState chartState) {
 
-func (chart *chart) indexChildren(state chartState) {
+	canonical := advancedState.StartForm()
+	completedConsequentsCount := advancedState.dotPosition - 2
 
-	canonical := state.BasicForm()
-
-	_, found := chart.children[canonical]
+	_, found := chart.advanced[canonical]
 	if !found {
-		chart.children[canonical] = [][]chartState{}
+		chart.advanced[canonical] = [][]chartState{}
 	}
 
-	chart.children[canonical] = append(chart.children[canonical], state.children)
+	children := []chartState{}
+	if completedConsequentsCount == 0 {
+		children = []chartState{ completedState }
+	} else {
+		for _, previousChildren := range chart.advanced[canonical] {
+			if len(previousChildren) == completedConsequentsCount {
+				if previousChildren[len(previousChildren)-1].endWordIndex == completedState.startWordIndex {
+					children = chart.appendState(previousChildren, completedState)
+					break
+				}
+			}
+		}
+	}
+
+	chart.advanced[canonical] = append(chart.advanced[canonical], children)
+
+	if advancedState.isComplete() {
+		chart.updateCompletedStatesIndex(advancedState, children)
+	}
+}
+
+func (chart *chart) updateCompletedStatesIndex(advancedState chartState, children []chartState) {
+
+	canonical := advancedState.BasicForm()
+
+	_, found := chart.completed[canonical]
+	if !found {
+		chart.completed[canonical] = [][]chartState{}
+	}
+
+	chart.completed[canonical] = append(chart.completed[canonical], children)
+}
+
+func (chart *chart) appendState(oldStates []chartState, newState chartState) []chartState {
+	newStates := []chartState{}
+	for _, state := range oldStates {
+		newStates = append(newStates, state)
+	}
+	newStates = append(newStates, newState)
+	return newStates
 }
 
 func (chart *chart) enqueue(state chartState, position int) bool {
 
-	found := chart.isStateInChart(state, position)
+	found := chart.containsState(state, position)
 	if !found {
 		chart.pushState(state, position)
 	}
@@ -70,7 +106,7 @@ func (chart *chart) enqueue(state chartState, position int) bool {
 	return found
 }
 
-func (chart *chart) isStateInChart(state chartState, position int) bool {
+func (chart *chart) containsState(state chartState, position int) bool {
 
 	for _, presentState := range chart.states[position] {
 		if presentState.Equals(state) {

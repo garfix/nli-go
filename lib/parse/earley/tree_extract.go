@@ -67,7 +67,7 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 
 	parentState := tree.peek().getCurrentState()
 
-	allChildStates, found := ex.chart.children[parentState.BasicForm()]
+	allChildStates, found := ex.chart.completed[parentState.BasicForm()]
 	if !found {
 
 		ex.next(tree)
@@ -125,7 +125,7 @@ func (ex *treeExtracter) forkTrees(tree treeInProgress, count int) []treeInProgr
 func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 
 	form := ""
-	if len(state.children) == 0 {
+	if state.isTerminal() {
 		form = state.rule.GetConsequent(0)
 	}
 
@@ -149,7 +149,7 @@ func findLastCompletedWordIndex(chart *chart) (int, string) {
 	for i := len(chart.states) - 1; i >= 0; i-- {
 		states := chart.states[i]
 		for _, state := range states {
-			if state.complete() {
+			if state.isComplete() {
 
 				lastIndex = state.endWordIndex - 1
 				goto done

@@ -12,19 +12,15 @@ type Answerer struct {
 	solutions []mentalese.Solution
 	matcher   *RelationMatcher
 	solver    *ProblemSolver
-	builder   *RelationSetBuilder
 	log       *common.SystemLog
 }
 
 func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
 
-	builder := NewRelationSetBuilder()
-
 	return &Answerer{
 		solutions: []mentalese.Solution{},
 		matcher:   matcher,
 		solver:    solver,
-		builder:   builder,
 		log:       log,
 	}
 }
@@ -101,7 +97,7 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings
-			answer = answerer.builder.Build(resultHandler.Answer, solutionBindings)
+			answer = answerer.build(resultHandler.Answer, solutionBindings)
 
 			// stop after the first solution
 			break
@@ -131,4 +127,23 @@ func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.S
 	}
 
 	return solutions
+}
+
+func (answerer Answerer) build(template mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
+
+	newSet := mentalese.RelationSet{}
+
+	if bindings.IsEmpty() {
+		newSet = template
+	} else {
+
+		sets := template.BindRelationSetMultipleBindings(bindings)
+
+		newSet = mentalese.RelationSet{}
+		for _, set := range sets {
+			newSet = newSet.Merge(set)
+		}
+	}
+
+	return newSet
 }

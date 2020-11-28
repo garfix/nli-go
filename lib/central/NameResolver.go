@@ -165,14 +165,14 @@ func (resolver *NameResolver) ResolveName(name string, sort string) []NameInform
 	return factBaseNameInformations
 }
 
-func (resolver *NameResolver) resolveNameInFactBase(name string, inducedEntityType string, factBase api.FactBase) []NameInformation {
+func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort string, factBase api.FactBase) []NameInformation {
 
 	var nameInformations []NameInformation
 
 	// go through all sorts
 	for aSort, entityInfo := range resolver.meta.GetSorts() {
 
-		if inducedEntityType != "entity" && inducedEntityType != "" && !resolver.meta.MatchesSort(inducedEntityType, aSort) {
+		if inducedSort != "entity" && inducedSort != "" && !resolver.meta.MatchesSort(aSort, inducedSort) {
 			continue
 		}
 

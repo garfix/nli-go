@@ -71,13 +71,17 @@ func (system *System) Answer(input string) (string, *common.Options) {
 func (system *System) Process(originalInput string) (string, *common.Options) {
 
 	options := common.NewOptions()
+	sortFinder := central.NewSortFinder(system.meta)
+	namesProcessed := false
+	nameNotFound := ""
 	answer := ""
 	tokens := []string{}
-	parseTree := earley.ParseTreeNode{}
+	parseTrees := []earley.ParseTreeNode{}
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
-	nameBinding := mentalese.NewBinding()
+	names := mentalese.NewBinding()
+	entityIds := mentalese.NewBinding()
 
 	system.log.AddProduction("Anaphora queue before", system.dialogContext.AnaphoraQueue.String())
 
@@ -89,25 +93,78 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		}
 
 		if !system.log.IsDone() {
-			parseTrees := system.parser.Parse(grammar.GetReadRules(), tokens)
+			parseTrees = system.parser.Parse(grammar.GetReadRules(), tokens)
 			if len(parseTrees) == 0 {
 				system.log.AddError("Parser returned no parse trees")
 			} else {
-				parseTree = parseTrees[0]
 				system.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
-				system.log.AddProduction("Parser", parseTree.String())
 			}
 		}
 
 		if !system.log.IsDone() {
-			requestRelations, nameBinding = system.relationizer.Relationize(parseTree, system.nameResolver)
-			system.storeNamedEntities(nameBinding)
-			system.log.AddProduction("Relationizer", requestRelations.String())
-			system.log.AddProduction("Named entities", nameBinding.String())
+			for _, aTree := range parseTrees {
+
+				system.log.AddProduction("Parser", aTree.String())
+
+// todo: lose name resolver
+// todo: remove s selection
+				requestRelations, names = system.relationizer.Relationize(aTree, system.nameResolver)
+				system.log.AddProduction("Relationizer", requestRelations.String())
+
+				// extract sorts: variable => sort
+				sorts, sortFound := sortFinder.FindSorts(requestRelations)
+				if !sortFound {
+					// conflicting sorts
+					system.log.AddProduction("Break", "Breaking due to conflicting sorts: " + sorts.String())
+					goto next
+				}
+
+				// look up entity ids by name
+				entityIds = mentalese.NewBinding()
+				for variable, name := range names.GetAll() {
+					// find sort
+					sort, found := sorts[variable]
+					if !found {
+						system.log.AddProduction("Info",
+							"The name '" + name.TermValue + "' could not be looked up because no sort could be derived from the relations.")
+						nameNotFound = name.TermValue
+						goto next
+					}
+					// find name information
+					nameInformations := system.nameResolver.ResolveName(name.TermValue, sort)
+					if len(nameInformations) == 0 {
+						system.log.AddProduction("Info",
+							"Database lookup for name '" + name.TermValue + "'  with sort '" + sort + "' did not give any results")
+						nameNotFound = name.TermValue
+						goto next
+					}
+
+					if len(nameInformations) > 1 {
+						nameInformations = system.nameResolver.Resolve(nameInformations)
+					}
+
+					for _, nameInformation := range nameInformations {
+						entityIds.Set(variable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
+					}
+				}
+
+				// names found and linked to id
+				system.storeNamedEntities(entityIds)
+				system.log.AddProduction("Named entities", entityIds.String())
+				namesProcessed = true
+				break
+
+				next:
+			}
+		}
+
+		if !namesProcessed {
+			answer = "Name not found: " + nameNotFound
+			system.log.AddError(answer)
 		}
 
 		if !system.log.IsDone() {
-			answerRelations = system.answerer.Answer(requestRelations, mentalese.InitBindingSet(nameBinding))
+			answerRelations = system.answerer.Answer(requestRelations, mentalese.InitBindingSet(entityIds))
 			system.log.AddProduction("Answer", answerRelations.String())
 			system.log.AddProduction("Anaphora queue after", system.dialogContext.AnaphoraQueue.String())
 		}

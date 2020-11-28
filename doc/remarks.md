@@ -1,3 +1,54 @@
+## 2020-11-28
+
+I works! Tokenize -> Parse -> Relationize -> Find Sorts -> Find Names -> Answer -> Generate
+
+I split the `find sorts` and `find names` off from the parse phase. This is more modular, and more powerful. Finding sorts and names is much easier now. And the only thing I was worried about, the explosion of the number of parse trees, turns out to be not a big problem at all. SYNTAX constraints the number of possible parse trees, even when your grammar tells you that 
+
+> Any word can be a proper noun
+
+I did not even order the parse trees by some heuristic. The first one that has sorts that do not conflict, and that lead to names being found in the database, is used to answer the question.
+
+By changing this, the number of database lookups for names has reduced quite a bit. I don't need to do three word lookups when the name is just a single word, because I now _know_ that the name is just a single word.
+
+## 2020-11-26
+
+I removed the children from the state altogether, along with its id. This is more in line with the original Earley algorithm, and it is semantically more correct, because a `state` in earley should not be bound to concrete children; it's an abstracted entity. 
+
+When the algorithm now completes a state, advanced states are now indexed in the chart (`advanced`). A completed state's child sequence is indexed in a separate field (`completed`). The extracter reads the child sequences from the `completed` field.
+
+===
+
+In "An Efficient Context-Free Parsing Algorithm", Jay Earley suggested that the completer add a pointer from the completed consequent (D, in E -> a D b) of the advanced state to the state that completed it (D -> c). When D is completed by multiple states, simply add multiple pointers to the completing states. 
+
+Creating the parse trees from this representation is not straightforward, so this should have been worked out.
+
+===
+
+There are many earley implementations available from https://en.wikipedia.org/wiki/Earley_parser Some of these are probably very good. I doubt any of them are particulary instructive; they all require enourmous amounts of code.
+
+I thought about writing an article about my solution, but there is not much point in this. I can't compare it with other solutions, since I don't understand them. It would take me very much time to work this out completely. And I doubt that someone is interested.
+
+When I'm done simplifying the parser even more, I may point out its simple structure, and leave it at that.
+
+=== 
+
+Let's continue with the sort extractor. To repeat:
+
+- Have `proper_noun` match any word
+- This will create loads of parse trees
+- Order these by the number of proper nouns (less is better?) and / or the length of the proper nouns (longer is better?)    
+- For each tree:
+    - Create relations
+    - Determine the sorts of the variables; this is now easy because all relations are known (known sorts are better)
+    - only if a sort is known, find the persons in the database, otherwise, skip the parse and mention that the person is not known
+    - stop when found
+    
+So there are several aspects that help to determine the most likely parse tree:
+
+- number of proper noun groups
+- number of proper nouns per group
+- number of known sorts
+
 ## 2020-11-24
 
 I finished rewriting the parser (again!) to have it extract all parse trees. This was not a walk in the park! I had to stretch my brain for days and laying awake going though the algorithm in my mind again and again.
@@ -88,7 +139,7 @@ So I want to extract the relation in a separate rule
 
     { rule: relation(E1, E2) -> 'capital',                                  sense: dom:has_capital(E1, E2) }
     
-And there are more cases where the current scheme of determining sort by top down induction from sense doesn't work. In many cases the sort can not be seduced top-down while parsing, so I want another technique.
+And there are more cases where the current scheme of determining sort by top down induction from sense doesn't work. In many cases the sort can not be reduced top-down while parsing, so I want another technique.
 
 I am now thinking of the following:
 

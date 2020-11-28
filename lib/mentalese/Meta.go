@@ -69,6 +69,16 @@ func (meta Meta) MatchesSort(subSort string, superSort string) bool {
 	return meta.matchesSortRecursive(subSort, superSort, &subSortsTried)
 }
 
+func (meta Meta) GetMostSpecific(sort1 string, sort2 string) (string, bool) {
+	if meta.MatchesSort(sort1, sort2) {
+		return sort1, true
+	} else if meta.MatchesSort(sort2, sort1) {
+		return sort2, true
+	} else {
+		return "", false
+	}
+}
+
 func (meta Meta) matchesSortRecursive(subSort string, superSort string, subSortsTried *map[string]bool) bool {
 
 	found := false

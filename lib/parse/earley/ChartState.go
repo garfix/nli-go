@@ -68,9 +68,8 @@ func (state chartState) ToString(chart *chart) string {
 	if len(state.rule.GetConsequents()) + 1 == state.dotPosition {
 		s += " *"
 	}
-	s += " ] "
 
-	s += "<"
+	s += " <"
 	for i, word := range chart.words {
 		if i >= state.startWordIndex && i < state.endWordIndex {
 			s += " " + word

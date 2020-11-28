@@ -57,17 +57,21 @@ func (chart *chart) updateAdvancedStatesIndex(completedState chartState, advance
 	children := []chartState{}
 	if completedConsequentsCount == 0 {
 		children = []chartState{ completedState }
+		chart.addAdvancedStateIndex(advancedState, children)
 	} else {
 		for _, previousChildren := range chart.advanced[canonical] {
 			if len(previousChildren) == completedConsequentsCount {
 				if previousChildren[len(previousChildren)-1].endWordIndex == completedState.startWordIndex {
 					children = chart.appendState(previousChildren, completedState)
-					break
+					chart.addAdvancedStateIndex(advancedState, children)
 				}
 			}
 		}
 	}
+}
 
+func (chart *chart) addAdvancedStateIndex(advancedState chartState, children []chartState) {
+	canonical := advancedState.StartForm()
 	chart.advanced[canonical] = append(chart.advanced[canonical], children)
 
 	if advancedState.isComplete() {

@@ -9,6 +9,8 @@ import (
 func TestRelationships(t *testing.T) {
 
 	log := common.NewSystemLog()
+	//log.SetDebug(true)
+	//log.SetPrint(true)
 	system := global.NewSystem(common.Dir() + "/../../resources/relationships", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
@@ -22,7 +24,7 @@ func TestRelationships(t *testing.T) {
 	}{
 		{"Who married Jacqueline de Boer?", "Mark van Dongen married her"},
 		{"Did Mark van Dongen marry Jacqueline de Boer?", "Yes"},
-		//{"Did Jacqueline de Boer marry Gerard van As?", "Name not found in any knowledge base: Gerard van As"},
+		{"Did Jacqueline de Boer marry Gerard van As?", "Name not found: Gerard van As"},
 		{"Are Mark van Dongen and Suzanne van Dongen siblings?", "Yes"},
 		{"Are Mark van Dongen and John van Dongen siblings?", "No"},
 		{"Which children has John van Dongen?", "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},

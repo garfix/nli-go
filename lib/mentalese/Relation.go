@@ -75,6 +75,7 @@ const PredicateBreak = "go_break"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"
+const CategoryProperNounGroup = "proper_noun_group"
 
 const AtomNone = "none"
 const AtomSome = "some"

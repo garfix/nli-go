@@ -34,17 +34,18 @@ func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolve
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
 func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
 
-	nameBinding := mentalese.NewBinding()
 	constantBinding := mentalese.NewBinding()
 	relationSet := mentalese.RelationSet{}
 
-	if len(node.nameInformations) > 0 {
-		firstAntecedentVariable := antecedentVariables[0]
-		resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
-		for _, nameInformation := range resolvedNameInformations {
-			nameBinding.Set(firstAntecedentVariable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
-		}
-	}
+	//if len(node.nameInformations) > 0 {
+	//	firstAntecedentVariable := antecedentVariables[0]
+		//resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
+		//for _, nameInformation := range resolvedNameInformations {
+		//	nameBinding.Set(firstAntecedentVariable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
+		//}
+	//}
+
+	nameBinding := relationizer.extractName(node, antecedentVariables)
 
 	variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.rule.GetAntecedentVariables(), node.rule.GetAllConsequentVariables())
 
@@ -76,6 +77,27 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 
 	return relationSet, nameBinding, constantBinding
+}
+
+func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVariables []string) mentalese.Binding {
+
+	names := mentalese.NewBinding()
+
+	if node.category != mentalese.CategoryProperNounGroup {
+		return names
+	}
+
+	variable := antecedentVariables[0]
+
+	name := ""
+	sep := ""
+	for _, properNounNode := range node.constituents {
+		name += sep + properNounNode.form
+		sep = " "
+	}
+	names.Set(variable, mentalese.NewTermString(name))
+
+	return names
 }
 
 // Adds all childSets to parentSet

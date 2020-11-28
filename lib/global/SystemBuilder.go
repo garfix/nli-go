@@ -108,7 +108,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
-	system.nameResolver = central.NewNameResolver(solver, system.meta, matcher, builder.log, system.dialogContext)
+	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
 	system.parser = earley.NewParser(system.nameResolver, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)

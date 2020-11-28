@@ -11,21 +11,20 @@ import (
 type NameResolver struct {
 	solver 			*ProblemSolver
 	meta 			*mentalese.Meta
-	matcher 		*RelationMatcher
 	log 			*common.SystemLog
 	dialogContext   *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, matcher *RelationMatcher, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
 		solver:      	solver,
 		meta: 			meta,
-		matcher:	 	matcher,
 		log: 			log,
 		dialogContext:	dialogContext,
 	}
 }
 
+// have the user select one of the entities with a given name
 func (resolver *NameResolver) Resolve(nameInformations []NameInformation) []NameInformation {
 
 	resolvedInformations := []NameInformation{}
@@ -147,11 +146,6 @@ func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInf
 	}
 
 	return nameInformations
-}
-
-type nameInfo struct {
-	name string
-	sort string
 }
 
 func (resolver *NameResolver) ResolveName(name string, sort string) []NameInformation {

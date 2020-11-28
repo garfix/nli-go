@@ -34,7 +34,6 @@ func (ex *treeExtracter) extract() {
 		constituents:     nil,
 		form:             "",
 		rule:             completedGammaState.rule,
-		nameInformations: nil,
 	}
 
 	ex.trees = append(ex.trees, rootNode)
@@ -134,7 +133,6 @@ func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 		constituents: []*ParseTreeNode{},
 		form: form,
 		rule: state.rule,
-		nameInformations: state.nameInformations,
 	}
 }
 

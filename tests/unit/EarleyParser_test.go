@@ -51,7 +51,7 @@ func TestEarleyParser(test *testing.T) {
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	nameResolver := central.NewNameResolver(solver, meta, matcher, log, dialogContext)
+	nameResolver := central.NewNameResolver(solver, meta, log, dialogContext)
 
 	parser := earley.NewParser(nameResolver, meta, log)
 	relationizer := earley.NewRelationizer(log)
@@ -66,7 +66,7 @@ func TestEarleyParser(test *testing.T) {
 			return
 		}
 
-		relations, _ := relationizer.Relationize(trees[0], nameResolver)
+		relations, _ := relationizer.Relationize(trees[0])
 
 		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))

@@ -69,7 +69,6 @@ func (tip *treeInProgress) cloneNodeWithMap(node *ParseTreeNode, aMap *map[*Pars
 		constituents:     constituents,
 		form:             node.form,
 		rule:             node.rule,
-		nameInformations: node.nameInformations,
 	}
 
 	(*aMap)[node] = newNode

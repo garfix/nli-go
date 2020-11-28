@@ -106,9 +106,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 
 				system.log.AddProduction("Parser", aTree.String())
 
-// todo: lose name resolver
-// todo: remove s selection
-				requestRelations, names = system.relationizer.Relationize(aTree, system.nameResolver)
+				requestRelations, names = system.relationizer.Relationize(aTree)
 				system.log.AddProduction("Relationizer", requestRelations.String())
 
 				// extract sorts: variable => sort
@@ -122,14 +120,18 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 				// look up entity ids by name
 				entityIds = mentalese.NewBinding()
 				for variable, name := range names.GetAll() {
+
 					// find sort
 					sort, found := sorts[variable]
 					if !found {
 						system.log.AddProduction("Info",
 							"The name '" + name.TermValue + "' could not be looked up because no sort could be derived from the relations.")
-						nameNotFound = name.TermValue
+						if nameNotFound == "" {
+							nameNotFound = name.TermValue
+						}
 						goto next
 					}
+
 					// find name information
 					nameInformations := system.nameResolver.ResolveName(name.TermValue, sort)
 					if len(nameInformations) == 0 {
@@ -139,6 +141,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 						goto next
 					}
 
+					// make the user choose one entity from multiple with the same name
 					if len(nameInformations) > 1 {
 						nameInformations = system.nameResolver.Resolve(nameInformations)
 					}

@@ -81,8 +81,6 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, words []strin
 			// check if the entry is parsed completely
 			if !state.isComplete() {
 
-				// note: we make no distinction between part-of-speech and not part-of-speech; a category can be both
-
 				// add all entries that have this abstract consequent as their antecedent
 				parser.predict(grammarRules, chart, state)
 
@@ -116,13 +114,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 	// go through all rules that have the next consequent as their antecedent
 	for _, rule := range grammarRules.FindRules(nextConsequent, len(nextConsequentVariables)) {
 
-		parentSSelection := state.sSelection[consequentIndex + 1]
-		sSelection, allowed := combineSSelection(parser.meta, parentSSelection, rule)
-		if !allowed {
-			continue
-		}
-
-		predictedState := newChartState(rule, sSelection, 1, endWordIndex, endWordIndex)
+		predictedState := newChartState(rule, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
 		if parser.log.Active() { parser.log.AddDebug("> predicted", predictedState.ToString(chart)) }
@@ -137,7 +129,6 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
-	nameInformations := []central.NameInformation{}
 	lexItemFound := false
 	posType := parse.PosTypeRelation
 
@@ -156,7 +147,6 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 
 	// proper noun
 	if !lexItemFound && nextConsequent == mentalese.CategoryProperNoun {
-		//lexItemFound, nameInformations = parser.isProperNoun(chart, state)
 		lexItemFound = true
 	}
 
@@ -169,43 +159,18 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	}
 
 	if lexItemFound {
-		rule := parse.NewGrammarRule([]string{ posType, parse.PosTypeWordForm }, []string{nextConsequent, endWord}, [][]string{{terminal}, {terminal}}, mentalese.RelationSet{})
-		sType := state.sSelection[state.dotPosition - 1]
-		scannedState := newChartState(rule, parse.SSelection{sType, sType}, 2, endWordIndex, endWordIndex+1)
-		scannedState.nameInformations = nameInformations
+		rule := parse.NewGrammarRule(
+			[]string{ posType, parse.PosTypeWordForm },
+			[]string{nextConsequent, endWord},
+			[][]string{{terminal}, {terminal}},
+			mentalese.RelationSet{})
+
+		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)
 		chart.enqueue(scannedState, endWordIndex+1)
 
 		if parser.log.Active() { parser.log.AddDebug("> scanned", scannedState.ToString(chart) + " " + endWord) }
 	}
 }
-
-//func (parser *Parser) isProperNoun(chart *chart, state chartState) (bool, []central.NameInformation) {
-//
-//	wordIndex := state.endWordIndex
-//	sType := state.sSelection[state.dotPosition - 1 + 1]
-//	wordCount := len(state.rule.GetConsequents())
-//
-//	// if the first consequent has created a match, all following words match
-//	if state.dotPosition > 1 {
-//		return true, []central.NameInformation{}
-//	}
-//
-//	// check if it is possible to match all words in the remainder of the sentence
-//	if wordIndex + wordCount > len(chart.words) {
-//		return false, []central.NameInformation{}
-//	}
-//
-//	// first word in proper noun consequents?  try to match all words at once
-//	words := chart.words[wordIndex:wordIndex + wordCount]
-//	wordString := strings.Join(words, " ")
-//	nameInformations := parser.nameResolver.ResolveName(wordString, sType[0])
-//
-//	if len(nameInformations) > 0 {
-//		return true, nameInformations
-//	}
-//
-//	return false, []central.NameInformation{}
-//}
 
 // This function is called whenever a state is completed.
 // Its purpose is to advance other states.
@@ -223,7 +188,6 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 
 		dotPosition := chartedState.dotPosition
 		rule := chartedState.rule
-		sSelection := chartedState.sSelection
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition - 1) != completedAntecedent) {
@@ -236,7 +200,7 @@ func (parser *Parser) complete(chart *chart, completedState chartState) {
 		}
 
 		// create a new state that is a dot-advancement of an older state
-		advancedState := newChartState(rule, sSelection, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
+		advancedState := newChartState(rule, dotPosition+1, chartedState.startWordIndex, completedState.endWordIndex)
 
 		// add this state to the index for tree extraction
 		chart.updateAdvancedStatesIndex(completedState, advancedState)

@@ -5,8 +5,6 @@ import (
 	"nli-go/lib/parse"
 )
 
-// Contains more than the strict chart that the Earley algorithm prescribes; it is used to hold all states of a parse.
-
 const terminal = "terminal"
 
 type chart struct {
@@ -33,7 +31,6 @@ func (chart *chart) buildIncompleteGammaState() chartState {
 			[][]string{{"G"}, {"S"}},
 			mentalese.RelationSet{},
 		),
-		[][]string{{""}, {""}},
 		1, 0, 0)
 }
 
@@ -122,6 +119,5 @@ func (chart *chart) containsState(state chartState, position int) bool {
 }
 
 func (chart *chart) pushState(state chartState, position int) {
-
 	chart.states[position] = append(chart.states[position], state)
 }

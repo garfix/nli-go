@@ -1,30 +1,23 @@
 package earley
 
 import (
-	"nli-go/lib/central"
 	"nli-go/lib/parse"
 	"strconv"
 )
 
 type chartState struct {
 	rule           parse.GrammarRule
-	sSelection	   parse.SSelection
 	dotPosition    int
 	startWordIndex int
 	endWordIndex   int
-
-	nameInformations []central.NameInformation
 }
 
-func newChartState(rule parse.GrammarRule, sSelection parse.SSelection, dotPosition int, startWordIndex int, endWordIndex int) chartState {
+func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
 	return chartState{
 		rule:           rule,
-		sSelection:     sSelection,
 		dotPosition:    dotPosition,
 		startWordIndex: startWordIndex,
 		endWordIndex:   endWordIndex,
-
-		nameInformations: []central.NameInformation{},
 	}
 }
 
@@ -41,8 +34,7 @@ func (state chartState) Equals(otherState chartState) bool {
 	return state.rule.Equals(otherState.rule) &&
 		state.dotPosition == otherState.dotPosition &&
 		state.startWordIndex == otherState.startWordIndex &&
-		state.endWordIndex == otherState.endWordIndex &&
-		true
+		state.endWordIndex == otherState.endWordIndex
 }
 
 func (state chartState) BasicForm() string {

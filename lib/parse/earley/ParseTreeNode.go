@@ -1,7 +1,6 @@
 package earley
 
 import (
-	"nli-go/lib/central"
 	"nli-go/lib/parse"
 )
 
@@ -10,7 +9,6 @@ type ParseTreeNode struct {
 	constituents []*ParseTreeNode
 	form         string
 	rule         parse.GrammarRule
-	nameInformations []central.NameInformation
 }
 
 func (node ParseTreeNode) IsLeafNode() bool {
@@ -21,9 +19,6 @@ func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
 	return node.constituents
 }
 
-func (node ParseTreeNode) GetNameInformations() []central.NameInformation {
-	return node.nameInformations
-}
 func (node ParseTreeNode) String() string {
 
 	body := ""

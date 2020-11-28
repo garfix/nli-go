@@ -1,7 +1,6 @@
 package earley
 
 import (
-	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
@@ -22,9 +21,9 @@ func NewRelationizer(log *common.SystemLog) *Relationizer {
 	}
 }
 
-func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolver *central.NameResolver) (mentalese.RelationSet, mentalese.Binding) {
+func (relationizer Relationizer) Relationize(rootNode ParseTreeNode) (mentalese.RelationSet, mentalese.Binding) {
 	rootEntityVariable := relationizer.senseBuilder.GetNewVariable("Sentence")
-	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, nameResolver, []string{ rootEntityVariable } )
+	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, []string{ rootEntityVariable } )
 	sense = sense.BindSingle(constantBinding)
 	return sense, nameBinding
 }
@@ -32,21 +31,12 @@ func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, nameResolve
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameResolver *central.NameResolver, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
+func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
 
 	constantBinding := mentalese.NewBinding()
 	relationSet := mentalese.RelationSet{}
 
-	//if len(node.nameInformations) > 0 {
-	//	firstAntecedentVariable := antecedentVariables[0]
-		//resolvedNameInformations := nameResolver.Resolve(node.nameInformations)
-		//for _, nameInformation := range resolvedNameInformations {
-		//	nameBinding.Set(firstAntecedentVariable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
-		//}
-	//}
-
 	nameBinding := relationizer.extractName(node, antecedentVariables)
-
 	variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.rule.GetAntecedentVariables(), node.rule.GetAllConsequentVariables())
 
 	// create relations for each of the children
@@ -60,7 +50,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 			mappedConsequentVariables = append(mappedConsequentVariables, variableMap[consequentVariable].TermValue)
 		}
 
-		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(*childNode, nameResolver, mappedConsequentVariables)
+		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(*childNode, mappedConsequentVariables)
 		nameBinding = nameBinding.Merge(childNameBinding)
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)
@@ -71,9 +61,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, nameRe
 	}
 
 	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.rule.Sense, variableMap)
-
 	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
-
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
 
 	return relationSet, nameBinding, constantBinding

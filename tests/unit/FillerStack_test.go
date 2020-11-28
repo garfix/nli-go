@@ -35,7 +35,7 @@ func TestFillerStack(t *testing.T) {
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	nameResolver := central.NewNameResolver(solver, meta, matcher, log, dialogContext)
+	nameResolver := central.NewNameResolver(solver, meta, log, dialogContext)
 
 	parser := earley.NewParser(nameResolver, meta, log)
 
@@ -48,7 +48,7 @@ func TestFillerStack(t *testing.T) {
 		return
 	}
 
-	result, _ := relationizer.Relationize(parseTrees[0], nameResolver)
+	result, _ := relationizer.Relationize(parseTrees[0])
 
 	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S5) take_from(S5, E6, E5)))"
 	if result.String() != want {

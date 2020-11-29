@@ -146,14 +146,20 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 						nameInformations = system.nameResolver.Resolve(nameInformations)
 					}
 
+					// link variable to ID
 					for _, nameInformation := range nameInformations {
 						entityIds.Set(variable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
 					}
 				}
 
 				// names found and linked to id
-				system.storeNamedEntities(entityIds)
+				for _, value := range entityIds.GetAll() {
+					system.dialogContext.AnaphoraQueue.AddReferenceGroup(
+						central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort) })
+				}
 				system.log.AddProduction("Named entities", entityIds.String())
+
+				// success!
 				namesProcessed = true
 				break
 
@@ -162,7 +168,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		}
 
 		if !namesProcessed {
-			answer = "Name not found: " + nameNotFound
+			answer = common.NameNotFound + ": " + nameNotFound
 			system.log.AddError(answer)
 		}
 
@@ -193,10 +199,4 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	}
 
 	return answer, options
-}
-
-func (system System) storeNamedEntities(binding mentalese.Binding) {
-	 for _, value := range binding.GetAll() {
-		 system.dialogContext.AnaphoraQueue.AddReferenceGroup(central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort) })
-	 }
 }

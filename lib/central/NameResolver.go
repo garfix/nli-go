@@ -55,7 +55,7 @@ func (resolver *NameResolver) Resolve(nameInformations []NameInformation) []Name
 				} else {
 
 					// need to ask user
-					userResponse = "Which one?"
+					userResponse = common.WhichOne
 					options = resolver.composeOptions(nameInformations)
 
 					// store options

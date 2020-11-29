@@ -1,3 +1,11 @@
+## 2020-11-29
+
+I wrote about the recent breakthrough in looking up names in this blog 
+
+http://patrick-van-bergen.blogspot.com/2020/11/the-right-way-of-looking-up-names-in.html
+
+
+
 ## 2020-11-28
 
 I works! Tokenize -> Parse -> Relationize -> Find Sorts -> Find Names -> Answer -> Generate

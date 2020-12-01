@@ -5,7 +5,7 @@
 { rule: proper_noun_group(N1) -> proper_noun(N1) }
 
 { rule: np(E1) -> 'the' nbar(E1),                                     sense: go:quant(some, E1, $nbar) } /* definite reference? */
-{ rule: np(E1) -> np_poss(E1),                                        sense: go:quant(some, E1, $np_poss) } /* definite reference? */
+{ rule: np(E1) -> nbar(E1),                                        sense: go:quant(some, E1, $nbar) } /* definite reference? */
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, go:equals(Result, Range)), E1, none) }
 { rule: np(E1) -> 'she',                                              sense: go:quant(
                                                                         go:quantifier(Result, Range, go:equals(Result, 1)),
@@ -31,7 +31,7 @@
 /* son of X */
 { rule: nbar(E1) -> relation(E2, E1) 'of' np(E2),                     sense: go:quant_check($np, $relation) }
 /* X's son */
-{ rule: np_poss(E1) -> np(E2) possessive_marker(_) relation(E2, E1),  sense: go:quant_check($np, $relation) }
+{ rule: nbar(E1) -> np(E2) possessive_marker(_) relation(E2, E1),  sense: go:quant_check($np, $relation) }
 
 { rule: relation(E1, E2) -> 'largest' aggregation(E1, E2, Q1),              sense: go:order(Q1, asc) go:last() }
 { rule: relation(E1, E2) -> number(N1) 'largest' aggregation(E1, E2, Q1),   sense: go:order(Q1, asc) go:last(N1) }

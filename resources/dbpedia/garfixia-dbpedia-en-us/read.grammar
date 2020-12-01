@@ -18,15 +18,10 @@
 { rule: nbar(E1) -> 'largest' aggregation(E1, Q1),                    sense: go:order(Q1, asc) go:last() }
 { rule: nbar(E1) -> number(N1) 'largest' aggregation(E1, Q1),         sense: go:order(Q1, asc) go:last(N1) }
 { rule: nbar(E1) -> ordinal(N1) 'largest' aggregation(E1, Q1),        sense: go:order(Q1, desc) go:subtract(N1, 1, I1) go:get(I1) }
+{ rule: nbar(E1) -> noun(E1) }
 
 { rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'area',                  sense: dom:land_area(E1, Q1) }
 { rule: aggregation(E1, Q1) -> nbar(E1) 'by' 'population',            sense: dom:has_population(E1, Q1) }
-
-{ rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E2) -> 'state' 'of' np(E1),                              sense: go:quant_check($np, dom:has_state(E1, E2)) }
-{ rule: nbar(E2) -> 'states' 'of' np(E1),                             sense: go:quant_check($np, dom:has_state(E1, E2)) }
-{ rule: nbar(E2) -> 'capital' 'of' np(E1),                            sense: go:quant_check($np, dom:has_capital(E1, E2)) }
-{ rule: nbar(E2) -> 'population' 'of' np(E1),                         sense: go:quant_check($np, dom:has_population(E1, E2)) }
 
 /* son of X */
 { rule: nbar(E1) -> relation(E2, E1) 'of' np(E2),                     sense: go:quant_check($np, $relation) }
@@ -41,12 +36,15 @@
 { rule: aggregation(E1, E2, Q1) -> relation(E1, E2) 'by' 'population',sense: dom:has_population(E2, Q1) }
 
 { rule: relation(E1, E2) -> 'state',                                  sense: dom:has_state(E1, E2) }
+{ rule: relation(E1, E2) -> 'states',                                 sense: dom:has_state(E1, E2) }
 { rule: relation(E1, E2) -> 'daughter',                               sense: dom:has_daughter(E1, E2) }
 { rule: relation(E1, E2) -> 'son',                                    sense: dom:has_son(E1, E2) }
 { rule: relation(E1, E2) -> 'wife',                                   sense: dom:has_wife(E1, E2) }
 { rule: relation(E1, E2) -> 'husband',                                sense: dom:has_husband(E1, E2) }
 { rule: relation(E1, E2) -> 'father',                                 sense: dom:has_father(E1, E2) }
 { rule: relation(E1, E2) -> 'mother',                                 sense: dom:has_mother(E1, E2) }
+{ rule: relation(E1, E2) -> 'capital',                                sense: dom:has_capital(E1, E2) }
+{ rule: relation(E1, E2) -> 'population',                             sense: dom:has_population(E1, E2) }
 
 { rule: child(E1) -> 'children' }
 { rule: birthday(E1) -> 'birthday' }

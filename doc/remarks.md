@@ -1,10 +1,69 @@
+## 2020-12-03
+
+I thought long and hard about these two constructs:
+
+    largest state of america by area
+    america's largest state by area
+    
+They mean the same thing, but I need to treat them differently, because two parts of the sentence that are semantically dependent are syntactically separated:
+
+    largest
+    by area
+    
+This is where phrase structure grammar shows a weakness. I can't join separated parts of a sentence together. I don't know if other types of grammar can do it, but it would be interesting to find out.
+
+I rewrote the DBPedia rules to make the relations and superlative rules more powerful and easy to extend. This is now possible because I separated sortal analysis from syntactic analysis. Semantics is no longer dependent of top-down sortal restrictions. They can also be bottom-up now.        
+
+## 2020-11-30
+
+Morphological analysis. Let's focus on the word "bigger" for a moment.
+
+The word has 2 morphemes: "big" and "-er". An othographical rule ads an extra "-g-". 
+
+The word big, I think means something different from the morpheme "big". "Big" means `larger than 128`, in the blocks world. The morpheme big does not mean that, because it can be used in the word "bigger". And one very small thing can still be bigger than another small thing. No, the morpheme "big" means something like `ordered by height, descendingly`. It orders the results. "Biggest" means "big", followed by `first()`, and "bigger" means "big", followed by `before(A, B)`. Paraphrased, "A is bigger than B" thus means: `take A's height hA and B's height hB, order these by height, ascendingly, then hA is positioned before hB`. 
+
+Can't "-er" just mean `greater_than(A, B)`? It can if we just consider "bigger", but if we extend the use to "smaller", we're out of luck. Morphological analysis is not _necessary_, because we can extend the dictionary with all morphological variants of a word, along with their meanings. Morphology gives us the opportunity to have less rules, in the end. But more importantly, it allows the system to derive the meaning of words it has not heard before.
+
+What does the rewrite rule like for words like bigger?
+
+    { rule: adjp(E1) -> adj(E1, E2) 'than' np(E2),                            sense: go:quant_check($np, $adj) }
+
+What are the inputs for the morhological analyser, for the word "bigger"?
+
+- the form: bigger
+- the category: adjective
+- the variables, E1, and E2
+
+What might a morphological rule look like?
+
+    { rule: /big/(E1, E2) -> big,           sense: height(E1, H1) height(E2, H2) order(H1, asc) }
+    { rule: /big/(E1) -> big,               sense: height(E1, H1) order(H1, asc) }
+    
+    { rule: /($1)er/(E1, E2) -> $1,         sense: $noun, before(E1, E2) }
+    { rule: /($1)est/(E1) -> $1,            sense: $noun, first(E1) }
+    
+No this doesn't work. Ordering by the height of E1 doesn't help. What about this; it simply removes relations that are not `bigger`. 
+
+    { rule: /(big(E1, E2))/ -> big,         sense: height(E1, H1) height(E2, H2) greater_than(H1, H2) }
+    { rule: /(big(E1))/ -> big,             sense: height(E1, H1) order(H1, asc) }
+    
+    { rule: /(small(E1, E2))/ -> big,       sense: height(E1, H1) height(E2, H2) less_than(H1, H2) }
+    { rule: /(small(E1))/ -> big,           sense: height(E1, H1) order(H1, desc) }
+
+    { rule: /(noun(E1, E2))er/ -> %noun,    sense: $noun }
+    { rule: /(noun(E1))est/ -> %noun,       sense: $noun, first(E1) }
+    
+Note that even for the morpheme `big` there are two variants: one has a single argument; the other has two.    
+
+The ordering works for "biggest", but not for "bigger". "bigger" needs a `greater than` that cuts away the relations that do not fit.
+
+Ok, and what about "the three biggest blocks"?
+
 ## 2020-11-29
 
 I wrote about the recent breakthrough in looking up names in this blog 
 
 http://patrick-van-bergen.blogspot.com/2020/11/the-right-way-of-looking-up-names-in.html
-
-
 
 ## 2020-11-28
 

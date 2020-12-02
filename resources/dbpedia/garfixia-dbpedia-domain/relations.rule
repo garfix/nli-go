@@ -1,0 +1,1 @@
+age(E1, A1) :- birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, A1);

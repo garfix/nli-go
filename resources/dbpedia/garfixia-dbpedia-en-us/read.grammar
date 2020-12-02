@@ -15,12 +15,15 @@
                                                                         E1, go:back_reference(E1, dom:gender(E1, male))) }
 
 { rule: nbar(E1) -> noun(E1) }
-
+/* child of b */
 { rule: nbar(E1) -> relation(E2, E1) 'of' np(E2),                     sense: go:quant_check($np, $relation) }
 { rule: nbar(E1) -> np(E2) possessive_marker(_) relation(E2, E1),     sense: go:quant_check($np, $relation) }
-
+/* largest a of b by area */
 { rule: nbar(E1) -> superlative(A1) relation(E2, E1) 'of' np(E2) attr(E1, A1),                     sense: go:quant_check($np, $relation $attr $superlative) }
 { rule: nbar(E1) -> np(E2) possessive_marker(_) superlative(A1) relation(E2, E1) attr(E1, A1),     sense: go:quant_check($np, $relation $attr $superlative) }
+/* oldest child of b */
+{ rule: nbar(E1) -> superlative(A1) relation(E2, E1) 'of' np(E2),                     sense: go:quant_check($np, $relation $superlative) }
+{ rule: nbar(E1) -> np(E2) possessive_marker(_) superlative(E1) relation(E2, E1),     sense: go:quant_check($np, $relation $superlative) }
 
 { rule: superlative(E1) -> super(E1),                                 sense: $super go:first() }
 { rule: superlative(E1) -> number(N1) super(E1),                      sense: $super go:first(N1) }
@@ -28,6 +31,8 @@
 
 { rule: super(E1) -> 'largest',                                       sense: go:order(E1, desc) }
 { rule: super(E1) -> 'smallest',                                      sense: go:order(E1, asc) }
+{ rule: super(E1) -> 'youngest',                                      sense: dom:age(E1, A1) go:order(A1, asc) }
+{ rule: super(E1) -> 'oldest',                                        sense: dom:age(E1, A1) go:order(A1, desc) }
 
 { rule: attr(E1, Q1) -> 'by' 'area',                                  sense: dom:land_area(E1, Q1) }
 { rule: attr(E1, Q1) -> 'by' 'population',                            sense: dom:has_population(E1, Q1) }

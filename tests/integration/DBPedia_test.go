@@ -46,15 +46,16 @@ func TestDBPedia(t *testing.T) {
 			{"Who married Lord Byron?", "Anne Isabella Byron married him"},
 			{"How many children had Lord Byron?", "He has 2 children"}, // Ada and Allegra
 			{"When did Lord Byron die?", "He died on April 19, 1824"},
+			{"Who is Lord Byron's youngest daughter?", "Allegra Byron"},
+			{"Who is Lord Byron's oldest daughter?", "Ada Lovelace"},
 		},
 		{
 			{"How many countries have population above 130000000", "8"},
 			{"What is the largest state of America by area?", "Alaska"},
-			{"What are the two largest states of america by area?", "Texas and Alaska"},
+			{"What are the two largest states of america by area?", "Alaska and Texas"},
 			{"What is the second largest state of america by area?", "Texas"},
 			{"What is the largest state of America by population?", "California"},
 			{"What is america's largest state by population?", "California"},
-			// oldest son?
 		},
 		{
 		},
@@ -93,7 +94,7 @@ func TestDBPedia(t *testing.T) {
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-				t.Error(log.String())
+				//t.Error(log.String())
 			}
 
 		}

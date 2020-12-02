@@ -19,7 +19,9 @@ func extractTreeRoots(chart *chart) []ParseTreeNode {
 	// the sentence node is the first child
 	roots := []ParseTreeNode{}
 	for _, root := range extracter.trees {
-		roots = append(roots, *root.constituents[0])
+		if len(root.constituents) > 0 {
+			roots = append(roots, *root.constituents[0])
+		}
 	}
 
 	return roots

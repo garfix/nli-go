@@ -1,3 +1,35 @@
+## 2020-12-04
+
+CLE (p.120) has a special segmentation phase to analyse tokens into morphemes. The result of this phase is a `seg` relation such as
+
+    seg(designed, [design, ed], regular)
+    
+Here, "designed" is the token, the array contains the morphemes, and the last argument is the rule by which these were extracted.
+
+Rules can be `regular`, `irreg`, `suffix` and others.
+
+The suffix rule is
+    
+    suffix(<added>, <removed>, <suffixes>)
+
+Examples of suffix rules:
+
+    suffix(ies, y, [s])
+    suffix(ments, [], [ment, s])
+    suffix(c1c1er, c1, [er])
+    
+In the last rule we recognize the comparative, in which `c1` is a consonant. Two `g`'s are reduced to one.
+
+The segmentation phase is followed by the morphology phase. This phase is split into a word parsing phase and a sense derivation phase.
+
+Word parsing is like sentence parsing in that it results in a parse tree. It yields syntactic information.
+
+While the word parsing phrase is performed _before_ sentence parsing, sense derivation is done _after_ sentence parsing, a the same time when semantic analysis takes place.
+
+===
+
+So, a word is like a miniature sentence. It needs tokenization ("segmentation") and parsing. The parse rules can have semantic attachments. The tokenization phase is more complex; the parsing phase is simpler. 
+
 ## 2020-12-03
 
 I thought long and hard about these two constructs:
@@ -12,7 +44,24 @@ They mean the same thing, but I need to treat them differently, because two part
     
 This is where phrase structure grammar shows a weakness. I can't join separated parts of a sentence together. I don't know if other types of grammar can do it, but it would be interesting to find out.
 
-I rewrote the DBPedia rules to make the relations and superlative rules more powerful and easy to extend. This is now possible because I separated sortal analysis from syntactic analysis. Semantics is no longer dependent of top-down sortal restrictions. They can also be bottom-up now.        
+I rewrote the DBPedia rules to make the relations and superlative rules more powerful and easy to extend. This is now possible because I separated sortal analysis from syntactic analysis. Semantics is no longer dependent of top-down sortal restrictions. They can also be bottom-up now.
+
+===
+
+Rules for plurals
+
+https://www.grammarly.com/blog/plural-nouns/
+
+Rules for double consonants        
+
+https://www.grammarly.com/blog/spelling-words-with-double-consonants/
+
+This information seems to imply that the units that matter are consonants and vowels. `biggest` must first be decomposed by this orthographic rule (segmentation)
+
+`biggest` 
+`(..\c\v\C)\Cest` -> `$1` `est` where `\v` means `vowel`, `\c` means consonant, and `\C` means the same consonant
+
+After this segmentation, morphological decomposition is simple.
 
 ## 2020-11-30
 

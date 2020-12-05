@@ -7,6 +7,8 @@
 * relation tags {{ Variable }} to help generate compound sentences
 * allow for left recursion in generation grammar
 * local variables; let
+* separated sort extraction from parsing 
+* support for comparatives and superlatives
 
 ## 1.11 modules - 13-09-2020
 

@@ -1,3 +1,82 @@
+## 2020-12-09
+
+If I were to introduce long distance relationships, the problem of the relations from 7 Dec, the problem of duplicating morphological rules, could be handled like this
+
+    { rule: relation(E1, E2&) -> noun(E1) }
+    { rule: noun(E1) -> noun(E1), ortho: *s -> *, sense: number(E1, plural) }
+    { terminal: noun(E1) -> 'daughter', sense: go:has_daughter(E1, E2*) }
+
+`E2&` introduces an unbound dependency (gap), that will be filled in by `E2*`. Or, more verbose
+
+    { rule: relation(E1, E2) -> noun(E1),                                   sense: gap(E2, rel) }
+    { rule: noun(E1) -> noun(E1), ortho: *s -> *,                           sense: number(E1, plural) }
+    { terminal: noun(E1) -> 'daughter', sense: go:has_daughter(E1, E2),     sense: filler(E2, rel) }
+    
+Here `rel` is the type of gap to be filled. The `gap` and `filler` relations need to be post-processed during the relationizer phase. 
+
+## 2020-12-07
+
+Regular expressions are not very well suited to the job. I will create a custom mini-language.
+
+    // vowels
+    { character-class: vowel, members: ['a', 'e', 'i', 'o', 'u', 'y'] }
+    
+    // superlatives (like 'biggest')
+    { rule: super(E1) -> adj(E1), ortho: *{vowel1}{vowel1}est -> *{vowel1} }
+    { rule: super(E1) -> adj(E1), ortho: *est -> * }
+    
+    // big
+    { terminal: adj(E1) -> 'big', sense: go:order(E1, desc) }
+    
+The segmentation rules are like CLE's, but more general. 
+
+Processing: in comes a word, all rules are tried, from top to bottom. The first that matches is executed. The result of the execution is then exposed to the rules again, until a terminal is reached.  
+
+Semantics are included in the rules, not in a separate layer, because "Speech and Language" doesn't require a parsing step, and CLE does not give a good reason for one. So why not keep it simple until we know what we really need.
+
+The character class allows short strings as well (i.e. `th`). I have no current need for them, but this seems like something you might need.
+
+===
+
+This works great for these examples, but what about for relations, like "daughters".
+
+    { rule: relation(E1, E2) -> relation(E1, E1), ortho: *s -> *, sense: number(E2, plural) }
+    { terminal: relation(E1, E2) -> 'daughter', sense: go:has_daughter(E1, E2) }
+    
+All orthographic rules would need to be doubled, because `relation` needs two variables.    
+
+===
+
+The problem here doesn't go away when the segmenation rules are separated from the semantic rules. 
+
+## 2020-12-06
+
+"Speech and Language Processing" also has a chapter on morphological analysis. Its approach is the use of Finite State Transducers. THese FST's need to be constructed from rules. And they need to be nested. Once this is done, it produces syntactic and semantic features.
+
+The book has a lot of examples and is worth the read. But implementation of these ideas is not straightforward.
+
+=== 
+
+What about this: repeatedly try all segmentation rules, which look something like this:
+
+    // parents
+    { rule: noun(E1) -> noun(E1), ortho: /(.*)s$/ -> $1v, sense: number(E1, plural) }
+    // cities
+    { rule: noun(E1) -> noun(E1), ortho: /(.*)ies$/ -> $1y, sense: number(E1, plural) }
+    // solves
+    { rule: verb(E1) -> verb(E1), ortho: /(.*)es$/ -> $1ve, sense: tense(E1, present), number(E1, singular) }
+    // solved
+    { rule: verb(E1) -> verb(E1), ortho: /(.*)ved$/ -> $1ve, sense: tense(E1, past) }
+    // breakable
+    { rule: adj(E1) -> verb(E1), ortho: /(.*)able$/ -> $1, sense: able_to(E1) }
+    // bigger
+    { rule: comparable(E1) -> adj(E1), ortho: /(.*)([bcdfghklmn]{2})er$/ -> $1$2 } // fout $2 double consonant
+    { rule: adj(E1) -> 'big', sense: big(E1) }
+    // unhappiest
+    { rule: adj(E1) -> adj(E1), ortho: /^un(.*)/ -> $1, sense: not($adj) }
+    // schoolbus
+    { rule: noun(E1) -> noun(E1), ortho: /^(.*)bus/ -> $1, sense: $noun drive_to(E1, E2) }
+
 ## 2020-12-04
 
 CLE (p.120) has a special segmentation phase to analyse tokens into morphemes. The result of this phase is a `seg` relation such as

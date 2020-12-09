@@ -24,6 +24,11 @@
 * rule bases now must always accept the writing of new rules; make this optional
 * change rewrite rules from categories with variables to relations (see also Generator)
 
+## Long distance relations
+
+At present, long distance relations are modelled explicitly, by passing variables through all intermediate layers. 
+Is it not possible to mark missing dependencies explicitly in the relations; and then, in a post-process, have the dependencies "bubble up" in some way, to have them attached?
+
 ## generation of multiple entities
 
 Replace `make_and()` by a `make_list()` and add list unification syntax

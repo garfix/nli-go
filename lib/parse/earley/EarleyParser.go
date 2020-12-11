@@ -15,6 +15,7 @@ import (
 
 type Parser struct {
 	nameResolver *central.NameResolver
+	morph 		 *central.MorphologicalAnalyser
 	meta         *mentalese.Meta
 	log          *common.SystemLog
 }
@@ -26,6 +27,11 @@ func NewParser(nameResolver *central.NameResolver, meta *mentalese.Meta, log *co
 		log:          log,
 	}
 }
+
+func (parser *Parser) setMorphologicalAnalyser(morph *central.MorphologicalAnalyser) {
+	parser.morph = morph
+}
+
 
 // Parses words using Parser.grammar
 // Returns parse tree roots
@@ -131,6 +137,7 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 	endWord := chart.words[endWordIndex]
 	lexItemFound := false
 	posType := parse.PosTypeRelation
+	sense := mentalese.RelationSet{}
 
 	if parser.log.Active() { parser.log.AddDebug("scan", state.ToString(chart)) }
 
@@ -158,12 +165,23 @@ func (parser *Parser) scan(chart *chart, state chartState) {
 		posType = parse.PosTypeWordForm
 	}
 
+	// morphological analysis
+	if !lexItemFound {
+		if parser.morph != nil {
+			variables := state.rule.GetConsequentVariables(state.dotPosition - 1)
+			sense, lexItemFound = parser.morph.Analyse(endWord, nextConsequent, variables)
+			if lexItemFound {
+				posType = parse.PosTypeWordForm
+			}
+		}
+	}
+
 	if lexItemFound {
 		rule := parse.NewGrammarRule(
 			[]string{ posType, parse.PosTypeWordForm },
 			[]string{nextConsequent, endWord},
 			[][]string{{terminal}, {terminal}},
-			mentalese.RelationSet{})
+			sense)
 
 		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)
 		chart.enqueue(scannedState, endWordIndex+1)

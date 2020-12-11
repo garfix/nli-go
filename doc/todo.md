@@ -9,6 +9,8 @@
 - extend a module with another module
 - interactive: arrow up/down for history
 
+- explicit gaps and fillers: long distance dependencies
+
 * database mappings: allow a rule to be used only for given sorts; for performance
 * binding set -> results
 * better validation for built-in functions; especially multi-binding ones

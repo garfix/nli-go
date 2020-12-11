@@ -12,7 +12,57 @@ If I were to introduce long distance relationships, the problem of the relations
     { rule: noun(E1) -> noun(E1), ortho: *s -> *,                           sense: number(E1, plural) }
     { terminal: noun(E1) -> 'daughter', sense: go:has_daughter(E1, E2),     sense: filler(E2, rel) }
     
-Here `rel` is the type of gap to be filled. The `gap` and `filler` relations need to be post-processed during the relationizer phase. 
+Here `rel` is the type of gap to be filled. The `gap` and `filler` relations need to be post-processed during the relationizer phase.
+
+===
+
+And what about this: I use these types of rules for segmentation
+
+    { rule: relation -> noun }
+    { rule: noun -> noun suffix,               ortho: *s -> * s }
+    { rule: super -> adj suffix,               ortho: *{consonant1}{consonant1}est -> *{consonant1} est }
+    { rule: comp -> adj suffix,                ortho: *{consonant1}{consonant1}er -> *{consonant1} er }
+
+and these rules for morphological analysis
+
+    { rule: plural_suffix(E1) -> 's',   sense: number(E1, plural) }
+    { rule: super_suffix(E1) -> 'est'}
+    { rule: comp_suffix(E1) -> 'er'}
+
+    { rule: noun(E1) -> noun(E1) plural_suffix(_) }
+    { rule: super(E1) -> adj(E1) super_suffix(_) }
+    { rule: comparative(E1, E2) -> adj(E1, E2) comp_suffix(_) }
+
+    { rule: relation(E1, E2) -> relation(E1, E2) plural_suffix(_) }
+    { rule: relation(E1, E2) -> 'daughter',                     sense: daughter_of(E1, E2) }
+    
+    { rule: adj(E1) -> 'big',                                   sense: height(E1, H1) order(H1, desc) }
+    { rule: adj(E1, E2) -> 'big',                               sense: height(E1, H1) height(E2, H2) greater_than(H1, H2) }
+
+The start-category is not `s` as in a sentence, but rather the given category from the parse tree.
+
+This way I can use the existing parser and the relationizer for semantic analysis of a word, and perhaps one day use gap-and-filler, if I want.  
+
+===
+
+Alternative for segmentation
+
+    relation: * -> noun: *
+    noun: *s -> noun: *, suffix: s
+    super: *{consonant1}{consonant1}est -> adj: *{consonant1}, suffix: est
+    comp: *{consonant1}{consonant1}er -> adj: *{consonant1}, suffix: er
+
+or with strings
+
+    relation: '*' -> noun: '*'
+    noun: '*s' -> noun: '*', suffix: 's'
+    super: '*{consonant1}{consonant1}est' -> adj: '*{consonant1}', suffix: 'est'
+    comp: '*{consonant1}{consonant1}er' -> adj: '*{consonant1}', suffix: 'er'
+
+Character classes can be written like this
+
+    vowel: ['a', 'e', 'i']
+    consonant: ['b', 'c', 'd']
 
 ## 2020-12-07
 
@@ -22,7 +72,7 @@ Regular expressions are not very well suited to the job. I will create a custom 
     { character-class: vowel, members: ['a', 'e', 'i', 'o', 'u', 'y'] }
     
     // superlatives (like 'biggest')
-    { rule: super(E1) -> adj(E1), ortho: *{vowel1}{vowel1}est -> *{vowel1} }
+    { rule: super(E1) -> adj(E1), ortho: *{consonant1}{consonant1}est -> *{consonant1} }
     { rule: super(E1) -> adj(E1), ortho: *est -> * }
     
     // big

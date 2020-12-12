@@ -2,6 +2,7 @@ package importer
 
 import (
 	"nli-go/lib/mentalese"
+	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
 	"regexp"
 	"strings"
@@ -738,6 +739,125 @@ func (parser *InternalGrammarParser) parseRuleReference(tokens []Token, startInd
 	end:
 
 	return term, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseSegmentationRulesAndCharacterClasses(tokens []Token, startIndex int) ([]morphology.CharacterClass, []morphology.SegmentationRule, int, bool) {
+
+	characterClasses := []morphology.CharacterClass{}
+	segmentationRules := []morphology.SegmentationRule{}
+	done := false
+
+	for !done {
+
+		characterClass, newStartIndex, ok := parser.parseCharacterClass(tokens, startIndex)
+		if ok {
+			startIndex = newStartIndex
+			characterClasses = append(characterClasses, characterClass)
+		} else {
+			segmentationRule, newStartIndex, ok := parser.parseSegmentationRule(tokens, startIndex)
+			if ok {
+				startIndex = newStartIndex
+				segmentationRules = append(segmentationRules, segmentationRule)
+			} else {
+				done = true
+			}
+		}
+	}
+
+	return characterClasses, segmentationRules, startIndex, done
+}
+
+// consonant: ['b', 'c', 'd']
+func (parser *InternalGrammarParser) parseCharacterClass(tokens []Token, startIndex int) (morphology.CharacterClass, int, bool) {
+
+	characterClass := morphology.CharacterClass{}
+	ok := true
+	name := ""
+	list := mentalese.TermList{}
+
+	name, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+		if ok {
+			list, startIndex, ok = parser.parseTermList(tokens, startIndex)
+			termType, _ := list.GetTermType()
+			ok = termType == mentalese.TermTypeStringConstant
+			if ok {
+				characterClass = morphology.NewCharacterClass(name, list)
+			}
+		}
+	}
+
+	return characterClass, startIndex, ok
+}
+
+// comp: '*{consonant1}{consonant1}er' -> adj: '*{consonant1}', suffix: 'er'
+func (parser *InternalGrammarParser) parseSegmentationRule(tokens []Token, startIndex int) (morphology.SegmentationRule, int, bool) {
+	ok := false
+	found := true
+	newStartIndex := 0
+	rule := morphology.SegmentationRule{}
+	antecedent := morphology.SegmentNode{}
+	consequent := morphology.SegmentNode{}
+	consequents := []morphology.SegmentNode{}
+
+	antecedent, startIndex, ok = parser.parseSegmentationNode(tokens, startIndex)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
+		if ok {
+			for true {
+				consequent, newStartIndex, ok = parser.parseSegmentationNode(tokens, startIndex)
+				if ok {
+					startIndex = newStartIndex
+					consequents = append(consequents, consequent)
+				} else {
+					break
+				}
+				_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, t_comma)
+				if found {
+					startIndex = newStartIndex
+				} else {
+					break
+				}
+			}
+			if ok {
+				rule = morphology.NewSegmentationRule(antecedent, consequents)
+			}
+		}
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseSegmentationNode(tokens []Token, startIndex int) (morphology.SegmentNode, int, bool) {
+	ok := false
+	category := ""
+	text := ""
+	pattern := []morphology.SegmentPatternCharacter{}
+	node := morphology.SegmentNode{}
+
+	category, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+		if ok {
+			text, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+			if ok {
+				pattern, ok = parser.parseSegmentPattern(text)
+				if ok {
+					node = morphology.NewSegmentNode(category, pattern)
+				}
+			}
+		}
+	}
+
+	return node, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseSegmentPattern(text string) ([]morphology.SegmentPatternCharacter, bool) {
+	pattern := []morphology.SegmentPatternCharacter{}
+	ok := false
+
+	return pattern, ok
 }
 
 func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {

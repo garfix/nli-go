@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
 )
 
@@ -264,6 +265,26 @@ func (parser *InternalGrammarParser) CreateBindings(source string) mentalese.Bin
 	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
 	return bindings
+}
+
+func (parser *InternalGrammarParser) CreateSegmentationRulesAndCharacterClasses(source string) ([]morphology.CharacterClass, []morphology.SegmentationRule) {
+	characterClasses := []morphology.CharacterClass{}
+	segmentationRules := []morphology.SegmentationRule{}
+
+	// tokenize
+	parser.lastParsedResult.LineNumber = 0
+	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
+	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
+	if !tokensOk {
+		return characterClasses, segmentationRules
+	}
+
+	// parse
+	parser.lastParsedResult.LineNumber = 0
+	characterClasses, segmentationRules, _, tokensOk = parser.parseSegmentationRulesAndCharacterClasses(tokens, 0)
+	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
+
+	return characterClasses, segmentationRules
 }
 
 func (parser *InternalGrammarParser) processResult(service string, ok bool, source string, lineNumber int) {

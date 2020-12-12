@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -855,7 +856,31 @@ func (parser *InternalGrammarParser) parseSegmentationNode(tokens []Token, start
 
 func (parser *InternalGrammarParser) parseSegmentPattern(text string) ([]morphology.SegmentPatternCharacter, bool) {
 	pattern := []morphology.SegmentPatternCharacter{}
-	ok := false
+	ok := true
+
+	expression, _ := regexp.Compile("(\\*|\\{([a-z]+)([0-9]+)\\}|[^\\*\\{]+)")
+
+	for _, results := range expression.FindAllStringSubmatch(text, -1) {
+
+		result := results[1]
+		characterType := ""
+		characterValue := ""
+		index := -1
+
+		if result == "*" {
+			characterType = morphology.CharacterTypeRest
+			characterValue = ""
+		} else if result[0] == '{' {
+			characterType = morphology.CharacterTypeClass
+			characterValue = results[2]
+			index, _ = strconv.Atoi(results[3])
+		} else {
+			characterType = morphology.CharacterTypeLiteral
+			characterValue = result
+		}
+
+		pattern = append(pattern, morphology.NewSegmentPatterCharacter(characterType, characterValue, index))
+	}
 
 	return pattern, ok
 }

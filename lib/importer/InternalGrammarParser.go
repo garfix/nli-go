@@ -267,8 +267,7 @@ func (parser *InternalGrammarParser) CreateBindings(source string) mentalese.Bin
 	return bindings
 }
 
-func (parser *InternalGrammarParser) CreateSegmentationRulesAndCharacterClasses(source string) ([]morphology.CharacterClass, []morphology.SegmentationRule) {
-	characterClasses := []morphology.CharacterClass{}
+func (parser *InternalGrammarParser) CreateSegmentationRulesAndCharacterClasses(source string) []morphology.SegmentationRule {
 	segmentationRules := []morphology.SegmentationRule{}
 
 	// tokenize
@@ -276,15 +275,15 @@ func (parser *InternalGrammarParser) CreateSegmentationRulesAndCharacterClasses(
 	tokens, _, tokensOk := parser.tokenizer.Tokenize(source)
 	parser.processResult(service_tokenizer, tokensOk, source, parser.lastParsedResult.LineNumber)
 	if !tokensOk {
-		return characterClasses, segmentationRules
+		return segmentationRules
 	}
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	characterClasses, segmentationRules, _, tokensOk = parser.parseSegmentationRulesAndCharacterClasses(tokens, 0)
+	segmentationRules, _, tokensOk = parser.parseSegmentationRulesAndCharacterClasses(tokens, 0)
 	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
-	return characterClasses, segmentationRules
+	return segmentationRules
 }
 
 func (parser *InternalGrammarParser) processResult(service string, ok bool, source string, lineNumber int) {

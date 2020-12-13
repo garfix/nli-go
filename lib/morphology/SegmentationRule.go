@@ -25,12 +25,7 @@ func (rule SegmentationRule) GetConsequents() []SegmentNode {
 }
 
 func (rule SegmentationRule) Matches(word string) ([]string, bool) {
-	raw := rule.regexp.Find([]byte(word))
-
-	results := []string{}
-	for _, match := range raw {
-		results = append(results, string(match))
-	}
+	results := rule.regexp.FindStringSubmatch(word)
 
 	return results, len(results) > 0
 }

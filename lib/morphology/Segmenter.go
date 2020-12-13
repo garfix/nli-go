@@ -1,7 +1,5 @@
 package morphology
 
-import "strconv"
-
 type Segmenter struct {
 
 }
@@ -14,13 +12,41 @@ func (segmenter *Segmenter) Segment(segmentationRules []SegmentationRule, word s
 
 	segments := []string{}
 
-	_, found, _ := segmenter.findRule(segmentationRules, word, category)
+	rule, found, binding := segmenter.findRule(segmentationRules, word, category)
 
 	if found {
-
+		for _, consequent := range rule.GetConsequents() {
+			segments = append(segments, segmenter.buildSegments(consequent, binding, segmentationRules)...)
+		}
+	} else {
+		segments = []string{ word }
 	}
 
 	return segments
+}
+
+func (segmenter *Segmenter) buildSegments(segmentNode SegmentNode, binding map[string]string, segmentationRules []SegmentationRule) []string {
+
+	word := segmenter.buildWord(segmentNode.GetPattern(), binding)
+
+	return segmenter.Segment(segmentationRules, word, segmentNode.category)
+}
+
+func (segmenter *Segmenter) buildWord(pattern []SegmentPatternCharacter, binding map[string]string) string {
+
+	word := ""
+
+	for _, character := range pattern {
+		if character.characterType == CharacterTypeRest {
+			word += binding[CharacterTypeRest]
+		} else if character.characterType == CharacterTypeClass {
+			word += binding[character.GetVariable()]
+		} else {
+			word += character.characterValue
+		}
+	}
+
+	return word
 }
 
 func (segmenter *Segmenter) findRule(segmentationRules []SegmentationRule, word string, category string) (SegmentationRule, bool, map[string]string) {
@@ -57,7 +83,7 @@ func (segmenter *Segmenter) findBinding(results []string, pattern []SegmentPatte
 
 	for i, character := range pattern {
 		if character.characterType == CharacterTypeClass {
-			variable := character.characterValue + strconv.Itoa(character.index)
+			variable := character.GetVariable()
 			value := results[i + 1]
 
 			// check if the variable exists and has the same value
@@ -68,6 +94,9 @@ func (segmenter *Segmenter) findBinding(results []string, pattern []SegmentPatte
 			}
 
 			binding[variable] = value
+		} else if character.characterType == CharacterTypeRest {
+			value := results[i + 1]
+			binding[CharacterTypeRest] = value
 		}
 	}
 

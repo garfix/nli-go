@@ -1,5 +1,7 @@
 package morphology
 
+import "strconv"
+
 const CharacterTypeRest = "rest"
 const CharacterTypeClass = "character-class"
 const CharacterTypeLiteral = "literal"
@@ -16,4 +18,8 @@ func NewSegmentPatterCharacter(characterType string, characterValue string, inde
 		characterValue: characterValue,
 		index: index,
 	}
+}
+
+func (character SegmentPatternCharacter) GetVariable() string {
+	return character.characterValue + strconv.Itoa(character.index)
 }

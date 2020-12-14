@@ -12,14 +12,32 @@ func (segmenter *Segmenter) Segment(segmentationRules []SegmentationRule, word s
 
 	segments := []string{}
 
-	rule, found, binding := segmenter.findRule(segmentationRules, word, category)
+	rules, bindings := segmenter.findRules(segmentationRules, word, category)
 
-	if found {
-		for _, consequent := range rule.GetConsequents() {
-			segments = append(segments, segmenter.buildSegments(consequent, binding, segmentationRules)...)
+	for i, rule := range rules {
+
+		singleRuleSegments := []string{}
+		binding := bindings[i]
+
+		if rule.IsTerminal() {
+			segments = []string{ word }
+			break
 		}
-	} else {
-		segments = []string{ word }
+
+		ok := true
+		for _, consequent := range rule.GetConsequents() {
+			consequentSegments := segmenter.buildSegments(consequent, binding, segmentationRules)
+			if len(consequentSegments) == 0 {
+				ok = false
+				break
+			}
+			singleRuleSegments = append(singleRuleSegments, consequentSegments...)
+		}
+
+		if ok {
+			segments = singleRuleSegments
+			break
+		}
 	}
 
 	return segments
@@ -49,12 +67,10 @@ func (segmenter *Segmenter) buildWord(pattern []SegmentPatternCharacter, binding
 	return word
 }
 
-func (segmenter *Segmenter) findRule(segmentationRules []SegmentationRule, word string, category string) (SegmentationRule, bool, map[string]string) {
+func (segmenter *Segmenter) findRules(segmentationRules []SegmentationRule, word string, category string) ([]SegmentationRule, []map[string]string) {
 
-	rule := SegmentationRule{}
-	found := false
-	ok := false
-	binding := map[string]string{}
+	rules := []SegmentationRule{}
+	bindings := []map[string]string{}
 
 	for _, aRule := range segmentationRules {
 		if aRule.antecedent.category != category {
@@ -63,17 +79,16 @@ func (segmenter *Segmenter) findRule(segmentationRules []SegmentationRule, word 
 
 		someresults, match := aRule.Matches(word)
 		if match {
-			rule = aRule
-			binding, ok = segmenter.findBinding(someresults, aRule.antecedent.GetPattern())
+			binding, ok := segmenter.findBinding(someresults, aRule.antecedent.GetPattern())
 			if !ok {
 				continue
 			}
-			found = true
-			break
+			bindings = append(bindings, binding)
+			rules = append(rules, aRule)
 		}
 	}
 
-	return rule, found, binding
+	return rules, bindings
 }
 
 func (segmenter *Segmenter) findBinding(results []string, pattern []SegmentPatternCharacter) (map[string]string, bool) {

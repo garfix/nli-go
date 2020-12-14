@@ -1,3 +1,21 @@
+## 2020-12-14
+
+The rules I had so far allow for removing extra characters, but it doesn't allow adding missing characters.
+
+And in the SHRDLU example, this is exactly what I need:
+
+    littlest -> little est
+    
+It needs to add an extra e, but only when the adjective that is formed ends with "e".
+
+    super: *est -> adj: *e, suffix: est
+    
+I can solve this by just adding the rule like this (not checking if the `adj` ends with "e", and checking if the final morpheme exists by explicitly naming it)
+
+    adj: little
+    
+Up until now I stopped processing rules when there were no more rules to be applied. I could change this to : until all rules have resulted in terminals.  This is more powerful, and more robust. But it requires all the simple morphemes to be listed.           
+
 ## 2020-12-09
 
 If I were to introduce long distance relationships, the problem of the relations from 7 Dec, the problem of duplicating morphological rules, could be handled like this

@@ -167,7 +167,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 			}
 		}
 
-		if !namesProcessed {
+		if !namesProcessed && nameNotFound != "" {
 			answer = common.NameNotFound + ": " + nameNotFound
 			system.log.AddError(answer)
 		}

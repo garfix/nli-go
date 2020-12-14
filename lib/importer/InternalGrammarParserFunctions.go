@@ -814,8 +814,9 @@ func (parser *InternalGrammarParser) parseSegmentationRule(tokens []Token, start
 
 	antecedent, startIndex, ok = parser.parseSegmentationNode(tokens, startIndex)
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
-		if ok {
+		_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, t_rewrite)
+		if found {
+			startIndex = newStartIndex
 			for true {
 				consequent, newStartIndex, ok = parser.parseSegmentationNode(tokens, startIndex)
 				if ok {
@@ -831,9 +832,9 @@ func (parser *InternalGrammarParser) parseSegmentationRule(tokens []Token, start
 					break
 				}
 			}
-			if ok {
-				rule = morphology.NewSegmentationRule(antecedent, consequents, nil)
-			}
+		}
+		if ok {
+			rule = morphology.NewSegmentationRule(antecedent, consequents, nil)
 		}
 	}
 

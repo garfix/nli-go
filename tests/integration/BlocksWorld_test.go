@@ -69,6 +69,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Put a small one onto the green cube which supports a pyramid", "OK"},
 		},
 		{
+			{"Put the littlest pyramid on top of it", "OK"},
 		},
 	}
 

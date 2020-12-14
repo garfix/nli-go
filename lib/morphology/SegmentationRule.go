@@ -24,6 +24,10 @@ func (rule SegmentationRule) GetConsequents() []SegmentNode {
 	return rule.consequents
 }
 
+func (rule SegmentationRule) IsTerminal() bool {
+	return len(rule.consequents) == 0
+}
+
 func (rule SegmentationRule) Matches(word string) ([]string, bool) {
 	results := rule.regexp.FindStringSubmatch(word)
 

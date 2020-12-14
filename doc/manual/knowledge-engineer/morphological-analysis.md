@@ -41,12 +41,23 @@ Place segmentation rules in a grammar, in a file named, for example `morpho.segm
 
 Example segmentation rules
 
-    vowel: ['a', 'e', 'i']
-    consonant: ['b', 'c', 'd']
+    /* character classes */
+    vowel: ['a', 'e', 'i', 'o', 'u', 'y']
+    consonant: ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
 
+    /* rewrite rules */
     relation: '*' -> noun: '*'
     noun: '*s' -> noun: '*', suffix: 's'
+    /* example: biggest -> big est */
     super: '*{consonant1}{consonant1}est' -> adj: '*{consonant1}', suffix: 'est'
     comp: '*{consonant1}{consonant1}er' -> adj: '*{consonant1}', suffix: 'er'
+    /* example: little -> little est */ 
+    super: '*est' -> adj: '*e', suffix: 'est'
  
+    /* terminals */
+    adj: 'big'
+    suffix: 'er'
+    suffix: 'est'
+ 
+ A word goes through the rules one by until one matches, and, when processed, results in one or more segments. Each resulting segments is one of the terminals.
  

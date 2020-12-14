@@ -5,3 +5,5 @@ uses:
 tokenexpression: "([_0-9a-zA-Z]+|[^\\s])"
 read: [ read.grammar ]
 write: [ write.grammar ]
+morphology:
+  segmentation: morpho.segment

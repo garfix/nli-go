@@ -742,7 +742,7 @@ func (parser *InternalGrammarParser) parseRuleReference(tokens []Token, startInd
 	return term, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseSegmentationRulesAndCharacterClasses(tokens []Token, startIndex int) ([]morphology.SegmentationRule, int, bool) {
+func (parser *InternalGrammarParser) parseSegmentationRulesAndCharacterClasses(tokens []Token, startIndex int) (*morphology.SegmentationRules, int, bool) {
 
 	characterClasses := []morphology.CharacterClass{}
 	segmentationRules := []morphology.SegmentationRule{}
@@ -765,14 +765,14 @@ func (parser *InternalGrammarParser) parseSegmentationRulesAndCharacterClasses(t
 		}
 	}
 
-	compiledRules := []morphology.SegmentationRule{}
+	compiledRules := morphology.NewSegmentationRules()
 	for _, rule := range segmentationRules {
 		regexp, ok := morphology.BuildRegexp(rule.GetAntecedent().GetPattern(), characterClasses)
 		if !ok {
 			done = false
 			break
 		}
-		compiledRules = append(compiledRules, morphology.NewSegmentationRule(rule.GetAntecedent(), rule.GetConsequents(), regexp))
+		compiledRules.Add(morphology.NewSegmentationRule(rule.GetAntecedent(), rule.GetConsequents(), regexp))
 	}
 
 	return compiledRules, startIndex, done

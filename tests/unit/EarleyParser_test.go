@@ -2,10 +2,8 @@ package tests
 
 import (
 	"fmt"
-	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
 	"testing"
@@ -46,20 +44,13 @@ func TestEarleyParser(test *testing.T) {
 
 	rawInput := "the small shy girl speaks up"
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
-
-	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
-	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	nameResolver := central.NewNameResolver(solver, meta, log, dialogContext)
-
-	parser := earley.NewParser(nameResolver, meta, log)
+	parser := earley.NewParser(log)
 	relationizer := earley.NewRelationizer(log)
 
 	{
 		wordArray := tokenizer.Process(rawInput)
 
-		trees := parser.Parse(grammarRules, wordArray)
+		trees := parser.Parse(grammarRules, nil, wordArray)
 
 		if len(trees) != 1 {
 			test.Error(fmt.Sprintf("expected : 1 tree, found %d", len(trees)))
@@ -79,7 +70,7 @@ func TestEarleyParser(test *testing.T) {
 	{
 		wordArray := tokenizer.Process("a b b c")
 
-		trees := parser.Parse(grammarRules, wordArray)
+		trees := parser.Parse(grammarRules, nil, wordArray)
 
 		if len(trees) != 3 {
 			test.Error(fmt.Sprintf("expected : 3 trees, found %d", len(trees)))

@@ -1,7 +1,7 @@
 vowel: ['a', 'e', 'i', 'o', 'u', 'y']
 consonant: ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
 
-super: *{consonant1}{consonant1}est -> adj: *{consonant1}, suffix: est
 super: *est -> adj: *e, suffix: est
 
 adj: little
+suffix: est

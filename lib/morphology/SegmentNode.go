@@ -15,3 +15,8 @@ func NewSegmentNode(category string, pattern []SegmentPatternCharacter) SegmentN
 func (s SegmentNode) GetPattern() []SegmentPatternCharacter {
 	return s.pattern
 }
+
+func (s SegmentNode) GetCategory() string {
+	return s.category
+}
+

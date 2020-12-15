@@ -1,0 +1,3 @@
+{ rule: super(E1) -> super_base(E1) 'est' }
+
+{ rule: super_base(E1) -> 'little',                                       sense: go:order(E1, asc) }

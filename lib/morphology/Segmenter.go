@@ -1,18 +1,20 @@
 package morphology
 
 type Segmenter struct {
-
+	segmentationRules *SegmentationRules
 }
 
-func NewSegmenter() *Segmenter {
-	return &Segmenter{}
+func NewSegmenter(segmentationRules *SegmentationRules) *Segmenter {
+	return &Segmenter{
+		segmentationRules: segmentationRules,
+	}
 }
 
-func (segmenter *Segmenter) Segment(segmentationRules []SegmentationRule, word string, category string) []string {
+func (segmenter *Segmenter) Segment(word string, category string) []string {
 
 	segments := []string{}
 
-	rules, bindings := segmenter.findRules(segmentationRules, word, category)
+	rules, bindings := segmenter.segmentationRules.FindRules(word, category)
 
 	for i, rule := range rules {
 
@@ -26,7 +28,7 @@ func (segmenter *Segmenter) Segment(segmentationRules []SegmentationRule, word s
 
 		ok := true
 		for _, consequent := range rule.GetConsequents() {
-			consequentSegments := segmenter.buildSegments(consequent, binding, segmentationRules)
+			consequentSegments := segmenter.buildSegments(consequent, binding)
 			if len(consequentSegments) == 0 {
 				ok = false
 				break
@@ -43,11 +45,11 @@ func (segmenter *Segmenter) Segment(segmentationRules []SegmentationRule, word s
 	return segments
 }
 
-func (segmenter *Segmenter) buildSegments(segmentNode SegmentNode, binding map[string]string, segmentationRules []SegmentationRule) []string {
+func (segmenter *Segmenter) buildSegments(segmentNode SegmentNode, binding map[string]string) []string {
 
 	word := segmenter.buildWord(segmentNode.GetPattern(), binding)
 
-	return segmenter.Segment(segmentationRules, word, segmentNode.category)
+	return segmenter.Segment(word, segmentNode.category)
 }
 
 func (segmenter *Segmenter) buildWord(pattern []SegmentPatternCharacter, binding map[string]string) string {
@@ -65,55 +67,4 @@ func (segmenter *Segmenter) buildWord(pattern []SegmentPatternCharacter, binding
 	}
 
 	return word
-}
-
-func (segmenter *Segmenter) findRules(segmentationRules []SegmentationRule, word string, category string) ([]SegmentationRule, []map[string]string) {
-
-	rules := []SegmentationRule{}
-	bindings := []map[string]string{}
-
-	for _, aRule := range segmentationRules {
-		if aRule.antecedent.category != category {
-			continue
-		}
-
-		someresults, match := aRule.Matches(word)
-		if match {
-			binding, ok := segmenter.findBinding(someresults, aRule.antecedent.GetPattern())
-			if !ok {
-				continue
-			}
-			bindings = append(bindings, binding)
-			rules = append(rules, aRule)
-		}
-	}
-
-	return rules, bindings
-}
-
-func (segmenter *Segmenter) findBinding(results []string, pattern []SegmentPatternCharacter) (map[string]string, bool) {
-
-	binding := map[string]string{}
-	ok := true
-
-	for i, character := range pattern {
-		if character.characterType == CharacterTypeClass {
-			variable := character.GetVariable()
-			value := results[i + 1]
-
-			// check if the variable exists and has the same value
-			existing, found := binding[variable]
-			if found && existing != value {
-				ok = false
-				break
-			}
-
-			binding[variable] = value
-		} else if character.characterType == CharacterTypeRest {
-			value := results[i + 1]
-			binding[CharacterTypeRest] = value
-		}
-	}
-
-	return binding, ok
 }

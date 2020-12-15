@@ -22,6 +22,7 @@ type index struct {
 	Predicates      string
 	Subsorts        string
 	TokenExpression string
+	Morphology		map[string]string
 }
 
 type table struct {

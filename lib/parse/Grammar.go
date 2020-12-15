@@ -1,9 +1,14 @@
 package parse
 
+import (
+	"nli-go/lib/morphology"
+)
+
 type Grammar struct {
 	readRules       *GrammarRules
 	writeRules      *GrammarRules
 	tokenizer 		*Tokenizer
+	morphologicalAnalyser *morphology.MorphologicalAnalyser
 }
 
 func NewGrammar() Grammar {
@@ -11,11 +16,16 @@ func NewGrammar() Grammar {
 		readRules: NewGrammarRules(),
 		writeRules: NewGrammarRules(),
 		tokenizer: NewTokenizer(DefaultTokenizerExpression),
+		morphologicalAnalyser: nil,
 	}
 }
 
 func (grammar *Grammar) SetTokenizer(tokenizer *Tokenizer) {
 	grammar.tokenizer = tokenizer
+}
+
+func (grammar *Grammar) SetMorphologicalAnalyser(morphologicalAnalyzer *morphology.MorphologicalAnalyser) {
+	grammar.morphologicalAnalyser = morphologicalAnalyzer
 }
 
 func (grammar *Grammar) GetTokenizer() *Tokenizer {

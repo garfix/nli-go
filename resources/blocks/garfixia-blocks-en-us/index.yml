@@ -7,3 +7,4 @@ read: [ read.grammar ]
 write: [ write.grammar ]
 morphology:
   segmentation: morpho.segment
+  parsing: morpho.grammar

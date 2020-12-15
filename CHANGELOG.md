@@ -9,6 +9,7 @@
 * local variables; let
 * separated sort extraction from parsing 
 * support for comparatives and superlatives
+* morphological decomposition
 
 ## 1.11 modules - 13-09-2020
 

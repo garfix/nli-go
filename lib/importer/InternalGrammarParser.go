@@ -267,8 +267,8 @@ func (parser *InternalGrammarParser) CreateBindings(source string) mentalese.Bin
 	return bindings
 }
 
-func (parser *InternalGrammarParser) CreateSegmentationRulesAndCharacterClasses(source string) []morphology.SegmentationRule {
-	segmentationRules := []morphology.SegmentationRule{}
+func (parser *InternalGrammarParser) CreateSegmentationRules(source string) *morphology.SegmentationRules {
+	segmentationRules := morphology.NewSegmentationRules()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0

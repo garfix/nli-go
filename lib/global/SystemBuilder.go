@@ -10,6 +10,7 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
+	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/earley"
 	"path/filepath"
@@ -109,7 +110,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.solver = solver
 	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
 	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
-	system.parser = earley.NewParser(system.nameResolver, system.meta, builder.log)
+	system.parser = earley.NewParser(builder.log)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
@@ -385,7 +386,68 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 		grammar.SetTokenizer(parse.NewTokenizer(index.TokenExpression))
 	}
 
+	if index.Morphology != nil {
+		grammar.SetMorphologicalAnalyser(builder.importMorphologicalAnalyser(index.Morphology, system))
+	}
+
 	system.grammars = append(system.grammars, grammar)
+}
+
+func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]string, system *System) *morphology.MorphologicalAnalyser {
+
+	parsingRules := parse.NewGrammarRules()
+	segmentationRules := morphology.NewSegmentationRules()
+
+	segmenterPath, found := parts["segmentation"]
+	if found {
+		segmentationRules = builder.readSegmentationRulesFromPath(segmenterPath)
+	}
+
+	parsingPath, found := parts["parsing"]
+	if found {
+		parsingRules = builder.readGrammarFromPath(parsingPath)
+	}
+
+	segmenter := morphology.NewSegmenter(segmentationRules)
+
+	return morphology.NewMorphologicalAnalyser(
+		segmenter, parsingRules, system.log)
+}
+
+func (builder *systemBuilder) readSegmentationRulesFromPath(path string) *morphology.SegmentationRules {
+
+	grammarString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return morphology.NewSegmentationRules()
+	}
+
+	rules := builder.parser.CreateSegmentationRules(grammarString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
+		return morphology.NewSegmentationRules()
+	}
+
+	return rules
+}
+
+func (builder *systemBuilder) readGrammarFromPath(path string) *parse.GrammarRules {
+
+	grammarString, err := common.ReadFile(path)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return parse.NewGrammarRules()
+	}
+
+	rules := builder.parser.CreateGrammarRules(grammarString)
+	lastResult := builder.parser.GetLastParseResult()
+	if !lastResult.Ok {
+		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
+		return parse.NewGrammarRules()
+	}
+
+	return rules
 }
 
 func (builder *systemBuilder) importGrammarFromPath(grammar *parse.Grammar, path string) {

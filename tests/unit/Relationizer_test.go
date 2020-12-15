@@ -1,10 +1,8 @@
 package tests
 
 import (
-	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/earley"
 	"testing"
 )
@@ -41,18 +39,11 @@ func TestRelationizer(t *testing.T) {
 	`)
 
 	log := common.NewSystemLog()
-
-	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
-	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	nameResolver := central.NewNameResolver(solver, meta, log, dialogContext)
-
-	parser := earley.NewParser(nameResolver, meta, log)
+	parser := earley.NewParser(log)
 
 	relationizer := earley.NewRelationizer(log)
 
-	parseTrees := parser.Parse(grammarRules, []string{"the", "book", "falls", "."})
+	parseTrees := parser.Parse(grammarRules, nil, []string{"the", "book", "falls", "."})
 	result, _ := relationizer.Relationize(parseTrees[0])
 
 	want := "isa(S5, fall) subject(S5, E5) isa(D5, the) isa(E5, book) determiner(E5, D5) declaration(S5)"
@@ -67,7 +58,7 @@ func TestRelationizer(t *testing.T) {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	parseTrees2 := parser.Parse(grammarRules, []string{"the", "book", "falls", "on", "the", "ground", "."})
+	parseTrees2 := parser.Parse(grammarRules, nil, []string{"the", "book", "falls", "on", "the", "ground", "."})
 	result2, _ := relationizer.Relationize(parseTrees2[0])
 
 	want2 := "isa(S7, fall) isa(P6, on) isa(D8, the) isa(P5, ground) determiner(P5, D8) case(P5, P6) mod(S7, P5) subject(S7, E7) isa(D7, the) isa(E7, book) determiner(E7, D7) declaration(S7)"

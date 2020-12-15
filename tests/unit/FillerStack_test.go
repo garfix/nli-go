@@ -1,10 +1,8 @@
 package tests
 
 import (
-	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/earley"
 	"testing"
 )
@@ -30,18 +28,11 @@ func TestFillerStack(t *testing.T) {
 	`)
 
 	log := common.NewSystemLog()
-
-	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
-	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	nameResolver := central.NewNameResolver(solver, meta, log, dialogContext)
-
-	parser := earley.NewParser(nameResolver, meta, log)
+	parser := earley.NewParser(log)
 
 	relationizer := earley.NewRelationizer(log)
 
-	parseTrees := parser.Parse(grammarRules, []string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
+	parseTrees := parser.Parse(grammarRules, nil, []string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
 
 	if len(parseTrees) == 0 {
 		t.Error(log.String())

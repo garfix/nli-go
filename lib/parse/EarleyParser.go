@@ -12,21 +12,21 @@ import (
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is isComplete.
 
 type EarleyParser struct {
-	grammarRules *GrammarRules
-	morphologicalAnalyser *MorphologicalAnalyser
-	log          *common.SystemLog
+	grammarRules          *GrammarRules
+	morphologicalAnalyzer *MorphologicalAnalyzer
+	log                   *common.SystemLog
 }
 
 func NewParser(grammarRules *GrammarRules, log *common.SystemLog) *EarleyParser {
 	return &EarleyParser{
-		grammarRules: grammarRules,
-		morphologicalAnalyser: nil,
-		log:          log,
+		grammarRules:          grammarRules,
+		morphologicalAnalyzer: nil,
+		log:                   log,
 	}
 }
 
-func (parser *EarleyParser) SetMorphologicalAnalyser(morphologicalAnalyzer *MorphologicalAnalyser) {
-	parser.morphologicalAnalyser = morphologicalAnalyzer
+func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *MorphologicalAnalyzer) {
+	parser.morphologicalAnalyzer = morphologicalAnalyzer
 }
 
 // Parses words using EarleyParser.grammar
@@ -165,8 +165,8 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 
 	// morphological analysis
 	if !lexItemFound && nextPosType == PosTypeRelation {
-		if parser.morphologicalAnalyser != nil {
-			sense, lexItemFound = parser.morphologicalAnalyser.Analyse(endWord, nextConsequent, nextVariables)
+		if parser.morphologicalAnalyzer != nil {
+			sense, lexItemFound = parser.morphologicalAnalyzer.Analyse(endWord, nextConsequent, nextVariables)
 			if lexItemFound {
 				newPosType = PosTypeWordForm
 			}

@@ -6,7 +6,7 @@ import (
 	"nli-go/lib/parse/morphology"
 )
 
-type MorphologicalAnalyser struct {
+type MorphologicalAnalyzer struct {
 	segmenter *morphology.Segmenter
 	parsingRules *GrammarRules
 	parser *EarleyParser
@@ -14,8 +14,8 @@ type MorphologicalAnalyser struct {
 	log *common.SystemLog
 }
 
-func NewMorphologicalAnalyser(parsingRules *GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyser {
-	return &MorphologicalAnalyser{
+func NewMorphologicalAnalyzer(parsingRules *GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
+	return &MorphologicalAnalyzer{
 		segmenter: segmenter,
 		parsingRules: parsingRules,
 		parser: parser,
@@ -24,7 +24,7 @@ func NewMorphologicalAnalyser(parsingRules *GrammarRules, segmenter *morphology.
 	}
 }
 
-func (morph *MorphologicalAnalyser) Analyse(word string, lexicalCategory string, variables []string) (mentalese.RelationSet, bool) {
+func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string, variables []string) (mentalese.RelationSet, bool) {
 
 	sense := mentalese.RelationSet{}
 

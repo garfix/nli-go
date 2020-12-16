@@ -92,7 +92,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 
 		if !system.log.IsDone() {
 			parser := parse.NewParser(grammar.GetReadRules(), system.log)
-			parser.SetMorphologicalAnalyser(grammar.GetMorphologicalAnalyser())
+			parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
 			parseTrees = parser.Parse(tokens)
 			if len(parseTrees) == 0 {
 				system.log.AddError("EarleyParser returned no parse trees")

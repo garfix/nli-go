@@ -385,13 +385,13 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 	}
 
 	if index.Morphology != nil {
-		grammar.SetMorphologicalAnalyser(builder.importMorphologicalAnalyser(index.Morphology, system, moduleBaseDir))
+		grammar.SetMorphologicalAnalyzer(builder.importMorphologicalAnalyzer(index.Morphology, system, moduleBaseDir))
 	}
 
 	system.grammars = append(system.grammars, grammar)
 }
 
-func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyser {
+func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyzer {
 
 	parsingRules := parse.NewGrammarRules()
 	segmentationRules := morphology.NewSegmentationRules()
@@ -408,7 +408,7 @@ func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]strin
 
 	segmenter := morphology.NewSegmenter(segmentationRules)
 
-	return parse.NewMorphologicalAnalyser(
+	return parse.NewMorphologicalAnalyzer(
 		parsingRules,
 		segmenter,
 		parse.NewParser(parsingRules, system.log),

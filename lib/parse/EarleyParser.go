@@ -129,21 +129,23 @@ func (parser *EarleyParser) predict(grammarRules *GrammarRules, chart *chart, st
 func (parser *EarleyParser) scan(chart *chart, state chartState) {
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
+	nextPosType := state.rule.GetConsequentPositionType(state.dotPosition - 1)
+	nextVariables := state.rule.GetConsequentVariables(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 	lexItemFound := false
-	posType := PosTypeRelation
+	newPosType := PosTypeRelation
 	sense := mentalese.RelationSet{}
 
 	if parser.log.Active() { parser.log.AddDebug("scan", state.ToString(chart)) }
 
 	// regular expression
-	if state.rule.GetConsequentPositionType(state.dotPosition - 1) == PosTypeRegExp {
+	if nextPosType == PosTypeRegExp {
 		expression, err := regexp.Compile(nextConsequent)
 		if err == nil {
 			if expression.FindString(endWord) != "" {
 				lexItemFound = true
-				posType = PosTypeRegExp
+				newPosType = PosTypeRegExp
 			}
 		}
 	}
@@ -155,26 +157,25 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 
 	// literal word form
 	if !lexItemFound {
-		if (nextConsequent == strings.ToLower(endWord)) && (len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
+		if (nextConsequent == strings.ToLower(endWord)) && (len(nextVariables) == 0) {
 			lexItemFound = true
 		}
-		posType = PosTypeWordForm
+		newPosType = PosTypeWordForm
 	}
 
 	// morphological analysis
-	if !lexItemFound {
+	if !lexItemFound && nextPosType == PosTypeRelation {
 		if parser.morphologicalAnalyser != nil {
-			variables := state.rule.GetConsequentVariables(state.dotPosition - 1)
-			sense, lexItemFound = parser.morphologicalAnalyser.Analyse(endWord, nextConsequent, variables)
+			sense, lexItemFound = parser.morphologicalAnalyser.Analyse(endWord, nextConsequent, nextVariables)
 			if lexItemFound {
-				posType = PosTypeWordForm
+				newPosType = PosTypeWordForm
 			}
 		}
 	}
 
 	if lexItemFound {
 		rule := NewGrammarRule(
-			[]string{ posType, PosTypeWordForm},
+			[]string{newPosType, PosTypeWordForm},
 			[]string{nextConsequent, endWord},
 			[][]string{{terminal}, {terminal}},
 			sense)

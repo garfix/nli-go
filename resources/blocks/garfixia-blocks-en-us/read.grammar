@@ -89,6 +89,10 @@
 { rule: nbar(E1) -> noun(E1) }
 { rule: nbar(E1) -> 'them',                                            sense: go:back_reference(E1, none) }
 
+{ rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
+
+{ rule: superlative(E1) -> super(E1),                                 sense: $super go:first() }
+
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }
 { rule: noun(E1) -> 'block',                                           sense: dom:block(E1) }

@@ -409,9 +409,10 @@ func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]strin
 	segmenter := morphology.NewSegmenter(segmentationRules)
 
 	return parse.NewMorphologicalAnalyser(
-		parse.NewParser(parsingRules, system.log),
-		segmenter,
 		parsingRules,
+		segmenter,
+		parse.NewParser(parsingRules, system.log),
+		parse.NewRelationizer(system.log),
 		system.log)
 }
 

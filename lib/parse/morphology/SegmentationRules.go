@@ -35,10 +35,6 @@ func (rules *SegmentationRules) FindRules(word string, category string) ([]Segme
 	}
 
 	for _, aRule := range segmentationRules {
-		if aRule.antecedent.category != category {
-			continue
-		}
-
 		someResults, match := aRule.Matches(word)
 		if match {
 			binding, ok := rules.findBinding(someResults, aRule.antecedent.GetPattern())

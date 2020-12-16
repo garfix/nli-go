@@ -1,10 +1,8 @@
-package earley
+package parse
 
 import (
-	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 	"regexp"
 	"strings"
 )
@@ -14,12 +12,12 @@ import (
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is isComplete.
 
 type EarleyParser struct {
-	grammarRules *parse.GrammarRules
-	morphologicalAnalyser api.MorphologicalAnalyser
+	grammarRules *GrammarRules
+	morphologicalAnalyser *MorphologicalAnalyser
 	log          *common.SystemLog
 }
 
-func NewParser(grammarRules *parse.GrammarRules, log *common.SystemLog) *EarleyParser {
+func NewParser(grammarRules *GrammarRules, log *common.SystemLog) *EarleyParser {
 	return &EarleyParser{
 		grammarRules: grammarRules,
 		morphologicalAnalyser: nil,
@@ -27,23 +25,23 @@ func NewParser(grammarRules *parse.GrammarRules, log *common.SystemLog) *EarleyP
 	}
 }
 
-func (parser *EarleyParser) SetMorphologicalAnalyser(morphologicalAnalyzer api.MorphologicalAnalyser) {
+func (parser *EarleyParser) SetMorphologicalAnalyser(morphologicalAnalyzer *MorphologicalAnalyser) {
 	parser.morphologicalAnalyser = morphologicalAnalyzer
 }
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string) []api.ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string) []ParseTreeNode {
 
 	if parser.log.Active() { parser.log.StartDebug("Parse", strings.Join(words, ",")) }
 
 	chart := parser.buildChart(parser.grammarRules, words)
 
-	rootNodes := extractTreeRoots(chart)
+	rootNodes := ExtractTreeRoots(chart)
 
 	if len(rootNodes) == 0 {
 
-		lastParsedWordIndex, nextWord := findLastCompletedWordIndex(chart)
+		lastParsedWordIndex, nextWord := FindLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
 			parser.log.AddError("Incomplete. Could not parse word: " + nextWord)
@@ -62,18 +60,13 @@ func (parser *EarleyParser) Parse(words []string) []api.ParseTreeNode {
 		parser.log.EndDebug("Parse", str)
 	}
 
-	s:= make([]api.ParseTreeNode, len(rootNodes))
-	for i, v := range rootNodes {
-		s[i] = v
-	}
-
-	return s
+	return rootNodes
 }
 
 // The body of Earley's algorithm
-func (parser *EarleyParser) buildChart(grammarRules *parse.GrammarRules, words []string) (*chart) {
+func (parser *EarleyParser) buildChart(grammarRules *GrammarRules, words []string) (*chart) {
 
-	chart := newChart(words)
+	chart := NewChart(words)
 	wordCount := len(words)
 
 	chart.enqueue(chart.buildIncompleteGammaState(), 0)
@@ -111,7 +104,7 @@ func (parser *EarleyParser) buildChart(grammarRules *parse.GrammarRules, words [
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
-func (parser *EarleyParser) predict(grammarRules *parse.GrammarRules, chart *chart, state chartState) {
+func (parser *EarleyParser) predict(grammarRules *GrammarRules, chart *chart, state chartState) {
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
@@ -139,18 +132,18 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 	lexItemFound := false
-	posType := parse.PosTypeRelation
+	posType := PosTypeRelation
 	sense := mentalese.RelationSet{}
 
 	if parser.log.Active() { parser.log.AddDebug("scan", state.ToString(chart)) }
 
 	// regular expression
-	if state.rule.GetConsequentPositionType(state.dotPosition - 1) == parse.PosTypeRegExp {
+	if state.rule.GetConsequentPositionType(state.dotPosition - 1) == PosTypeRegExp {
 		expression, err := regexp.Compile(nextConsequent)
 		if err == nil {
 			if expression.FindString(endWord) != "" {
 				lexItemFound = true
-				posType = parse.PosTypeRegExp
+				posType = PosTypeRegExp
 			}
 		}
 	}
@@ -165,7 +158,7 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 		if (nextConsequent == strings.ToLower(endWord)) && (len(state.rule.GetConsequentVariables(state.dotPosition - 1)) == 0) {
 			lexItemFound = true
 		}
-		posType = parse.PosTypeWordForm
+		posType = PosTypeWordForm
 	}
 
 	// morphological analysis
@@ -174,14 +167,14 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 			variables := state.rule.GetConsequentVariables(state.dotPosition - 1)
 			sense, lexItemFound = parser.morphologicalAnalyser.Analyse(endWord, nextConsequent, variables)
 			if lexItemFound {
-				posType = parse.PosTypeWordForm
+				posType = PosTypeWordForm
 			}
 		}
 	}
 
 	if lexItemFound {
-		rule := parse.NewGrammarRule(
-			[]string{ posType, parse.PosTypeWordForm },
+		rule := NewGrammarRule(
+			[]string{ posType, PosTypeWordForm},
 			[]string{nextConsequent, endWord},
 			[][]string{{terminal}, {terminal}},
 			sense)

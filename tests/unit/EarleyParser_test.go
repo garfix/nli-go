@@ -5,7 +5,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/parse"
-	"nli-go/lib/parse/earley"
 	"testing"
 )
 
@@ -44,8 +43,8 @@ func TestEarleyParser(test *testing.T) {
 
 	rawInput := "the small shy girl speaks up"
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
-	parser := earley.NewParser(grammarRules, log)
-	relationizer := earley.NewRelationizer(log)
+	parser := parse.NewParser(grammarRules, log)
+	relationizer := parse.NewRelationizer(log)
 
 	{
 		wordArray := tokenizer.Process(rawInput)
@@ -57,7 +56,7 @@ func TestEarleyParser(test *testing.T) {
 			return
 		}
 
-		relations, _ := relationizer.Relationize(trees[0].(earley.ParseTreeNode))
+		relations, _ := relationizer.Relationize(trees[0])
 
 		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))

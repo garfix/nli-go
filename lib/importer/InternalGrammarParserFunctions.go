@@ -2,8 +2,8 @@ package importer
 
 import (
 	"nli-go/lib/mentalese"
-	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
+	"nli-go/lib/parse/morphology"
 	"regexp"
 	"strconv"
 	"strings"

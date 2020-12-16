@@ -1,22 +1,21 @@
-package earley
+package parse
 
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 	"strconv"
 )
 
 // The relationizer turns a parse tree into a relation set
 // It also subsumes the range and quantifier relation sets inside its quantification relation
 type Relationizer struct {
-	senseBuilder parse.SenseBuilder
+	senseBuilder SenseBuilder
 	log          *common.SystemLog
 }
 
 func NewRelationizer(log *common.SystemLog) *Relationizer {
 	return &Relationizer{
-		senseBuilder: parse.NewSenseBuilder(),
+		senseBuilder: NewSenseBuilder(),
 		log:          log,
 	}
 }
@@ -55,7 +54,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)
 
-		if node.rule.GetConsequentPositionType(i) == parse.PosTypeRegExp {
+		if node.rule.GetConsequentPositionType(i) == PosTypeRegExp {
 			constantBinding.Set(antecedentVariables[0], mentalese.NewTermString(childNode.form))
 		}
 	}
@@ -91,7 +90,7 @@ func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVaria
 // Adds all childSets to parentSet
 // Special case: if parentSet contains relation set placeholders [], like `quantification(X, [], Y, [])`, then these placeholders
 // will be filled with the child set of the preceding variable
-func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule parse.GrammarRule) mentalese.RelationSet {
+func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule GrammarRule) mentalese.RelationSet {
 
 	referencedChildrenIndexes := []int{}
 	compoundRelations := mentalese.RelationSet{}
@@ -116,7 +115,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 }
 
 // replaces `sem(N)` in parentRelation
-func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int, rule parse.GrammarRule) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int, rule GrammarRule) (mentalese.RelationSet, []int) {
 
 	newParentRelationSet := mentalese.RelationSet{}
 
@@ -167,7 +166,7 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 	return newParentRelationSet, childIndexes
 }
 
-func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int, rule parse.GrammarRule) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int, rule GrammarRule) (mentalese.RelationSet, []int) {
 
 	newSet := mentalese.RelationSet{}
 	for _, relation := range parentRelations {

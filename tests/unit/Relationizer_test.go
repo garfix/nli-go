@@ -3,7 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/parse/earley"
+	"nli-go/lib/parse"
 	"testing"
 )
 
@@ -39,19 +39,19 @@ func TestRelationizer(t *testing.T) {
 	`)
 
 	log := common.NewSystemLog()
-	parser := earley.NewParser(grammarRules, log)
+	parser := parse.NewParser(grammarRules, log)
 
-	relationizer := earley.NewRelationizer(log)
+	relationizer := parse.NewRelationizer(log)
 
 	parseTrees := parser.Parse([]string{"the", "book", "falls", "."})
-	result, _ := relationizer.Relationize(parseTrees[0].(earley.ParseTreeNode))
+	result, _ := relationizer.Relationize(parseTrees[0])
 
 	want := "isa(S5, fall) subject(S5, E5) isa(D5, the) isa(E5, book) determiner(E5, D5) declaration(S5)"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	result, _ = relationizer.Relationize(parseTrees[0].(earley.ParseTreeNode))
+	result, _ = relationizer.Relationize(parseTrees[0])
 
 	want = "isa(S6, fall) subject(S6, E6) isa(D6, the) isa(E6, book) determiner(E6, D6) declaration(S6)"
 	if result.String() != want {
@@ -59,7 +59,7 @@ func TestRelationizer(t *testing.T) {
 	}
 
 	parseTrees2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."})
-	result2, _ := relationizer.Relationize(parseTrees2[0].(earley.ParseTreeNode))
+	result2, _ := relationizer.Relationize(parseTrees2[0])
 
 	want2 := "isa(S7, fall) isa(P6, on) isa(D8, the) isa(P5, ground) determiner(P5, D8) case(P5, P6) mod(S7, P5) subject(S7, E7) isa(D7, the) isa(E7, book) determiner(E7, D7) declaration(S7)"
 	if result2.String() != want2 {

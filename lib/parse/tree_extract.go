@@ -1,4 +1,4 @@
-package earley
+package parse
 
 // no backtracking! uses custom stacks
 
@@ -7,7 +7,7 @@ type treeExtracter struct {
 	chart *chart
 }
 
-func extractTreeRoots(chart *chart) []ParseTreeNode {
+func ExtractTreeRoots(chart *chart) []ParseTreeNode {
 
 	extracter := &treeExtracter{
 		trees: []*ParseTreeNode{},
@@ -45,7 +45,7 @@ func (ex *treeExtracter) extract() {
 		path: []workingStep{
 		{
 			states:      []chartState{completedGammaState},
-			nodes:       []*ParseTreeNode{ rootNode },
+			nodes:       []*ParseTreeNode{rootNode },
 			stateIndex: 0,
 		},
 	}}
@@ -139,7 +139,7 @@ func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 }
 
 // Returns the word that could not be parsed (or ""), and the index of the last completed word
-func findLastCompletedWordIndex(chart *chart) (int, string) {
+func FindLastCompletedWordIndex(chart *chart) (int, string) {
 
 	nextWord := ""
 	lastIndex := -1

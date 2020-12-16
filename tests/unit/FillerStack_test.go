@@ -3,7 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/parse/earley"
+	"nli-go/lib/parse"
 	"testing"
 )
 
@@ -28,9 +28,9 @@ func TestFillerStack(t *testing.T) {
 	`)
 
 	log := common.NewSystemLog()
-	parser := earley.NewParser(grammarRules, log)
+	parser := parse.NewParser(grammarRules, log)
 
-	relationizer := earley.NewRelationizer(log)
+	relationizer := parse.NewRelationizer(log)
 
 	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
 
@@ -39,7 +39,7 @@ func TestFillerStack(t *testing.T) {
 		return
 	}
 
-	result, _ := relationizer.Relationize(parseTrees[0].(earley.ParseTreeNode))
+	result, _ := relationizer.Relationize(parseTrees[0])
 
 	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S5) take_from(S5, E6, E5)))"
 	if result.String() != want {

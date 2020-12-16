@@ -3,7 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
-	"nli-go/lib/morphology"
+	"nli-go/lib/parse/morphology"
 	"strings"
 	"testing"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
+	"nli-go/lib/parse/morphology"
 )
 
 const (

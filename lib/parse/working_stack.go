@@ -1,4 +1,4 @@
-package earley
+package parse
 
 
 type workingStep struct {

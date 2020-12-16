@@ -2,14 +2,12 @@ package global
 
 import (
 	"fmt"
-	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
-	"nli-go/lib/parse/earley"
 	"strconv"
 )
 
@@ -21,7 +19,7 @@ type System struct {
 	nameResolver          *central.NameResolver
 	grammars              []parse.Grammar
 	meta                  *mentalese.Meta
-	relationizer          *earley.Relationizer
+	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	solver                *central.ProblemSolver
 	answerer              *central.Answerer
@@ -76,7 +74,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	nameNotFound := ""
 	answer := ""
 	tokens := []string{}
-	parseTrees := []api.ParseTreeNode{}
+	parseTrees := []parse.ParseTreeNode{}
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
@@ -93,7 +91,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		}
 
 		if !system.log.IsDone() {
-			parser := earley.NewParser(grammar.GetReadRules(), system.log)
+			parser := parse.NewParser(grammar.GetReadRules(), system.log)
 			parser.SetMorphologicalAnalyser(grammar.GetMorphologicalAnalyser())
 			parseTrees = parser.Parse(tokens)
 			if len(parseTrees) == 0 {
@@ -108,7 +106,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 
 				system.log.AddProduction("EarleyParser", aTree.String())
 
-				requestRelations, names = system.relationizer.Relationize(aTree.(earley.ParseTreeNode))
+				requestRelations, names = system.relationizer.Relationize(aTree)
 				system.log.AddProduction("Relationizer", requestRelations.String())
 
 				// extract sorts: variable => sort

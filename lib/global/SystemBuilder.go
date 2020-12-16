@@ -10,9 +10,8 @@ import (
 	"nli-go/lib/knowledge"
 	"nli-go/lib/knowledge/function"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
-	"nli-go/lib/parse/earley"
+	"nli-go/lib/parse/morphology"
 	"path/filepath"
 	"strings"
 )
@@ -93,7 +92,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.matcher = matcher
 
 	system.grammars = []parse.Grammar{}
-	system.relationizer = earley.NewRelationizer(builder.log)
+	system.relationizer = parse.NewRelationizer(builder.log)
 	system.dialogContext = central.NewDialogContext()
 	system.meta = mentalese.NewMeta()
 	system.internalGrammarParser = builder.parser
@@ -392,7 +391,7 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 	system.grammars = append(system.grammars, grammar)
 }
 
-func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]string, system *System, moduleBaseDir string) *morphology.MorphologicalAnalyser {
+func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyser {
 
 	parsingRules := parse.NewGrammarRules()
 	segmentationRules := morphology.NewSegmentationRules()
@@ -409,8 +408,8 @@ func (builder *systemBuilder) importMorphologicalAnalyser(parts map[string]strin
 
 	segmenter := morphology.NewSegmenter(segmentationRules)
 
-	return morphology.NewMorphologicalAnalyser(
-		earley.NewParser(parsingRules, system.log),
+	return parse.NewMorphologicalAnalyser(
+		parse.NewParser(parsingRules, system.log),
 		segmenter,
 		parsingRules,
 		system.log)

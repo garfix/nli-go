@@ -1,18 +1,17 @@
-package earley
+package parse
 
 import (
-	"nli-go/lib/parse"
 	"strconv"
 )
 
 type chartState struct {
-	rule           parse.GrammarRule
+	rule           GrammarRule
 	dotPosition    int
 	startWordIndex int
 	endWordIndex   int
 }
 
-func newChartState(rule parse.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
+func newChartState(rule GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
 	return chartState{
 		rule:           rule,
 		dotPosition:    dotPosition,

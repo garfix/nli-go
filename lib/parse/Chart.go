@@ -1,8 +1,7 @@
-package earley
+package parse
 
 import (
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 )
 
 const terminal = "terminal"
@@ -14,7 +13,7 @@ type chart struct {
 	completed        map[string][][]chartState
 }
 
-func newChart(words []string) *chart {
+func NewChart(words []string) *chart {
 	return &chart{
 		words:            words,
 		states:           make([][]chartState, len(words) + 1),
@@ -25,8 +24,8 @@ func newChart(words []string) *chart {
 
 func (chart *chart) buildIncompleteGammaState() chartState {
 	return newChartState(
-		parse.NewGrammarRule(
-			[]string{ parse.PosTypeRelation, parse.PosTypeRelation },
+		NewGrammarRule(
+			[]string{PosTypeRelation, PosTypeRelation},
 			[]string{"gamma", "s"},
 			[][]string{{"G"}, {"S"}},
 			mentalese.RelationSet{},

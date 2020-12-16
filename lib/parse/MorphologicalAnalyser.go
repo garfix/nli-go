@@ -1,19 +1,18 @@
-package morphology
+package parse
 
 import (
-	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
+	"nli-go/lib/parse/morphology"
 )
 
 type MorphologicalAnalyser struct {
-	segmenter *Segmenter
-	parsingRules *parse.GrammarRules
-	parser api.Parser
+	segmenter *morphology.Segmenter
+	parsingRules *GrammarRules
+	parser *EarleyParser
 }
 
-func NewMorphologicalAnalyser(parser api.Parser, segmenter *Segmenter, parsingRules *parse.GrammarRules, log *common.SystemLog) *MorphologicalAnalyser {
+func NewMorphologicalAnalyser(parser *EarleyParser, segmenter *morphology.Segmenter, parsingRules *GrammarRules, log *common.SystemLog) *MorphologicalAnalyser {
 	return &MorphologicalAnalyser{
 		segmenter: segmenter,
 		parsingRules: parsingRules,

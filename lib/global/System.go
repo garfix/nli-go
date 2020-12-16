@@ -2,6 +2,7 @@ package global
 
 import (
 	"fmt"
+	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
@@ -19,7 +20,6 @@ type System struct {
 	internalGrammarParser *importer.InternalGrammarParser
 	nameResolver          *central.NameResolver
 	grammars              []parse.Grammar
-	parser                *earley.Parser
 	meta                  *mentalese.Meta
 	relationizer          *earley.Relationizer
 	matcher               *central.RelationMatcher
@@ -76,7 +76,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	nameNotFound := ""
 	answer := ""
 	tokens := []string{}
-	parseTrees := []earley.ParseTreeNode{}
+	parseTrees := []api.ParseTreeNode{}
 	requestRelations := mentalese.RelationSet{}
 	answerRelations := mentalese.RelationSet{}
 	answerWords := []string{}
@@ -93,9 +93,11 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		}
 
 		if !system.log.IsDone() {
-			parseTrees = system.parser.Parse(grammar.GetReadRules(), tokens)
+			parser := earley.NewParser(grammar.GetReadRules(), system.log)
+			parser.SetMorphologicalAnalyser(grammar.GetMorphologicalAnalyser())
+			parseTrees = parser.Parse(tokens)
 			if len(parseTrees) == 0 {
-				system.log.AddError("Parser returned no parse trees")
+				system.log.AddError("EarleyParser returned no parse trees")
 			} else {
 				system.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
 			}
@@ -104,9 +106,9 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			for _, aTree := range parseTrees {
 
-				system.log.AddProduction("Parser", aTree.String())
+				system.log.AddProduction("EarleyParser", aTree.String())
 
-				requestRelations, names = system.relationizer.Relationize(aTree)
+				requestRelations, names = system.relationizer.Relationize(aTree.(earley.ParseTreeNode))
 				system.log.AddProduction("Relationizer", requestRelations.String())
 
 				// extract sorts: variable => sort

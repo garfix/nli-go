@@ -62,7 +62,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
-	parser := earley.NewParser(log)
+	parser := earley.NewParser(grammarRules, log)
 
 	tests := []struct {
 		input string
@@ -83,13 +83,13 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	for _, test := range tests {
 
 		words := tokenizer.Process(test.input)
-		trees := parser.Parse(grammarRules, nil, words)
+		trees := parser.Parse(words)
 		if len(trees) == 0 {
 			t.Errorf("Cannot parse: %s", test.input)
 			continue
 		}
 		relationizer := earley.NewRelationizer(log)
-		input, _ := relationizer.Relationize(trees[0])
+		input, _ := relationizer.Relationize(trees[0].(earley.ParseTreeNode))
 		result := solver.SolveRelationSet(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)

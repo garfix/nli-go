@@ -28,18 +28,18 @@ func TestFillerStack(t *testing.T) {
 	`)
 
 	log := common.NewSystemLog()
-	parser := earley.NewParser(log)
+	parser := earley.NewParser(grammarRules, log)
 
 	relationizer := earley.NewRelationizer(log)
 
-	parseTrees := parser.Parse(grammarRules, nil, []string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
+	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
 
 	if len(parseTrees) == 0 {
 		t.Error(log.String())
 		return
 	}
 
-	result, _ := relationizer.Relationize(parseTrees[0])
+	result, _ := relationizer.Relationize(parseTrees[0].(earley.ParseTreeNode))
 
 	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S5) take_from(S5, E6, E5)))"
 	if result.String() != want {

@@ -1,9 +1,9 @@
 package earley
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/morphology"
 	"nli-go/lib/parse"
 	"regexp"
 	"strings"
@@ -13,23 +13,31 @@ import (
 // "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is isComplete.
 
-type Parser struct {
+type EarleyParser struct {
+	grammarRules *parse.GrammarRules
+	morphologicalAnalyser api.MorphologicalAnalyser
 	log          *common.SystemLog
 }
 
-func NewParser(log *common.SystemLog) *Parser {
-	return &Parser{
+func NewParser(grammarRules *parse.GrammarRules, log *common.SystemLog) *EarleyParser {
+	return &EarleyParser{
+		grammarRules: grammarRules,
+		morphologicalAnalyser: nil,
 		log:          log,
 	}
 }
 
-// Parses words using Parser.grammar
+func (parser *EarleyParser) SetMorphologicalAnalyser(morphologicalAnalyzer api.MorphologicalAnalyser) {
+	parser.morphologicalAnalyser = morphologicalAnalyzer
+}
+
+// Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *Parser) Parse(grammarRules *parse.GrammarRules, morphologicalAnalyzer *morphology.MorphologicalAnalyser, words []string) []ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string) []api.ParseTreeNode {
 
 	if parser.log.Active() { parser.log.StartDebug("Parse", strings.Join(words, ",")) }
 
-	chart := parser.buildChart(grammarRules, morphologicalAnalyzer, words)
+	chart := parser.buildChart(parser.grammarRules, words)
 
 	rootNodes := extractTreeRoots(chart)
 
@@ -54,11 +62,16 @@ func (parser *Parser) Parse(grammarRules *parse.GrammarRules, morphologicalAnaly
 		parser.log.EndDebug("Parse", str)
 	}
 
-	return rootNodes
+	s:= make([]api.ParseTreeNode, len(rootNodes))
+	for i, v := range rootNodes {
+		s[i] = v
+	}
+
+	return s
 }
 
 // The body of Earley's algorithm
-func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, morphologicalAnalyzer *morphology.MorphologicalAnalyser, words []string) (*chart) {
+func (parser *EarleyParser) buildChart(grammarRules *parse.GrammarRules, words []string) (*chart) {
 
 	chart := newChart(words)
 	wordCount := len(words)
@@ -83,7 +96,7 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, morphological
 				// if the current word in the sentence has this part-of-speech, then
 				// we add a completed entry to the chart (part-of-speech => word)
 				if i < wordCount {
-					parser.scan(chart, morphologicalAnalyzer, state)
+					parser.scan(chart, state)
 				}
 
 			} else {
@@ -98,7 +111,7 @@ func (parser *Parser) buildChart(grammarRules *parse.GrammarRules, morphological
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
-func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, state chartState) {
+func (parser *EarleyParser) predict(grammarRules *parse.GrammarRules, chart *chart, state chartState) {
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
@@ -120,7 +133,7 @@ func (parser *Parser) predict(grammarRules *parse.GrammarRules, chart *chart, st
 // If the current consequent in state (which non-abstract, like noun, verb, adjunct) is one
 // of the parts of speech associated with the current word in the sentence,
 // then a new, completed, entry is added to the chart: (cat => word)
-func (parser *Parser) scan(chart *chart, morphologicalAnalyzer *morphology.MorphologicalAnalyser, state chartState) {
+func (parser *EarleyParser) scan(chart *chart, state chartState) {
 
 	nextConsequent := state.rule.GetConsequent(state.dotPosition - 1)
 	endWordIndex := state.endWordIndex
@@ -157,9 +170,9 @@ func (parser *Parser) scan(chart *chart, morphologicalAnalyzer *morphology.Morph
 
 	// morphological analysis
 	if !lexItemFound {
-		if morphologicalAnalyzer != nil {
+		if parser.morphologicalAnalyser != nil {
 			variables := state.rule.GetConsequentVariables(state.dotPosition - 1)
-			sense, lexItemFound = morphologicalAnalyzer.Analyse(endWord, nextConsequent, variables)
+			sense, lexItemFound = parser.morphologicalAnalyser.Analyse(endWord, nextConsequent, variables)
 			if lexItemFound {
 				posType = parse.PosTypeWordForm
 			}
@@ -186,7 +199,7 @@ func (parser *Parser) scan(chart *chart, morphologicalAnalyzer *morphology.Morph
 // For example:
 // - this state is NP -> noun, it has been completed
 // - now proceed all other states in the chart that are waiting for an NP at the current position
-func (parser *Parser) complete(chart *chart, completedState chartState) {
+func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 
 	completedAntecedent := completedState.rule.GetAntecedent()
 

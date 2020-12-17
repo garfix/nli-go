@@ -31,11 +31,11 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string) []ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []ParseTreeNode {
 
 	if parser.log.Active() { parser.log.StartDebug("Parse", strings.Join(words, ",")) }
 
-	chart := parser.buildChart(parser.grammarRules, words)
+	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 
 	rootNodes := ExtractTreeRoots(chart)
 
@@ -64,9 +64,9 @@ func (parser *EarleyParser) Parse(words []string) []ParseTreeNode {
 }
 
 // The body of Earley's algorithm
-func (parser *EarleyParser) buildChart(grammarRules *GrammarRules, words []string) (*chart) {
+func (parser *EarleyParser) buildChart(grammarRules *GrammarRules, words []string, rootCategory string, rootVariables []string) (*chart) {
 
-	chart := NewChart(words)
+	chart := NewChart(words, rootCategory, rootVariables)
 	wordCount := len(words)
 
 	chart.enqueue(chart.buildIncompleteGammaState(), 0)
@@ -159,17 +159,14 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	if !lexItemFound {
 		if (nextConsequent == strings.ToLower(endWord)) && (len(nextVariables) == 0) {
 			lexItemFound = true
+			newPosType = PosTypeWordForm
 		}
-		newPosType = PosTypeWordForm
 	}
 
 	// morphological analysis
 	if !lexItemFound && nextPosType == PosTypeRelation {
 		if parser.morphologicalAnalyzer != nil {
 			sense, lexItemFound = parser.morphologicalAnalyzer.Analyse(endWord, nextConsequent, nextVariables)
-			if lexItemFound {
-				newPosType = PosTypeWordForm
-			}
 		}
 	}
 
@@ -177,7 +174,7 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 		rule := NewGrammarRule(
 			[]string{newPosType, PosTypeWordForm},
 			[]string{nextConsequent, endWord},
-			[][]string{{terminal}, {terminal}},
+			[][]string{nextVariables, {terminal}},
 			sense)
 
 		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)

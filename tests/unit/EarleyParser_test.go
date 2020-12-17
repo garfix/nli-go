@@ -49,16 +49,16 @@ func TestEarleyParser(test *testing.T) {
 	{
 		wordArray := tokenizer.Process(rawInput)
 
-		trees := parser.Parse(wordArray)
+		trees := parser.Parse(wordArray, "s", []string{"S"})
 
 		if len(trees) != 1 {
 			test.Error(fmt.Sprintf("expected : 1 tree, found %d", len(trees)))
 			return
 		}
 
-		relations, _ := relationizer.Relationize(trees[0])
+		relations, _ := relationizer.Relationize(trees[0], []string{ "S"})
 
-		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S5, speak_up) subject(S5, E5)" {
+		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S, speak_up) subject(S, E5)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))
 		}
 		if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [speaks speaks] [up up]]]]" {
@@ -69,7 +69,7 @@ func TestEarleyParser(test *testing.T) {
 	{
 		wordArray := tokenizer.Process("a b b c")
 
-		trees := parser.Parse(wordArray)
+		trees := parser.Parse(wordArray, "s", []string{"S"})
 
 		if len(trees) != 3 {
 			test.Error(fmt.Sprintf("expected : 3 trees, found %d", len(trees)))

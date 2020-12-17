@@ -32,16 +32,16 @@ func TestFillerStack(t *testing.T) {
 
 	relationizer := parse.NewRelationizer(log)
 
-	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"})
+	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"}, "s", []string{"S"})
 
 	if len(parseTrees) == 0 {
 		t.Error(log.String())
 		return
 	}
 
-	result, _ := relationizer.Relationize(parseTrees[0])
+	result, _ := relationizer.Relationize(parseTrees[0], []string{ "S"})
 
-	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S5) take_from(S5, E6, E5)))"
+	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S) take_from(S, E6, E5)))"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}

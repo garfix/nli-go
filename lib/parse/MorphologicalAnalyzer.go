@@ -28,20 +28,18 @@ func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string,
 
 	sense := mentalese.RelationSet{}
 
-//fmt.Println(word, lexicalCategory)
-
 	segments := morph.segmenter.Segment(word, lexicalCategory)
 	if len(segments) == 0 {
 		return sense, false
 	}
 
-	trees := morph.parser.Parse(segments)
+	trees := morph.parser.Parse(segments, lexicalCategory, variables)
 	if trees == nil {
 		return sense, false
 	}
 
 	// keep just the first tree, for now
-	sense, _ = morph.relationizer.Relationize(trees[0])
+	sense, _ = morph.relationizer.Relationize(trees[0], variables)
 
 	return sense, len(sense) > 0
 }

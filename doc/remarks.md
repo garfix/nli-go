@@ -1,3 +1,11 @@
+## 2020-12-17
+
+Almost finished with the 21 interaction. The word "littlest" is analyzed successfully and its semantics are integrated with the rest. The interaction succeeds now except for the fact that the wrong pyramid is placed on top of the tower.
+
+The reason: the word "the" in "the littlest pyramid" is implemented as a back reference and this again is implemented by looking at the anaphora queue first to see if it can find "the littlest pyramid". It finds the red pyramid (which is the largest) and condludes that it is the littlest one within the set of just itself. "the" is one of the hardest words around, semantically!
+
+I changed the parser and the relationized. Thet can now handle cases where the root category is not `s`, with one variable. It can now be, for example `comparative(E1, E2)`. I need this for the morphological analyzer. It uses the Earley parser to parse the word segments.
+
 ## 2020-12-14
 
 The rules I had so far allow for removing extra characters, but it doesn't allow adding missing characters.

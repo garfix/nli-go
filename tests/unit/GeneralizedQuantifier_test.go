@@ -82,13 +82,13 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	for _, test := range tests {
 
 		words := tokenizer.Process(test.input)
-		trees := parser.Parse(words)
+		trees := parser.Parse(words, "s", []string{"S"})
 		if len(trees) == 0 {
 			t.Errorf("Cannot parse: %s", test.input)
 			continue
 		}
 		relationizer := parse.NewRelationizer(log)
-		input, _ := relationizer.Relationize(trees[0])
+		input, _ := relationizer.Relationize(trees[0], []string{ "S"})
 		result := solver.SolveRelationSet(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)

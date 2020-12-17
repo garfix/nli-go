@@ -1,5 +1,3 @@
-{ rule: s(E1) -> super(E1) }
-
 { rule: super(E1) -> super_base(E1) 'est' }
 
-{ rule: super_base(E1) -> 'little',                                       sense: go:order(E1, asc) }
+{ rule: super_base(E1) -> 'little',                                       sense: dom:height(E1, H1) go:order(H1, asc) }

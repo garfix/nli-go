@@ -21,7 +21,10 @@ func newChartState(rule GrammarRule, dotPosition int, startWordIndex int, endWor
 }
 
 func (state chartState) isTerminal() bool {
-	return state.rule.GetAntecedentVariables()[0] == terminal
+	if len(state.rule.GetConsequentVariables(0)) == 0 {
+		return false
+	}
+	return state.rule.GetConsequentVariables(0)[0] == terminal
 }
 
 func (state chartState) isComplete() bool {

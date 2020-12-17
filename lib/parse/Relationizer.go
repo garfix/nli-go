@@ -20,9 +20,11 @@ func NewRelationizer(log *common.SystemLog) *Relationizer {
 	}
 }
 
-func (relationizer Relationizer) Relationize(rootNode ParseTreeNode) (mentalese.RelationSet, mentalese.Binding) {
-	rootEntityVariable := relationizer.senseBuilder.GetNewVariable("Sentence")
-	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, []string{ rootEntityVariable } )
+func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, rootVariables []string) (mentalese.RelationSet, mentalese.Binding) {
+	if rootVariables == nil {
+		rootVariables = []string{ relationizer.senseBuilder.GetNewVariable("Sentence") }
+	}
+	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, rootVariables )
 	sense = sense.BindSingle(constantBinding)
 	return sense, nameBinding
 }

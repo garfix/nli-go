@@ -7,14 +7,18 @@ import (
 const terminal = "terminal"
 
 type chart struct {
+	rootCategory     string
+	rootVariables    []string
 	words            []string
 	states           [][]chartState
 	advanced         map[string][][]chartState
 	completed        map[string][][]chartState
 }
 
-func NewChart(words []string) *chart {
+func NewChart(words []string, rootCategory string, rootVariables []string) *chart {
 	return &chart{
+		rootCategory: 	  rootCategory,
+		rootVariables:    rootVariables,
 		words:            words,
 		states:           make([][]chartState, len(words) + 1),
 		advanced:         map[string][][]chartState{},
@@ -26,8 +30,8 @@ func (chart *chart) buildIncompleteGammaState() chartState {
 	return newChartState(
 		NewGrammarRule(
 			[]string{PosTypeRelation, PosTypeRelation},
-			[]string{"gamma", "s"},
-			[][]string{{"G"}, {"S"}},
+			[]string{"gamma", chart.rootCategory},
+			[][]string{{"G"}, chart.rootVariables},
 			mentalese.RelationSet{},
 		),
 		1, 0, 0)

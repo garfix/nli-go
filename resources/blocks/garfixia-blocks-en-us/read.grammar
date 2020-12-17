@@ -29,6 +29,7 @@
 { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: go:quant_foreach($np, $tv) }
 { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
+{ rule: vp(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart(P1, $np) }
 { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
@@ -91,7 +92,7 @@
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
-{ rule: superlative(E1) -> super(E1),                                 sense: $super go:first() }
+{ rule: superlative(E1) -> super(E1),                                  sense: $super go:first() }
 
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }

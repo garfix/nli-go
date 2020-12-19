@@ -1,3 +1,34 @@
+## 2020-12-19
+
+On long distance dependencies. I want to solve these using features. The features 
+
+    go:gap(Variable, atom)
+    go:filler(Variable, atom)
+
+CLE uses gap threading using feature unification, which brings with it an extensive amount of syntax. Most of which just passes fillers up and down the tree. I find it hard to understand exactly how their system works, and yet I believe it can be replaced by a system in which all gap threading is implicit rather than explicit.
+
+In such a system a rewrite rule that introduces a gap names this by adding the sense `gap`, specifying the entity variable and a syntactic role. For example
+
+    go:gap(E1, subject)
+    go:gap(E1, object)
+
+A rule that introduces a filler would do this by naming the sense `filler`. For example
+
+    go:gap(E1, subject)
+    go:gap(E1, object)
+
+I will then add a gap-filler phase inside the relationalization process that unifies the variables of the gap and the filler. 
+
+This phase first goes through all nodes of the tree and copies the fillers from the leaf nodes, up to each parent node, ending in the root node.
+
+Then it goes through all nodes again, looking for gaps. When one it found, it looks up the tree for a filler. The first one it encounters is used; note that the syntactic role must match. This ensures that when multiple gaps are present, a subject-filler is not bound to an object-gap.
+
+The main drive to simplify the existing means of long term dependency resolution I had comes from this sentence in CLE (p. 72):
+
+    > The gap threading analysis is a considerable practical improvement on the metarule treatment of Gazdar et al. 1985, which would involve a separate rule not only for each different subcategorization, but for each gap position for each version.
+
+While my former approach did not seem too complex, once the grammar would grow, it might indeed suffer from the growth of extra rules to deal with gap filling. This new approach would keep the number of rules minimal.  
+
 ## 2020-12-18
 
 "the" in "the littlest pyramid" can only refer to one of a group (of more than one items).

@@ -27,7 +27,17 @@ The main drive to simplify the existing means of long term dependency resolution
 
     > The gap threading analysis is a considerable practical improvement on the metarule treatment of Gazdar et al. 1985, which would involve a separate rule not only for each different subcategorization, but for each gap position for each version.
 
-While my former approach did not seem too complex, once the grammar would grow, it might indeed suffer from the growth of extra rules to deal with gap filling. This new approach would keep the number of rules minimal.  
+While my former approach did not seem too complex, once the grammar would grow, it might indeed suffer from the growth of extra rules to deal with gap filling. This new approach would keep the number of rules minimal.
+
+===
+
+Yes, I found it. I extended the meaning of `superlative` by the constraint that the number of elements to which the superlative applies must be larger than 1. This solved the problem because the pyramid entries in the anaphora queue consisted only of one element each. Therefore the `definite_reference` skipped the anaphora queue and looked at the scene only.
+
+Mathematically it is perfectly all right to ask for the smallest number in a set of 1 element. But linguistically, it is nonsense to ask for the littlest, the biggest, or the oldest, when there is only one
+
+    * Which is the biggest sun of our solar system?
+
+This completes interaction 21! I can't believe it only took 40 days. Seems much longer.
 
 ## 2020-12-18
 

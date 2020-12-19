@@ -92,7 +92,7 @@
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
-{ rule: superlative(E1) -> super(E1),                                  sense: $super go:first() }
+{ rule: superlative(E1) -> super(E1),                                  sense: $super go:number_of(E1, N) go:greater_than(N, 1) go:first() }
 
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }

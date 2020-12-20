@@ -1,6 +1,6 @@
 # Changelog
 
-##
+## 1.12 morphological analyzer - 20-12-2020
 
 * nli executable allows interactive session 
 * insert / delete in MySQL
@@ -9,7 +9,7 @@
 * local variables; let
 * separated sort extraction from parsing 
 * support for comparatives and superlatives
-* morphological decomposition
+* morphological analyzer
 
 ## 1.11 modules - 13-09-2020
 

@@ -67,15 +67,18 @@ func TestBlocksWorld(t *testing.T) {
 			{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
 
 			{"Put a small one onto the green cube which supports a pyramid", "OK"},
+
+				{"Does the small red block support the green pyramid?", "No"},
+			{"Put the littlest pyramid on top of it", "OK"},
+				{"Does the small red block support the green pyramid?", "Yes"},
 		},
 		{
-			{"Put the littlest pyramid on top of it", "OK"},
 		},
 	}
 
 	log := common.NewSystemLog()
-	log.SetDebug(true)
-	log.SetPrint(true)
+	//log.SetDebug(true)
+	//log.SetPrint(true)
 	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
 	sessionId := "blocks-demo"
 

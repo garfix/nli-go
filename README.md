@@ -13,6 +13,7 @@ A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/a
 ## Features
 
 * An Earley parser to create a syntax tree from an input sentence, with semantic attachments
+* Morphological analysis that performs segmentation and parsing of morphemes  
 * Mentalese, a based internal language, based on Predicate Logic, to process the user input
 * A language with a Prolog-like syntax for rule based reasoning
 * Support for access to Sparql and MySQL databases as well as in-memory data stores

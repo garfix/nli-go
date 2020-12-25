@@ -269,3 +269,49 @@ Long term dependencies (extraposition) can be implemented using extra variables 
 
 "FillerStack_test" provides an example.
 
+## Object control verbs vs subject control verbs
+
+Seen in this Youtube channel, a lesson on Lexical Functional Grammar by Prod. Dr. phil. Miriam Butt
+
+Lexical-Functional Grammar 6: Control and CP
+
+https://www.youtube.com/watch?v=qsZlt1vj-8Y&list=PLUj-3pwbaDzMLHdkxPUllgDEj3x5gIQV6&index=7
+
+The difference between the words "persuaded" and "promised": the one links the subject, the other one the object
+
+    "Kim persuaded Sandy to eat cake"
+
+-> object control verb
+
+    s(P1) -> np(E1) vp(P1, E1)
+    vp(P1, E1) -> oc-verb(P1, E1, E2, P2) np(E2) vp(P2, E2)
+    oc-verb(P1, E1, E2, E3) -> 'persuade',                      sense: persuade(P1, E1, E2, E3)
+    vp(P1, E1) -> 'to' 'eat' np(E2),                            sense: eat(P1, E1, E2)
+
+    "Kim promised Sandy to eat cake"
+
+-> subject control verb
+
+    s(P1) -> np(E1) vp(P1, E1)
+    vp(P1, E1) -> sc-verb(P1, E1, E2, P2) np(E2) vp(P2, E1)
+    sc-verb(P1, E1, E2, E3) -> 'promised',                      sense: promise(P1, E1, E2, E3)
+    vp(P1, E1) -> 'to' 'eat' np(E2),                            sense: eat(P1, E1, E2)
+
+by the way, even though the verbs are now classified in a highly specific way (as `sc-verb`) they can still be used were regular verbs are expected
+
+    verb(P1, E1, E2, P2) -> sc-verb(P1, E1, E2, P2)
+    verb(P1, E1, E2, P2) -> oc-verb(P1, E1, E2, P2)
+
+## There be
+
+Also from the channel by Miriam Butt, a "there be" example:
+
+    "there seems to be a unicorn in the garden"
+
+The entity grammar reading:
+    
+    s(P1) -> 'there' s(P1)
+    s(P1) -> 'seems' 'to' 'be' np(E1),                  sense: seem(E1, $np)
+    np(E1) -> np(E1) pp(E1)
+    pp(E1) -> 'in' np(E2),                              sense: in(E1, E2)
+

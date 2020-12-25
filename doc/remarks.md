@@ -1,3 +1,29 @@
+## 2020-12-25
+
+It is possible to do the the gap-filler technique, and I thought about it for several days. But I just decided that the way I did it before is still better than anything I could come up with using gap-filler relations. The main reason is that it requires you to specify some kind of roles or functions for the entities, and this is only easy to do when the verb that these functions belong to is known. When it is not known yet, and this is often the case with long distance relationships, you cannot tell the functions with certainty. There may be multiple options, and these options will increase when the grammar grows. And I fear that eventually everything is possible, and the functions don't constraint anything anymore. The way I used before enposes much stricter restrictions. And there's also the things that te gap-filler requires you to specify functional roles, something you did not have to do before. You might say that it is only necessary in some cases, but it is not clear in which cases, so you might end up doing it everywhere, and this complicates the syntax unnecessarily, just for these edge cases, this is what I was trying to avoid.
+
+I will just leave some possible syntactic constructions, in a random order, perhaps I need them later:
+
+    function: function(E1, subject)
+    syntax: function(E1, subject)
+    features: function(E1, subject)
+    function: gap(E1) function(E1, indirect-object)
+    function: gap(E1) function(E1, subject)
+
+less parse trees is better; lets put all possible roles together
+
+    s(P) -> whnp(E1) vp(P),         syntax: function(E1, [subject, indirect-object])
+
+but an entity can have only a single function
+
+    s(P) -> whnp(E1) vp(P),         syntax: function(E1, subject)
+    s(P) -> whnp(E1) vp(P),         syntax: function(E1, indirect-object)
+
+to enforce different parse trees:
+
+    s(P) -> whnp-subject(E1) vp(P),         syntax: function(E1, subject)
+    s(P) -> whnp-ind-object(E1) vp(P),      syntax: function(E1, indirect-object)
+
 ## 2020-12-19
 
 On long distance dependencies. I want to solve these using features. The features 

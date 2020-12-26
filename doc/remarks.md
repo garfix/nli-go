@@ -1,3 +1,15 @@
+## 2020-12-26
+
+I watched https://www.youtube.com/watch?v=ZsYWwtNtag0&list=PLUj-3pwbaDzMLHdkxPUllgDEj3x5gIQV6&index=8 . It names the `functional uncertainty equation` that links parts of the sentence that are separated by a long distance. In the example 
+
+    Beans, I believe that Kim wants Sandy to know that Kim likes
+
+"Beans" is the `topic` of the sentence. It is also the `object` of the innermost embedded relation `like`. It is unified to it by the functional uncertainty equation
+
+    {comp|xcomp}* obj
+
+This equation is annotated to the NP that forms the topic ("Beans"). It links it to the object of the (x)comp of the comp of the comp. Which is absolutely superior to my formalism, IFF it it spans all sentences in which this topicalization works. And I have a strong feeling that it doesn't. But I don't know how to find out if this is the case. At present I have only this example, which is intriguing.  
+
 ## 2020-12-25
 
 It is possible to do the the gap-filler technique, and I thought about it for several days. But I just decided that the way I did it before is still better than anything I could come up with using gap-filler relations. The main reason is that it requires you to specify some kind of roles or functions for the entities, and this is only easy to do when the verb that these functions belong to is known. When it is not known yet, and this is often the case with long distance relationships, you cannot tell the functions with certainty. There may be multiple options, and these options will increase when the grammar grows. And I fear that eventually everything is possible, and the functions don't constraint anything anymore. The way I used before enposes much stricter restrictions. And there's also the things that te gap-filler requires you to specify functional roles, something you did not have to do before. You might say that it is only necessary in some cases, but it is not clear in which cases, so you might end up doing it everywhere, and this complicates the syntax unnecessarily, just for these edge cases, this is what I was trying to avoid.

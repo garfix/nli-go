@@ -13,6 +13,32 @@ $(function(){
     const optionsHeader = document.getElementById('options-header');
     const logBox = document.getElementById("log");
 
+    function setup()
+    {
+        popupCloseButton.onclick = function() {
+            popup.style.display = "none";
+        };
+
+        sampleButton.onclick = function (event) {
+            event.preventDefault();
+            samplePopup.style.display = "block";
+        };
+
+        form.onsubmit = function(){
+            postQuestion(inputField.value);
+            return false;
+        };
+
+        let samples = document.querySelectorAll('#samples li');
+        for (let i = 0; i < samples.length; i++) {
+            samples[i].onclick = function (element) {
+                let li = element.currentTarget;
+                inputField.value = li.innerHTML;
+                samplePopup.style.display = "none";
+            }
+        }
+    }
+
     function showError(error) {
         let html = "";
 
@@ -55,34 +81,10 @@ $(function(){
         productionBox.innerHTML = html;
     }
 
-    popupCloseButton.onclick = function() {
-        popup.style.display = "none";
-    };
-
-    sampleButton.onclick = function (event) {
-        event.preventDefault();
-        samplePopup.style.display = "block";
-    };
-
-    form.onsubmit = function(){
-
-        postQuestion(inputField.value);
-        return false;
-    };
-
-    let samples = document.querySelectorAll('#samples li');
-    for (let i = 0; i < samples.length; i++) {
-        samples[i].onclick = function (element) {
-            let li = element.currentTarget;
-            inputField.value = li.innerHTML;
-            samplePopup.style.display = "none";
-        }
-    }
-
     function postQuestion(question) {
         $.ajax({
             url: 'ajax-answer.php',
-            data: { format: "json", query: question },
+            data: { format: "json", query: question, app: "blocks" },
             dataType: 'json',
             type: 'GET',
             success: function (data) {
@@ -136,4 +138,6 @@ $(function(){
 
         logBox.innerHTML = html + logBox.innerHTML;
     }
+
+    setup();
 });

@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+    <title>Blocks world demo</title>
+    <meta name="description" content="Modelling Terry Winograd's blocks world in NLI-GO" />
+    <script src="js/jquery-1.5.2.js" type="text/javascript" charset="utf-8"></script>
+    <link href="css/blocks.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="main">
+    <div id="header">
+        The blocks world - NLI-GO demo<br>
+        <a href="index.html">DBpedia demo</a>
+    </div>
+    <div id="body">
+        <div id="center">
+            <div id="monitor">
+                monitor
+            </div>
+            <div id="toolbar">
+                <button type="button" id="show-samples">Samples</button>
+            </div>
+            <div id="input">
+                <form id="f">
+                    <input type="text" name="input" id="q">
+                    <button type="submit" id="submit-button">Enter</button>
+                </form>
+            </div>
+            <div id="output">
+                <div id="answer-box">&nbsp;</div>
+                <div id="error-box">&nbsp;</div>
+            </div>
+            <div id="log">
+            </div>
+        </div>
+        <div id="left">
+            <div id="production-box">&nbsp;</div>
+        </div>
+        <div id="right">
+            right
+        </div>
+    </div>
+    <div id="footer">
+        <a href="https://github.com/garfix/nli-go">NLI-GO on Github</a>
+    </div>
+    <div id="popup">
+        <div id="popup-header">
+            <div id="close">X</div>
+        </div>
+        <div id="popup-contents">
+            <div id="options-header"></div>
+            <div id="options-box"></div>
+        </div>
+    </div>
+    <div id="samples">
+        <ol>
+            <li>Pick up a green block</li>
+        </ol>
+    </div>
+</div>
+
+<script src="js/blocks.js"></script>
+</body>
+</html>

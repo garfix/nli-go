@@ -178,7 +178,6 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 		for _, binding := range bindings.GetAll() {
 
 			id, _ := binding.Get(mentalese.IdVar)
-			information := aSort
 
 			// sort because the resulting strings must not be in random order
 			sortedInfoTypes := []string{}
@@ -186,6 +185,9 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 				sortedInfoTypes = append(sortedInfoTypes, infoType)
 			}
 			sort.Strings(sortedInfoTypes)
+
+			information := ""
+			sep := ""
 
 			for _, infoType := range sortedInfoTypes {
 
@@ -198,7 +200,8 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 
 				for _, binding2 := range bindings2.GetAll() {
 					value, _ := binding2.Get(mentalese.ValueVar)
-					information += "; " + infoType + ": " + value.TermValue
+					information += sep + value.TermValue
+					sep = ";"
 					// DBPedia sometimes returns multiple results for a date, while there should be only one
 					break
 				}

@@ -81,13 +81,13 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	names := mentalese.NewBinding()
 	entityIds := mentalese.NewBinding()
 
-	system.log.AddProduction("Anaphora queue before", system.dialogContext.AnaphoraQueue.String())
+	system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 
 	for _, grammar := range system.grammars {
 
 		if !system.log.IsDone() {
 			tokens = grammar.GetTokenizer().Process(originalInput)
-			system.log.AddProduction("TokenExpression", fmt.Sprintf("%v", tokens))
+			system.log.AddProduction("Tokens", fmt.Sprintf("%v", tokens))
 		}
 
 		if !system.log.IsDone() {
@@ -104,10 +104,10 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			for _, aTree := range parseTrees {
 
-				system.log.AddProduction("EarleyParser", aTree.String())
+				system.log.AddProduction("Parse tree", aTree.String())
 
 				requestRelations, names = system.relationizer.Relationize(aTree, []string{ "S"})
-				system.log.AddProduction("Relationizer", requestRelations.String())
+				system.log.AddProduction("Relations", requestRelations.String())
 
 				// extract sorts: variable => sort
 				sorts, sortFound := sortFinder.FindSorts(requestRelations)
@@ -175,12 +175,12 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			answerRelations = system.answerer.Answer(requestRelations, mentalese.InitBindingSet(entityIds))
 			system.log.AddProduction("Answer", answerRelations.String())
-			system.log.AddProduction("Anaphora queue after", system.dialogContext.AnaphoraQueue.String())
+			system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 		}
 
 		if !system.log.IsDone() {
 			answerWords = system.generator.Generate(grammar.GetWriteRules(), answerRelations)
-			system.log.AddProduction("Answer Words", fmt.Sprintf("%v", answerWords))
+			system.log.AddProduction("Answer words", fmt.Sprintf("%v", answerWords))
 		}
 
 		if !system.log.IsDone() {

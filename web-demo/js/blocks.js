@@ -2,6 +2,16 @@ $(function(){
 
     const inputField = document.getElementById('q');
     const samplePopup = document.getElementById('samples');
+    const productionBox = document.getElementById('production-box');
+    const answerBox = document.getElementById('answer-box');
+    const errorBox = document.getElementById('error-box');
+    const popup = document.getElementById('popup');
+    const popupCloseButton = document.getElementById('close');
+    const sampleButton = document.getElementById('show-samples');
+    const form = document.getElementById('f');
+    const optionsBox = document.getElementById('options-box');
+    const optionsHeader = document.getElementById('options-header');
+    const logBox = document.getElementById("log");
 
     function showError(error) {
         let html = "";
@@ -10,15 +20,15 @@ $(function(){
             html += error[i] + "<br>";
         }
 
-        document.getElementById('error-box').innerHTML = html;
+        errorBox.innerHTML = html;
     }
 
     function showAnswer(answer) {
-        document.getElementById('answer-box').innerHTML = answer;
+        answerBox.innerHTML = answer;
     }
 
     function clearInput() {
-        document.getElementById('q').value = "";
+        inputField.value = "";
     }
 
     function showProductions(productions) {
@@ -42,30 +52,23 @@ $(function(){
             html += "<p>" + value + "</p>";
         }
 
-        document.getElementById('production-box').innerHTML = html;
+        productionBox.innerHTML = html;
     }
 
-    $('#close').click(function() {
-        let popup = document.getElementById('popup');
+    popupCloseButton.onclick = function() {
         popup.style.display = "none";
-    });
+    };
 
-    $('#samples a').click(function(event){
+    sampleButton.onclick = function (event) {
         event.preventDefault();
-        $('#q').val(this.innerHTML);
-        $('#samples').hide();
-    });
+        samplePopup.style.display = "block";
+    };
 
-    $('#show-samples').click(function (event) {
-        event.preventDefault();
-        $('#samples').show();
-    });
+    form.onsubmit = function(){
 
-    $('#f').submit(function(){
-
-        postQuestion($('#q').val());
+        postQuestion(inputField.value);
         return false;
-    });
+    };
 
     let samples = document.querySelectorAll('#samples li');
     for (let i = 0; i < samples.length; i++) {
@@ -111,19 +114,18 @@ $(function(){
 
         html += "</ol>"
 
-        let popup = document.getElementById('popup');
-        let optionsBox = document.getElementById('options-box');
-        let optionsHeader = document.getElementById('options-header');
-
         optionsHeader.innerHTML = answer;
         optionsBox.innerHTML = html;
 
         popup.style.display = showOptions ? "block" : "none";
 
-        $('#options-box a').click(function (event) {
-            event.preventDefault();
-            postQuestion($(this).attr('href'));
-        });
+        let aTags = optionsBox.querySelectorAll('a');
+        for (let i = 0; i < aTags.length; i++) {
+            aTags[i].onclick = function (event) {
+                event.preventDefault();
+                postQuestion(event.currentTarget.getAttribute('href'));
+            };
+        }
     }
 
     function log(question, answer) {
@@ -132,7 +134,6 @@ $(function(){
         html += "<div><h3>" + question + "</h3></div>";
         html += "<div>" + answer + "</div>";
 
-        let log = document.getElementById("log");
-        log.innerHTML = html + log.innerHTML;
+        logBox.innerHTML = html + logBox.innerHTML;
     }
 });

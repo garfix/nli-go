@@ -4,6 +4,7 @@ html {
 }
 
 body {
+    font-family: arial, sans-serif;
     font-size: 20px;
     margin: 0;
     padding: 0;
@@ -20,48 +21,63 @@ body {
     color: black;
 }
 
+#header, #footer {
+    width: 100%;
+    height: 50px;
+    background-color: #000000;
+    box-sizing: border-box;
+    color: white;
+    line-height: 50px;
+    padding: 0 20px 0 20px;
+}
+
+#header a, #footer a {
+    color: red;
+}
+
 #header {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100px;
-    background-color: #4785ce;
 }
 
 #body {
     position: absolute;
     left: 0;
-    top: 100px;
+    top: 50px;
     width: 100%;
-    height: calc(100% - 200px);
+    height: calc(100% - 100px);
 }
 
-    #left {
-        background-color: black;
+    #left, #right {
         color: #51FF0D;
+        background-color: black;
         font-family: "Courier New";
         position: absolute;
-        left: 0;
         box-sizing: border-box;
         width: calc(50% - 300px);
         height: 100%;
-        overflow: auto;
+        overflow-y: auto;
         padding: 20px;
+    }
+
+    #left {
+        position: absolute;
+        left: 0;
     }
 
     #center {
         position: absolute;
         left: calc(50% - 300px);
         width: 600px;
+        max-width: 100%;
         height: 100%;
         font-family: arial, sans-serif;
         overflow: auto;
-        background-color: orange;
+        background-color: black;
     }
 
         #monitor {
-            height: 300px;
             background-color: green;
         }
 
@@ -71,23 +87,19 @@ body {
         }
 
         #log {
-
+            color: white;
             overflow: auto;
         }
 
     #right {
         position: absolute;
         right: 0;
-        width: calc(50% - 300px);
-        height: 100%;
     }
 
 #footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100px;
-    background-color: #4785ce;
 }
 
 #popup, #samples {

@@ -94,9 +94,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 			parser := parse.NewParser(grammar.GetReadRules(), system.log)
 			parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
 			parseTrees = parser.Parse(tokens, "s", []string{"S"})
-			if len(parseTrees) == 0 {
-				system.log.AddError("EarleyParser returned no parse trees")
-			} else {
+			if len(parseTrees) > 0 {
 				system.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
 			}
 		}
@@ -104,7 +102,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			for _, aTree := range parseTrees {
 
-				system.log.AddProduction("Parse tree", aTree.String())
+				system.log.AddProduction("Parse tree", aTree.IndentedString(0))
 
 				requestRelations, names = system.relationizer.Relationize(aTree, []string{ "S"})
 				system.log.AddProduction("Relations", requestRelations.String())

@@ -73,7 +73,6 @@ func (storage DialogContextFileStorage) Write(sessionId string, dialogContext *c
 		}
 	}
 
-
 	err = common.WriteFile(sessionPath, jsonString)
 	if err != nil {
 		storage.log.AddError("Error writing dialog context file " + sessionPath + " (" + err.Error() + ")")

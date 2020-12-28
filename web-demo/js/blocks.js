@@ -2,7 +2,8 @@ $(function(){
 
     const inputField = document.getElementById('q');
     const samplePopup = document.getElementById('samples');
-    const productionBox = document.getElementById('production-box');
+    const productionBoxLeft = document.getElementById('production-box-left');
+    const productionBoxRight = document.getElementById('production-box-right');
     const answerBox = document.getElementById('answer-box');
     const errorBox = document.getElementById('error-box');
     const popup = document.getElementById('popup');
@@ -13,7 +14,8 @@ $(function(){
     const optionsHeader = document.getElementById('options-header');
     const logBox = document.getElementById("log");
     const monitor = document.getElementById("monitor");
-
+    const displayWidth = Math.min(window.innerWidth, 600);
+    const displayHeight = displayWidth / 2;
     const colors = {
         red: 0xc00000,
         green: 0x008000,
@@ -74,7 +76,12 @@ $(function(){
 
     function showProductions(productions) {
 
-        let html = '';
+        let html = {
+            'production-box-left': "",
+            'production-box-right': ""
+        };
+
+        let container = 'production-box-left';
 
         for (let key in productions) {
             let production = productions[key];
@@ -87,13 +94,17 @@ $(function(){
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;")
-                .replace("\n", "<br>");
+                .replace(/\n/g, "<br>");
 
-            html += "<h2>" + name + "</h2>";
-            html += "<p>" + value + "</p>";
+            html[container] += "<h2>" + name + "</h2>" + "<p>" + value + "</p>";
+
+            if (name === "Parse tree") {
+                container = 'production-box-right';
+            }
         }
 
-        productionBox.innerHTML = html;
+        productionBoxLeft.innerHTML = html['production-box-left'];
+        productionBoxRight.innerHTML = html['production-box-right'];
     }
 
     function postQuestion(question) {
@@ -191,9 +202,9 @@ $(function(){
         const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
         scene.add( directionalLight );
 
-        camera.position.set(6.75, 4.5, 0);
+        camera.position.set(8, 4.5, 0);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize( 600, 300 );
+        renderer.setSize(displayWidth, displayHeight);
 
         monitor.innerHTML = "";
         monitor.appendChild( renderer.domElement );

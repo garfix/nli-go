@@ -12,14 +12,14 @@
 <body>
 <div id="main">
     <div id="header">
+        <span style="float: right"><a href="index.html">DBpedia demo</a></span>
         The blocks world - NLI-GO demo<br>
-        <a href="index.html">DBpedia demo</a>
     </div>
     <div id="body">
         <div id="center">
             <div id="monitor"></div>
             <div id="toolbar">
-                <button type="button" id="show-samples">Samples</button>
+                <button type="button" id="show-samples">Sample Questions</button>
             </div>
             <div id="input">
                 <form id="f">
@@ -35,14 +35,27 @@
             </div>
         </div>
         <div id="left">
-            <div id="production-box">&nbsp;</div>
+            <div id="production-box-left">
+                <h2>Introduction: SHRDLU</h2>
+                <p>In 1968 Terry Winograd created the natural language program SHRDLU, as part of his gratuation thesis at MIT.</p>
+                <p>It introduced a so called "microworld" of blocks that is simple enough for a programmer to answer all questions a user might pose about it.</p>
+                <p>SHRDLU does just allow you to ask questions. It also lets you make commands and teach it new information. The program excels in the uses of anaphora (like pronouns) and introspection (why/how did you do that?)</p>
+
+                <h2>NLI-GO</h2>
+                <p>The demo you see here is not a copy of the original LISP program by Winograd. It is new implementation, built with NLI-GO, a rule based system written in Go, that allows a programmer to build a system like SHRDLU using declarative code.</p>
+
+                <h2>The demo</h2>
+                <p>The demo is still work-in-progress. Currently it handles the first 21 interactions of the 44 of the demo-conversation that Winograd published in his book "Understanding Natural Language".</p>
+            </div>
         </div>
         <div id="right">
-            right
+            <div id="production-box-right"><p>Ready.</p></div>
         </div>
     </div>
     <div id="footer">
-        <a href="https://github.com/garfix/nli-go">NLI-GO on Github</a>
+        SHRDLU on <a href="https://en.wikipedia.org/wiki/SHRDLU" target="_blank">Wikipedia</a>
+        NLI-GO on <a href="https://github.com/garfix/nli-go" target="_blank">Github</a>
+        3D graphics made with <a href="https://threejs.org/" target="_blank">three.js</a>
     </div>
     <div id="popup">
         <div id="popup-header">
@@ -55,7 +68,9 @@
     </div>
     <div id="samples">
         <ol>
-            <li>Pick up a green block</li>
+            <li>Pick up a big red block</li>
+            <li>What does the box contain?</li>
+            <li>How many blocks are not in the box?</li>
         </ol>
     </div>
 </div>

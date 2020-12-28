@@ -22,7 +22,9 @@ $(function(){
         black: 0x654321
     }
 
+    const scale = 90;
     const opacity = 0.9;
+    const boxOpacity = 0.4;
 
     function setup()
     {
@@ -172,7 +174,7 @@ $(function(){
     function buildScene(data)
     {
         const scene = new THREE.Scene();
-        var camera = new THREE.OrthographicCamera( -7, 7, 7, -7, 0, 1000 );
+        var camera = new THREE.OrthographicCamera( -10, 10, 5, -5, 0, 1000 );
 
         const group = new THREE.Group();
 
@@ -189,7 +191,7 @@ $(function(){
         const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
         scene.add( directionalLight );
 
-        camera.position.set(6.75, 5, 0);
+        camera.position.set(6.75, 4.5, 0);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize( 600, 300 );
 
@@ -211,7 +213,7 @@ $(function(){
     // https://stackoverflow.com/questions/26021618/how-can-i-create-an-axonometric-oblique-cavalier-cabinet-with-threejs
     function skew(mesh)
     {
-        var alpha = Math.PI / 4;
+        var alpha = Math.PI / 6;
 
         var Syx = 0,
             Szx = - 0.5 * Math.cos( alpha ),
@@ -243,13 +245,12 @@ $(function(){
     {
         var geometry = new THREE.Geometry();
 
-        let s = 100;
-        let x = (datum.X / s);
-        let y = (datum.Y / s);
-        let z = -(datum.Z / s);
-        let w = (datum.Width / s);
-        let l = -(datum.Length / s);
-        let h = (datum.Height / s);
+        let x = (datum.X / scale);
+        let y = (datum.Y / scale);
+        let z = -(datum.Z / scale);
+        let w = (datum.Width / scale);
+        let l = -(datum.Length / scale);
+        let h = (datum.Height / scale);
 
         geometry.vertices = [
             new THREE.Vector3( x + 0, y + 0, z + 0 ),
@@ -276,13 +277,12 @@ $(function(){
     {
         var geometry = new THREE.Geometry();
 
-        let s = 100;
-        let x = (datum.X / s);
-        let y = (datum.Y / s);
-        let z = -(datum.Z / s);
-        let w = (datum.Width / s);
-        let l = -(datum.Length / s);
-        let h = ((datum.Height ? datum.Height : 0.01) / s);
+        let x = (datum.X / scale);
+        let y = (datum.Y / scale);
+        let z = -(datum.Z / scale);
+        let w = (datum.Width / scale);
+        let l = -(datum.Length / scale);
+        let h = ((datum.Height ? datum.Height : 0.01) / scale);
 
         geometry.vertices = [
             new THREE.Vector3( x + 0, y + 0, z + 0 ),
@@ -316,7 +316,9 @@ $(function(){
             new THREE.Face3( 4, 7,  6),
         ];
 
-        var material = new THREE.MeshBasicMaterial( {color: colors[datum.Color] , wireframe:false, transparent: true, opacity: opacity} );
+        let blockOpacity = datum.Type === "box" ? boxOpacity : opacity;
+
+        var material = new THREE.MeshBasicMaterial( {color: colors[datum.Color] , wireframe:false, transparent: true, opacity: blockOpacity} );
         return new THREE.Mesh( geometry, material );
     }
 

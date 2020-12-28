@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
+	"nli-go/lib/mentalese"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -25,6 +26,7 @@ type Result struct {
 func main() {
 
 	var interactive = false
+	var query = ""
 	var sessionId = ""
 	var absSessionPath = ""
 	var configPath = ""
@@ -35,6 +37,7 @@ func main() {
 	flag.StringVar(&sessionId, "s", "", "Session id: an arbitrary identifier for current user's dialog session")
 	flag.StringVar(&configPath, "c", "", "Config path: (relative) path to the root directory of an application")
 	flag.StringVar(&variableDir, "d", "", "Directory: (relative) path to the directory where caches and sessions are stored (default ./var)")
+	flag.StringVar(&query, "q", "", "Relational query")
 	flag.StringVar(&returnType, "r", "text", "Return type: text / json")
 
 	flag.Parse()
@@ -48,6 +51,9 @@ func main() {
 		fmt.Println("")
 		fmt.Println("Interactive:")
 		fmt.Println("    bin/nli -i -c resources/blocks")
+		fmt.Println("")
+		fmt.Println("Low level:")
+		fmt.Println("    bin/nli -c resources/blocks -q 'dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)'")
 		fmt.Println("")
 		fmt.Println("Type `nli/go --help` for more information.")
 		fmt.Println("")
@@ -74,7 +80,9 @@ func main() {
 	}
 
 	if log.IsOk() {
-		if interactive {
+		if query != "" {
+			performQuery(system, query, sessionId)
+		} else if interactive {
 			goInteractive(system, log, absSessionPath, configPath, returnType)
 		} else {
 			singleLine(system, log, sentence, sessionId, returnType)
@@ -84,6 +92,43 @@ func main() {
 	if !log.IsOk() {
 		os.Exit(1)
 	}
+}
+
+func performQuery(system *global.System, query string, sessionId string)  {
+
+	// the actual system call
+	bindings := system.Query(query)
+
+	// store dialog context for next call
+	if sessionId != "" {
+		system.StoreDialogContext(sessionId)
+	}
+
+	response := bindingsToJson(bindings) + "\n"
+
+	fmt.Printf(response)
+}
+
+
+func bindingsToJson(set mentalese.BindingSet) string {
+
+	type aMap = map[string]string
+	type array = []aMap
+
+	arr := array{}
+
+	for _, item := range set.GetAll() {
+		i := aMap{}
+		for k, v := range item.GetAll() {
+			i[k] = v.String()
+		}
+		arr = append(arr, i)
+	}
+
+
+	responseRaw, _ := json.MarshalIndent(arr, "", "    ")
+
+	return string(responseRaw)
 }
 
 func singleLine(system *global.System, log *common.SystemLog, sentence string, sessionId string, returnType string) (string, *common.Options) {

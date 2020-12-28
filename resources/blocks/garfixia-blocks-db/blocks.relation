@@ -45,7 +45,7 @@ size(`pyramid:blue`, 200, 200, 200)
 size(`pyramid:red`, 100, 100, 300)
 size(`:hand`, 0, 0, 0)
 size(`table:table`, 1000, 1000, 0)
-size(`box:box`, 376, 376, 300)
+size(`box:box`, 400, 400, 300)
 
 support(`table:table`, `block:small-red`)
 support(`table:table`, `block:green-front`)

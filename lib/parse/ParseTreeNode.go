@@ -1,7 +1,5 @@
 package parse
 
-import "strings"
-
 type ParseTreeNode struct {
 	category     string
 	constituents []*ParseTreeNode
@@ -34,19 +32,22 @@ func (node ParseTreeNode) String() string {
 	return "[" + node.category + " " + body + "]"
 }
 
-func (node ParseTreeNode) IndentedString(level int) string {
+func (node ParseTreeNode) IndentedString(indent string) string {
 
-	prefix := ""
-	if level > 0 {
-		prefix = strings.Repeat("| ", level - 1) + "+- "
-	}
-	body := "\n" + prefix + node.category + " "
+	body := ""
 
 	if node.form != "" {
-		body += node.form
+		body = indent + "+- " + node.category + " " + node.form + "\n"
 	} else {
-		for _, child := range node.constituents {
-			body += child.IndentedString(level + 1)
+		for i, child := range node.constituents {
+			body += indent + "+- " + child.category + " " + "\n"
+			newIndent := indent
+			if i < len(node.constituents) - 1 {
+				newIndent += "|  "
+			} else {
+				newIndent += "   "
+			}
+			body += child.IndentedString(newIndent)
 		}
 	}
 

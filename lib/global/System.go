@@ -102,7 +102,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 		if !system.log.IsDone() {
 			for _, aTree := range parseTrees {
 
-				system.log.AddProduction("Parse tree", aTree.IndentedString(0))
+				system.log.AddProduction("Parse tree", aTree.IndentedString(""))
 
 				requestRelations, names = system.relationizer.Relationize(aTree, []string{ "S"})
 				system.log.AddProduction("Relations", requestRelations.String())

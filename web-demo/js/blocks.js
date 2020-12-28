@@ -30,6 +30,8 @@ $(function(){
 
     function setup()
     {
+        monitor.style.height = displayHeight + "px";
+
         popupCloseButton.onclick = function() {
             popup.style.display = "none";
         };
@@ -95,6 +97,10 @@ $(function(){
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;")
                 .replace(/\n/g, "<br>");
+
+            if (name === "Parse tree") {
+                value = value.replace(/ /g, "&nbsp;")
+            }
 
             html[container] += "<h2>" + name + "</h2>" + "<p>" + value + "</p>";
 

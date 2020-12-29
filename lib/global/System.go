@@ -105,7 +105,7 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 				system.log.AddProduction("Parse tree", aTree.IndentedString(""))
 
 				requestRelations, names = system.relationizer.Relationize(aTree, []string{ "S"})
-				system.log.AddProduction("Relations", requestRelations.String())
+				system.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
 				// extract sorts: variable => sort
 				sorts, sortFound := sortFinder.FindSorts(requestRelations)

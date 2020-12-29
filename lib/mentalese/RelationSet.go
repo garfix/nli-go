@@ -241,12 +241,28 @@ func (set RelationSet) String() string {
 
 	s, sep := "", ""
 
-	if len(set) == 0 { return AtomNone
+	if len(set) == 0 {
+		return AtomNone
 	}
 
 	for _, relation := range set {
 		s += sep + relation.String()
 		sep = " "
+	}
+
+	return s
+}
+
+func (set RelationSet) IndentedString(indent string) string {
+
+	s := ""
+
+	if len(set) == 0 {
+		return AtomNone
+	}
+
+	for _, relation := range set {
+		s += relation.IndentedString(indent)
 	}
 
 	return s

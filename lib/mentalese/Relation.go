@@ -216,3 +216,28 @@ func (relation Relation) String() string {
 
 	return sign + relation.Predicate + "(" + args + ")"
 }
+
+
+func (relation Relation) IndentedString(indent string) string {
+
+	args := ""
+	sep := ""
+
+	for _, Argument := range relation.Arguments {
+
+		if Argument.IsRelationSet() {
+			args += sep + Argument.TermValueRelationSet.IndentedString(indent + "    ")
+		} else {
+			args += sep + Argument.String()
+		}
+
+		sep = ", "
+	}
+
+	sign := ""
+	if !relation.Positive {
+		sign = "-"
+	}
+
+	return "\n" + indent + sign + relation.Predicate + "(" + args + ")"
+}

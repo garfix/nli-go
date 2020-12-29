@@ -1,3 +1,9 @@
+## 2020-12-29
+
+Working on a demo for the blocks world.
+
+Introduced sub-commands for the cli application.
+
 ## 2020-12-26
 
 I watched https://www.youtube.com/watch?v=ZsYWwtNtag0&list=PLUj-3pwbaDzMLHdkxPUllgDEj3x5gIQV6&index=8 . It names the `functional uncertainty equation` that links parts of the sentence that are separated by a long distance. In the example 

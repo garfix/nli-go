@@ -44,7 +44,7 @@ You can and move the executable to another location if you like.
 
 NLI-GO comes with some sample applications, located in the directory "resources". The application `resources/blocks`, for example, is an attempt to recreate the results of [SHRDLU](https://en.wikipedia.org/wiki/SHRDLU). Start an interactive session with it like this:
 
-    bin/nli -i -c resources/blocks   
+    bin/nli inter -a resources/blocks   
     
 NLI-GO will then show
 
@@ -70,7 +70,7 @@ When done, just type
 
 NLI-GO can also be used just to give a single response. This allows you to use it as part of a larger system. This variant is used by the web demo, for instance. In this example you tell "Hello World" to the hello world application:
 
-    bin/nli -c resources/helloworld "Hello World"    
+    bin/nli answer -a resources/helloworld "Hello World"    
 
 and it responds with
 
@@ -78,7 +78,7 @@ and it responds with
 
 This is the response of the application, or the error, if something went wrong. If you need more control over the output of the system, you can add `-r json`; like this
 
-    bin/nli -c resources/helloworld -r json "Hello World"    
+    bin/nli answer -a resources/helloworld -r json "Hello World"    
   
 and NLI-GO responds with a JSON string like this:
 
@@ -107,8 +107,12 @@ If the system responds with a clarification question, it does this with a number
 
 And if you want to specify a session identifier to allow NLI-GO to resolve back-references to earlier parts of the dialog, use `-s` with an identifier of your choice.     
 
-    bin/nli -c resources/helloworld -s 64152 "Hello World"    
+    bin/nli answer -a resources/helloworld -s 64152 "Hello World"    
     
+To reset the session, use
+
+    bin/nli reset -s 64152
+
 ## Trying it out
 
 If you want to experiment with NLI-GO, copy one of the application directories in `resources` and make changes to it.

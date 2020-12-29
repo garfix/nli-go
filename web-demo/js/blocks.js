@@ -14,8 +14,11 @@ $(function(){
     const optionsHeader = document.getElementById('options-header');
     const logBox = document.getElementById("log");
     const monitor = document.getElementById("monitor");
+    const resetButton = document.getElementById("reset");
+
     const displayWidth = Math.min(window.innerWidth, 600);
     const displayHeight = displayWidth / 2;
+
     const colors = {
         red: 0xc00000,
         green: 0x008000,
@@ -37,9 +40,12 @@ $(function(){
         };
 
         sampleButton.onclick = function (event) {
-            event.preventDefault();
             samplePopup.style.display = "block";
         };
+
+        resetButton.onclick = function () {
+            reset();
+        }
 
         form.onsubmit = function(){
             postQuestion(inputField.value);
@@ -61,8 +67,12 @@ $(function(){
     function showError(error) {
         let html = "";
 
-        for (let i = 0; i < error.length; i++) {
-            html += error[i] + "<br>";
+        if (Array.isArray(error)) {
+            for (let i = 0; i < error.length; i++) {
+                html += error[i] + "<br>";
+            }
+        } else {
+            html = error;
         }
 
         errorBox.innerHTML = html;
@@ -111,6 +121,19 @@ $(function(){
 
         productionBoxLeft.innerHTML = html['production-box-left'];
         productionBoxRight.innerHTML = html['production-box-right'];
+    }
+
+    function reset() {
+        $.ajax({
+            url: 'scene.php',
+            data: { format: "json", action: 'reset' },
+            dataType: 'json',
+            type: 'GET',
+            success: function () {
+console.log('x')
+                window.location.reload();
+            }
+        });
     }
 
     function postQuestion(question) {
@@ -176,7 +199,7 @@ $(function(){
     {
         $.ajax({
             url: 'scene.php',
-            data: { format: "json" },
+            data: { format: "json", action: "state" },
             dataType: 'json',
             type: 'GET',
             success: function (data) {

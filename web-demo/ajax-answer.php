@@ -16,7 +16,7 @@ $varDir = __DIR__ . '/../var';
 // query
 
 $start = microtime(true);
-$fullCommand = sprintf('%s -s %s -c %s -d %s -r json "%s"', $command, $sessionId, $configPath, $varDir, $query);
+$fullCommand = sprintf('%s answer -s %s -a %s -o %s -r json "%s"', $command, $sessionId, $configPath, $varDir, $query);
 exec($fullCommand, $output);
 $end = microtime(true);
 $duration = sprintf("%.2f", $end - $start);

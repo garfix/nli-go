@@ -74,7 +74,7 @@ body {
         max-width: 100%;
         height: 100%;
         font-family: arial, sans-serif;
-        overflow: auto;
+        overflow: hidden;
         background-color: black;
     }
 
@@ -91,6 +91,7 @@ body {
         #log {
             color: white;
             overflow: auto;
+            height: calc(100% - 500px);
         }
 
     #right {
@@ -109,15 +110,21 @@ body {
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background-color: #888888;
+    background-color: #e0e0ff;
     display: none;
     max-height: 100%;
     overflow: auto;
+    padding: 20px;
 }
 
 #samples li {
     cursor: pointer;
+    margin-bottom: 10px;
 }
+
+    #samples li:hover {
+        color: #c00000;
+    }
 
 #popup-header {
     position: relative;
@@ -139,7 +146,7 @@ body {
 }
 
 #popup a {
-    color: #0d25ff;
+    color: #0000c0;
     font-family: arial, sans-serif;
 }
 
@@ -157,7 +164,7 @@ body {
 #error-box {
     padding: 10px;
     font-size: 24px;
-    color: red;
+    color: #c00000;
 }
 
 #log {
@@ -166,12 +173,13 @@ body {
 
 #log h3 {
     cursor: pointer;
-}
-
-#log h3 {
     margin-top: 10px;
     margin-bottom: 0;
 }
+
+    #log h3:hover {
+        color: #c00000;
+    }
 
 @media only screen and (max-width: 600px) {
     #main, #header, #body, #footer, #left, #center, #right, #log {
@@ -187,6 +195,12 @@ body {
     margin: 10px 0 10px 0;
     font-size: 26px;
 }
+
+#reset, #show-samples {
+    padding: 5px;
+    font-size: 18px;
+}
+
 #submit-button {
     width: 90px;
     padding: 5px;

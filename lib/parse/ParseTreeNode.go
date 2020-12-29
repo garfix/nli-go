@@ -36,19 +36,24 @@ func (node ParseTreeNode) IndentedString(indent string) string {
 
 	body := ""
 
-	if node.form != "" {
-		body = indent + "+- " + node.category + " " + node.form + "\n"
-	} else {
-		for i, child := range node.constituents {
-			body += indent + "+- " + child.category + " " + "\n"
-			newIndent := indent
-			if i < len(node.constituents) - 1 {
-				newIndent += "|  "
-			} else {
-				newIndent += "   "
-			}
-			body += child.IndentedString(newIndent)
+	if indent == "" {
+		body = node.category + "\n"
+	}
+
+	for i, child := range node.constituents {
+		if child.form != "" {
+			body += indent + "+- " + child.category + " '" + child.form + "'\n"
+			continue
 		}
+
+		body += indent + "+- " + child.category + "\n"
+		newIndent := indent
+		if i < len(node.constituents) - 1 {
+			newIndent += "|  "
+		} else {
+			newIndent += "   "
+		}
+		body += child.IndentedString(newIndent)
 	}
 
 	return body

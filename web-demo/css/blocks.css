@@ -165,6 +165,10 @@ body {
 }
 
 #log h3 {
+    cursor: pointer;
+}
+
+#log h3 {
     margin-top: 10px;
     margin-bottom: 0;
 }

@@ -54,10 +54,17 @@ $(function(){
 
         let samples = document.querySelectorAll('#samples li');
         for (let i = 0; i < samples.length; i++) {
-            samples[i].onclick = function (element) {
-                let li = element.currentTarget;
+            samples[i].onclick = function (event) {
+                let li = event.target;
                 inputField.value = li.innerHTML;
                 samplePopup.style.display = "none";
+            }
+        }
+
+        logBox.onclick = function (event) {
+            let e = event.target;
+            if (e.tagName.toLowerCase() === "h3") {
+                inputField.value = e.innerHTML;
             }
         }
 
@@ -108,8 +115,8 @@ $(function(){
                 .replace(/'/g, "&#039;")
                 .replace(/\n/g, "<br>");
 
-            if (name === "Parse tree") {
-                value = value.replace(/ /g, "&nbsp;")
+            if (name === "Parse tree" || name === "Relations") {
+                value = value.replace(/  /g, "&nbsp;&nbsp;")
             }
 
             html[container] += "<h2>" + name + "</h2>" + "<p>" + value + "</p>";
@@ -130,8 +137,10 @@ $(function(){
             dataType: 'json',
             type: 'GET',
             success: function () {
-console.log('x')
                 window.location.reload();
+            },
+            error: function (request, status, error) {
+                showError(error)
             }
         });
     }

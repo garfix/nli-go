@@ -19,7 +19,7 @@ func NewDialogContextFileStorage(varDir string, log *common.SystemLog) *DialogCo
 	}
 }
 
-func (storage DialogContextFileStorage) Read(sessionId string, dialogContext *central.DialogContext, clearWhenCorrupt bool) {
+func (storage DialogContextFileStorage) Read(sessionId string, dialogContext *central.DialogContext) {
 
 	if sessionId == "" {
 		return
@@ -41,10 +41,8 @@ func (storage DialogContextFileStorage) Read(sessionId string, dialogContext *ce
 
 	err = json.Unmarshal([]byte(dialogContextJson), &dialogContext)
 	if err != nil {
-		if !clearWhenCorrupt {
-			storage.log.AddError("Error parsing YAML file " + dialogContextJson + " (" + err.Error() + ")")
-			return
-		}
+		dialogContext.Initialize()
+		return
 	}
 }
 

@@ -79,15 +79,15 @@ func TestBlocksWorld(t *testing.T) {
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/blocks", common.Dir() + "/../../var", log)
 	sessionId := "blocks-demo"
+	system := global.NewSystem(common.Dir() + "/../../resources/blocks", sessionId, common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
 		return
 	}
 
-	system.RemoveDialogContext(sessionId)
+	system.ClearDialogContext()
 
 	for _, session := range tests {
 
@@ -95,15 +95,11 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			system.PopulateDialogContext(sessionId, false)
-
 			answer, options := system.Answer(test.question)
 
 			if options.HasOptions() {
 				answer += options.String()
 			}
-
-			system.StoreDialogContext(sessionId)
 
 			if answer != test.answer {
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)

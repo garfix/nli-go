@@ -75,28 +75,28 @@ func main() {
 				showUsage()
 			}
 			system := buildSystem(log, workingDir, *answerApp, *answerSes, *answerOut)
-			answer(system, log, answerCmd.Arg(0), *answerSes, *answerRet)
+			answer(system, log, answerCmd.Arg(0), *answerRet)
 		case "inter":
 			interCmd.Parse(os.Args[2:])
 			if *interApp == "" {
 				showUsage()
 			}
 			system := buildSystem(log, workingDir, *interApp, *interSes, *interOut)
-			goInteractive(system, log, *interSes, *interApp)
+			goInteractive(system, log, *interApp)
 		case "query":
 			queryCmd.Parse(os.Args[2:])
 			if *queryApp == "" || queryCmd.Arg(0) == "" {
 				showUsage()
 			}
 			system := buildSystem(log, workingDir, *queryApp, *querySes, *queryOut)
-			performQuery(system, queryCmd.Arg(0), *querySes)
+			performQuery(system, queryCmd.Arg(0))
 		case "reset":
 			resetCmd.Parse(os.Args[2:])
 			if *resetApp == "" || *resetSes == "" {
 				showUsage()
 			}
 			system := buildSystem(log, workingDir, *resetApp, *resetSes, *resetOut)
-			resetDialog(system, *resetSes)
+			resetDialog(system)
 		default:
 			println("Unknown command: " + os.Args[1])
 		}
@@ -141,25 +141,15 @@ func buildSystem(log *common.SystemLog, workingDir string, applicationPath strin
 	outputDir, _ = filepath.Abs(outputDir)
 	outputDir = filepath.Clean(outputDir)
 
-	system := global.NewSystem(absApplicationPath, outputDir, log)
-
-	// load dialog context
-	if sessionId != "" {
-		system.PopulateDialogContext(sessionId, true)
-	}
+	system := global.NewSystem(absApplicationPath, sessionId, outputDir, log)
 
 	return system
 }
 
-func performQuery(system *global.System, query string, sessionId string)  {
+func performQuery(system *global.System, query string)  {
 
 	// the actual system call
 	bindings := system.Query(query)
-
-	// store dialog context for next call
-	if sessionId != "" {
-		system.StoreDialogContext(sessionId)
-	}
 
 	response := bindingsToJson(bindings) + "\n"
 
@@ -188,15 +178,10 @@ func bindingsToJson(set mentalese.BindingSet) string {
 	return string(responseRaw)
 }
 
-func answer(system *global.System, log *common.SystemLog, sentence string, sessionId string, returnType string) (string, *common.Options) {
+func answer(system *global.System, log *common.SystemLog, sentence string, returnType string) (string, *common.Options) {
 
 	// the actual system call
 	answer, options := system.Answer(sentence)
-
-	// store dialog context for next call
-	if sessionId != "" {
-		system.StoreDialogContext(sessionId)
-	}
 
 	response := createResponseString(log, answer, options, returnType)
 
@@ -205,7 +190,7 @@ func answer(system *global.System, log *common.SystemLog, sentence string, sessi
 	return answer, options
 }
 
-func goInteractive(system *global.System, log *common.SystemLog, sessionId string, configPath string) {
+func goInteractive(system *global.System, log *common.SystemLog, configPath string) {
 
 	sentence := ""
 	options := &common.Options{}
@@ -230,7 +215,7 @@ func goInteractive(system *global.System, log *common.SystemLog, sessionId strin
 			}
 		}
 
-		_, options = answer(system, log, sentence, sessionId, "text")
+		_, options = answer(system, log, sentence, "text")
 
 	}
 }
@@ -280,9 +265,6 @@ func createResponseString(log *common.SystemLog, answer string, options *common.
 	return response
 }
 
-func resetDialog(system *global.System, sessionId string) {
+func resetDialog(system *global.System) {
 	system.ClearDialogContext()
-	if sessionId != "" {
-		system.StoreDialogContext(sessionId)
-	}
 }

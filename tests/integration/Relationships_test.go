@@ -11,7 +11,7 @@ func TestRelationships(t *testing.T) {
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/relationships", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir() + "/../../resources/relationships", "", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

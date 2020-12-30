@@ -19,6 +19,7 @@ import (
 type systemBuilder struct {
 	log                *common.SystemLog
 	baseDir            string
+	sessionId		   string
 	varDir			   string
 	parser             *importer.InternalGrammarParser
 	loadedModules      []string
@@ -28,7 +29,7 @@ type systemBuilder struct {
 // systemDir: absolute base dir of the interaction system
 // cacheDir: absolute base dir of all output files
 // log: the log file that will store progress and errors
-func NewSystem(systemDir string, varDir string, log *common.SystemLog) *System {
+func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog) *System {
 
 	system := &System{ log: log }
 
@@ -38,19 +39,20 @@ func NewSystem(systemDir string, varDir string, log *common.SystemLog) *System {
 		return system
 	}
 
-	builder := newSystemBuilder(absolutePath, varDir, log)
+	builder := newSystemBuilder(absolutePath, sessionId, varDir, log)
 	builder.build(system)
 
 	return system
 }
 
-func newSystemBuilder(baseDir string, varDir string, log *common.SystemLog) *systemBuilder {
+func newSystemBuilder(baseDir string, sessionId string, varDir string, log *common.SystemLog) *systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
 	return &systemBuilder {
 		baseDir: baseDir,
+		sessionId: sessionId,
 		varDir:  varDir,
 		parser:  parser,
 		log:     log,
@@ -91,9 +93,14 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
 
+	system.sessionId = builder.sessionId
+
+	system.dialogContext = central.NewDialogContext()
+	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
+	system.dialogContextStorage.Read(system.sessionId, system.dialogContext)
+
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(builder.log)
-	system.dialogContext = central.NewDialogContext()
 	system.meta = mentalese.NewMeta()
 	system.internalGrammarParser = builder.parser
 
@@ -105,9 +112,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
-
 	system.solver = solver
-	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
+
 	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)

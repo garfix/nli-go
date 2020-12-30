@@ -35,13 +35,13 @@ func TestDBPedia(t *testing.T) {
 			{"What is the population of Iraq?", "37056169"},
 		},
 		{
-			{"Who married Michael Jackson?", "Which one? [dbpedia/http://dbpedia.org/resource/Mariléia_dos_Santos] person; description: Women's footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1980)] person; description: English footballer, born 1980 [dbpedia/http://dbpedia.org/resource/Michael_Jackson] person; description: American singer and dancer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(American_Revolution)] person; description: American revolutionary officer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(English_singer)] person; description: UK male singer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(TV_executive)] person; description: British television producer and executive [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(actor)] person; description: Canadian actor, grip and gaffer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(anthropologist)] person; description: New Zealand poet and anthropologist [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(basketball)] person; description: retired American professional basketball player [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(bishop)] person; description: Church of Ireland Archbishop of Dublin [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(journalist)] person; description: Niuean journalist and former politician [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(linebacker)] person; description: former professional American football player, born 1957 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(radio_commentator)] person; description: American talk radio host [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(rugby_league)] person; description: retired professional rugby league footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(wide_receiver)] person; description: former American professional football player, born 1969 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(writer)] person; description: English writer and journalist [dbpedia/http://dbpedia.org/resource/2000–01_Preston_North_End_F.C._season__Michael_Jackson__1] person [dbpedia/http://dbpedia.org/resource/2002–03_Swansea_City_A.F.C._season__Michael_Jackson__1] person [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1973)] person; description: retired English professional football defender, born 1973 [dbpedia/http://dbpedia.org/resource/1996–97_Bury_F.C._season__Michael_Jackson__1] person [dbpedia/http://dbpedia.org/resource/1996–97_Preston_North_End_F.C._season__Michael_Jackson__1] person [dbpedia/http://dbpedia.org/resource/Michael_A._Jackson] person; description: British computer scientist [dbpedia/http://dbpedia.org/resource/1999–2000_Preston_North_End_F.C._season__Michael_Jackson__1] person [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(engineer)] person"},
+			{"Who married Michael Jackson?", "Which one? [dbpedia/http://dbpedia.org/resource/Mariléia_dos_Santos] Women's footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1980)] English footballer, born 1980 [dbpedia/http://dbpedia.org/resource/Michael_Jackson] American singer and dancer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(American_Revolution)] American revolutionary officer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(English_singer)] UK male singer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(TV_executive)] British television producer and executive [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(actor)] Canadian actor, grip and gaffer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(anthropologist)] New Zealand poet and anthropologist [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(basketball)] retired American professional basketball player [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(bishop)] Church of Ireland Archbishop of Dublin [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(journalist)] Niuean journalist and former politician [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(linebacker)] former professional American football player, born 1957 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(radio_commentator)] American talk radio host [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(rugby_league)] retired professional rugby league footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(wide_receiver)] former American professional football player, born 1969 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(writer)] English writer and journalist [dbpedia/http://dbpedia.org/resource/2000–01_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/2002–03_Swansea_City_A.F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1973)] retired English professional football defender, born 1973 [dbpedia/http://dbpedia.org/resource/1996–97_Bury_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/1996–97_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_A._Jackson] British computer scientist [dbpedia/http://dbpedia.org/resource/1999–2000_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(engineer)] "},
 			{"dbpedia/http://dbpedia.org/resource/Michael_Jackson", "Lisa Marie Presley and Debbie Rowe married him"},
 			{"Was Michael Jackson married to Elvis Presley's daughter?", "Yes"},
 			{"Was Michael Jackson married to the daughter of Elvis Presley?", "Yes"},
 		},
 		{
-			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] person; description: English poet and a leading figure in the Romantic movement [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] person; description: Major League Baseball umpire"},
+			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] English poet and a leading figure in the Romantic movement [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] Major League Baseball umpire"},
 			{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 22, 1788"},
 			{"Who married Lord Byron?", "Anne Isabella Byron married him"},
 			{"How many children had Lord Byron?", "He has 2 children"}, // Ada and Allegra
@@ -64,15 +64,13 @@ func TestDBPedia(t *testing.T) {
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", common.Dir() + "/../../var", log)
 	sessionId := "dbpedia-demo"
+	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", sessionId, common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
 		return
 	}
-
-	system.RemoveDialogContext(sessionId)
 
 	for _, session := range tests {
 
@@ -82,15 +80,11 @@ func TestDBPedia(t *testing.T) {
 
 			log.Clear()
 
-			system.PopulateDialogContext(sessionId, false)
-
 			answer, options := system.Answer(test.question)
 
 			if options.HasOptions() {
 				answer += options.String()
 			}
-
-			system.StoreDialogContext(sessionId)
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

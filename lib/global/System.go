@@ -13,6 +13,7 @@ import (
 
 type System struct {
 	log                   *common.SystemLog
+	sessionId			  string
 	dialogContext         *central.DialogContext
 	dialogContextStorage  *DialogContextFileStorage
 	internalGrammarParser *importer.InternalGrammarParser
@@ -27,26 +28,14 @@ type System struct {
 	surfacer              *generate.SurfaceRepresentation
 }
 
-func (system *System) PopulateDialogContext(sessionId string, clearWhenCorrupt bool) {
-	system.dialogContextStorage.Read(sessionId, system.dialogContext, clearWhenCorrupt)
-}
-
-func (system *System) ClearDialogContext() {
-	system.dialogContext.Initialize()
-}
-
-func (system *System) StoreDialogContext(sessionId string) {
-	system.dialogContextStorage.Write(sessionId, system.dialogContext)
-}
-
-func (system *System) RemoveDialogContext(sessionId string) {
-	system.dialogContextStorage.Remove(sessionId)
-}
-
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	return system.solver.SolveRelationSet(set, mentalese.InitBindingSet( mentalese.NewBinding()))
+	result := system.solver.SolveRelationSet(set, mentalese.InitBindingSet( mentalese.NewBinding()))
+
+	system.dialogContextStorage.Write(system.sessionId, system.dialogContext)
+
+	return result
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {
@@ -55,7 +44,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	originalInput := system.dialogContext.Process(input)
 
 	// process it (again)
-	answer, options := system.Process(originalInput)
+	answer, options := system.process(originalInput)
 
 	// does the System ask the user a question?
 	if !options.HasOptions() {
@@ -63,10 +52,12 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		system.dialogContext.RemoveOriginalInput()
 	}
 
+	system.dialogContextStorage.Write(system.sessionId, system.dialogContext)
+
 	return answer, options
 }
 
-func (system *System) Process(originalInput string) (string, *common.Options) {
+func (system *System) process(originalInput string) (string, *common.Options) {
 
 	options := common.NewOptions()
 	sortFinder := central.NewSortFinder(system.meta)
@@ -197,4 +188,9 @@ func (system *System) Process(originalInput string) (string, *common.Options) {
 	}
 
 	return answer, options
+}
+
+func (system *System) ClearDialogContext() {
+	system.dialogContextStorage.Remove(system.sessionId)
+	system.dialogContext.Initialize()
 }

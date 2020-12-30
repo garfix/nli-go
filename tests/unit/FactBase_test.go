@@ -40,7 +40,7 @@ func TestFactBase(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 

@@ -31,7 +31,7 @@ func TestLocalVariables(t *testing.T) {
 		sibling(A, B) :- sibling(A, B);
 	`)
 	writeMap := []mentalese.Rule{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)

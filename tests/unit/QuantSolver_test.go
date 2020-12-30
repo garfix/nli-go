@@ -103,7 +103,7 @@ func TestQuantSolver(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 
-	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, nil, log)
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(central.NewRelationMatcher(log), dialogContext, log)

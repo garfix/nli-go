@@ -57,6 +57,15 @@ func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
 	return solver.scopeStack.GetCurrentScope()
 }
 
+func (solver *ProblemSolver) ResetSession() {
+	for _, factBase := range solver.index.factBases {
+		switch v := factBase.(type) {
+		case api.SessionBasedFactBase:
+			v.ResetSession()
+		}
+	}
+}
+
 // set e.g. [ father(X, Y) father(Y, Z) ]
 // bindings e.g. [{X: john, Z: jack} {}]
 // return e.g. [

@@ -42,7 +42,7 @@ func TestSolver(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 
 	dialogContext := central.NewDialogContext()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
@@ -128,7 +128,7 @@ func TestSolver(t *testing.T) {
 		link(A, B) :- link(A, B);
 	`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, nil, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, log)
 
 	solver2 := central.NewProblemSolver(matcher, dialogContext, log)
@@ -165,7 +165,7 @@ func TestMissingHandlerError(t *testing.T) {
 	readMap := []mentalese.Rule{}
 	writeMap := []mentalese.Rule{}
 	matcher := central.NewRelationMatcher(log)
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 
 	dialogContext := central.NewDialogContext()
 

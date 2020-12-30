@@ -8,25 +8,35 @@ import (
 
 type InMemoryFactBase struct {
 	KnowledgeBaseCore
+	originalFacts     mentalese.RelationSet
 	facts     mentalese.RelationSet
 	readMap   []mentalese.Rule
 	writeMap  []mentalese.Rule
 	entities  mentalese.Entities
 	sharedIds SharedIds
 	matcher   *central.RelationMatcher
+	storage *common.FileStorage
 	log       *common.SystemLog
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *InMemoryFactBase {
-	return &InMemoryFactBase{
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, storage *common.FileStorage, log *common.SystemLog) *InMemoryFactBase {
+	factBase := InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
-		facts:             facts,
+		originalFacts: 	   facts,
+		facts:             facts.Copy(),
 		readMap:           readMap,
 		writeMap:          writeMap,
 		sharedIds:         SharedIds{},
 		matcher:           matcher,
+		storage:           storage,
 		log:               log,
 	}
+
+	if storage != nil {
+		storage.Read(&factBase.facts)
+	}
+
+	return &factBase
 }
 
 func (factBase *InMemoryFactBase) GetReadMappings() []mentalese.Rule {
@@ -95,10 +105,26 @@ func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
 	}
 
 	factBase.facts = append(factBase.facts, relation)
+
+	factBase.persist()
 }
 
 func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
 	factBase.RemoveRelation(relation)
+
+	factBase.persist()
+}
+
+func (factBase *InMemoryFactBase) ResetSession() {
+	factBase.facts = factBase.originalFacts.Copy()
+
+	factBase.persist()
+}
+
+func (factBase *InMemoryFactBase) persist() {
+	if factBase.storage != nil {
+		factBase.storage.Write(factBase.facts)
+	}
 }
 
 // Removes all facts that match relation

@@ -184,7 +184,7 @@ func TestListFunctions(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
@@ -266,7 +266,7 @@ func TestQuantFunctions(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)

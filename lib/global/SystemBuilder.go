@@ -27,7 +27,7 @@ type systemBuilder struct {
 }
 
 // systemDir: absolute base dir of the interaction system
-// cacheDir: absolute base dir of all output files
+// outputDir: absolute base dir of all output files
 // log: the log file that will store progress and errors
 func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog) *System {
 
@@ -524,7 +524,14 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 	readMap := builder.buildReadMap(index, baseDir)
 	writeMap := builder.buildWriteMap(index, baseDir)
 
-	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, builder.log)
+	storageType := index.StorageType
+
+	if storageType == "" {
+		storageType = common.StorageNone
+	}
+
+	storage := common.NewFileStorage(builder.varDir + "/db", builder.sessionId, storageType, applicationAlias, system.log)
+	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, storage, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {

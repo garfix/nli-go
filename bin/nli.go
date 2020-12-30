@@ -96,7 +96,7 @@ func main() {
 				showUsage()
 			}
 			system := buildSystem(log, workingDir, *resetApp, *resetSes, *resetOut)
-			resetDialog(system)
+			resetSession(system)
 		default:
 			println("Unknown command: " + os.Args[1])
 		}
@@ -265,6 +265,6 @@ func createResponseString(log *common.SystemLog, answer string, options *common.
 	return response
 }
 
-func resetDialog(system *global.System) {
-	system.ClearDialogContext()
+func resetSession(system *global.System) {
+	system.ResetSession()
 }

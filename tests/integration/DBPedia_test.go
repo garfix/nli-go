@@ -73,7 +73,7 @@ func TestDBPedia(t *testing.T) {
 
 	for _, session := range tests {
 
-		system.ClearDialogContext()
+		system.ResetSession()
 
 		for _, test := range session {
 

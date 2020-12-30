@@ -12,6 +12,7 @@ type index struct {
 	Shared          []string
 	BaseUrl         string
 	DefaultGraphUri string
+	StorageType     string
 	Names           string
 	Cache           bool
 	Database        string

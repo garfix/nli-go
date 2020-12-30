@@ -1,6 +1,7 @@
 type: db/internal
 version: 1.0.0
 facts: [ blocks.relation ]
+storagetype: session
 read: [ read.map ]
 write: [ write.map ]
 uses:

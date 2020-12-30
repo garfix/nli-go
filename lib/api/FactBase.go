@@ -13,3 +13,7 @@ type FactBase interface {
 	GetLocalId(sharedId string, sort string) string
 	GetSharedId(localId string, sort string) string
 }
+
+type SessionBasedFactBase interface {
+	ResetSession()
+}

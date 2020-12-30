@@ -86,7 +86,7 @@ func TestBlocksWorld(t *testing.T) {
 		return
 	}
 
-	system.ClearDialogContext()
+	system.ResetSession()
 
 	for _, session := range tests {
 

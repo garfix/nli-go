@@ -190,7 +190,9 @@ func (system *System) process(originalInput string) (string, *common.Options) {
 	return answer, options
 }
 
-func (system *System) ClearDialogContext() {
+func (system *System) ResetSession() {
 	system.dialogContextStorage.Remove(system.sessionId)
 	system.dialogContext.Initialize()
+
+	system.solver.ResetSession()
 }

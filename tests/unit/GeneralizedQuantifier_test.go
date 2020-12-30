@@ -54,7 +54,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	dialogContext := central.NewDialogContext()
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
-	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, log)
+	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)

@@ -119,7 +119,7 @@ $(function(){
                 value = value.replace(/  /g, "&nbsp;&nbsp;")
             }
 
-            html[container] += "<h2>" + name + "</h2>" + "<p>" + value + "</p>";
+            html[container] += "<div class='card'><h2>" + name + "</h2>" + "<p>" + value + "</p></div>";
 
             if (name === "Parse tree") {
                 container = 'production-box-right';

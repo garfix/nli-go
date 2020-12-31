@@ -44,7 +44,7 @@ func TestSolver(t *testing.T) {
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)
 
@@ -167,7 +167,7 @@ func TestMissingHandlerError(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	solver.AddFactBase(factBase)

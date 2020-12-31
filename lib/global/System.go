@@ -13,9 +13,7 @@ import (
 
 type System struct {
 	log                   *common.SystemLog
-	sessionId			  string
 	dialogContext         *central.DialogContext
-	dialogContextStorage  *DialogContextFileStorage
 	internalGrammarParser *importer.InternalGrammarParser
 	nameResolver          *central.NameResolver
 	grammars              []parse.Grammar
@@ -33,7 +31,7 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
 	result := system.solver.SolveRelationSet(set, mentalese.InitBindingSet( mentalese.NewBinding()))
 
-	system.dialogContextStorage.Write(system.sessionId, system.dialogContext)
+	system.dialogContext.Store()
 
 	return result
 }
@@ -52,7 +50,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		system.dialogContext.RemoveOriginalInput()
 	}
 
-	system.dialogContextStorage.Write(system.sessionId, system.dialogContext)
+	system.dialogContext.Store()
 
 	return answer, options
 }
@@ -191,8 +189,8 @@ func (system *System) process(originalInput string) (string, *common.Options) {
 }
 
 func (system *System) ResetSession() {
-	system.dialogContextStorage.Remove(system.sessionId)
 	system.dialogContext.Initialize()
+	system.dialogContext.Store()
 
 	system.solver.ResetSession()
 }

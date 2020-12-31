@@ -59,6 +59,10 @@ func newSystemBuilder(baseDir string, sessionId string, varDir string, log *comm
 	}
 }
 
+func (builder *systemBuilder) getSystemName() string {
+	return filepath.Base(builder.baseDir)
+}
+
 func (builder *systemBuilder) build(system *System) {
 
 	indexes, ok := builder.readIndexes()
@@ -93,11 +97,9 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
 
-	system.sessionId = builder.sessionId
-
-	system.dialogContext = central.NewDialogContext()
-	system.dialogContextStorage = NewDialogContextFileStorage(builder.varDir + "/session", builder.log)
-	system.dialogContextStorage.Read(system.sessionId, system.dialogContext)
+	path := builder.varDir + "/" + builder.getSystemName() + "/session"
+	storage := common.NewFileStorage(path, builder.sessionId, common.StorageSession, "session", system.log)
+	system.dialogContext = central.NewDialogContext(storage)
 
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(builder.log)
@@ -530,7 +532,8 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 		storageType = common.StorageNone
 	}
 
-	storage := common.NewFileStorage(builder.varDir + "/db", builder.sessionId, storageType, applicationAlias, system.log)
+	path := builder.varDir + "/" + builder.getSystemName() + "/database"
+	storage := common.NewFileStorage(path, builder.sessionId, storageType, applicationAlias, system.log)
 	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, storage, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)

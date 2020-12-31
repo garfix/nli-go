@@ -1,3 +1,7 @@
+## 2020-12-30
+
+Internal database data can now be persisted to file, per session, or globally.
+
 ## 2020-12-29
 
 Working on a demo for the blocks world.

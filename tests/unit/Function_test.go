@@ -14,7 +14,7 @@ func TestFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
-	context := central.NewDialogContext()
+	context := central.NewDialogContext(nil)
 	matcher := central.NewRelationMatcher(log)
 	solver := central.NewProblemSolver(matcher, context, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
@@ -68,7 +68,7 @@ func TestFunctions(t *testing.T) {
 func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
-	context := central.NewDialogContext()
+	context := central.NewDialogContext(nil)
 	matcher := central.NewRelationMatcher(log)
 	solver := central.NewProblemSolver(matcher, context, log)
 	multiBindingBase := knowledge.NewSystemMultiBindingBase("name", log)
@@ -122,7 +122,7 @@ func TestControlFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
@@ -165,7 +165,7 @@ func TestListFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
@@ -244,7 +244,7 @@ func TestQuantFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 

@@ -51,7 +51,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext()
+	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolver(matcher, dialogContext, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, nil, log)

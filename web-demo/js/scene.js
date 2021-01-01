@@ -18,16 +18,30 @@ let createScene = function() {
             const scene = new THREE.Scene();
             var camera = new THREE.OrthographicCamera( -10, 10, 5, -5, 0, 1000 );
 
-            const group = new THREE.Group();
+            var alpha = Math.PI / 6; // or Math.PI / 4
+
+            var Syx = 0,
+                Szx = - 0.5 * Math.cos( alpha ),
+                Sxy = 0,
+                Szy = - 0.5 * Math.sin( alpha ),
+                Sxz = 0,
+                Syz = 0;
+
+            var matrix = new THREE.Matrix4();
+
+            matrix.set(   1,   Syx,  Szx,  0,
+                Sxy,     1,  Szy,  0,
+                Sxz,   Syz,   1,   0,
+                0,     0,   0,   1  );
+
+            camera.projectionMatrix.multiply(matrix);
+            camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 
             for (let i = 0; i < data.length; i++) {
                 let datum = data[i];
                 let object = this.createObject(datum);
-                group.add(this.createEdges(object))
-                group.add(object);
+                scene.add(object);
             }
-
-            scene.add( group );
 
             camera.position.set(8, 4.5, 0);
             const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -63,10 +77,10 @@ let createScene = function() {
 
             var matrix = new THREE.Matrix4();
 
-            matrix.set(   1,   Syx,  Szx,  0,
-                Sxy,     1,  Szy,  0,
-                Sxz,   Syz,   1,   0,
-                0,     0,   0,   1  );
+            matrix.set(1, Syx, Szx,0,
+                Sxy,1,  Szy,0,
+                Sxz, Syz,1,0,
+                0,0,0,1 );
 
             mesh.geometry.applyMatrix4(matrix);
         },
@@ -107,11 +121,11 @@ let createScene = function() {
             let h = (datum.Height / scale);
 
             geometry.vertices = [
-                new THREE.Vector3( x + 0, y + 0, z + 0 ),
-                new THREE.Vector3( x + w, y + 0, z + 0 ),
-                new THREE.Vector3( x + w, y + 0, z + l ),
-                new THREE.Vector3( x + 0, y + 0, z + l ),
-                new THREE.Vector3( x + 0.5 * w, y + h, z + 0.5 * l )
+                new THREE.Vector3(  0, 0, 0 ),
+                new THREE.Vector3( w, 0, 0 ),
+                new THREE.Vector3( w, 0, l ),
+                new THREE.Vector3( 0, 0, l ),
+                new THREE.Vector3( 0.5 * w, h, 0.5 * l )
             ];
 
             geometry.faces = [
@@ -125,8 +139,19 @@ let createScene = function() {
 
             let material = new THREE.MeshBasicMaterial( {color: colors[datum.Color] , wireframe:false, transparent: true, opacity: opacity} );
             let object = new THREE.Mesh( geometry, material );
-            this.skew(object)
-            return object;
+
+            let group = new THREE.Group();
+
+            group.add(object);
+
+            let edges = this.createEdges(object)
+            group.add(edges)
+
+            group.position.x = x
+            group.position.y = y
+            group.position.z = z
+
+            return group;
         },
 
         createBlock: function(datum)
@@ -141,15 +166,15 @@ let createScene = function() {
             let h = ((datum.Height ? datum.Height : 0.01) / scale);
 
             geometry.vertices = [
-                new THREE.Vector3( x + 0, y + 0, z + 0 ),
-                new THREE.Vector3( x + w, y + 0, z + 0 ),
-                new THREE.Vector3( x + w, y + 0, z + l ),
-                new THREE.Vector3( x + 0, y + 0, z + l ),
+                new THREE.Vector3( 0, 0, 0 ),
+                new THREE.Vector3( w, 0, 0 ),
+                new THREE.Vector3( w, 0, l ),
+                new THREE.Vector3( 0, 0, l ),
 
-                new THREE.Vector3( x + 0, y + h, z + 0 ),
-                new THREE.Vector3( x + w, y + h, z + 0 ),
-                new THREE.Vector3( x + w, y + h, z + l ),
-                new THREE.Vector3( x + 0, y + h, z + l ),
+                new THREE.Vector3( 0, h, 0 ),
+                new THREE.Vector3( w, h, 0 ),
+                new THREE.Vector3( w, h, l ),
+                new THREE.Vector3( 0, h, l ),
             ];
 
             geometry.faces = [
@@ -173,11 +198,19 @@ let createScene = function() {
             ];
 
             let blockOpacity = datum.Type === "box" ? boxOpacity : opacity;
-
             let material = new THREE.MeshBasicMaterial( {color: colors[datum.Color] , wireframe:false, transparent: true, opacity: blockOpacity} );
             let object = new THREE.Mesh( geometry, material );
-            this.skew(object)
-            return object;
+            let edges = this.createEdges(object)
+
+            let group = new THREE.Group();
+            group.add(object);
+            group.add(edges)
+
+            group.position.x = x
+            group.position.y = y
+            group.position.z = z
+
+            return group;
         }
     }
 };

@@ -58,7 +58,7 @@ $(function(){
             }
         }
 
-        updateScene()
+        updateScene(true)
     }
 
     function showError(error) {
@@ -147,7 +147,7 @@ $(function(){
                     showAnswer(data.Answer);
                     clearInput();
                     log(question, data.Answer)
-                    updateScene()
+                    updateScene(false)
                 } else {
                     showAnswer("");
                 }
@@ -194,7 +194,7 @@ $(function(){
         logBox.innerHTML = html + logBox.innerHTML;
     }
 
-    function updateScene()
+    function updateScene(initial)
     {
         $.ajax({
             url: 'scene.php',
@@ -202,7 +202,11 @@ $(function(){
             dataType: 'json',
             type: 'GET',
             success: function (data) {
-                scene.build(data, displayWidth, displayHeight)
+                if (initial) {
+                    scene.build(data, displayWidth, displayHeight)
+                } else {
+                    scene.update(data)
+                }
             },
             error: function (request, status, error) {
                 showError(error)

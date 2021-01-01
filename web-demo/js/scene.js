@@ -12,39 +12,25 @@ let createScene = function() {
     const opacity = 0.9;
     const boxOpacity = 0.4;
 
+    let scene = null;
+    let camera = null;
+    let renderer = null;
+    let objects = {}
+
     return {
         build: function(data, displayWidth, displayHeight)
         {
-            const scene = new THREE.Scene();
-            var camera = new THREE.OrthographicCamera( -10, 10, 5, -5, 0, 1000 );
-
-            var alpha = Math.PI / 6; // or Math.PI / 4
-
-            var Syx = 0,
-                Szx = - 0.5 * Math.cos( alpha ),
-                Sxy = 0,
-                Szy = - 0.5 * Math.sin( alpha ),
-                Sxz = 0,
-                Syz = 0;
-
-            var matrix = new THREE.Matrix4();
-
-            matrix.set(   1,   Syx,  Szx,  0,
-                Sxy,     1,  Szy,  0,
-                Sxz,   Syz,   1,   0,
-                0,     0,   0,   1  );
-
-            camera.projectionMatrix.multiply(matrix);
-            camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
+            scene = new THREE.Scene();
+            camera = this.createCamera();
 
             for (let i = 0; i < data.length; i++) {
                 let datum = data[i];
                 let object = this.createObject(datum);
+                objects[datum.E] = object
                 scene.add(object);
             }
 
-            camera.position.set(8, 4.5, 0);
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(displayWidth, displayHeight);
 
             monitor.innerHTML = "";
@@ -53,19 +39,24 @@ let createScene = function() {
             renderer.render( scene, camera );
         },
 
+        update: function(data) {
+            for (let i = 0; i < data.length; i++) {
+                let datum = data[i];
+                let x = (datum.X / scale);
+                let y = (datum.Y / scale);
+                let z = -(datum.Z / scale);
+                let object = objects[datum.E]
+                object.position.set(x, y, z);
+            }
 
-        // https://stackoverflow.com/questions/36472653/drawing-edges-of-a-mesh-in-three-js
-        createEdges: function(mesh)
-        {
-            var geometry = new THREE.EdgesGeometry( mesh.geometry );
-            var material = new THREE.LineBasicMaterial( { color: 0xf0f0f0 } );
-
-            return new THREE.LineSegments( geometry, material );
+            renderer.render( scene, camera );
         },
 
         // https://stackoverflow.com/questions/26021618/how-can-i-create-an-axonometric-oblique-cavalier-cabinet-with-threejs
-        skew: function(mesh)
-        {
+        createCamera() {
+            var camera = new THREE.OrthographicCamera( -10, 10, 5, -5, 0, 1000 );
+            var matrix = new THREE.Matrix4();
+
             var alpha = Math.PI / 6;
 
             var Syx = 0,
@@ -75,14 +66,22 @@ let createScene = function() {
                 Sxz = 0,
                 Syz = 0;
 
-            var matrix = new THREE.Matrix4();
+            matrix.set(1, Syx, Szx,0, Sxy,1, Szy,0, Sxz, Syz,1,0,0,0,0,1);
 
-            matrix.set(1, Syx, Szx,0,
-                Sxy,1,  Szy,0,
-                Sxz, Syz,1,0,
-                0,0,0,1 );
+            camera.projectionMatrix.multiply(matrix);
+            camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
+            camera.position.set(8, 4.5, 0);
 
-            mesh.geometry.applyMatrix4(matrix);
+            return camera;
+        },
+
+        // https://stackoverflow.com/questions/36472653/drawing-edges-of-a-mesh-in-three-js
+        createEdges: function(mesh)
+        {
+            var geometry = new THREE.EdgesGeometry( mesh.geometry );
+            var material = new THREE.LineBasicMaterial( { color: 0xf0f0f0 } );
+
+            return new THREE.LineSegments( geometry, material );
         },
 
         createObject: function(datum)
@@ -103,7 +102,6 @@ let createScene = function() {
             const geometry = new THREE.BoxGeometry( 1, 1, 1 );
             const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
             const cube = new THREE.Mesh( geometry, material );
-            this.skew(cube);
             group.add( cube );
 
             return group;
@@ -147,9 +145,7 @@ let createScene = function() {
             let edges = this.createEdges(object)
             group.add(edges)
 
-            group.position.x = x
-            group.position.y = y
-            group.position.z = z
+            group.position.set(x, y, z);
 
             return group;
         },
@@ -206,9 +202,7 @@ let createScene = function() {
             group.add(object);
             group.add(edges)
 
-            group.position.x = x
-            group.position.y = y
-            group.position.z = z
+            group.position.set(x, y, z);
 
             return group;
         }

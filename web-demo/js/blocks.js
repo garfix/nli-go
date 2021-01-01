@@ -203,7 +203,7 @@ $(function(){
             type: 'GET',
             success: function (data) {
                 if (initial) {
-                    scene.build(data, displayWidth, displayHeight)
+                    scene.build(monitor, data, displayWidth, displayHeight)
                 } else {
                     scene.update(data)
                 }

@@ -1,7 +1,3 @@
-/* move an object */
-do_move(E1, X, Y, Z) :-
-    do_pick_up(E1)
-    do_put_down(E1, X, Y, Z);
 
 /* move the hand */
 do_move_hand(X, Y, Z) :- db_hand(X, Y, Z);
@@ -37,6 +33,11 @@ top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1) :-
     size(E1, Width, Length, Height)
     go:divide(Width, 2, Wh) go:divide(Length, 2, Lh)
     go:subtract(X, Wh, X1) go:subtract(Y, Lh, Y1) go:subtract(Z, Height, Z1);
+
+bottom_corner_to_top_center(E1, X, Y, Z, X1, Y1, Z1) :-
+    size(E1, Width, Length, Height)
+    go:divide(Width, 2, Wh) go:divide(Length, 2, Lh)
+    go:add(X, Wh, X1) go:add(Y, Lh, Y1) go:add(Z, Height, Z1);
 
 do_find_space_on_table(E1, X1, Y1) :-
     do_find_free_space(`table:table`, E1, X1, Y1);

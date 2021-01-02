@@ -3,6 +3,7 @@ version: 1.0.0
 sorts: sorts.yml
 rules:
   - sentence.rule
+  - commands.rule
   - helper.rule
   - relations.rule
   - db.rule

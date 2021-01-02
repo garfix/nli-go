@@ -1,6 +1,8 @@
 # NLI-GO
 
-NLI-GO is a semantic parser and execution engine in the form of an executable program, written in Go, that provides a Natural Language Interface to databases. It allows the user to interact with a computer system using natural language like English or French. 
+This is a research project with the following purpose: create a programming environment for a regular programmer who is not trained in linguistics to program a computer to respond to natural language. It aims to make this environment both as simple to use and as expressive as possible. 
+
+Its product is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French. 
  
 It is a rule based system that requires the developer to write rules by hand. Thus, the developer has full control over the behaviour of the system. Its semantics are not functional, but procedural.
 

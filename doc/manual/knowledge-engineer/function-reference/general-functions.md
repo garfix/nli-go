@@ -166,6 +166,16 @@ Multiplies two numbers `N1` and `N2` and places the result in `Product`. If `Pro
 * `N2`: a number
 * `Product`: a variable (to contain a number) or a number
 
+## divide
+
+Divides two numbers `N1` and `N2` and places the result in `Result`.
+
+    go:divide(N1, N2, Result)
+
+* `N1`: a number
+* `N2`: a number
+* `Result`: a variable (to contain a number) or a number
+
 ## min
 
 Sets `Min` to the smallest of `N1` and `N2.  

@@ -41,6 +41,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateAdd: base.add,
 		mentalese.PredicateSubtract: base.subtract,
 		mentalese.PredicateMultiply: base.multiply,
+		mentalese.PredicateDivide: base.divide,
 		mentalese.PredicateMin: base.min,
 		mentalese.PredicateDateToday: base.dateToday,
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
@@ -228,6 +229,25 @@ func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding menta
 	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
 
 	result := int1 * int2
+
+	newBinding := binding.Copy()
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
+
+	return newBinding, true
+}
+
+func (base *SystemFunctionBase) divide(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ii*", base.log) {
+		return mentalese.NewBinding(), false
+	}
+
+	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
+	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+
+	result := int1 / int2
 
 	newBinding := binding.Copy()
 	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))

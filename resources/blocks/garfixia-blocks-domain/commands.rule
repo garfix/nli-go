@@ -1,0 +1,32 @@
+/* these command presume that the hand is free and that the block to be moved has no objects on top of it */
+/* the hand grasps an object at its center top and moves it on top of the center of another object */
+
+/* these commands make sure the following relations stay in tact */
+/* contain() support() cleartop() at() */
+
+/* pick up E1 and hold it in the hand */
+do_pick_up(E1) :-
+    top_center(E1, X, Y, Z)
+    do_move_hand(X, Y, Z)
+    db_grasp(E1)
+    do_raise_hand(_)
+    db_unsupport(_, E1)
+    db_memo(pick_up(123, `:shrdlu`, E1));
+
+do_put_down(E1, X, Y, Z) :-
+    do_move_hand(X, Y, Z)
+    db_release(E1);
+
+do_put_on(E1, E2) :-
+    at(E2, X, Y, Z)
+    height(E2, H)
+    go:add(Z, H, Z1)
+    do_move(E1, X, Y, Z1)
+    db_support(E2, E1)
+    db_hidetop(E2);
+
+do_put_in(E1, E2) :-
+    at(E2, _, _, Z)
+    do_find_free_space(E2, E1, X, Y)
+    do_move(E1, X, Y, Z)
+    db_contain(E2, E1);

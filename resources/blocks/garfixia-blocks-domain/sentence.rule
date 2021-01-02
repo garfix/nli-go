@@ -1,4 +1,7 @@
-/* these commands need to be robust; they must clear up any previous state of holding a block */
+/* these commands are robust:
+ * - the hand is made empty
+ * - objects on top of the objects in focus are removed
+ */
 
 /* make sure the following relations stay in tact */
 /* contain() support() cleartop() at() */

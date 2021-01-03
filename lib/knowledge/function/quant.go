@@ -122,7 +122,7 @@ func unique(values []mentalese.Term) []mentalese.Term {
 	uniq := []mentalese.Term{}
 
 	for i := 0; i < len(values); i++ {
-		value := values[i].TermValue
+		value := values[i]
 		if !containsId(uniq, value) {
 			uniq = append(uniq, values[i])
 		}
@@ -131,9 +131,9 @@ func unique(values []mentalese.Term) []mentalese.Term {
 	return uniq
 }
 
-func containsId(values []mentalese.Term, value string) bool {
+func containsId(values []mentalese.Term, value mentalese.Term) bool {
 	for i := 0; i < len(values); i++ {
-		if values[i].TermValue == value {
+		if values[i].Equals(value) {
 			return true
 		}
 	}
@@ -152,7 +152,7 @@ func (base *SystemSolverFunctionBase) applyQuantifierForOr(leftQuant mentalese.R
 
 	for i := 0; i < len(orderedValues); i++ {
 		value := orderedValues[i]
-		if containsId(leftValues, value.TermValue) {
+		if containsId(leftValues, value) {
 			leftScopeCount++
 			selectedLeftIds = append(selectedLeftIds, value)
 			if leftQuant.Predicate != mentalese.PredicateQuant {
@@ -165,7 +165,7 @@ func (base *SystemSolverFunctionBase) applyQuantifierForOr(leftQuant mentalese.R
 				break
 			}
 		}
-		if containsId(rightValues, value.TermValue) {
+		if containsId(rightValues, value) {
 			rightScopeCount++
 			selectedRightIds = append(selectedRightIds, value)
 			if rightQuant.Predicate != mentalese.PredicateQuant {
@@ -195,9 +195,8 @@ func (base *SystemSolverFunctionBase) applyQuantifierForAnd(leftQuant mentalese.
 
 	for i := 0; i < len(orderedValues); i++ {
 		term := orderedValues[i]
-		value := term.TermValue
 		if !leftDone {
-			if containsId(leftValues, value) {
+			if containsId(leftValues, term) {
 				selectedIds = append(selectedIds, term)
 				leftScopeCount++
 				if leftQuant.Predicate != mentalese.PredicateQuant {
@@ -211,7 +210,7 @@ func (base *SystemSolverFunctionBase) applyQuantifierForAnd(leftQuant mentalese.
 			}
 		}
 		if !rightDone {
-			if containsId(rightValues, value) {
+			if containsId(rightValues, term) {
 				selectedIds = append(selectedIds, term)
 				rightScopeCount++
 				if rightQuant.Predicate != mentalese.PredicateQuant {
@@ -233,7 +232,7 @@ func (base *SystemSolverFunctionBase) applyQuantifierForAnd(leftQuant mentalese.
 func (base *SystemSolverFunctionBase) applyQuantifier(quant mentalese.Relation, rangeValues []mentalese.Term) []mentalese.Term {
 	rangeCount := len(rangeValues)
 	scopeCount := 0
-	for i := 0; i < rangeCount; i++ {
+	for i := 0; i <= rangeCount; i++ {
 		ok := base.tryQuantifier(quant, rangeCount, i, true)
 		if ok {
 			scopeCount = i

@@ -53,6 +53,19 @@ func (base *SystemSolverFunctionBase) call(relation mentalese.Relation, binding 
 	return newBindings
 }
 
+func (base *SystemSolverFunctionBase) ignore(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	child := relation.Arguments[0].TermValueRelationSet
+
+	newBindings := base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
+
+	if newBindings.IsEmpty() {
+		return mentalese.InitBindingSet(binding)
+	} else {
+		return newBindings
+	}
+}
+
 func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

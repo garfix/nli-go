@@ -1,10 +1,19 @@
+/*
+
+Database
+
+Contains all retracts and asserts, and nothing more.
+
+*/
+
 db_memo(P1) :- go:assert(P1);
 db_contain(A, B) :- go:assert(contain(123, A, B));
+db_uncontain(A, B) :- go:retract(contain(_, A, B));
 db_hand(X, Y, Z) :- go:retract(at(`:hand`, _, _, _)) go:assert(at(`:hand`, X, Y, Z));
 db_object(E, X, Y, Z) :- go:retract(at(E, _, _, _)) go:assert(at(E, X, Y, Z));
 db_grasp(X) :- go:retract(grasping(_, _)) go:assert(grasping(`:shrdlu`, X));
 db_release(E1) :- go:retract(grasping(_, _));
 db_cleartop(E1) :- go:assert(cleartop(E1));
-db_hidetop(E1) :- go:retract(cleartop(E1));
+db_uncleartop(E1) :- go:retract(cleartop(E1));
 db_support(E1, E2) :- go:assert(support(123, E1, E2));
 db_unsupport(E1, E2) :- go:retract(support(_, E1, E2));

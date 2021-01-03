@@ -1,0 +1,66 @@
+/*
+
+Physics rules
+
+Enforces "physics" rules: it updates the object-object relations and object properties that should change when an object is moved.
+
+*/
+
+/* move the hand */
+phys_move_hand(X, Y, Z) :- db_hand(X, Y, Z);
+phys_move_hand(X, Y, Z) :- phys_drag_grasped_object(X, Y, Z);
+
+phys_drag_grasped_object(X, Y, Z) :-
+    grasping(`:shrdlu`, E1)
+    top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
+    phys_move_object(E1, X1, Y1, Z1);
+
+phys_grasp(E1) :- db_grasp(E1);
+phys_release(E1) :- db_release(E1);
+
+phys_raise_hand(_) :- at(`:hand`, X, Y, Z) phys_move_hand(X, Y, 600);
+
+phys_move_object(E1, X, Y, Z) :-
+    go:call(db_unsupport(_, E1))
+    go:call(db_uncontain(_, E1))
+    db_cleartop(E1)
+    db_object(E1, X, Y, Z)
+    go:ignore(phys_create_support_relations(E1))
+    go:ignore(phys_create_contain_relations(E1))
+;
+
+phys_create_support_relations(E1) :-
+    at(E1, Left1, Front1, Bottom1)
+    at(E2, Left2, Front2, Bottom2)
+    size(E2, Width2, Length2, Height2)
+    go:add(Bottom2, Height2, Top2)
+    go:equals(Top2, Bottom1)                       /* main check, as early as possible */
+    size(E1, Width1, Length1, Height1)
+    go:add(Left1, Width1, Right1)
+    go:add(Front1, Length1, Back1)
+    go:add(Left2, Width2, Right2)
+    go:add(Front2, Length2, Back2)
+    go:less_than_equals(Left2, Right1)
+    go:greater_than_equals(Right2, Left1)
+    go:less_than_equals(Front2, Back1)
+    go:greater_than_equals(Back2, Front1)
+    db_support(E2, E1)
+    db_uncleartop(E2)
+;
+
+phys_create_contain_relations(E1) :-
+    at(E1, Left1, Front1, Bottom1)
+    at(E2, Left2, Front2, Bottom2)
+    go:equals(Bottom2, Bottom1)                       /* main check, as early as possible */
+    size(E1, Width1, Length1, Height1)
+    size(E2, Width2, Length2, Height2)
+    go:add(Left1, Width1, Right1)
+    go:add(Front1, Length1, Back1)
+    go:add(Left2, Width2, Right2)
+    go:add(Front2, Length2, Back2)
+    go:less_than_equals(Left2, Left1)
+    go:greater_than_equals(Right2, Right1)
+    go:less_than_equals(Front2, Front1)
+    go:greater_than_equals(Back2, Back1)
+    db_contain(E2, E1)
+;

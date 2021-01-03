@@ -4,7 +4,7 @@
  */
 
 /* make sure the following relations stay in tact */
-/* contain() support() cleartop() at() */
+/* contain() support() at() */
 
 /* after making sure you can, pick up an object and hold it in the hand */
 do_pick_up_smart(P1, E1) :-
@@ -32,14 +32,15 @@ do_stack_up_smart(P1, QBlocks) :-
     stack_up_proper(SortedList, X, Y);
 
 stack_up_proper(List1, X, Y) :-
+    go:let(Base, `table:table`)
     go:list_foreach(List1, E1,
         do_cleartop(E1)
         go:if_then_else(
-            at(Base, X, Y, _) cleartop(Base), /* find the topmost object on the stack */
-            block(Base)
-            do_put_on(E1, Base),
-            block(E1) do_put_on_table(E1, X, Y)
+            go:equals(Base, `table:table`),
+            block(E1) do_put_on_table(E1, X, Y),
+            block(Base) go:unify(B1, Base) do_put_on(E1, B1)
         )
+        go:let(Base, E1)
     );
 
 by_easiness(E1, E2, R) :-
@@ -55,15 +56,25 @@ by_easiness(E1, E2, R) :-
 
 /* Order decreasingly by width or depth */
 by_size(E1, E2, R) :-
-    size(E1, Width1, Depth1, _)
-    size(E2, Width2, Depth2, _)
     go:if_then_else(
-        go:equals(Width1, Width2),
-        go:compare(Depth2, Depth1, R),
+        pyramid(E1),
+        go:unify(R, 1),
+
         go:if_then_else(
-            go:equals(Depth1, Depth2),
-            go:compare(Width2, Width1, R),
-            go:min(Width1, Depth1, Min1) go:min(Width2, Depth2, Min2) go:compare(Min2, Min1, R)
+            pyramid(E2),
+            go:unify(R, -1),
+
+            size(E1, Width1, Depth1, _)
+            size(E2, Width2, Depth2, _)
+            go:if_then_else(
+                go:equals(Width1, Width2),
+                go:compare(Depth2, Depth1, R),
+                go:if_then_else(
+                    go:equals(Depth1, Depth2),
+                    go:compare(Width2, Width1, R),
+                    go:min(Width1, Depth1, Min1) go:min(Width2, Depth2, Min2) go:compare(Min2, Min1, R)
+                )
+            )
         )
     );
 

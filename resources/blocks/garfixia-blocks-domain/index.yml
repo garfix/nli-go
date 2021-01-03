@@ -6,6 +6,7 @@ rules:
   - commands.rule
   - helper.rule
   - relations.rule
+  - physics.rule
   - db.rule
   - free_space.rule
 

@@ -35,6 +35,7 @@ func (base *SystemSolverFunctionBase) partition(ids *[]mentalese.Term, lo int, h
 			j = j - 1
 			id := (*ids)[j]
 			if base.compare(id, pivotId, orderFunction) <= 0 { break }
+			if j == 0 { break }
 		}
 		if i >= j {
 			return j

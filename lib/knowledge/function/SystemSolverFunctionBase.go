@@ -46,6 +46,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateRangeForeach: base.rangeForEach,
 		mentalese.PredicateBreak: base.doBreak,
 		mentalese.PredicateCall: base.call,
+		mentalese.PredicateIgnore: base.ignore,
 		mentalese.PredicateAnd:	base.and,
 		mentalese.PredicateXor: base.xor,
 		mentalese.PredicateOr: base.or,

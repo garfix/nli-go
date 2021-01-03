@@ -1,16 +1,11 @@
 
-/* move the hand */
-do_move_hand(X, Y, Z) :- db_hand(X, Y, Z);
-do_move_hand(X, Y, Z) :- drag_grasped_object(X, Y, Z);
-
 /* move the block in the hand to a free space */
 do_get_rid_of(E1) :-
     do_find_space_on_table(E1, X, Y)
     do_put_on_table(E1, X, Y);
 
 do_put_on_table(E1, X, Y) :-
-    do_move(E1, X, Y, 0)
-    db_support(`table:table`, E1);
+    do_move(E1, X, Y, 0);
 
 /* if there is a block in the hand, it is put down */
 do_clear_hand(_) :- go:or(
@@ -20,14 +15,7 @@ do_clear_hand(_) :- go:or(
 
 /* remove all blocks that are on top of X */
 do_cleartop(E1) :- cleartop(E1);
-do_cleartop(E1) :- support(_, E1, E2) do_cleartop(E2) do_get_rid_of(E2) db_cleartop(E1);
-
-do_raise_hand(_) :- at(`:hand`, X, Y, Z) do_move_hand(X, Y, 600);
-
-drag_grasped_object(X, Y, Z) :-
-    grasping(`:shrdlu`, E1)
-    top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
-    db_object(E1, X1, Y1, Z1);
+do_cleartop(E1) :- support(_, E1, E2) do_cleartop(E2) do_get_rid_of(E2);
 
 top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1) :-
     size(E1, Width, Length, Height)

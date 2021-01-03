@@ -68,7 +68,15 @@ This relation just processes its single argument, that is a relation set. The pu
 
     go:call(S)
     
-* `S`: a relation set    
+* `S`: a relation set
+
+## Ignore
+
+This relation just processes its single argument, that is a relation set. The difference with `call` is that `ignore` always succeeds. 
+
+    go:ignore(S)
+
+* `S`: a relation set
 
 ## Range foreach
 

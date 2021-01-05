@@ -56,6 +56,10 @@ func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.B
 
 			// no results? try the next solution (if there is one)
 			if resultBindings.IsEmpty() {
+
+				// stack trace
+				answerer.log.AddProduction("Stack trace", answerer.solver.callStack.String())
+
 				if i < len(allSolutions) - 1 {
 					continue
 				}

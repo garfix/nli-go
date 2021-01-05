@@ -18,6 +18,7 @@ type ProblemSolver struct {
 	modifier              *FactBaseModifier
 	dialogContext         *DialogContext
 	log                   *common.SystemLog
+	callStack		      *CallStack
 }
 
 func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, log *common.SystemLog) *ProblemSolver {
@@ -30,6 +31,7 @@ func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, lo
 		matcher:           matcher,
 		dialogContext:     dialogContext,
 		log:               log,
+		callStack: 		   NewCallStack(),
 	}
 }
 
@@ -74,8 +76,6 @@ func (solver *ProblemSolver) ResetSession() {
 // ]
 func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	//if solver.log.Active() { solver.log.StartDebug("Solve Set", set.String() + " " + bindings.String()) }
-
 	newBindings := bindings
 	for _, relation := range set {
 		newBindings = solver.solveSingleRelationMultipleBindings(relation, newBindings)
@@ -87,8 +87,6 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 			break
 		}
 	}
-
-	//if solver.log.Active() { solver.log.EndDebug("Solve Set", newBindings.String()) }
 
 	return newBindings
 }
@@ -133,7 +131,9 @@ func (solver *ProblemSolver) solveMultipleBindings(relation mentalese.Relation, 
 	functions, found := solver.index.multiBindingFunctions[relation.Predicate]
 	if found {
 		for _, function := range functions {
+			solver.callStack.PushMultiple(relation, bindings)
 			newBindings = function(relation, bindings)
+			solver.callStack.Pop(newBindings)
 			multiFound = true
 		}
 	}
@@ -153,6 +153,8 @@ func (solver *ProblemSolver) solveSingleRelationSingleBinding(relation mentalese
 	simpleBinding := binding.FilterVariablesByName(relationVariables)
 
 	if solver.log.Active() { solver.log.StartDebug("Solve Simple Binding", relation.String() + " " + fmt.Sprint(simpleBinding)) }
+
+	solver.callStack.PushSingle(relation, binding)
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -205,6 +207,8 @@ func (solver *ProblemSolver) solveSingleRelationSingleBinding(relation mentalese
 		completedBinding := binding.Merge(essentialResultBinding)
 		completedBindings.Add(completedBinding)
 	}
+
+	solver.callStack.Pop(newBindings)
 
 	return completedBindings
 }

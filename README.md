@@ -1,12 +1,16 @@
 # NLI-GO
 
-This is a research project with the following purpose: create a programming environment for a regular programmer who is not trained in linguistics to program a computer to respond to natural language. It aims to make this environment both as simple to use and as expressive as possible. 
+This is a research project with the following purpose: 
+
+> To create a programming environment that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The environment should be easy to use and the range of language constructs should be very wide.   
+
+The emphasis of the project is on developing declarative structures that are both easy to use and very expressive. To this end, different forms of linguistic and logical representations are considered. From these, a new representation is distilled, that focuses on programmability.
 
 Its product is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French. 
  
 It is a rule based system that requires the developer to write rules by hand. Thus, the developer has full control over the behaviour of the system. Its semantics are not functional, but procedural.
 
-It is not production ready, but you can use it to experiment. Backward-incompatible changes will be made from time to time.
+The application is not production ready, but you can use it to experiment. The system is not at all robust and will break easily. Backward-incompatible changes will be made from time to time.
 
 ## Web demo
 

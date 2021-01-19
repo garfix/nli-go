@@ -1,3 +1,79 @@
+## 2021-01-17
+
+In order to save the state of a plan in execution, I want to create a custom call stack. Basically such a stack looks like this:
+
+goal
+|
+goal
+|
+goal
+
+The reason there is a call stack (or: sub goal stack) is that _some_ functions, like `list_foreach` perform a series of functions as part of their execution.
+
+The advantage of creating a custom call-stack is that you can serialize and store is, and pick it up at some later time. And this is of course what I want. I want the system to be aware of its own state, and I want to be able to pause a process at any time, and I want to run the application for a limited amount of time, and be able to continue where it left off. If I can create this, I can use it for other processes too. Processes with steps that require user interaction.
+
+This is one of those times where you'd wish that you had taken this decision earlier, because now you need to rewrite large parts of the code, and you had the idea in the back of your mind all the time. (Then again, there are _many_ ideas in the back of my head ;)
+
+But things are not that simple. For one, the bindings need to be preserved.
+
+    goal A / bindings 1
+    |
+    goal B / bindings 2
+    |
+    goal C / bindings 3
+
+And then there's the thing that a goal consists of a relation set. Only one relation of this set can be executed at once, so we need to keep track of this
+
+    relation * relation / bindings1
+    |
+    * relation relation / bindings2
+    |
+    relation relation * relation / bindings 3
+
+The `*` denotes the current relation that is being executed. The bindings are now bound to the relation that is currently being executed.
+
+So far, nothing special. But what exactly should happen when a function like `list_foreach` is executed? This function binds a variable to all values in a list, and calls a `scope` relation set, with this binding. How would that work? It can't call each `scope` immediately, like before. Now it must place `scope` on the call stack and leave its execution to the system (to its "fetch-decode-execution" cycle). But, hey!, that means that once `scope` is finished, `list_foreach` should be called again, to tell it that `scope` has finished, and that it should continue where it left off.
+
+Yes, this is pretty complicated, but I see no other way. The relation that is being executed must get a state, and this state will be stored in the call stack.
+
+    relation * relation / bindings1 / state 1
+    |
+    * relation relation / bindings2 / state 2
+    |
+    relation relation * relation / bindings 3 / state 3
+
+As an example, let's go through the `list_foreach` and see what this means. In this example the values of the list are all added up. (S is a local, rewrtitable, variable).
+
+First call:
+
+    * go:list_foreach(List, ElementVar, Scope) / [S: 0, { List: [15, 27, 31], ListVar: X, Scope: go:add(S, X, S)}] / {}
+
+`list_foreach` places the scope on the stack:
+
+    * go:list_foreach(List, ElementVar, Scope) / [S: 0, { List: [15, 27, 31], ListVar: X, Scope: go:add(S, X, S)}] / { Index: 0 }
+    |
+    * go:add(S, X, S) / [{S: 0, X: 15}] / {}
+
+Note that `list_foreach` has changed its state. Now it says: `{ Index: 0 }`
+
+`add` quickly returns and the system pops it off the stack. `S` has become 15. The system still sees `list_foreach` as the current relation, and calls it again, but this time with a state. The result binding of `scope` is passed to `list_foreach` as well. 
+
+    * go:list_foreach(List, ElementVar, Scope) / [S: 0, { List: [15, 27, 31], ListVar: X, Scope: go:add(S, X, S)}] / { Index: 0 }; child = [{S: 15, ...}]
+
+`list_foreach` places the next scope on the stack:
+
+    * go:list_foreach(List, ElementVar, Scope) / [S: 15, { List: [15, 27, 31], ListVar: X, Scope: go:add(S, X, S)}] / { Index: 1 }
+    |
+    * go:add(S, X, S) / [{S: 15, X: 15}] / {}
+
+and when `add` returns, `list_foreach` is called for the third time and places the next scope on the stack:
+
+    * go:list_foreach(List, ElementVar, Scope) / [S: 15, { List: [15, 27, 31], ListVar: X, Scope: go:add(S, X, S)}] / { Index: 2 }
+    |
+    * go:add(S, X, S) / [{S: 52, X: 15}] / {}
+
+when `list_foreach` is called for the fourth time, is is done spawning child relations, and returns with new binding. This binding is passed to the next relation on the same stack frame. The state is reset to `{}`. 
+
 ## 2021-01-09
 
 I noticed that the original SHRDLU demo used animations when moving objects around in the scene. And since this is an important part of the demo, I need to duplicate this. 

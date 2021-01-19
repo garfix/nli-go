@@ -1,5 +1,9 @@
 # Changelog
 
+##
+
+* stack trace of last relation that resulted in zero bindings
+
 ## 1.12 morphological analyzer - 20-12-2020
 
 * nli executable allows interactive session 

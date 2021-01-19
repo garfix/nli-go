@@ -16,7 +16,7 @@ In 6.2.4 of Natural Language Understanding Winograd mentions that a history _cou
 
 This relation would say: B1 is on B2 at time 111. 
 
-While this representation creates a history, Winograd shortly explaings that it is not easy to work with, and that he had let this idea go.
+While this representation creates a history, Winograd briefly explains that it is not easy to work with, and that he had let this idea go.
 
 ## Event list
 

@@ -1,14 +1,16 @@
 package parse
 
 type Grammar struct {
+	locale 			      string
 	readRules             *GrammarRules
 	writeRules            *GrammarRules
 	tokenizer             *Tokenizer
 	morphologicalAnalyzer *MorphologicalAnalyzer
 }
 
-func NewGrammar() Grammar {
+func NewGrammar(locale string) Grammar {
 	return Grammar{
+		locale: 			   locale,
 		readRules:             NewGrammarRules(),
 		writeRules:            NewGrammarRules(),
 		tokenizer:             NewTokenizer(DefaultTokenizerExpression),
@@ -30,6 +32,10 @@ func (grammar *Grammar) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morpholo
 
 func (grammar *Grammar) GetMorphologicalAnalyzer() *MorphologicalAnalyzer {
 	return grammar.morphologicalAnalyzer
+}
+
+func (grammar *Grammar) GetLocale() string {
+	return grammar.locale
 }
 
 func (grammar *Grammar) GetReadRules() *GrammarRules {

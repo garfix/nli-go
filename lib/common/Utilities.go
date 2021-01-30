@@ -2,10 +2,12 @@ package common
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path"
 	"path/filepath"
 	"runtime"
+	"time"
 )
 
 func IntArrayCopy(original []int) []int {
@@ -130,4 +132,22 @@ func AbsolutePath(baseDir string, path string) string {
 	}
 
 	return absolutePath
+}
+
+var seeded = false
+
+func CreateUuid() string {
+
+	if !seeded {
+		rand.Seed(time.Now().UnixNano())
+		seeded = true
+	}
+
+	letters := "0123456789ABCDEF"
+
+	b := make([]byte, 16)
+	for i := 0; i < 16; i++ {
+		b[i] = letters[rand.Intn(16)]
+	}
+	return string(b)
 }

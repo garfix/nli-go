@@ -1,3 +1,15 @@
+## 2020-01-23
+
+Save all goals and give them a status (i.e. "complete"), or remove them when they are finished?
+
+## 2021-01-21
+
+Starting one of the biggest rewrites of this program. Making everything asynchronous.
+
+First problem: not all relations must be executed asynchonously. If I want to fetch all active goals at the start of a Run(), this can't wait. I need them now.
+
+Relations that are executed in the scope of a goal are asynchronous; relations that are executed otherwise are immediate, synchronous.
+
 ## 2021-01-17
 
 In order to save the state of a plan in execution, I want to create a custom call stack. Basically such a stack looks like this:

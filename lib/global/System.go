@@ -24,6 +24,7 @@ type System struct {
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
+	processRunner         *central.ProcessRunner
 }
 
 // Low-level function to inspect the internal state of the system
@@ -34,6 +35,43 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	system.dialogContext.Store()
 
 	return result
+}
+
+func (system *System) CreateAnswerGoal(input string) {
+
+	// go:assert(go:uuid(Id) go:goal(go:answer(input, Id)))
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateUuid, []mentalese.Term{
+			mentalese.NewTermVariable("Id"),
+		}),
+		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{
+				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+					mentalese.NewTermRelationSet(mentalese.RelationSet{ mentalese.NewRelation(true, mentalese.PredicateAnswer, []mentalese.Term{
+						mentalese.NewTermString(input),
+					})}),
+					mentalese.NewTermVariable("Id"),
+				})}),
+		}),
+	}
+	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+}
+
+func (system *System) Run() {
+	// find all goals
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+			mentalese.NewTermVariable("Goal"),
+			mentalese.NewTermVariable("Id"),
+		}),
+	}
+	// find processes
+	bindings := system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	for _, binding := range bindings.GetAll() {
+		goalId, _ := binding.MustGet("Id").GetIntValue()
+		goalSet := binding.MustGet("Goal").TermValueRelationSet
+		system.processRunner.RunProcess(goalId, goalSet)
+	}
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {

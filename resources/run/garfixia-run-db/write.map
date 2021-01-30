@@ -1,0 +1,1 @@
+go:goal(G, Id) :- goal(G, Id);

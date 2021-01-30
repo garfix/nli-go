@@ -88,6 +88,10 @@ func (builder *systemBuilder) build(system *System) {
 	for _, moduleSpec := range config.Uses {
 		builder.loadModule(moduleSpec, &indexes, system)
 	}
+
+	languageBase := knowledge.NewLanguageBase("language", system.grammars, builder.log)
+	system.solver.AddSolverFunctionBase(languageBase)
+
 }
 
 func (builder *systemBuilder) buildBasic(system *System) {
@@ -115,6 +119,9 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	system.solver = solver
+
+	solverAsync := central.NewProblemSolverAsync(solver)
+	system.processRunner = central.NewProcessRunner(solverAsync)
 
 	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)
@@ -379,7 +386,7 @@ func (builder *systemBuilder) buildDomain(index index, system *System, moduleBas
 
 func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBaseDir string) {
 
-	grammar := parse.NewGrammar()
+	grammar := parse.NewGrammar(index.Locale)
 
 	for _, read := range index.Read {
 		builder.importGrammarFromPath(&grammar, moduleBaseDir + "/" + read)

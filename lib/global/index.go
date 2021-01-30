@@ -4,6 +4,7 @@ type index struct {
 	Type     string
 	Version         string
 	Uses            map[string]string
+	Locale			string
 	Read            []string
 	Write           []string
 	Solution        []string

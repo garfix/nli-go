@@ -74,6 +74,13 @@ const PredicateDateSubtractYears = "go_date_subtract_years"
 const PredicateSem = "go_sem"
 const PredicateLog = "go_log"
 const PredicateBreak = "go_break"
+const PredicateGoal = "go_goal"
+const PredicateUuid = "go_uuid"
+const PredicateAction = "go_action"
+const PredicateTokenize = "go_tokenize"
+
+// todo prefix should be go
+const PredicateAnswer = "dom_answer"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

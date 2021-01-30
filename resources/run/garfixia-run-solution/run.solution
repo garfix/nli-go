@@ -1,0 +1,12 @@
+{
+    condition: dom:in_out(X, Y),
+    result: _,
+    responses:
+        {
+            condition: go:exists(),
+            answer: go:canned(Y)
+        }
+        {
+            answer: go:canned('Error')
+        }
+}

@@ -1,5 +1,6 @@
 type: grammar
 version: 1.0.0
+locale: en_US
 uses:
   dom: coolcorp-helloworld-domain:1.0.0
 read: [ read.grammar ]

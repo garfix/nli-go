@@ -1,0 +1,14 @@
+in_out('A', Y) :- go:assign(Y, 1);
+
+/* This file should be moved outside this app, into the system ('domain/nli-go.rule') */
+
+answer(Input) :-
+    go:locale(Locale)
+    go:tokenize(Locale, Input, Tokens)
+    go:parse(Locale, Tokens, ParseTreeJson)
+    go:relationize(ParseTreeJson, Sense)
+    go:answer(Sense, Answer)
+    go:generate(Answer, Tokens)
+    go:surface(Tokens, Output)
+    go:assert(go:action('print', Output))
+    ;

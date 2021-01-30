@@ -1,0 +1,1 @@
+{ rule: s(P) -> 'test' 'A',       sense: dom:in_out('A', Y) }

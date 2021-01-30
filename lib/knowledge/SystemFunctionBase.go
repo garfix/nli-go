@@ -21,10 +21,6 @@ func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBa
 	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: central.NewRelationMatcher(log) }
 }
 
-func (base *SystemFunctionBase) GetFunctions1(predicate string) api.SimpleFunction {
-	return nil
-}
-
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
 		mentalese.PredicateSplit: base.split,
@@ -46,6 +42,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateDateToday: base.dateToday,
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
 		mentalese.PredicateLog: base.debug,
+		mentalese.PredicateUuid: base.uuid,
 	}
 }
 
@@ -418,4 +415,21 @@ func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentales
 	fmt.Println(log)
 
 	return binding, true
+}
+
+func (base *SystemFunctionBase) uuid(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "v", base.log) {
+		return mentalese.NewBinding(), false
+	}
+
+	u := bound.Arguments[0].TermValue
+
+	newBinding := binding.Copy()
+
+	newBinding.Set(u, mentalese.NewTermString(common.CreateUuid()))
+
+	return newBinding, true
 }

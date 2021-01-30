@@ -225,3 +225,10 @@ Prints `Str` for debugging purposes.
     
 * `Str`: a string value
 
+## uuid
+
+Generates a random 16 digit hexadecimal number.
+
+    go:uuid(V)
+
+* `V`: a variable

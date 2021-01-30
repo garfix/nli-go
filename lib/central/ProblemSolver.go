@@ -366,6 +366,8 @@ func (solver *ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bi
 					binding = solver.replaceLocalIdBySharedId(binding, factBase)
 					newBindings.Add(binding)
 				}
+			} else {
+				solver.log.AddError("Asserted relation not accepted by any fact base: " + predicate)
 			}
 		} else if argument.IsRule() {
 			for _, ruleBase := range solver.index.ruleBases {
@@ -391,6 +393,8 @@ func (solver *ProblemSolver) modifyKnowledgeBase(relation mentalese.Relation, bi
 					binding = solver.replaceLocalIdBySharedId(binding, factBase)
 					newBindings.Add(binding)
 				}
+			} else {
+				solver.log.AddError("Retracted relation not accepted by any fact base: " + predicate)
 			}
 		}
 	}

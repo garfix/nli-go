@@ -1,0 +1,7 @@
+type: db/internal
+version: 1.0.0
+storagetype: session
+read: [ read.map ]
+write: [ write.map ]
+uses:
+  dom: garfixia-run-domain:1.0.0

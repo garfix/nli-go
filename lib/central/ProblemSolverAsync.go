@@ -64,6 +64,11 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	relation := frame.GetCurrentRelation()
 	binding := frame.GetCurrentBinding()
 
+	_, found := s.solver.index.knownPredicates[relation.Predicate]
+		if !found {
+			s.solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
+			return
+		}
 
 	relationVariables := relation.GetVariableNames()
 	simpleBinding := binding.FilterVariablesByName(relationVariables)
@@ -103,7 +108,8 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	functions2, f2 := s.solver.index.solverFunctions[relation.Predicate]
 	if f2 {
 		for _, function := range functions2 {
-			newBindings.AddMultiple(function(relation, simpleBinding))
+			result := function(relation, simpleBinding)
+			frame.OutBindings.AddMultiple(result)
 		}
 	}
 
@@ -151,7 +157,7 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(proc
 
 	// process child frame bindings
 	if currentRuleIndex > 0 {
-		subgoalResultBindings = process.GetCursor().Bindings
+		subgoalResultBindings = process.GetCursor().OutBindings
 		for _, childResult := range process.GetCursor().ChildFrameResultBindings.GetAll() {
 			// filter out the input variables
 			filteredBinding := childResult.FilterVariablesByName(inputVariables)
@@ -159,7 +165,7 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(proc
 			goalBinding := scopedBinding.Merge(filteredBinding)
 			subgoalResultBindings.Add(goalBinding)
 		}
-		process.GetCursor().Bindings = subgoalResultBindings
+		process.GetCursor().OutBindings = subgoalResultBindings
 	}
 
 	if currentRuleIndex < len(rules) {

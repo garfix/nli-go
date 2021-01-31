@@ -27,6 +27,7 @@ func NewLanguageBase(name string, grammars []parse.Grammar, log *common.SystemLo
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
+		mentalese.PredicateLocale: base.locale,
 		mentalese.PredicateTokenize: base.tokenize,
 	}
 }
@@ -46,6 +47,7 @@ func (base *LanguageBase) locale(input mentalese.Relation, binding mentalese.Bin
 	for _, grammar := range base.grammars {
 		newBinding := binding.Copy()
 		newBinding.Set(localeVar, mentalese.NewTermString(grammar.GetLocale()))
+		newBindings.Add(newBinding)
 	}
 
 	return newBindings
@@ -55,7 +57,7 @@ func (base *LanguageBase) tokenize(input mentalese.Relation, binding mentalese.B
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "sv", base.log) {
+	if !Validate(bound, "ssv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 

@@ -121,7 +121,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.solver = solver
 
 	solverAsync := central.NewProblemSolverAsync(solver)
-	system.processRunner = central.NewProcessRunner(solverAsync)
+	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 
 	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, builder.log)

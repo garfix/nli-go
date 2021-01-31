@@ -77,6 +77,7 @@ const PredicateBreak = "go_break"
 const PredicateGoal = "go_goal"
 const PredicateUuid = "go_uuid"
 const PredicateAction = "go_action"
+const PredicateLocale = "go_locale"
 const PredicateTokenize = "go_tokenize"
 
 // todo prefix should be go

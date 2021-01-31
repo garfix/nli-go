@@ -28,30 +28,48 @@ func (p *Process) Clear() {
 // advance the cursor in the frame
 // pop the frame when done, and transfer child bindings to parent
 func (p *Process) Advance() {
-	if !p.IsDone() {
 
-		// advance binding
-		frame := p.GetLastFrame()
-		frame.BindingIndex++
-		if frame.BindingIndex >= frame.Bindings.GetLength() {
-			frame.BindingIndex = 0
+	// advance binding
+	frame := p.GetLastFrame()
+	frame.OutBindings.AddMultiple(frame.Cursor.OutBindings)
+	frame.InBindingIndex++
 
-			// advance position
-			frame.Position++
-			frame.Cursor = NewStackFrameCursor()
+	// create a new working environment
+	frame.Cursor = NewStackFrameCursor()
 
-			if frame.IsDone() {
-				p.PopFrame()
-
-				// transfer child bindings to parent
-				resultBindings := frame.Bindings
-				newLastFrame := p.GetLastFrame()
-				if newLastFrame != nil {
-					newLastFrame.Cursor.ChildFrameResultBindings = resultBindings
-				}
-			}
-		}
+	if frame.InBindingIndex >= frame.InBindings.GetLength() {
+		p.advanceRelation(frame)
 	}
+}
+
+func (p *Process) advanceRelation(frame *StackFrame) {
+
+	frame.InBindings = frame.OutBindings
+	frame.InBindingIndex = 0
+
+	frame.OutBindings = mentalese.NewBindingSet()
+
+	frame.RelationIndex++
+
+	if frame.InBindings.IsEmpty() {
+		// process failed due to no result bindings
+		p.Clear()
+	} else if frame.IsDone() {
+		p.advanceFrame(frame)
+	}
+}
+
+func (p *Process) advanceFrame(frame *StackFrame) {
+
+	p.PopFrame()
+
+	// transfer child bindings to parent
+	resultBindings := frame.OutBindings
+	newLastFrame := p.GetLastFrame()
+	if newLastFrame != nil {
+		newLastFrame.Cursor.ChildFrameResultBindings = resultBindings
+	}
+
 }
 
 func (p *Process) GetCursor() *StackFrameCursor {

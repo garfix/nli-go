@@ -5,8 +5,8 @@ in_out('A', Y) :- go:assign(Y, 1);
 answer(Input) :-
     go:locale(Locale)
     go:tokenize(Locale, Input, Tokens)
-    go:parse(Locale, Tokens, ParseTreeJson)
-    go:relationize(ParseTreeJson, Sense)
+    go:parse(Locale, Tokens, ParseTreeSerialized)
+    go:relationize(ParseTreeSerialized, Sense)
     go:answer(Sense, Answer)
     go:generate(Answer, Tokens)
     go:surface(Tokens, Output)

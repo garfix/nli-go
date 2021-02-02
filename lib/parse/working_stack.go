@@ -59,16 +59,16 @@ func (tip *treeInProgress) cloneTree(tree *ParseTreeNode) (*ParseTreeNode, map[*
 func (tip *treeInProgress) cloneNodeWithMap(node *ParseTreeNode, aMap *map[*ParseTreeNode]*ParseTreeNode) *ParseTreeNode {
 
 	constituents := []*ParseTreeNode{}
-	for _, constituent := range node.constituents {
+	for _, constituent := range node.Constituents {
 		clone := tip.cloneNodeWithMap(constituent, aMap)
 		constituents = append(constituents, clone)
 	}
 
 	newNode := &ParseTreeNode{
-		category:         node.category,
-		constituents:     constituents,
-		form:             node.form,
-		rule:             node.rule,
+		Category:     node.Category,
+		Constituents: constituents,
+		Form:         node.Form,
+		Rule:         node.Rule,
 	}
 
 	(*aMap)[node] = newNode

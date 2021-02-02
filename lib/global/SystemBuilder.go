@@ -89,9 +89,8 @@ func (builder *systemBuilder) build(system *System) {
 		builder.loadModule(moduleSpec, &indexes, system)
 	}
 
-	languageBase := knowledge.NewLanguageBase("language", system.grammars, builder.log)
+	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, builder.log)
 	system.solver.AddSolverFunctionBase(languageBase)
-
 }
 
 func (builder *systemBuilder) buildBasic(system *System) {

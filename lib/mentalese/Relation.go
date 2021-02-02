@@ -79,6 +79,8 @@ const PredicateUuid = "go_uuid"
 const PredicateAction = "go_action"
 const PredicateLocale = "go_locale"
 const PredicateTokenize = "go_tokenize"
+const PredicateParse = "go_parse"
+const PredicateRelationize = "go_relationize"
 
 // todo prefix should be go
 const PredicateAnswer = "dom_answer"

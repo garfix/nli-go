@@ -38,13 +38,13 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 	relationSet := mentalese.RelationSet{}
 
 	nameBinding := relationizer.extractName(node, antecedentVariables)
-	variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.rule.GetAntecedentVariables(), node.rule.GetAllConsequentVariables())
+	variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.Rule.GetAntecedentVariables(), node.Rule.GetAllConsequentVariables())
 
 	// create relations for each of the children
 	boundChildSets := []mentalese.RelationSet{}
-	for i, childNode := range node.constituents {
+	for i, childNode := range node.Constituents {
 
-		consequentVariables := node.rule.GetConsequentVariables(i)
+		consequentVariables := node.Rule.GetConsequentVariables(i)
 
 		mappedConsequentVariables := []string{}
 		for _, consequentVariable := range consequentVariables {
@@ -56,14 +56,14 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)
 
-		if node.rule.GetConsequentPositionType(i) == PosTypeRegExp {
-			constantBinding.Set(antecedentVariables[0], mentalese.NewTermString(childNode.form))
+		if node.Rule.GetConsequentPositionType(i) == PosTypeRegExp {
+			constantBinding.Set(antecedentVariables[0], mentalese.NewTermString(childNode.Form))
 		}
 	}
 
-	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.rule.Sense, variableMap)
-	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.rule.Sense, variableMap)
-	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.rule)
+	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.Rule.Sense, variableMap)
+	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.Rule.Sense, variableMap)
+	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.Rule)
 
 	return relationSet, nameBinding, constantBinding
 }
@@ -72,7 +72,7 @@ func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVaria
 
 	names := mentalese.NewBinding()
 
-	if node.category != mentalese.CategoryProperNounGroup {
+	if node.Category != mentalese.CategoryProperNounGroup {
 		return names
 	}
 
@@ -80,8 +80,8 @@ func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVaria
 
 	name := ""
 	sep := ""
-	for _, properNounNode := range node.constituents {
-		name += sep + properNounNode.form
+	for _, properNounNode := range node.Constituents {
+		name += sep + properNounNode.Form
 		sep = " "
 	}
 	names.Set(variable, mentalese.NewTermString(name))

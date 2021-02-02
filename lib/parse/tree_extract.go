@@ -19,8 +19,8 @@ func ExtractTreeRoots(chart *chart) []ParseTreeNode {
 	// the sentence node is the first child
 	roots := []ParseTreeNode{}
 	for _, root := range extracter.trees {
-		if len(root.constituents) > 0 {
-			roots = append(roots, *root.constituents[0])
+		if len(root.Constituents) > 0 {
+			roots = append(roots, *root.Constituents[0])
 		}
 	}
 
@@ -32,10 +32,10 @@ func (ex *treeExtracter) extract() {
 	completedGammaState := ex.chart.buildCompleteGammaState()
 
 	rootNode := &ParseTreeNode{
-		category:         "gamma",
-		constituents:     nil,
-		form:             "",
-		rule:             completedGammaState.rule,
+		Category:     "gamma",
+		Constituents: nil,
+		Form:         "",
+		Rule:         completedGammaState.rule,
 	}
 
 	ex.trees = append(ex.trees, rootNode)
@@ -86,7 +86,7 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 			for _, childState := range childStates {
 				childNodes = append(childNodes, ex.createNode(childState))
 			}
-			parentNode.constituents = childNodes
+			parentNode.Constituents = childNodes
 
 			step := workingStep{
 				states:     childStates,
@@ -131,10 +131,10 @@ func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
 	}
 
 	return &ParseTreeNode{
-		category: state.rule.GetAntecedent(),
-		constituents: []*ParseTreeNode{},
-		form: form,
-		rule: state.rule,
+		Category:     state.rule.GetAntecedent(),
+		Constituents: []*ParseTreeNode{},
+		Form:         form,
+		Rule:         state.rule,
 	}
 }
 

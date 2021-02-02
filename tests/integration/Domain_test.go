@@ -14,7 +14,7 @@ func TestDomain(t *testing.T) {
 		answer        string
 	}{
 		{
-			{"Test A", "1"},
+			{"Test A X", "1"},
 		},
 	}
 

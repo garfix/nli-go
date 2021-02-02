@@ -69,6 +69,12 @@ that converts the binding variables into a list. And create
     
 But I don't like `to_list` because it must change the variable E and this is against the rules in Prolog. If it wouldn't change E then the number of bindings would stay unnecessary large.            
 
+## Stuff I'm not happy with
+
+* the RelationTransformer; is only used in solutions, but should be ermoved from there as well, if possible
+* scoped variables
+* multiple stack frames
+
 ## Misc
 
 * Blocks World examples

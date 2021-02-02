@@ -1,35 +1,35 @@
 package parse
 
 type ParseTreeNode struct {
-	category     string
-	constituents []*ParseTreeNode
-	form         string
-	rule         GrammarRule
+	Category     string
+	Constituents []*ParseTreeNode
+	Form         string
+	Rule         GrammarRule
 }
 
 func (node ParseTreeNode) IsLeafNode() bool {
-	return len(node.constituents) == 0
+	return len(node.Constituents) == 0
 }
 
 func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
-	return node.constituents
+	return node.Constituents
 }
 
 func (node ParseTreeNode) String() string {
 
 	body := ""
 
-	if node.form != "" {
-		body = node.form
+	if node.Form != "" {
+		body = node.Form
 	} else {
 		sep := ""
-		for _, child := range node.constituents {
+		for _, child := range node.Constituents {
 			body += sep + child.String()
 			sep = " "
 		}
 	}
 
-	return "[" + node.category + " " + body + "]"
+	return "[" + node.Category + " " + body + "]"
 }
 
 func (node ParseTreeNode) IndentedString(indent string) string {
@@ -37,18 +37,18 @@ func (node ParseTreeNode) IndentedString(indent string) string {
 	body := ""
 
 	if indent == "" {
-		body = node.category + "\n"
+		body = node.Category + "\n"
 	}
 
-	for i, child := range node.constituents {
-		if child.form != "" {
-			body += indent + "+- " + child.category + " '" + child.form + "'\n"
+	for i, child := range node.Constituents {
+		if child.Form != "" {
+			body += indent + "+- " + child.Category + " '" + child.Form + "'\n"
 			continue
 		}
 
-		body += indent + "+- " + child.category + "\n"
+		body += indent + "+- " + child.Category + "\n"
 		newIndent := indent
-		if i < len(node.constituents) - 1 {
+		if i < len(node.Constituents) - 1 {
 			newIndent += "|  "
 		} else {
 			newIndent += "   "

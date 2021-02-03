@@ -5,9 +5,9 @@ in_out('A', Y) :- go:assign(Y, 1);
 respond(Input) :-
     go:locale(Locale)
     go:tokenize(Locale, Input, Tokens)
-    go:parse(Locale, Tokens, ParseTreeSerialized)
-    go:relationize(ParseTreeSerialized, Sense, RequestBindings)
-    go:answer(Sense, RequestBindings, Answer, AnswerBindings)
+    go:parse(Locale, Tokens, ParseTree)
+    go:relationize(ParseTree, Sense, RequestBindings)
+    go:answer(Sense, RequestBindings, Answer)
     go:generate(Answer, AnswerBindings, Tokens)
     go:surface(Tokens, Output)
     go:assert(go:action('print', Output))

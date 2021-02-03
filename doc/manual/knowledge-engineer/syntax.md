@@ -22,6 +22,7 @@
  * a rule
  * a reference to a rule
  * list of terms
+ * json: any structure that is json serializable 
  
 Integer numbers are stored as a string, but recognized as integer by the function IsNumber(). 
  

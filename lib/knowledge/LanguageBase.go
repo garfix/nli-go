@@ -82,19 +82,13 @@ func (base *LanguageBase) tokenize(input mentalese.Relation, binding mentalese.B
 	locale := bound.Arguments[0].TermValue
 	rawInput := bound.Arguments[1].TermValue
 	tokenVar := input.Arguments[2].TermValue
-	tokens := []string{}
 
-	found := false
-	for _, grammar := range base.grammars {
-		if grammar.GetLocale() == locale {
-			tokens = grammar.GetTokenizer().Process(rawInput)
-			found = true
-		}
-	}
-
+	grammar, found := base.getGrammar(locale)
 	if !found {
 		return mentalese.NewBindingSet()
 	}
+
+	tokens := grammar.GetTokenizer().Process(rawInput)
 
 	terms := []mentalese.Term{}
 	for _, token := range tokens {
@@ -105,6 +99,21 @@ func (base *LanguageBase) tokenize(input mentalese.Relation, binding mentalese.B
 	newBinding.Set(tokenVar, mentalese.NewTermList(terms))
 
 	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) getGrammar(locale string) (parse.Grammar, bool) {
+
+	grammar := parse.Grammar{}
+
+	found := false
+	for _, aGrammar := range base.grammars {
+		if aGrammar.GetLocale() == locale {
+			grammar = aGrammar
+			found = true
+		}
+	}
+
+	return grammar, found
 }
 
 func (base *LanguageBase) parse(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -124,36 +133,19 @@ func (base *LanguageBase) parse(input mentalese.Relation, binding mentalese.Bind
 		tokens = append(tokens, token.TermValue)
 	}
 
-	var theGrammar parse.Grammar
-
-	found := false
-	for _, grammar := range base.grammars {
-		if grammar.GetLocale() == locale {
-			theGrammar = grammar
-			found = true
-		}
-	}
-
+	grammar, found := base.getGrammar(locale)
 	if !found {
 		return mentalese.NewBindingSet()
 	}
 
-	parser := parse.NewParser(theGrammar.GetReadRules(), base.log)
-	parser.SetMorphologicalAnalyzer(theGrammar.GetMorphologicalAnalyzer())
+	parser := parse.NewParser(grammar.GetReadRules(), base.log)
+	parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
 	parseTrees := parser.Parse(tokens, "s", []string{"S"})
 
 	newBindings := mentalese.NewBindingSet()
 	for _, parseTree := range parseTrees {
-
-		jsonBytes, err := json.Marshal(parseTree)
-		if err != nil {
-			return mentalese.BindingSet{}
-		}
-
-		jsonString := string(jsonBytes)
-
 		newBinding := binding.Copy()
-		newBinding.Set(sentenceVar, mentalese.NewTermString(jsonString))
+		newBinding.Set(sentenceVar, mentalese.NewTermJson(parseTree))
 		newBindings.Add(newBinding)
 	}
 
@@ -164,13 +156,13 @@ func (base *LanguageBase) relationize(input mentalese.Relation, binding mentales
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "svv", base.log) {
+	if !Validate(bound, "jvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	sentenceSerialized := bound.Arguments[0].TermValue
 	senseVar := input.Arguments[1].TermValue
-//	requestBindingVar := input.Arguments[2].TermValue
+	requestBindingVar := input.Arguments[2].TermValue
 
 	var parseTree parse.ParseTreeNode
 	jsonBytes := []byte(sentenceSerialized)
@@ -207,10 +199,10 @@ nameNotFound = nameNotFound
 	}
 	base.log.AddProduction("Named entities", entityIds.String())
 
-	newBinding := binding.Merge(entityIds)
+	newBinding := binding.Copy()
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
-//	newBinding.Set(requestBindingVar, mentalese.NewTermRelationSet(entityIds))
+	newBinding.Set(requestBindingVar, mentalese.NewTermJson(entityIds))
 
 	return mentalese.InitBindingSet(newBinding)
 }
@@ -264,19 +256,22 @@ func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Bin
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "rv", base.log) {
+	if !Validate(bound, "rjv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
+	requestBindings := mentalese.Binding{}
+
 	requestRelations := bound.Arguments[0].TermValueRelationSet
-	answerVar := input.Arguments[1].TermValue
+	input.Arguments[1].GetJsonValue(requestBindings)
+	answerRelationVar := input.Arguments[2].TermValue
 
 	answerRelations := base.answerer.Answer(requestRelations, mentalese.InitBindingSet(binding))
 	base.log.AddProduction("Answer", answerRelations.String())
 	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.String())
 
 	newBinding := binding.Copy()
-	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answerRelations))
+	newBinding.Set(answerRelationVar, mentalese.NewTermRelationSet(answerRelations))
 
 	return mentalese.InitBindingSet(newBinding)
 }

@@ -2,13 +2,13 @@ in_out('A', Y) :- go:assign(Y, 1);
 
 /* This file should be moved outside this app, into the system ('domain/nli-go.rule') */
 
-answer(Input) :-
+respond(Input) :-
     go:locale(Locale)
     go:tokenize(Locale, Input, Tokens)
     go:parse(Locale, Tokens, ParseTreeSerialized)
-    go:relationize(ParseTreeSerialized, Sense)
-    go:answer(Sense, Answer)
-    go:generate(Answer, Tokens)
+    go:relationize(ParseTreeSerialized, Sense, RequestBindings)
+    go:answer(Sense, RequestBindings, Answer, AnswerBindings)
+    go:generate(Answer, AnswerBindings, Tokens)
     go:surface(Tokens, Output)
     go:assert(go:action('print', Output))
     ;

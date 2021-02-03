@@ -47,7 +47,7 @@ func (system *System) CreateAnswerGoal(input string) {
 		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
 				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
-					mentalese.NewTermRelationSet(mentalese.RelationSet{ mentalese.NewRelation(true, mentalese.PredicateAnswer, []mentalese.Term{
+					mentalese.NewTermRelationSet(mentalese.RelationSet{ mentalese.NewRelation(true, mentalese.PredicateRespond, []mentalese.Term{
 						mentalese.NewTermString(input),
 					})}),
 					mentalese.NewTermVariable("Id"),

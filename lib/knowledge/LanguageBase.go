@@ -16,10 +16,18 @@ type LanguageBase struct {
 	meta                  *mentalese.Meta
 	dialogContext         *central.DialogContext
 	nameResolver          *central.NameResolver
+	answerer 			  *central.Answerer
 	log 			      *common.SystemLog
 }
 
-func NewLanguageBase(name string, grammars []parse.Grammar, meta *mentalese.Meta, dialogContext *central.DialogContext, nameResolver *central.NameResolver, log *common.SystemLog) *LanguageBase {
+func NewLanguageBase(
+	name string,
+	grammars []parse.Grammar,
+	meta *mentalese.Meta,
+	dialogContext *central.DialogContext,
+	nameResolver *central.NameResolver,
+	answerer *central.Answerer,
+	log *common.SystemLog) *LanguageBase {
 	return &LanguageBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ name },
 		matcher: central.NewRelationMatcher(log),
@@ -27,6 +35,7 @@ func NewLanguageBase(name string, grammars []parse.Grammar, meta *mentalese.Meta
 		meta: meta,
 		dialogContext: dialogContext,
 		nameResolver: nameResolver,
+		answerer: answerer,
 		log: log,
 	}
 }
@@ -37,6 +46,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateTokenize: base.tokenize,
 		mentalese.PredicateParse: base.parse,
 		mentalese.PredicateRelationize: base.relationize,
+		mentalese.PredicateAnswer: base.answer,
 	}
 }
 
@@ -154,12 +164,13 @@ func (base *LanguageBase) relationize(input mentalese.Relation, binding mentales
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "sv", base.log) {
+	if !Validate(bound, "svv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	sentenceSerialized := bound.Arguments[0].TermValue
 	senseVar := input.Arguments[1].TermValue
+//	requestBindingVar := input.Arguments[2].TermValue
 
 	var parseTree parse.ParseTreeNode
 	jsonBytes := []byte(sentenceSerialized)
@@ -199,6 +210,7 @@ nameNotFound = nameNotFound
 	newBinding := binding.Merge(entityIds)
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
+//	newBinding.Set(requestBindingVar, mentalese.NewTermRelationSet(entityIds))
 
 	return mentalese.InitBindingSet(newBinding)
 }
@@ -246,4 +258,25 @@ func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sor
 	next:
 
 	return entityIds, nameNotFound
+}
+
+func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "rv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	requestRelations := bound.Arguments[0].TermValueRelationSet
+	answerVar := input.Arguments[1].TermValue
+
+	answerRelations := base.answerer.Answer(requestRelations, mentalese.InitBindingSet(binding))
+	base.log.AddProduction("Answer", answerRelations.String())
+	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.String())
+
+	newBinding := binding.Copy()
+	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answerRelations))
+
+	return mentalese.InitBindingSet(newBinding)
 }

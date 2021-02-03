@@ -81,9 +81,10 @@ const PredicateLocale = "go_locale"
 const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"
 const PredicateRelationize = "go_relationize"
+const PredicateAnswer = "go_answer"
 
 // todo prefix should be go
-const PredicateAnswer = "dom_answer"
+const PredicateRespond = "dom_respond"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

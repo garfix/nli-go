@@ -70,10 +70,10 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 			return
 		}
 
-	relationVariables := relation.GetVariableNames()
-	simpleBinding := binding.FilterVariablesByName(relationVariables)
+	//relationVariables := relation.GetVariableNames()
+	simpleBinding := binding //.FilterVariablesByName(relationVariables)
 
-	s.solver.callStack.PushSingle(relation, binding)
+	//s.solver.callStack.PushSingle(relation, binding)
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -117,16 +117,16 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	newBindings.AddMultiple(s.solver.modifyKnowledgeBase(relation, simpleBinding))
 
 	// compose the result set
-	completedBindings := mentalese.NewBindingSet()
-	for _, newBinding := range newBindings.GetAll() {
-		// remove temporary variables
-		essentialResultBinding := newBinding.FilterVariablesByName(relationVariables)
-		// combine the source binding with the clean results
-		completedBinding := binding.Merge(essentialResultBinding)
-		completedBindings.Add(completedBinding)
-	}
+	//completedBindings := mentalese.NewBindingSet()
+	//for _, newBinding := range newBindings.GetAll() {
+	//	// remove temporary variables
+	//	essentialResultBinding := newBinding.FilterVariablesByName(relationVariables)
+	//	// combine the source binding with the clean results
+	//	completedBinding := binding.Merge(essentialResultBinding)
+	//	completedBindings.Add(completedBinding)
+	//}
 
-	s.solver.callStack.Pop(newBindings)
+	//s.solver.callStack.Pop(newBindings)
 }
 
 func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(process *goal.Process, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {

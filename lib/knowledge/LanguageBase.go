@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
+	"nli-go/lib/generate"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 )
@@ -47,6 +48,8 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateParse: base.parse,
 		mentalese.PredicateRelationize: base.relationize,
 		mentalese.PredicateAnswer: base.answer,
+		mentalese.PredicateGenerate: base.generate,
+		mentalese.PredicateSurface: base.surface,
 	}
 }
 
@@ -272,6 +275,62 @@ func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Bin
 
 	newBinding := binding.Copy()
 	newBinding.Set(answerRelationVar, mentalese.NewTermRelationSet(answerRelations))
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) generate(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "srl", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	locale := bound.Arguments[0].TermValue
+	answerRelations := bound.Arguments[1].TermValueRelationSet
+	tokenVar := input.Arguments[2].TermValue
+
+	grammar, found := base.getGrammar(locale)
+	if !found {
+		return mentalese.NewBindingSet()
+	}
+
+	generator := generate.NewGenerator(base.log, base.matcher)
+	tokens := generator.Generate(grammar.GetWriteRules(), answerRelations)
+
+	tokenTerms := []mentalese.Term{}
+	for _, token := range tokens {
+		tokenTerms = append(tokenTerms, mentalese.NewTermString(token))
+	}
+
+	newBinding := binding.Copy()
+	newBinding.Set(tokenVar, mentalese.NewTermList(tokenTerms))
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) surface(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "lv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	tokenList := bound.Arguments[0].TermValueList
+	surfaceVar := input.Arguments[1].TermValue
+
+	tokens := []string{}
+	for _, token := range tokenList {
+		tokens = append(tokens, token.TermValue)
+	}
+
+	surfacer := generate.NewSurfaceRepresentation(base.log)
+	surface := surfacer.Create(tokens)
+
+	newBinding := binding.Copy()
+	newBinding.Set(surfaceVar, mentalese.NewTermString(surface))
 
 	return mentalese.InitBindingSet(newBinding)
 }

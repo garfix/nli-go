@@ -1,4 +1,4 @@
-in_out('A', Y) :- go:assign(Y, 1);
+in_out('A', Y) :- go:unify(Y, 1);
 
 /* This file should be moved outside this app, into the system ('domain/nli-go.rule') */
 
@@ -8,7 +8,7 @@ respond(Input) :-
     go:parse(Locale, Tokens, ParseTree)
     go:relationize(ParseTree, Sense, RequestBindings)
     go:answer(Sense, RequestBindings, Answer)
-    go:generate(Answer, AnswerBindings, Tokens)
+    go:generate(Locale, Answer, Tokens)
     go:surface(Tokens, Output)
     go:assert(go:action('print', Output))
     ;

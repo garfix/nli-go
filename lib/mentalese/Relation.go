@@ -82,6 +82,8 @@ const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"
 const PredicateRelationize = "go_relationize"
 const PredicateAnswer = "go_answer"
+const PredicateGenerate = "go_generate"
+const PredicateSurface = "go_surface"
 
 // todo prefix should be go
 const PredicateRespond = "dom_respond"

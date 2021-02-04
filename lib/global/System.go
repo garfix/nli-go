@@ -57,6 +57,18 @@ func (system *System) CreateAnswerGoal(input string) {
 	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 }
 
+func (system *System) ReadActions(actionType string) mentalese.BindingSet {
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateAction, []mentalese.Term{
+			mentalese.NewTermString(actionType),
+			mentalese.NewTermVariable("Id"),
+			mentalese.NewTermVariable("Content"),
+		}),
+	}
+
+	return system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+}
+
 func (system *System) Run() {
 	// find all goals
 	set := mentalese.RelationSet{

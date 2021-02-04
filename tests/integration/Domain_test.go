@@ -20,7 +20,6 @@ func TestDomain(t *testing.T) {
 
 	log := common.NewSystemLog()
 	log.SetDebug(true)
-	//log.SetPrint(true)
 	system := global.NewSystem(common.Dir() + "/../../resources/run", "run-demo", common.Dir() + "/../../var", log)
 
 	if !log.IsOk() {
@@ -38,15 +37,16 @@ func TestDomain(t *testing.T) {
 
 			system.CreateAnswerGoal(test.question)
 			system.Run()
-			//actions := system.ReadActions("print")
-
-			answer := ""//actions[0].Text()
+			actions := system.ReadActions("print")
+			answer := ""
+			if actions.GetLength() > 0 {
+				answer = actions.Get(0).MustGet("Content").TermValue
+			}
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
 				fmt.Println(log.String())
 			}
-
 		}
 	}
 }

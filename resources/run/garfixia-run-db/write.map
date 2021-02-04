@@ -1,1 +1,2 @@
 go:goal(G, Id) :- goal(G, Id);
+go:action(Type, Id, Content) :- action(Type, Id, Content);

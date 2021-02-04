@@ -75,13 +75,14 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 
 	//s.solver.callStack.PushSingle(relation, binding)
 
-	newBindings := mentalese.NewBindingSet()
+	//newBindings := mentalese.NewBindingSet()
 
 	// go through all simple fact bases
 	factBases, f4 := s.solver.index.factReadBases[relation.Predicate]
 	if f4 {
 		for _, factBase := range factBases {
-			newBindings.AddMultiple(s.solver.FindFacts(factBase, relation, simpleBinding))
+			// todo
+			s.solver.FindFacts(factBase, relation, simpleBinding)
 		}
 	}
 
@@ -99,7 +100,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 		for _, function := range functions1 {
 			resultBinding, success := function(relation, simpleBinding)
 			if success {
-				newBindings.Add(resultBinding)
+				frame.OutBindings.Add(resultBinding)
 			}
 		}
 	}
@@ -114,7 +115,8 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	}
 
 	// do assert / retract
-	newBindings.AddMultiple(s.solver.modifyKnowledgeBase(relation, simpleBinding))
+	// todo
+	s.solver.modifyKnowledgeBase(relation, simpleBinding)
 
 	// compose the result set
 	//completedBindings := mentalese.NewBindingSet()

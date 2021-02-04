@@ -10,5 +10,6 @@ respond(Input) :-
     go:answer(Sense, RequestBindings, Answer)
     go:generate(Locale, Answer, Tokens)
     go:surface(Tokens, Output)
-    go:assert(go:action('print', Output))
+    go:uuid(ActionId)
+    go:assert(go:action('print', ActionId, Output))
     ;

@@ -51,5 +51,5 @@ func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
 
 	padding := strings.Repeat("  ", stackDepth)
 	p.log.AddDebug("frame",
-		padding + frame.Relations[frame.RelationIndex].String() + "  " + frame.InBindings.Get(frame.InBindingIndex).String())
+		padding + frame.Relations[frame.RelationIndex].String() + "  " + frame.GetInBinding().String())
 }

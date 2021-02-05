@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDomain(t *testing.T) {
+func TestAsync(t *testing.T) {
 
 	var tests = [][]struct {
 		question      string
@@ -38,6 +38,7 @@ func TestDomain(t *testing.T) {
 			system.CreateAnswerGoal(test.question)
 			system.Run()
 			actions := system.ReadActions("print")
+
 			answer := ""
 			if actions.GetLength() > 0 {
 				answer = actions.Get(0).MustGet("Content").TermValue

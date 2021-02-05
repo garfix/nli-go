@@ -283,7 +283,7 @@ func (base *LanguageBase) generate(input mentalese.Relation, binding mentalese.B
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "srl", base.log) {
+	if !Validate(bound, "srv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 

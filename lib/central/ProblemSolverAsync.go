@@ -60,9 +60,11 @@ func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, 
 
 func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Process) {
 
+	// todo: too much information
 	frame := process.GetLastFrame()
 	relation := frame.GetCurrentRelation()
-	binding := frame.GetCurrentBinding()
+	currentBinding := frame.GetCurrentBinding()
+	binding := frame.GetInBinding()
 
 	_, found := s.solver.index.knownPredicates[relation.Predicate]
 		if !found {
@@ -70,19 +72,12 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 			return
 		}
 
-	//relationVariables := relation.GetVariableNames()
-	simpleBinding := binding //.FilterVariablesByName(relationVariables)
-
-	//s.solver.callStack.PushSingle(relation, binding)
-
-	//newBindings := mentalese.NewBindingSet()
-
 	// go through all simple fact bases
 	factBases, f4 := s.solver.index.factReadBases[relation.Predicate]
 	if f4 {
 		for _, factBase := range factBases {
 			// todo
-			s.solver.FindFacts(factBase, relation, simpleBinding)
+			s.solver.FindFacts(factBase, relation, binding)
 		}
 	}
 
@@ -90,7 +85,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	bases, f3 := s.solver.index.ruleReadBases[relation.Predicate]
 	if f3 {
 		for _, base := range bases {
-			s.solveSingleRelationSingleBindingSingleRuleBase(process, relation, simpleBinding, base)
+			s.solveSingleRelationSingleBindingSingleRuleBase(process, relation, binding, base)
 		}
 	}
 
@@ -98,9 +93,9 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	functions1, f1 := s.solver.index.simpleFunctions[relation.Predicate]
 	if f1 {
 		for _, function := range functions1 {
-			resultBinding, success := function(relation, simpleBinding)
+			resultBinding, success := function(relation, binding)
 			if success {
-				frame.OutBindings.Add(resultBinding)
+				frame.AddOutBinding(currentBinding, resultBinding)
 			}
 		}
 	}
@@ -109,26 +104,14 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	functions2, f2 := s.solver.index.solverFunctions[relation.Predicate]
 	if f2 {
 		for _, function := range functions2 {
-			result := function(relation, simpleBinding)
-			frame.OutBindings.AddMultiple(result)
+			result := function(relation, binding)
+			frame.AddOutBindings(currentBinding, result)
 		}
 	}
 
 	// do assert / retract
 	// todo
-	s.solver.modifyKnowledgeBase(relation, simpleBinding)
-
-	// compose the result set
-	//completedBindings := mentalese.NewBindingSet()
-	//for _, newBinding := range newBindings.GetAll() {
-	//	// remove temporary variables
-	//	essentialResultBinding := newBinding.FilterVariablesByName(relationVariables)
-	//	// combine the source binding with the clean results
-	//	completedBinding := binding.Merge(essentialResultBinding)
-	//	completedBindings.Add(completedBinding)
-	//}
-
-	//s.solver.callStack.Pop(newBindings)
+	s.solver.modifyKnowledgeBase(relation, binding)
 }
 
 func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(process *goal.Process, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {

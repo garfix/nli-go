@@ -17,31 +17,6 @@ func NewProblemSolverAsync(solver *ProblemSolver) *ProblemSolverAsync {
 	}
 }
 
-//func (s *ProblemSolverAsync) SolveRelation(process *goal.Process) {
-//
-//	relation := process.GetLastFrame().
-//
-//	if s.solver.log.Active() { s.solver.log.StartDebug("Solve Relation", relation.String() + " " + fmt.Sprint(bindings)) }
-//
-//	_, found := s.solver.index.knownPredicates[relation.Predicate]
-//	if !found {
-//		s.solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
-//		return
-//	}
-//
-//	newBindings, multiFound := s.solveMultipleBindings(relation, bindings)
-//
-//	if !multiFound {
-//		for _, binding := range bindings.GetAll() {
-//			newBindings.AddMultiple(s.SolveSingleRelationSingleBinding(process, relation, binding))
-//		}
-//	}
-//
-//	if s.solver.log.Active() { s.solver.log.EndDebug("Solve Relation", relation.String() + ": " + fmt.Sprint(newBindings)) }
-//
-//	return newBindings
-//}
-
 func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := mentalese.NewBindingSet()
@@ -58,13 +33,10 @@ func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, 
 	return newBindings, multiFound
 }
 
-func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Process) {
+func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Messenger) {
 
-	// todo: too much information
-	frame := process.GetLastFrame()
-	relation := frame.GetCurrentRelation()
-	currentBinding := frame.GetCurrentBinding()
-	binding := frame.GetInBinding()
+	relation := messenger.GetRelation()
+	binding := messenger.GetInBinding()
 
 	_, found := s.solver.index.knownPredicates[relation.Predicate]
 		if !found {
@@ -85,7 +57,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	bases, f3 := s.solver.index.ruleReadBases[relation.Predicate]
 	if f3 {
 		for _, base := range bases {
-			s.solveSingleRelationSingleBindingSingleRuleBase(process, relation, binding, base)
+			s.solveSingleRelationSingleBindingSingleRuleBase(messenger, relation, binding, base)
 		}
 	}
 
@@ -95,7 +67,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 		for _, function := range functions1 {
 			resultBinding, success := function(relation, binding)
 			if success {
-				frame.AddOutBinding(currentBinding, resultBinding)
+				messenger.AddOutBinding(resultBinding)
 			}
 		}
 	}
@@ -105,7 +77,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	if f2 {
 		for _, function := range functions2 {
 			result := function(relation, binding)
-			frame.AddOutBindings(currentBinding, result)
+			messenger.AddOutBindings(result)
 		}
 	}
 
@@ -114,7 +86,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(process *goal.Proc
 	s.solver.modifyKnowledgeBase(relation, binding)
 }
 
-func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(process *goal.Process, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
+func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger *goal.Messenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
 
 	subgoalResultBindings := mentalese.BindingSet{}
 	inputVariables := goalRelation.GetVariableNames()
@@ -133,64 +105,30 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(proc
 	scope := mentalese.NewScope()
 	scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
 
+	cursor := messenger.GetCursor()
+
 	// build the rule index
 	currentRuleIndex := 0
-	ruleBinding, ruleBindingFound := process.GetCursor().State.Get("rule")
+	ruleBinding, ruleBindingFound := cursor.State.Get("rule")
 	if ruleBindingFound {
 		currentRuleIndex, _ = ruleBinding.GetIntValue()
 	}
 
 	// process child frame bindings
 	if currentRuleIndex > 0 {
-		subgoalResultBindings = process.GetCursor().OutBindings
-		for _, childResult := range process.GetCursor().ChildFrameResultBindings.GetAll() {
+		subgoalResultBindings = cursor.StepBindings
+		for _, childResult := range cursor.ChildFrameResultBindings.GetAll() {
 			// filter out the input variables
 			filteredBinding := childResult.FilterVariablesByName(inputVariables)
 			// make sure all variables of the original binding are present
 			goalBinding := scopedBinding.Merge(filteredBinding)
 			subgoalResultBindings.Add(goalBinding)
 		}
-		process.GetCursor().OutBindings = subgoalResultBindings
+		cursor.StepBindings = subgoalResultBindings
 	}
 
 	if currentRuleIndex < len(rules) {
-		process.GetCursor().State.Set("rule", mentalese.NewTermString(strconv.Itoa(currentRuleIndex + 1)))
-		process.PushFrame(sourceSubgoalSets[currentRuleIndex], mentalese.InitBindingSet(scopedBinding))
+		cursor.State.Set("rule", mentalese.NewTermString(strconv.Itoa(currentRuleIndex + 1)))
+		messenger.CreateChildStackFrame(sourceSubgoalSets[currentRuleIndex], mentalese.InitBindingSet(scopedBinding))
 	}
-
-	//for i, sourceSubgoalSet := range sourceSubgoalSets {
-	//
-	//	scope := mentalese.NewScope()
-	//	s.solver.scopeStack.PushFrame(scope)
-	//
-	//	scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
-	//	subgoalResultBindings := mentalese.InitBindingSet(scopedBinding)
-	//
-	//	binding := mentalese.NewBinding()
-	//	binding.Set("rule", mentalese.NewTermString(strconv.Itoa(i)))
-	//	process.PushFrame(sourceSubgoalSet, binding)
-	//
-	//	//for _, subGoal := range sourceSubgoalSet {
-	//	//
-	//	//	subgoalResultBindings = solver.SolveRelationSet([]mentalese.Relation{subGoal}, subgoalResultBindings)
-	//	//
-	//	//	if subgoalResultBindings.IsEmpty() {
-	//	//		break
-	//	//	}
-	//	//}
-	//
-	//	for _, subgoalResultBinding := range subgoalResultBindings.GetAll() {
-	//
-	//		// filter out the input variables
-	//		filteredBinding := subgoalResultBinding.FilterVariablesByName(inputVariables)
-	//
-	//		// make sure all variables of the original binding are present
-	//		goalBinding := scopedBinding.Merge(filteredBinding)
-	//
-	//		goalBindings.Add(goalBinding)
-	//	}
-	//
-	//	s.solver.scopeStack.Pop()
-	//}
-
 }

@@ -16,9 +16,13 @@ func NewProcess(goalId int, goalSet mentalese.RelationSet) *Process {
 	}
 }
 
-func (p *Process) PushFrame(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) {
-	p.Stack = append(p.Stack,
-		NewStackFrame(goalSet, bindings))
+//func (p *Process) PushFrame(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) {
+//	p.Stack = append(p.Stack,
+//		NewStackFrame(goalSet, bindings))
+//}
+
+func (p *Process) PushFrame(frame *StackFrame) {
+	p.Stack = append(p.Stack, frame)
 }
 
 func (p *Process) Clear() {
@@ -31,7 +35,7 @@ func (p *Process) Advance() {
 
 	// advance binding
 	frame := p.GetLastFrame()
-	frame.OutBindings.AddMultiple(frame.Cursor.OutBindings)
+	frame.OutBindings.AddMultiple(frame.Cursor.StepBindings)
 	frame.InBindingIndex++
 
 	// create a new working environment
@@ -70,6 +74,23 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 		newLastFrame.Cursor.ChildFrameResultBindings = resultBindings
 	}
 
+}
+
+func (p *Process) CreateMessenger() *Messenger {
+	frame := p.GetLastFrame()
+
+	return NewMessenger(
+		frame.GetCurrentRelation(),
+		frame.GetInBinding(),
+		frame.Cursor)
+}
+
+func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
+	frame.AddOutBindings(frame.GetCurrentBinding(), messenger.GetOutBindings())
+
+	if messenger.GetChildFrame() != nil {
+		p.PushFrame(messenger.GetChildFrame())
+	}
 }
 
 func (p *Process) GetCursor() *StackFrameCursor {

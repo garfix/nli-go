@@ -39,7 +39,9 @@ func (p ProcessRunner) singleStep(process *goal.Process) {
 // since these are only simple functions, this can be done inline without much fuzz
 
 	// execute the relation at the cursor
-	p.solver.SolveSingleRelationSingleBinding(process)
+	messenger := process.CreateMessenger()
+	p.solver.SolveSingleRelationSingleBinding(messenger)
+	process.ProcessMessenger(messenger, currentFrame)
 
 	// if the relation has not pushed a new frame, then it is done processing
 	if currentFrame == process.GetLastFrame() {

@@ -14,7 +14,11 @@ respond(Input) :-
     go:tokenize(Locale, Input, InTokens)
     go:parse(Locale, InTokens, ParseTree)
     go:relationize(ParseTree, Sense, RequestBindings)
+
     go:answer(Sense, RequestBindings, Answer)
+
+    go:find_solution(Sense, SolutionIndex)
+
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)
     go:uuid(ActionId)

@@ -34,7 +34,7 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 
 // goal e.g. [ question(Q) child(S, O) SharedId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
 // return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
-func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
+func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.RelationSet, binding mentalese.Binding) mentalese.RelationSet {
 
 	answer := mentalese.RelationSet{}
 	transformer := NewRelationTransformer(answerer.matcher, answerer.log)
@@ -55,7 +55,12 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, bindings)
+			resultBindings := mentalese.BindingSet{}
+			if messenger == nil {
+				resultBindings = answerer.solver.SolveRelationSet(transformedGoal, mentalese.InitBindingSet(binding))
+			} else {
+				messenger.CreateChildStackFrame(transformedGoal, mentalese.InitBindingSet(binding))
+			}
 
 			// no results? try the next solution (if there is one)
 			if resultBindings.IsEmpty() {

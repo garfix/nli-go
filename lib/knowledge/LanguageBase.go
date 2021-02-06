@@ -269,7 +269,7 @@ func (base *LanguageBase) answer(messenger api.ProcessMessenger, input mentalese
 	input.Arguments[1].GetJsonValue(requestBindings)
 	answerRelationVar := input.Arguments[2].TermValue
 
-	answerRelations := base.answerer.Answer(messenger, requestRelations, mentalese.InitBindingSet(binding))
+	answerRelations := base.answerer.Answer(messenger, requestRelations, binding)
 	base.log.AddProduction("Answer", answerRelations.String())
 	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.String())
 

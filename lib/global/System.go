@@ -210,7 +210,7 @@ func (system *System) process(originalInput string) (string, *common.Options) {
 		}
 
 		if !system.log.IsDone() {
-			answerRelations = system.answerer.Answer(nil, requestRelations, mentalese.InitBindingSet(entityIds))
+			answerRelations = system.answerer.Answer(nil, requestRelations, entityIds)
 			system.log.AddProduction("Answer", answerRelations.String())
 			system.log.AddProduction("Anaphora queue", system.dialogContext.AnaphoraQueue.String())
 		}

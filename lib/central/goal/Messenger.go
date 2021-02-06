@@ -1,9 +1,9 @@
 package goal
 
-import "nli-go/lib/mentalese"
-
-// This struct is an intermediary between a process and the rest of the framework
-// Its purpose is to expose as little as possible of the internal state of the process
+import (
+	"nli-go/lib/api"
+	"nli-go/lib/mentalese"
+)
 
 type Messenger struct {
 	relation  mentalese.Relation
@@ -31,7 +31,7 @@ func (i *Messenger) GetRelation() mentalese.Relation {
 	return i.relation
 }
 
-func (i *Messenger) GetCursor() *StackFrameCursor {
+func (i *Messenger) GetCursor() api.ProcessCursor {
 	return i.cursor
 }
 

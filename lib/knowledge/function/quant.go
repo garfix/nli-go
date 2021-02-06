@@ -1,6 +1,7 @@
 package function
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
@@ -9,7 +10,7 @@ import (
 )
 
 // quant_check(quant() quant(), relationset)
-func (base *SystemSolverFunctionBase) quantCheck(find mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) quantCheck(messenger api.ProcessMessenger, find mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	if len(find.Arguments) != 2 {
 		panic("quant_check(quants, scope) needs two arguments")
 	}
@@ -17,14 +18,14 @@ func (base *SystemSolverFunctionBase) quantCheck(find mentalese.Relation, bindin
 }
 
 // quant_foreach(quant() quant(), relationset)
-func (base *SystemSolverFunctionBase) quantForeach(find mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenger, find mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	if len(find.Arguments) != 2 {
 		panic("quant_foreach(quants, scope) needs two arguments")
 	}
 	return base.solveQuantifiedRelations(find, binding, false)
 }
 
-func (base *SystemSolverFunctionBase) quantOrderedList(quantList mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) quantOrderedList(messenger api.ProcessMessenger, quantList mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := quantList.BindSingle(binding)
 

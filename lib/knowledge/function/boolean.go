@@ -1,10 +1,11 @@
 package function
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/mentalese"
 )
 
-func (base *SystemSolverFunctionBase) not(notRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) not(messenger api.ProcessMessenger, notRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	scope := notRelation.Arguments[mentalese.NotScopeIndex].TermValueRelationSet
 
@@ -20,7 +21,7 @@ func (base *SystemSolverFunctionBase) not(notRelation mentalese.Relation, bindin
 	return resultBindings
 }
 
-func (base *SystemSolverFunctionBase) and(andRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) and(messenger api.ProcessMessenger, andRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := andRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := andRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
@@ -36,7 +37,7 @@ func (base *SystemSolverFunctionBase) and(andRelation mentalese.Relation, bindin
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) or(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) or(messenger api.ProcessMessenger, orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet
@@ -52,7 +53,7 @@ func (base *SystemSolverFunctionBase) or(orRelation mentalese.Relation, binding 
 	return result
 }
 
-func (base *SystemSolverFunctionBase) xor(orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) xor(messenger api.ProcessMessenger, orRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	first := orRelation.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet
 	second := orRelation.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet

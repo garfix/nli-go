@@ -53,7 +53,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	}
 }
 
-func (base *LanguageBase) locale(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) locale(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -74,7 +74,7 @@ func (base *LanguageBase) locale(input mentalese.Relation, binding mentalese.Bin
 	return newBindings
 }
 
-func (base *LanguageBase) tokenize(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) tokenize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -119,7 +119,7 @@ func (base *LanguageBase) getGrammar(locale string) (parse.Grammar, bool) {
 	return grammar, found
 }
 
-func (base *LanguageBase) parse(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -155,7 +155,7 @@ func (base *LanguageBase) parse(input mentalese.Relation, binding mentalese.Bind
 	return newBindings
 }
 
-func (base *LanguageBase) relationize(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -255,7 +255,7 @@ func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sor
 	return entityIds, nameNotFound
 }
 
-func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) answer(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -269,7 +269,7 @@ func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Bin
 	input.Arguments[1].GetJsonValue(requestBindings)
 	answerRelationVar := input.Arguments[2].TermValue
 
-	answerRelations := base.answerer.Answer(requestRelations, mentalese.InitBindingSet(binding))
+	answerRelations := base.answerer.Answer(messenger, requestRelations, mentalese.InitBindingSet(binding))
 	base.log.AddProduction("Answer", answerRelations.String())
 	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.String())
 
@@ -279,7 +279,7 @@ func (base *LanguageBase) answer(input mentalese.Relation, binding mentalese.Bin
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) generate(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -310,7 +310,7 @@ func (base *LanguageBase) generate(input mentalese.Relation, binding mentalese.B
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) surface(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) surface(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 

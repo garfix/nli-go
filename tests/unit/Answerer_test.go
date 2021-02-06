@@ -101,7 +101,8 @@ func TestAnswerer(t *testing.T) {
 	solver.AddMultipleBindingBase(systemAggregateBase)
 	solver.AddFactBase(factBase)
 
-	answerer := central.NewAnswerer(matcher, solver, log)
+	solverAsync := central.NewProblemSolverAsync(solver)
+	answerer := central.NewAnswerer(matcher, solver, solverAsync, log)
 	answerer.AddSolutions(solutions)
 
 	tests := []struct {
@@ -122,7 +123,7 @@ func TestAnswerer(t *testing.T) {
 
 		input := parser.CreateRelationSet(test.input)
 
-		resultRelationSet := answerer.Answer(input, mentalese.InitBindingSet(mentalese.NewBinding()))
+		resultRelationSet := answerer.Answer(nil, input, mentalese.InitBindingSet(mentalese.NewBinding()))
 
 		if fmt.Sprintf("%v", resultRelationSet) != test.wantRelationSet {
 			t.Errorf("Answerer(%v): got %v, want %s", test.input, resultRelationSet, test.wantRelationSet)

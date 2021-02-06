@@ -1,12 +1,13 @@
 package function
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"strconv"
 )
 
-func (base *SystemSolverFunctionBase) listOrder(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -24,7 +25,7 @@ func (base *SystemSolverFunctionBase) listOrder(relation mentalese.Relation, bin
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listAppend(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listAppend(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -42,7 +43,7 @@ func (base *SystemSolverFunctionBase) listAppend(relation mentalese.Relation, bi
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listForeach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 	newBindings := mentalese.NewBindingSet()
@@ -89,7 +90,7 @@ func (base *SystemSolverFunctionBase) listForeach(relation mentalese.Relation, b
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) listDeduplicate(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listDeduplicate(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -105,7 +106,7 @@ func (base *SystemSolverFunctionBase) listDeduplicate(relation mentalese.Relatio
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listSort(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listSort(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -125,7 +126,7 @@ func (base *SystemSolverFunctionBase) listSort(relation mentalese.Relation, bind
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listIndex(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listIndex(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -148,7 +149,7 @@ func (base *SystemSolverFunctionBase) listIndex(relation mentalese.Relation, bin
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) listGet(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listGet(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -175,7 +176,7 @@ func (base *SystemSolverFunctionBase) listGet(relation mentalese.Relation, bindi
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listLength(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listLength(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -191,7 +192,7 @@ func (base *SystemSolverFunctionBase) listLength(relation mentalese.Relation, bi
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *SystemSolverFunctionBase) listExpand(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listExpand(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 

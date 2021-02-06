@@ -1,6 +1,7 @@
 package central
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -12,15 +13,17 @@ type Answerer struct {
 	solutions []mentalese.Solution
 	matcher   *RelationMatcher
 	solver    *ProblemSolver
+	solverAsync *ProblemSolverAsync
 	log       *common.SystemLog
 }
 
-func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, log *common.SystemLog) *Answerer {
+func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, solverAsync *ProblemSolverAsync, log *common.SystemLog) *Answerer {
 
 	return &Answerer{
 		solutions: []mentalese.Solution{},
 		matcher:   matcher,
 		solver:    solver,
+		solverAsync: solverAsync,
 		log:       log,
 	}
 }
@@ -31,7 +34,7 @@ func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 
 // goal e.g. [ question(Q) child(S, O) SharedId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
 // return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
-func (answerer Answerer) Answer(goal mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
+func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
 
 	answer := mentalese.RelationSet{}
 	transformer := NewRelationTransformer(answerer.matcher, answerer.log)

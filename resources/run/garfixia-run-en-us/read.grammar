@@ -1,1 +1,2 @@
-{ rule: s(P) -> 'test' 'a' 'x',       sense: dom:in_out('A', Y) }
+{ rule: s(P) -> 'test' 'a',       sense: dom:in_out('A', Y) }
+{ rule: s(P) -> 'test' 'b',       sense: dom:in_out('B', Y) }

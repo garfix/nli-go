@@ -1,13 +1,14 @@
 package function
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"os/exec"
 	"strconv"
 )
 
-func (base *SystemSolverFunctionBase) let(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -27,7 +28,7 @@ func (base *SystemSolverFunctionBase) let(relation mentalese.Relation, binding m
 	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemSolverFunctionBase) ifThenElse(ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	condition := ifThenElse.Arguments[0].TermValueRelationSet
 	action := ifThenElse.Arguments[1].TermValueRelationSet
@@ -44,7 +45,7 @@ func (base *SystemSolverFunctionBase) ifThenElse(ifThenElse mentalese.Relation, 
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) call(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	child := relation.Arguments[0].TermValueRelationSet
 
@@ -53,7 +54,7 @@ func (base *SystemSolverFunctionBase) call(relation mentalese.Relation, binding 
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) ignore(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) ignore(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	child := relation.Arguments[0].TermValueRelationSet
 
@@ -66,7 +67,7 @@ func (base *SystemSolverFunctionBase) ignore(relation mentalese.Relation, bindin
 	}
 }
 
-func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -108,7 +109,7 @@ func (base *SystemSolverFunctionBase) rangeForEach(relation mentalese.Relation, 
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) doBreak(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 
@@ -119,7 +120,7 @@ func (base *SystemSolverFunctionBase) doBreak(relation mentalese.Relation, bindi
 	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemSolverFunctionBase) exec(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) exec(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -145,7 +146,7 @@ func (base *SystemSolverFunctionBase) exec(input mentalese.Relation, binding men
 }
 
 
-func (base *SystemSolverFunctionBase) execResponse(input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 	responseVar := input.Arguments[0].TermValue

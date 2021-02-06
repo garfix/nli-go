@@ -14,7 +14,8 @@ func TestAsync(t *testing.T) {
 		answer        string
 	}{
 		{
-			{"Test A X", "1"},
+			{"Test A", "1"},
+			//{"Test B", "3"},
 		},
 	}
 

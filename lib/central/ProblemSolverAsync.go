@@ -2,9 +2,7 @@ package central
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/mentalese"
-	"strconv"
 )
 
 type ProblemSolverAsync struct {
@@ -33,7 +31,7 @@ func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, 
 	return newBindings, multiFound
 }
 
-func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Messenger) {
+func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger) {
 
 	relation := messenger.GetRelation()
 	binding := messenger.GetInBinding()
@@ -76,7 +74,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Me
 	functions2, f2 := s.solver.index.solverFunctions[relation.Predicate]
 	if f2 {
 		for _, function := range functions2 {
-			result := function(relation, binding)
+			result := function(messenger, relation, binding)
 			messenger.AddOutBindings(result)
 		}
 	}
@@ -86,10 +84,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Me
 	s.solver.modifyKnowledgeBase(relation, binding)
 }
 
-func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger *goal.Messenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
-
-	subgoalResultBindings := mentalese.BindingSet{}
-	inputVariables := goalRelation.GetVariableNames()
+func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger api.ProcessMessenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
 
 	// match rules from the rule base to the goalRelation
 	rules := ruleBase.GetRules(goalRelation, binding)
@@ -108,28 +103,15 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(mess
 	cursor := messenger.GetCursor()
 
 	// build the rule index
-	currentRuleIndex := 0
-	ruleBinding, ruleBindingFound := cursor.State.Get("rule")
-	if ruleBindingFound {
-		currentRuleIndex, _ = ruleBinding.GetIntValue()
-	}
+	currentRuleIndex := cursor.GetState("rule", 0)
 
 	// process child frame bindings
 	if currentRuleIndex > 0 {
-		subgoalResultBindings = cursor.StepBindings
-		for _, childResult := range cursor.ChildFrameResultBindings.GetAll() {
-// todo: don't need to do this here
-			// filter out the input variables
-			filteredBinding := childResult.FilterVariablesByName(inputVariables)
-			// make sure all variables of the original binding are present
-			goalBinding := scopedBinding.Merge(filteredBinding)
-			subgoalResultBindings.Add(goalBinding)
-		}
-		cursor.StepBindings = subgoalResultBindings
+		cursor.AddStepBindings(cursor.GetChildFrameResultBindings())
 	}
 
 	if currentRuleIndex < len(rules) {
-		cursor.State.Set("rule", mentalese.NewTermString(strconv.Itoa(currentRuleIndex + 1)))
+		cursor.SetState("rule", currentRuleIndex + 1)
 		messenger.CreateChildStackFrame(sourceSubgoalSets[currentRuleIndex], mentalese.InitBindingSet(scopedBinding))
 	}
 }

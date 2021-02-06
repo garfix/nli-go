@@ -189,7 +189,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleBinding(relation mentalese
 	functions2, f2 := solver.index.solverFunctions[relation.Predicate]
 	if f2 {
 		for _, function := range functions2 {
-			newBindings.AddMultiple(function(relation, simpleBinding))
+			newBindings.AddMultiple(function(nil, relation, simpleBinding))
 		}
 	}
 

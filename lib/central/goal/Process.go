@@ -73,7 +73,6 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 	if newLastFrame != nil {
 		newLastFrame.Cursor.ChildFrameResultBindings = resultBindings
 	}
-
 }
 
 func (p *Process) CreateMessenger() *Messenger {

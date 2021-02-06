@@ -2,6 +2,9 @@ package goal
 
 import "nli-go/lib/mentalese"
 
+// This struct is an intermediary between a process and the rest of the framework
+// Its purpose is to expose as little as possible of the internal state of the process
+
 type Messenger struct {
 	relation  mentalese.Relation
 	inBinding mentalese.Binding

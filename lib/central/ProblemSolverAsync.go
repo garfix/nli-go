@@ -118,6 +118,7 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(mess
 	if currentRuleIndex > 0 {
 		subgoalResultBindings = cursor.StepBindings
 		for _, childResult := range cursor.ChildFrameResultBindings.GetAll() {
+// todo: don't need to do this here
 			// filter out the input variables
 			filteredBinding := childResult.FilterVariablesByName(inputVariables)
 			// make sure all variables of the original binding are present

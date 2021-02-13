@@ -15,7 +15,6 @@ func TestAsync(t *testing.T) {
 	}{
 		{
 			{"Test A", "1"},
-			//{"Test B", "3"},
 		},
 	}
 
@@ -36,14 +35,7 @@ func TestAsync(t *testing.T) {
 
 			log.Clear()
 
-			system.CreateAnswerGoal(test.question)
-			system.Run()
-			actions := system.ReadActions("print")
-
-			answer := ""
-			if actions.GetLength() > 0 {
-				answer = actions.Get(0).MustGet("Content").TermValue
-			}
+			answer, _ := system.AnswerAsync(test.question)
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

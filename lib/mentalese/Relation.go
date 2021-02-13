@@ -79,6 +79,8 @@ const PredicateGoal = "go_goal"
 const PredicateUuid = "go_uuid"
 const PredicateAction = "go_action"
 const PredicateLocale = "go_locale"
+
+const PredicateRespond = "go_respond"
 const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"
 const PredicateRelationize = "go_relationize"
@@ -89,9 +91,6 @@ const PredicateFindSolution = "go_find_solution"
 const PredicateSolve = "go_solve"
 const PredicateFindResponse = "go_find_response"
 const PredicateCreateAnswer = "go_create_answer"
-
-// todo prefix should be go
-const PredicateRespond = "dom_respond"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

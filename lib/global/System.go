@@ -86,6 +86,18 @@ func (system *System) Run() {
 	}
 }
 
+func (system *System) AnswerAsync(input string) (string, *common.Options) {
+	system.CreateAnswerGoal(input)
+	system.Run()
+	actions := system.ReadActions("print")
+
+	answer := ""
+	if actions.GetLength() > 0 {
+		answer = actions.Get(0).MustGet("Content").TermValue
+	}
+	return answer, nil
+}
+
 func (system *System) Answer(input string) (string, *common.Options) {
 
 	// process possible user responses and start with the original question

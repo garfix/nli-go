@@ -126,6 +126,11 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.answerer = central.NewAnswerer(matcher, solver, solverAsync, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
+
+	domainIndex, ok := builder.buildIndex(common.Dir() + "/../domain")
+	if ok {
+		builder.buildDomain(domainIndex, system, common.Dir() + "/../domain")
+	}
 }
 
 func (builder *systemBuilder) AddPredicates(path string, system *System) bool {
@@ -281,39 +286,53 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 		if !fileInfo.IsDir() { continue }
 
 		dirName := fileInfo.Name()
-		indexPath := builder.baseDir + "/" + dirName + "/index.yml"
-
-		indexYml, err := common.ReadFile(indexPath)
-		if err != nil {
-			builder.log.AddError(err.Error())
-			ok = false
+		anIndex := index{}
+		anIndex, ok = builder.buildIndex(builder.baseDir + "/" + dirName)
+		if ! ok {
 			goto end
 		}
 
-		index := index{ }
-		err = yaml.Unmarshal([]byte(indexYml), &index)
-		if err != nil {
-			builder.log.AddError("Error parsing YAML file " + indexPath + " (" + err.Error() + ")")
-			ok = false
-			goto end
-		}
-
-		if index.Type == "" {
-			builder.log.AddError("'type' is required; index.yml from: " + dirName)
-			goto end
-		}
-
-		if index.Version == "" {
-			builder.log.AddError("'version' is required; index.yml from: " + dirName)
-			goto end
-		}
-
-		indexes[dirName] = index
+		indexes[dirName] = anIndex
 	}
 
 	end:
 
 	return indexes, ok
+}
+
+func (builder *systemBuilder) buildIndex(dirName string) (index, bool) {
+
+	index := index{ }
+	indexPath := dirName + "/index.yml"
+
+	ok := true
+
+	indexYml, err := common.ReadFile(indexPath)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		ok = false
+		goto end
+	}
+
+	err = yaml.Unmarshal([]byte(indexYml), &index)
+	if err != nil {
+		builder.log.AddError("Error parsing YAML file " + indexPath + " (" + err.Error() + ")")
+		ok = false
+		goto end
+	}
+
+	if index.Type == "" {
+		builder.log.AddError("'type' is required; index.yml from: " + dirName)
+		goto end
+	}
+
+	if index.Version == "" {
+		builder.log.AddError("'version' is required; index.yml from: " + dirName)
+		goto end
+	}
+
+	end:
+		return index, ok
 }
 
 func (builder *systemBuilder) GetApplicationAlias(module string) string {

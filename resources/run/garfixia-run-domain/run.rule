@@ -6,24 +6,3 @@ multiply(A) :- go:unify(A, 'E');
 multiply(A) :- go:unify(A, 'F');
 multiply(A) :- go:unify(A, 'G');
 
-
-/* This file should be moved outside this app, into the system ('domain/nli-go.rule') */
-
-respond(Input) :-
-    go:locale(Locale)
-    go:tokenize(Locale, Input, InTokens)
-    go:parse(Locale, InTokens, ParseTree)
-    go:relationize(ParseTree, Request, RequestBinding)
-
-    go:find_solution(Request, Solution)
-    go:cut(1,
-        go:solve(Request, RequestBinding, Solution, ResultBindings)
-    )
-    go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
-    go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)
-
-    go:generate(Locale, Answer, OutTokens)
-    go:surface(OutTokens, Output)
-    go:uuid(ActionId)
-    go:assert(go:action('print', ActionId, Output))
-    ;

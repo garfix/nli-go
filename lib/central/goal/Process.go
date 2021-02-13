@@ -35,7 +35,6 @@ func (p *Process) Advance() {
 
 	// advance binding
 	frame := p.GetLastFrame()
-	frame.OutBindings.AddMultiple(frame.Cursor.StepBindings)
 	frame.InBindingIndex++
 
 	// create a new working environment
@@ -68,7 +67,7 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 	p.PopFrame()
 
 	// transfer child bindings to parent
-	resultBindings := frame.OutBindings
+	resultBindings := frame.InBindings
 	newLastFrame := p.GetLastFrame()
 	if newLastFrame != nil {
 		newLastFrame.Cursor.ChildFrameResultBindings = resultBindings
@@ -80,12 +79,12 @@ func (p *Process) CreateMessenger() *Messenger {
 
 	return NewMessenger(
 		frame.GetCurrentRelation(),
-		frame.GetInBinding(),
+		frame.GetPreparedBinding(),
 		frame.Cursor)
 }
 
 func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
-	frame.AddOutBindings(frame.GetCurrentBinding(), messenger.GetOutBindings())
+	frame.AddOutBindings(frame.GetCurrentInBinding(), messenger.GetOutBindings())
 
 	if messenger.GetChildFrame() != nil {
 		p.PushFrame(messenger.GetChildFrame())

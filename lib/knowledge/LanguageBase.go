@@ -1,7 +1,6 @@
 package knowledge
 
 import (
-	"encoding/json"
 	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
@@ -47,9 +46,11 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateTokenize: base.tokenize,
 		mentalese.PredicateParse: base.parse,
 		mentalese.PredicateRelationize: base.relationize,
-		mentalese.PredicateAnswer: base.answer,
-		mentalese.PredicateGenerate: base.generate,
-		mentalese.PredicateSurface: base.surface,
+		mentalese.PredicateGenerate:     base.generate,
+		mentalese.PredicateSurface:      base.surface,
+		mentalese.PredicateFindSolution: base.findSolution,
+		mentalese.PredicateSolve: base.solve,
+		mentalese.PredicateFindResponse: base.findResponse,
 	}
 }
 
@@ -163,18 +164,11 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	sentenceSerialized := bound.Arguments[0].TermValue
 	senseVar := input.Arguments[1].TermValue
 	requestBindingVar := input.Arguments[2].TermValue
-
 	var parseTree parse.ParseTreeNode
-	jsonBytes := []byte(sentenceSerialized)
-	err := json.Unmarshal(jsonBytes, &parseTree)
-	if err != nil {
-		base.log.AddError(err.Error())
-		return mentalese.NewBindingSet()
-	}
 
+	bound.Arguments[0].GetJsonValue(&parseTree)
 	relationizer := parse.NewRelationizer(base.log)
 	sortFinder := central.NewSortFinder(base.meta)
 
@@ -255,28 +249,125 @@ func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sor
 	return entityIds, nameNotFound
 }
 
-func (base *LanguageBase) answer(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) findSolution(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "rjv", base.log) {
+	if !Validate(bound, "rv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	requestBindings := mentalese.Binding{}
+	request := bound.Arguments[0].TermValueRelationSet
+	solutionVar := input.Arguments[1].TermValue
 
-	requestRelations := bound.Arguments[0].TermValueRelationSet
-	input.Arguments[1].GetJsonValue(requestBindings)
-	answerRelationVar := input.Arguments[2].TermValue
+	solutions := base.answerer.FindSolutions(request)
 
-	answerRelations := base.answerer.Answer(messenger, requestRelations, binding)
-	base.log.AddProduction("Answer", answerRelations.String())
-	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.String())
+	newBindings := mentalese.NewBindingSet()
 
-	newBinding := binding.Copy()
-	newBinding.Set(answerRelationVar, mentalese.NewTermRelationSet(answerRelations))
+	for _, solution := range solutions {
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(solutionVar, mentalese.NewTermJson(solution))
+		newBindings.Add(newBinding)
+	}
 
-	return mentalese.InitBindingSet(newBinding)
+	return newBindings
+}
+
+func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	transformer := central.NewRelationTransformer(base.matcher, base.log)
+
+	//Request, RequestBinding, Solution, ResultBindings
+	if !Validate(bound, "rjjv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	requestBinding := mentalese.Binding{}
+	solution := mentalese.Solution{}
+
+	request := bound.Arguments[0].TermValueRelationSet
+	bound.Arguments[1].GetJsonValue(&requestBinding)
+	bound.Arguments[2].GetJsonValue(&solution)
+	resultBindingsVar := input.Arguments[3].TermValue
+
+	child := messenger.GetCursor().GetState("child", 0)
+	if child == 0 {
+
+		messenger.GetCursor().SetState("child", 1)
+
+		// apply transformation, if available
+		transformedRequest := transformer.Replace(solution.Transformations, request)
+
+		messenger.CreateChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
+		return mentalese.NewBindingSet()
+
+	} else {
+
+		resultBindings := messenger.GetCursor().GetChildFrameResultBindings()
+
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+
+		// queue ids
+		group := central.EntityReferenceGroup{}
+		for _, id := range resultBindings.GetIds(solution.Result.TermValue) {
+			group = append(group, central.CreateEntityReference(id.TermValue, id.TermSort))
+		}
+		base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+
+		return mentalese.InitBindingSet(newBinding)
+
+	}
+}
+
+func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "jjv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	solution := mentalese.Solution{}
+	resultBindings := mentalese.NewBindingSet()
+
+	bound.Arguments[0].GetJsonValue(solution)
+
+	resultBindingsRaw := []map[string]mentalese.Term{}
+	bound.Arguments[1].GetJsonValue(&resultBindingsRaw)
+	resultBindings.FromRaw(resultBindingsRaw)
+
+	conditionBindingsVar := input.Arguments[2].TermValue
+
+	index := messenger.GetCursor().GetState("index", 0)
+
+	// process child results
+	if index > 0 {
+		conditionBindings := messenger.GetCursor().GetChildFrameResultBindings()
+		if !conditionBindings.IsEmpty() {
+			newBinding := mentalese.NewBinding()
+			newBinding.Set(conditionBindingsVar, mentalese.NewTermJson(conditionBindings))
+			return mentalese.InitBindingSet(newBinding)
+		}
+	}
+
+	if index < len(solution.Responses) {
+		response := solution.Responses[index]
+		if response.Condition.IsEmpty() {
+			newBinding := mentalese.NewBinding()
+			newBinding.Set(conditionBindingsVar, mentalese.NewTermJson(resultBindings))
+			return mentalese.InitBindingSet(newBinding)
+		} else {
+			messenger.CreateChildStackFrame(response.Condition, resultBindings)
+		}
+	}
+
+	messenger.GetCursor().SetState("index", index + 1)
+
+	return mentalese.NewBindingSet()
+
 }
 
 func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

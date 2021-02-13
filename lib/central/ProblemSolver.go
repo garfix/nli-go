@@ -132,7 +132,7 @@ func (solver *ProblemSolver) solveMultipleBindings(relation mentalese.Relation, 
 	if found {
 		for _, function := range functions {
 			solver.callStack.PushMultiple(relation, bindings)
-			newBindings = function(relation, bindings)
+			newBindings = function(nil, relation, bindings)
 			solver.callStack.Pop(newBindings)
 			multiFound = true
 		}

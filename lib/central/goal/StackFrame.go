@@ -2,6 +2,8 @@ package goal
 
 import "nli-go/lib/mentalese"
 
+// RelationIndex must always point to a real relation!
+
 type StackFrame struct {
 	Relations      mentalese.RelationSet
 	RelationIndex  int
@@ -30,19 +32,30 @@ func (f *StackFrame) GetCurrentRelation() mentalese.Relation {
 	return f.Relations[f.RelationIndex]
 }
 
-func (f *StackFrame) GetCurrentBinding() mentalese.Binding {
+func (f *StackFrame) GetCurrentInBinding() mentalese.Binding {
 	return f.InBindings.Get(f.InBindingIndex)
 }
 
 // prepare the active binding to be fed to a function
-func (f *StackFrame) GetInBinding() mentalese.Binding {
+func (f *StackFrame) GetPreparedBinding() mentalese.Binding {
 
-	binding := f.GetCurrentBinding()
+	binding := f.GetCurrentInBinding()
 
-	// filter out only the variable needed by the relation
+	// filter out only the variables needed by the relation
 	binding = binding.FilterVariablesByName(f.GetCurrentRelation().GetVariableNames())
 
 	return binding
+}
+
+// prepare the active binding to be fed to a function
+func (f *StackFrame) GetPreparedBindings() mentalese.BindingSet {
+
+	bindings := f.InBindings
+
+	// filter out only the variables needed by the relation
+	bindings = bindings.FilterVariablesByName(f.GetCurrentRelation().GetVariableNames())
+
+	return bindings
 }
 
 func (f *StackFrame) AddOutBinding(inBinding mentalese.Binding, outBinding mentalese.Binding) {

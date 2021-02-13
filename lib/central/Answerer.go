@@ -39,7 +39,7 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 	answer := mentalese.RelationSet{}
 	transformer := NewRelationTransformer(answerer.matcher, answerer.log)
 
-	allSolutions := answerer.findSolutions(goal)
+	allSolutions := answerer.FindSolutions(goal)
 
 	if len(allSolutions) == 0 {
 
@@ -55,12 +55,7 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 			transformedGoal := transformer.Replace(solution.Transformations, goal)
 
 			// resultBindings: map goal variables to answers
-			resultBindings := mentalese.BindingSet{}
-			if messenger == nil {
-				resultBindings = answerer.solver.SolveRelationSet(transformedGoal, mentalese.InitBindingSet(binding))
-			} else {
-				messenger.CreateChildStackFrame(transformedGoal, mentalese.InitBindingSet(binding))
-			}
+			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, mentalese.InitBindingSet(binding))
 
 			// no results? try the next solution (if there is one)
 			if resultBindings.IsEmpty() {
@@ -120,7 +115,7 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 }
 
 // Returns the solutions whose condition matches the goal, and a set of bindings per solution
-func (answerer Answerer) findSolutions(goal mentalese.RelationSet) []mentalese.Solution {
+func (answerer Answerer) FindSolutions(goal mentalese.RelationSet) []mentalese.Solution {
 
 	var solutions []mentalese.Solution
 

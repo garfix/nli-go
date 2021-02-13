@@ -6,8 +6,6 @@ import "nli-go/lib/mentalese"
 // Its purpose is to expose as little as possible of the internal state of the process
 
 type ProcessMessenger interface {
-	GetInBinding() mentalese.Binding
-	GetRelation() mentalese.Relation
 	GetCursor() ProcessCursor
 	AddOutBinding(binding mentalese.Binding)
 	AddOutBindings(bindings mentalese.BindingSet)

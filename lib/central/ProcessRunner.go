@@ -25,22 +25,27 @@ func (p ProcessRunner) RunProcess(goalId int, goalSet mentalese.RelationSet) {
 	process := p.list.GetProcess(goalId, goalSet)
 
 	for !process.IsDone() {
-		p.singleStep(process)
+		p.singleBinding(process)
 	}
 }
 
-// cursor must always point to a real relation!
-func (p ProcessRunner) singleStep(process *goal.Process) {
+func (p ProcessRunner) singleBinding(process *goal.Process) {
 	currentFrame := process.GetLastFrame()
 
 	p.debug(currentFrame, len(process.Stack))
 
-// todo call functions that act on multiple bindings
-// since these are only simple functions, this can be done inline without much fuzz
-
-	// execute the relation at the cursor
 	messenger := process.CreateMessenger()
-	p.solver.SolveSingleRelationSingleBinding(messenger)
+	relation := currentFrame.GetCurrentRelation()
+
+	_, found := p.solver.solver.index.multiBindingFunctions[relation.Predicate]
+	if found {
+		if currentFrame.InBindingIndex == 0 {
+			p.solver.SolveMultipleBindings(messenger, relation, currentFrame.GetPreparedBindings())
+		}
+	} else {
+		p.solver.SolveSingleRelationSingleBinding(messenger, relation, currentFrame.GetPreparedBinding())
+	}
+
 	process.ProcessMessenger(messenger, currentFrame)
 
 	// if the relation has not pushed a new frame, then it is done processing
@@ -52,6 +57,14 @@ func (p ProcessRunner) singleStep(process *goal.Process) {
 func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
 
 	padding := strings.Repeat("  ", stackDepth)
+
+	child := ""
+	childBindings := frame.Cursor.ChildFrameResultBindings
+	if !childBindings.IsEmpty() {
+		child = " from child: " + childBindings.String()
+	}
+
 	p.log.AddDebug("frame",
-		padding + frame.Relations[frame.RelationIndex].String() + "  " + frame.GetInBinding().String())
+		padding + frame.Relations[frame.RelationIndex].String() + "  " + frame.GetPreparedBinding().String() +
+		" " + child)
 }

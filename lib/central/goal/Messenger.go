@@ -6,8 +6,6 @@ import (
 )
 
 type Messenger struct {
-	relation  mentalese.Relation
-	inBinding mentalese.Binding
 	cursor *StackFrameCursor
 	outBindings mentalese.BindingSet
 	childFrame *StackFrame
@@ -15,20 +13,10 @@ type Messenger struct {
 
 func NewMessenger(relation mentalese.Relation, binding mentalese.Binding, cursor *StackFrameCursor) *Messenger {
 	return &Messenger{
-		relation:  relation,
-		inBinding: binding,
 		cursor: cursor,
 		outBindings: mentalese.NewBindingSet(),
 		childFrame: nil,
 	}
-}
-
-func (i *Messenger) GetInBinding() mentalese.Binding {
-	return i.inBinding
-}
-
-func (i *Messenger) GetRelation() mentalese.Relation {
-	return i.relation
 }
 
 func (i *Messenger) GetCursor() api.ProcessCursor {
@@ -44,6 +32,11 @@ func (i *Messenger) AddOutBindings(bindings mentalese.BindingSet) {
 }
 
 func (i *Messenger) CreateChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) {
+
+	if relations.IsEmpty() {
+		panic("Cannot create stack frame with no relations")
+	}
+
 	i.childFrame = NewStackFrame(relations, bindings)
 }
 

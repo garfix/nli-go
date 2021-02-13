@@ -27,12 +27,13 @@ func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiB
 		mentalese.PredicateLargest:  base.largest,
 		mentalese.PredicateSmallest: base.smallest,
 		mentalese.PredicateExists:   base.exists,
+		mentalese.PredicateCut: 	 base.cut,
 		mentalese.PredicateMakeAnd:  base.makeAnd,
 		mentalese.PredicateMakeList: base.makeList,
 	}
 }
 
-func (base *SystemMultiBindingFunctionBase) numberOf(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) numberOf(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "--", base.log) {
 		return mentalese.NewBindingSet()
@@ -67,7 +68,7 @@ func (base *SystemMultiBindingFunctionBase) numberOf(input mentalese.Relation, b
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) first(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) first(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	length := 0
 
@@ -113,7 +114,7 @@ func (base *SystemMultiBindingFunctionBase) first(input mentalese.Relation, bind
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) last(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) last(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	length := 0
 
@@ -155,7 +156,7 @@ func (base *SystemMultiBindingFunctionBase) last(input mentalese.Relation, bindi
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) get(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) get(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	start := 0
 	length := 1
@@ -208,7 +209,7 @@ func (base *SystemMultiBindingFunctionBase) get(input mentalese.Relation, bindin
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) order(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) order(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v*", base.log) {
 		return mentalese.NewBindingSet()
@@ -241,7 +242,7 @@ func (base *SystemMultiBindingFunctionBase) order(input mentalese.Relation, bind
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) largest(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) largest(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v", base.log) {
 		return mentalese.NewBindingSet()
@@ -284,7 +285,7 @@ func (base *SystemMultiBindingFunctionBase) largest(input mentalese.Relation, bi
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) smallest(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) smallest(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "v", base.log) {
 		return mentalese.NewBindingSet()
@@ -327,7 +328,7 @@ func (base *SystemMultiBindingFunctionBase) smallest(input mentalese.Relation, b
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) exists(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) exists(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "", base.log) {
 		return mentalese.NewBindingSet()
@@ -336,7 +337,45 @@ func (base *SystemMultiBindingFunctionBase) exists(input mentalese.Relation, bin
 	return bindings
 }
 
-func (base *SystemMultiBindingFunctionBase) makeAnd(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+
+	if !Validate(input, "ir", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	count, _ := input.Arguments[0].GetIntValue()
+	childRelations := input.Arguments[1].TermValueRelationSet
+
+	cursor := messenger.GetCursor()
+
+	index := cursor.GetState("index", 0)
+	passed := cursor.GetState("passed", 0)
+
+	if index > 0 {
+		childBindings := cursor.GetChildFrameResultBindings()
+
+		if !childBindings.IsEmpty() {
+			cursor.AddStepBindings(childBindings)
+			passed += 1
+			cursor.SetState("passed", passed)
+
+			if passed == count {
+				return cursor.GetStepBindings()
+			}
+		}
+	}
+
+	if index < bindings.GetLength() {
+		binding := bindings.Get(index)
+		messenger.CreateChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
+
+		cursor.SetState("index", index + 1)
+	}
+
+	return mentalese.NewBindingSet()
+}
+
+func (base *SystemMultiBindingFunctionBase) makeAnd(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	if !Validate(input, "vv", base.log) {
 		return mentalese.NewBindingSet()
@@ -380,7 +419,7 @@ func (base *SystemMultiBindingFunctionBase) makeAnd(input mentalese.Relation, bi
 	return newBindings
 }
 
-func (base *SystemMultiBindingFunctionBase) makeList(input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
+func (base *SystemMultiBindingFunctionBase) makeList(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
 	if !Validate(input, "V", base.log) {
 		return mentalese.NewBindingSet()
 	}

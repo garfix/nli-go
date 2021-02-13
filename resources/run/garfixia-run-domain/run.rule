@@ -13,11 +13,17 @@ respond(Input) :-
     go:locale(Locale)
     go:tokenize(Locale, Input, InTokens)
     go:parse(Locale, InTokens, ParseTree)
-    go:relationize(ParseTree, Sense, RequestBindings)
+    go:relationize(ParseTree, Request, RequestBinding)
 
-    go:answer(Sense, RequestBindings, Answer)
+    /* go:answer(Sense, RequestBindings, Answer) */
 
-    go:find_solution(Sense, SolutionIndex)
+    go:find_solution(Request, Solution)
+    go:cut(1,
+        go:solve(Request, RequestBinding, Solution, ResultBindings)
+    )
+    go:find_response(Solution, ResultBindings, ResponseBindings)
+    go:prepare_response(SolutionIndex, AnswerBindings, ResponseIndex, Preparation)
+    go:respond(Preparation, Answer)
 
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)

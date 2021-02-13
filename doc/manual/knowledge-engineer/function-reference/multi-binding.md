@@ -93,6 +93,12 @@ Checks if there currently are any bindings. The function doesn't actually do any
 
     go:exists()
 
+## cut 
+
+Continues trying binding sets until n have succeeded. Only these n binding sets will proceed.
+
+    go:cut(2, do_something(X))
+
 ## other predicates
 
 [`make_list`](list.md) also takes multiple bindings.

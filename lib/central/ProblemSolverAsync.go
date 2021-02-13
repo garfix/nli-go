@@ -15,7 +15,7 @@ func NewProblemSolverAsync(solver *ProblemSolver) *ProblemSolverAsync {
 	}
 }
 
-func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (s *ProblemSolverAsync) SolveMultipleBindings(messenger api.ProcessMessenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := mentalese.NewBindingSet()
 	multiFound := false
@@ -23,7 +23,8 @@ func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, 
 	functions, found := s.solver.index.multiBindingFunctions[relation.Predicate]
 	if found {
 		for _, function := range functions {
-			newBindings = function(relation, bindings)
+			newBindings = function(messenger, relation, bindings)
+			messenger.AddOutBindings(newBindings)
 			multiFound = true
 		}
 	}
@@ -31,10 +32,11 @@ func (s *ProblemSolverAsync) solveMultipleBindings(relation mentalese.Relation, 
 	return newBindings, multiFound
 }
 
-func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger) {
+//func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger) {
+func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) {
 
-	relation := messenger.GetRelation()
-	binding := messenger.GetInBinding()
+	//relation := messenger.GetRelation()
+	//binding := messenger.GetInBinding()
 
 	_, found := s.solver.index.knownPredicates[relation.Predicate]
 		if !found {
@@ -107,7 +109,8 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(mess
 
 	// process child frame bindings
 	if currentRuleIndex > 0 {
-		cursor.AddStepBindings(cursor.GetChildFrameResultBindings())
+	//	cursor.AddStepBindings(cursor.GetChildFrameResultBindings())
+		messenger.AddOutBindings(cursor.GetChildFrameResultBindings())
 	}
 
 	if currentRuleIndex < len(rules) {

@@ -32,6 +32,24 @@ func (set BindingSet) AddMultiple(bindingSet BindingSet) {
 	}
 }
 
+func (set BindingSet) ToRaw() []map[string]Term {
+	raw := []map[string]Term{}
+	for _, b := range *set.bindings {
+		raw = append(raw, b.k2v)
+	}
+	return raw
+}
+
+func (set BindingSet) FromRaw(raw []map[string]Term) {
+	for _, b := range raw {
+		binding := NewBinding()
+		for key, value := range b {
+			binding.Set(key, value)
+		}
+		set.Add(binding)
+	}
+}
+
 func (set BindingSet) Reverse() BindingSet {
 	newSet := NewBindingSet()
 	lastIndex := len(*set.bindings) - 1

@@ -104,7 +104,7 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(mess
 
 	cursor := messenger.GetCursor()
 
-	// build the rule index
+	// Build the rule index
 	currentRuleIndex := cursor.GetState("rule", 0)
 
 	// process child frame bindings

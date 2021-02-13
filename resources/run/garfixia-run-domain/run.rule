@@ -15,15 +15,12 @@ respond(Input) :-
     go:parse(Locale, InTokens, ParseTree)
     go:relationize(ParseTree, Request, RequestBinding)
 
-    /* go:answer(Sense, RequestBindings, Answer) */
-
     go:find_solution(Request, Solution)
     go:cut(1,
         go:solve(Request, RequestBinding, Solution, ResultBindings)
     )
-    go:find_response(Solution, ResultBindings, ResponseBindings)
-    go:prepare_response(SolutionIndex, AnswerBindings, ResponseIndex, Preparation)
-    go:respond(Preparation, Answer)
+    go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
+    go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)
 
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)

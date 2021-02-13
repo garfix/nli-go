@@ -104,7 +104,7 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 			}
 
 			// create answer relation sets by binding 'answer' to solutionBindings
-			answer = answerer.build(resultHandler.Answer, solutionBindings)
+			answer = answerer.Build(resultHandler.Answer, solutionBindings)
 
 			// stop after the first solution
 			break
@@ -136,7 +136,7 @@ func (answerer Answerer) FindSolutions(goal mentalese.RelationSet) []mentalese.S
 	return solutions
 }
 
-func (answerer Answerer) build(template mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
+func (answerer Answerer) Build(template mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {
 
 	newSet := mentalese.RelationSet{}
 

@@ -88,6 +88,7 @@ const PredicateSurface = "go_surface"
 const PredicateFindSolution = "go_find_solution"
 const PredicateSolve = "go_solve"
 const PredicateFindResponse = "go_find_response"
+const PredicateCreateAnswer = "go_create_answer"
 
 // todo prefix should be go
 const PredicateRespond = "dom_respond"

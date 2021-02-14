@@ -155,6 +155,8 @@ func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.
 		newBindings.Add(newBinding)
 	}
 
+	base.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
+
 	return newBindings
 }
 

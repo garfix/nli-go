@@ -66,7 +66,7 @@ func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
 		child = " from child: " + childBindings.String()
 	}
 
+	text := frame.Relations[frame.RelationIndex].String() + "  " + frame.GetPreparedBinding().String() + " " + child
 	p.log.AddDebug("frame",
-		padding + frame.Relations[frame.RelationIndex].String() + "  " + frame.GetPreparedBinding().String() +
-		" " + child)
+		padding + text)
 }

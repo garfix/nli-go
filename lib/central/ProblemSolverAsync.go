@@ -2,6 +2,7 @@ package central
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/central/goal"
 	"nli-go/lib/mentalese"
 )
 
@@ -15,7 +16,7 @@ func NewProblemSolverAsync(solver *ProblemSolver) *ProblemSolverAsync {
 	}
 }
 
-func (s *ProblemSolverAsync) SolveMultipleBindings(messenger api.ProcessMessenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *goal.Messenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := mentalese.NewBindingSet()
 	multiFound := false
@@ -32,7 +33,7 @@ func (s *ProblemSolverAsync) SolveMultipleBindings(messenger api.ProcessMessenge
 	return newBindings, multiFound
 }
 
-func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) {
+func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Messenger, relation mentalese.Relation, binding mentalese.Binding) {
 
 	_, found := s.solver.index.knownPredicates[relation.Predicate]
 		if !found {
@@ -82,7 +83,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.Proc
 	s.solver.modifyKnowledgeBase(relation, binding)
 }
 
-func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger api.ProcessMessenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
+func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger *goal.Messenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
 
 	// match rules from the rule base to the goalRelation
 	rules := ruleBase.GetRules(goalRelation, binding)

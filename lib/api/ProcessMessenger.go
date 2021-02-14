@@ -7,7 +7,5 @@ import "nli-go/lib/mentalese"
 
 type ProcessMessenger interface {
 	GetCursor() ProcessCursor
-	AddOutBinding(binding mentalese.Binding)
-	AddOutBindings(bindings mentalese.BindingSet)
 	CreateChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet)
 }

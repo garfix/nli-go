@@ -402,12 +402,12 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 
 	if index == 0 {
 
+		messenger.GetCursor().SetState("index", 1)
+
 		if !resultHandler.Preparation.IsEmpty() {
 			messenger.CreateChildStackFrame(resultHandler.Preparation, resultBindings)
 			return mentalese.NewBindingSet()
 		}
-
-		messenger.GetCursor().SetState("index", 1)
 
 	} else {
 

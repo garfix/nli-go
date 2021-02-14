@@ -51,6 +51,8 @@ func (p ProcessRunner) singleBinding(process *goal.Process) {
 	// if the relation has not pushed a new frame, then it is done processing
 	if currentFrame == process.GetLastFrame() {
 		process.Advance()
+	} else {
+		process.EmptyRelationCheck()
 	}
 }
 

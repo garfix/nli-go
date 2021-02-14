@@ -16,17 +16,19 @@ func NewProcess(goalId int, goalSet mentalese.RelationSet) *Process {
 	}
 }
 
-//func (p *Process) PushFrame(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) {
-//	p.Stack = append(p.Stack,
-//		NewStackFrame(goalSet, bindings))
-//}
-
 func (p *Process) PushFrame(frame *StackFrame) {
 	p.Stack = append(p.Stack, frame)
 }
 
 func (p *Process) Clear() {
 	p.Stack = []*StackFrame{}
+}
+
+func (p *Process) EmptyRelationCheck() {
+	frame := p.GetLastFrame()
+	if frame.Relations.IsEmpty() {
+		p.advanceFrame(frame)
+	}
 }
 
 // advance the cursor in the frame

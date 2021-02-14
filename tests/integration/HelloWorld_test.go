@@ -17,7 +17,7 @@ func TestHelloWorld(t *testing.T) {
 		return
 	}
 
-	answer, _ := system.Answer("Hello world")
+	answer, _ := system.AnswerAsync("Hello world")
 
 	if answer != "Welcome!" {
 		t.Errorf(log.String())

@@ -4,4 +4,4 @@ storagetype: session
 read: [ read.map ]
 write: [ write.map ]
 uses:
-  dom: garfixia-run-domain:1.0.0
+  dom: nligo-base-domain:1.0.0

@@ -32,11 +32,6 @@ func (i *Messenger) AddOutBindings(bindings mentalese.BindingSet) {
 }
 
 func (i *Messenger) CreateChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) {
-
-	if relations.IsEmpty() {
-		panic("Cannot create stack frame with no relations")
-	}
-
 	i.childFrame = NewStackFrame(relations, bindings)
 }
 

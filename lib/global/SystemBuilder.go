@@ -127,9 +127,13 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
-	domainIndex, ok := builder.buildIndex(common.Dir() + "/../domain")
+	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")
 	if ok {
-		builder.buildDomain(domainIndex, system, common.Dir() + "/../domain")
+		builder.buildDomain(domainIndex, system, common.Dir() + "/../base/domain")
+	}
+	dbIndex, ok := builder.buildIndex(common.Dir() + "/../base/db")
+	if ok {
+		builder.buildInternalDatabase(dbIndex, system, common.Dir() + "/../base/db", "nligo-db")
 	}
 }
 

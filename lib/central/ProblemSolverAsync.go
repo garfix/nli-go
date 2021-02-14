@@ -32,11 +32,7 @@ func (s *ProblemSolverAsync) SolveMultipleBindings(messenger api.ProcessMessenge
 	return newBindings, multiFound
 }
 
-//func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger) {
 func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) {
-
-	//relation := messenger.GetRelation()
-	//binding := messenger.GetInBinding()
 
 	_, found := s.solver.index.knownPredicates[relation.Predicate]
 		if !found {

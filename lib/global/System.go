@@ -37,24 +37,25 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	return result
 }
 
-func (system *System) CreateAnswerGoal(input string) {
+func (system *System) CreateAnswerGoal(input string) string {
+
+	uuid := common.CreateUuid()
 
 	// go:assert(go:uuid(Id) go:goal(go:answer(input, Id)))
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateUuid, []mentalese.Term{
-			mentalese.NewTermVariable("Id"),
-		}),
 		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
 				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
 					mentalese.NewTermRelationSet(mentalese.RelationSet{ mentalese.NewRelation(true, mentalese.PredicateRespond, []mentalese.Term{
 						mentalese.NewTermString(input),
 					})}),
-					mentalese.NewTermVariable("Id"),
+					mentalese.NewTermString(uuid),
 				})}),
 		}),
 	}
 	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+
+	return uuid
 }
 
 func (system *System) ReadActions(actionType string) mentalese.BindingSet {
@@ -67,6 +68,33 @@ func (system *System) ReadActions(actionType string) mentalese.BindingSet {
 	}
 
 	return system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+}
+
+func (system *System) DeleteAction(actionId string) {
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateRetract, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{
+				mentalese.NewRelation(true, mentalese.PredicateAction, []mentalese.Term{
+					mentalese.NewTermAnonymousVariable(),
+					mentalese.NewTermString(actionId),
+					mentalese.NewTermAnonymousVariable(),
+				})}),
+		}),
+	}
+	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+}
+
+func (system *System) DeleteGoal(goalId string) {
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateRetract, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{
+				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+					mentalese.NewTermAnonymousVariable(),
+					mentalese.NewTermString(goalId),
+				})}),
+		}),
+	}
+	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 }
 
 func (system *System) Run() {
@@ -87,14 +115,20 @@ func (system *System) Run() {
 }
 
 func (system *System) AnswerAsync(input string) (string, *common.Options) {
-	system.CreateAnswerGoal(input)
+	goalId := system.CreateAnswerGoal(input)
 	system.Run()
 	actions := system.ReadActions("print")
 
 	answer := ""
 	if actions.GetLength() > 0 {
-		answer = actions.Get(0).MustGet("Content").TermValue
+		action := actions.Get(0)
+		answer = action.MustGet("Content").TermValue
+		actionId := action.MustGet("Id").TermValue
+		system.DeleteAction(actionId)
 	}
+
+	system.DeleteGoal(goalId)
+
 	return answer, nil
 }
 

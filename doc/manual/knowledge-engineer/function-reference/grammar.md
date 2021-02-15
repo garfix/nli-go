@@ -101,3 +101,12 @@ In this example `back_sortal_reference` will find the sort of E1, and resolve th
 
 More on this in [anaphora-resolution](../anaphora-resolution.md)
      
+## Created canned response
+
+Creates a canned response, based on a canned template, and one or more arguments, and places it in Output
+
+    go:create_canned(Output, template, Argument)
+
+* `Ouput`: a string
+* `template`: an atom
+* `Argument`: a string

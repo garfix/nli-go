@@ -2,7 +2,12 @@ go:respond(Input) :-
     go:locale(Locale)
     go:tokenize(Locale, Input, InTokens)
     go:parse(Locale, InTokens, ParseTree)
-    go:relationize(ParseTree, Request, RequestBinding)
+    go:relationize(ParseTree, Request, RequestBinding, UnresolvedName)
+    go:if_then(
+        go:not_equals(UnresolvedName, ''),
+        go:canned(Output, name_not_found, UnresolvedName)
+        go:uuid(ActionId) go:assert(go:action('print', ActionId, Output)) go:fail()
+    )
 
     go:find_solution(Request, Solution)
     go:cut(1,

@@ -30,7 +30,7 @@ func TestShell(t *testing.T) {
 
 		log.Clear()
 
-		answer, _ := system.Answer(test.question)
+		answer, _ := system.AnswerAsync(test.question)
 
 		if !strings.Contains(answer, test.answer) {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

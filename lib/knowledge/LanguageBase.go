@@ -53,6 +53,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateSolve: base.solve,
 		mentalese.PredicateFindResponse: base.findResponse,
 		mentalese.PredicateCreateAnswer: base.createAnswer,
+		mentalese.PredicateCanned: base.createCanned,
 	}
 }
 
@@ -164,12 +165,13 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "jvv", base.log) {
+	if !Validate(bound, "jvvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	senseVar := input.Arguments[1].TermValue
 	requestBindingVar := input.Arguments[2].TermValue
+	unboundNameVar := input.Arguments[3].TermValue
 	var parseTree parse.ParseTreeNode
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
@@ -188,11 +190,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	entityIds, nameNotFound := base.findNames(names, sorts)
 
-
-// todo
-nameNotFound = nameNotFound
-
-
 	// names found and linked to id
 	for _, value := range entityIds.GetAll() {
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(
@@ -204,6 +201,7 @@ nameNotFound = nameNotFound
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
 	newBinding.Set(requestBindingVar, mentalese.NewTermJson(entityIds))
+	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)
 }
@@ -477,5 +475,22 @@ func (base *LanguageBase) surface(messenger api.ProcessMessenger, input mentales
 	newBinding := binding.Copy()
 	newBinding.Set(surfaceVar, mentalese.NewTermString(surface))
 
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) createCanned(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "vas", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	outputVar := input.Arguments[0].TermValue
+	templateString := bound.Arguments[1].TermValue
+	argumentString := bound.Arguments[2].TermValue
+
+	newBinding := binding.Copy()
+	newBinding.Set(outputVar, mentalese.NewTermString(common.GetString(templateString, argumentString)))
 	return mentalese.InitBindingSet(newBinding)
 }

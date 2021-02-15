@@ -28,6 +28,54 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) ifThen(messenger api.ProcessMessenger, ifThenElse mentalese.Relation,
+	binding mentalese.Binding) mentalese.BindingSet {
+
+	condition := ifThenElse.Arguments[0].TermValueRelationSet
+	action := ifThenElse.Arguments[1].TermValueRelationSet
+
+	newBindings := mentalese.NewBindingSet()
+
+	if messenger == nil {
+
+		newBindings = base.solver.SolveRelationSet(condition, mentalese.InitBindingSet(binding))
+
+		if !newBindings.IsEmpty() {
+			newBindings = base.solver.SolveRelationSet(action, newBindings)
+		} else {
+			newBindings = mentalese.InitBindingSet(binding)
+		}
+
+	} else {
+
+		cursor := messenger.GetCursor()
+		state := cursor.GetState("state", 0)
+		if state == 0 {
+
+			cursor.SetState("state", 1)
+			messenger.CreateChildStackFrame(condition, mentalese.InitBindingSet(binding))
+
+		} else if state == 1 {
+
+			cursor.SetState("state", 2)
+			conditionBindings := cursor.GetChildFrameResultBindings()
+			if conditionBindings.IsEmpty() {
+				newBindings = mentalese.InitBindingSet(binding)
+			} else {
+				messenger.CreateChildStackFrame(action, conditionBindings)
+			}
+
+		} else {
+
+			actionBindings := cursor.GetChildFrameResultBindings()
+			newBindings = actionBindings
+
+		}
+	}
+
+	return newBindings
+}
+
 func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	condition := ifThenElse.Arguments[0].TermValueRelationSet
@@ -43,6 +91,11 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 	}
 
 	return newBindings
+}
+
+func (base *SystemSolverFunctionBase) fail(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	return mentalese.NewBindingSet()
 }
 
 func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

@@ -45,8 +45,7 @@ func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Me
 	factBases, f4 := s.solver.index.factReadBases[relation.Predicate]
 	if f4 {
 		for _, factBase := range factBases {
-			// todo
-			s.solver.FindFacts(factBase, relation, binding)
+			messenger.AddOutBindings(s.solver.FindFacts(factBase, relation, binding))
 		}
 	}
 

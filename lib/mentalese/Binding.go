@@ -18,6 +18,16 @@ func NewScopedBinding(scope *Scope) Binding {
 	return Binding{ k2v: map[string]Term{}, scope: scope }
 }
 
+func (b Binding) ToRaw() map[string]Term {
+	return b.k2v
+}
+
+func (p Binding) FromRaw(raw map[string]Term) {
+	for key, value := range raw {
+		p.Set(key, value)
+	}
+}
+
 func (b Binding) GetScope() *Scope {
 	return b.scope
 }

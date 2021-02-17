@@ -200,7 +200,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	newBinding := binding.Copy()
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
-	newBinding.Set(requestBindingVar, mentalese.NewTermJson(entityIds))
+	newBinding.Set(requestBindingVar, mentalese.NewTermJson(entityIds.ToRaw()))
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)
@@ -286,13 +286,16 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 		return mentalese.NewBindingSet()
 	}
 
-	requestBinding := mentalese.Binding{}
 	solution := mentalese.Solution{}
 
 	request := bound.Arguments[0].TermValueRelationSet
-	bound.Arguments[1].GetJsonValue(&requestBinding)
 	bound.Arguments[2].GetJsonValue(&solution)
 	resultBindingsVar := input.Arguments[3].TermValue
+
+	requestBinding := mentalese.NewBinding()
+	requestBindingRaw := map[string]mentalese.Term{}
+	bound.Arguments[1].GetJsonValue(&requestBindingRaw)
+	requestBinding.FromRaw(requestBindingRaw)
 
 	child := messenger.GetCursor().GetState("child", 0)
 	if child == 0 {
@@ -341,17 +344,17 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 	bound.Arguments[1].GetJsonValue(&resultBindingsRaw)
 	resultBindings.FromRaw(resultBindingsRaw)
 
-	conditionBindingsVar := input.Arguments[2].TermValue
+	responseBindingsVar := input.Arguments[2].TermValue
 	responseIndexVar := input.Arguments[3].TermValue
 
 	index := messenger.GetCursor().GetState("index", 0)
 
 	// process child results
 	if index > 0 {
-		conditionBindings := messenger.GetCursor().GetChildFrameResultBindings()
-		if !conditionBindings.IsEmpty() {
+		responseBindings := messenger.GetCursor().GetChildFrameResultBindings()
+		if !responseBindings.IsEmpty() {
 			newBinding := mentalese.NewBinding()
-			newBinding.Set(conditionBindingsVar, mentalese.NewTermJson(conditionBindings.ToRaw()))
+			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
 			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index - 1)))
 			return mentalese.InitBindingSet(newBinding)
 		}
@@ -361,7 +364,8 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 		response := solution.Responses[index]
 		if response.Condition.IsEmpty() {
 			newBinding := mentalese.NewBinding()
-			newBinding.Set(conditionBindingsVar, mentalese.NewTermJson(resultBindings))
+			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(resultBindings))
+			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			messenger.CreateChildStackFrame(response.Condition, resultBindings)

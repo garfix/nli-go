@@ -25,17 +25,24 @@ func (p ProcessRunner) RunProcess(goalId int, goalSet mentalese.RelationSet) {
 	process := p.list.GetProcess(goalId, goalSet)
 
 	for !process.IsDone() {
-		p.singleBinding(process)
+		p.step(process)
 	}
 }
 
-func (p ProcessRunner) singleBinding(process *goal.Process) {
+func (p ProcessRunner) step(process *goal.Process) {
 	currentFrame := process.GetLastFrame()
 
 	p.debug(currentFrame, len(process.Stack))
 
 	messenger := process.CreateMessenger()
 	relation := currentFrame.GetCurrentRelation()
+
+	// special case: go:exists() may accept zero bindings; the rest of the code cannot handle this
+	// so we return early
+	if currentFrame.InBindings.IsEmpty() {
+		process.Advance()
+		return
+	}
 
 	_, found := p.solver.solver.index.multiBindingFunctions[relation.Predicate]
 	if found {
@@ -66,7 +73,12 @@ func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
 		child = " from child: " + childBindings.String()
 	}
 
-	text := frame.Relations[frame.RelationIndex].String() + "  " + frame.GetPreparedBinding().String() + " " + child
+	prepared := ""
+	if frame.InBindings.GetLength() > 0 {
+		prepared = frame.GetPreparedBinding().String()
+	}
+
+	text := frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child
 	p.log.AddDebug("frame",
 		padding + text)
 }

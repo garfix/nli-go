@@ -11,7 +11,7 @@ type Messenger struct {
 	childFrame *StackFrame
 }
 
-func NewMessenger(relation mentalese.Relation, binding mentalese.Binding, cursor *StackFrameCursor) *Messenger {
+func NewMessenger(cursor *StackFrameCursor) *Messenger {
 	return &Messenger{
 		cursor: cursor,
 		outBindings: mentalese.NewBindingSet(),

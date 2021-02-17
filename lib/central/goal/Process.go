@@ -58,7 +58,7 @@ func (p *Process) advanceRelation(frame *StackFrame) {
 
 	if frame.InBindings.IsEmpty() {
 		// process failed due to no result bindings
-		p.Clear()
+		p.advanceFrame(frame)
 	} else if frame.IsDone() {
 		p.advanceFrame(frame)
 	}
@@ -79,10 +79,7 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 func (p *Process) CreateMessenger() *Messenger {
 	frame := p.GetLastFrame()
 
-	return NewMessenger(
-		frame.GetCurrentRelation(),
-		frame.GetPreparedBinding(),
-		frame.Cursor)
+	return NewMessenger(frame.Cursor)
 }
 
 func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {

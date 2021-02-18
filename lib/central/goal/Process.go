@@ -90,6 +90,19 @@ func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
 	}
 }
 
+func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *StackFrame) {
+
+	// add bindings without variable validation
+	frame.OutBindings.AddMultiple(messenger.GetOutBindings())
+
+	// skip the bindings
+	frame.InBindingIndex = frame.InBindings.GetLength() - 1
+
+	if messenger.GetChildFrame() != nil {
+		p.PushFrame(messenger.GetChildFrame())
+	}
+}
+
 func (p *Process) GetCursor() *StackFrameCursor {
 	frame := p.GetLastFrame()
 	if frame == nil {

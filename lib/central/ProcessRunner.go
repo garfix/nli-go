@@ -37,23 +37,21 @@ func (p ProcessRunner) step(process *goal.Process) {
 	messenger := process.CreateMessenger()
 	relation := currentFrame.GetCurrentRelation()
 
-	// special case: go:exists() may accept zero bindings; the rest of the code cannot handle this
-	// so we return early
-	if currentFrame.InBindings.IsEmpty() {
-		process.Advance()
-		return
-	}
-
 	_, found := p.solver.solver.index.multiBindingFunctions[relation.Predicate]
 	if found {
-		if currentFrame.InBindingIndex == 0 {
-			p.solver.SolveMultipleBindings(messenger, relation, currentFrame.GetPreparedBindings())
-		}
-	} else {
-		p.solver.SolveSingleRelationSingleBinding(messenger, relation, currentFrame.GetPreparedBinding())
-	}
 
-	process.ProcessMessenger(messenger, currentFrame)
+		preparedBindings := currentFrame.InBindings
+		p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
+		process.ProcessMessengerMultipleBindings(messenger, currentFrame)
+
+	} else {
+
+		preparedBinding := currentFrame.GetPreparedBinding()
+		p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
+
+		process.ProcessMessenger(messenger, currentFrame)
+
+	}
 
 	// if the relation has not pushed a new frame, then it is done processing
 	if currentFrame == process.GetLastFrame() {

@@ -53,7 +53,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateSolve: base.solve,
 		mentalese.PredicateFindResponse: base.findResponse,
 		mentalese.PredicateCreateAnswer: base.createAnswer,
-		mentalese.PredicateCanned: base.createCanned,
+		mentalese.PredicateCreateCanned: base.createCanned,
 	}
 }
 

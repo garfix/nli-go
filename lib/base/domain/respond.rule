@@ -1,23 +1,26 @@
 go:respond(Input) :-
-    go:locale(Locale)
-    go:tokenize(Locale, Input, InTokens)
-    go:parse(Locale, InTokens, ParseTree)
-    go:relationize(ParseTree, Request, RequestBinding, UnresolvedName)
-    go:if_then(
-        go:not_equals(UnresolvedName, ''),
-        go:canned(Output, name_not_found, UnresolvedName)
-        go:uuid(ActionId) go:assert(go:action('print', ActionId, Output)) go:fail()
-    )
+    go:let(Output, '')
+    go:ignore(
+        go:locale(Locale)
+        go:tokenize(Locale, Input, InTokens)
+        go:parse(Locale, InTokens, ParseTree)
+        go:relationize(ParseTree, Request, RequestBinding, UnresolvedName)
+        go:if_then(
+            go:not_equals(UnresolvedName, ''),
+            go:create_canned(Output, name_not_found, UnresolvedName)
+            go:fail()
+        )
 
-    go:find_solution(Request, Solution)
-    go:cut(1,
-        go:solve(Request, RequestBinding, Solution, ResultBindings)
-    )
-    go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
-    go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)
+        go:find_solution(Request, Solution)
+        go:cut(1,
+            go:solve(Request, RequestBinding, Solution, ResultBindings)
+        )
+        go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
+        go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)
 
-    go:generate(Locale, Answer, OutTokens)
-    go:surface(OutTokens, Output)
+        go:generate(Locale, Answer, OutTokens)
+        go:surface(OutTokens, Output)
+    )
     go:uuid(ActionId)
     go:assert(go:action('print', ActionId, Output))
     ;

@@ -3,8 +3,9 @@ package goal
 import "nli-go/lib/mentalese"
 
 type Process struct {
-	GoalId int
-	Stack  []*StackFrame
+	GoalId           int
+	Stack            []*StackFrame
+	MutableVariables map[string]bool
 }
 
 func NewProcess(goalId int, goalSet mentalese.RelationSet) *Process {
@@ -13,7 +14,17 @@ func NewProcess(goalId int, goalSet mentalese.RelationSet) *Process {
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, mentalese.InitBindingSet(mentalese.NewBinding())),
 		},
+		MutableVariables: map[string]bool{},
 	}
+}
+
+func (p *Process) AddMutableVariable(variable string) {
+	p.MutableVariables[variable] = true
+}
+
+func (p* Process) IsMutableVariable(variable string) bool {
+	_, found := p.MutableVariables[variable]
+	return found
 }
 
 func (p *Process) PushFrame(frame *StackFrame) {
@@ -76,6 +87,17 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 	}
 }
 
+// prepare the active binding to be fed to a function
+func (p *Process) GetPreparedBinding(f *StackFrame) mentalese.Binding {
+
+	binding := f.GetCurrentInBinding()
+
+	// filter out only the variables needed by the relation
+	binding = binding.FilterVariablesByName(f.GetCurrentRelation().GetVariableNames())
+
+	return binding
+}
+
 func (p *Process) CreateMessenger() *Messenger {
 	frame := p.GetLastFrame()
 
@@ -83,10 +105,32 @@ func (p *Process) CreateMessenger() *Messenger {
 }
 
 func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
-	frame.AddOutBindings(frame.GetCurrentInBinding(), messenger.GetOutBindings())
+
+	outBindings := messenger.GetOutBindings()
+
+	p.updateMutableVariables(outBindings)
+
+	frame.AddOutBindings(frame.GetCurrentInBinding(), outBindings)
 
 	if messenger.GetChildFrame() != nil {
 		p.PushFrame(messenger.GetChildFrame())
+	}
+}
+
+func (p *Process) updateMutableVariables(outBindings mentalese.BindingSet) {
+	for _, outBinding := range outBindings.GetAll() {
+		for variable, value := range outBinding.GetAll() {
+			if p.IsMutableVariable(variable) {
+				p.updateMutableVariable(variable, value)
+			}
+		}
+	}
+}
+
+func (p *Process) updateMutableVariable(variable string, value mentalese.Term) {
+
+	for _, frame := range p.Stack {
+		frame.UpdateMutableVariable(variable, value)
 	}
 }
 

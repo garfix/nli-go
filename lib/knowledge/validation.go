@@ -31,10 +31,10 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 		if c == 'a' && !arg.IsAtom() {
 			return false
 		}
-		if c == 'v' && !arg.IsVariable() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
-			return false
-		}
+		//if c == 'v' && !arg.IsVariable() {
+		//	log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be an unbound variable")
+		//	return false
+		//}
 		if c == 's' && !arg.IsString() {
 			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
 			return false

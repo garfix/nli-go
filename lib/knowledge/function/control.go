@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// todo: remove
 func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
@@ -23,7 +24,12 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 		return mentalese.NewBindingSet()
 	}
 
-	(*variables).Set(variable, value)
+	if messenger == nil {
+		(*variables).Set(variable, value)
+	} else {
+		binding = binding.Copy()
+		binding.Set(variable, value)
+	}
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -111,13 +117,33 @@ func (base *SystemSolverFunctionBase) ignore(messenger api.ProcessMessenger, rel
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
+	if messenger == nil {
 
-	if newBindings.IsEmpty() {
-		return mentalese.InitBindingSet(binding)
+		newBindings := base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
+
+		if newBindings.IsEmpty() {
+			return mentalese.InitBindingSet(binding)
+		} else {
+			return newBindings
+		}
+
 	} else {
-		return newBindings
+		cursor := messenger.GetCursor()
+		state := cursor.GetState("state", 0)
+		if state == 0 {
+			cursor.SetState("state", 1)
+			messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
+		} else {
+			childBindings := messenger.GetCursor().GetChildFrameResultBindings()
+			if childBindings.IsEmpty() {
+				return mentalese.InitBindingSet(binding)
+			} else {
+				return childBindings
+			}
+		}
 	}
+
+	return mentalese.NewBindingSet()
 }
 
 func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

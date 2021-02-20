@@ -32,7 +32,7 @@ func (p ProcessRunner) RunProcess(goalId int, goalSet mentalese.RelationSet) {
 func (p ProcessRunner) step(process *goal.Process) {
 	currentFrame := process.GetLastFrame()
 
-	p.debug(currentFrame, len(process.Stack))
+	p.debug(process, currentFrame, len(process.Stack))
 
 	messenger := process.CreateMessenger()
 	relation := currentFrame.GetCurrentRelation()
@@ -46,9 +46,12 @@ func (p ProcessRunner) step(process *goal.Process) {
 
 	} else {
 
-		preparedBinding := currentFrame.GetPreparedBinding()
-		p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
+		if relation.Predicate == mentalese.PredicateLet {
+			p.createMutableVariable(process, relation)
+		}
 
+		preparedBinding := process.GetPreparedBinding(currentFrame)
+		p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
 		process.ProcessMessenger(messenger, currentFrame)
 
 	}
@@ -61,7 +64,24 @@ func (p ProcessRunner) step(process *goal.Process) {
 	}
 }
 
-func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
+func (p ProcessRunner) createMutableVariable(process *goal.Process, relation mentalese.Relation) {
+
+	if len(relation.Arguments) != 2 {
+		p.log.AddError("`let should have two arguments`")
+		return
+	}
+
+	variableTerm := relation.Arguments[0]
+
+	if !variableTerm.IsVariable() {
+		p.log.AddError("First argument of `let` should be a variable")
+		return
+	}
+
+	process.AddMutableVariable(variableTerm.TermValue)
+}
+
+func (p ProcessRunner) debug(process *goal.Process, frame *goal.StackFrame, stackDepth int) {
 
 	padding := strings.Repeat("  ", stackDepth)
 
@@ -73,7 +93,7 @@ func (p ProcessRunner) debug(frame *goal.StackFrame, stackDepth int) {
 
 	prepared := ""
 	if frame.InBindings.GetLength() > 0 {
-		prepared = frame.GetPreparedBinding().String()
+		prepared = process.GetPreparedBinding(frame).String()
 	}
 
 	text := frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child

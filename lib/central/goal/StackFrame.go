@@ -24,6 +24,20 @@ func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSe
 	}
 }
 
+func (f *StackFrame) UpdateMutableVariable(variable string, value mentalese.Term) {
+	for _, binding := range f.InBindings.GetAll() {
+		if binding.ContainsVariable(variable) {
+			binding.Set(variable, value)
+		}
+	}
+	for _, binding := range f.OutBindings.GetAll() {
+		if binding.ContainsVariable(variable) {
+			binding.Set(variable, value)
+		}
+	}
+	f.Cursor.UpdateMutableVariable(variable, value)
+}
+
 func (f *StackFrame) IsDone() bool {
 	return f.RelationIndex >= len(f.Relations)
 }
@@ -34,28 +48,6 @@ func (f *StackFrame) GetCurrentRelation() mentalese.Relation {
 
 func (f *StackFrame) GetCurrentInBinding() mentalese.Binding {
 	return f.InBindings.Get(f.InBindingIndex)
-}
-
-// prepare the active binding to be fed to a function
-func (f *StackFrame) GetPreparedBinding() mentalese.Binding {
-
-	binding := f.GetCurrentInBinding()
-
-	// filter out only the variables needed by the relation
-	binding = binding.FilterVariablesByName(f.GetCurrentRelation().GetVariableNames())
-
-	return binding
-}
-
-// prepare the active binding to be fed to a function
-func (f *StackFrame) GetPreparedBindings() mentalese.BindingSet {
-
-	bindings := f.InBindings
-
-	// filter out only the variables needed by the relation
-	bindings = bindings.FilterVariablesByName(f.GetCurrentRelation().GetVariableNames())
-
-	return bindings
 }
 
 func (f *StackFrame) AddOutBinding(inBinding mentalese.Binding, outBinding mentalese.Binding) {

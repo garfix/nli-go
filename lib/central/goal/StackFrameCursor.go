@@ -16,6 +16,19 @@ func NewStackFrameCursor() *StackFrameCursor {
 	}
 }
 
+func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentalese.Term) {
+	for _, binding := range c.StepBindings.GetAll() {
+		if binding.ContainsVariable(variable) {
+			binding.Set(variable, value)
+		}
+	}
+	for _, binding := range c.ChildFrameResultBindings.GetAll() {
+		if binding.ContainsVariable(variable) {
+			binding.Set(variable, value)
+		}
+	}
+}
+
 func (c *StackFrameCursor) GetState(name string, fallback int) int {
 	value, found := c.State[name]
 	if found {

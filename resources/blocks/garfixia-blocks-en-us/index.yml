@@ -1,5 +1,6 @@
 type: grammar
 version: 1.0.0
+locale: en_US
 uses:
   dom: garfixia-blocks-domain:1.0.0
 tokenexpression: "([_0-9a-zA-Z]+|[^\\s])"

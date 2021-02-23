@@ -360,7 +360,11 @@ func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, 
 			cursor.SetState("passed", passed)
 
 			if passed == count {
-				return cursor.GetStepBindings()
+				resultBindings := mentalese.NewBindingSet()
+				for _, bindingSet := range cursor.GetAllStepBindings() {
+					resultBindings.AddMultiple(bindingSet)
+				}
+				return resultBindings
 			}
 		}
 	}

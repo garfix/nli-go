@@ -4,22 +4,24 @@ import "nli-go/lib/mentalese"
 
 type StackFrameCursor struct {
 	State                    map[string]int
-	StepBindings             mentalese.BindingSet
+	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
 }
 
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
 		State:                    map[string]int{},
-		StepBindings:             mentalese.NewBindingSet(),
+		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
 	}
 }
 
 func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentalese.Term) {
-	for _, binding := range c.StepBindings.GetAll() {
-		if binding.ContainsVariable(variable) {
-			binding.Set(variable, value)
+	for _, bindingSet := range c.AllStepBindings {
+		for _, binding := range bindingSet.GetAll() {
+			if binding.ContainsVariable(variable) {
+				binding.Set(variable, value)
+			}
 		}
 	}
 	for _, binding := range c.ChildFrameResultBindings.GetAll() {
@@ -42,16 +44,12 @@ func (c *StackFrameCursor) SetState(name string, value int)  {
 	c.State[name] = value
 }
 
-func (c *StackFrameCursor) GetStepBindings() mentalese.BindingSet {
-	return c.StepBindings
-}
-
-func (c *StackFrameCursor) AddStepBinding(binding mentalese.Binding) {
-	c.StepBindings.Add(binding)
+func (c *StackFrameCursor) GetAllStepBindings() []mentalese.BindingSet {
+	return c.AllStepBindings
 }
 
 func (c *StackFrameCursor) AddStepBindings(bindings mentalese.BindingSet) {
-	c.StepBindings.AddMultiple(bindings)
+	c.AllStepBindings = append(c.AllStepBindings, bindings)
 }
 
 func (c *StackFrameCursor) GetChildFrameResultBindings() mentalese.BindingSet {

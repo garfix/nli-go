@@ -32,7 +32,7 @@ func (p ProcessRunner) RunProcess(goalId int, goalSet mentalese.RelationSet) {
 func (p ProcessRunner) step(process *goal.Process) {
 	currentFrame := process.GetLastFrame()
 
-	p.debug(process, currentFrame, len(process.Stack))
+	debug := p.before(process, currentFrame, len(process.Stack))
 
 	messenger := process.CreateMessenger()
 	relation := currentFrame.GetCurrentRelation()
@@ -55,6 +55,9 @@ func (p ProcessRunner) step(process *goal.Process) {
 		process.ProcessMessenger(messenger, currentFrame)
 
 	}
+
+	debug += p.after(process, currentFrame)
+	p.log.AddDebug("frame", debug)
 
 	// if the relation has not pushed a new frame, then it is done processing
 	if currentFrame == process.GetLastFrame() {
@@ -81,7 +84,7 @@ func (p ProcessRunner) createMutableVariable(process *goal.Process, relation men
 	process.AddMutableVariable(variableTerm.TermValue)
 }
 
-func (p ProcessRunner) debug(process *goal.Process, frame *goal.StackFrame, stackDepth int) {
+func (p ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, stackDepth int) string {
 
 	padding := strings.Repeat("  ", stackDepth)
 
@@ -97,6 +100,13 @@ func (p ProcessRunner) debug(process *goal.Process, frame *goal.StackFrame, stac
 	}
 
 	text := frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child
-	p.log.AddDebug("frame",
-		padding + text)
+	return padding + text
+}
+
+func (p ProcessRunner) after(process *goal.Process, frame *goal.StackFrame) string {
+	debug := ": " + frame.OutBindings.String()
+	if process.GetLastFrame() != frame {
+		debug = ""
+	}
+	return debug
 }

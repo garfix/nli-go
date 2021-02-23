@@ -9,8 +9,7 @@ import "nli-go/lib/mentalese"
 type ProcessCursor interface {
 	GetState(string, int) int
 	SetState(string, int)
-	GetStepBindings() mentalese.BindingSet
-	AddStepBinding(binding mentalese.Binding)
 	AddStepBindings(bindings mentalese.BindingSet)
+	GetAllStepBindings() []mentalese.BindingSet
 	GetChildFrameResultBindings() mentalese.BindingSet
 }

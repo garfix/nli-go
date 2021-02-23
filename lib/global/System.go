@@ -129,7 +129,7 @@ func (system *System) AnswerAsync(input string) (string, *common.Options) {
 
 	system.DeleteGoal(goalId)
 
-	return answer, nil
+	return answer, common.NewOptions()
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {

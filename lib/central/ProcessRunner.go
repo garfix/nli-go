@@ -125,7 +125,12 @@ func (p ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, sta
 		prepared = process.GetPreparedBinding(frame).String()
 	}
 
-	text := frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child
+	fromChild := ""
+	if len(frame.Cursor.State) > 0 {
+		fromChild = "╰ "
+	}
+
+	text := fromChild + frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child
 	return padding + text
 }
 

@@ -415,7 +415,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goal
 	goalBindings := mentalese.NewBindingSet()
 
 	// match rules from the rule base to the goalRelation
-	rules := ruleBase.GetRules(goalRelation, binding)
+	rules := ruleBase.GetRulesForRelation(goalRelation, binding)
 	sourceSubgoalSets := []mentalese.RelationSet{}
 	for _, rule := range rules {
 		aBinding, _ := solver.matcher.MatchTwoRelations(goalRelation, rule.Goal, binding)

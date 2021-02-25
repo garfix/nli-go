@@ -1,6 +1,7 @@
 package central
 
 import (
+	"nli-go/lib/api"
 	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
@@ -51,9 +52,21 @@ func (p ProcessRunner) step(process *goal.Process) {
 		}
 
 		preparedBinding := process.GetPreparedBinding(currentFrame)
-		p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
-		process.ProcessMessenger(messenger, currentFrame)
+		//p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
 
+		handler := p.PrepareHandler(relation.Predicate, currentFrame)
+		if handler == nil {
+			// there may just be no handlers, or handlers could have been removed from the knowledge bases
+			if currentFrame.HandlerIndex == 0 {
+				p.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
+				process.Clear()
+				return
+			}
+		} else {
+			outBindings := handler(messenger, relation, preparedBinding)
+			messenger.AddOutBindings(outBindings)
+			process.ProcessMessenger(messenger, currentFrame)
+		}
 	}
 
 	debug += p.after(process, currentFrame)
@@ -65,6 +78,19 @@ func (p ProcessRunner) step(process *goal.Process) {
 	} else {
 		process.EmptyRelationCheck()
 	}
+}
+
+func (p ProcessRunner) PrepareHandler(predicate string, frame *goal.StackFrame) api.RelationHandler {
+
+	handlers := p.solver.GetHandlers(predicate)
+
+	frame.HandlerCount = len(handlers)
+
+	if frame.HandlerIndex >= len(handlers) {
+		return nil
+	}
+
+	return handlers[frame.HandlerIndex]
 }
 
 func (p ProcessRunner) createMutableVariable(process *goal.Process, relation mentalese.Relation) {

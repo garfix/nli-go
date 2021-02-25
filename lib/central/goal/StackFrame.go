@@ -9,6 +9,8 @@ type StackFrame struct {
 	RelationIndex  int
 	InBindings     mentalese.BindingSet
 	InBindingIndex int
+	HandlerIndex   int
+	HandlerCount   int
 	OutBindings    mentalese.BindingSet
 	Cursor         *StackFrameCursor
 }
@@ -18,7 +20,9 @@ func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSe
 		Relations:      relations,
 		InBindings:     bindings,
 		OutBindings:    mentalese.NewBindingSet(),
+		HandlerCount: 0,
 		InBindingIndex: 0,
+		HandlerIndex: 0,
 		RelationIndex:  0,
 		Cursor:         NewStackFrameCursor(),
 	}

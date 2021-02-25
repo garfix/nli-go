@@ -28,7 +28,11 @@ func (ruleBase *InMemoryRuleBase) GetPredicates() []string {
 	return predicates
 }
 
-func (ruleBase *InMemoryRuleBase) GetRules(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Rule {
+func (ruleBase *InMemoryRuleBase) GetRules() []mentalese.Rule {
+	return ruleBase.rules
+}
+
+func (ruleBase *InMemoryRuleBase) GetRulesForRelation(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Rule {
 
 	matcher := central.NewRelationMatcher(ruleBase.log)
 	rules := []mentalese.Rule{}

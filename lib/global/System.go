@@ -21,6 +21,7 @@ type System struct {
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	solver                *central.ProblemSolver
+	solverAsync           *central.ProblemSolverAsync
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation

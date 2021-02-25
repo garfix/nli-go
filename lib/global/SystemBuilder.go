@@ -91,6 +91,8 @@ func (builder *systemBuilder) build(system *System) {
 
 	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, system.answerer, builder.log)
 	system.solver.AddSolverFunctionBase(languageBase)
+
+	system.solverAsync.Reindex()
 }
 
 func (builder *systemBuilder) buildBasic(system *System) {
@@ -120,6 +122,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.solver = solver
 
 	solverAsync := central.NewProblemSolverAsync(solver)
+	system.solverAsync = solverAsync
 	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 
 	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)

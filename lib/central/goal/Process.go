@@ -42,16 +42,29 @@ func (p *Process) EmptyRelationCheck() {
 	}
 }
 
-// advance the cursor in the frame
-// pop the frame when done, and transfer child bindings to parent
 func (p *Process) Advance() {
 
-	// advance binding
 	frame := p.GetLastFrame()
-	frame.InBindingIndex++
-
-	// create a new working environment
 	frame.Cursor = NewStackFrameCursor()
+
+	p.AdvanceHandler()
+}
+
+func (p *Process) AdvanceHandler() {
+
+	frame := p.GetLastFrame()
+	frame.HandlerIndex++
+
+	if frame.HandlerIndex >= frame.HandlerCount {
+		p.AdvanceBinding()
+	}
+}
+
+func (p *Process) AdvanceBinding() {
+
+	frame := p.GetLastFrame()
+	frame.HandlerIndex = 0
+	frame.InBindingIndex++
 
 	if frame.InBindingIndex >= frame.InBindings.GetLength() {
 		p.advanceRelation(frame)

@@ -47,10 +47,6 @@ func (p ProcessRunner) step(process *goal.Process) {
 
 	} else {
 
-		//if relation.Predicate == mentalese.PredicateLet {
-		//	p.createMutableVariable(process, relation)
-		//}
-
 		preparedBinding := process.GetPreparedBinding(currentFrame)
 
 		handler := p.PrepareHandler(relation.Predicate, currentFrame, process)
@@ -59,7 +55,7 @@ func (p ProcessRunner) step(process *goal.Process) {
 		} else {
 			outBindings := handler(messenger, relation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
-			process.ProcessMessenger(messenger, currentFrame)
+			currentFrame = process.ProcessMessenger(messenger, currentFrame)
 		}
 	}
 

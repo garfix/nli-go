@@ -117,34 +117,40 @@ func (p *Process) CreateMessenger() *Messenger {
 	return NewMessenger(frame.Cursor)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
+func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) *StackFrame {
 
 	outBindings := messenger.GetOutBindings()
 
-	p.executeProcessInstructions(messenger, frame)
-
 	p.updateMutableVariables(outBindings)
 
-	frame.AddOutBindings(frame.GetCurrentInBinding(), outBindings)
+	currentFame, outBindings = p.executeProcessInstructions(messenger, currentFame, outBindings)
+
+	currentFame.AddOutBindings(currentFame.GetCurrentInBinding(), outBindings)
 
 	if messenger.GetChildFrame() != nil {
 		p.PushFrame(messenger.GetChildFrame())
 	}
+
+
+	return currentFame
 }
 
-func (p *Process) executeProcessInstructions(messenger *Messenger, frame *StackFrame) {
+func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet) {
 
 	for instruction, value := range messenger.GetProcessInstructions() {
 		switch instruction {
 		case mentalese.ProcessInstructionLet:
 			p.AddMutableVariable(value)
 		case mentalese.ProcessInstructionBreak:
-			p.executeBreak()
+			outBindings = currentFrame.InBindings
+			currentFrame = p.executeBreak(currentFrame)
 		}
 	}
+
+	return currentFrame, outBindings
 }
 
-func (p *Process) executeBreak() {
+func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
 	done := false
 	for !done {
 		frame := p.GetLastFrame()
@@ -152,18 +158,22 @@ func (p *Process) executeBreak() {
 			// todo: log error: break without loop
 			done = true
 		}
+
 		frameType := frame.Cursor.GetType()
 
-		p.PopFrame()
-
-		if frameType == mentalese.FrameTypeLoop {
+		switch frameType {
+		case mentalese.FrameTypeLoop:
+			currentFrame = frame
 			done = true
-		}
-		if frameType == mentalese.FrameTypeScope {
+		case mentalese.FrameTypeScope:
 			// todo: log error: break without loop
 			done = true
+		default:
+			p.PopFrame()
 		}
 	}
+
+	return currentFrame
 }
 
 func (p *Process) updateMutableVariables(outBindings mentalese.BindingSet) {

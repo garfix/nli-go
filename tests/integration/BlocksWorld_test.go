@@ -19,9 +19,9 @@ func TestBlocksWorld(t *testing.T) {
 		answer        string
 	}{
 		{
-				//{"Does the table support the big red block?", "Yes"},
-			{"Pick up a big red block", "OK1"},
-				//{"Does the table support the big red block?", "No"},
+				{"Does the table support the big red block?", "Yes"},
+			{"Pick up a big red block", "OK"},
+				{"Does the table support the big red block?", "No"},
 
 			// todo "I don't understand which pyramid you mean"
 			//{"Grasp the pyramid", "I don't understand which one you mean"},

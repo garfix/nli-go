@@ -89,12 +89,43 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 	action := ifThenElse.Arguments[1].TermValueRelationSet
 	alternative := ifThenElse.Arguments[2].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(condition, mentalese.InitBindingSet(binding))
+	newBindings := mentalese.NewBindingSet()
 
-	if !newBindings.IsEmpty() {
-		newBindings = base.solver.SolveRelationSet(action, newBindings )
+	if messenger == nil {
+
+		newBindings := base.solver.SolveRelationSet(condition, mentalese.InitBindingSet(binding))
+
+		if !newBindings.IsEmpty() {
+			newBindings = base.solver.SolveRelationSet(action, newBindings)
+		} else {
+			newBindings = base.solver.SolveRelationSet(alternative, mentalese.InitBindingSet(binding))
+		}
+
 	} else {
-		newBindings = base.solver.SolveRelationSet(alternative, mentalese.InitBindingSet(binding))
+
+		cursor := messenger.GetCursor()
+		state := cursor.GetState("state", 0)
+		cursor.SetState("state", state + 1)
+
+		if state == 0 {
+
+			messenger.CreateChildStackFrame(condition, mentalese.InitBindingSet(binding))
+
+		} else if state == 1 {
+
+			conditionBindings := cursor.GetChildFrameResultBindings()
+			if !conditionBindings.IsEmpty() {
+				messenger.CreateChildStackFrame(action, conditionBindings)
+			} else {
+				messenger.CreateChildStackFrame(alternative, mentalese.InitBindingSet(binding))
+			}
+
+		} else {
+
+			newBindings = cursor.GetChildFrameResultBindings()
+
+		}
+
 	}
 
 	return newBindings

@@ -52,16 +52,10 @@ func (p ProcessRunner) step(process *goal.Process) {
 		}
 
 		preparedBinding := process.GetPreparedBinding(currentFrame)
-		//p.solver.SolveSingleRelationSingleBinding(messenger, relation, preparedBinding)
 
-		handler := p.PrepareHandler(relation.Predicate, currentFrame)
+		handler := p.PrepareHandler(relation.Predicate, currentFrame, process)
 		if handler == nil {
-			// there may just be no handlers, or handlers could have been removed from the knowledge bases
-			if currentFrame.HandlerIndex == 0 {
-				p.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
-				process.Clear()
-				return
-			}
+			return
 		} else {
 			outBindings := handler(messenger, relation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
@@ -80,13 +74,18 @@ func (p ProcessRunner) step(process *goal.Process) {
 	}
 }
 
-func (p ProcessRunner) PrepareHandler(predicate string, frame *goal.StackFrame) api.RelationHandler {
+func (p ProcessRunner) PrepareHandler(predicate string, frame *goal.StackFrame, process *goal.Process) api.RelationHandler {
 
 	handlers := p.solver.GetHandlers(predicate)
 
 	frame.HandlerCount = len(handlers)
 
 	if frame.HandlerIndex >= len(handlers) {
+		// there may just be no handlers, or handlers could have been removed from the knowledge bases
+		if frame.HandlerIndex == 0 {
+			p.log.AddError("Predicate not supported by any knowledge base: " + predicate)
+			process.Clear()
+		}
 		return nil
 	}
 

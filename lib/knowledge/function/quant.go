@@ -65,6 +65,7 @@ func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenge
 	}
 
 	messenger.GetCursor().SetState("childIndex", 0)
+	messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
 
 	result, loading := base.solveQuantifiedRelations(messenger, find, binding, false)
 	if loading {

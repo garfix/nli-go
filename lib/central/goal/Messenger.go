@@ -6,21 +6,31 @@ import (
 )
 
 type Messenger struct {
-	cursor *StackFrameCursor
-	outBindings mentalese.BindingSet
-	childFrame *StackFrame
+	cursor              *StackFrameCursor
+	outBindings         mentalese.BindingSet
+	childFrame          *StackFrame
+	processInstructions map[string]string
 }
 
 func NewMessenger(cursor *StackFrameCursor) *Messenger {
 	return &Messenger{
-		cursor: cursor,
-		outBindings: mentalese.NewBindingSet(),
-		childFrame: nil,
+		cursor:              cursor,
+		outBindings:         mentalese.NewBindingSet(),
+		childFrame:          nil,
+		processInstructions: map[string]string{},
 	}
 }
 
 func (i *Messenger) GetCursor() api.ProcessCursor {
 	return i.cursor
+}
+
+func (i *Messenger) AddProcessInstruction(name string, value string) {
+	i.processInstructions[name] = value
+}
+
+func (i *Messenger) GetProcessInstructions() map[string]string {
+	return i.processInstructions
 }
 
 func (i *Messenger) AddOutBinding(binding mentalese.Binding) {

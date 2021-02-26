@@ -5,6 +5,7 @@ import "nli-go/lib/mentalese"
 // RelationIndex must always point to a real relation!
 
 type StackFrame struct {
+	Type           string
 	Relations      mentalese.RelationSet
 	RelationIndex  int
 	InBindings     mentalese.BindingSet
@@ -17,6 +18,7 @@ type StackFrame struct {
 
 func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) *StackFrame {
 	return &StackFrame{
+		Type: 			mentalese.FrameTypePlain,
 		Relations:      relations,
 		InBindings:     bindings,
 		OutBindings:    mentalese.NewBindingSet(),
@@ -40,6 +42,14 @@ func (f *StackFrame) UpdateMutableVariable(variable string, value mentalese.Term
 		}
 	}
 	f.Cursor.UpdateMutableVariable(variable, value)
+}
+
+func (f *StackFrame) SetType(t string) {
+	f.Type = t
+}
+
+func (f *StackFrame) GetType() string {
+	return f.Type
 }
 
 func (f *StackFrame) IsDone() bool {

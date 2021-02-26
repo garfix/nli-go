@@ -121,12 +121,50 @@ func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) {
 
 	outBindings := messenger.GetOutBindings()
 
+	p.executeProcessInstructions(messenger, frame)
+
 	p.updateMutableVariables(outBindings)
 
 	frame.AddOutBindings(frame.GetCurrentInBinding(), outBindings)
 
 	if messenger.GetChildFrame() != nil {
 		p.PushFrame(messenger.GetChildFrame())
+	}
+}
+
+func (p *Process) executeProcessInstructions(messenger *Messenger, frame *StackFrame) {
+
+	for instruction, value := range messenger.GetProcessInstructions() {
+		switch instruction {
+		case mentalese.ProcessInstructionLet:
+			p.AddMutableVariable(value)
+		case mentalese.ProcessInstructionType:
+			frame.SetType(value)
+		case mentalese.ProcessInstructionBreak:
+			p.executeBreak()
+		}
+	}
+}
+
+func (p *Process) executeBreak() {
+	done := false
+	for !done {
+		frame := p.GetLastFrame()
+		if frame == nil {
+			// todo: log error: break without loop
+			done = true
+		}
+		frameType := frame.GetType()
+
+		p.PopFrame()
+
+		if frameType == mentalese.FrameTypeLoop {
+			done = true
+		}
+		if frameType == mentalese.FrameTypeScope {
+			// todo: log error: break without loop
+			done = true
+		}
 	}
 }
 

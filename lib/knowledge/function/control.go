@@ -27,6 +27,7 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 	if messenger == nil {
 		(*variables).Set(variable, value)
 	} else {
+		messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
 		binding = binding.Copy()
 		binding.Set(variable, value)
 	}
@@ -169,19 +170,41 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 		return newBindings
 	}
 
-	for i := start; i <= end; i++ {
-		scopedBinding := binding.Copy()
-		if !variableTerm.IsAnonymousVariable() {
-			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
+	if messenger == nil {
+
+		for i := start; i <= end; i++ {
+			scopedBinding := binding.Copy()
+			if !variableTerm.IsAnonymousVariable() {
+				scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
+			}
+			elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
+			if !variableTerm.IsAnonymousVariable() {
+				elementBindings = elementBindings.FilterOutVariablesByName([]string{variable})
+			}
+			newBindings.AddMultiple(elementBindings)
+			if base.solver.GetCurrentScope().IsBreaked() {
+				scope.SetBreaked(false)
+				break
+			}
 		}
-		elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-		if !variableTerm.IsAnonymousVariable() {
-			elementBindings = elementBindings.FilterOutVariablesByName([]string{ variable })
+	} else {
+
+		cursor := messenger.GetCursor()
+		index := cursor.GetState("index", start)
+		cursor.SetState("index", index + 1)
+
+		if index == start {
+			messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
+		} else {
+			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
 		}
-		newBindings.AddMultiple(elementBindings)
-		if base.solver.GetCurrentScope().IsBreaked() {
-			scope.SetBreaked(false)
-			break
+
+		if index <= end {
+			scopedBinding := binding.Copy()
+			if !variableTerm.IsAnonymousVariable() {
+				scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(index)))
+			}
+			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 		}
 	}
 
@@ -194,7 +217,11 @@ func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, re
 
 	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
 
-	base.solver.GetCurrentScope().SetBreaked(true)
+	if messenger == nil {
+		base.solver.GetCurrentScope().SetBreaked(true)
+	} else {
+		messenger.AddProcessInstruction(mentalese.ProcessInstructionBreak, "")
+	}
 
 	return mentalese.InitBindingSet(binding)
 }

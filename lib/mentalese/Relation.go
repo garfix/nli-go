@@ -10,6 +10,14 @@ type Relation struct {
 	Arguments []Term
 }
 
+const ProcessInstructionLet = "let"
+const ProcessInstructionType = "type"
+const ProcessInstructionBreak = "break"
+
+const FrameTypePlain = "plain"
+const FrameTypeScope = "scope"
+const FrameTypeLoop = "loop"
+
 const PredicateCanned = "go_canned"
 const PredicateQuantCheck = "go_quant_check"
 const PredicateQuantForeach = "go_quant_foreach"

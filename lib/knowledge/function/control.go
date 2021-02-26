@@ -194,7 +194,7 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 		cursor.SetState("index", index + 1)
 
 		if index == start {
-			messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
+			cursor.SetType(mentalese.FrameTypeLoop)
 		} else {
 			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
 		}

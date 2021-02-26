@@ -83,8 +83,8 @@ func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.Relation
 		// process child frame bindings
 		if state == 0 {
 			cursor.SetState("state", 1)
-			// turn the frame into a name scope
-			messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeScope)
+			// turn the cursor into a scope
+			cursor.SetType(mentalese.FrameTypeScope)
 			// push the child relations
 			messenger.CreateChildStackFrame(sourceSubgoalSet, mentalese.InitBindingSet(scopedBinding))
 		} else {

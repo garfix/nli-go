@@ -7,6 +7,8 @@ import "nli-go/lib/mentalese"
 // when a stack frame has finished, the parent relation is re-entered and continued
 
 type ProcessCursor interface {
+	GetType() string
+	SetType(string)
 	GetState(string, int) int
 	SetState(string, int)
 	AddStepBindings(bindings mentalese.BindingSet)

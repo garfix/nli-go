@@ -102,7 +102,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 			children := relation.Arguments[2].TermValueRelationSet
 
 			if index == 0 {
-				messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
+				cursor.SetType(mentalese.FrameTypeLoop)
 			} else {
 				newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
 			}
@@ -131,7 +131,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 			children := relation.Arguments[3].TermValueRelationSet
 
 			if index == 0 {
-				messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
+				cursor.SetType(mentalese.FrameTypeLoop)
 			} else {
 				newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
 			}

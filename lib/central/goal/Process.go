@@ -138,8 +138,6 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, frame *StackF
 		switch instruction {
 		case mentalese.ProcessInstructionLet:
 			p.AddMutableVariable(value)
-		case mentalese.ProcessInstructionType:
-			frame.SetType(value)
 		case mentalese.ProcessInstructionBreak:
 			p.executeBreak()
 		}
@@ -154,7 +152,7 @@ func (p *Process) executeBreak() {
 			// todo: log error: break without loop
 			done = true
 		}
-		frameType := frame.GetType()
+		frameType := frame.Cursor.GetType()
 
 		p.PopFrame()
 

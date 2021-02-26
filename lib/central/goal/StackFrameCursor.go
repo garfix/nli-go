@@ -1,8 +1,11 @@
 package goal
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+)
 
 type StackFrameCursor struct {
+	Type                     string
 	State                    map[string]int
 	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
@@ -10,6 +13,7 @@ type StackFrameCursor struct {
 
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
+		Type: 					  mentalese.FrameTypePlain,
 		State:                    map[string]int{},
 		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
@@ -29,6 +33,14 @@ func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentales
 			binding.Set(variable, value)
 		}
 	}
+}
+
+func (c *StackFrameCursor) SetType(t string) {
+	c.Type = t
+}
+
+func (c *StackFrameCursor) GetType() string {
+	return c.Type
 }
 
 func (c *StackFrameCursor) GetState(name string, fallback int) int {

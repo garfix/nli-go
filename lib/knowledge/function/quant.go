@@ -64,8 +64,9 @@ func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenge
 		panic("quant_foreach(quants, scope) needs two arguments")
 	}
 
-	messenger.GetCursor().SetState("childIndex", 0)
-	messenger.AddProcessInstruction(mentalese.ProcessInstructionType, mentalese.FrameTypeLoop)
+	cursor := messenger.GetCursor()
+	cursor.SetType(mentalese.FrameTypeLoop)
+	cursor.SetState("childIndex", 0)
 
 	result, loading := base.solveQuantifiedRelations(messenger, find, binding, false)
 	if loading {

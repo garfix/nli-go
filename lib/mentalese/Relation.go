@@ -11,7 +11,6 @@ type Relation struct {
 }
 
 const ProcessInstructionLet = "let"
-const ProcessInstructionType = "type"
 const ProcessInstructionBreak = "break"
 
 const FrameTypePlain = "plain"

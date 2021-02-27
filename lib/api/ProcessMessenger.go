@@ -8,5 +8,6 @@ import "nli-go/lib/mentalese"
 type ProcessMessenger interface {
 	GetCursor() ProcessCursor
 	CreateChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet)
+	ExecuteChildStackFrameAsync(relations mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool)
 	AddProcessInstruction(name string, value string)
 }

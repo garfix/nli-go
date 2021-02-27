@@ -19,8 +19,20 @@ func (base *SystemSolverFunctionBase) intent(messenger api.ProcessMessenger, inp
 
 func (base *SystemSolverFunctionBase) backReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
+	if messenger != nil {
+		cursor := messenger.GetCursor()
+		cursor.SetState("childIndex", 0)
+	}
+
+	result, _ := base.doBackReference(messenger, relation, binding)
+	return result
+}
+
+func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) (mentalese.BindingSet, bool) {
+
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
+	loading := false
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -43,14 +55,19 @@ func (base *SystemSolverFunctionBase) backReference(messenger api.ProcessMesseng
 			continue
 		}
 
-		testRangeBindings := base.solver.SolveRelationSet(set, mentalese.InitBindingSet(refBinding))
+		testRangeBindings := mentalese.BindingSet{}
+		if messenger == nil {
+			testRangeBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(refBinding))
+		} else {
+			testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(refBinding))
+		}
 		if testRangeBindings.GetLength() == 1 {
 			newBindings = testRangeBindings
 			break
 		}
 	}
 
-	return newBindings
+	return newBindings, loading
 }
 
 func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -58,10 +75,21 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
 
-	newBindings := base.backReference(messenger, relation, binding)
+	if messenger != nil {
+		cursor := messenger.GetCursor()
+		cursor.SetState("childIndex", 0)
+	}
+
+	newBindings, loading := base.doBackReference(messenger, relation, binding)
+	if loading { return mentalese.NewBindingSet() }
 
 	if newBindings.IsEmpty() {
-		newBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(binding))
+		if messenger == nil {
+			newBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(binding))
+		} else {
+			newBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
+			if loading { return mentalese.NewBindingSet() }
+		}
 
 		if newBindings.GetLength() > 1 {
 			rangeIndex, found := base.rangeIndexClarification(newBindings, variable)
@@ -79,8 +107,13 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	variable := relation.Arguments[0].TermValue
-
 	newBindings := mentalese.NewBindingSet()
+	loading := false
+
+	if messenger != nil {
+		cursor := messenger.GetCursor()
+		cursor.SetState("childIndex", 0)
+	}
 
 	for _, group := range *base.dialogContext.AnaphoraQueue {
 
@@ -110,7 +143,12 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
-		newBindings = base.solver.SolveRelationSet(sortRelationSet, mentalese.InitBindingSet(binding))
+		if messenger == nil {
+			newBindings = base.solver.SolveRelationSet(sortRelationSet, mentalese.InitBindingSet(binding))
+		} else {
+			newBindings, loading = messenger.ExecuteChildStackFrameAsync(sortRelationSet, mentalese.InitBindingSet(binding))
+			if loading { return mentalese.NewBindingSet() }
+		}
 		break
 	}
 

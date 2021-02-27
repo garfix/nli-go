@@ -11,6 +11,8 @@
 
 - explicit gaps and fillers: long distance dependencies
 
+- document: these are two ways of doing a child stack frame
+
 * database mappings: allow a rule to be used only for given sorts; for performance
 * binding set -> results
 * better validation for built-in functions; especially multi-binding ones

@@ -15,31 +15,7 @@ func (base *SystemSolverFunctionBase) solveAsync(messenger api.ProcessMessenger,
 		return base.solver.SolveRelationSet(set, bindings), false
 	}
 
-	cursor := messenger.GetCursor()
-	childIndex := cursor.GetState("childIndex", 0)
-	loading := cursor.GetState("loading", 0)
-	allStepBindings := cursor.GetAllStepBindings()
-
-	messenger.GetCursor().SetState("childIndex", childIndex+ 1)
-
-	// has the child been done before?
-	if childIndex < len(allStepBindings) {
-		return allStepBindings[childIndex], false
-	}
-
-	// have we just done the child?
-	if loading == 1 {
-		cursor.SetState("loading", 0)
-		// yes: collect the results
-		childBindings := cursor.GetChildFrameResultBindings()
-		cursor.AddStepBindings(childBindings)
-		return childBindings, false
-	} else {
-		// do it now
-		cursor.SetState("loading", 1)
-		messenger.CreateChildStackFrame(set, bindings)
-		return mentalese.NewBindingSet(), true
-	}
+	return messenger.ExecuteChildStackFrameAsync(set, bindings)
 }
 
 // quant_check(quant() quant(), relationset)

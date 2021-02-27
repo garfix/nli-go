@@ -18,7 +18,9 @@ func NewFactBaseModifier(log *common.SystemLog, variableGenerator *mentalese.Var
 	}
 }
 
-func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase api.FactBase) {
+func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase api.FactBase) bool {
+
+	found := false
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
@@ -30,11 +32,16 @@ func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase ap
 		for _, replacementRelation := range dbRelations {
 
 			factBase.Assert(replacementRelation)
+			found = true
 		}
 	}
+
+	return found
 }
 
-func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase api.FactBase) {
+func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase api.FactBase) bool {
+
+	found := false
 
 	for _, mapping := range factBase.GetWriteMappings() {
 
@@ -46,6 +53,9 @@ func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase a
 		for _, replacementRelation := range dbRelations {
 
 			factBase.Retract(replacementRelation)
+			found = true
 		}
 	}
+
+	return found
 }

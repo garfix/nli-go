@@ -3,7 +3,6 @@ package function
 import (
 	"nli-go/lib/api"
 	"nli-go/lib/central"
-	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -571,25 +570,4 @@ func (base *SystemSolverFunctionBase) quickAcceptabilityCheck(variable string, s
 	}
 
 	return accepted
-}
-
-// ask the user which of the specified entities he/she means
-func (base *SystemSolverFunctionBase) rangeIndexClarification(rangeBindings mentalese.BindingSet, rangeVariable string) (int, bool) {
-
-	options := common.NewOptions()
-
-	answer, found := base.dialogContext.GetAnswerToOpenQuestion()
-
-	if found {
-
-		index, _ := strconv.Atoi(answer)
-		base.dialogContext.RemoveAnswerToOpenQuestion()
-
-		return index, true
-
-	} else {
-
-		base.log.SetClarificationRequest("I don't understand which one you mean", options)
-		return 0, false
-	}
 }

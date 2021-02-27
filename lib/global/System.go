@@ -118,7 +118,7 @@ func (system *System) Run() {
 func (system *System) AnswerAsync(input string) (string, *common.Options) {
 	goalId := system.CreateAnswerGoal(input)
 	system.Run()
-	actions := system.ReadActions("print")
+	actions := system.ReadActions(mentalese.ActionPrint)
 
 	answer := ""
 	if actions.GetLength() > 0 {

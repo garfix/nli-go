@@ -2,6 +2,7 @@ package function
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
@@ -72,7 +73,6 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
 
 	if messenger != nil {
@@ -92,16 +92,52 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 		}
 
 		if newBindings.GetLength() > 1 {
-			rangeIndex, found := base.rangeIndexClarification(newBindings, variable)
-			if found {
-				newBindings = mentalese.InitBindingSet(newBindings.Get(rangeIndex))
-			} else {
-				return mentalese.NewBindingSet()
-			}
+			loading = base.rangeIndexClarification(messenger)
+			newBindings = mentalese.NewBindingSet()
+
+			//rangeIndex, found := base.rangeIndexClarification(messenger)
+			//if found {
+			//	newBindings = mentalese.InitBindingSet(newBindings.Get(rangeIndex))
+			//} else {
+			//	return mentalese.NewBindingSet()
+			//}
 		}
 	}
 
 	return newBindings
+}
+
+// ask the user which of the specified entities he/she means
+func (base *SystemSolverFunctionBase) rangeIndexClarification(messenger api.ProcessMessenger) bool {
+
+	if messenger == nil {
+
+		base.log.SetClarificationRequest("I don't understand which one you mean", common.NewOptions())
+		return false
+
+	} else {
+
+		cursor := messenger.GetCursor()
+		state := cursor.GetState("state", 0)
+		cursor.SetState("state", state + 1)
+
+		if state == 0 {
+
+			set := mentalese.RelationSet{
+				mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+					mentalese.NewTermRelationSet(mentalese.RelationSet{
+						mentalese.NewRelation(true, mentalese.PredicateOutput, []mentalese.Term{
+							mentalese.NewTermString("I don't understand which one you mean"),
+						})}),
+				}),
+			}
+			messenger.CreateChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+			return true
+
+		} else {
+			return false
+		}
+	}
 }
 
 func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

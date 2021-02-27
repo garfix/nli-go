@@ -13,7 +13,13 @@ go:respond(Input) :-
 
         go:find_solution(Request, Solution)
         go:cut(1,
+            go:retract(go:output(_))
             go:solve(Request, RequestBinding, Solution, ResultBindings)
+            go:if_then(
+                go:output(O),
+                go:let(Output, O)
+                go:fail()
+            )
         )
         go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
         go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)

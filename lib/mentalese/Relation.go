@@ -10,6 +10,9 @@ type Relation struct {
 	Arguments []Term
 }
 
+const ActionPrint = "print"
+const ActionSelect = "select"
+
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
 
@@ -89,6 +92,7 @@ const PredicateUuid = "go_uuid"
 const PredicateAction = "go_action"
 const PredicateLocale = "go_locale"
 
+const PredicateOutput = "go_output"
 const PredicateRespond = "go_respond"
 const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"

@@ -147,7 +147,10 @@ func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.Rela
 			boundRelation := relation.BindSingle(localIdBinding)
 			singleRelation := boundRelation.Arguments[0].TermValueRelationSet[0]
 			if singleRelation.IsBound() {
-				s.solver.modifier.Assert(singleRelation, base)
+				found := s.solver.modifier.Assert(singleRelation, base)
+				if !found {
+					return mentalese.NewBindingSet()
+				}
 			} else {
 				s.solver.log.AddError("Cannot assert unbound relation " + singleRelation.String())
 				return mentalese.NewBindingSet()
@@ -165,7 +168,10 @@ func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.Rel
 		if relation.Arguments[0].IsRelationSet() {
 			localIdBinding := s.solver.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
-			s.solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], base)
+			found := s.solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], base)
+			if !found {
+				return mentalese.NewBindingSet()
+			}
 			newBinding := s.solver.replaceLocalIdBySharedId(binding, base)
 			return mentalese.InitBindingSet(newBinding)
 		} else {

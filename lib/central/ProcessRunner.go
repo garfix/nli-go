@@ -62,7 +62,6 @@ func (p ProcessRunner) step(process *goal.Process) {
 	debug += p.after(process, currentFrame)
 	p.log.AddDebug("frame", debug)
 
-	// if the relation has not pushed a new frame, then it is done processing
 	if currentFrame == process.GetLastFrame() {
 		process.Advance()
 	} else {
@@ -87,23 +86,6 @@ func (p ProcessRunner) PrepareHandler(predicate string, frame *goal.StackFrame, 
 
 	return handlers[frame.HandlerIndex]
 }
-//
-//func (p ProcessRunner) createMutableVariable(process *goal.Process, relation mentalese.Relation) {
-//
-//	if len(relation.Arguments) != 2 {
-//		p.log.AddError("`let should have two arguments`")
-//		return
-//	}
-//
-//	variableTerm := relation.Arguments[0]
-//
-//	if !variableTerm.IsVariable() {
-//		p.log.AddError("First argument of `let` should be a variable")
-//		return
-//	}
-//
-//	process.AddMutableVariable(variableTerm.TermValue)
-//}
 
 func (p ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, stackDepth int) string {
 

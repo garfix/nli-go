@@ -61,7 +61,10 @@ func (base *SystemSolverFunctionBase) quantOrderedList(messenger api.ProcessMess
 
 	if !knowledge.Validate(bound, "rav", base.log) { return mentalese.NewBindingSet() }
 
-	messenger.GetCursor().SetState("childIndex", 0)
+	if messenger != nil {
+		cursor := messenger.GetCursor()
+		cursor.SetState("childIndex", 0)
+	}
 
 	quant := bound.Arguments[0].TermValueRelationSet[0]
 	orderFunction := bound.Arguments[1].TermValue
@@ -117,7 +120,10 @@ func (base *SystemSolverFunctionBase) getQuantifiedEntities(messenger api.Proces
 		}
 		combinedEntities := append(leftEntities, rightEntities...)
 		uniqueEntities := unique(combinedEntities)
-		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
+		orderedEntities, loading := base.entityQuickSort(messenger, uniqueEntities, orderFunction)
+		if loading {
+			return mentalese.TermList{}, true
+		}
 		quantifiedEntities, loading = base.applyQuantifierForOr(messenger, leftQuant, rightQuant, leftEntities, rightEntities, orderedEntities)
 		if loading {
 			return mentalese.TermList{}, true
@@ -138,7 +144,10 @@ func (base *SystemSolverFunctionBase) getQuantifiedEntities(messenger api.Proces
 		}
 		combinedEntities := append(leftEntities, rightEntities...)
 		uniqueEntities := unique(combinedEntities)
-		orderedEntities := base.entityQuickSort(uniqueEntities, orderFunction)
+		orderedEntities, loading := base.entityQuickSort(messenger, uniqueEntities, orderFunction)
+		if loading {
+			return mentalese.TermList{}, true
+		}
 		quantifiedEntities, loading = base.applyQuantifierForAnd(messenger, leftQuant, rightQuant, leftEntities, rightEntities, orderedEntities)
 		if loading {
 			return mentalese.TermList{}, true
@@ -155,7 +164,10 @@ func (base *SystemSolverFunctionBase) getQuantifiedEntities(messenger api.Proces
 		if loading {
 			return mentalese.TermList{}, true
 		}
-		orderedEntities := base.entityQuickSort(entities, orderFunction)
+		orderedEntities, loading := base.entityQuickSort(messenger, entities, orderFunction)
+		if loading {
+			return mentalese.TermList{}, true
+		}
 		quantifiedEntities, loading = base.applyQuantifier(messenger, quant, orderedEntities)
 		if loading {
 			return mentalese.TermList{}, true

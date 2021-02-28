@@ -140,7 +140,25 @@ func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relat
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	newBindings := base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
+	newBindings := mentalese.NewBindingSet()
+
+	if messenger == nil {
+
+		newBindings = base.solver.SolveRelationSet(child, mentalese.InitBindingSet(binding))
+
+	} else {
+
+		cursor := messenger.GetCursor()
+		state := cursor.GetState("state", 0)
+		cursor.SetState("state", 1)
+
+		if state == 0 {
+			messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
+		} else {
+			newBindings = cursor.GetChildFrameResultBindings()
+		}
+
+	}
 
 	return newBindings
 }

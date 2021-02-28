@@ -13,11 +13,19 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 
 	if !knowledge.Validate(bound, "lav", base.log) { return mentalese.NewBindingSet() }
 
+	if messenger != nil {
+		cursor := messenger.GetCursor()
+		cursor.SetState("childIndex", 0)
+	}
+
 	list := bound.Arguments[0].TermValueList
 	orderFunction := bound.Arguments[1].TermValue
 	listVariable := bound.Arguments[2].TermValue
 
-	orderedList := base.entityQuickSort(list, orderFunction)
+	orderedList, loading := base.entityQuickSort(messenger, list, orderFunction)
+	if loading {
+		return mentalese.NewBindingSet()
+	}
 
 	newBinding := binding.Copy()
 	newBinding.Set(listVariable, mentalese.NewTermList(orderedList))

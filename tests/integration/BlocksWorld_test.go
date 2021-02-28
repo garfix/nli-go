@@ -54,23 +54,23 @@ func TestBlocksWorld(t *testing.T) {
 			{"Do I own the box?", "No"},
 
 			{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid"},
-			//
-			//	{"Does a green block support a pyramid?", "Yes"},
-			//{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
-			//	{"Is the small red block supported by a green block?", "Yes"},
-			//	{"Is a green block supported by the big red block?", "Yes"},
-			//	{"Does a green block support a pyramid?", "Yes"},
-			//
-			//{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
-			//
-			//// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
-			//{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
-			//
-			//{"Put a small one onto the green cube which supports a pyramid", "OK"},
-			//
-			//	{"Does the small red block support the green pyramid?", "No"},
-			//{"Put the littlest pyramid on top of it", "OK"},
-			//	{"Does the small red block support the green pyramid?", "Yes"},
+
+				{"Does a green block support a pyramid?", "Yes"},
+			{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
+				{"Is the small red block supported by a green block?", "Yes"},
+				{"Is a green block supported by the big red block?", "Yes"},
+				{"Does a green block support a pyramid?", "Yes"},
+
+			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
+
+			// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
+			{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
+
+			{"Put a small one onto the green cube which supports a pyramid", "OK"},
+
+				{"Does the small red block support the green pyramid?", "No"},
+			{"Put the littlest pyramid on top of it", "OK"},
+				{"Does the small red block support the green pyramid?", "Yes"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

@@ -153,6 +153,23 @@ func (set RelationSet) ImportBinding(binding Binding, generator *VariableGenerat
 	return set.BindSingle(importBinding)
 }
 
+func (relations RelationSet) ConvertVariables(variableMapping Binding, variableGenerator *VariableGenerator) RelationSet {
+	inputVariables := relations.GetVariableNames()
+
+	newRelations := relations.Copy()
+
+	for _, inputVariable := range inputVariables {
+		newVariable, found := variableMapping.Get(inputVariable)
+		if found {
+			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), newVariable)
+		} else {
+			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), variableGenerator.GenerateVariable(inputVariable))
+		}
+	}
+
+	return newRelations
+}
+
 func (relations RelationSet) InstantiateUnboundVariables(binding Binding, variableGenerator *VariableGenerator) RelationSet {
 	inputVariables := relations.GetVariableNames()
 

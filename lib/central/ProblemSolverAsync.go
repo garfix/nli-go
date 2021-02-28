@@ -22,6 +22,8 @@ func NewProblemSolverAsync(solver *ProblemSolver) *ProblemSolverAsync {
 
 func (s *ProblemSolverAsync) Reindex() {
 
+	s.relationHandlers = map[string][]api.RelationHandler{}
+
 	s.createFactBaseHandlers()
 	s.createRuleHandlers()
 	s.createSimpleFunctionBaseHandlers()
@@ -64,19 +66,19 @@ func (s *ProblemSolverAsync) createRuleHandlers() {
 func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-		aBinding, a := s.solver.matcher.MatchTwoRelations(relation, rule.Goal, binding)
-		bBinding, b := s.solver.matcher.MatchTwoRelations(rule.Goal, relation, mentalese.NewBinding())
-
-		if !a || !b {
+		_, match  := s.solver.matcher.MatchTwoRelations(relation, rule.Goal, binding)
+		if !match {
 			return mentalese.NewBindingSet()
 		}
 
-		boundRule := rule.BindSingle(bBinding)
-		boundRule = boundRule.InstantiateUnboundVariables(aBinding, s.solver.variableGenerator)
-		sourceSubgoalSet := boundRule.Pattern
+		mapping, mappingOk := s.solver.matcher.MatchTwoRelations(rule.Goal, relation, mentalese.NewBinding())
+		// todo: necessary?
+		if !mappingOk {
+			return mentalese.NewBindingSet()
+		}
 
-		scope := mentalese.NewScope()
-		scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
+		mappedPattern := rule.Pattern.ConvertVariables(mapping, s.solver.variableGenerator)
+
 		cursor := messenger.GetCursor()
 		state := cursor.GetState("state", 0)
 
@@ -86,7 +88,7 @@ func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.Relation
 			// turn the cursor into a scope
 			cursor.SetType(mentalese.FrameTypeScope)
 			// push the child relations
-			messenger.CreateChildStackFrame(sourceSubgoalSet, mentalese.InitBindingSet(scopedBinding))
+			messenger.CreateChildStackFrame(mappedPattern, mentalese.InitBindingSet(binding))
 		} else {
 			return cursor.GetChildFrameResultBindings()
 		}
@@ -183,18 +185,19 @@ func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.Rel
 func (s *ProblemSolverAsync) createRuleBaseModificationHandlers() {
 
 	for _, base := range s.solver.index.ruleBases {
-		s.addRelationHandler(mentalese.PredicateAssert, s.createRuleAssertClosure(base))
+		s.addRelationHandler(mentalese.PredicateAssert, s.createAssertRuleClosure(base))
 		//  only add the rule to a single rulebase
 		break
 	}
 }
 
-func (s *ProblemSolverAsync) createRuleAssertClosure(base api.RuleBase) api.RelationHandler {
+func (s *ProblemSolverAsync) createAssertRuleClosure(base api.RuleBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		if relation.Arguments[0].IsRule() {
 			rule := relation.Arguments[0].TermValueRule.BindSingle(binding)
 			base.Assert(rule)
-			s.solver.index.reindexRules()
+			s.solver.index.reindexRules() // todo remove
+			s.Reindex()
 			return mentalese.InitBindingSet(binding)
 		} else {
 			return mentalese.NewBindingSet()

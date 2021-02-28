@@ -89,7 +89,7 @@ func (builder *systemBuilder) build(system *System) {
 		builder.loadModule(moduleSpec, &indexes, system)
 	}
 
-	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, system.answerer, builder.log)
+	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, system.answerer, system.generator, builder.log)
 	system.solver.AddSolverFunctionBase(languageBase)
 
 	system.solverAsync.Reindex()

@@ -61,6 +61,9 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 			testRangeBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(refBinding))
 		} else {
 			testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(refBinding))
+			if loading {
+				return mentalese.NewBindingSet(), true
+			}
 		}
 		if testRangeBindings.GetLength() == 1 {
 			newBindings = testRangeBindings

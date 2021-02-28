@@ -18,6 +18,7 @@ type LanguageBase struct {
 	dialogContext         *central.DialogContext
 	nameResolver          *central.NameResolver
 	answerer 			  *central.Answerer
+	generator	  		  *generate.Generator
 	log 			      *common.SystemLog
 }
 
@@ -28,6 +29,7 @@ func NewLanguageBase(
 	dialogContext *central.DialogContext,
 	nameResolver *central.NameResolver,
 	answerer *central.Answerer,
+	generator *generate.Generator,
 	log *common.SystemLog) *LanguageBase {
 	return &LanguageBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ name },
@@ -37,6 +39,7 @@ func NewLanguageBase(
 		dialogContext: dialogContext,
 		nameResolver: nameResolver,
 		answerer: answerer,
+		generator: generator,
 		log: log,
 	}
 }
@@ -443,8 +446,7 @@ func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentale
 		return mentalese.NewBindingSet()
 	}
 
-	generator := generate.NewGenerator(base.log, base.matcher)
-	tokens := generator.Generate(grammar.GetWriteRules(), answerRelations)
+	tokens := base.generator.Generate(grammar.GetWriteRules(), answerRelations)
 
 	tokenTerms := []mentalese.Term{}
 	for _, token := range tokens {

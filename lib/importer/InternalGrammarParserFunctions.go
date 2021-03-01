@@ -953,7 +953,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 		rule, newStartIndex, ok = parser.parseRule(tokens, startIndex)
 		if ok {
 			term.TermType = mentalese.TermTypeRule
-			term.TermValueRule = rule
+			term.TermValueRule = &rule
 			startIndex = newStartIndex
 			goto end
 		}

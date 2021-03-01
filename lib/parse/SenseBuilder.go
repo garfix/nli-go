@@ -116,7 +116,7 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 				newPattern := builder.CreateGrammarRuleRelations(argument.TermValueRule.Pattern, variableMap)
 				newRule := mentalese.Rule{ Goal: newGoal[0], Pattern: newPattern }
 				newRelation.Arguments[a].TermType = mentalese.TermTypeRule
-				newRelation.Arguments[a].TermValueRule = newRule
+				newRelation.Arguments[a].TermValueRule = &newRule
 
 			} else if argument.IsList() {
 				panic("to be implemented")

@@ -12,7 +12,7 @@ type Term struct {
 	TermValue            string
 	TermSort             string
 	TermValueRelationSet RelationSet
-	TermValueRule        Rule
+	TermValueRule        *Rule
 	TermValueList        TermList
 }
 
@@ -48,7 +48,7 @@ func NewTermRelationSet(value RelationSet) Term {
 }
 
 func NewTermRule(rule Rule) Term {
-	return Term{ TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: rule}
+	return Term{ TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: &rule}
 }
 
 func NewTermId(id string, sort string) Term {
@@ -156,7 +156,7 @@ func (term Term) Equals(otherTerm Term) bool {
 	case TermTypeRelationSet:
 		return term.TermValueRelationSet.Equals(otherTerm.TermValueRelationSet)
 	case TermTypeRule:
-		return term.TermValueRule.Equals(otherTerm.TermValueRule)
+		return term.TermValueRule.Equals(*otherTerm.TermValueRule)
 	case TermTypeList:
 		return term.TermValueList.Equals(otherTerm.TermValueList)
 	default:
@@ -224,7 +224,8 @@ func (term Term) Copy() Term {
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	} else if term.IsRule() {
-		newTerm.TermValueRule = term.TermValueRule.Copy()
+		copy := term.TermValueRule.Copy()
+		newTerm.TermValueRule = &copy
 	} else if term.IsList() {
 		newTerm.TermValueList = term.TermValueList.Copy()
 	}
@@ -241,7 +242,8 @@ func (term Term) Bind(binding Binding) Term {
 	} else if term.IsRelationSet() {
 		arg.TermValueRelationSet = term.TermValueRelationSet.BindSingle(binding)
 	} else if term.IsRule() {
-		arg.TermValueRule = term.TermValueRule.BindSingle(binding)
+		bound := term.TermValueRule.BindSingle(binding)
+		arg.TermValueRule = &bound
 	} else if term.IsList() {
 		arg.TermValueList = term.TermValueList.Bind(binding)
 	}
@@ -261,7 +263,7 @@ func (term Term) ReplaceTerm(from Term, to Term) Term {
 		newGoals := RelationSet{relationArgument.TermValueRule.Goal}.ReplaceTerm(from, to)
 		newPattern := relationArgument.TermValueRule.Pattern.ReplaceTerm(from, to)
 		newRule := Rule{Goal: newGoals[0], Pattern: newPattern}
-		relationArgument.TermValueRule = newRule
+		relationArgument.TermValueRule = &newRule
 
 	} else if term.IsList() {
 

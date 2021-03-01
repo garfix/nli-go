@@ -65,6 +65,11 @@ func (base *SystemSolverFunctionBase) partition(messenger api.ProcessMessenger, 
 
 func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id1 mentalese.Term, id2 mentalese.Term, orderFunction string) (int, bool) {
 
+	// special case to save time
+	if id1.Equals(id2) {
+		return 0, false
+	}
+
 	relation := mentalese.NewRelation(true, orderFunction, []mentalese.Term{
 		mentalese.NewTermVariable("E1"),
 		mentalese.NewTermVariable("E2"),

@@ -5,6 +5,7 @@ import (
 	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"strconv"
 	"strings"
 )
 
@@ -107,7 +108,9 @@ func (p ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, sta
 		fromChild = "╰ "
 	}
 
-	text := fromChild + frame.Relations[frame.RelationIndex].String() + "  " + prepared + " " + child
+	handlerIndex := strconv.Itoa(frame.HandlerIndex)
+
+	text := fromChild + frame.Relations[frame.RelationIndex].String() + ":" + handlerIndex + "  " + prepared + " " + child
 	return padding + text
 }
 

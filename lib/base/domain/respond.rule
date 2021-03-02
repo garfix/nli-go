@@ -11,22 +11,48 @@ go:respond(Input) :-
             go:fail()
         )
 
-        go:find_solution(Request, Solution)
         go:cut(1,
-            go:retract(go:output(_))
-            go:solve(Request, RequestBinding, Solution, ResultBindings)
-            go:if_then(
-                go:output(O),
-                go:let(Output, O)
-                go:fail()
-            )
+            go:find_solution(Request, Solution)
+
+            go:make_list(Solutions, Solution)
+            go:exec_solution(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings)
         )
-        go:find_response(Solution, ResultBindings, ResponseBindings, ResponseIndex)
-        go:create_answer(Solution, ResponseBindings, ResponseIndex, Answer)
+
+        go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
+        go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
 
         go:generate(Locale, Answer, OutTokens)
         go:surface(OutTokens, Output)
     )
     go:uuid(ActionId)
     go:assert(go:action('print', ActionId, Output))
-    ;
+;
+
+go:exec_solution(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings) :-
+    go:list_length(Solutions, SolSize)
+    go:subtract(SolSize, 1, LastSol)
+    go:list_foreach(Solutions, Index, Sol,
+
+         go:retract(go:output(_))
+         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount)
+
+         go:if_then(
+             go:output(O),
+             go:let(Output, O) go:break()
+         )
+         go:if_then(
+             go:greater_than(ResultCount, 0),
+             go:let(Accepted, Sol) go:let(AcceptedBindings, ResultBindings) go:break()
+         )
+         go:if_then(
+             go:equals(LastSol, Index),
+             go:let(Accepted, Sol) go:let(AcceptedBindings, ResultBindings) go:break()
+         )
+         go:fail()
+    )
+
+    go:if_then(
+         go:output(O),
+         go:fail()
+     )
+;

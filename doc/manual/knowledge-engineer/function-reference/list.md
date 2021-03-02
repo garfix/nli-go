@@ -86,7 +86,7 @@ The function checks the types of the elements. If they are all integers, the lis
 
 Puts the number of elements of List in Len. 
 
-    go:list_sort(List, Len)
+    go:list_length(List, Len)
     
 * `List`: a list
 * `Len`: a variable that will contain an integer

@@ -285,7 +285,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	transformer := central.NewRelationTransformer(base.matcher, base.log)
 
 	//Request, RequestBinding, Solution, ResultBindings
-	if !Validate(bound, "rjjv", base.log) {
+	if !Validate(bound, "rjjvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -294,6 +294,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	request := bound.Arguments[0].TermValueRelationSet
 	bound.Arguments[2].GetJsonValue(&solution)
 	resultBindingsVar := input.Arguments[3].TermValue
+	resultCountVar := input.Arguments[4].TermValue
 
 	requestBinding := mentalese.NewBinding()
 	requestBindingRaw := map[string]mentalese.Term{}
@@ -317,6 +318,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 		newBinding := mentalese.NewBinding()
 		newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+		newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
 
 		// queue ids
 		group := central.EntityReferenceGroup{}

@@ -1,3 +1,33 @@
+## 2020-03-01
+
+Still working on making everything asynchronous. It's a lot of work, but its doable.
+
+I am tackling some other issues in the process. Such as binding. I was never happy with the fact that the responsibility of binding was distributed over the code base. I am able to centralize it (in the Process and ProcessRunner classes). I just rewrote the binding code for rules as well, and it has become rediculously simple. As it should be.
+
+Also, I am working on getting rid of scoped variable bindings.
+
+Even though all relations are now executed asynchronously, this has not affected exection time. In fact, in the end it will be faster than before.
+
+But today I want to talk about clarification questions. These will also change drastically. When the user asks "How old was Lord Byron" and the system needs to ask "Which one, A, B, or C?" the system would need to ask the user and restart the complete question from scratch. This changes. The system will halt until the user has answered the question, but when he/she does, the system will be able to continue where it left off.
+
+I have thought of several approaches, but this is the one I'm currently excited about:
+
+When the system needs to ask the user a question, it will just run
+
+    go:ask(
+        go:which_one(['George', 'Jack', 'Bob'], SelectionIndex)
+    )
+
+The `go:ask()` executes its child. When it succeeds, halt is successful. If it fails, it will not fail, but it will pause the process. Pausing the process can happen by sending a "processing instruction", which I already use for `go:break()`.
+
+Next time the process is started, it will just run the `ask()` relation again, until the answer is made by the user.
+
+The UI will ask the system for open `go:which_one()` relations (the last one on the process stack) and create facts for them:
+
+    go:assert(go:which_one(['George', 'Jack', 'Bob'], 2))
+
+Next time the process asks `go:which_one(...)` it will match this fact. This way, the answer will remain available to the system, and other knowledge sources could be able to answer the question as well.
+
 ## 2020-01-23
 
 Save all goals and give them a status (i.e. "complete"), or remove them when they are finished?

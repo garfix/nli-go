@@ -6,6 +6,8 @@ import (
 	"nli-go/lib/mentalese"
 )
 
+const handleLinkChar = "-"
+
 type ProblemSolverAsync struct {
 	solver *ProblemSolver
 	relationHandlers      map[string][]api.RelationHandler
@@ -133,12 +135,10 @@ func (s *ProblemSolverAsync) createSolverFunctionClosure(function api.SolverFunc
 func (s *ProblemSolverAsync) createFactBaseModificationHandlers() {
 	for _, base := range s.solver.index.factBases {
 
-		if len(base.GetWriteMappings()) == 0 {
-			continue
+		for _, mapping := range base.GetWriteMappings() {
+			s.addRelationHandler(mentalese.PredicateAssert + handleLinkChar + mapping.Goal.Predicate, s.createAssertFactClosure(base))
+			s.addRelationHandler(mentalese.PredicateRetract + handleLinkChar + mapping.Goal.Predicate, s.createRetractFactClosure(base))
 		}
-
-		s.addRelationHandler(mentalese.PredicateAssert, s.createAssertFactClosure(base))
-		s.addRelationHandler(mentalese.PredicateRetract, s.createRetractFactClosure(base))
 	}
 }
 
@@ -185,9 +185,9 @@ func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.Rel
 func (s *ProblemSolverAsync) createRuleBaseModificationHandlers() {
 
 	for _, base := range s.solver.index.ruleBases {
-		s.addRelationHandler(mentalese.PredicateAssert, s.createAssertRuleClosure(base))
-		//  only add the rule to a single rulebase
-		break
+		for _, predicate := range base.GetWritablePredicates() {
+			s.addRelationHandler(mentalese.PredicateAssert + handleLinkChar + predicate, s.createAssertRuleClosure(base))
+		}
 	}
 }
 
@@ -205,9 +205,20 @@ func (s *ProblemSolverAsync) createAssertRuleClosure(base api.RuleBase) api.Rela
 	}
 }
 
-func (s *ProblemSolverAsync) GetHandlers(predicate string) []api.RelationHandler {
+func (s *ProblemSolverAsync) GetHandlers(relation mentalese.Relation) []api.RelationHandler {
 
-	handlers, found := s.relationHandlers[predicate]
+	handle := relation.Predicate
+
+	if handle == mentalese.PredicateAssert || handle == mentalese.PredicateRetract {
+		object := relation.Arguments[0]
+		if object.IsRule() {
+			handle += handleLinkChar + relation.Arguments[0].TermValueRule.Goal.Predicate
+		} else {
+			handle += handleLinkChar + relation.Arguments[0].TermValueRelationSet[0].Predicate
+		}
+	}
+
+	handlers, found := s.relationHandlers[handle]
 
 	if found {
 		return handlers

@@ -1,6 +1,7 @@
 type: domain
 version: 1.0.0
 sorts: sorts.yml
+write: [ write.yml ]
 rules:
   - sentence.rule
   - commands.rule
@@ -9,4 +10,5 @@ rules:
   - physics.rule
   - db.rule
   - free_space.rule
+  - own.rule
 

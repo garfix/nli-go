@@ -132,7 +132,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")
 	if ok {
-		builder.buildDomain(domainIndex, system, common.Dir() + "/../base/domain")
+		builder.buildDomain(domainIndex, system, common.Dir() + "/../base/domain", "go")
 	}
 	dbIndex, ok := builder.buildIndex(common.Dir() + "/../base/db")
 	if ok {
@@ -362,7 +362,7 @@ func (builder *systemBuilder) processIndex(index index, system *System, applicat
 
 	switch index.Type {
 	case "domain":
-		builder.buildDomain(index, system, moduleBaseDir)
+		builder.buildDomain(index, system, moduleBaseDir, applicationAlias)
 	case "grammar":
 		builder.buildGrammar(index, system, moduleBaseDir)
 	case "solution":
@@ -381,14 +381,12 @@ func (builder *systemBuilder) processIndex(index index, system *System, applicat
 	return ok
 }
 
-func (builder *systemBuilder) buildDomain(index index, system *System, moduleBaseDir string) {
+func (builder *systemBuilder) buildDomain(index index, system *System, moduleBaseDir string, applicationAlias string) {
 
 	ok := true
 	path := ""
 
-	for _, rule := range index.Rules {
-		builder.importRuleBaseFromPath(system, moduleBaseDir + "/" + rule)
-	}
+	builder.importRuleBaseFromPath(index, system, moduleBaseDir, applicationAlias)
 
 	path = common.AbsolutePath(moduleBaseDir, index.Sorts)
 	ok = builder.AddSorts(path, system)
@@ -743,22 +741,58 @@ func (builder *systemBuilder) importSolutionBaseFromPath(system *System, path st
 	system.answerer.AddSolutions(solutions)
 }
 
-func (builder systemBuilder) importRuleBaseFromPath(system *System, path string) {
+func (builder systemBuilder) importRuleBaseFromPath(index index, system *System, baseDir string, applicationAlias string) {
 
-	ruleBaseString, err := common.ReadFile(path)
-	if err != nil {
-		builder.log.AddError("Error reading rules " + path + " (" + err.Error() + ")")
+	rules := []mentalese.Rule{}
+
+	for _, rule := range index.Rules {
+		path := baseDir + "/" + rule
+		ruleBaseString, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading rules " + path + " (" + err.Error() + ")")
+			return
+		}
+
+		rules = append(rules, builder.parser.CreateRules(ruleBaseString)...)
+		lastResult := builder.parser.GetLastParseResult()
+		if !lastResult.Ok {
+			builder.log.AddError("Error parsing rules file " + path + " (" + lastResult.String() + ")")
+			return
+		}
+	}
+
+	writeList, ok := builder.readWritelist(index, baseDir, applicationAlias)
+	if !ok {
 		return
 	}
 
-	rules := builder.parser.CreateRules(ruleBaseString)
-	lastResult := builder.parser.GetLastParseResult()
-	if !lastResult.Ok {
-		builder.log.AddError("Error parsing rules file " + path + " (" + lastResult.String() + ")")
-		return
+	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
+}
+
+func (builder systemBuilder) readWritelist(index index, baseDir string, applicationAlias string) ([]string, bool) {
+
+	writelist := []string{}
+
+	for _, write := range index.Write {
+		path := baseDir + "/" + write
+		predicatesList, err := common.ReadFile(path)
+		if err != nil {
+			builder.log.AddError("Error reading rules " + path + " (" + err.Error() + ")")
+			return writelist, false
+		}
+
+		aWritelist := []string{}
+		err = yaml.Unmarshal([]byte(predicatesList), &aWritelist)
+		if err != nil {
+			return writelist, false
+		}
+		for _, predicate := range aWritelist {
+			aliasedPredicate := applicationAlias + "_" + predicate
+			writelist = append(writelist, aliasedPredicate)
+		}
 	}
 
-	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, builder.log))
+	return writelist, true
 }
 
 func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool) {

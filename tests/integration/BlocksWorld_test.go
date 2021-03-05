@@ -42,7 +42,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Can a pyramid support a pyramid?", "No"},
 			{"Stack up two pyramids.", "I can't"},
 
-			//{"Do I own the blue pyramid?", "No"},
+				{"Do I own the blue pyramid?", "No"},
 			{"The blue pyramid is mine", "I understand"},
 				{"Do I own the blue pyramid?", "Yes"},
 

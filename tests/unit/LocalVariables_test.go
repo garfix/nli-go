@@ -59,7 +59,7 @@ func TestLocalVariables(t *testing.T) {
 		;
 	
 	`)
-	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
+	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
 
 	tests := []struct {

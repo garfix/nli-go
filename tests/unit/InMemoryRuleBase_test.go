@@ -41,7 +41,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
 		-sibling(A, B) :- go:equals(A, B);
 	`)
-	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, log)
+	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
 
 	tests := []struct {

@@ -50,7 +50,7 @@ func (p ProcessRunner) step(process *goal.Process) {
 
 		preparedBinding := process.GetPreparedBinding(currentFrame)
 
-		handler := p.PrepareHandler(relation.Predicate, currentFrame, process)
+		handler := p.PrepareHandler(relation, currentFrame, process)
 		if handler == nil {
 			return
 		} else {
@@ -70,16 +70,16 @@ func (p ProcessRunner) step(process *goal.Process) {
 	}
 }
 
-func (p ProcessRunner) PrepareHandler(predicate string, frame *goal.StackFrame, process *goal.Process) api.RelationHandler {
+func (p ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *goal.StackFrame, process *goal.Process) api.RelationHandler {
 
-	handlers := p.solver.GetHandlers(predicate)
+	handlers := p.solver.GetHandlers(relation)
 
 	frame.HandlerCount = len(handlers)
 
 	if frame.HandlerIndex >= len(handlers) {
 		// there may just be no handlers, or handlers could have been removed from the knowledge bases
 		if frame.HandlerIndex == 0 {
-			p.log.AddError("Predicate not supported by any knowledge base: " + predicate)
+			p.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
 			process.Clear()
 		}
 		return nil

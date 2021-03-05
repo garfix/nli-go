@@ -6,6 +6,7 @@ import "nli-go/lib/mentalese"
 type RuleBase interface {
 	KnowledgeBase
 	GetPredicates() []string
+	GetWritablePredicates() []string
 	GetRules() []mentalese.Rule
 	GetRulesForRelation(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Rule
 	Assert(rule mentalese.Rule)

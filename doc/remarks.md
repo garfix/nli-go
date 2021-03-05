@@ -1,4 +1,10 @@
-## 2020-03-01
+## 2021-03-05
+
+All predicates that can be asserted / retracted are now indexed individually for facts and rules.
+
+I created a write.yml file for rule bases. Now you can specify which rule base will receive the new rule, explicitly.  
+
+## 2021-03-01
 
 Still working on making everything asynchronous. It's a lot of work, but its doable.
 
@@ -28,7 +34,7 @@ The UI will ask the system for open `go:which_one()` relations (the last one on 
 
 Next time the process asks `go:which_one(...)` it will match this fact. This way, the answer will remain available to the system, and other knowledge sources could be able to answer the question as well.
 
-## 2020-01-23
+## 2021-01-23
 
 Save all goals and give them a status (i.e. "complete"), or remove them when they are finished?
 

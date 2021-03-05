@@ -1,0 +1,2 @@
+/* Allow own() to be used before an own rule is learned */
+own(A, B) :- go:fail();

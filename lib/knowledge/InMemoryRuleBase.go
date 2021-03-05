@@ -9,13 +9,15 @@ import (
 type InMemoryRuleBase struct {
 	KnowledgeBaseCore
 	rules []mentalese.Rule
+	writeList []string
 	log   *common.SystemLog
 }
 
-func NewInMemoryRuleBase(name string, rules []mentalese.Rule, log *common.SystemLog) *InMemoryRuleBase {
+func NewInMemoryRuleBase(name string, rules []mentalese.Rule, writeList []string, log *common.SystemLog) *InMemoryRuleBase {
 	return &InMemoryRuleBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
 		rules: rules,
+		writeList: writeList,
 		log: log,
 	}
 }
@@ -30,6 +32,10 @@ func (ruleBase *InMemoryRuleBase) GetPredicates() []string {
 
 func (ruleBase *InMemoryRuleBase) GetRules() []mentalese.Rule {
 	return ruleBase.rules
+}
+
+func (ruleBase *InMemoryRuleBase) GetWritablePredicates() []string {
+	return ruleBase.writeList
 }
 
 func (ruleBase *InMemoryRuleBase) GetRulesForRelation(goal mentalese.Relation, binding mentalese.Binding) []mentalese.Rule {

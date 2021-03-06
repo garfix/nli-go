@@ -55,126 +55,56 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 
 	bound := relation.BindSingle(binding)
 	newBindings := mentalese.NewBindingSet()
-	scope := base.solver.GetCurrentScope()
 
-	if messenger == nil {
+	cursor := messenger.GetCursor()
+	index := cursor.GetState("index", 0)
+	cursor.SetState("index", index + 1)
 
-		if len(relation.Arguments) == 3 {
+	if len(relation.Arguments) == 3 {
 
-			list := bound.Arguments[0].TermValueList
-			elementVar := relation.Arguments[1].TermValue
-			children := relation.Arguments[2].TermValueRelationSet
+		list := bound.Arguments[0].TermValueList
+		elementVar := relation.Arguments[1].TermValue
+		children := relation.Arguments[2].TermValueRelationSet
 
-			for _, element := range list {
-				scopedBinding := binding.Copy()
-				scopedBinding.Set(elementVar, element)
-				elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-				newBindings.AddMultiple(elementBindings)
-				if base.solver.GetCurrentScope().IsBreaked() {
-					scope.SetBreaked(false)
-					break
-				}
-			}
-
-		} else if len(relation.Arguments) == 4 {
-
-			list := bound.Arguments[0].TermValueList
-			indexVar := relation.Arguments[1].TermValue
-			elementVar := relation.Arguments[2].TermValue
-			children := relation.Arguments[3].TermValueRelationSet
-
-			for index, element := range list {
-				scopedBinding := binding.Copy()
-				scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
-				scopedBinding.Set(elementVar, element)
-				elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-				elementBindings = elementBindings.FilterOutVariablesByName([]string{indexVar, elementVar})
-				newBindings.AddMultiple(elementBindings)
-				if base.solver.GetCurrentScope().IsBreaked() {
-					scope.SetBreaked(false)
-					break
-				}
-			}
+		if index == 0 {
+			cursor.SetType(mentalese.FrameTypeLoop)
+		} else {
+			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
 		}
 
-	} else {
+		if index < len(list) {
 
-		cursor := messenger.GetCursor()
-		index := cursor.GetState("index", 0)
-		cursor.SetState("index", index + 1)
+			element := list[index]
 
-		if len(relation.Arguments) == 3 {
+			scopedBinding := binding.Copy()
+			scopedBinding.Set(elementVar, element)
 
-			list := bound.Arguments[0].TermValueList
-			elementVar := relation.Arguments[1].TermValue
-			children := relation.Arguments[2].TermValueRelationSet
-
-			if index == 0 {
-				cursor.SetType(mentalese.FrameTypeLoop)
-			} else {
-				newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
-			}
-
-			if index < len(list) {
-
-				element := list[index]
-
-				scopedBinding := binding.Copy()
-				scopedBinding.Set(elementVar, element)
-				//elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-
-				messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-
-				//if base.solver.GetCurrentScope().IsBreaked() {
-				//	scope.SetBreaked(false)
-				//	break
-				//}
-			}
-
-		} else if len(relation.Arguments) == 4 {
-
-			list := bound.Arguments[0].TermValueList
-			indexVar := relation.Arguments[1].TermValue
-			elementVar := relation.Arguments[2].TermValue
-			children := relation.Arguments[3].TermValueRelationSet
-
-			if index == 0 {
-				cursor.SetType(mentalese.FrameTypeLoop)
-			} else {
-				newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
-			}
-
-			if index < len(list) {
-
-				element := list[index]
-
-				scopedBinding := binding.Copy()
-				scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
-				scopedBinding.Set(elementVar, element)
-				//elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-
-				messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-
-				//if base.solver.GetCurrentScope().IsBreaked() {
-				//	scope.SetBreaked(false)
-				//	break
-				//}
-			}
-
-			//for index, element := range list {
-			//	scopedBinding := binding.Copy()
-			//	scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
-			//	scopedBinding.Set(elementVar, element)
-			//	elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-			//	elementBindings = elementBindings.FilterOutVariablesByName([]string{indexVar, elementVar})
-			//	newBindings.AddMultiple(elementBindings)
-			//	if base.solver.GetCurrentScope().IsBreaked() {
-			//		scope.SetBreaked(false)
-			//		break
-			//	}
-			//}
+			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 		}
 
+	} else if len(relation.Arguments) == 4 {
+
+		list := bound.Arguments[0].TermValueList
+		indexVar := relation.Arguments[1].TermValue
+		elementVar := relation.Arguments[2].TermValue
+		children := relation.Arguments[3].TermValueRelationSet
+
+		if index == 0 {
+			cursor.SetType(mentalese.FrameTypeLoop)
+		} else {
+			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
+		}
+
+		if index < len(list) {
+
+			element := list[index]
+
+			scopedBinding := binding.Copy()
+			scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
+			scopedBinding.Set(elementVar, element)
+
+			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+		}
 	}
 
 	return newBindings

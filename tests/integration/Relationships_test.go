@@ -40,7 +40,7 @@ func TestRelationships(t *testing.T) {
 
 		log.Clear()
 
-		answer, _ := system.AnswerAsync(test.question)
+		answer, _ := system.Answer(test.question)
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)

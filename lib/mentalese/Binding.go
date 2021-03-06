@@ -7,15 +7,10 @@ import (
 
 type Binding struct {
 	k2v map[string]Term
-	scope *Scope
 }
 
 func NewBinding() Binding {
-	return Binding{ k2v: map[string]Term{}, scope: nil }
-}
-
-func NewScopedBinding(scope *Scope) Binding {
-	return Binding{ k2v: map[string]Term{}, scope: scope }
+	return Binding{ k2v: map[string]Term{} }
 }
 
 func (b Binding) ToRaw() map[string]Term {
@@ -28,36 +23,16 @@ func (p Binding) FromRaw(raw map[string]Term) {
 	}
 }
 
-func (b Binding) GetScope() *Scope {
-	return b.scope
-}
-
 func (b Binding) ContainsVariable(variable string) bool {
 	_, found := b.k2v[variable]
 	return found
 }
 
 func (b Binding) Set(variable string, value Term) {
-	if b.scope != nil {
-		variables := b.scope.GetVariables()
-		if variables.ContainsVariable(variable) {
-			variables.Set(variable, value)
-			return
-		}
-	}
 	b.k2v[variable] = value
 }
 
 func (b Binding) Get(variable string) (Term, bool) {
-
-	if b.scope != nil {
-		variables := b.scope.GetVariables()
-		value, found := variables.Get(variable)
-		if found {
-			return value, true
-		}
-	}
-
 	value, found := b.k2v[variable]
 	return value, found
 }
@@ -76,18 +51,13 @@ func (b Binding) GetAll() map[string]Term {
 	for key, value := range b.k2v {
 		all[key] = value
 	}
-	if b.scope != nil {
-		for key, value := range b.scope.GetVariables().k2v {
-			all[key] = value
-		}
-	}
 	return all
 }
 
 // Returns a new Binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for k, v := range b.k2v {
 		result.k2v[k] = v
@@ -97,21 +67,13 @@ func (b Binding) Merge(b2 Binding) Binding {
 		result.k2v[k] = v
 	}
 
-	if b.scope != nil && b2.scope != nil && b.scope != b2.scope {
-		b.scope.variables = b.scope.GetVariables().Merge(*b2.scope.GetVariables())
-	}
-
 	return result
 }
 
 // Returns a new Binding that contains just the keys of b, and whose values may be overwritten by those of b2
 func (b Binding) Intersection(b2 Binding) Binding {
 
-	result := NewScopedBinding(b.scope)
-
-	if b2.scope != nil {
-		panic("binding has scope")
-	}
+	result := NewBinding()
 
 	for k, v := range b.k2v {
 		result.k2v[k] = v
@@ -144,7 +106,7 @@ func (b Binding) Select(keys []string) Binding {
 // Returns a copy
 func (b Binding) Copy() Binding {
 
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for k, v := range b.k2v {
 		result.k2v[k] = v
@@ -165,11 +127,7 @@ func (b Binding) Copy() Binding {
 // note: F is discarded
 func (b Binding) Bind(c Binding) Binding {
 
-	result := NewScopedBinding(b.scope).Merge(b)
-
-	if c.scope != nil {
-		panic("binding has scope")
-	}
+	result := NewBinding().Merge(b)
 
 	for bKey, bVal := range b.k2v {
 
@@ -189,7 +147,7 @@ func (b Binding) Bind(c Binding) Binding {
 // Returns a version of b without the keys that have variable values
 func (b Binding) RemoveVariables() Binding {
 
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for key, value := range b.k2v {
 		if !value.IsVariable() {
@@ -207,7 +165,7 @@ func (b Binding) RemoveVariables() Binding {
 // { X: B }
 func (b Binding) Swap() Binding {
 
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for key, value := range b.k2v {
 		if value.IsVariable() {
@@ -219,7 +177,7 @@ func (b Binding) Swap() Binding {
 }
 
 func (b Binding) FilterVariablesByName(variableNames []string) Binding {
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for _, variableName := range variableNames {
 		_, found := b.k2v[variableName]
@@ -232,7 +190,7 @@ func (b Binding) FilterVariablesByName(variableNames []string) Binding {
 }
 
 func (b Binding) FilterOutVariablesByName(variableNames []string) Binding {
-	result := NewScopedBinding(b.scope)
+	result := NewBinding()
 
 	for key, value := range b.k2v {
 		if !common.StringArrayContains(variableNames, key) {
@@ -272,12 +230,7 @@ func (b Binding) String() string {
 		sep = ", "
 	}
 
-	local := ""
-	if b.scope != nil {
-		local = "&" + b.scope.variables.String()
-	}
-
-	return "{" + s + "}" + local
+	return "{" + s + "}"
 }
 
 func (b Binding) Equals(c Binding) bool {

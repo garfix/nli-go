@@ -1,8 +1,0 @@
-in_out('A', Y) :- go:unify(Y, 1);
-
-in_out('B', Y) :- multiply(A) go:number_of(A, Y);
-
-multiply(A) :- go:unify(A, 'E');
-multiply(A) :- go:unify(A, 'F');
-multiply(A) :- go:unify(A, 'G');
-

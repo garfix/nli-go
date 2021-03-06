@@ -17,7 +17,7 @@ func TestDualWorld(t *testing.T) {
 		return
 	}
 
-	answer, _ := system.AnswerAsync("Which poem wrote the grandfather of Charles Darwin?")
+	answer, _ := system.Answer("Which poem wrote the grandfather of Charles Darwin?")
 
 	if answer != "The Loves of the Plants" {
 		t.Errorf(log.String())

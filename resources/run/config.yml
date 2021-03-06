@@ -1,4 +1,0 @@
-uses:
-  dom: garfixia-run-domain:1.0.0
-  en: garfixia-run-en-us:1.0.0
-  sol: garfixia-run-solution:1.0.0

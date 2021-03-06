@@ -96,7 +96,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			answer, options := system.AnswerAsync(test.question)
+			answer, options := system.Answer(test.question)
 
 			if options.HasOptions() {
 				answer += options.String()

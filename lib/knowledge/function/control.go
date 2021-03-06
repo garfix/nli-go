@@ -17,20 +17,15 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
-	variables := base.solver.GetCurrentScope().GetVariables()
 
 	if !relation.Arguments[0].IsVariable() {
 		base.log.AddError("Let: variable already in use. Value: " + variable)
 		return mentalese.NewBindingSet()
 	}
 
-	if messenger == nil {
-		(*variables).Set(variable, value)
-	} else {
-		messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
-		binding = binding.Copy()
-		binding.Set(variable, value)
-	}
+	messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
+	binding = binding.Copy()
+	binding.Set(variable, value)
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -205,7 +200,6 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 	variableTerm := relation.Arguments[2]
 	variable := variableTerm.TermValue
 	children := relation.Arguments[3].TermValueRelationSet
-	scope := base.solver.GetCurrentScope()
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -219,42 +213,22 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 		return newBindings
 	}
 
-	if messenger == nil {
+	cursor := messenger.GetCursor()
+	index := cursor.GetState("index", start)
+	cursor.SetState("index", index + 1)
 
-		for i := start; i <= end; i++ {
-			scopedBinding := binding.Copy()
-			if !variableTerm.IsAnonymousVariable() {
-				scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(i)))
-			}
-			elementBindings := base.solver.SolveRelationSet(children, mentalese.InitBindingSet(scopedBinding))
-			if !variableTerm.IsAnonymousVariable() {
-				elementBindings = elementBindings.FilterOutVariablesByName([]string{variable})
-			}
-			newBindings.AddMultiple(elementBindings)
-			if base.solver.GetCurrentScope().IsBreaked() {
-				scope.SetBreaked(false)
-				break
-			}
-		}
+	if index == start {
+		cursor.SetType(mentalese.FrameTypeLoop)
 	} else {
+		newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
+	}
 
-		cursor := messenger.GetCursor()
-		index := cursor.GetState("index", start)
-		cursor.SetState("index", index + 1)
-
-		if index == start {
-			cursor.SetType(mentalese.FrameTypeLoop)
-		} else {
-			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
+	if index <= end {
+		scopedBinding := binding.Copy()
+		if !variableTerm.IsAnonymousVariable() {
+			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(index)))
 		}
-
-		if index <= end {
-			scopedBinding := binding.Copy()
-			if !variableTerm.IsAnonymousVariable() {
-				scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(index)))
-			}
-			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-		}
+		messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 	}
 
 	return newBindings
@@ -266,11 +240,7 @@ func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, re
 
 	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
 
-	if messenger == nil {
-		base.solver.GetCurrentScope().SetBreaked(true)
-	} else {
-		messenger.AddProcessInstruction(mentalese.ProcessInstructionBreak, "")
-	}
+	messenger.AddProcessInstruction(mentalese.ProcessInstructionBreak, "")
 
 	return mentalese.InitBindingSet(binding)
 }

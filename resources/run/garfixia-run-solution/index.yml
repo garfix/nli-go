@@ -1,5 +1,0 @@
-type: solution
-version: 1.0.0
-uses:
-  dom: garfixia-run-domain:1.0.0
-solution: [ run.solution ]

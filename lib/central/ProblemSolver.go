@@ -12,7 +12,6 @@ import (
 // It uses knowledge bases to find these bindings
 type ProblemSolver struct {
 	index    			  *KnowledgeBaseIndex
-	scopeStack            *mentalese.ScopeStack
 	matcher               *RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
 	modifier              *FactBaseModifier
@@ -27,7 +26,6 @@ func NewProblemSolver(matcher *RelationMatcher, dialogContext *DialogContext, lo
 		index: 			   NewProblemSolverIndex(),
 		variableGenerator: variableGenerator,
 		modifier:          NewFactBaseModifier(log, variableGenerator),
-		scopeStack:        mentalese.NewScopeStack(),
 		matcher:           matcher,
 		dialogContext:     dialogContext,
 		log:               log,
@@ -55,10 +53,6 @@ func (solver *ProblemSolver) AddSolverFunctionBase(base api.SolverFunctionBase) 
 	solver.index.AddSolverFunctionBase(base)
 }
 
-func (solver *ProblemSolver) GetCurrentScope() *mentalese.Scope {
-	return solver.scopeStack.GetCurrentScope()
-}
-
 func (solver *ProblemSolver) ResetSession() {
 	for _, factBase := range solver.index.factBases {
 		switch v := factBase.(type) {
@@ -80,10 +74,6 @@ func (solver *ProblemSolver) SolveRelationSet(set mentalese.RelationSet, binding
 	for _, relation := range set {
 		newBindings = solver.solveSingleRelationMultipleBindings(relation, newBindings)
 		if newBindings.IsEmpty() {
-			break
-		}
-		// check for break
-		if solver.scopeStack.GetCurrentScope().IsBreaked() {
 			break
 		}
 	}
@@ -290,7 +280,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleFactBase(relation mentales
 
 func (solver *ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
-	newBinding := mentalese.NewScopedBinding(binding.GetScope())
+	newBinding := mentalese.NewBinding()
 
 	for key, value := range binding.GetAll() {
 		newValue := value
@@ -316,7 +306,7 @@ func (solver *ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Bindin
 
 func (solver *ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
-	newBinding := mentalese.NewScopedBinding(binding.GetScope())
+	newBinding := mentalese.NewBinding()
 
 	for key, value := range binding.GetAll() {
 		newValue := value
@@ -427,10 +417,7 @@ func (solver *ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goal
 
 	for _, sourceSubgoalSet := range sourceSubgoalSets {
 
-		scope := mentalese.NewScope()
-		solver.scopeStack.Push(scope)
-
-		scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
+		scopedBinding := mentalese.NewBinding().Merge(binding)
 		subgoalResultBindings := mentalese.InitBindingSet(scopedBinding)
 
 		for _, subGoal := range sourceSubgoalSet {
@@ -451,8 +438,6 @@ func (solver *ProblemSolver) solveSingleRelationSingleBindingSingleRuleBase(goal
 
 			goalBindings.Add(goalBinding)
 		}
-
-		solver.scopeStack.Pop()
 	}
 
 	return goalBindings

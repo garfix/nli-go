@@ -305,8 +305,7 @@ func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(mess
 		sourceSubgoalSets = append(sourceSubgoalSets, boundRule.Pattern)
 	}
 
-	scope := mentalese.NewScope()
-	scopedBinding := mentalese.NewScopedBinding(scope).Merge(binding)
+	scopedBinding := mentalese.NewBinding().Merge(binding)
 
 	cursor := messenger.GetCursor()
 

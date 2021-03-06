@@ -222,15 +222,6 @@ func (parser *InternalGrammarParser) CreateTerm(source string) mentalese.Term {
 	return term
 }
 
-func (parser *InternalGrammarParser) CreateScopedBinding(source string, scope *mentalese.Scope) mentalese.Binding {
-	raw := parser.CreateBinding(source)
-	binding := mentalese.NewScopedBinding(scope)
-	for k, v := range raw.GetAll() {
-		binding.Set(k, v)
-	}
-	return binding
-}
-
 func (parser *InternalGrammarParser) CreateBinding(source string) mentalese.Binding {
 
 	// tokenize

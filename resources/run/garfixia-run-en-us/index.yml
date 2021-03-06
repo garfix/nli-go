@@ -1,6 +1,0 @@
-type: grammar
-version: 1.0.0
-locale: en_US
-uses:
-  dom: garfixia-run-domain:1.0.0
-read: [ read.grammar ]

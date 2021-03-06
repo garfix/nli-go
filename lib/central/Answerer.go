@@ -61,7 +61,7 @@ func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.R
 			if resultBindings.IsEmpty() {
 
 				// stack trace
-				answerer.log.AddProduction("Stack trace", answerer.solver.callStack.String())
+				// todo
 
 				if i < len(allSolutions) - 1 {
 					continue

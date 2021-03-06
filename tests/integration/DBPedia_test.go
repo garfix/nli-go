@@ -35,14 +35,14 @@ func TestDBPedia(t *testing.T) {
 			{"What is the population of Iraq?", "37056169"},
 		},
 		{
-			{"Who married Michael Jackson?", "Which one? [dbpedia/http://dbpedia.org/resource/Mariléia_dos_Santos] Women's footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1980)] English footballer, born 1980 [dbpedia/http://dbpedia.org/resource/Michael_Jackson] American singer and dancer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(American_Revolution)] American revolutionary officer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(English_singer)] UK male singer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(TV_executive)] British television producer and executive [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(actor)] Canadian actor, grip and gaffer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(anthropologist)] New Zealand poet and anthropologist [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(basketball)] retired American professional basketball player [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(bishop)] Church of Ireland Archbishop of Dublin [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(journalist)] Niuean journalist and former politician [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(linebacker)] former professional American football player, born 1957 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(radio_commentator)] American talk radio host [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(rugby_league)] retired professional rugby league footballer [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(wide_receiver)] former American professional football player, born 1969 [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(writer)] English writer and journalist [dbpedia/http://dbpedia.org/resource/2000–01_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/2002–03_Swansea_City_A.F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(footballer,_born_1973)] retired English professional football defender, born 1973 [dbpedia/http://dbpedia.org/resource/1996–97_Bury_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/1996–97_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_A._Jackson] British computer scientist [dbpedia/http://dbpedia.org/resource/1999–2000_Preston_North_End_F.C._season__Michael_Jackson__1]  [dbpedia/http://dbpedia.org/resource/Michael_Jackson_(engineer)] "},
-			{"dbpedia/http://dbpedia.org/resource/Michael_Jackson", "Lisa Marie Presley and Debbie Rowe married him"},
+			{"Who married Michael Jackson?", " [0] Women's footballer [1] English footballer, born 1980 [2] American singer and dancer [3] American revolutionary officer [4] UK male singer [5] British television producer and executive [6] Canadian actor, grip and gaffer [7] New Zealand poet and anthropologist [8] retired American professional basketball player [9] Church of Ireland Archbishop of Dublin [10] Niuean journalist and former politician [11] former professional American football player, born 1957 [12] American talk radio host [13] retired professional rugby league footballer [14] former American professional football player, born 1969 [15] English writer and journalist [16]  [17]  [18] retired English professional football defender, born 1973 [19]  [20]  [21] British computer scientist [22]  [23] "},
+			{"2", "Lisa Marie Presley and Debbie Rowe married him"},
 			{"Was Michael Jackson married to Elvis Presley's daughter?", "Yes"},
 			{"Was Michael Jackson married to the daughter of Elvis Presley?", "Yes"},
 		},
 		{
-			{"When was Lord Byron born?", "Which one? [dbpedia/http://dbpedia.org/resource/Lord_Byron] English poet and a leading figure in the Romantic movement [dbpedia/http://dbpedia.org/resource/Lord_Byron_(umpire)] Major League Baseball umpire"},
-			{"dbpedia/http://dbpedia.org/resource/Lord_Byron", "He was born on January 22, 1788"},
+			{"When was Lord Byron born?", " [0] English poet and a leading figure in the Romantic movement [1] Major League Baseball umpire"},
+			{"0", "He was born on January 22, 1788"},
 			{"Who married Lord Byron?", "Anne Isabella Byron married him"},
 			{"How many children had Lord Byron?", "He has 2 children"}, // Ada and Allegra
 			{"When did Lord Byron die?", "He died on April 19, 1824"},
@@ -79,7 +79,7 @@ func TestDBPedia(t *testing.T) {
 
 			log.Clear()
 
-			answer, options := system.Answer(test.question)
+			answer, options := system.AnswerAsync(test.question)
 
 			if options.HasOptions() {
 				answer += options.String()
@@ -87,7 +87,7 @@ func TestDBPedia(t *testing.T) {
 
 			if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-				//t.Error(log.String())
+				t.Errorf("\n%s", log.String())
 			}
 
 		}

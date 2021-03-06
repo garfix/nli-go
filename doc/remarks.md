@@ -2,7 +2,11 @@
 
 All predicates that can be asserted / retracted are now indexed individually for facts and rules.
 
-I created a write.yml file for rule bases. Now you can specify which rule base will receive the new rule, explicitly.  
+I created a write.yml file for rule bases. Now you can specify which rule base will receive the new rule, explicitly.
+
+===
+
+I will use `wait_for` instead of `ask` because it's a bit more general.
 
 ## 2021-03-01
 

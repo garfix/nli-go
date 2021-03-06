@@ -113,4 +113,18 @@ Breaks a loop.
 
     go:break()
     
-    
+## Wait for
+
+This relation tries `Condition` until it succeeds.
+
+Under the hood, it tries `Condition` once. If it succeeds, `wait_for` succeeds. If it fails, `Condition` is restacked and the process ends without breaking up the stack. Next time the process is executed, the `Condition` will be tried again.
+
+    go:wait_for(Condition)
+
+* `Condition`: a relation set
+
+Example:
+
+    go:wait_for(
+        go:which_one(['George', 'Jack', 'Bob'], SelectionIndex)
+    )

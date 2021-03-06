@@ -42,14 +42,16 @@ func (system *System) CreateAnswerGoal(input string) string {
 
 	uuid := common.CreateUuid()
 
-	// go:assert(go:uuid(Id) go:goal(go:answer(input, Id)))
+	// go:assert(go:goal(go:answer(input, Id)))
 	set := mentalese.RelationSet{
 		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
 				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
-					mentalese.NewTermRelationSet(mentalese.RelationSet{ mentalese.NewRelation(true, mentalese.PredicateRespond, []mentalese.Term{
-						mentalese.NewTermString(input),
-					})}),
+					mentalese.NewTermRelationSet(mentalese.RelationSet{
+						mentalese.NewRelation(true, mentalese.PredicateRespond, []mentalese.Term{
+							mentalese.NewTermString(input),
+						}),
+					}),
 					mentalese.NewTermString(uuid),
 				})}),
 		}),
@@ -109,17 +111,64 @@ func (system *System) Run() {
 	// find processes
 	bindings := system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 	for _, binding := range bindings.GetAll() {
-		goalId, _ := binding.MustGet("Id").GetIntValue()
+		goalId := binding.MustGet("Id").TermValue
 		goalSet := binding.MustGet("Goal").TermValueRelationSet
 		system.processRunner.RunProcess(goalId, goalSet)
 	}
 }
 
 func (system *System) AnswerAsync(input string) (string, *common.Options) {
-	goalId := system.CreateAnswerGoal(input)
-	system.Run()
-	actions := system.ReadActions(mentalese.ActionPrint)
 
+	options := common.NewOptions()
+	goalId := ""
+
+	for _, process := range system.processRunner.GetProcesses() {
+		if !process.IsDone() {
+
+			userSelect := process.GetLastFrame().Relations
+			binding := mentalese.NewBinding()
+			binding.Set("Selection", mentalese.NewTermString(input))
+			list := userSelect[0].Arguments[0]
+
+			set := mentalese.RelationSet{
+				mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+					mentalese.NewTermRelationSet(
+						mentalese.RelationSet{
+							mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
+								list,
+								mentalese.NewTermString(input),
+							}),
+						}),
+				}),
+			}
+			system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+
+			goalId = process.GoalId
+
+			break
+		}
+	}
+
+	if goalId == "" {
+		goalId = system.CreateAnswerGoal(input)
+	}
+
+	system.Run()
+
+	process := system.processRunner.GetProcessByGoalId(goalId)
+	lastFrame := process.GetLastFrame()
+	if lastFrame != nil {
+		relation := lastFrame.Relations[0]
+		if relation.Predicate == mentalese.PredicateUserSelect {
+			for i, value := range relation.Arguments[0].TermValueList.GetValues() {
+				options.AddOption(strconv.Itoa(i), value)
+			}
+		}
+	} else {
+		system.DeleteGoal(goalId)
+	}
+
+	actions := system.ReadActions(mentalese.ActionPrint)
 	answer := ""
 	if actions.GetLength() > 0 {
 		action := actions.Get(0)
@@ -128,9 +177,7 @@ func (system *System) AnswerAsync(input string) (string, *common.Options) {
 		system.DeleteAction(actionId)
 	}
 
-	system.DeleteGoal(goalId)
-
-	return answer, common.NewOptions()
+	return answer, options
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {
@@ -227,7 +274,7 @@ func (system *System) process(originalInput string) (string, *common.Options) {
 
 					// make the user choose one entity from multiple with the same name
 					if len(nameInformations) > 1 {
-						nameInformations = system.nameResolver.Resolve(nameInformations)
+						nameInformations, _ = system.nameResolver.Choose(nil, nameInformations)
 					}
 
 					// link variable to ID

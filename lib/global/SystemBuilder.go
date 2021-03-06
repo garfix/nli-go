@@ -125,7 +125,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.solverAsync = solverAsync
 	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 
-	system.nameResolver = central.NewNameResolver(solver, system.meta, builder.log, system.dialogContext)
+	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log, system.dialogContext)
 	system.answerer = central.NewAnswerer(matcher, solver, solverAsync, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)

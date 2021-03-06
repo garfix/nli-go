@@ -275,6 +275,29 @@ func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, re
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	child := relation.Arguments[0].TermValueRelationSet
+
+	newBindings := mentalese.NewBindingSet()
+
+	cursor := messenger.GetCursor()
+	state := cursor.GetState("state", 0)
+	cursor.SetState("state", 1)
+
+	if state == 0 {
+		messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
+	} else {
+		newBindings = cursor.GetChildFrameResultBindings()
+		if newBindings.IsEmpty() {
+			messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
+			messenger.AddProcessInstruction(mentalese.ProcessInstructionStop, "")
+		}
+	}
+
+	return newBindings
+}
+
 func (base *SystemSolverFunctionBase) exec(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)

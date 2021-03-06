@@ -3,12 +3,12 @@ package goal
 import "nli-go/lib/mentalese"
 
 type Process struct {
-	GoalId           int
+	GoalId           string
 	Stack            []*StackFrame
 	MutableVariables map[string]bool
 }
 
-func NewProcess(goalId int, goalSet mentalese.RelationSet) *Process {
+func NewProcess(goalId string, goalSet mentalese.RelationSet) *Process {
 	return &Process{
 		GoalId: goalId,
 		Stack: []*StackFrame{
@@ -117,13 +117,14 @@ func (p *Process) CreateMessenger() *Messenger {
 	return NewMessenger(frame.Cursor)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) *StackFrame {
+func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) (*StackFrame, bool) {
 
 	outBindings := messenger.GetOutBindings()
+	hasStopped := false
 
 	p.updateMutableVariables(outBindings)
 
-	currentFame, outBindings = p.executeProcessInstructions(messenger, currentFame, outBindings)
+	currentFame, outBindings, hasStopped = p.executeProcessInstructions(messenger, currentFame, outBindings)
 
 	currentFame.AddOutBindings(currentFame.GetCurrentInBinding(), outBindings)
 
@@ -131,11 +132,12 @@ func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame
 		p.PushFrame(messenger.GetChildFrame())
 	}
 
-
-	return currentFame
+	return currentFame, hasStopped
 }
 
-func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet) {
+func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet, bool) {
+
+	hasStopped := false
 
 	for instruction, value := range messenger.GetProcessInstructions() {
 		switch instruction {
@@ -144,10 +146,12 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame 
 		case mentalese.ProcessInstructionBreak:
 			outBindings = currentFrame.InBindings
 			currentFrame = p.executeBreak(currentFrame)
+		case mentalese.ProcessInstructionStop:
+			hasStopped = true
 		}
 	}
 
-	return currentFrame, outBindings
+	return currentFrame, outBindings, hasStopped
 }
 
 func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {

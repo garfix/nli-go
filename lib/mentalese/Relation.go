@@ -11,10 +11,10 @@ type Relation struct {
 }
 
 const ActionPrint = "print"
-const ActionSelect = "select"
 
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
+const ProcessInstructionStop = "stop"
 
 const FrameTypePlain = "plain"
 const FrameTypeScope = "scope"
@@ -87,6 +87,7 @@ const PredicateDateSubtractYears = "go_date_subtract_years"
 const PredicateSem = "go_sem"
 const PredicateLog = "go_log"
 const PredicateBreak = "go_break"
+const PredicateWaitFor = "go_wait_for"
 const PredicateGoal = "go_goal"
 const PredicateUuid = "go_uuid"
 const PredicateAction = "go_action"
@@ -105,6 +106,8 @@ const PredicateSolve = "go_solve"
 const PredicateFindResponse = "go_find_response"
 const PredicateCreateAnswer = "go_create_answer"
 const PredicateCreateCanned = "go_create_canned"
+
+const PredicateUserSelect = "go_user_select"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

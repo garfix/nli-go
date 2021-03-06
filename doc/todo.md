@@ -9,16 +9,15 @@
 - extend a module with another module
 - interactive: arrow up/down for history
 
-- explicit gaps and fillers: long distance dependencies
-
+- let => var
 - document: these are two ways of doing a child stack frame
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched
 - would be nice to have `is_first()` and `is_last()`: a check if the current binding is the first / last of the active bindings; such a function takes both a single binding and all bindings as input
 
 * database mappings: allow a rule to be used only for given sorts; for performance
-* binding set -> results
+* binding set -> results / binding list
+* relation set -> relation list  
 * better validation for built-in functions; especially multi-binding ones
-* rewrite all rebinding cases; make them simpler and easier to understand  
 * quant_foreach: add as second parameter the variable to which the ids must be bound 
 * agreement, especially for number, because it reduces ambiguity (reintroducing feature unification?)
 * syntax check while parsing: is the number of arguments correct?
@@ -27,7 +26,6 @@
 * use relations as functions (with special role for the last parameter as the return value)
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
-* rule bases now must always accept the writing of new rules; make this optional
 * change rewrite rules from categories with variables to relations (see also Generator)
 
 ## Long distance relations

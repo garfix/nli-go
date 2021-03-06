@@ -172,6 +172,9 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
+
 	senseVar := input.Arguments[1].TermValue
 	requestBindingVar := input.Arguments[2].TermValue
 	unboundNameVar := input.Arguments[3].TermValue
@@ -191,7 +194,10 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	entityIds, nameNotFound := base.findNames(names, sorts)
+	entityIds, nameNotFound, loading := base.findNames(messenger, names, sorts)
+	if loading {
+		return mentalese.NewBindingSet()
+	}
 
 	// names found and linked to id
 	for _, value := range entityIds.GetAll() {
@@ -209,7 +215,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sorts) (mentalese.Binding, string) {
+func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.Sorts) (mentalese.Binding, string, bool) {
 
 	entityIds := mentalese.NewBinding()
 	nameNotFound := ""
@@ -240,7 +246,11 @@ func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sor
 
 		// make the user choose one entity from multiple with the same name
 		if len(nameInformations) > 1 {
-			nameInformations = base.nameResolver.Resolve(nameInformations)
+			loading := false
+			nameInformations, loading = base.nameResolver.Choose(messenger, nameInformations)
+			if loading {
+				return entityIds, nameNotFound, true
+			}
 		}
 
 		// link variable to ID
@@ -251,7 +261,7 @@ func (base *LanguageBase) findNames(names mentalese.Binding, sorts mentalese.Sor
 
 	next:
 
-	return entityIds, nameNotFound
+	return entityIds, nameNotFound, false
 }
 
 func (base *LanguageBase) findSolution(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

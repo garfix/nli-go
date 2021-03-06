@@ -9,77 +9,114 @@ import (
 
 // uses SharedId() relations to create new sense() relations, that hold the SharedId's of the entities of different knowledge bases
 type NameResolver struct {
-	solver 			*ProblemSolver
-	meta 			*mentalese.Meta
-	log 			*common.SystemLog
-	dialogContext   *DialogContext
+	solverAsync   *ProblemSolverAsync
+	meta          *mentalese.Meta
+	log           *common.SystemLog
+	dialogContext *DialogContext
 }
 
-func NewNameResolver(solver *ProblemSolver, meta *mentalese.Meta, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solverAsync *ProblemSolverAsync, meta *mentalese.Meta, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
 	return &NameResolver{
-		solver:      	solver,
-		meta: 			meta,
-		log: 			log,
-		dialogContext:	dialogContext,
+		solverAsync:   solverAsync,
+		meta:          meta,
+		log:           log,
+		dialogContext: dialogContext,
 	}
+}
+
+func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInformations []NameInformation) ([]NameInformation, bool) {
+
+	resolvedInformations := []NameInformation{}
+
+	names := mentalese.TermList{}
+
+	for _, nameInformation := range nameInformations {
+		names = append(names, mentalese.NewTermString(nameInformation.Information))
+	}
+
+	// go:wait_for(go:user_select(['A', 'B', 'C'], Selection))
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateWaitFor, []mentalese.Term{
+			mentalese.NewTermRelationSet(
+				mentalese.RelationSet{
+					mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
+						mentalese.NewTermList(names),
+						mentalese.NewTermVariable("Selection"),
+					}),
+				}),
+		}),
+	}
+
+	bindings, loading := messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	if loading {
+		return resolvedInformations, true
+	}
+
+	for _, binding := range bindings.GetAll() {
+		selection := binding.MustGet("Selection")
+		index, _ := selection.GetIntValue()
+		resolvedInformations = append(resolvedInformations, nameInformations[index])
+	}
+
+	return resolvedInformations, false
 }
 
 // have the user select one of the entities with a given name
-func (resolver *NameResolver) Resolve(nameInformations []NameInformation) []NameInformation {
-
-	resolvedInformations := []NameInformation{}
-	userResponse := ""
-	options := common.NewOptions()
-
-	if len(nameInformations) > 0 {
-
-		name := nameInformations[0].Name
-
-		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
-
-		if len(dialogNameInformations) == 0 {
-
-			multipleResultsInFactBase, factBasesWithResults := resolver.collectMetaData(nameInformations)
-
-			if factBasesWithResults > 1 || multipleResultsInFactBase {
-
-				// check if the user has just answered this question
-				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
-
-				if found {
-
-					dialogNameInformations = resolver.selectNameInformationsFromAnswer(nameInformations, answer)
-					resolver.SaveNameInformations(name, dialogNameInformations)
-					resolver.dialogContext.RemoveAnswerToOpenQuestion()
-
-				} else {
-
-					// need to ask user
-					userResponse = common.WhichOne
-					options = resolver.composeOptions(nameInformations)
-
-					// store options
-					resolver.storeOptions(nameInformations)
-
-				}
-			} else {
-
-				// single meaning for nameAndType
-				dialogNameInformations = nameInformations
-				resolver.SaveNameInformations(name, dialogNameInformations)
-
-			}
-		}
-
-		resolvedInformations = dialogNameInformations
-	}
-
-	if userResponse != "" {
-		resolver.log.SetClarificationRequest(userResponse, options)
-	}
-
-	return resolvedInformations
-}
+//func (resolver *NameResolver) Resolve1(nameInformations []NameInformation) []NameInformation {
+//
+//	resolvedInformations := []NameInformation{}
+//	userResponse := ""
+//	options := common.NewOptions()
+//
+//	if len(nameInformations) > 0 {
+//
+//		name := nameInformations[0].Name
+//
+//		dialogNameInformations := resolver.RetrieveNameInDialogContext(name)
+//
+//		if len(dialogNameInformations) == 0 {
+//
+//			multipleResultsInFactBase, factBasesWithResults := resolver.collectMetaData(nameInformations)
+//
+//			if factBasesWithResults > 1 || multipleResultsInFactBase {
+//
+//				// check if the user has just answered this question
+//				answer, found := resolver.dialogContext.GetAnswerToOpenQuestion()
+//
+//				if found {
+//
+//					dialogNameInformations = resolver.selectNameInformationsFromAnswer(nameInformations, answer)
+//					resolver.SaveNameInformations(name, dialogNameInformations)
+//					resolver.dialogContext.RemoveAnswerToOpenQuestion()
+//
+//				} else {
+//
+//					// need to ask user
+//					userResponse = common.WhichOne
+//					options = resolver.composeOptions(nameInformations)
+//
+//					// store options
+//					resolver.storeOptions(nameInformations)
+//
+//				}
+//			} else {
+//
+//				// single meaning for nameAndType
+//				dialogNameInformations = nameInformations
+//				resolver.SaveNameInformations(name, dialogNameInformations)
+//
+//			}
+//		}
+//
+//		resolvedInformations = dialogNameInformations
+//	}
+//
+//	if userResponse != "" {
+//		resolver.log.SetClarificationRequest(userResponse, options)
+//	}
+//
+//	return resolvedInformations
+//}
 
 func (resolver *NameResolver) collectMetaData(nameInformations []NameInformation) (bool, int) {
 
@@ -119,16 +156,16 @@ func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations 
 	return answerNameInformations
 }
 
-func (resolver *NameResolver) composeOptions(nameInformations []NameInformation) *common.Options {
-
-	options := &common.Options{}
-
-	for _, nameInformation := range nameInformations {
-		options.AddOption(nameInformation.GetIdentifier(), nameInformation.Information)
-	}
-
-	return options
-}
+//func (resolver *NameResolver) composeOptions(nameInformations []NameInformation) *common.Options {
+//
+//	options := &common.Options{}
+//
+//	for _, nameInformation := range nameInformations {
+//		options.AddOption(nameInformation.GetIdentifier(), nameInformation.Information)
+//	}
+//
+//	return options
+//}
 
 func (resolver *NameResolver) SaveNameInformations(name string, nameInformations []NameInformation) {
 
@@ -152,8 +189,9 @@ func (resolver *NameResolver) ResolveName(name string, sort string) []NameInform
 
 	factBaseNameInformations := []NameInformation{}
 
-	for _, factBase := range resolver.solver.index.factBases {
-		factBaseNameInformations = append(factBaseNameInformations, resolver.resolveNameInFactBase(name, sort, factBase)...)
+	for _, factBase := range resolver.solverAsync.solver.index.factBases {
+		nameInformations := resolver.resolveNameInFactBase(name, sort, factBase)
+		factBaseNameInformations = append(factBaseNameInformations, nameInformations...)
 	}
 
 	return factBaseNameInformations
@@ -173,7 +211,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 		b := mentalese.NewBinding()
 		b.Set(mentalese.NameVar, mentalese.NewTermString(name))
 
-		bindings := resolver.solver.FindFacts(factBase, entityInfo.Name, b)
+		bindings := resolver.solverAsync.solver.FindFacts(factBase, entityInfo.Name, b)
 
 		for _, binding := range bindings.GetAll() {
 
@@ -196,7 +234,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 				// create a relation set for each field that gives Information about this name
 				b := mentalese.NewBinding()
 				b.Set(mentalese.IdVar, mentalese.NewTermId(id.TermValue, aSort))
-				bindings2 := resolver.solver.FindFacts(factBase, relationSet, b)
+				bindings2 := resolver.solverAsync.solver.FindFacts(factBase, relationSet, b)
 
 				for _, binding2 := range bindings2.GetAll() {
 					value, _ := binding2.Get(mentalese.ValueVar)

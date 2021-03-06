@@ -13,10 +13,8 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 
 	if !knowledge.Validate(bound, "lav", base.log) { return mentalese.NewBindingSet() }
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
 
 	list := bound.Arguments[0].TermValueList
 	orderFunction := bound.Arguments[1].TermValue

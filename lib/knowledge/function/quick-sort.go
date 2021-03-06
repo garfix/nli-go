@@ -83,14 +83,11 @@ func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id
 	bindings := mentalese.NewBindingSet()
 	loading := false
 
-	if messenger == nil {
-		bindings = base.solver.SolveRelationSet(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
-	} else {
-		bindings, loading = messenger.ExecuteChildStackFrameAsync(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
-		if loading {
-			return 0, true
-		}
+	bindings, loading = messenger.ExecuteChildStackFrameAsync(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
+	if loading {
+		return 0, true
 	}
+
 	values := bindings.GetDistinctValues("R")
 
 	if len(values) != 1 {

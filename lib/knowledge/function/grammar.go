@@ -2,7 +2,6 @@ package function
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
@@ -20,10 +19,8 @@ func (base *SystemSolverFunctionBase) intent(messenger api.ProcessMessenger, inp
 
 func (base *SystemSolverFunctionBase) backReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
 
 	result, _ := base.doBackReference(messenger, relation, binding)
 	return result
@@ -57,13 +54,9 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		}
 
 		testRangeBindings := mentalese.BindingSet{}
-		if messenger == nil {
-			testRangeBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(refBinding))
-		} else {
-			testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(refBinding))
-			if loading {
-				return mentalese.NewBindingSet(), true
-			}
+		testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(refBinding))
+		if loading {
+			return mentalese.NewBindingSet(), true
 		}
 		if testRangeBindings.GetLength() == 1 {
 			newBindings = testRangeBindings
@@ -78,32 +71,19 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 
 	set := relation.Arguments[1].TermValueRelationSet
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
 
 	newBindings, loading := base.doBackReference(messenger, relation, binding)
 	if loading { return mentalese.NewBindingSet() }
 
 	if newBindings.IsEmpty() {
-		if messenger == nil {
-			newBindings = base.solver.SolveRelationSet(set, mentalese.InitBindingSet(binding))
-		} else {
-			newBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
-			if loading { return mentalese.NewBindingSet() }
-		}
+		newBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
+		if loading { return mentalese.NewBindingSet() }
 
 		if newBindings.GetLength() > 1 {
 			loading = base.rangeIndexClarification(messenger)
 			newBindings = mentalese.NewBindingSet()
-
-			//rangeIndex, found := base.rangeIndexClarification(messenger)
-			//if found {
-			//	newBindings = mentalese.InitBindingSet(newBindings.Get(rangeIndex))
-			//} else {
-			//	return mentalese.NewBindingSet()
-			//}
 		}
 	}
 
@@ -113,33 +93,25 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 // ask the user which of the specified entities he/she means
 func (base *SystemSolverFunctionBase) rangeIndexClarification(messenger api.ProcessMessenger) bool {
 
-	if messenger == nil {
+	cursor := messenger.GetCursor()
+	state := cursor.GetState("state", 0)
+	cursor.SetState("state", state + 1)
 
-		base.log.SetClarificationRequest("I don't understand which one you mean", common.NewOptions())
-		return false
+	if state == 0 {
+
+		set := mentalese.RelationSet{
+			mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+				mentalese.NewTermRelationSet(mentalese.RelationSet{
+					mentalese.NewRelation(true, mentalese.PredicateOutput, []mentalese.Term{
+						mentalese.NewTermString("I don't understand which one you mean"),
+					})}),
+			}),
+		}
+		messenger.CreateChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+		return true
 
 	} else {
-
-		cursor := messenger.GetCursor()
-		state := cursor.GetState("state", 0)
-		cursor.SetState("state", state + 1)
-
-		if state == 0 {
-
-			set := mentalese.RelationSet{
-				mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
-					mentalese.NewTermRelationSet(mentalese.RelationSet{
-						mentalese.NewRelation(true, mentalese.PredicateOutput, []mentalese.Term{
-							mentalese.NewTermString("I don't understand which one you mean"),
-						})}),
-				}),
-			}
-			messenger.CreateChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-			return true
-
-		} else {
-			return false
-		}
+		return false
 	}
 }
 
@@ -149,10 +121,8 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 	newBindings := mentalese.NewBindingSet()
 	loading := false
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
 
 	for _, group := range *base.dialogContext.AnaphoraQueue {
 
@@ -182,12 +152,8 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
-		if messenger == nil {
-			newBindings = base.solver.SolveRelationSet(sortRelationSet, mentalese.InitBindingSet(binding))
-		} else {
-			newBindings, loading = messenger.ExecuteChildStackFrameAsync(sortRelationSet, mentalese.InitBindingSet(binding))
-			if loading { return mentalese.NewBindingSet() }
-		}
+		newBindings, loading = messenger.ExecuteChildStackFrameAsync(sortRelationSet, mentalese.InitBindingSet(binding))
+		if loading { return mentalese.NewBindingSet() }
 		break
 	}
 

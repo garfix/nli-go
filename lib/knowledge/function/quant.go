@@ -10,10 +10,6 @@ import (
 
 func (base *SystemSolverFunctionBase) solveAsync(messenger api.ProcessMessenger, set mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
-	if messenger == nil {
-		return base.solver.SolveRelationSet(set, bindings), false
-	}
-
 	return messenger.ExecuteChildStackFrameAsync(set, bindings)
 }
 
@@ -23,9 +19,7 @@ func (base *SystemSolverFunctionBase) quantCheck(messenger api.ProcessMessenger,
 		panic("quant_check(quants, scope) needs two arguments")
 	}
 
-	if messenger != nil {
-		messenger.GetCursor().SetState("childIndex", 0)
-	}
+	messenger.GetCursor().SetState("childIndex", 0)
 
 	result, loading := base.solveQuantifiedRelations(messenger, find, binding, true)
 	if loading {
@@ -41,11 +35,9 @@ func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenge
 		panic("quant_foreach(quants, scope) needs two arguments")
 	}
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetType(mentalese.FrameTypeLoop)
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetType(mentalese.FrameTypeLoop)
+	cursor.SetState("childIndex", 0)
 
 	result, loading := base.solveQuantifiedRelations(messenger, find, binding, false)
 	if loading {
@@ -61,10 +53,8 @@ func (base *SystemSolverFunctionBase) quantOrderedList(messenger api.ProcessMess
 
 	if !knowledge.Validate(bound, "rav", base.log) { return mentalese.NewBindingSet() }
 
-	if messenger != nil {
-		cursor := messenger.GetCursor()
-		cursor.SetState("childIndex", 0)
-	}
+	cursor := messenger.GetCursor()
+	cursor.SetState("childIndex", 0)
 
 	quant := bound.Arguments[0].TermValueRelationSet[0]
 	orderFunction := bound.Arguments[1].TermValue

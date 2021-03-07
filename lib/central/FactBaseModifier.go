@@ -27,7 +27,7 @@ func (modifier FactBaseModifier) Assert(relation mentalese.Relation, factBase ap
 		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
-		dbRelations := mapping.Pattern.ImportBinding(activeBinding2, modifier.variableGenerator)
+		dbRelations := mapping.Pattern.ConvertVariables(activeBinding2, modifier.variableGenerator)
 
 		for _, replacementRelation := range dbRelations {
 
@@ -48,7 +48,7 @@ func (modifier FactBaseModifier) Retract(relation mentalese.Relation, factBase a
 		activeBinding2, match2 := modifier.matcher.MatchTwoRelations(mapping.Goal, relation, mentalese.NewBinding())
 		if !match2 { continue }
 
-		dbRelations := mapping.Pattern.ImportBinding(activeBinding2, modifier.variableGenerator)
+		dbRelations := mapping.Pattern.ConvertVariables(activeBinding2, modifier.variableGenerator)
 
 		for _, replacementRelation := range dbRelations {
 

@@ -133,25 +133,25 @@ func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 // set contains variables A, B, and C
 // binding: A: X, C: Z
 // resulting set contains X (for A), Z (for C) and X22 (a new variable)
-func (set RelationSet) ImportBinding(binding Binding, generator *VariableGenerator) RelationSet {
-
-	importBinding := binding.Copy()
-
-	// find all variables
-	variables := set.GetVariableNames()
-
-	// extend binding with extra variables in set
-	for _, variable  := range variables {
-		_, found := importBinding.Get(variable)
-		if !found {
-			importBinding.Set(variable, generator.GenerateVariable(variable))
-		}
-	}
-
-	// replace variables in set
-
-	return set.BindSingle(importBinding)
-}
+//func (set RelationSet) ImportBinding(binding Binding, generator *VariableGenerator) RelationSet {
+//
+//	importBinding := binding.Copy()
+//
+//	// find all variables
+//	variables := set.GetVariableNames()
+//
+//	// extend binding with extra variables in set
+//	for _, variable  := range variables {
+//		_, found := importBinding.Get(variable)
+//		if !found {
+//			importBinding.Set(variable, generator.GenerateVariable(variable))
+//		}
+//	}
+//
+//	// replace variables in set
+//
+//	return set.BindSingle(importBinding)
+//}
 
 func (relations RelationSet) ConvertVariables(variableMapping Binding, variableGenerator *VariableGenerator) RelationSet {
 	inputVariables := relations.GetVariableNames()

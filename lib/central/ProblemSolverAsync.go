@@ -336,7 +336,7 @@ func (solver *ProblemSolverAsync) findFactsSingleMapping(factBase api.FactBase, 
 	activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
 	if !match2 { return dbBindings }
 
-	dbRelations := ds2db.Pattern.ImportBinding(activeBinding2, solver.variableGenerator)
+	dbRelations := ds2db.Pattern.ConvertVariables(activeBinding2, solver.variableGenerator)
 
 	localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 

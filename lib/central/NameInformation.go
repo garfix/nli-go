@@ -8,7 +8,3 @@ type NameInformation struct {
 	SharedId     string
 	Information  string
 }
-
-func (nameInformation NameInformation) GetIdentifier() string {
-	return nameInformation.DatabaseName + "/" + nameInformation.SharedId
-}

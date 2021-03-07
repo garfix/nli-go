@@ -61,62 +61,6 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 	return resolvedInformations, false
 }
 
-func (resolver *NameResolver) collectMetaData(nameInformations []NameInformation) (bool, int) {
-
-	factBases := map[string]bool{}
-
-	multipleResultsInFactBase := false
-
-	for _, nameInformation := range nameInformations {
-
-		_, found := factBases[nameInformation.DatabaseName]
-		if found {
-			multipleResultsInFactBase = true
-		} else {
-			factBases[nameInformation.DatabaseName] = true
-		}
-	}
-
-	return multipleResultsInFactBase, len(factBases)
-}
-
-func (resolver *NameResolver) storeOptions(nameInformations []NameInformation) {
-
-	for _, nameInformation := range nameInformations {
-		resolver.dialogContext.AddOption(nameInformation.GetIdentifier())
-	}
-}
-
-func (resolver *NameResolver) selectNameInformationsFromAnswer(nameInformations []NameInformation, answer string) []NameInformation {
-	answerNameInformations := []NameInformation{}
-
-	for _, nameInformation := range nameInformations {
-		if nameInformation.GetIdentifier() == answer {
-			answerNameInformations = append(answerNameInformations, nameInformation)
-		}
-	}
-
-	return answerNameInformations
-}
-
-func (resolver *NameResolver) SaveNameInformations(name string, nameInformations []NameInformation) {
-
-	resolver.dialogContext.AddNameInformations(nameInformations)
-}
-
-func (resolver *NameResolver) RetrieveNameInDialogContext(name string) []NameInformation {
-
-	nameInformations := []NameInformation{}
-
-	for _, nameInformation := range resolver.dialogContext.GetNameInformations() {
-		if nameInformation.Name == name {
-			nameInformations = append(nameInformations, nameInformation)
-		}
-	}
-
-	return nameInformations
-}
-
 func (resolver *NameResolver) ResolveName(name string, sort string) []NameInformation {
 
 	factBaseNameInformations := []NameInformation{}

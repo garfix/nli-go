@@ -16,19 +16,21 @@ import (
 // haystack: the base of relations that serve as matching candidates
 
 type RelationMatcher struct {
-	index           *KnowledgeBaseIndex
-	log             *common.SystemLog
+	simpleFunctions     map[string]api.SimpleFunction
+	log             	*common.SystemLog
 }
 
 func NewRelationMatcher(log *common.SystemLog) *RelationMatcher {
 	return &RelationMatcher{
-		index: 				    NewProblemSolverIndex(),
-		log: 					log,
+		simpleFunctions:    map[string]api.SimpleFunction{},
+		log: 			    log,
 	}
 }
 
 func (matcher *RelationMatcher) AddFunctionBase(base api.FunctionBase) {
-	matcher.index.AddFunctionBase(base)
+	for predicate, function := range base.GetFunctions() {
+		matcher.simpleFunctions[predicate] = function
+	}
 }
 
 type solutionNode struct {
@@ -97,14 +99,11 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relatio
 	functionFound := false
 	success := false
 
-	functions, found := matcher.index.simpleFunctions[needleRelation.Predicate]
+	function, found := matcher.simpleFunctions[needleRelation.Predicate]
 	if found {
-		for _, function := range functions {
-			resultBinding, success = function(needleRelation, binding)
-			newBinding = resultBinding
-			functionFound = true
-			break
-		}
+		resultBinding, success = function(needleRelation, binding)
+		newBinding = resultBinding
+		functionFound = true
 	}
 
 	return newBinding, functionFound, success

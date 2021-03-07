@@ -65,7 +65,7 @@ func (resolver *NameResolver) ResolveName(name string, sort string) []NameInform
 
 	factBaseNameInformations := []NameInformation{}
 
-	for _, factBase := range resolver.solverAsync.index.factBases {
+	for _, factBase := range resolver.solverAsync.factBases {
 		nameInformations := resolver.resolveNameInFactBase(name, sort, factBase)
 		factBaseNameInformations = append(factBaseNameInformations, nameInformations...)
 	}

@@ -114,16 +114,16 @@ func (s *ProblemSolverAsync) addRelationHandler(predicate string, handler api.Re
 
 func (s *ProblemSolverAsync) createFactBaseHandlers() {
 	for _, base := range s.factBases {
-		rules := base.GetReadMappings()
-		for _, rule := range rules {
-			s.addRelationHandler(rule.Goal.Predicate, s.createFactBaseClosure(base))
+		mappings := base.GetReadMappings()
+		for _, mapping := range mappings {
+			s.addRelationHandler(mapping.Goal.Predicate, s.createFactBaseClosure(base, mapping))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase) api.RelationHandler{
+func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase, mapping mentalese.Rule) api.RelationHandler{
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-		return s.FindFacts(base, relation, binding)
+		return s.findFactsSingleMapping(base, mapping, relation, binding)
 	}
 }
 
@@ -318,33 +318,38 @@ func (solver *ProblemSolverAsync) FindFacts(factBase api.FactBase, relation ment
 
 	dbBindings := mentalese.NewBindingSet()
 
-
-	// todo: call this function with more specific predicate, so we don't need to loop over all mappings
-
-
 	for _, ds2db := range factBase.GetReadMappings() {
+		mappingBindings := solver.findFactsSingleMapping(factBase, ds2db, relation, binding)
+		dbBindings.AddMultiple(mappingBindings)
+	}
 
-		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.NewBinding())
-		if !match { continue }
+	return dbBindings
+}
 
-		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
-		if !match2 { continue }
+func (solver *ProblemSolverAsync) findFactsSingleMapping(factBase api.FactBase, ds2db mentalese.Rule, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2, solver.variableGenerator)
+	dbBindings := mentalese.NewBindingSet()
 
-		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
+	activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.NewBinding())
+	if !match { return dbBindings }
 
-		relevantBinding := localIdBinding.Select(dbRelations.GetVariableNames())
-		newDbBindings := solver.solveMultipleRelationSingleFactBase(dbRelations, relevantBinding, factBase)
+	activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
+	if !match2 { return dbBindings }
 
-		for _, newDbBinding := range newDbBindings.GetAll() {
+	dbRelations := ds2db.Pattern.ImportBinding(activeBinding2, solver.variableGenerator)
 
-			dbBinding := activeBinding.Merge(newDbBinding)
+	localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
 
-			combinedBinding := localIdBinding.Merge(dbBinding.Select(relation.GetVariableNames()))
-			sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
-			dbBindings.Add(sharedBinding)
-		}
+	relevantBinding := localIdBinding.Select(dbRelations.GetVariableNames())
+	newDbBindings := solver.solveMultipleRelationSingleFactBase(dbRelations, relevantBinding, factBase)
+
+	for _, newDbBinding := range newDbBindings.GetAll() {
+
+		dbBinding := activeBinding.Merge(newDbBinding)
+
+		combinedBinding := localIdBinding.Merge(dbBinding.Select(relation.GetVariableNames()))
+		sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
+		dbBindings.Add(sharedBinding)
 	}
 
 	return dbBindings

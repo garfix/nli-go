@@ -41,8 +41,7 @@ func TestFactBase(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
-	dialogContext := central.NewDialogContext(nil)
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 
 	tests := []struct {
 		input         string

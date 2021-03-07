@@ -14,11 +14,12 @@ func TestFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
-	context := central.NewDialogContext(nil)
 	matcher := central.NewRelationMatcher(log)
-	solver := central.NewProblemSolver(matcher, context, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 	tests := []struct {
 		input      string
 		binding     string
@@ -53,7 +54,7 @@ func TestFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunNowWithBindings(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings.Get(0), wantBindings)
@@ -68,11 +69,11 @@ func TestFunctions(t *testing.T) {
 func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
-	context := central.NewDialogContext(nil)
 	matcher := central.NewRelationMatcher(log)
-	solver := central.NewProblemSolver(matcher, context, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	multiBindingBase := knowledge.NewSystemMultiBindingBase("name", log)
 	solver.AddMultipleBindingBase(multiBindingBase)
+	runner := central.NewProcessRunner(solver, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -106,7 +107,7 @@ func TestAggregateFunctions(t *testing.T) {
 		bindings := parser.CreateBindings(test.bindings)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := solver.SolveRelationSet(input, bindings)
+		resultBindings := runner.RunNowWithBindings(input, bindings)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, bindings, resultBindings, wantBindings)
@@ -125,11 +126,13 @@ func TestControlFunctions(t *testing.T) {
 	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input      string
@@ -149,7 +152,7 @@ func TestControlFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunNowWithBindings(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -183,15 +186,17 @@ func TestListFunctions(t *testing.T) {
 	`)
 	writeMap := []mentalese.Rule{}
 
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, predicates, log)
 	solver.AddSolverFunctionBase(nestedBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 	tests := []struct {
 		input      string
 		binding     string
@@ -199,7 +204,7 @@ func TestListFunctions(t *testing.T) {
 	}{
 		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
-		{"go:list_foreach([`:B`, `:C`, `:A`], I, E, go:unify(F, E) go:unify(G, I))", "{}", "[{F:`:B`, G: 0} {F:`:C`, G: 1} {F:`:A`, G: 2}]"},
+		{"go:list_foreach([`:B`, `:C`, `:A`], I, E, go:unify(F, E) go:unify(G, I))", "{}", "[{E:`:B`, F:`:B`, G:0, I:0} {E:`:C`, F:`:C`, G:1, I:1} {E:`:A`, F:`:A`, G:2, I:2}]"},
 		//{`
 		//	go:let(C, 0) go:list_foreach([1,2,3], I, E,
 		//		go:list_foreach([1,2,3], J, F,
@@ -227,7 +232,7 @@ func TestListFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunNowWithBindings(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -265,15 +270,17 @@ func TestQuantFunctions(t *testing.T) {
 	`)
 	writeMap := []mentalese.Rule{}
 
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, predicates, log)
 	solver.AddSolverFunctionBase(nestedBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 	tests := []struct {
 		input      string
 		binding     string
@@ -355,7 +362,7 @@ func TestQuantFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := solver.SolveRelationSet(input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunNowWithBindings(input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("got %v, want %v", resultBindings, wantBindings)

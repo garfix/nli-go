@@ -17,7 +17,7 @@ func TestLocalVariables(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)
@@ -35,7 +35,7 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :- 
@@ -61,6 +61,8 @@ func TestLocalVariables(t *testing.T) {
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 
 	tests := []struct {
 		goal           string
@@ -78,7 +80,7 @@ func TestLocalVariables(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := solver.SolveRelationSet(mentalese.RelationSet{ goal }, mentalese.InitBindingSet(binding)).String()
+		resultBindings := runner.RunNowWithBindings(mentalese.RelationSet{ goal }, mentalese.InitBindingSet(binding)).String()
 
 		if !log.IsOk() {
 			t.Errorf(log.String())

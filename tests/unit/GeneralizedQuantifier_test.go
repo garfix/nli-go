@@ -53,13 +53,15 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(matcher, dialogContext, log)
+	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 	parser := parse.NewParser(grammarRules, log)
 
@@ -89,7 +91,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		}
 		relationizer := parse.NewRelationizer(log)
 		input, _ := relationizer.Relationize(trees[0], []string{ "S"})
-		result := solver.SolveRelationSet(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
+		result := runner.RunNowWithBindings(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)
 			print(log.String())

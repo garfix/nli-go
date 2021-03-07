@@ -8,11 +8,11 @@ type Process struct {
 	MutableVariables map[string]bool
 }
 
-func NewProcess(goalId string, goalSet mentalese.RelationSet) *Process {
+func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
 	return &Process{
 		GoalId: goalId,
 		Stack: []*StackFrame{
-			NewStackFrame(goalSet, mentalese.InitBindingSet(mentalese.NewBinding())),
+			NewStackFrame(goalSet, bindings),
 		},
 		MutableVariables: map[string]bool{},
 	}

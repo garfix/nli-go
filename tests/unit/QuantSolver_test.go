@@ -106,17 +106,20 @@ func TestQuantSolver(t *testing.T) {
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, nil, log)
 	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolver(central.NewRelationMatcher(log), dialogContext, log)
+	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)
 	solver.AddMultipleBindingBase(aggregateBase)
+
+	solver.Reindex()
+	runner := central.NewProcessRunner(solver, log)
 
 	for _, test := range tests {
 
@@ -125,7 +128,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := solver.SolveRelationSet(mentalese.RelationSet{ quant }, mentalese.InitBindingSet(binding))
+		result := runner.RunNowWithBindings(mentalese.RelationSet{ quant }, mentalese.InitBindingSet(binding))
 
 		resultString := ""
 		for _, result := range result.GetAll() {

@@ -33,7 +33,7 @@ func (p *ProcessList) GetOrCreateProcess(goalId string, goalSet mentalese.Relati
 		}
 	}
 
-	process := NewProcess(goalId, goalSet)
+	process := NewProcess(goalId, goalSet, mentalese.InitBindingSet(mentalese.NewBinding()))
 	p.list = append(p.list, process)
 
 	return process

@@ -32,7 +32,11 @@ func (p *ProcessRunner) GetProcessByGoalId(goalId string) *goal.Process {
 }
 
 func (p *ProcessRunner) RunNow(goalSet mentalese.RelationSet) mentalese.BindingSet {
-	process := goal.NewProcess("", goalSet)
+	return p.RunNowWithBindings(goalSet, mentalese.InitBindingSet(mentalese.NewBinding()))
+}
+
+func (p *ProcessRunner) RunNowWithBindings(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
+	process := goal.NewProcess("", goalSet, bindings)
 	frame := process.Stack[0]
 	p.runProcessNow(process)
 	// note: frame has already been deleted; frame is now just the last reference
@@ -76,7 +80,7 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 
 		handler := p.PrepareHandler(relation, currentFrame, process)
 		if handler == nil {
-			return hasStopped
+			return true
 		} else {
 			outBindings := handler(messenger, relation, preparedBinding)
 			messenger.AddOutBindings(outBindings)

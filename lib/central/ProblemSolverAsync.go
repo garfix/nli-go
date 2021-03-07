@@ -33,7 +33,6 @@ func NewProblemSolverAsync(matcher *RelationMatcher, log *common.SystemLog) *Pro
 	return &async
 }
 
-
 func (solver *ProblemSolverAsync) AddFactBase(base api.FactBase) {
 	solver.index.AddFactBase(base)
 }
@@ -237,7 +236,6 @@ func (s *ProblemSolverAsync) createAssertRuleClosure(base api.RuleBase) api.Rela
 		if relation.Arguments[0].IsRule() {
 			rule := relation.Arguments[0].TermValueRule.BindSingle(binding)
 			base.Assert(rule)
-			s.index.reindexRules() // todo remove
 			s.Reindex()
 			return mentalese.InitBindingSet(binding)
 		} else {

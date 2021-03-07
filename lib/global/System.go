@@ -19,7 +19,6 @@ type System struct {
 	meta                  *mentalese.Meta
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
-	solver                *central.ProblemSolver
 	solverAsync           *central.ProblemSolverAsync
 	answerer              *central.Answerer
 	generator             *generate.Generator
@@ -183,5 +182,5 @@ func (system *System) ResetSession() {
 	system.dialogContext.Initialize()
 	system.dialogContext.Store()
 
-	system.solver.ResetSession()
+	system.solverAsync.ResetSession()
 }

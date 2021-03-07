@@ -11,18 +11,14 @@ import (
 type Answerer struct {
 	solutions []mentalese.Solution
 	matcher   *RelationMatcher
-	solver    *ProblemSolver
-	solverAsync *ProblemSolverAsync
 	log       *common.SystemLog
 }
 
-func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, solverAsync *ProblemSolverAsync, log *common.SystemLog) *Answerer {
+func NewAnswerer(matcher *RelationMatcher, log *common.SystemLog) *Answerer {
 
 	return &Answerer{
 		solutions: []mentalese.Solution{},
 		matcher:   matcher,
-		solver:    solver,
-		solverAsync: solverAsync,
 		log:       log,
 	}
 }

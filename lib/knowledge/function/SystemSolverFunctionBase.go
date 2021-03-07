@@ -11,16 +11,15 @@ import (
 // nested query structures (quant, or)
 type SystemSolverFunctionBase struct {
 	knowledge.KnowledgeBaseCore
-	solver        *central.ProblemSolver
+	solverAsync   *central.ProblemSolverAsync
 	dialogContext *central.DialogContext
 	meta          *mentalese.Meta
 	log           *common.SystemLog
 }
 
-func NewSystemSolverFunctionBase(solver *central.ProblemSolver, dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
+func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
 	return &SystemSolverFunctionBase{
 		KnowledgeBaseCore: knowledge.KnowledgeBaseCore{ Name: "nested-structure" },
-		solver:            solver,
 		dialogContext:     dialogContext,
 		meta:              meta,
 		log:               log,

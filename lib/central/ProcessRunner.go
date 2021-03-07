@@ -62,7 +62,7 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 	messenger := process.CreateMessenger()
 	relation := currentFrame.GetCurrentRelation()
 
-	_, found := p.solver.solver.index.multiBindingFunctions[relation.Predicate]
+	_, found := p.solver.index.multiBindingFunctions[relation.Predicate]
 	if found {
 
 		preparedBindings := currentFrame.InBindings

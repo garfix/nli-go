@@ -90,7 +90,7 @@ func (builder *systemBuilder) build(system *System) {
 	}
 
 	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, system.answerer, system.generator, builder.log)
-	system.solver.AddSolverFunctionBase(languageBase)
+	system.solverAsync.AddSolverFunctionBase(languageBase)
 
 	system.solverAsync.Reindex()
 }
@@ -111,22 +111,20 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.meta = mentalese.NewMeta()
 	system.internalGrammarParser = builder.parser
 
-	solver := central.NewProblemSolver(matcher, system.dialogContext, builder.log)
-	solver.AddFunctionBase(systemFunctionBase)
+	solverAsync := central.NewProblemSolverAsync(matcher, builder.log)
+	solverAsync.AddFunctionBase(systemFunctionBase)
 
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
-	solver.AddMultipleBindingBase(systemMultiBindingBase)
+	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
-	nestedStructureBase := function.NewSystemSolverFunctionBase(solver, system.dialogContext, system.meta, builder.log)
-	solver.AddSolverFunctionBase(nestedStructureBase)
-	system.solver = solver
+	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
+	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
-	solverAsync := central.NewProblemSolverAsync(solver, matcher, builder.log)
 	system.solverAsync = solverAsync
 	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log, system.dialogContext)
-	system.answerer = central.NewAnswerer(matcher, solver, solverAsync, builder.log)
+	system.answerer = central.NewAnswerer(matcher, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
@@ -571,7 +569,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solver.AddFactBase(database)
+	system.solverAsync.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
@@ -589,7 +587,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solver.AddFactBase(database)
+	system.solverAsync.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
@@ -618,7 +616,7 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solver.AddFactBase(database)
+	system.solverAsync.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildReadMap(index index, baseDir string) []mentalese.Rule {
@@ -766,7 +764,7 @@ func (builder systemBuilder) importRuleBaseFromPath(index index, system *System,
 		return
 	}
 
-	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
+	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
 }
 
 func (builder systemBuilder) readWritelist(index index, baseDir string, applicationAlias string) ([]string, bool) {

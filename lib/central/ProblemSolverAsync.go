@@ -1,8 +1,10 @@
 package central
 
 import (
+	"fmt"
 	"nli-go/lib/api"
 	"nli-go/lib/central/goal"
+	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
 
@@ -10,13 +12,19 @@ const handleLinkChar = "-"
 
 type ProblemSolverAsync struct {
 	solver *ProblemSolver
+	matcher               *RelationMatcher
+	variableGenerator     *mentalese.VariableGenerator
 	relationHandlers      map[string][]api.RelationHandler
+	log                   *common.SystemLog
 }
 
-func NewProblemSolverAsync(solver *ProblemSolver) *ProblemSolverAsync {
+func NewProblemSolverAsync(solver *ProblemSolver, matcher *RelationMatcher, log *common.SystemLog) *ProblemSolverAsync {
 	async := ProblemSolverAsync{
 		solver: solver,
-		relationHandlers:      map[string][]api.RelationHandler{},
+		matcher: matcher,
+		variableGenerator: mentalese.NewVariableGenerator(),
+		relationHandlers: map[string][]api.RelationHandler{},
+		log: log,
 	}
 
 	return &async
@@ -53,7 +61,7 @@ func (s *ProblemSolverAsync) createFactBaseHandlers() {
 
 func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase) api.RelationHandler{
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-		return s.solver.FindFacts(base, relation, binding)
+		return s.FindFacts(base, relation, binding)
 	}
 }
 
@@ -145,7 +153,7 @@ func (s *ProblemSolverAsync) createFactBaseModificationHandlers() {
 func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		if relation.Arguments[0].IsRelationSet() {
-			localIdBinding := s.solver.replaceSharedIdsByLocalIds(binding, base)
+			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
 			singleRelation := boundRelation.Arguments[0].TermValueRelationSet[0]
 			if singleRelation.IsBound() {
@@ -157,7 +165,7 @@ func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.Rela
 				s.solver.log.AddError("Cannot assert unbound relation " + singleRelation.String())
 				return mentalese.NewBindingSet()
 			}
-			newBinding := s.solver.replaceLocalIdBySharedId(binding, base)
+			newBinding := s.replaceLocalIdBySharedId(binding, base)
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			return mentalese.NewBindingSet()
@@ -168,13 +176,13 @@ func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.Rela
 func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		if relation.Arguments[0].IsRelationSet() {
-			localIdBinding := s.solver.replaceSharedIdsByLocalIds(binding, base)
+			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
 			found := s.solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], base)
 			if !found {
 				return mentalese.NewBindingSet()
 			}
-			newBinding := s.solver.replaceLocalIdBySharedId(binding, base)
+			newBinding := s.replaceLocalIdBySharedId(binding, base)
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			return mentalese.NewBindingSet()
@@ -236,89 +244,146 @@ func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *goal.Messenger, re
 	if found {
 		for _, function := range functions {
 			newBindings = function(messenger, relation, bindings)
-			messenger.AddOutBindings(newBindings)
 			multiFound = true
+			break
 		}
 	}
 
 	return newBindings, multiFound
 }
 
-func (s *ProblemSolverAsync) SolveSingleRelationSingleBinding(messenger *goal.Messenger, relation mentalese.Relation, binding mentalese.Binding) {
+// Creates bindings for the free variables in 'relations', by resolving them in factBase
+func (solver *ProblemSolverAsync) FindFacts(factBase api.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	_, found := s.solver.index.knownPredicates[relation.Predicate]
-		if !found {
-			s.solver.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
-			return
-		}
+	dbBindings := mentalese.NewBindingSet()
 
-	// go through all simple fact bases
-	factBases, f4 := s.solver.index.factReadBases[relation.Predicate]
-	if f4 {
-		for _, factBase := range factBases {
-			messenger.AddOutBindings(s.solver.FindFacts(factBase, relation, binding))
+
+	// todo: call this function with more specific predicate, so we don't need to loop over all mappings
+
+
+	for _, ds2db := range factBase.GetReadMappings() {
+
+		activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.NewBinding())
+		if !match { continue }
+
+		activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
+		if !match2 { continue }
+
+		dbRelations := ds2db.Pattern.ImportBinding(activeBinding2, solver.variableGenerator)
+
+		localIdBinding := solver.replaceSharedIdsByLocalIds(binding, factBase)
+
+		relevantBinding := localIdBinding.Select(dbRelations.GetVariableNames())
+		newDbBindings := solver.solveMultipleRelationSingleFactBase(dbRelations, relevantBinding, factBase)
+
+		for _, newDbBinding := range newDbBindings.GetAll() {
+
+			dbBinding := activeBinding.Merge(newDbBinding)
+
+			combinedBinding := localIdBinding.Merge(dbBinding.Select(relation.GetVariableNames()))
+			sharedBinding := solver.replaceLocalIdBySharedId(combinedBinding, factBase)
+			dbBindings.Add(sharedBinding)
 		}
 	}
 
-	// go through all rule bases
-	bases, f3 := s.solver.index.ruleReadBases[relation.Predicate]
-	if f3 {
-		for _, base := range bases {
-			s.solveSingleRelationSingleBindingSingleRuleBase(messenger, relation, binding, base)
-		}
+	return dbBindings
+}
+
+func (solver *ProblemSolverAsync) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase api.FactBase) mentalese.BindingSet {
+
+	sequenceBindings := mentalese.InitBindingSet(binding)
+
+	for _, relation := range relations {
+		sequenceBindings = solver.solveSingleRelationSingleFactBase(relation, sequenceBindings, factBase)
 	}
 
-	// go through all simple function bases
-	functions1, f1 := s.solver.index.simpleFunctions[relation.Predicate]
-	if f1 {
-		for _, function := range functions1 {
-			resultBinding, success := function(relation, binding)
-			if success {
-				messenger.AddOutBinding(resultBinding)
+	return sequenceBindings
+}
+
+func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
+
+	if solver.log.Active() { solver.log.StartDebug("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String()) }
+
+	// todo: notice cannot handle second order predicates, since no handler
+
+	relationBindings, multiFound := solver.SolveMultipleBindings(nil, relation, bindings)
+	resultBindings := mentalese.NewBindingSet()
+
+	if !multiFound {
+
+		for _, binding := range bindings.GetAll() {
+
+			// todo: notice cannot handle second order predicates, since no handler
+
+			_, found := solver.solver.index.simpleFunctions[relation.Predicate]
+			if found {
+				handlers := solver.GetHandlers(relation)
+				resultBindings = handlers[0](nil, relation, binding)
+			} else {
+				resultBindings = factBase.MatchRelationToDatabase(relation, binding)
+			}
+
+			// found bindings must be extended with the bindings already present
+			for _, resultBinding := range resultBindings.GetAll() {
+				newRelationBinding := binding.Merge(resultBinding)
+				relationBindings.Add(newRelationBinding)
 			}
 		}
 	}
 
-	// go through all solver functions
-	functions2, f2 := s.solver.index.solverFunctions[relation.Predicate]
-	if f2 {
-		for _, function := range functions2 {
-			result := function(messenger, relation, binding)
-			messenger.AddOutBindings(result)
-		}
-	}
+	if solver.log.Active() { solver.log.EndDebug("Database" + " " + factBase.GetName(), relationBindings.String()) }
 
-	// do assert / retract
-	s.solver.modifyKnowledgeBase(relation, binding)
+	return relationBindings
 }
 
-func (s *ProblemSolverAsync) solveSingleRelationSingleBindingSingleRuleBase(messenger *goal.Messenger, goalRelation mentalese.Relation, binding mentalese.Binding, ruleBase api.RuleBase) {
+func (solver *ProblemSolverAsync) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
-	// match rules from the rule base to the goalRelation
-	rules := ruleBase.GetRulesForRelation(goalRelation, binding)
-	sourceSubgoalSets := []mentalese.RelationSet{}
-	for _, rule := range rules {
-		aBinding, _ := s.solver.matcher.MatchTwoRelations(goalRelation, rule.Goal, binding)
-		bBinding, _ := s.solver.matcher.MatchTwoRelations(rule.Goal, goalRelation, mentalese.NewBinding())
-		boundRule := rule.BindSingle(bBinding)
-		boundRule = boundRule.InstantiateUnboundVariables(aBinding, s.solver.variableGenerator)
-		sourceSubgoalSets = append(sourceSubgoalSets, boundRule.Pattern)
+	newBinding := mentalese.NewBinding()
+
+	for key, value := range binding.GetAll() {
+		newValue := value
+
+		if value.IsId() {
+			sharedId := value.TermValue
+			sort := value.TermSort
+			if sort != "" {
+				localId := factBase.GetLocalId(sharedId, sort)
+				if localId == "" {
+					solver.log.AddError(fmt.Sprintf("Local id %s not found for %s in fact base %s", sharedId, sort, factBase.GetName()))
+					return newBinding
+				}
+				newValue = mentalese.NewTermId(localId, sort)
+			}
+		}
+
+		newBinding.Set(key, newValue)
 	}
 
-	scopedBinding := mentalese.NewBinding().Merge(binding)
+	return newBinding
+}
 
-	cursor := messenger.GetCursor()
+func (solver *ProblemSolverAsync) replaceLocalIdBySharedId(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
-	// Build the rule index
-	currentRuleIndex := cursor.GetState("rule", 0)
+	newBinding := mentalese.NewBinding()
 
-	// process child frame bindings
-	if currentRuleIndex > 0 {
-		messenger.AddOutBindings(cursor.GetChildFrameResultBindings())
+	for key, value := range binding.GetAll() {
+		newValue := value
+
+		if value.IsId() {
+			localId := value.TermValue
+			sort := value.TermSort
+			if sort != "" {
+				sharedId := factBase.GetSharedId(localId, sort)
+				if sharedId == "" {
+					solver.log.AddError(fmt.Sprintf("Shared id %s not found for %s in fact base %s", localId, sort, factBase.GetName()))
+					return newBinding
+				}
+				newValue = mentalese.NewTermId(sharedId, sort)
+			}
+		}
+
+		newBinding.Set(key, newValue)
 	}
 
-	if currentRuleIndex < len(rules) {
-		cursor.SetState("rule", currentRuleIndex + 1)
-		messenger.CreateChildStackFrame(sourceSubgoalSets[currentRuleIndex], mentalese.InitBindingSet(scopedBinding))
-	}
+	return newBinding
 }

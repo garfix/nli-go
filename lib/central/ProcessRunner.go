@@ -31,9 +31,20 @@ func (p *ProcessRunner) GetProcessByGoalId(goalId string) *goal.Process {
 	return p.list.GetProcess(goalId)
 }
 
+func (p *ProcessRunner) RunNow(goalSet mentalese.RelationSet) mentalese.BindingSet {
+	process := goal.NewProcess("", goalSet)
+	frame := process.Stack[0]
+	p.runProcessNow(process)
+	// note: frame has already been deleted; frame is now just the last reference
+	return frame.InBindings
+}
+
 func (p *ProcessRunner) RunProcess(goalId string, goalSet mentalese.RelationSet) {
 	process := p.list.GetOrCreateProcess(goalId, goalSet)
+	p.runProcessNow(process)
+}
 
+func (p *ProcessRunner) runProcessNow(process *goal.Process) {
 	for !process.IsDone() {
 		hasStopped := p.step(process)
 		if hasStopped {
@@ -55,7 +66,8 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 	if found {
 
 		preparedBindings := currentFrame.InBindings
-		p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
+		outBindings, _ := p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
+		messenger.AddOutBindings(outBindings)
 		process.ProcessMessengerMultipleBindings(messenger, currentFrame)
 
 	} else {

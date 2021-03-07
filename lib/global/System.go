@@ -30,7 +30,7 @@ type System struct {
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	result := system.solver.SolveRelationSet(set, mentalese.InitBindingSet( mentalese.NewBinding()))
+	result := system.processRunner.RunNow(set)
 
 	system.dialogContext.Store()
 
@@ -41,7 +41,7 @@ func (system *System) CreateAnswerGoal(input string) string {
 
 	uuid := common.CreateUuid()
 
-	// go:assert(go:goal(go:answer(input, Id)))
+	// go:assert(go:goal(go:respond(input, Id)))
 	set := mentalese.RelationSet{
 		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
@@ -55,7 +55,7 @@ func (system *System) CreateAnswerGoal(input string) string {
 				})}),
 		}),
 	}
-	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	system.processRunner.RunNow(set)
 
 	return uuid
 }
@@ -69,7 +69,7 @@ func (system *System) ReadActions(actionType string) mentalese.BindingSet {
 		}),
 	}
 
-	return system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	return system.processRunner.RunNow(set)
 }
 
 func (system *System) DeleteAction(actionId string) {
@@ -83,7 +83,7 @@ func (system *System) DeleteAction(actionId string) {
 				})}),
 		}),
 	}
-	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	system.processRunner.RunNow(set)
 }
 
 func (system *System) DeleteGoal(goalId string) {
@@ -96,7 +96,7 @@ func (system *System) DeleteGoal(goalId string) {
 				})}),
 		}),
 	}
-	system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	system.processRunner.RunNow(set)
 }
 
 func (system *System) Run() {
@@ -108,7 +108,7 @@ func (system *System) Run() {
 		}),
 	}
 	// find processes
-	bindings := system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	bindings := system.processRunner.RunNow(set)
 	for _, binding := range bindings.GetAll() {
 		goalId := binding.MustGet("Id").TermValue
 		goalSet := binding.MustGet("Goal").TermValueRelationSet
@@ -140,7 +140,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 						}),
 				}),
 			}
-			system.solver.SolveRelationSet(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+			system.processRunner.RunNow(set)
 
 			goalId = process.GoalId
 

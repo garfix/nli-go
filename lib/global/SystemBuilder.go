@@ -121,7 +121,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	system.solver = solver
 
-	solverAsync := central.NewProblemSolverAsync(solver)
+	solverAsync := central.NewProblemSolverAsync(solver, matcher, builder.log)
 	system.solverAsync = solverAsync
 	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 

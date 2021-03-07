@@ -1,7 +1,6 @@
 package central
 
 import (
-	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -30,88 +29,6 @@ func NewAnswerer(matcher *RelationMatcher, solver *ProblemSolver, solverAsync *P
 
 func (answerer *Answerer) AddSolutions(solutions []mentalese.Solution) {
 	answerer.solutions = append(answerer.solutions, solutions...)
-}
-
-// goal e.g. [ question(Q) child(S, O) SharedId(S, 'Janice', fullName) number_of(O, N) focus(Q, N) ]
-// return e.g. [ child(S, O) gender(S, female) number_of(O, N) ]
-func (answerer Answerer) Answer(messenger api.ProcessMessenger, goal mentalese.RelationSet, binding mentalese.Binding) mentalese.RelationSet {
-
-	answer := mentalese.RelationSet{}
-	transformer := NewRelationTransformer(answerer.matcher, answerer.log)
-
-	allSolutions := answerer.FindSolutions(goal)
-
-	if len(allSolutions) == 0 {
-
-		answerer.log.AddError("There are no solutions for this problem")
-
-	} else {
-
-		for i, solution := range allSolutions {
-
-			answerer.log.AddProduction("Solution", solution.Condition.String())
-
-			// apply transformation, if available
-			transformedGoal := transformer.Replace(solution.Transformations, goal)
-
-			// resultBindings: map goal variables to answers
-			resultBindings := answerer.solver.SolveRelationSet(transformedGoal, mentalese.InitBindingSet(binding))
-
-			// no results? try the next solution (if there is one)
-			if resultBindings.IsEmpty() {
-
-				// stack trace
-				// todo
-
-				if i < len(allSolutions) - 1 {
-					continue
-				}
-			}
-
-			group := EntityReferenceGroup{}
-			for _, id := range resultBindings.GetIds(solution.Result.TermValue) {
-				group = append(group, CreateEntityReference(id.TermValue, id.TermSort))
-			}
-			answerer.solver.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
-
-			// find a handler
-			conditionedBindings := resultBindings
-			var resultHandler *mentalese.ResultHandler
-			for _, response := range solution.Responses {
-				if !response.Condition.IsEmpty() {
-					conditionBindings := answerer.solver.SolveRelationSet(response.Condition, resultBindings)
-					if conditionBindings.IsEmpty() {
-						continue
-					} else {
-						conditionedBindings = conditionBindings
-					}
-				}
-				resultHandler = &response
-				break
-			}
-
-			if resultHandler == nil {
-				answerer.log.AddError("No solution had its conditions fulfilled")
-				break
-			}
-
-			// solutionBindings: map condition variables to results
-			var solutionBindings = conditionedBindings
-
-			// extend solution bindings by executing the preparation
-			if !resultHandler.Preparation.IsEmpty() {
-				solutionBindings = answerer.solver.SolveRelationSet(resultHandler.Preparation, conditionedBindings)
-			}
-
-			// create answer relation sets by binding 'answer' to solutionBindings
-			answer = answerer.Build(resultHandler.Answer, solutionBindings)
-
-			// stop after the first solution
-			break
-		}
-	}
-
-	return answer
 }
 
 // Returns the solutions whose condition matches the goal, and a set of bindings per solution

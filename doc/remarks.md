@@ -1,3 +1,7 @@
+## 2021-03-06
+
+The async rewrite is complete!
+
 ## 2021-03-05
 
 All predicates that can be asserted / retracted are now indexed individually for facts and rules.

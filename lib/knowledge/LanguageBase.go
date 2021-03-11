@@ -8,6 +8,7 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"strconv"
+	"strings"
 )
 
 type LanguageBase struct {
@@ -100,6 +101,8 @@ func (base *LanguageBase) tokenize(messenger api.ProcessMessenger, input mentale
 
 	tokens := grammar.GetTokenizer().Process(rawInput)
 
+	base.log.AddProduction("Tokens", strings.Join(tokens, " "))
+
 	terms := []mentalese.Term{}
 	for _, token := range tokens {
 		terms = append(terms, mentalese.NewTermString(token))
@@ -159,7 +162,9 @@ func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.
 		newBindings.Add(newBinding)
 	}
 
-	base.log.AddProduction("Parse trees found", strconv.Itoa(len(parseTrees)))
+	for _, parseTree := range parseTrees {
+		base.log.AddProduction("Parse tree", parseTree.IndentedString(""))
+	}
 
 	return newBindings
 }
@@ -185,6 +190,8 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	sortFinder := central.NewSortFinder(base.meta)
 
 	requestRelations, names := relationizer.Relationize(parseTree, []string{ "S"})
+
+	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
 	// extract sorts: variable => sort
 	sorts, sortFound := sortFinder.FindSorts(requestRelations)
@@ -314,6 +321,9 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	child := messenger.GetCursor().GetState("child", 0)
 	if child == 0 {
 
+		base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.FormattedString())
+		base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
+
 		messenger.GetCursor().SetState("child", 1)
 
 		// apply transformation, if available
@@ -434,6 +444,8 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 
 	// create answer relation sets by binding 'answer' to solutionBindings
 	answer := base.answerer.Build(resultHandler.Answer, solutionBindings)
+
+	base.log.AddProduction("Answer", answer.String())
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answer))

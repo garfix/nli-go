@@ -97,19 +97,9 @@ $(function(){
 
             let matches = production.match(/([^:]+)/);
             let name = matches[1];
-            let value = production.substr(name.length + 1)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;")
-                .replace(/\n/g, "<br>");
+            let value = production.substr(name.length + 2);
 
-            if (name === "Parse tree" || name === "Relations") {
-                value = value.replace(/  /g, "&nbsp;&nbsp;")
-            }
-
-            html[container] += "<div class='card'><h2>" + name + "</h2>" + "<p>" + value + "</p></div>";
+            html[container] += "<div class='card'><h2>" + name + "</h2>" + "<pre>" + value + "</pre></div>";
 
             if (name === "Parse tree") {
                 container = 'production-box-right';

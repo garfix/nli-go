@@ -12,6 +12,10 @@ body {
     background-color: black;
 }
 
+pre {
+    font-size: 14px;
+}
+
 #main {
     position: absolute;
     left: 0;

@@ -130,44 +130,20 @@ func (set RelationSet) RemoveRelations(remove RelationSet) RelationSet {
 	return resultSet
 }
 
-// set contains variables A, B, and C
-// binding: A: X, C: Z
-// resulting set contains X (for A), Z (for C) and X22 (a new variable)
-//func (set RelationSet) ImportBinding(binding Binding, generator *VariableGenerator) RelationSet {
-//
-//	importBinding := binding.Copy()
-//
-//	// find all variables
-//	variables := set.GetVariableNames()
-//
-//	// extend binding with extra variables in set
-//	for _, variable  := range variables {
-//		_, found := importBinding.Get(variable)
-//		if !found {
-//			importBinding.Set(variable, generator.GenerateVariable(variable))
-//		}
-//	}
-//
-//	// replace variables in set
-//
-//	return set.BindSingle(importBinding)
-//}
-
 func (relations RelationSet) ConvertVariables(variableMapping Binding, variableGenerator *VariableGenerator) RelationSet {
-	inputVariables := relations.GetVariableNames()
 
-	newRelations := relations.Copy()
+	// find all variables
+	variables := relations.GetVariableNames()
 
-	for _, inputVariable := range inputVariables {
-		newVariable, found := variableMapping.Get(inputVariable)
-		if found {
-			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), newVariable)
-		} else {
-			newRelations = newRelations.ReplaceTerm(NewTermVariable(inputVariable), variableGenerator.GenerateVariable(inputVariable))
+	// extend binding with extra variables in set
+	for _, variable  := range variables {
+		_, found := variableMapping.Get(variable)
+		if !found {
+			variableMapping.Set(variable, variableGenerator.GenerateVariable(variable))
 		}
 	}
 
-	return newRelations
+	return relations.BindSingle(variableMapping)
 }
 
 func (relations RelationSet) InstantiateUnboundVariables(binding Binding, variableGenerator *VariableGenerator) RelationSet {
@@ -230,12 +206,12 @@ func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 
 func (relations RelationSet) processIncludes(relation Relation, binding Binding) RelationSet {
 
-	newSet := RelationSet{relation}
+	newSet := RelationSet{relation.BindSingle(binding)}
 
 	variable := relation.Arguments[0].TermValue
 
 	term, found := binding.Get(variable)
-	if found {
+	if found && term.IsRelationSet() {
 		newSet = term.TermValueRelationSet.BindSingle(binding)
 	}
 

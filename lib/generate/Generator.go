@@ -69,6 +69,11 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 			words = append(words, consequent...)
 		}
 	} else {
+
+
+		generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
+
+
 		generator.log.AddError("No rule found for " + fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
 
 		rule, binding, ok = generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)

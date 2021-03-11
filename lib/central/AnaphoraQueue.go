@@ -43,3 +43,19 @@ func (queue *AnaphoraQueue) String() string {
 	}
 	return "[" + list + "]"
 }
+
+func (queue *AnaphoraQueue) FormattedString() string {
+	str := ""
+
+	for _, group := range *queue {
+		sep := ""
+		for _, item := range group {
+			str += sep + item.String()
+			sep = ", "
+		}
+
+		str += "\n"
+	}
+
+	return str
+}

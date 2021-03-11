@@ -2,7 +2,10 @@
 
 ##
 
-* stack trace of last relation that resulted in zero bindings
+* asynchronous execution of mentalese code
+* processing of input has been rewritten as a mentalese program  
+* goals, actions
+* explicit declaration of the rule base that accepts a new rule
 
 ## 1.12 morphological analyzer - 20-12-2020
 

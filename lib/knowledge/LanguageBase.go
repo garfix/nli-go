@@ -321,7 +321,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	child := messenger.GetCursor().GetState("child", 0)
 	if child == 0 {
 
-		base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.FormattedString())
 		base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
 
 		messenger.GetCursor().SetState("child", 1)
@@ -479,6 +478,8 @@ func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentale
 
 	newBinding := binding.Copy()
 	newBinding.Set(tokenVar, mentalese.NewTermList(tokenTerms))
+
+	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.FormattedString())
 
 	return mentalese.InitBindingSet(newBinding)
 }

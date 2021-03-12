@@ -99,6 +99,8 @@ $(function(){
             let name = matches[1];
             let value = production.substr(name.length + 2);
 
+            if (name === "Named entities") { continue }
+
             html[container] += "<div class='card'><h2>" + name + "</h2>" + "<pre>" + value + "</pre></div>";
 
             if (name === "Parse tree") {

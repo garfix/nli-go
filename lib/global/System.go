@@ -175,6 +175,8 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		system.DeleteAction(actionId)
 	}
 
+	system.dialogContext.Store()
+
 	return answer, options
 }
 

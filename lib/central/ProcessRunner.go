@@ -19,16 +19,7 @@ func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *Proces
 	return &ProcessRunner{
 		solver: solver,
 		log: log,
-		list: goal.ProcessList{},
 	}
-}
-
-func (p *ProcessRunner) GetProcesses() []*goal.Process {
-	return p.list.GetProcesses()
-}
-
-func (p *ProcessRunner) GetProcessByGoalId(goalId string) *goal.Process {
-	return p.list.GetProcess(goalId)
 }
 
 func (p *ProcessRunner) RunNow(goalSet mentalese.RelationSet) mentalese.BindingSet {
@@ -41,10 +32,6 @@ func (p *ProcessRunner) RunNowWithBindings(goalSet mentalese.RelationSet, bindin
 	p.RunProcessNow(process)
 	// note: frame has already been deleted; frame is now just the last reference
 	return frame.InBindings
-}
-
-func (p *ProcessRunner) GetOrCreateProcess(goalId string, goalSet mentalese.RelationSet) *goal.Process{
-	return p.list.GetOrCreateProcess(goalId, goalSet)
 }
 
 func (p *ProcessRunner) RunProcessNow(process *goal.Process) {

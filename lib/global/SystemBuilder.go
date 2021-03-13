@@ -4,6 +4,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"nli-go/lib/central"
+	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
@@ -109,6 +110,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.relationizer = parse.NewRelationizer(builder.log)
 	system.meta = mentalese.NewMeta()
 	system.internalGrammarParser = builder.parser
+	system.processList = goal.NewProcessList()
 
 	solverAsync := central.NewProblemSolverAsync(matcher, builder.log)
 	solverAsync.AddFunctionBase(systemFunctionBase)
@@ -117,7 +119,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	anaphoraQueue := central.NewAnaphoraQueue()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue)
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, system.processList)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 

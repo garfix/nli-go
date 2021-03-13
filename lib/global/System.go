@@ -24,6 +24,7 @@ type System struct {
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
+	processList	          *goal.ProcessList
 	processRunner         *central.ProcessRunner
 }
 
@@ -108,7 +109,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	system.Run()
 
 	// get the goal's process
-	process := system.processRunner.GetProcessByGoalId(goalId)
+	process := system.processList.GetProcess(goalId)
 
 	// build options for the user, if applicable
 	options := system.buildOptions(process)
@@ -126,7 +127,7 @@ func (system *System) getGoalId(input string) string {
 
 	goalId := ""
 
-	for _, process := range system.processRunner.GetProcesses() {
+	for _, process := range system.processList.GetProcesses() {
 		if !process.IsDone() {
 
 			userSelect := process.GetLastFrame().Relations
@@ -178,7 +179,7 @@ func (system *System) Run() {
 
 		// run the process
 		// todo: processes are not yet stored!
-		process := system.processRunner.GetOrCreateProcess(goalId, goalSet)
+		process := system.processList.GetOrCreateProcess(goalId, goalSet)
 		system.processRunner.RunProcessNow(process)
 
 		// delete goal when done

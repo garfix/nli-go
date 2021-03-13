@@ -1,20 +1,24 @@
 package central
 
-import "nli-go/lib/common"
+import (
+	"nli-go/lib/central/goal"
+	"nli-go/lib/common"
+)
 
 const MaxSizeAnaphoraQueue = 10
 
-// The dialog context stores questions and answers that involve interaction with the user while solving his/her main question
-// It may also be used to data relations that may be needed in the next call of the library (within the same session)
+// The dialog context stores session data that needs not and should not be available to mentalese programs
 type DialogContext struct {
 	storage *common.FileStorage
 	AnaphoraQueue *AnaphoraQueue
+	ProcessList *goal.ProcessList
 }
 
-func NewDialogContext(storage *common.FileStorage, AnaphoraQueue *AnaphoraQueue) *DialogContext {
+func NewDialogContext(storage *common.FileStorage, anaphoraQueue *AnaphoraQueue, processList *goal.ProcessList) *DialogContext {
 	dialogContext := &DialogContext{
-		storage: storage,
-		AnaphoraQueue: AnaphoraQueue,
+		storage:       storage,
+		AnaphoraQueue: anaphoraQueue,
+		ProcessList: processList,
 	}
 	dialogContext.Initialize()
 
@@ -25,6 +29,7 @@ func NewDialogContext(storage *common.FileStorage, AnaphoraQueue *AnaphoraQueue)
 
 func (dc *DialogContext) Initialize() {
 	dc.AnaphoraQueue.Initialize()
+	dc.ProcessList.Initialize()
 }
 
 func (dc *DialogContext) Store() {

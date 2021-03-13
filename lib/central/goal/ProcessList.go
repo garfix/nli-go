@@ -6,10 +6,14 @@ type ProcessList struct {
 	list []*Process
 }
 
-func (p *ProcessList) NewProcessList() ProcessList {
-	return ProcessList{
+func NewProcessList() *ProcessList {
+	return &ProcessList{
 		list: []*Process{},
 	}
+}
+
+func (p *ProcessList) Initialize() {
+	p.list = []*Process{}
 }
 
 func (p *ProcessList) GetProcesses() []*Process {

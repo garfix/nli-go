@@ -2,6 +2,7 @@ package global
 
 import (
 	"nli-go/lib/central"
+	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
@@ -98,26 +99,31 @@ func (system *System) DeleteGoal(goalId string) {
 	system.processRunner.RunNow(set)
 }
 
-func (system *System) Run() {
-	// find all goals
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
-			mentalese.NewTermVariable("Goal"),
-			mentalese.NewTermVariable("Id"),
-		}),
-	}
-	// find processes
-	bindings := system.processRunner.RunNow(set)
-	for _, binding := range bindings.GetAll() {
-		goalId := binding.MustGet("Id").TermValue
-		goalSet := binding.MustGet("Goal").TermValueRelationSet
-		system.processRunner.RunProcess(goalId, goalSet)
-	}
-}
-
 func (system *System) Answer(input string) (string, *common.Options) {
 
-	options := common.NewOptions()
+	// find or create a goal
+	goalId := system.getGoalId(input)
+
+	// execute all goals
+	system.Run()
+
+	// get the goal's process
+	process := system.processRunner.GetProcessByGoalId(goalId)
+
+	// build options for the user, if applicable
+	options := system.buildOptions(process)
+
+	// read answer action
+	answer := system.readAnswer()
+
+	// store the updated dialog context
+	system.dialogContext.Store()
+
+	return answer, options
+}
+
+func (system *System) getGoalId(input string) string {
+
 	goalId := ""
 
 	for _, process := range system.processRunner.GetProcesses() {
@@ -151,21 +157,54 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		goalId = system.CreateAnswerGoal(input)
 	}
 
-	system.Run()
+	return goalId
+}
 
-	process := system.processRunner.GetProcessByGoalId(goalId)
-	lastFrame := process.GetLastFrame()
-	if lastFrame != nil {
+func (system *System) Run() {
+
+	// find all goals
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+			mentalese.NewTermVariable("Goal"),
+			mentalese.NewTermVariable("Id"),
+		}),
+	}
+	bindings := system.processRunner.RunNow(set)
+
+	// go through all goals
+	for _, binding := range bindings.GetAll() {
+		goalId := binding.MustGet("Id").TermValue
+		goalSet := binding.MustGet("Goal").TermValueRelationSet
+
+		// run the process
+		// todo: processes are not yet stored!
+		process := system.processRunner.GetOrCreateProcess(goalId, goalSet)
+		system.processRunner.RunProcessNow(process)
+
+		// delete goal when done
+		if process.IsDone() {
+			system.DeleteGoal(goalId)
+		}
+	}
+}
+
+func (system *System) buildOptions(process *goal.Process) *common.Options {
+	options := common.NewOptions()
+
+	if !process.IsDone() {
+		lastFrame := process.GetLastFrame()
 		relation := lastFrame.Relations[0]
 		if relation.Predicate == mentalese.PredicateUserSelect {
 			for i, value := range relation.Arguments[0].TermValueList.GetValues() {
 				options.AddOption(strconv.Itoa(i), value)
 			}
 		}
-	} else {
-		system.DeleteGoal(goalId)
 	}
 
+	return options
+}
+
+func (system *System) readAnswer() string {
 	actions := system.ReadActions(mentalese.ActionPrint)
 	answer := ""
 	if actions.GetLength() > 0 {
@@ -174,10 +213,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		actionId := action.MustGet("Id").TermValue
 		system.DeleteAction(actionId)
 	}
-
-	system.dialogContext.Store()
-
-	return answer, options
+	return answer
 }
 
 func (system *System) ResetSession() {

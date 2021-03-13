@@ -51,12 +51,12 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)

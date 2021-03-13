@@ -34,7 +34,7 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	newBindings := mentalese.NewBindingSet()
 
-	for _, group := range *base.dialogContext.AnaphoraQueue {
+	for _, group := range *base.anaphoraQueue {
 
 		ref := group[0]
 
@@ -124,7 +124,7 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	for _, group := range *base.dialogContext.AnaphoraQueue {
+	for _, group := range *base.anaphoraQueue {
 
 		sort := ""
 

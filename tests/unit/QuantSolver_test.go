@@ -104,7 +104,6 @@ func TestQuantSolver(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, nil, log)
-	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
@@ -112,7 +111,8 @@ func TestQuantSolver(t *testing.T) {
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)

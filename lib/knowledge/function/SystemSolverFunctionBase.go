@@ -12,15 +12,15 @@ import (
 type SystemSolverFunctionBase struct {
 	knowledge.KnowledgeBaseCore
 	solverAsync   *central.ProblemSolverAsync
-	dialogContext *central.DialogContext
+	anaphoraQueue *central.AnaphoraQueue
 	meta          *mentalese.Meta
 	log           *common.SystemLog
 }
 
-func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
+func NewSystemSolverFunctionBase(anaphoraQueue *central.AnaphoraQueue, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
 	return &SystemSolverFunctionBase{
 		KnowledgeBaseCore: knowledge.KnowledgeBaseCore{ Name: "nested-structure" },
-		dialogContext:     dialogContext,
+		anaphoraQueue:     anaphoraQueue,
 		meta:              meta,
 		log:               log,
 	}

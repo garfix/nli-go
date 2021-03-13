@@ -15,7 +15,6 @@ func TestInMemoryRuleBase(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 	solver := central.NewProblemSolverAsync(matcher, log)
 	facts := parser.CreateRelationSet(`
@@ -35,7 +34,8 @@ func TestInMemoryRuleBase(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	runner := central.NewProcessRunner(solver, log)
 	rules := parser.CreateRules(`

@@ -38,17 +38,16 @@ func (p *ProcessRunner) RunNow(goalSet mentalese.RelationSet) mentalese.BindingS
 func (p *ProcessRunner) RunNowWithBindings(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 	process := goal.NewProcess("", goalSet, bindings)
 	frame := process.Stack[0]
-	p.runProcessNow(process)
+	p.RunProcessNow(process)
 	// note: frame has already been deleted; frame is now just the last reference
 	return frame.InBindings
 }
 
-func (p *ProcessRunner) RunProcess(goalId string, goalSet mentalese.RelationSet) {
-	process := p.list.GetOrCreateProcess(goalId, goalSet)
-	p.runProcessNow(process)
+func (p *ProcessRunner) GetOrCreateProcess(goalId string, goalSet mentalese.RelationSet) *goal.Process{
+	return p.list.GetOrCreateProcess(goalId, goalSet)
 }
 
-func (p *ProcessRunner) runProcessNow(process *goal.Process) {
+func (p *ProcessRunner) RunProcessNow(process *goal.Process) {
 	for !process.IsDone() {
 		hasStopped := p.step(process)
 		if hasStopped {

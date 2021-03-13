@@ -104,7 +104,6 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	path := builder.varDir + "/" + builder.getSystemName() + "/session"
 	storage := common.NewFileStorage(path, builder.sessionId, common.StorageSession, "session", system.log)
-	system.dialogContext = central.NewDialogContext(storage)
 
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(builder.log)
@@ -117,13 +116,15 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
-	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync
 	system.processRunner = central.NewProcessRunner(solverAsync, builder.log)
 
-	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log, system.dialogContext)
+	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)
 	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)

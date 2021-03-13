@@ -123,13 +123,13 @@ func TestControlFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(nil)
 	meta := mentalese.NewMeta()
 
 	solver := central.NewProblemSolverAsync(matcher, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", log)
 	solver.AddFunctionBase(functionBase)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)
@@ -168,7 +168,6 @@ func TestListFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(nil)
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
@@ -193,7 +192,8 @@ func TestListFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, predicates, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, predicates, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)
@@ -249,7 +249,6 @@ func TestQuantFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	dialogContext := central.NewDialogContext(nil)
 	predicates := &mentalese.Meta{}
 	parser := importer.NewInternalGrammarParser()
 
@@ -277,7 +276,8 @@ func TestQuantFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, predicates, log)
+	anaphoraQueue := central.NewAnaphoraQueue()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, predicates, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)

@@ -2,6 +2,14 @@ package central
 
 type AnaphoraQueue []EntityReferenceGroup
 
+func NewAnaphoraQueue() *AnaphoraQueue {
+	return &AnaphoraQueue{}
+}
+
+func (queue *AnaphoraQueue) Initialize() {
+	(*queue) = []EntityReferenceGroup{}
+}
+
 func (queue *AnaphoraQueue) AddReferenceGroup(entityReferenceGroup EntityReferenceGroup) {
 
 	// empty group? ignore

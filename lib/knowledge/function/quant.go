@@ -472,7 +472,7 @@ func (base *SystemSolverFunctionBase) solveScope(messenger api.ProcessMessenger,
 		value, found := rangeBinding.Get(rangeVariable)
 		if found && value.IsId() {
 			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort) }
-			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+			base.anaphoraQueue.AddReferenceGroup(group)
 		}
 
 		rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)

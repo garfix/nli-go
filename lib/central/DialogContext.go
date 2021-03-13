@@ -11,25 +11,22 @@ type DialogContext struct {
 	AnaphoraQueue *AnaphoraQueue
 }
 
-func NewDialogContext(storage *common.FileStorage) *DialogContext {
+func NewDialogContext(storage *common.FileStorage, AnaphoraQueue *AnaphoraQueue) *DialogContext {
 	dialogContext := &DialogContext{
 		storage: storage,
+		AnaphoraQueue: AnaphoraQueue,
 	}
 	dialogContext.Initialize()
 
-	if storage != nil {
-		storage.Read(dialogContext)
-	}
+	storage.Read(dialogContext)
 
 	return dialogContext
 }
 
 func (dc *DialogContext) Initialize() {
-	dc.AnaphoraQueue = &AnaphoraQueue{}
+	dc.AnaphoraQueue.Initialize()
 }
 
 func (dc *DialogContext) Store() {
-	if dc.storage != nil {
-		dc.storage.Write(dc)
-	}
+	dc.storage.Write(dc)
 }

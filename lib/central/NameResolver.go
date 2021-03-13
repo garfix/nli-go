@@ -12,15 +12,13 @@ type NameResolver struct {
 	solverAsync   *ProblemSolverAsync
 	meta          *mentalese.Meta
 	log           *common.SystemLog
-	dialogContext *DialogContext
 }
 
-func NewNameResolver(solverAsync *ProblemSolverAsync, meta *mentalese.Meta, log *common.SystemLog, dialogContext *DialogContext) *NameResolver {
+func NewNameResolver(solverAsync *ProblemSolverAsync, meta *mentalese.Meta, log *common.SystemLog) *NameResolver {
 	return &NameResolver{
 		solverAsync:   solverAsync,
 		meta:          meta,
 		log:           log,
-		dialogContext: dialogContext,
 	}
 }
 

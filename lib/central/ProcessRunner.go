@@ -22,19 +22,19 @@ func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *Proces
 	}
 }
 
-func (p *ProcessRunner) RunNow(goalSet mentalese.RelationSet) mentalese.BindingSet {
-	return p.RunNowWithBindings(goalSet, mentalese.InitBindingSet(mentalese.NewBinding()))
+func (p *ProcessRunner) RunRelationSet(relationSet mentalese.RelationSet) mentalese.BindingSet {
+	return p.RunRelationSetWithBindings(relationSet, mentalese.InitBindingSet(mentalese.NewBinding()))
 }
 
-func (p *ProcessRunner) RunNowWithBindings(goalSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
-	process := goal.NewProcess("", goalSet, bindings)
+func (p *ProcessRunner) RunRelationSetWithBindings(relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
+	process := goal.NewProcess("", relationSet, bindings)
 	frame := process.Stack[0]
-	p.RunProcessNow(process)
+	p.RunProcess(process)
 	// note: frame has already been deleted; frame is now just the last reference
 	return frame.InBindings
 }
 
-func (p *ProcessRunner) RunProcessNow(process *goal.Process) {
+func (p *ProcessRunner) RunProcess(process *goal.Process) {
 	for !process.IsDone() {
 		hasStopped := p.step(process)
 		if hasStopped {

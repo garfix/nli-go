@@ -64,7 +64,7 @@ func TestSolver(t *testing.T) {
 	for _, test := range tests {
 
 		input := parser.CreateRelationSet(test.input)
-		resultBindings := runner.RunNowWithBindings(input, mentalese.InitBindingSet(mentalese.NewBinding()))
+		resultBindings := runner.RunRelationSetWithBindings(input, mentalese.InitBindingSet(mentalese.NewBinding()))
 		resultRelationSets := input.BindRelationSetMultipleBindings(resultBindings)
 
 		if fmt.Sprintf("%v", resultRelationSets) != test.wantRelationSets {
@@ -89,7 +89,7 @@ func TestSolver(t *testing.T) {
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := runner.RunNowWithBindings([]mentalese.Relation{input}, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings([]mentalese.Relation{input}, mentalese.InitBindingSet(binding))
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
@@ -108,7 +108,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := runner.RunNowWithBindings(mentalese.RelationSet{ input }, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{input }, mentalese.InitBindingSet(binding))
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
@@ -152,7 +152,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := runner2.RunNowWithBindings(mentalese.RelationSet{ input }, mentalese.InitBindingSet(binding))
+		resultBindings := runner2.RunRelationSetWithBindings(mentalese.RelationSet{input }, mentalese.InitBindingSet(binding))
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)

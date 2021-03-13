@@ -80,7 +80,7 @@ func TestLocalVariables(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := runner.RunNowWithBindings(mentalese.RelationSet{ goal }, mentalese.InitBindingSet(binding)).String()
+		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{goal }, mentalese.InitBindingSet(binding)).String()
 
 		if !log.IsOk() {
 			t.Errorf(log.String())

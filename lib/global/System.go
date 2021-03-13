@@ -31,7 +31,7 @@ type System struct {
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	result := system.processRunner.RunNow(set)
+	result := system.processRunner.RunRelationSet(set)
 
 	system.dialogContext.Store()
 
@@ -56,7 +56,7 @@ func (system *System) CreateAnswerGoal(input string) string {
 				})}),
 		}),
 	}
-	system.processRunner.RunNow(set)
+	system.processRunner.RunRelationSet(set)
 
 	return uuid
 }
@@ -70,7 +70,7 @@ func (system *System) ReadActions(actionType string) mentalese.BindingSet {
 		}),
 	}
 
-	return system.processRunner.RunNow(set)
+	return system.processRunner.RunRelationSet(set)
 }
 
 func (system *System) DeleteAction(actionId string) {
@@ -84,7 +84,7 @@ func (system *System) DeleteAction(actionId string) {
 				})}),
 		}),
 	}
-	system.processRunner.RunNow(set)
+	system.processRunner.RunRelationSet(set)
 }
 
 func (system *System) DeleteGoal(goalId string) {
@@ -97,7 +97,7 @@ func (system *System) DeleteGoal(goalId string) {
 				})}),
 		}),
 	}
-	system.processRunner.RunNow(set)
+	system.processRunner.RunRelationSet(set)
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {
@@ -146,7 +146,7 @@ func (system *System) getGoalId(input string) string {
 						}),
 				}),
 			}
-			system.processRunner.RunNow(set)
+			system.processRunner.RunRelationSet(set)
 
 			goalId = process.GoalId
 
@@ -170,7 +170,7 @@ func (system *System) Run() {
 			mentalese.NewTermVariable("Id"),
 		}),
 	}
-	bindings := system.processRunner.RunNow(set)
+	bindings := system.processRunner.RunRelationSet(set)
 
 	// go through all goals
 	for _, binding := range bindings.GetAll() {
@@ -178,9 +178,8 @@ func (system *System) Run() {
 		goalSet := binding.MustGet("Goal").TermValueRelationSet
 
 		// run the process
-		// todo: processes are not yet stored!
 		process := system.processList.GetOrCreateProcess(goalId, goalSet)
-		system.processRunner.RunProcessNow(process)
+		system.processRunner.RunProcess(process)
 
 		// delete goal when done
 		if process.IsDone() {

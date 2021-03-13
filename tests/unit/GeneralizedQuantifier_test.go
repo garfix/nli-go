@@ -91,7 +91,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		}
 		relationizer := parse.NewRelationizer(log)
 		input, _ := relationizer.Relationize(trees[0], []string{ "S"})
-		result := runner.RunNowWithBindings(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
+		result := runner.RunRelationSetWithBindings(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)
 			print(log.String())

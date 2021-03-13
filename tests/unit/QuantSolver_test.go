@@ -128,7 +128,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := runner.RunNowWithBindings(mentalese.RelationSet{ quant }, mentalese.InitBindingSet(binding))
+		result := runner.RunRelationSetWithBindings(mentalese.RelationSet{quant }, mentalese.InitBindingSet(binding))
 
 		resultString := ""
 		for _, result := range result.GetAll() {

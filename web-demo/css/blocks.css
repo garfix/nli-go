@@ -120,6 +120,15 @@ pre {
     border-radius: 4px;
     padding: 15px;
     margin-bottom: 20px;
+    overflow: auto;
+}
+
+.prev-question {
+    color: #FFBF00;
+}
+
+.prev-answer {
+    color: #846302;
 }
 
 #popup, #samples {

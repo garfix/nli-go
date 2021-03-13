@@ -26,11 +26,11 @@ $(function(){
         monitor.style.height = displayHeight + "px";
 
         popupCloseButton.onclick = function() {
-            popup.style.display = "none";
+            hidePopup()
         };
 
         sampleButton.onclick = function (event) {
-            samplePopup.style.display = "block";
+            showPopup()
         };
 
         resetButton.onclick = function () {
@@ -41,6 +41,12 @@ $(function(){
             postQuestion(inputField.value);
             return false;
         };
+
+        document.addEventListener('keydown', function(event){
+            if (event.key === 'Escape') {
+                hidePopup()
+            }
+        });
 
         let samples = document.querySelectorAll('#samples li');
         for (let i = 0; i < samples.length; i++) {
@@ -59,6 +65,14 @@ $(function(){
         }
 
         updateScene(true)
+    }
+
+    function showPopup() {
+        samplePopup.style.display = "block";
+    }
+
+    function hidePopup() {
+        samplePopup.style.display = "none";
     }
 
     function showError(error) {
@@ -180,8 +194,8 @@ $(function(){
     function log(question, answer) {
         let html = "";
 
-        html += "<div><h3>" + question + "</h3></div>";
-        html += "<div>" + answer + "</div>";
+        html += "<div class='prev-question'><h3>" + question + "</h3></div>";
+        html += "<div class='prev-answer'>" + answer + "</div>";
 
         logBox.innerHTML = html + logBox.innerHTML;
     }

@@ -200,7 +200,7 @@ pre {
 #log h3 {
     cursor: pointer;
     margin-top: 10px;
-    margin-bottom: 0;
+    margin-bottom: 3px;
 }
 
     #log h3:hover {

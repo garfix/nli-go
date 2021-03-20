@@ -2,8 +2,6 @@ $(function(){
 
     const inputField = document.getElementById('q');
     const samplePopup = document.getElementById('samples');
-    const productionBoxLeft = document.getElementById('production-box-left');
-    const productionBoxRight = document.getElementById('production-box-right');
     const answerBox = document.getElementById('answer-box');
     const errorBox = document.getElementById('error-box');
     const popup = document.getElementById('popup');
@@ -20,6 +18,7 @@ $(function(){
     const displayHeight = displayWidth / 2;
 
     let scene = createScene();
+    let currentInput = "";
 
     function setup()
     {
@@ -38,7 +37,10 @@ $(function(){
         }
 
         form.onsubmit = function(){
-            tell(inputField.value)
+            currentInput = inputField.value
+            clearProductions()
+            clearInput();
+            tell(currentInput)
             return false;
         };
 
@@ -65,6 +67,18 @@ $(function(){
         }
 
         updateScene(true)
+    }
+
+    function clearProductions()
+    {
+        document.getElementById('Intro').innerHTML = "";
+        document.getElementById('Ready').innerHTML = "";
+        document.getElementById('Tokens').innerHTML = "";
+        document.getElementById('Parse-tree').innerHTML = "";
+        document.getElementById('Relations').innerHTML = "";
+        document.getElementById('Solution').innerHTML = "";
+        document.getElementById('Answer').innerHTML = "";
+        document.getElementById('Anaphora-queue').innerHTML = "";
     }
 
     function showPopup() {
@@ -99,31 +113,19 @@ $(function(){
 
     function showProductions(productions) {
 
-        let html = {
-            'production-box-left': "",
-            'production-box-right': ""
-        };
-
-        let container = 'production-box-left';
-
         for (let key in productions) {
             let production = productions[key];
 
             let matches = production.match(/([^:]+)/);
             let name = matches[1];
             let value = production.substr(name.length + 2);
+            let id = name.replace(' ', '-')
 
-            if (name === "Named entities") { continue }
-
-            html[container] += "<div class='card'><h2>" + name + "</h2>" + "<pre>" + value + "</pre></div>";
-
-            if (name === "Parse tree") {
-                container = 'production-box-right';
+            let container = document.getElementById(id)
+            if (container) {
+                container.innerHTML = "<div class='card'><h2>" + name + "</h2>" + "<pre>" + value + "</pre></div>";
             }
         }
-
-        productionBoxLeft.innerHTML = html['production-box-left'];
-        productionBoxRight.innerHTML = html['production-box-right'];
     }
 
     function reset() {
@@ -150,17 +152,9 @@ $(function(){
             success: function (data) {
 
                 processResponse(data.AnswerStruct)
-
-                // if (data.OptionKeys.length === 0) {
-                //     showAnswer(data.Answer);
-                //     clearInput();
-                //     log(question, data.Answer)
-                //     updateScene(false)
-                // } else {
-                //     showAnswer("");
-                // }
                 showError(data.ErrorLines);
                 showProductions(data.Productions);
+                updateScene(false)
                 //showOptions(data.Answer, data.OptionKeys, data.OptionValues);
             },
             error: function (request, status, error) {
@@ -174,8 +168,8 @@ $(function(){
         for (let i = 0; i < response.length; i++) {
             let relation = response[i];
             switch (relation.predicate) {
-                case 'dom_move_object':
-                    moveObject(objectId, response[1], response[2], response[3])
+                case 'dom_action_move_to':
+                    moveObject(relation)
                     break;
                 case 'go_print':
                     print(relation)
@@ -188,7 +182,13 @@ $(function(){
     }
 
     function print(relation) {
-        showAnswer(relation.arguments[1].value)
+        let answer = relation.arguments[1].value;
+        showAnswer(answer)
+        log(currentInput, answer)
+        assert(relation);
+    }
+
+    function moveObject(relation) {
         assert(relation);
     }
 

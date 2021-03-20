@@ -1,6 +1,6 @@
 <?php
 
-$query = isset($_REQUEST['query']) ? $_REQUEST['query'] : "";
+$request = isset($_REQUEST['request']) ? $_REQUEST['request'] : null;
 $app = isset($_REQUEST['app']) ? $_REQUEST['app'] : "dbpedia";
 
 if (!in_array($app, ['dbpedia', 'blocks'])) {
@@ -13,22 +13,25 @@ $command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/' . $app;
 $varDir = __DIR__ . '/../var';
 
-// query
-
 $start = microtime(true);
-$fullCommand = sprintf('%s answer -s %s -a %s -o %s -r json "%s"', $command, $sessionId, $configPath, $varDir, $query);
+
+$message = escapeshellarg($request);
+$fullCommand = sprintf('%s send -s %s -a %s -o %s %s', $command, $sessionId, $configPath, $varDir, $message);
 exec($fullCommand, $output);
+
 $end = microtime(true);
 $duration = sprintf("%.2f", $end - $start);
 
 $result = json_decode(implode($output), true);
 $response = json_encode($result, JSON_PRETTY_PRINT);
+if ($result === null) {
+    $response = "ERROR executing\n" . $fullCommand . "\n" . implode($output);
+}
 
 logResult($result, $duration, $sessionId);
 
 header('content-type: application/json');
 echo $response;
-
 
 function logResult($result, $duration, $sessionId)
 {

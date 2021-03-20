@@ -27,6 +27,10 @@ phys_move_object(E1, X, Y, Z) :-
     db_object(E1, X, Y, Z)
     go:ignore(phys_create_support_relations(E1))
     go:ignore(phys_create_contain_relations(E1))
+    go:uuid(Uuid)
+    go:wait_for(
+        action_move_to(Uuid, E1, X, Y, Z)
+    )
 ;
 
 phys_create_support_relations(E1) :-

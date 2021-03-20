@@ -1,1 +1,0 @@
-go:goal(Goal, State, Id, ParentId) :- (Goal, State, Id, ParentId);

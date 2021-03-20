@@ -1,3 +1,10 @@
+go:tell(Input) :-
+    go:uuid(Uuid)
+    go:assert(
+        go:goal(
+            go:respond(Input),
+            Uuid));
+
 go:respond(Input) :-
     go:let(Output, '')
     go:ignore(
@@ -24,8 +31,10 @@ go:respond(Input) :-
         go:generate(Locale, Answer, OutTokens)
         go:surface(OutTokens, Output)
     )
-    go:uuid(ActionId)
-    go:assert(go:action('print', ActionId, Output))
+    go:uuid(Uuid)
+    go:wait_for(
+        go:print(Uuid, Output)
+    )
 ;
 
 go:exec_solution(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings) :-

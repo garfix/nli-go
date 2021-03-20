@@ -23,6 +23,14 @@ type Result struct {
 	OptionValues []string
 }
 
+type Result2 struct {
+	Success        bool
+	ErrorLines     []string
+	Productions    []string
+	AnswerRelation string
+	AnswerStruct   mentalese.RelationSet
+}
+
 func main() {
 
 	const optApplication = "a"
@@ -59,6 +67,11 @@ func main() {
 	querySes := queryCmd.String(optSession, "", txtSession)
 	queryOut := queryCmd.String(optOutput, defaultOutputDir, txtOutput)
 
+	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
+	sendApp := sendCmd.String(optApplication, "", txtApplication)
+	sendSes := sendCmd.String(optSession, "", txtSession)
+	sendOut := sendCmd.String(optOutput, defaultOutputDir, txtOutput)
+
 	flag.Parse()
 
 	if len(os.Args) < 2 {
@@ -90,6 +103,13 @@ func main() {
 			}
 			system := buildSystem(log, workingDir, *queryApp, *querySes, *queryOut)
 			performQuery(system, queryCmd.Arg(0))
+		case "send":
+			sendCmd.Parse(os.Args[2:])
+			if *sendApp == "" || sendCmd.Arg(0) == "" {
+				showUsage()
+			}
+			system := buildSystem(log, workingDir, *sendApp, *sendSes, *sendOut)
+			performSend(system, log, sendCmd.Arg(0))
 		case "reset":
 			resetCmd.Parse(os.Args[2:])
 			if *resetApp == "" || *resetSes == "" {
@@ -126,6 +146,9 @@ func showUsage()  {
 	fmt.Println("Low level query:")
 	fmt.Println("    bin/nli query <options -a,-s,-o> \"dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)\"")
 	fmt.Println("")
+	fmt.Println("Send a relation set message, and receive a response:")
+	fmt.Println("    bin/nli send <options -a,-s,-o> \"go:assert(dom:at('block:red', 100, 100, 0))\"")
+	fmt.Println("")
 	fmt.Println("Options:")
 	fmt.Println("  -a </path/to/application>")
 	fmt.Println("  -s <session_id>")
@@ -156,6 +179,39 @@ func performQuery(system *global.System, query string)  {
 	fmt.Printf(response)
 }
 
+func performSend(system *global.System, log *common.SystemLog, relationJson string)  {
+
+	answerRelation := ""
+	answerStruct := mentalese.RelationSet{}
+	relation := mentalese.Relation{}
+
+	err := json.Unmarshal([]byte(relationJson), &relation)
+	if err != nil {
+		log.AddError(err.Error() + " in: " + relationJson)
+	} else {
+
+		// the actual system call
+		response, hasResponse := system.SendMessage(relation)
+
+		if hasResponse {
+			answerRelation = response.String()
+			answerStruct = response
+		}
+	}
+
+	result := Result2{
+		Success:        log.IsOk(),
+		ErrorLines:     log.GetErrors(),
+		Productions:    log.GetProductions(),
+		AnswerRelation: answerRelation,
+		AnswerStruct:   answerStruct,
+	}
+
+	responseRaw, _ := json.MarshalIndent(result, "", "    ")
+	responseString := string(responseRaw) + "\n"
+
+	fmt.Printf(responseString)
+}
 
 func bindingsToJson(set mentalese.BindingSet) string {
 

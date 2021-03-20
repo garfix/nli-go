@@ -5,9 +5,9 @@ import (
 )
 
 type Relation struct {
-	Positive  bool
-	Predicate string
-	Arguments []Term
+	Positive  bool		`json:"positive"`
+	Predicate string	`json:"predicate"`
+	Arguments []Term	`json:"arguments"`
 }
 
 const ActionPrint = "print"
@@ -108,6 +108,7 @@ const PredicateCreateAnswer = "go_create_answer"
 const PredicateCreateCanned = "go_create_canned"
 
 const PredicateUserSelect = "go_user_select"
+const PredicateActionExec = "go_action_exec"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

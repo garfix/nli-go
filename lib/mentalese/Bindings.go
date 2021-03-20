@@ -6,36 +6,36 @@ import (
 )
 
 type BindingSet struct {
-	bindings *[]Binding
-	lookup *map[string]bool
+	Bindings *[]Binding
+	Lookup   *map[string]bool
 }
 
 func NewBindingSet() BindingSet{
-	return BindingSet{ bindings: &[]Binding{}, lookup: &map[string]bool{} }
+	return BindingSet{ Bindings: &[]Binding{}, Lookup: &map[string]bool{} }
 }
 
 func InitBindingSet(binding Binding) BindingSet{
-	return BindingSet{ bindings: &[]Binding{ binding }, lookup: &map[string]bool{} }
+	return BindingSet{ Bindings: &[]Binding{binding }, Lookup: &map[string]bool{} }
 }
 
 func (set BindingSet) Add(binding Binding) {
 	serialized := binding.String()
-	_, found := (*set.lookup)[serialized]
+	_, found := (*set.Lookup)[serialized]
 	if found { return }
-	(*set.lookup)[serialized] = true
-	*set.bindings = append(*set.bindings, binding)
+	(*set.Lookup)[serialized] = true
+	*set.Bindings = append(*set.Bindings, binding)
 }
 
 func (set BindingSet) AddMultiple(bindingSet BindingSet) {
-	for _, binding := range *bindingSet.bindings {
+	for _, binding := range *bindingSet.Bindings {
 		set.Add(binding)
 	}
 }
 
 func (set BindingSet) ToRaw() []map[string]Term {
 	raw := []map[string]Term{}
-	for _, b := range *set.bindings {
-		raw = append(raw, b.k2v)
+	for _, b := range *set.Bindings {
+		raw = append(raw, b.Key2vvalue)
 	}
 	return raw
 }
@@ -52,9 +52,9 @@ func (set BindingSet) FromRaw(raw []map[string]Term) {
 
 func (set BindingSet) Reverse() BindingSet {
 	newSet := NewBindingSet()
-	lastIndex := len(*set.bindings) - 1
-	for i, _ := range *set.bindings {
-		binding := (*set.bindings)[lastIndex - i]
+	lastIndex := len(*set.Bindings) - 1
+	for i, _ := range *set.Bindings {
+		binding := (*set.Bindings)[lastIndex - i]
 		newSet.Add(binding)
 	}
 	return newSet
@@ -63,8 +63,8 @@ func (set BindingSet) Reverse() BindingSet {
 func (set BindingSet) GetTermType(variable string) (string, bool) {
 	aType := ""
 
-	for _, binding := range *set.bindings {
-		term, found := binding.k2v[variable]
+	for _, binding := range *set.Bindings {
+		term, found := binding.Key2vvalue[variable]
 		if !found { continue }
 
 		if aType == "" {
@@ -79,8 +79,8 @@ func (set BindingSet) GetTermType(variable string) (string, bool) {
 
 
 func (set BindingSet) IsIntegerSet(variable string) bool {
-	for _, binding := range *set.bindings {
-		term, found := binding.k2v[variable]
+	for _, binding := range *set.Bindings {
+		term, found := binding.Key2vvalue[variable]
 		if !found { continue }
 
 		if !term.IsInteger() {
@@ -100,7 +100,7 @@ func (set BindingSet) Sort(variable string) (BindingSet, bool) {
 	strings := map[string][]Binding{}
 
 	for _, binding := range set.GetAll() {
-		term := binding.k2v[variable]
+		term := binding.Key2vvalue[variable]
 		if term.IsNumber() {
 			number, _ := strconv.ParseFloat(term.TermValue, 64)
 			_, found := numbers[number]
@@ -156,7 +156,7 @@ func (set BindingSet) Sort(variable string) (BindingSet, bool) {
 
 func (set BindingSet) Copy() BindingSet {
 	newSet := NewBindingSet()
-	for _, binding := range *set.bindings {
+	for _, binding := range *set.Bindings {
 		newSet.Add(binding)
 	}
 	return newSet
@@ -166,7 +166,7 @@ func (set BindingSet) String() string {
 	str := ""
 	sep := ""
 
-	for _, binding := range *set.bindings {
+	for _, binding := range *set.Bindings {
 		str += sep + binding.String()
 		sep = " "
 	}
@@ -175,26 +175,26 @@ func (set BindingSet) String() string {
 }
 
 func (set BindingSet) GetAll() []Binding {
-	return *set.bindings
+	return *set.Bindings
 }
 
 func (set BindingSet) Get(index int) Binding {
-	return (*set.bindings)[index]
+	return (*set.Bindings)[index]
 }
 
 func (set BindingSet) GetLength() int {
-	return len(*set.bindings)
+	return len(*set.Bindings)
 }
 
 func (set BindingSet) IsEmpty() bool {
-	return len(*set.bindings) == 0
+	return len(*set.Bindings) == 0
 }
 
 func (set BindingSet) GetIds(variable string) []Term {
 	idMap := map[string]bool{}
 	ids := []Term{}
 
-	for _, binding := range *set.bindings {
+	for _, binding := range *set.Bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -215,7 +215,7 @@ func (set BindingSet) GetDistinctValueCount(variable string) int {
 	idMap := map[string]bool{}
 	count := 0
 
-	for _, binding := range *set.bindings {
+	for _, binding := range *set.Bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -235,7 +235,7 @@ func (set BindingSet) GetAllVariableValues(variable string) []Term {
 	values := []Term{}
 
 	for _, binding := range set.GetAll() {
-		term, found := binding.k2v[variable]
+		term, found := binding.Key2vvalue[variable]
 		if !found {
 			continue
 		}
@@ -249,7 +249,7 @@ func (set BindingSet) GetDistinctValues(variable string) []Term {
 	idMap := map[string]bool{}
 	values := []Term{}
 
-	for _, binding := range *set.bindings {
+	for _, binding := range *set.Bindings {
 		for key, value := range binding.GetAll() {
 			if key != variable {
 				continue
@@ -268,7 +268,7 @@ func (set BindingSet) GetDistinctValues(variable string) []Term {
 func (s BindingSet) FilterVariablesByName(variableNames []string) BindingSet {
 	newBindings := NewBindingSet()
 
-	for _, binding := range *s.bindings {
+	for _, binding := range *s.Bindings {
 		newBindings.Add(binding.FilterVariablesByName(variableNames))
 	}
 
@@ -278,7 +278,7 @@ func (s BindingSet) FilterVariablesByName(variableNames []string) BindingSet {
 func (s BindingSet) FilterOutVariablesByName(variableNames []string) BindingSet {
 	newBindings := NewBindingSet()
 
-	for _, binding := range *s.bindings {
+	for _, binding := range *s.Bindings {
 		newBindings.Add(binding.FilterOutVariablesByName(variableNames))
 	}
 

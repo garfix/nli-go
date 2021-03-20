@@ -1,11 +1,13 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/tidwall/pinhole"
 	"image/color"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
+	"nli-go/lib/mentalese"
 	"strconv"
 	"testing"
 )
@@ -19,58 +21,58 @@ func TestBlocksWorld(t *testing.T) {
 		answer        string
 	}{
 		{
-				{"Does the table support the big red block?", "Yes"},
+		//		{"Does the table support the big red block?", "Yes"},
 			{"Pick up a big red block", "OK"},
-				{"Does the table support the big red block?", "No"},
-
-			// todo "I don't understand which pyramid you mean"
-			{"Grasp the pyramid", "I don't understand which one you mean"},
-
-				{"Is the blue block in the box?", "No"},
-			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
-			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
-				{"Is the blue block in the box?", "Yes"},
-
-			{"What does the box contain?", "The blue pyramid and the blue block"},
-			{"What is the pyramid supported by?", "The box"},
-			{"How many blocks are not in the box?", "Four of them"},
-			{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube"},
-			{"Is it supported?", "Yes, by the table"},
-			{"Can the table pick up blocks?", "No"},
-			{"Can a pyramid be supported by a block?", "Yes"},
-			// todo: must be: I don't know
-			{"Can a pyramid support a pyramid?", "No"},
-			{"Stack up two pyramids.", "I can't"},
-
-				{"Do I own the blue pyramid?", "No"},
-			{"The blue pyramid is mine", "I understand"},
-				{"Do I own the blue pyramid?", "Yes"},
-
-				{"Do I own a green block?", "No"},
-			{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand"},
-				{"Do I own a green block?", "Yes"},
-				{"Do I own all green blocks?", "No"},
-
-			{"Do I own the box?", "No"},
-
-			{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid"},
-
-				{"Does a green block support a pyramid?", "Yes"},
-			{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
-				{"Is the small red block supported by a green block?", "Yes"},
-				{"Is a green block supported by the big red block?", "Yes"},
-				{"Does a green block support a pyramid?", "Yes"},
-
-			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
-
-			// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
-			{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
-
-			{"Put a small one onto the green cube which supports a pyramid", "OK"},
-
-				{"Does the small red block support the green pyramid?", "No"},
-			{"Put the littlest pyramid on top of it", "OK"},
-				{"Does the small red block support the green pyramid?", "Yes"},
+		//		{"Does the table support the big red block?", "No"},
+		//
+		//	// todo "I don't understand which pyramid you mean"
+		//	{"Grasp the pyramid", "I don't understand which one you mean"},
+		//
+		//		{"Is the blue block in the box?", "No"},
+		//	// todo "By "it", I assume you mean the block which is taller than the one I am holding"
+		//	{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
+		//		{"Is the blue block in the box?", "Yes"},
+		//
+		//	{"What does the box contain?", "The blue pyramid and the blue block"},
+		//	{"What is the pyramid supported by?", "The box"},
+		//	{"How many blocks are not in the box?", "Four of them"},
+		//	{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube"},
+		//	{"Is it supported?", "Yes, by the table"},
+		//	{"Can the table pick up blocks?", "No"},
+		//	{"Can a pyramid be supported by a block?", "Yes"},
+		//	// todo: must be: I don't know
+		//	{"Can a pyramid support a pyramid?", "No"},
+		//	{"Stack up two pyramids.", "I can't"},
+		//
+		//		{"Do I own the blue pyramid?", "No"},
+		//	{"The blue pyramid is mine", "I understand"},
+		//		{"Do I own the blue pyramid?", "Yes"},
+		//
+		//		{"Do I own a green block?", "No"},
+		//	{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand"},
+		//		{"Do I own a green block?", "Yes"},
+		//		{"Do I own all green blocks?", "No"},
+		//
+		//	{"Do I own the box?", "No"},
+		//
+		//	{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid"},
+		//
+		//		{"Does a green block support a pyramid?", "Yes"},
+		//	{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
+		//		{"Is the small red block supported by a green block?", "Yes"},
+		//		{"Is a green block supported by the big red block?", "Yes"},
+		//		{"Does a green block support a pyramid?", "Yes"},
+		//
+		//	{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
+		//
+		//	// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
+		//	{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
+		//
+		//	{"Put a small one onto the green cube which supports a pyramid", "OK"},
+		//
+		//		{"Does the small red block support the green pyramid?", "No"},
+		//	{"Put the littlest pyramid on top of it", "OK"},
+		//		{"Does the small red block support the green pyramid?", "Yes"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -79,6 +81,7 @@ func TestBlocksWorld(t *testing.T) {
 	}
 
 	log := common.NewSystemLog()
+
 	//log.SetDebug(true)
 	//log.SetPrint(true)
 	system := global.NewSystem(common.Dir() + "/../../resources/blocks", "blocks-demo", common.Dir() + "/../../var", log)
@@ -88,7 +91,25 @@ func TestBlocksWorld(t *testing.T) {
 		return
 	}
 
-	system.ResetSession()
+	//system.ResetSession()
+
+	relation := mentalese.Relation{}
+	relationJson := "{\"positive\":true,\"predicate\":\"go_assert\",\"arguments\":[{\"type\":\"relation-set\",\"set\":[{\"positive\":true,\"predicate\":\"go_print\",\"arguments\":[{\"type\":\"string\",\"value\":\"CFB38D2C341BA825\"},{\"type\":\"string\",\"value\":\"OK\"}]}]}]}"
+	err := json.Unmarshal([]byte(relationJson), &relation)
+	if err != nil {
+		log.AddError(err.Error() + " in: " + relationJson)
+	} else {
+
+		// the actual system call
+		response, hasResponse := system.SendMessage(relation)
+
+		response = response
+		hasResponse = hasResponse
+	}
+
+	//system.Answer("Pick up a big red block")
+	//
+	//system = global.NewSystem(common.Dir() + "/../../resources/blocks", "blocks-demo", common.Dir() + "/../../var", log)
 
 	for _, session := range tests {
 

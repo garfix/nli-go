@@ -1,0 +1,1 @@
+dom:action_move_to(Id, E, X, Y, Z) :- dom:action_move_to(Id, E, X, Y, Z);

@@ -226,6 +226,14 @@ func (p *Process) GetLastFrame() *StackFrame {
 	}
 }
 
+func (p *Process) GetBeforeLastFrame() *StackFrame {
+	if len(p.Stack) < 2 {
+		return nil
+	} else {
+		return p.Stack[len(p.Stack) - 2]
+	}
+}
+
 func (p *Process) PopFrame() {
 	p.Stack = p.Stack[0 : len(p.Stack) - 1]
 }

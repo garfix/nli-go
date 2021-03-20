@@ -3,25 +3,25 @@ package goal
 import "nli-go/lib/mentalese"
 
 type ProcessList struct {
-	list []*Process
+	List []*Process
 }
 
 func NewProcessList() *ProcessList {
 	return &ProcessList{
-		list: []*Process{},
+		List: []*Process{},
 	}
 }
 
 func (p *ProcessList) Initialize() {
-	p.list = []*Process{}
+	p.List = []*Process{}
 }
 
 func (p *ProcessList) GetProcesses() []*Process {
-	return p.list
+	return p.List
 }
 
 func (p *ProcessList) GetProcess(goalId string) *Process {
-	for _, process := range p.list {
+	for _, process := range p.List {
 		if process.GoalId == goalId {
 			return process
 		}
@@ -31,14 +31,14 @@ func (p *ProcessList) GetProcess(goalId string) *Process {
 }
 
 func (p *ProcessList) GetOrCreateProcess(goalId string, goalSet mentalese.RelationSet) *Process {
-	for _, process := range p.list {
+	for _, process := range p.List {
 		if process.GoalId == goalId {
 			return process
 		}
 	}
 
 	process := NewProcess(goalId, goalSet, mentalese.InitBindingSet(mentalese.NewBinding()))
-	p.list = append(p.list, process)
+	p.List = append(p.List, process)
 
 	return process
 }

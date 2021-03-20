@@ -38,7 +38,7 @@ $(function(){
         }
 
         form.onsubmit = function(){
-            postQuestion(inputField.value);
+            tell(inputField.value)
             return false;
         };
 
@@ -141,29 +141,80 @@ $(function(){
         });
     }
 
-    function postQuestion(question) {
+    function sendRequest(request) {
         $.ajax({
             url: 'ajax-answer.php',
-            data: { format: "json", query: question, app: "blocks" },
+            data: { format: "json", request: JSON.stringify(request), app: "blocks" },
             dataType: 'json',
             type: 'GET',
             success: function (data) {
 
-                if (data.OptionKeys.length === 0) {
-                    showAnswer(data.Answer);
-                    clearInput();
-                    log(question, data.Answer)
-                    updateScene(false)
-                } else {
-                    showAnswer("");
-                }
+                processResponse(data.AnswerStruct)
+
+                // if (data.OptionKeys.length === 0) {
+                //     showAnswer(data.Answer);
+                //     clearInput();
+                //     log(question, data.Answer)
+                //     updateScene(false)
+                // } else {
+                //     showAnswer("");
+                // }
                 showError(data.ErrorLines);
                 showProductions(data.Productions);
-                showOptions(data.Answer, data.OptionKeys, data.OptionValues);
+                //showOptions(data.Answer, data.OptionKeys, data.OptionValues);
             },
             error: function (request, status, error) {
                 showError(error)
             }
+        });
+    }
+
+    function processResponse(response)
+    {
+        for (let i = 0; i < response.length; i++) {
+            let relation = response[i];
+            switch (relation.predicate) {
+                case 'dom_move_object':
+                    moveObject(objectId, response[1], response[2], response[3])
+                    break;
+                case 'go_print':
+                    print(relation)
+                    break;
+                case 'go_user_select':
+                    initUserSelect(response[1])
+                    break;
+            }
+        }
+    }
+
+    function print(relation) {
+        showAnswer(relation.arguments[1].value)
+        assert(relation);
+    }
+
+    function tell(input) {
+        sendRequest({
+            positive: true,
+            predicate: 'go_tell',
+            arguments: [
+                {
+                    type: 'string',
+                    value: input
+                }
+            ]
+        });
+    }
+
+    function assert(assertion) {
+        sendRequest({
+            positive: true,
+            predicate: 'go_assert',
+            arguments: [
+                {
+                    "type": "relation-set",
+                    "set": [assertion]
+                }
+            ]
         });
     }
 
@@ -186,7 +237,7 @@ $(function(){
         for (let i = 0; i < aTags.length; i++) {
             aTags[i].onclick = function (event) {
                 event.preventDefault();
-                postQuestion(event.currentTarget.getAttribute('href'));
+                sendRequest(event.currentTarget.getAttribute('href'));
             };
         }
     }

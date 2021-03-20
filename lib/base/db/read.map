@@ -2,3 +2,4 @@ go:goal(G, Id) :- goal(G, Id);
 go:action(Type, Id, Content) :- action(Type, Id, Content);
 go:output(Content) :- output(Content);
 go:user_select(Options, Selection) :- go:user_select(Options, Selection);
+go:print(Id, Text) :- go:print(Id, Text);

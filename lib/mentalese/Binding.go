@@ -6,15 +6,15 @@ import (
 )
 
 type Binding struct {
-	k2v map[string]Term
+	Key2vvalue map[string]Term
 }
 
 func NewBinding() Binding {
-	return Binding{ k2v: map[string]Term{} }
+	return Binding{ Key2vvalue: map[string]Term{} }
 }
 
 func (b Binding) ToRaw() map[string]Term {
-	return b.k2v
+	return b.Key2vvalue
 }
 
 func (p Binding) FromRaw(raw map[string]Term) {
@@ -24,16 +24,16 @@ func (p Binding) FromRaw(raw map[string]Term) {
 }
 
 func (b Binding) ContainsVariable(variable string) bool {
-	_, found := b.k2v[variable]
+	_, found := b.Key2vvalue[variable]
 	return found
 }
 
 func (b Binding) Set(variable string, value Term) {
-	b.k2v[variable] = value
+	b.Key2vvalue[variable] = value
 }
 
 func (b Binding) Get(variable string) (Term, bool) {
-	value, found := b.k2v[variable]
+	value, found := b.Key2vvalue[variable]
 	return value, found
 }
 
@@ -48,7 +48,7 @@ func (b Binding) MustGet(variable string) Term {
 
 func (b Binding) GetAll() map[string]Term {
 	all := map[string]Term{}
-	for key, value := range b.k2v {
+	for key, value := range b.Key2vvalue {
 		all[key] = value
 	}
 	return all
@@ -59,12 +59,12 @@ func (b Binding) Merge(b2 Binding) Binding {
 
 	result := NewBinding()
 
-	for k, v := range b.k2v {
-		result.k2v[k] = v
+	for k, v := range b.Key2vvalue {
+		result.Key2vvalue[k] = v
 	}
 
-	for k, v := range b2.k2v {
-		result.k2v[k] = v
+	for k, v := range b2.Key2vvalue {
+		result.Key2vvalue[k] = v
 	}
 
 	return result
@@ -75,14 +75,14 @@ func (b Binding) Intersection(b2 Binding) Binding {
 
 	result := NewBinding()
 
-	for k, v := range b.k2v {
-		result.k2v[k] = v
+	for k, v := range b.Key2vvalue {
+		result.Key2vvalue[k] = v
 	}
 
-	for k, v := range b2.k2v {
-		_, found := result.k2v[k]
+	for k, v := range b2.Key2vvalue {
+		_, found := result.Key2vvalue[k]
 		if found {
-			result.k2v[k] = v
+			result.Key2vvalue[k] = v
 		}
 	}
 
@@ -94,9 +94,9 @@ func (b Binding) Select(keys []string) Binding {
 	newBinding := NewBinding()
 
 	for _, key := range keys {
-		value, found := b.k2v[key]
+		value, found := b.Key2vvalue[key]
 		if found {
-			newBinding.k2v[key] = value
+			newBinding.Key2vvalue[key] = value
 		}
 	}
 
@@ -108,8 +108,8 @@ func (b Binding) Copy() Binding {
 
 	result := NewBinding()
 
-	for k, v := range b.k2v {
-		result.k2v[k] = v
+	for k, v := range b.Key2vvalue {
+		result.Key2vvalue[k] = v
 	}
 
 	return result
@@ -129,14 +129,14 @@ func (b Binding) Bind(c Binding) Binding {
 
 	result := NewBinding().Merge(b)
 
-	for bKey, bVal := range b.k2v {
+	for bKey, bVal := range b.Key2vvalue {
 
-		result.k2v[bKey] = bVal
+		result.Key2vvalue[bKey] = bVal
 
 		if bVal.IsVariable() {
-			value, found := c.k2v[bVal.TermValue]
+			value, found := c.Key2vvalue[bVal.TermValue]
 			if found {
-				result.k2v[bKey] = value
+				result.Key2vvalue[bKey] = value
 			}
 		}
 	}
@@ -149,9 +149,9 @@ func (b Binding) RemoveVariables() Binding {
 
 	result := NewBinding()
 
-	for key, value := range b.k2v {
+	for key, value := range b.Key2vvalue {
 		if !value.IsVariable() {
-			result.k2v[key] = value
+			result.Key2vvalue[key] = value
 		}
 	}
 
@@ -167,9 +167,9 @@ func (b Binding) Swap() Binding {
 
 	result := NewBinding()
 
-	for key, value := range b.k2v {
+	for key, value := range b.Key2vvalue {
 		if value.IsVariable() {
-			result.k2v[value.TermValue] = Term{TermType: TermTypeVariable, TermValue: key}
+			result.Key2vvalue[value.TermValue] = Term{TermType: TermTypeVariable, TermValue: key}
 		}
 	}
 
@@ -180,9 +180,9 @@ func (b Binding) FilterVariablesByName(variableNames []string) Binding {
 	result := NewBinding()
 
 	for _, variableName := range variableNames {
-		_, found := b.k2v[variableName]
+		_, found := b.Key2vvalue[variableName]
 		if found {
-			result.k2v[variableName] = b.k2v[variableName]
+			result.Key2vvalue[variableName] = b.Key2vvalue[variableName]
 		}
 	}
 
@@ -192,9 +192,9 @@ func (b Binding) FilterVariablesByName(variableNames []string) Binding {
 func (b Binding) FilterOutVariablesByName(variableNames []string) Binding {
 	result := NewBinding()
 
-	for key, value := range b.k2v {
+	for key, value := range b.Key2vvalue {
 		if !common.StringArrayContains(variableNames, key) {
-			result.k2v[key] = value
+			result.Key2vvalue[key] = value
 		}
 	}
 
@@ -205,9 +205,9 @@ func (b Binding) FilterOutVariablesByName(variableNames []string) Binding {
 func (b Binding) Extract(key string) Binding {
 	newBinding := NewBinding()
 
-	val, found := b.k2v[key]
+	val, found := b.Key2vvalue[key]
 	if found {
-		newBinding.k2v[key] = val
+		newBinding.Key2vvalue[key] = val
 	}
 
 	return newBinding
@@ -219,14 +219,14 @@ func (b Binding) String() string {
 	s, sep := "", ""
 	keys := []string{}
 
-	for k := range b.k2v {
+	for k := range b.Key2vvalue {
 		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		s += sep + k + ":" + b.k2v[k].String()
+		s += sep + k + ":" + b.Key2vvalue[k].String()
 		sep = ", "
 	}
 
@@ -235,12 +235,12 @@ func (b Binding) String() string {
 
 func (b Binding) Equals(c Binding) bool {
 
-	if len(b.k2v) != len(c.k2v) {
+	if len(b.Key2vvalue) != len(c.Key2vvalue) {
 		return false
 	}
 
-	for key, bValue := range b.k2v {
-		cValue, found := c.k2v[key]
+	for key, bValue := range b.Key2vvalue {
+		cValue, found := c.Key2vvalue[key]
 		if !found {
 			return false
 		}

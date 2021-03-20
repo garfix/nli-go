@@ -8,9 +8,12 @@
 
 /* after making sure you can, pick up an object and hold it in the hand */
 do_pick_up_smart(P1, E1) :-
-    do_clear_hand(_)
-    do_cleartop(E1)
-    do_pick_up(E1);
+    go:uuid(Uuid)
+    go:assert(go:goal(
+        do_clear_hand(_)
+        do_cleartop(E1)
+        do_pick_up(E1),
+        Uuid));
 
 do_put_in_smart(P1, E1, E2) :-
     do_clear_hand(_)

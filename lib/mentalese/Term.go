@@ -8,12 +8,12 @@ import (
 )
 
 type Term struct {
-	TermType             string
-	TermValue            string
-	TermSort             string
-	TermValueRelationSet RelationSet
-	TermValueRule        *Rule
-	TermValueList        TermList
+	TermType             string         `json:"type"`
+	TermValue            string			`json:"value,omitempty"`
+	TermSort             string			`json:"sort,omitempty"`
+	TermValueRelationSet RelationSet	`json:"set,omitempty"`
+	TermValueRule        *Rule			`json:"rule,omitempty"`
+	TermValueList        TermList		`json:"list,omitempty"`
 }
 
 const TermTypeVariable = "variable"

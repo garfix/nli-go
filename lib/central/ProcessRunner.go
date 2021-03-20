@@ -23,7 +23,8 @@ func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *Proces
 }
 
 func (p *ProcessRunner) RunRelationSet(relationSet mentalese.RelationSet) mentalese.BindingSet {
-	return p.RunRelationSetWithBindings(relationSet, mentalese.InitBindingSet(mentalese.NewBinding()))
+	bindings := mentalese.InitBindingSet(mentalese.NewBinding())
+	return p.RunRelationSetWithBindings(relationSet, bindings)
 }
 
 func (p *ProcessRunner) RunRelationSetWithBindings(relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {

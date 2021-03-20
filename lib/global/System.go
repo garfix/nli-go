@@ -38,6 +38,43 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	return result
 }
 
+func (system *System) SendMessage(relation mentalese.Relation) (mentalese.RelationSet, bool) {
+
+	system.processRunner.RunRelationSet(mentalese.RelationSet{ relation })
+
+	system.Run()
+
+	response := mentalese.RelationSet{}
+	hasResponse := false
+	relationSets := system.getWaitingRelations()
+	if len(relationSets) > 0 {
+		response = relationSets[0]
+		hasResponse = true
+	}
+
+	system.dialogContext.Store()
+
+	return response, hasResponse
+}
+
+func (system *System) getWaitingRelations() []mentalese.RelationSet {
+	relationSets := []mentalese.RelationSet{}
+
+	for _, process := range system.processList.GetProcesses() {
+		beforeLastFrame := process.GetBeforeLastFrame()
+		if beforeLastFrame != nil {
+			if beforeLastFrame.Relations[beforeLastFrame.RelationIndex].Predicate == mentalese.PredicateWaitFor {
+				lastFrame := process.GetLastFrame()
+				binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
+				boundRelations := lastFrame.Relations.BindSingle(binding)
+				relationSets = append(relationSets, boundRelations)
+			}
+		}
+	}
+
+	return relationSets
+}
+
 func (system *System) CreateAnswerGoal(input string) string {
 
 	uuid := common.CreateUuid()

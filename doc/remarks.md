@@ -1,3 +1,40 @@
+## 2021-03-15
+
+I must now create a more general communication protocol between the system (as a server) and the client (for example website).
+
+Currently we have: asking something, getting a response text, getting response options, passing the option selection back to the server. Now we must add actions: the system tells the client what to do; the client notifies the system when its done.
+
+Whereas before we could do most of the interaction in plain text; this is now becoming awkward. Its better to make the intention explicit.
+
+    User: tell('How old is Lord Byron')
+    System: select(uuid, 'Which one?', ['a', 'b', 'c'])
+    User: pick(uuid, 'b')
+    User: tell('Pick up a block')
+    System: move_block(uuid, `block:red`, 100, 100, 0)
+    User: done(uuid)
+
+This would work, but it also requires to conversion from commands to actions on the side of the system. Can we do without? Can we make create relations that are directly executable?
+
+    User: assert(goal(answer('How old is Lord Byron'))
+    System: user_select(uuid, 'Which one?', ['a', 'b', 'c'], Selection)
+    User: assert(user_select(uuid, 'Which one?', ['a', 'b', 'c'], 'b'))
+    User: assert(goal(answer('Pick up a block'))
+    System: user_move_block(uuid, `block:red`, 100, 100, 0)
+    User: assert(user_move_block(uuid, `block:red`, 100, 100, 0))
+
+(The relations the system sends are wrapped in `wait_for` relations).
+
+This way, the system treats the user as just another knowledge source.
+
+To create just two relation levels:
+
+    User: go:tell('How old is Lord Byron')
+    System: go:user_select(uuid, 'Which one?', ['a', 'b', 'c'], Selection)
+    User: go:assert(go:user_select(uuid, 'Which one?', ['a', 'b', 'c'], 'b'))
+    User: go:tell('Pick up a block')
+    System: dom:move_object(uuid, `block:red`, 100, 100, 0)
+    User: go:assert(dom:move_object(uuid, `block:red`, 100, 100, 0))
+
 ## 2021-03-06
 
 The async rewrite is complete!

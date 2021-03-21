@@ -19,6 +19,7 @@ $(function(){
 
     let scene = createScene();
     let currentInput = "";
+    let animationTime = 1000;
 
     function setup()
     {
@@ -154,7 +155,6 @@ $(function(){
                 processResponse(data.AnswerStruct)
                 showError(data.ErrorLines);
                 showProductions(data.Productions);
-                updateScene(false)
                 //showOptions(data.Answer, data.OptionKeys, data.OptionValues);
             },
             error: function (request, status, error) {
@@ -167,6 +167,8 @@ $(function(){
     {
         let asserts = [];
         let assert;
+        let wait = 0;
+        let animations = [];
 
         for (let i = 0; i < response.length; i++) {
             let relation = response[i];
@@ -174,6 +176,14 @@ $(function(){
                 case 'dom_action_move_to':
                     assert = moveObject(relation)
                     asserts.push(assert)
+                    let animation = scene.createObjectAnimation({
+                        E: "`" + relation.arguments[1].sort + ":" + relation.arguments[1].value + "`",
+                        X: relation.arguments[2].value,
+                        Y: relation.arguments[4].value,
+                        Z: relation.arguments[3].value
+                    }, animationTime)
+                    animations.push(animation)
+                    wait = animationTime
                     break;
                 case 'go_print':
                     assert = print(relation)
@@ -186,8 +196,13 @@ $(function(){
             }
         }
 
+        if (animations.length > 0) {
+            scene.runAnimations(animations, animationTime)
+        }
         if (asserts.length > 0) {
-            sendRequest(asserts)
+            window.setTimeout(function (){
+                sendRequest(asserts)
+            }, wait);
         }
     }
 

@@ -40,6 +40,48 @@ let createScene = function() {
             renderer.render(scene, camera);
         },
 
+        createObjectAnimation: function(datum, animationTime) {
+            let object = objects[datum.E]
+            let startX = object.position.x * scale;
+            let startY = object.position.y * scale;
+            let startZ = -object.position.z * scale;
+            return function(time) {
+                let fract = time / animationTime;
+                return {
+                    E: datum.E,
+                    X: startX + fract * (datum.X - startX),
+                    Y: startY + fract * (datum.Y - startY),
+                    Z: startZ + fract * (datum.Z - startZ)
+                }
+            }
+        },
+
+        runAnimations: function(animations, animationTime) {
+            let self = this;
+            let prevTime = 0;
+            let elapsed = 0;
+            let frameHandler = function(time) {
+                if (prevTime === 0) prevTime = time;
+                let timeDiff = time - prevTime;
+
+                prevTime = time;
+                elapsed += timeDiff;
+
+                let data = [];
+                for (let a = 0; a < animations.length; a++) {
+                    data.push(animations[a](elapsed))
+                }
+
+                self.update(data)
+
+                if (elapsed < animationTime) {
+                    window.requestAnimationFrame(frameHandler);
+                }
+            }
+
+            window.requestAnimationFrame(frameHandler);
+        },
+
         update: function(data) {
             for (let i = 0; i < data.length; i++) {
                 let datum = data[i];

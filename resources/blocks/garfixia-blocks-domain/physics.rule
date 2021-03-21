@@ -19,17 +19,12 @@ phys_move_hand(X, Y, Z) :-
 phys_move_hand(X, Y, Z) :-
     grasping(`:shrdlu`, E1)
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
-
     go:uuid(Uuid)
     go:wait_for(
+        action_move_to(Uuid, `hand:hand`, X, Y, Z)
         action_move_to(Uuid, E1, X1, Y1, Z1)
     )
     phys_move_object(E1, X1, Y1, Z1)
-
-    go:uuid(Uuid2)
-    go:wait_for(
-        action_move_to(Uuid2, `hand:hand`, X, Y, Z)
-    )
     db_hand(X, Y, Z)
 ;
 

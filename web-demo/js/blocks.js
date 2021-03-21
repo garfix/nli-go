@@ -165,19 +165,29 @@ $(function(){
 
     function processResponse(response)
     {
+        let asserts = [];
+        let assert;
+
         for (let i = 0; i < response.length; i++) {
             let relation = response[i];
             switch (relation.predicate) {
                 case 'dom_action_move_to':
-                    moveObject(relation)
+                    assert = moveObject(relation)
+                    asserts.push(assert)
                     break;
                 case 'go_print':
-                    print(relation)
+                    assert = print(relation)
+                    asserts.push(assert)
                     break;
                 case 'go_user_select':
-                    initUserSelect(response[1])
+                    assert = initUserSelect(response[1])
+                    asserts.push(assert)
                     break;
             }
+        }
+
+        if (asserts.length > 0) {
+            sendRequest(asserts)
         }
     }
 
@@ -185,15 +195,15 @@ $(function(){
         let answer = relation.arguments[1].value;
         showAnswer(answer)
         log(currentInput, answer)
-        assert(relation);
+        return getAssert(relation);
     }
 
     function moveObject(relation) {
-        assert(relation);
+        return getAssert(relation);
     }
 
     function tell(input) {
-        sendRequest({
+        sendRequest([{
             positive: true,
             predicate: 'go_tell',
             arguments: [
@@ -202,11 +212,11 @@ $(function(){
                     value: input
                 }
             ]
-        });
+        }]);
     }
 
-    function assert(assertion) {
-        sendRequest({
+    function getAssert(assertion) {
+        return {
             positive: true,
             predicate: 'go_assert',
             arguments: [
@@ -215,7 +225,7 @@ $(function(){
                     "set": [assertion]
                 }
             ]
-        });
+        }
     }
 
     function showOptions(answer, optionKeys, optionValues) {
@@ -237,7 +247,7 @@ $(function(){
         for (let i = 0; i < aTags.length; i++) {
             aTags[i].onclick = function (event) {
                 event.preventDefault();
-                sendRequest(event.currentTarget.getAttribute('href'));
+                //sendRequest(event.currentTarget.getAttribute('href'));
             };
         }
     }

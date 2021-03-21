@@ -38,9 +38,9 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	return result
 }
 
-func (system *System) SendMessage(relation mentalese.Relation) (mentalese.RelationSet, bool) {
+func (system *System) SendMessage(relations mentalese.RelationSet) (mentalese.RelationSet, bool) {
 
-	system.processRunner.RunRelationSet(mentalese.RelationSet{ relation })
+	system.processRunner.RunRelationSet(relations)
 
 	system.Run()
 

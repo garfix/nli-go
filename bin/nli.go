@@ -27,7 +27,7 @@ type Result2 struct {
 	Success        bool
 	ErrorLines     []string
 	Productions    []string
-	AnswerRelation string
+	AnswerRelations string
 	AnswerStruct   mentalese.RelationSet
 }
 
@@ -181,20 +181,20 @@ func performQuery(system *global.System, query string)  {
 
 func performSend(system *global.System, log *common.SystemLog, relationJson string)  {
 
-	answerRelation := ""
+	answerRelationSet := ""
 	answerStruct := mentalese.RelationSet{}
-	relation := mentalese.Relation{}
+	relations := mentalese.RelationSet{}
 
-	err := json.Unmarshal([]byte(relationJson), &relation)
+	err := json.Unmarshal([]byte(relationJson), &relations)
 	if err != nil {
 		log.AddError(err.Error() + " in: " + relationJson)
 	} else {
 
 		// the actual system call
-		response, hasResponse := system.SendMessage(relation)
+		response, hasResponse := system.SendMessage(relations)
 
 		if hasResponse {
-			answerRelation = response.String()
+			answerRelationSet = response.String()
 			answerStruct = response
 		}
 	}
@@ -203,7 +203,7 @@ func performSend(system *global.System, log *common.SystemLog, relationJson stri
 		Success:        log.IsOk(),
 		ErrorLines:     log.GetErrors(),
 		Productions:    log.GetProductions(),
-		AnswerRelation: answerRelation,
+		AnswerRelations: answerRelationSet,
 		AnswerStruct:   answerStruct,
 	}
 

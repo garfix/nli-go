@@ -63,7 +63,7 @@ func (storage FileStorage) Write(object StorableObject) {
 		return
 	}
 
-	jsonBytes, err := json.Marshal(object)
+	jsonBytes, err := json.MarshalIndent(object, "", "    ")
 	if err != nil {
 		storage.log.AddError("Error serializing object (" + err.Error() + ")")
 		return

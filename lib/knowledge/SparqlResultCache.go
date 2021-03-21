@@ -42,7 +42,7 @@ func (factBase *SparqlFactBase) populateCache(query string, queryCachePath strin
 	sparqlResponse := factBase.callSparql(query)
 
 	// put them in the cache
-	jsonBytes, _ := json.Marshal(sparqlResponse)
+	jsonBytes, _ := json.MarshalIndent(sparqlResponse, "", "    ")
 	err := common.WriteFile(queryCachePath, string(jsonBytes))
 	if err != nil {
 		factBase.log.AddError("Error creating cache file: " + err.Error())

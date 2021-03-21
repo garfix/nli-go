@@ -1,13 +1,11 @@
 package tests
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/tidwall/pinhole"
 	"image/color"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
-	"nli-go/lib/mentalese"
 	"strconv"
 	"testing"
 )
@@ -93,19 +91,19 @@ func TestBlocksWorld(t *testing.T) {
 
 	//system.ResetSession()
 
-	relation := mentalese.Relation{}
-	relationJson := "{\"positive\":true,\"predicate\":\"go_assert\",\"arguments\":[{\"type\":\"relation-set\",\"set\":[{\"positive\":true,\"predicate\":\"go_print\",\"arguments\":[{\"type\":\"string\",\"value\":\"CFB38D2C341BA825\"},{\"type\":\"string\",\"value\":\"OK\"}]}]}]}"
-	err := json.Unmarshal([]byte(relationJson), &relation)
-	if err != nil {
-		log.AddError(err.Error() + " in: " + relationJson)
-	} else {
-
-		// the actual system call
-		response, hasResponse := system.SendMessage(relation)
-
-		response = response
-		hasResponse = hasResponse
-	}
+	//relation := mentalese.Relation{}
+	//relationJson := "{\"positive\":true,\"predicate\":\"go_assert\",\"arguments\":[{\"type\":\"relation-set\",\"set\":[{\"positive\":true,\"predicate\":\"go_print\",\"arguments\":[{\"type\":\"string\",\"value\":\"CFB38D2C341BA825\"},{\"type\":\"string\",\"value\":\"OK\"}]}]}]}"
+	//err := json.Unmarshal([]byte(relationJson), &relation)
+	//if err != nil {
+	//	log.AddError(err.Error() + " in: " + relationJson)
+	//} else {
+	//
+	//	// the actual system call
+	//	response, hasResponse := system.SendMessage(relation)
+	//
+	//	response = response
+	//	hasResponse = hasResponse
+	//}
 
 	//system.Answer("Pick up a big red block")
 	//

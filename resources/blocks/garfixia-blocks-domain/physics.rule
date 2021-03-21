@@ -7,18 +7,38 @@ Enforces "physics" rules: it updates the object-object relations and object prop
 */
 
 /* move the hand */
-phys_move_hand(X, Y, Z) :- db_hand(X, Y, Z);
-phys_move_hand(X, Y, Z) :- phys_drag_grasped_object(X, Y, Z);
+phys_move_hand(X, Y, Z) :-
+    go:not(grasping(`:shrdlu`, _))
+    go:uuid(Uuid)
+    go:wait_for(
+        action_move_to(Uuid, `hand:hand`, X, Y, Z)
+    )
+    db_hand(X, Y, Z)
+;
 
-phys_drag_grasped_object(X, Y, Z) :-
+phys_move_hand(X, Y, Z) :-
     grasping(`:shrdlu`, E1)
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
-    phys_move_object(E1, X1, Y1, Z1);
+
+    go:uuid(Uuid)
+    go:wait_for(
+        action_move_to(Uuid, E1, X1, Y1, Z1)
+    )
+    phys_move_object(E1, X1, Y1, Z1)
+
+    go:uuid(Uuid2)
+    go:wait_for(
+        action_move_to(Uuid2, `hand:hand`, X, Y, Z)
+    )
+    db_hand(X, Y, Z)
+;
 
 phys_grasp(E1) :- db_grasp(E1);
 phys_release(E1) :- db_release(E1);
 
-phys_raise_hand(_) :- at(`:hand`, X, Y, Z) phys_move_hand(X, Y, 600);
+phys_raise_hand(_) :-
+    at(`hand:hand`, X, Y, Z)
+    phys_move_hand(X, Y, 600);
 
 phys_move_object(E1, X, Y, Z) :-
     go:call(db_unsupport(_, E1))
@@ -27,10 +47,6 @@ phys_move_object(E1, X, Y, Z) :-
     db_object(E1, X, Y, Z)
     go:ignore(phys_create_support_relations(E1))
     go:ignore(phys_create_contain_relations(E1))
-    go:uuid(Uuid)
-    go:wait_for(
-        action_move_to(Uuid, E1, X, Y, Z)
-    )
 ;
 
 phys_create_support_relations(E1) :-

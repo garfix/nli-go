@@ -6,9 +6,15 @@ Enforces "physics" rules: it updates the object-object relations and object prop
 
 */
 
-/* move the hand */
 phys_move_hand(X, Y, Z) :-
     go:not(grasping(`:shrdlu`, _))
+    at(`hand:hand`, X1, Y1, Z1)
+    phys_move_hand_partial(X1, Y1, 600)
+    phys_move_hand_partial(X, Y, 600)
+    phys_move_hand_partial(X, Y, Z)
+;
+
+phys_move_hand_partial(X, Y, Z) :-
     go:uuid(Uuid)
     go:wait_for(
         action_move_to(Uuid, `hand:hand`, X, Y, Z)
@@ -18,6 +24,13 @@ phys_move_hand(X, Y, Z) :-
 
 phys_move_hand(X, Y, Z) :-
     grasping(`:shrdlu`, E1)
+    at(`hand:hand`, X1, Y1, Z1)
+    phys_move_hand_with_object(E1, X1, Y1, 600)
+    phys_move_hand_with_object(E1, X, Y, 600)
+    phys_move_hand_with_object(E1, X, Y, Z)
+;
+
+phys_move_hand_with_object(E1, X, Y, Z) :-
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
     go:uuid(Uuid)
     go:wait_for(

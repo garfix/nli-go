@@ -40,13 +40,22 @@ let createScene = function() {
             renderer.render(scene, camera);
         },
 
-        createObjectAnimation: function(datum, animationTime) {
+        createObjectAnimation: function(datum) {
             let object = objects[datum.E]
             let startX = object.position.x * scale;
             let startY = object.position.y * scale;
             let startZ = -object.position.z * scale;
-            return function(time) {
-                let fract = time / animationTime;
+
+            let duration = ((Math.sqrt(
+                (datum.X - startX) * (datum.X - startX) +
+                (datum.Y - startY) * (datum.Y - startY) +
+                (datum.Z - startZ) * (datum.Z - startZ)
+            )) / 600) * 1000;
+            if (duration === 0) { duration = 0.001; }
+
+            let animation = function(time) {
+                if (time > duration) { time = duration; }
+                let fract = time / duration;
                 return {
                     E: datum.E,
                     X: startX + fract * (datum.X - startX),
@@ -54,9 +63,14 @@ let createScene = function() {
                     Z: startZ + fract * (datum.Z - startZ)
                 }
             }
+
+            return {
+                animation: animation,
+                duration: duration
+            }
         },
 
-        runAnimations: function(animations, animationTime) {
+        runAnimations: function(animations, maxDuration) {
             let self = this;
             let prevTime = 0;
             let elapsed = 0;
@@ -74,7 +88,7 @@ let createScene = function() {
 
                 self.update(data)
 
-                if (elapsed < animationTime) {
+                if (elapsed < maxDuration) {
                     window.requestAnimationFrame(frameHandler);
                 }
             }

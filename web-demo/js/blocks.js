@@ -94,6 +94,9 @@ $(function(){
         let html = "";
 
         if (Array.isArray(error)) {
+            if (error.length > 0) {
+                showAnswer("")
+            }
             for (let i = 0; i < error.length; i++) {
                 html += error[i] + "<br>";
             }
@@ -155,7 +158,6 @@ $(function(){
                 processResponse(data.AnswerStruct)
                 showError(data.ErrorLines);
                 showProductions(data.Productions);
-                //showOptions(data.Answer, data.OptionKeys, data.OptionValues);
             },
             error: function (request, status, error) {
                 showError(error)
@@ -167,7 +169,7 @@ $(function(){
     {
         let asserts = [];
         let assert;
-        let wait = 0;
+        let maxDuration = 0;
         let animations = [];
 
         for (let i = 0; i < response.length; i++) {
@@ -176,33 +178,33 @@ $(function(){
                 case 'dom_action_move_to':
                     assert = moveObject(relation)
                     asserts.push(assert)
-                    let animation = scene.createObjectAnimation({
+                    let result = scene.createObjectAnimation({
                         E: "`" + relation.arguments[1].sort + ":" + relation.arguments[1].value + "`",
                         X: relation.arguments[2].value,
                         Y: relation.arguments[4].value,
                         Z: relation.arguments[3].value
-                    }, animationTime)
-                    animations.push(animation)
-                    wait = animationTime
+                    })
+                    animations.push(result.animation)
+                    maxDuration = Math.max(maxDuration, result.duration)
                     break;
                 case 'go_print':
                     assert = print(relation)
                     asserts.push(assert)
                     break;
                 case 'go_user_select':
-                    assert = initUserSelect(response[1])
-                    asserts.push(assert)
+                    // assert = initUserSelect(response[1])
+                    // asserts.push(assert)
                     break;
             }
         }
 
         if (animations.length > 0) {
-            scene.runAnimations(animations, animationTime)
+            scene.runAnimations(animations, maxDuration)
         }
         if (asserts.length > 0) {
             window.setTimeout(function (){
                 sendRequest(asserts)
-            }, wait);
+            }, maxDuration);
         }
     }
 

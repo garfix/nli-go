@@ -61,7 +61,7 @@ func NewTermList(list TermList) Term {
 
 func NewTermJson(value interface{}) Term {
 
-	bytes, _ := json.MarshalIndent(value, "", "    ")
+	bytes, _ := json.Marshal(value)
 	jsonString := string(bytes)
 
 	return Term{ TermType: TermTypeJson, TermValue: jsonString }

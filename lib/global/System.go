@@ -75,7 +75,18 @@ func (system *System) getWaitingRelations() []mentalese.RelationSet {
 	return relationSets
 }
 
-func (system *System) CreateAnswerGoal(input string) string {
+func (system *System) assert(relation mentalese.Relation) {
+
+	// go:assert(go:goal(go:respond(input, Id)))
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
+		}),
+	}
+	system.processRunner.RunRelationSet(set)
+}
+
+func (system *System) createAnswerGoal(input string) string {
 
 	uuid := common.CreateUuid()
 
@@ -98,33 +109,7 @@ func (system *System) CreateAnswerGoal(input string) string {
 	return uuid
 }
 
-func (system *System) ReadActions(actionType string) mentalese.BindingSet {
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateAction, []mentalese.Term{
-			mentalese.NewTermString(actionType),
-			mentalese.NewTermVariable("Id"),
-			mentalese.NewTermVariable("Content"),
-		}),
-	}
-
-	return system.processRunner.RunRelationSet(set)
-}
-
-func (system *System) DeleteAction(actionId string) {
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateRetract, []mentalese.Term{
-			mentalese.NewTermRelationSet(mentalese.RelationSet{
-				mentalese.NewRelation(true, mentalese.PredicateAction, []mentalese.Term{
-					mentalese.NewTermAnonymousVariable(),
-					mentalese.NewTermString(actionId),
-					mentalese.NewTermAnonymousVariable(),
-				})}),
-		}),
-	}
-	system.processRunner.RunRelationSet(set)
-}
-
-func (system *System) DeleteGoal(goalId string) {
+func (system *System) deleteGoal(goalId string) {
 	set := mentalese.RelationSet{
 		mentalese.NewRelation(true, mentalese.PredicateRetract, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
@@ -139,20 +124,31 @@ func (system *System) DeleteGoal(goalId string) {
 
 func (system *System) Answer(input string) (string, *common.Options) {
 
+	answer := ""
+	anAnswer := ""
+	options := common.NewOptions()
+	done := false
+
 	// find or create a goal
-	goalId := system.getGoalId(input)
+	system.getGoalId(input)
 
-	// execute all goals
-	system.Run()
+	for !done {
 
-	// get the goal's process
-	process := system.processList.GetProcess(goalId)
+		// execute all goals
+		system.Run()
 
-	// build options for the user, if applicable
-	options := system.buildOptions(process)
+		// get the goal's process
+		//process := system.processList.GetProcess(goalId)
+		//
+		//// build options for the user, if applicable
+		//options = system.buildOptions(process)
 
-	// read answer action
-	answer := system.readAnswer()
+		// read answer action
+		anAnswer, done = system.readAnswer()
+		if anAnswer != "" {
+			answer = anAnswer
+		}
+	}
 
 	// store the updated dialog context
 	system.dialogContext.Store()
@@ -164,35 +160,35 @@ func (system *System) getGoalId(input string) string {
 
 	goalId := ""
 
-	for _, process := range system.processList.GetProcesses() {
-		if !process.IsDone() {
-
-			userSelect := process.GetLastFrame().Relations
-			binding := mentalese.NewBinding()
-			binding.Set("Selection", mentalese.NewTermString(input))
-			list := userSelect[0].Arguments[0]
-
-			set := mentalese.RelationSet{
-				mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
-					mentalese.NewTermRelationSet(
-						mentalese.RelationSet{
-							mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
-								list,
-								mentalese.NewTermString(input),
-							}),
-						}),
-				}),
-			}
-			system.processRunner.RunRelationSet(set)
-
-			goalId = process.GoalId
-
-			break
-		}
-	}
+	//for _, process := range system.processList.GetProcesses() {
+	//	if !process.IsDone() {
+	//
+	//		userSelect := process.GetLastFrame().Relations
+	//		binding := mentalese.NewBinding()
+	//		binding.Set("Selection", mentalese.NewTermString(input))
+	//		list := userSelect[0].Arguments[0]
+	//
+	//		set := mentalese.RelationSet{
+	//			mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+	//				mentalese.NewTermRelationSet(
+	//					mentalese.RelationSet{
+	//						mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
+	//							list,
+	//							mentalese.NewTermString(input),
+	//						}),
+	//					}),
+	//			}),
+	//		}
+	//		system.processRunner.RunRelationSet(set)
+	//
+	//		goalId = process.GoalId
+	//
+	//		break
+	//	}
+	//}
 
 	if goalId == "" {
-		goalId = system.CreateAnswerGoal(input)
+		goalId = system.createAnswerGoal(input)
 	}
 
 	return goalId
@@ -220,7 +216,8 @@ func (system *System) Run() {
 
 		// delete goal when done
 		if process.IsDone() {
-			system.DeleteGoal(goalId)
+			system.processList.RemoveProcess(process.GoalId)
+			system.deleteGoal(goalId)
 		}
 	}
 }
@@ -241,16 +238,23 @@ func (system *System) buildOptions(process *goal.Process) *common.Options {
 	return options
 }
 
-func (system *System) readAnswer() string {
-	actions := system.ReadActions(mentalese.ActionPrint)
+func (system *System) readAnswer() (string, bool) {
+
+	relationSets := system.getWaitingRelations()
 	answer := ""
-	if actions.GetLength() > 0 {
-		action := actions.Get(0)
-		answer = action.MustGet("Content").TermValue
-		actionId := action.MustGet("Id").TermValue
-		system.DeleteAction(actionId)
+
+	for _, relationSet := range relationSets {
+		firstRelation := relationSet[0]
+		if firstRelation.Predicate == mentalese.PredicatePrint {
+			answer = firstRelation.Arguments[1].TermValue
+		}
+		for _, relation := range relationSet {
+			system.assert(relation)
+		}
 	}
-	return answer
+
+	done := len(relationSets) == 0
+	return answer, done
 }
 
 func (system *System) ResetSession() {

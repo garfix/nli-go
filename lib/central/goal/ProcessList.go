@@ -30,6 +30,19 @@ func (p *ProcessList) GetProcess(goalId string) *Process {
 	return nil
 }
 
+func (p *ProcessList) RemoveProcess(goalId string) {
+
+	newList := []*Process{}
+
+	for _, process := range p.List {
+		if process.GoalId != goalId {
+			newList = append(newList, process)
+		}
+	}
+
+	p.List = newList
+}
+
 func (p *ProcessList) GetOrCreateProcess(goalId string, goalSet mentalese.RelationSet) *Process {
 	for _, process := range p.List {
 		if process.GoalId == goalId {

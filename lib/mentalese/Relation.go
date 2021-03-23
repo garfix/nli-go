@@ -10,8 +10,6 @@ type Relation struct {
 	Arguments []Term	`json:"arguments"`
 }
 
-const ActionPrint = "print"
-
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
 const ProcessInstructionStop = "stop"
@@ -90,7 +88,7 @@ const PredicateBreak = "go_break"
 const PredicateWaitFor = "go_wait_for"
 const PredicateGoal = "go_goal"
 const PredicateUuid = "go_uuid"
-const PredicateAction = "go_action"
+const PredicatePrint = "go_print"
 const PredicateLocale = "go_locale"
 
 const PredicateOutput = "go_output"

@@ -1,5 +1,7 @@
 # Todo
 
+- store KB only at the end of the run
+
 - functions calls for arguments
 - typed arguments
 - operators
@@ -13,6 +15,8 @@
 - document: these are two ways of doing a child stack frame
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched
 - would be nice to have `is_first()` and `is_last()`: a check if the current binding is the first / last of the active bindings; such a function takes both a single binding and all bindings as input
+
+The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
 
 * database mappings: allow a rule to be used only for given sorts; for performance
 * binding set -> results / binding list

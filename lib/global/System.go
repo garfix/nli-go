@@ -127,6 +127,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	answer := ""
 	anAnswer := ""
 	options := common.NewOptions()
+	someOptions := common.NewOptions()
 	done := false
 
 	// find or create a goal
@@ -137,16 +138,13 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		// execute all goals
 		system.Run()
 
-		// get the goal's process
-		//process := system.processList.GetProcess(goalId)
-		//
-		//// build options for the user, if applicable
-		//options = system.buildOptions(process)
-
 		// read answer action
-		anAnswer, done = system.readAnswer()
+		anAnswer, someOptions, done = system.readAnswer()
 		if anAnswer != "" {
 			answer = anAnswer
+		}
+		if someOptions.HasOptions() {
+			options = someOptions
 		}
 	}
 
@@ -160,32 +158,22 @@ func (system *System) getGoalId(input string) string {
 
 	goalId := ""
 
-	//for _, process := range system.processList.GetProcesses() {
-	//	if !process.IsDone() {
-	//
-	//		userSelect := process.GetLastFrame().Relations
-	//		binding := mentalese.NewBinding()
-	//		binding.Set("Selection", mentalese.NewTermString(input))
-	//		list := userSelect[0].Arguments[0]
-	//
-	//		set := mentalese.RelationSet{
-	//			mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
-	//				mentalese.NewTermRelationSet(
-	//					mentalese.RelationSet{
-	//						mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
-	//							list,
-	//							mentalese.NewTermString(input),
-	//						}),
-	//					}),
-	//			}),
-	//		}
-	//		system.processRunner.RunRelationSet(set)
-	//
-	//		goalId = process.GoalId
-	//
-	//		break
-	//	}
-	//}
+	for _, process := range system.processList.GetProcesses() {
+		beforeLastFrame := process.GetBeforeLastFrame()
+		if beforeLastFrame != nil {
+			if beforeLastFrame.Relations[beforeLastFrame.RelationIndex].Predicate == mentalese.PredicateWaitFor {
+				lastFrame := process.GetLastFrame()
+				if lastFrame.Relations[0].Predicate == mentalese.PredicateUserSelect {
+					binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
+					boundRelation := lastFrame.Relations[0].BindSingle(binding)
+					boundRelation.Arguments[1] = mentalese.NewTermString(input)
+					system.assert(boundRelation)
+					goalId = process.GoalId
+					break
+				}
+			}
+		}
+	}
 
 	if goalId == "" {
 		goalId = system.createAnswerGoal(input)
@@ -238,23 +226,33 @@ func (system *System) buildOptions(process *goal.Process) *common.Options {
 	return options
 }
 
-func (system *System) readAnswer() (string, bool) {
+func (system *System) readAnswer() (string, *common.Options, bool) {
 
 	relationSets := system.getWaitingRelations()
 	answer := ""
+	options := common.NewOptions()
+
+	done := len(relationSets) == 0
 
 	for _, relationSet := range relationSets {
 		firstRelation := relationSet[0]
 		if firstRelation.Predicate == mentalese.PredicatePrint {
 			answer = firstRelation.Arguments[1].TermValue
 		}
+		if firstRelation.Predicate == mentalese.PredicateUserSelect {
+			for i, value := range firstRelation.Arguments[0].TermValueList.GetValues() {
+				options.AddOption(strconv.Itoa(i), value)
+			}
+			done = true
+			continue
+		}
+
 		for _, relation := range relationSet {
 			system.assert(relation)
 		}
 	}
 
-	done := len(relationSets) == 0
-	return answer, done
+	return answer, options, done
 }
 
 func (system *System) ResetSession() {

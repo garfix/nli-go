@@ -119,8 +119,6 @@ Breaks a loop and discards all bindings built so far.
 
     go:cancel()
 
-Note! This has not been tested.
-    
 ## Wait for
 
 This relation tries `Condition` until it succeeds.

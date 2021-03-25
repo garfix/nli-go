@@ -198,6 +198,17 @@ func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, re
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) cancel(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
+
+	messenger.AddProcessInstruction(mentalese.ProcessInstructionCancel, "")
+
+	return mentalese.NewBindingSet()
+}
+
 func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	child := relation.Arguments[0].TermValueRelationSet

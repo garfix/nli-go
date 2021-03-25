@@ -109,9 +109,17 @@ Example:
 
 ## Break
 
-Breaks a loop.
+Breaks a loop and keeps the bindings built so far.
 
     go:break()
+
+## Cancel
+
+Breaks a loop and discards all bindings built so far.
+
+    go:cancel()
+
+Note! This has not been tested.
     
 ## Wait for
 

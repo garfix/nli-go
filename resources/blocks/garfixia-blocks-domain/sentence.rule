@@ -33,15 +33,25 @@ do_put_on_smart(P1, E1, E2) :-
         Uuid));
 
 do_stack_up_smart(P1, QBlocks) :-
+    create_plan_for_stack(QBlocks, SortedList)
+    go:list_get(SortedList, 0, BaseBlock)
     go:uuid(Uuid)
     go:assert(go:goal(
         do_clear_hand(_)
-        go:quant_ordered_list(QBlocks, &by_easiness, List)
-        go:list_order(List, &by_size, SortedList)
-        go:list_get(List, 0, BaseBlock)
         do_find_space_on_table(BaseBlock, X, Y)
         stack_up_proper(SortedList, X, Y),
         Uuid));
+
+create_plan_for_stack(QBlocks, SortedList) :-
+    go:quant_ordered_list(QBlocks, &by_easiness, List)
+    go:list_order(List, &by_size, SortedList)
+    go:list_length(SortedList, Size)
+    go:subtract(Size, 1, Last)
+    go:list_get(SortedList, Last, LastObject)
+    go:if_then(
+        go:not(block(LastObject)),
+        go:fail()
+    );
 
 stack_up_proper(List1, X, Y) :-
     go:let(Base, `table:table`)

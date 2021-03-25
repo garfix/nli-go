@@ -146,6 +146,9 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame 
 		case mentalese.ProcessInstructionBreak:
 			outBindings = currentFrame.InBindings
 			currentFrame = p.executeBreak(currentFrame)
+		case mentalese.ProcessInstructionCancel:
+			outBindings = mentalese.NewBindingSet()
+			currentFrame = p.executeBreak(currentFrame)
 		case mentalese.ProcessInstructionStop:
 			hasStopped = true
 		}

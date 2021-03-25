@@ -10,7 +10,7 @@ A "bag" is an unordered collection of items that may contain duplicates.
 
 For all alternative bindings of Cond, Action can be proven.
 
-`forall/2` does not change any variable bindings.
+`forall/2` does not change any variable bindings. It is useful only to create side effects.
 
     forall(:Cond, :Action)
     
@@ -46,6 +46,8 @@ Create a list of the instantiations Template gets successively on backtracking o
 As `findall/3`, but returns the result as the difference list Bag-Tail. The 3-argument version is defined as    
     
     findall(+Template, :Goal, -Bag, +Tail)
+
+https://www.swi-prolog.org/pldoc/doc_for?object=findall/3
 
 ## findnsols
 

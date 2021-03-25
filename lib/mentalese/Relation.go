@@ -12,6 +12,7 @@ type Relation struct {
 
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
+const ProcessInstructionCancel = "cancel"
 const ProcessInstructionStop = "stop"
 
 const FrameTypePlain = "plain"
@@ -85,6 +86,7 @@ const PredicateDateSubtractYears = "go_date_subtract_years"
 const PredicateSem = "go_sem"
 const PredicateLog = "go_log"
 const PredicateBreak = "go_break"
+const PredicateCancel = "go_cancel"
 const PredicateWaitFor = "go_wait_for"
 const PredicateGoal = "go_goal"
 const PredicateUuid = "go_uuid"

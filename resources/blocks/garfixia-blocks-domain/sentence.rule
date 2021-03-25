@@ -47,10 +47,11 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:list_order(List, &by_size, SortedList)
     go:list_length(SortedList, Size)
     go:subtract(Size, 1, Last)
-    go:list_get(SortedList, Last, LastObject)
-    go:if_then(
-        go:not(block(LastObject)),
-        go:fail()
+    go:list_foreach(SortedList, Index, E1,
+        go:if_then(
+            go:not_equals(Index, Last) go:not(block(E1)),
+            go:cancel()
+        )
     );
 
 stack_up_proper(List1, X, Y) :-

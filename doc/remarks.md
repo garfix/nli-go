@@ -6,10 +6,6 @@ Up until now, `go:list_foreach` only fails if all children fail. I need it to fa
 
 That breaks the loop and fails.
 
----
-
-I created the function, but it turns out I don't need it for the demo.
-
 ## 2021-03-23
 
 The movements in the blocks world demo are now animated. The fact that the hand moved from A to B directly now became obvious, since it moved the blocks through other blocks. The hand now first moves up, before moving the block to another location.

@@ -170,7 +170,7 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 
 		arguments := []Term{}
 		predicate := relation.Predicate
-		positive := relation.Positive
+		negative := relation.Negate
 
 		for _, argument := range relation.Arguments {
 
@@ -179,7 +179,7 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 			arguments = append(arguments, relationArgument)
 		}
 
-		relation := NewRelation(positive, predicate, arguments)
+		relation := NewRelation(negative, predicate, arguments)
 		newRelations = append(newRelations, relation)
 	}
 

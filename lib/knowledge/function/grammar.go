@@ -100,9 +100,9 @@ func (base *SystemSolverFunctionBase) rangeIndexClarification(messenger api.Proc
 	if state == 0 {
 
 		set := mentalese.RelationSet{
-			mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+			mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
 				mentalese.NewTermRelationSet(mentalese.RelationSet{
-					mentalese.NewRelation(true, mentalese.PredicateOutput, []mentalese.Term{
+					mentalese.NewRelation(false, mentalese.PredicateOutput, []mentalese.Term{
 						mentalese.NewTermString("I don't understand which one you mean"),
 					})}),
 			}),

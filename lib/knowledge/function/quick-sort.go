@@ -70,7 +70,7 @@ func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id
 		return 0, false
 	}
 
-	relation := mentalese.NewRelation(true, orderFunction, []mentalese.Term{
+	relation := mentalese.NewRelation(false, orderFunction, []mentalese.Term{
 		mentalese.NewTermVariable("E1"),
 		mentalese.NewTermVariable("E2"),
 		mentalese.NewTermVariable("R"),

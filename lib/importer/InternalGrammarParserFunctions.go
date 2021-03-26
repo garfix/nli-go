@@ -410,7 +410,7 @@ func (parser *InternalGrammarParser) parseRelationTag(tokens []Token, startIndex
 	if found {
 		tag, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_variable)
 		if found {
-			relation = mentalese.NewRelation(true, mentalese.PredicateIncludeRelations, []mentalese.Term{
+			relation = mentalese.NewRelation(false, mentalese.PredicateIncludeRelations, []mentalese.Term{
 				mentalese.NewTermVariable(tag),
 			})
 			_, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_double_closing_brace)
@@ -469,15 +469,15 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 	arguments := []mentalese.Term{}
 	predicate := ""
 	newStartIndex := 0
-	positive := true
+	negate := false
 	relation := mentalese.Relation{}
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
 	if ok {
-		positive = false
+		negate = true
 	}
 
-	relation, newStartIndex, ok = parser.parsePlaceholder(tokens, startIndex, positive)
+	relation, newStartIndex, ok = parser.parsePlaceholder(tokens, startIndex, negate)
 	if ok {
 		startIndex = newStartIndex
 	} else {
@@ -537,7 +537,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			}
 
 		}
-		relation = mentalese.NewRelation(positive, prefix + predicate, arguments)
+		relation = mentalese.NewRelation(negate, prefix + predicate, arguments)
 	}
 
 	return relation, startIndex, ok

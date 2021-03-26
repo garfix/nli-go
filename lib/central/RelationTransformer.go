@@ -33,7 +33,7 @@ func (transformer *RelationTransformer) replaceRelations(transformations []menta
 	for _, relation := range relationSet {
 
 		// replace inside hierarchical relations
-		deepRelation := mentalese.NewRelation(true, relation.Predicate, relation.Arguments)
+		deepRelation := mentalese.NewRelation(false, relation.Predicate, relation.Arguments)
 
 		for i, argument := range deepRelation.Arguments {
 			if argument.IsRelationSet() {

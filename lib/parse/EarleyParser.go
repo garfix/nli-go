@@ -44,7 +44,7 @@ func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVaria
 		lastParsedWordIndex, nextWord := FindLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
-			parser.log.AddError("Incomplete. Could not parse word: " + nextWord)
+			parser.log.AddError("Could not parse the word: " + nextWord)
 		} else if len(words) == 0 {
 			parser.log.AddError("No sentence given.")
 		} else if lastParsedWordIndex == len(words)-1 {

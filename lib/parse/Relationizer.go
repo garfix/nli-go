@@ -131,8 +131,8 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 				childIndexes = append(childIndexes, index)
 				newParentRelationSet = childSets[index].Copy()
 				for i := range newParentRelationSet {
-					if !parentRelation.Positive {
-						newParentRelationSet[i].Positive = !newParentRelationSet[i].Positive
+					if parentRelation.Negate {
+						newParentRelationSet[i].Negate = !newParentRelationSet[i].Negate
 					}
 				}
 			} else {

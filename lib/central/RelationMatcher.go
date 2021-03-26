@@ -138,7 +138,7 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation mentalese.Relat
 	// predicate
 	if needleRelation.Predicate != haystackRelation.Predicate {
 		match = false
-	} else if needleRelation.Positive != haystackRelation.Positive {
+	} else if needleRelation.Negate != haystackRelation.Negate {
 		match = false
 	} else if len(needleRelation.Arguments) != len(haystackRelation.Arguments) {
 		match = false

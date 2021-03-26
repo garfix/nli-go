@@ -395,17 +395,17 @@ func (base *SystemMultiBindingFunctionBase) makeAnd(messenger api.ProcessMesseng
 	if count == 0 {
 		return bindings
 	} else if count == 1 {
-		relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+		relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
 			uniqueValues[0],
 			uniqueValues[0],
 		})
 	} else {
-		relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+		relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
 			uniqueValues[count - 2],
 			uniqueValues[count - 1],
 		})
 		for i := len(uniqueValues)-3; i >= 0 ; i-- {
-			relation = mentalese.NewRelation(true, mentalese.PredicateAnd, []mentalese.Term{
+			relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
 				uniqueValues[i],
 				mentalese.NewTermRelationSet(mentalese.RelationSet{ relation }),
 			})

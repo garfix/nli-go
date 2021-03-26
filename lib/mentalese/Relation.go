@@ -5,9 +5,9 @@ import (
 )
 
 type Relation struct {
-	Positive  bool		`json:"positive"`
-	Predicate string	`json:"predicate"`
-	Arguments []Term	`json:"arguments"`
+	Negate    bool   `json:"negate,omitempty"`
+	Predicate string `json:"predicate"`
+	Arguments []Term `json:"arguments"`
 }
 
 const ProcessInstructionLet = "let"
@@ -132,9 +132,9 @@ const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
 
-func NewRelation(positive bool, predicate string, arguments []Term) Relation {
+func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{
-		Positive:  positive,
+		Negate:    negate,
 		Predicate: predicate,
 		Arguments: arguments,
 	}
@@ -155,7 +155,7 @@ func (relation Relation) Equals(otherRelation Relation) bool {
 
 	equals := relation.Predicate == otherRelation.Predicate
 
-	equals = equals && relation.Positive == otherRelation.Positive
+	equals = equals && relation.Negate == otherRelation.Negate
 
 	for i, argument := range relation.Arguments {
 		equals = equals && argument.Equals(otherRelation.Arguments[i])
@@ -168,7 +168,7 @@ func (relation Relation) Copy() Relation {
 
 	newRelation := Relation{}
 	newRelation.Predicate = relation.Predicate
-	newRelation.Positive = relation.Positive
+	newRelation.Negate = relation.Negate
 	newRelation.Arguments = []Term{}
 	for _, argument := range relation.Arguments {
 		newRelation.Arguments = append(newRelation.Arguments, argument.Copy())
@@ -186,7 +186,7 @@ func (relation Relation) BindSingle(binding Binding) Relation {
 		boundArguments = append(boundArguments, arg)
 	}
 
-	return NewRelation(relation.Positive, relation.Predicate, boundArguments)
+	return NewRelation(relation.Negate, relation.Predicate, boundArguments)
 }
 
 // Returns multiple relations, that has all variables bound to bindings
@@ -233,7 +233,7 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 		newArguments = append(newArguments, newArgument)
 	}
 
-	return NewRelation(relation.Positive, relation.Predicate, newArguments)
+	return NewRelation(relation.Negate, relation.Predicate, newArguments)
 }
 
 func (relation Relation) String() string {
@@ -247,7 +247,7 @@ func (relation Relation) String() string {
 	}
 
 	sign := ""
-	if !relation.Positive {
+	if relation.Negate {
 		sign = "-"
 	}
 
@@ -272,7 +272,7 @@ func (relation Relation) IndentedString(indent string) string {
 	}
 
 	sign := ""
-	if !relation.Positive {
+	if relation.Negate {
 		sign = "-"
 	}
 

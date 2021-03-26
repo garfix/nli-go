@@ -19,7 +19,6 @@ $(function(){
 
     let scene = createScene();
     let currentInput = "";
-    let animationTime = 1000;
 
     function setup()
     {
@@ -90,21 +89,21 @@ $(function(){
         samplePopup.style.display = "none";
     }
 
-    function showError(error) {
+    function errorToHtml(error) {
         let html = "";
 
         if (Array.isArray(error)) {
-            if (error.length > 0) {
-                showAnswer("")
-            }
             for (let i = 0; i < error.length; i++) {
                 html += error[i] + "<br>";
             }
         } else {
             html = error;
         }
+        return html;
+    }
 
-        errorBox.innerHTML = html;
+    function showError(error) {
+        errorBox.innerHTML = errorToHtml(error);
     }
 
     function showAnswer(answer) {
@@ -155,8 +154,14 @@ $(function(){
             type: 'GET',
             success: function (data) {
 
-                processResponse(data.AnswerStruct)
-                showError(data.ErrorLines);
+                if (data.ErrorLines.length > 0) {
+                    showAnswer("")
+                    showError(data.ErrorLines);
+                    log(currentInput, errorToHtml(data.ErrorLines))
+                } else {
+                    processResponse(data.AnswerStruct)
+                    showError([]);
+                }
                 showProductions(data.Productions);
             },
             error: function (request, status, error) {
@@ -221,7 +226,6 @@ $(function(){
 
     function tell(input) {
         sendRequest([{
-            positive: true,
             predicate: 'go_tell',
             arguments: [
                 {
@@ -234,7 +238,6 @@ $(function(){
 
     function getAssert(assertion) {
         return {
-            positive: true,
             predicate: 'go_assert',
             arguments: [
                 {

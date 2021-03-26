@@ -34,10 +34,10 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 
 	// go:wait_for(go:user_select(['A', 'B', 'C'], Selection))
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateWaitFor, []mentalese.Term{
+		mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
 			mentalese.NewTermRelationSet(
 				mentalese.RelationSet{
-					mentalese.NewRelation(true, mentalese.PredicateUserSelect, []mentalese.Term{
+					mentalese.NewRelation(false, mentalese.PredicateUserSelect, []mentalese.Term{
 						mentalese.NewTermList(names),
 						mentalese.NewTermVariable("Selection"),
 					}),

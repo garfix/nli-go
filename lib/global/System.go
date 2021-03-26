@@ -79,7 +79,7 @@ func (system *System) assert(relation mentalese.Relation) {
 
 	// go:assert(go:goal(go:respond(input, Id)))
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+		mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
 		}),
 	}
@@ -92,11 +92,11 @@ func (system *System) createAnswerGoal(input string) string {
 
 	// go:assert(go:goal(go:respond(input, Id)))
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateAssert, []mentalese.Term{
+		mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
-				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+				mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
 					mentalese.NewTermRelationSet(mentalese.RelationSet{
-						mentalese.NewRelation(true, mentalese.PredicateRespond, []mentalese.Term{
+						mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
 							mentalese.NewTermString(input),
 						}),
 					}),
@@ -110,10 +110,13 @@ func (system *System) createAnswerGoal(input string) string {
 }
 
 func (system *System) deleteGoal(goalId string) {
+
+	system.processList.RemoveProcess(goalId)
+
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateRetract, []mentalese.Term{
+		mentalese.NewRelation(false, mentalese.PredicateRetract, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{
-				mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+				mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
 					mentalese.NewTermAnonymousVariable(),
 					mentalese.NewTermString(goalId),
 				})}),
@@ -131,12 +134,17 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	done := false
 
 	// find or create a goal
-	system.getGoalId(input)
+	goalId := system.getGoalId(input)
 
 	for !done {
 
 		// execute all goals
 		system.Run()
+
+		if len(system.log.GetErrors()) > 0 {
+			system.deleteGoal(goalId)
+			break
+		}
 
 		// read answer action
 		anAnswer, someOptions, done = system.readAnswer()
@@ -186,7 +194,7 @@ func (system *System) Run() {
 
 	// find all goals
 	set := mentalese.RelationSet{
-		mentalese.NewRelation(true, mentalese.PredicateGoal, []mentalese.Term{
+		mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
 			mentalese.NewTermVariable("Goal"),
 			mentalese.NewTermVariable("Id"),
 		}),
@@ -204,7 +212,6 @@ func (system *System) Run() {
 
 		// delete goal when done
 		if process.IsDone() {
-			system.processList.RemoveProcess(process.GoalId)
 			system.deleteGoal(goalId)
 		}
 	}

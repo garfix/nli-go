@@ -1,3 +1,23 @@
+## 2021-03-26
+
+The rewrite I started on January 21 is done! Answering and execution are now separated. This is a major advancement and I will create a new release.
+
+It is now possible to create a plan and execute that plan later, by creating a `goal` for it. This change shows itself most manifestly in the fact that the system answers "OK" directly after it has received the question, and before it starts executing the plan. This is an advancement even over SHRDLU, that says "OK" only after the execution is complete. To appreciate this difference it is only necessary to imagine that you want to tell the system to "Stop!" performing its current action. 
+
+The working representation of the blocks after all interactions now looks like this:
+
+![Initial blocks world](archive/blocksworld3.png)
+
+And here's a first impression of the web demo I am working on.
+
+    "Pick up a big red block."
+
+![Initial blocks world](archive/blocksworld4.png)
+
+It is still too brittle to release.
+
+The system class now looks nothing like it did before. It used to contain all language processes. Now it just passes relational messages. 
+
 ## 2021-03-25
 
 Up until now, `go:list_foreach` only fails if all children fail. I need it to fail under certain circumstances. So I'm thinking about a 

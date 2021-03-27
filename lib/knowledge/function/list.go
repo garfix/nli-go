@@ -16,7 +16,7 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	list := bound.Arguments[0].TermValueList
+	list := bound.Arguments[0].TermValueList.Copy()
 	orderFunction := bound.Arguments[1].TermValue
 	listVariable := bound.Arguments[2].TermValue
 

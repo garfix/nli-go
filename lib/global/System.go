@@ -38,15 +38,16 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	return result
 }
 
+// API call that executes input, runs all processes, and returns the first waiting relation set
 func (system *System) SendMessage(relations mentalese.RelationSet) (mentalese.RelationSet, bool) {
 
 	system.processRunner.RunRelationSet(relations)
 
-	system.Run()
+	system.run()
 
 	response := mentalese.RelationSet{}
 	hasResponse := false
-	relationSets := system.getWaitingRelations()
+	relationSets := system.getWaitingMessages()
 	if len(relationSets) > 0 {
 		response = relationSets[0]
 		hasResponse = true
@@ -57,74 +58,7 @@ func (system *System) SendMessage(relations mentalese.RelationSet) (mentalese.Re
 	return response, hasResponse
 }
 
-func (system *System) getWaitingRelations() []mentalese.RelationSet {
-	relationSets := []mentalese.RelationSet{}
-
-	for _, process := range system.processList.GetProcesses() {
-		beforeLastFrame := process.GetBeforeLastFrame()
-		if beforeLastFrame != nil {
-			if beforeLastFrame.Relations[beforeLastFrame.RelationIndex].Predicate == mentalese.PredicateWaitFor {
-				lastFrame := process.GetLastFrame()
-				binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
-				boundRelations := lastFrame.Relations.BindSingle(binding)
-				relationSets = append(relationSets, boundRelations)
-			}
-		}
-	}
-
-	return relationSets
-}
-
-func (system *System) assert(relation mentalese.Relation) {
-
-	// go:assert(go:goal(go:respond(input, Id)))
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
-		}),
-	}
-	system.processRunner.RunRelationSet(set)
-}
-
-func (system *System) createAnswerGoal(input string) string {
-
-	uuid := common.CreateUuid()
-
-	// go:assert(go:goal(go:respond(input, Id)))
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-			mentalese.NewTermRelationSet(mentalese.RelationSet{
-				mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
-					mentalese.NewTermRelationSet(mentalese.RelationSet{
-						mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
-							mentalese.NewTermString(input),
-						}),
-					}),
-					mentalese.NewTermString(uuid),
-				})}),
-		}),
-	}
-	system.processRunner.RunRelationSet(set)
-
-	return uuid
-}
-
-func (system *System) deleteGoal(goalId string) {
-
-	system.processList.RemoveProcess(goalId)
-
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(false, mentalese.PredicateRetract, []mentalese.Term{
-			mentalese.NewTermRelationSet(mentalese.RelationSet{
-				mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
-					mentalese.NewTermAnonymousVariable(),
-					mentalese.NewTermString(goalId),
-				})}),
-		}),
-	}
-	system.processRunner.RunRelationSet(set)
-}
-
+// processes input and return the answer, respond to all waiting relations
 func (system *System) Answer(input string) (string, *common.Options) {
 
 	answer := ""
@@ -139,7 +73,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	for !done {
 
 		// execute all goals
-		system.Run()
+		system.run()
 
 		if len(system.log.GetErrors()) > 0 {
 			system.deleteGoal(goalId)
@@ -160,6 +94,75 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	system.dialogContext.Store()
 
 	return answer, options
+}
+
+func (system *System) ResetSession() {
+	system.dialogContext.Initialize()
+	system.dialogContext.Store()
+
+	system.solverAsync.ResetSession()
+}
+
+// returns the children of all `wait_for` relations
+func (system *System) getWaitingMessages() []mentalese.RelationSet {
+	kessages := []mentalese.RelationSet{}
+
+	for _, process := range system.processList.GetProcesses() {
+		beforeLastFrame := process.GetBeforeLastFrame()
+		if beforeLastFrame != nil {
+			if beforeLastFrame.Relations[beforeLastFrame.RelationIndex].Predicate == mentalese.PredicateWaitFor {
+				lastFrame := process.GetLastFrame()
+				binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
+				boundRelations := lastFrame.Relations.BindSingle(binding)
+				kessages = append(kessages, boundRelations)
+			}
+		}
+	}
+
+	return kessages
+}
+
+func (system *System) assert(relation mentalese.Relation) {
+
+	// go:assert(go:goal(go:respond(input, Id)))
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
+		}),
+	}
+	system.processRunner.RunRelationSet(set)
+}
+
+func (system *System) createAnswerGoal(input string) string {
+
+	uuid := common.CreateUuid()
+
+	system.assert(mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
+		mentalese.NewTermRelationSet(mentalese.RelationSet{
+			mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
+				mentalese.NewTermString(input),
+			}),
+		}),
+		mentalese.NewTermString(uuid),
+	}))
+
+	return uuid
+}
+
+func (system *System) deleteGoal(goalId string) {
+
+	system.processList.RemoveProcess(goalId)
+
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(false, mentalese.PredicateRetract, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{
+				mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
+					mentalese.NewTermAnonymousVariable(),
+					mentalese.NewTermString(goalId),
+				})}),
+		}),
+	}
+	system.processRunner.RunRelationSet(set)
 }
 
 func (system *System) getGoalId(input string) string {
@@ -190,7 +193,7 @@ func (system *System) getGoalId(input string) string {
 	return goalId
 }
 
-func (system *System) Run() {
+func (system *System) run() {
 
 	// find all goals
 	set := mentalese.RelationSet{
@@ -235,7 +238,7 @@ func (system *System) buildOptions(process *goal.Process) *common.Options {
 
 func (system *System) readAnswer() (string, *common.Options, bool) {
 
-	relationSets := system.getWaitingRelations()
+	relationSets := system.getWaitingMessages()
 	answer := ""
 	options := common.NewOptions()
 
@@ -260,11 +263,4 @@ func (system *System) readAnswer() (string, *common.Options, bool) {
 	}
 
 	return answer, options, done
-}
-
-func (system *System) ResetSession() {
-	system.dialogContext.Initialize()
-	system.dialogContext.Store()
-
-	system.solverAsync.ResetSession()
 }

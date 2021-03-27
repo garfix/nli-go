@@ -173,7 +173,7 @@ func performQuery(system *global.System, query string)  {
 	// the actual system call
 	bindings := system.Query(query)
 
-	response := bindingsToJson(bindings) + "\n"
+	response := bindings.ToJson() + "\n"
 
 	fmt.Printf(response)
 }
@@ -207,27 +207,6 @@ func performSend(system *global.System, log *common.SystemLog, relationJson stri
 	responseString := string(responseRaw) + "\n"
 
 	fmt.Printf(responseString)
-}
-
-func bindingsToJson(set mentalese.BindingSet) string {
-
-	type aMap = map[string]string
-	type array = []aMap
-
-	arr := array{}
-
-	for _, item := range set.GetAll() {
-		i := aMap{}
-		for k, v := range item.GetAll() {
-			i[k] = v.String()
-		}
-		arr = append(arr, i)
-	}
-
-
-	responseRaw, _ := json.MarshalIndent(arr, "", "    ")
-
-	return string(responseRaw)
 }
 
 func answer(system *global.System, log *common.SystemLog, sentence string, returnType string) (string, *common.Options) {

@@ -103,6 +103,9 @@ the database.
 
 Some relations take relation sets as their arguments. Read about them [here](functions-nested)
 
+## Message
+
+A relation set can be used as a message to pass a command to an external party. This is what happens in the web demo, between the Javascript client and the server.
 
 ## The relation "spouse" is bidirectional, how do I deal with it?
 

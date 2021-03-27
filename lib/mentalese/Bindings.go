@@ -1,6 +1,7 @@
 package mentalese
 
 import (
+	"encoding/json"
 	"sort"
 	"strconv"
 )
@@ -48,6 +49,26 @@ func (set BindingSet) FromRaw(raw []map[string]Term) {
 		}
 		set.Add(binding)
 	}
+}
+
+func (set BindingSet) ToJson() string {
+
+	type aMap = map[string]string
+	type array = []aMap
+
+	arr := array{}
+
+	for _, item := range set.GetAll() {
+	i := aMap{}
+	for k, v := range item.GetAll() {
+		i[k] = v.String()
+	}
+		arr = append(arr, i)
+	}
+
+	responseRaw, _ := json.MarshalIndent(arr, "", "    ")
+
+	return string(responseRaw)
 }
 
 func (set BindingSet) Reverse() BindingSet {

@@ -62,7 +62,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	done := false
 
 	// find or create a goal
-	goalId := system.getGoalId(input)
+	system.getGoalId(input)
 
 	for !done {
 
@@ -70,7 +70,6 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		system.run()
 
 		if len(system.log.GetErrors()) > 0 {
-			system.deleteGoal(goalId)
 			break
 		}
 
@@ -208,7 +207,7 @@ func (system *System) run() {
 		system.processRunner.RunProcess(process)
 
 		// delete goal when done
-		if process.IsDone() {
+		if process.IsDone() || !system.log.IsOk() {
 			system.deleteGoal(goalId)
 		}
 	}

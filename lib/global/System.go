@@ -186,7 +186,10 @@ func (system *System) getGoalId(input string) string {
 	return goalId
 }
 
-func (system *System) run() {
+func (system *System) getAllGoals() ([]string, []mentalese.RelationSet) {
+	sets := []mentalese.RelationSet{}
+	ids := []string{}
+	goalString := ""
 
 	// find all goals
 	set := mentalese.RelationSet{
@@ -197,16 +200,36 @@ func (system *System) run() {
 	}
 	bindings := system.processRunner.RunRelationSet(set)
 
-	// go through all goals
 	for _, binding := range bindings.GetAll() {
 		goalId := binding.MustGet("Id").TermValue
 		goalSet := binding.MustGet("Goal").TermValueRelationSet
+		sets = append(sets, goalSet)
+		ids = append(ids, goalId)
+		goalString += goalId + ":\n"
+		for _, relation := range goalSet {
+			goalString += relation.String() + "\n"
+		}
+		goalString += "\n"
+	}
+
+	system.log.AddProduction("Goals", goalString)
+
+	return ids, sets
+}
+
+func (system *System) run() {
+
+	goalIds, goalSets := system.getAllGoals()
+
+	// go through all goals
+	for i, goalId := range goalIds {
+		goalSet := goalSets[i]
 
 		// run the process
 		process := system.processList.GetOrCreateProcess(goalId, goalSet)
 		system.processRunner.RunProcess(process)
 
-		// delete goal when done
+		// delete goal when done or failed
 		if process.IsDone() || !system.log.IsOk() {
 			system.deleteGoal(goalId)
 		}

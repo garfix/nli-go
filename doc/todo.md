@@ -11,6 +11,11 @@
 - extend a module with another module
 - interactive: arrow up/down for history
 
+## Performance
+- if the system is instantiated just to process messages, dont't install all language components; lazy load; specially for all grammars
+- on the other hand: maybe the rules take longer to parse, and they are always necessary
+- create a service? (a stay resident application that processes messages)
+
 - let => var
 - document: these are two ways of doing a child stack frame
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched

@@ -38,24 +38,18 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	return result
 }
 
-// API call that executes input, runs all processes, and returns the first waiting relation set
-func (system *System) SendMessage(relations mentalese.RelationSet) (mentalese.RelationSet, bool) {
+// API call that executes input, runs all processes, and returns all waiting messages
+func (system *System) SendMessage(relations mentalese.RelationSet) []mentalese.RelationSet {
 
 	system.processRunner.RunRelationSet(relations)
 
 	system.run()
 
-	response := mentalese.RelationSet{}
-	hasResponse := false
 	relationSets := system.getWaitingMessages()
-	if len(relationSets) > 0 {
-		response = relationSets[0]
-		hasResponse = true
-	}
 
 	system.dialogContext.Store()
 
-	return response, hasResponse
+	return relationSets
 }
 
 // processes input and return the answer, respond to all waiting relations

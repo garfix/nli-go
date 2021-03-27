@@ -1,3 +1,7 @@
+## 2021-03-27
+
+Relations are now used as messages, in the communication between the web client and the server. Relations can be converted to JSON effortlessly. 
+
 ## 2021-03-26
 
 The rewrite I started on January 21 is done! Answering and execution are now separated. This is a major advancement and I will create a new release.

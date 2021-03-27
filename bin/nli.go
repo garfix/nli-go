@@ -189,10 +189,10 @@ func performSend(system *global.System, log *common.SystemLog, relationJson stri
 	} else {
 
 		// the actual system call
-		response, hasResponse := system.SendMessage(relations)
+		responses := system.SendMessage(relations)
 
-		if hasResponse {
-			message = response
+		if len(responses) > 0 {
+			message = responses[0]
 		}
 	}
 

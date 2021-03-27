@@ -151,7 +151,7 @@ $(function(){
             url: 'ajax-answer.php',
             data: { format: "json", request: JSON.stringify(request), app: "blocks" },
             dataType: 'json',
-            type: 'GET',
+            type: 'POST',
             success: function (data) {
 
                 if (data.ErrorLines.length > 0) {

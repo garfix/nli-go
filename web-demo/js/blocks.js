@@ -159,7 +159,7 @@ $(function(){
                     showError(data.ErrorLines);
                     log(currentInput, errorToHtml(data.ErrorLines))
                 } else {
-                    processResponse(data.AnswerStruct)
+                    processResponse(data.Message)
                     showError([]);
                 }
                 showProductions(data.Productions);

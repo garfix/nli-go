@@ -24,11 +24,10 @@ type Result struct {
 }
 
 type Result2 struct {
-	Success        bool
-	ErrorLines     []string
-	Productions    []string
-	AnswerRelations string
-	AnswerStruct   mentalese.RelationSet
+	Success     bool
+	ErrorLines  []string
+	Productions []string
+	Message     mentalese.RelationSet
 }
 
 func main() {
@@ -181,8 +180,7 @@ func performQuery(system *global.System, query string)  {
 
 func performSend(system *global.System, log *common.SystemLog, relationJson string)  {
 
-	answerRelationSet := ""
-	answerStruct := mentalese.RelationSet{}
+	message := mentalese.RelationSet{}
 	relations := mentalese.RelationSet{}
 
 	err := json.Unmarshal([]byte(relationJson), &relations)
@@ -194,17 +192,15 @@ func performSend(system *global.System, log *common.SystemLog, relationJson stri
 		response, hasResponse := system.SendMessage(relations)
 
 		if hasResponse {
-			answerRelationSet = response.String()
-			answerStruct = response
+			message = response
 		}
 	}
 
 	result := Result2{
-		Success:        log.IsOk(),
-		ErrorLines:     log.GetErrors(),
-		Productions:    log.GetProductions(),
-		AnswerRelations: answerRelationSet,
-		AnswerStruct:   answerStruct,
+		Success:     log.IsOk(),
+		ErrorLines:  log.GetErrors(),
+		Productions: log.GetProductions(),
+		Message:     message,
 	}
 
 	responseRaw, _ := json.MarshalIndent(result, "", "    ")

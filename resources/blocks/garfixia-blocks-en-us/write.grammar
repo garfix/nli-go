@@ -1,5 +1,5 @@
 { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
-{ rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(_, E1, E2) }
+{ rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }
 
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'the' }

@@ -10,7 +10,7 @@ dom:green(E) :- color(E, green);
 dom:color(E, C) :- color(E, C);
 
 dom:at(E, X, Y, Z) :- at(E, X, Y, Z);
-dom:support(P, A, B) :- support(A, B);
+dom:support(A, B) :- support(A, B);
 dom:contain(P, A, B) :- contain(A, B);
 dom:grasping(P1, E1) :- grasping(P1, E1);
 dom:size(E, Width, Length, Height) :- size(E, Width, Length, Height);

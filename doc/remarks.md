@@ -1,6 +1,15 @@
 ## 2021-03-27
 
-Relations are now used as messages, in the communication between the web client and the server. Relations can be converted to JSON effortlessly. 
+Relations are now used as messages, in the communication between the web client and the server. Relations can be converted to JSON effortlessly.
+
+---
+
+This sequence also goes wrong:
+
+    Put a small red block into the box
+    Will you please stack up both of the red blocks and either a green cube or a pyramid?
+
+The system creates a stack of a green block with on it a single small red block. Now I think I know why: it somehow interprets "both of the red blocks" as "a small red block" from the anaphora queue.
 
 ## 2021-03-26
 

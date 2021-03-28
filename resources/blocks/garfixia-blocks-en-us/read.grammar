@@ -20,14 +20,15 @@
 { rule: tv(P1, E1, E2) -> 'grasp',                                     sense: dom:do_pick_up_smart(P1, E2) }
 { rule: tv(P1, E1, E2) -> 'find' }
 { rule: tv(P1, E1, E2) -> 'own',                                       sense: dom:own(E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(P1, E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(P1, E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(P1, E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
 
 { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: go:quant_foreach($np, $tv) }
 { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(P1, E1, E2))) }
+{ rule: vp(P1) -> 'put' np(E1) 'in' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart(P1, $np) }
@@ -52,7 +53,7 @@
 { rule: contain(P1) -> 'contain' }
 { rule: can(P1) -> 'can' }
 
-{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(P1, E2, E1) }
+{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
 /* nouns */
 
@@ -96,6 +97,8 @@
 
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }
+{ rule: noun(E1) -> 'object',                                          sense: dom:object(E1) }
+{ rule: noun(E1) -> 'objects',                                         sense: dom:object(E1) }
 { rule: noun(E1) -> 'block',                                           sense: dom:block(E1) }
 { rule: noun(E1) -> 'cube',                                            sense: dom:cube(E1) }
 { rule: noun(E1) -> 'blocks',                                          sense: dom:block(E1) }
@@ -134,7 +137,7 @@
 { rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: go:quant_check($np, dom:contain(P1, E1, E2)) }
 { rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: go:quant_check($np, $past_participle) }
 
-{ rule: which_clause(P1, E2) -> aux_be(_) 'sitting' 'on' np(E1),                    sense: go:quant_check($np1, dom:support(P1, E1, E2)) }
+{ rule: which_clause(P1, E2) -> aux_be(_) 'sitting' 'on' np(E1),                    sense: go:quant_check($np1, dom:support(E1, E2)) }
 
 { rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
 

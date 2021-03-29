@@ -4,6 +4,25 @@ go:number_of() -> go:count()
 
 Data in memory bases is now only persisted if a change has taken place. This saves 25% of the time to run the blocks world.
 
+---
+
+Agreement:
+- number: the NP must agree in number with the VP (singular, plural)
+- gender (male, female, neuter)
+- tense (present, past, future)
+
+It would be nice to have agreement. I haven't needed it yet, but it is necessary in some cases.
+But is it? Yes, I agree that agreement is necessary for generation; but is it necessary for parsing?
+It's a big deal in CLE; so let's see if they can come up with an example where agreement is necessary for a proper parse.
+
+I haven't found one. And even if I could find a far-fetched example of a sentence that could only be parsed properly with agreement, is it worth it? Agreement requires a lot of extra work.
+
+And what about generation? Yes, to generate a sentence one must remember that the number, the gender and the tense of the NP and the VP match. But is it necessary to have explicit mention of agreement in the rules? It is the semantics that leads the chosen rule, both for the NP and the VP. There's no need to have them match.
+
+If I were to have agreement, its syntax would be an extra field next to 'rule' and 'sense': 'agree'. But I will wait until have a good case before I add it in.
+
+    You might not need agreement.
+
 ## 2021-03-27
 
 Relations are now used as messages, in the communication between the web client and the server. Relations can be converted to JSON effortlessly.

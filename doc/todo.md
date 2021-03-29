@@ -15,7 +15,6 @@
 - create a service? (a stay resident application that processes messages)
 
 - let => var
-- document: these are two ways of doing a child stack frame
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched
 - would be nice to have `is_first()` and `is_last()`: a check if the current binding is the first / last of the active bindings; such a function takes both a single binding and all bindings as input
 

@@ -162,6 +162,8 @@ func (system *System) getGoalId(input string) string {
 
 	goalId := ""
 
+	// if there are open system-questions, the user input will be regarded as the response
+	// and its goal will be made the active goal
 	for _, process := range system.processList.GetProcesses() {
 		beforeLastFrame := process.GetBeforeLastFrame()
 		if beforeLastFrame != nil {
@@ -234,22 +236,6 @@ func (system *System) run() {
 			system.deleteGoal(goalId)
 		}
 	}
-}
-
-func (system *System) buildOptions(process *goal.Process) *common.Options {
-	options := common.NewOptions()
-
-	if !process.IsDone() {
-		lastFrame := process.GetLastFrame()
-		relation := lastFrame.Relations[0]
-		if relation.Predicate == mentalese.PredicateUserSelect {
-			for i, value := range relation.Arguments[0].TermValueList.GetValues() {
-				options.AddOption(strconv.Itoa(i), value)
-			}
-		}
-	}
-
-	return options
 }
 
 func (system *System) readAnswer() (string, *common.Options, bool) {

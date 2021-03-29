@@ -52,7 +52,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: go:number_of(E1, N),
+            preparation: go:count(E1, N),
             answer: dom:a_number(N)
         }
         {
@@ -68,7 +68,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+            preparation: dom:describe(B, N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {
@@ -85,7 +85,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:number_of(B, Count),
+            preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {
@@ -116,7 +116,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And) go:number_of(B, Count),
+            preparation: dom:describe(B, N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {

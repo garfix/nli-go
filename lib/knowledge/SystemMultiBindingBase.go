@@ -19,7 +19,7 @@ func NewSystemMultiBindingBase(name string, log *common.SystemLog) *SystemMultiB
 
 func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiBindingFunction {
 	return map[string]api.MultiBindingFunction{
-		mentalese.PredicateNumberOf: base.numberOf,
+		mentalese.PredicateCount:    base.numberOf,
 		mentalese.PredicateFirst:    base.first,
 		mentalese.PredicateLast:     base.last,
 		mentalese.PredicateGet:      base.get,
@@ -27,7 +27,7 @@ func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiB
 		mentalese.PredicateLargest:  base.largest,
 		mentalese.PredicateSmallest: base.smallest,
 		mentalese.PredicateExists:   base.exists,
-		mentalese.PredicateCut: 	 base.cut,
+		mentalese.PredicateCut:      base.cut,
 		mentalese.PredicateMakeAnd:  base.makeAnd,
 		mentalese.PredicateMakeList: base.makeList,
 	}
@@ -54,7 +54,7 @@ func (base *SystemMultiBindingFunctionBase) numberOf(messenger api.ProcessMessen
 	} else {
 		assertedNumber, err := strconv.Atoi(numberArgumentValue)
 		if err != nil {
-			base.log.AddError("The second argument of number_of() needs to be an integer")
+			base.log.AddError("The second argument of count() needs to be an integer")
 			newBindings = mentalese.NewBindingSet()
 		} else {
 			if number == assertedNumber {

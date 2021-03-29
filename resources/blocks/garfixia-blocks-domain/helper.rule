@@ -101,19 +101,19 @@ describe(E1, DescSet) :-
     /* Is the shape unique? */
     shape(E1, S)
     go:if_then_else(
-        shape(E2, S) go:number_of(E2, 1),
+        shape(E2, S) go:count(E2, 1),
         go:unify(DescSet, description(E1) shape(E1, S)),
 
         /* Is the combination of shape and color unique? */
         color(E1, C)
         go:if_then_else(
-            shape(E2, S) color(E2, C) go:number_of(E2, 1),
+            shape(E2, S) color(E2, C) go:count(E2, 1),
             go:unify(DescSet, description(E1) shape(E1, S) color(E1, C)),
 
             /* Is the combination of shape, color and volume (big, small) unique? */
             volume(E1, V)
             go:if_then_else(
-                shape(E2, S) color(E2, C) volume(E2, V) go:number_of(E2, 1),
+                shape(E2, S) color(E2, C) volume(E2, V) go:count(E2, 1),
                 go:unify(DescSet, description(E1) shape(E1, S) color(E1, C) volume(E1, V)),
 
                 /* Add the object it supports and presume that this is enough */
@@ -133,13 +133,13 @@ describe_categoric(E1, DescSet) :-
     /* Is the shape unique? */
     shape(E1, S)
     go:if_then_else(
-        shape(E2, S) go:number_of(E2, 1),
+        shape(E2, S) go:count(E2, 1),
         go:unify(DescSet, description(E1) shape(E1, S)),
 
         /* Is the combination of shape and color unique? */
         color(E1, C)
         go:if_then_else(
-            shape(E2, S) color(E2, C) go:number_of(E2, 1),
+            shape(E2, S) color(E2, C) go:count(E2, 1),
             go:unify(DescSet, description(E1) shape(E1, S) color(E1, C)),
 
             /* Is the combination of shape, color and volume (big, small) unique? */

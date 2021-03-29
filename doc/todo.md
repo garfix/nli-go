@@ -1,7 +1,5 @@
 # Todo
 
-- store KB only at the end of the run
-
 - functions calls for arguments
 - typed arguments
 - operators
@@ -21,6 +19,7 @@
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched
 - would be nice to have `is_first()` and `is_last()`: a check if the current binding is the first / last of the active bindings; such a function takes both a single binding and all bindings as input
 
+## Blocks
 The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
 
 * database mappings: allow a rule to be used only for given sorts; for performance
@@ -36,11 +35,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
 * change rewrite rules from categories with variables to relations (see also Generator)
-
-## Long distance relations
-
-At present, long distance relations are modelled explicitly, by passing variables through all intermediate layers. 
-Is it not possible to mark missing dependencies explicitly in the relations; and then, in a post-process, have the dependencies "bubble up" in some way, to have them attached?
 
 ## generation of multiple entities
 
@@ -62,33 +56,11 @@ The last one is used with just a single constant.
     'pick' 'up', sense: pick_up(E1) agr(E1, number, multiple) // plural
     
     'pick' 'up', sense: pick_up(E1) number(E1, multiple)
-    > number's second argument must have a single value; declare this in some way
-
-## Aggregation functions on bindings
-
-`number_of`, `exists`, and the functions that still need to be build, `min` and `max`, work on bindings, and it is better to make this explicit.
-
-    bindings_max(E)
-    
-for example. On the other hand, I could make a single function
-
-    to_list(E)
-    
-that converts the binding variables into a list. And create
-
-    list_max(E)
-    
-But I don't like `to_list` because it must change the variable E and this is against the rules in Prolog. If it wouldn't change E then the number of bindings would stay unnecessary large.            
+    > number's second argument must have a single value; declare this in some way 
 
 ## Stuff I'm not happy with
 
-* the RelationTransformer; is only used in solutions, but should be ermoved from there as well, if possible
-* scoped variables
-* multiple stack frames
-
-## Misc
-
-* Blocks World examples
+* the RelationTransformer; is only used in solutions, but should be removed from there as well, if possible
 
 ## Rules
 
@@ -102,7 +74,7 @@ Test if this works or make it work. Create a stack of current relations to be so
 ## Syntax
 
 - Perhaps replace the syntax of functions like number_of(N, X) to
-    number_of(X: N)
+    count(X: N)
     join('', firstName, lastName: name)
     join('', firstName, lastName -> name)
     name = join('', firstName, lastName)

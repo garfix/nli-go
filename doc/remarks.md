@@ -1,3 +1,9 @@
+## 2021-03-29
+
+go:number_of() -> go:count()
+
+Data in memory bases is now only persisted if a change has taken place. This saves 25% of the time to run the blocks world.
+
 ## 2021-03-27
 
 Relations are now used as messages, in the communication between the web client and the server. Relations can be converted to JSON effortlessly.

@@ -112,7 +112,7 @@ Each question requires a specific type of answer. To answer a question, a soluti
     responses: [
         {
             condition: go:exists(),
-            preparation: gender(B, G) go:number_of(N, A),
+            preparation: gender(B, G) go:count(N, A),
             answer: gender(B, G) go:count(C, N) have_child(B, C)
         }
         {
@@ -186,9 +186,9 @@ After the question is executed, we have a set of bindings. These bindings are th
 
 The preparation is meant to collect some more information needed to create the answer.
 
-    preparation: gender(B, G) number_of(N, A),
+    preparation: gender(B, G) count(N, A),
 
-In this example, the engine executes 'gender' because the gender is needed in the answer ('He ...'). number_of() is an aggregate function used to collect the number of children for the answer. This function is performed on the binding set. The different occurrences of A are counted and stored in variable N of all bindings.
+In this example, the engine executes 'gender' because the gender is needed in the answer ('He ...'). count() is an aggregate function used to collect the number of children for the answer. This function is performed on the binding set. The different occurrences of A are counted and stored in variable N of all bindings.
 
 #### Answer
 

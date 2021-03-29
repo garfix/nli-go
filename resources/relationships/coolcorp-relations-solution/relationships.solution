@@ -54,7 +54,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:gender(B, G) go:number_of(A, N),
+            preparation: dom:gender(B, G) go:count(A, N),
             answer: dom:gender(B, G) go:count(C, N) dom:have_child(C, B)
         }
         {

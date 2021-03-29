@@ -17,6 +17,7 @@ type InMemoryFactBase struct {
 	matcher   *central.RelationMatcher
 	storage *common.FileStorage
 	log       *common.SystemLog
+	changed bool
 }
 
 func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, storage *common.FileStorage, log *common.SystemLog) *InMemoryFactBase {
@@ -30,6 +31,7 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *cent
 		matcher:           matcher,
 		storage:           storage,
 		log:               log,
+		changed: 		   false,
 	}
 
 	if storage != nil {
@@ -83,16 +85,14 @@ func (factBase *InMemoryFactBase) GetSharedId(inId string, sort string) string {
 	return outId
 }
 
-func (factBase *InMemoryFactBase) SetRelations(relations mentalese.RelationSet) {
-	factBase.facts = relations
-}
-
 func (factBase *InMemoryFactBase) GetRelations() mentalese.RelationSet {
 	return factBase.facts
 }
 
-func (factBase *InMemoryFactBase) AddRelation(relation mentalese.Relation) {
-	factBase.facts = append(factBase.facts, relation)
+func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, binding)
+	return bindings
 }
 
 func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
@@ -105,30 +105,11 @@ func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
 	}
 
 	factBase.facts = append(factBase.facts, relation)
-
-	factBase.persist()
-}
-
-func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
-	factBase.RemoveRelation(relation)
-
-	factBase.persist()
-}
-
-func (factBase *InMemoryFactBase) ResetSession() {
-	factBase.facts = factBase.originalFacts.Copy()
-
-	factBase.persist()
-}
-
-func (factBase *InMemoryFactBase) persist() {
-	if factBase.storage != nil {
-		factBase.storage.Write(factBase.facts)
-	}
+	factBase.changed = true
 }
 
 // Removes all facts that match relation
-func (factBase *InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
+func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
 	newFacts := []mentalese.Relation{}
 
 	for _, fact := range factBase.facts {
@@ -139,10 +120,18 @@ func (factBase *InMemoryFactBase) RemoveRelation(relation mentalese.Relation) {
 	}
 
 	factBase.facts = newFacts
+	factBase.changed = true
 }
 
-func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (factBase *InMemoryFactBase) ResetSession() {
+	factBase.facts = factBase.originalFacts.Copy()
+	factBase.changed = true
+}
 
-	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, binding)
-	return bindings
+func (factBase *InMemoryFactBase) Persist() {
+	if factBase.storage != nil {
+		if factBase.changed {
+			factBase.storage.Write(factBase.facts)
+		}
+	}
 }

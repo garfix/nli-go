@@ -33,7 +33,7 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
 	result := system.processRunner.RunRelationSet(set)
 
-	system.dialogContext.Store()
+	system.persistSession()
 
 	return result
 }
@@ -47,7 +47,7 @@ func (system *System) SendMessage(relations mentalese.RelationSet) []mentalese.R
 
 	relationSets := system.getWaitingMessages()
 
-	system.dialogContext.Store()
+	system.persistSession()
 
 	return relationSets
 }
@@ -83,17 +83,21 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		}
 	}
 
-	// store the updated dialog context
-	system.dialogContext.Store()
+	system.persistSession()
 
 	return answer, options
 }
 
 func (system *System) ResetSession() {
 	system.dialogContext.Initialize()
-	system.dialogContext.Store()
-
 	system.solverAsync.ResetSession()
+
+	system.persistSession()
+}
+
+func (system *System) persistSession() {
+	system.dialogContext.Store()
+	system.solverAsync.PersistSessionBases()
 }
 
 // returns the children of all `wait_for` relations

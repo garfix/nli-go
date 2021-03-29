@@ -75,6 +75,10 @@ func TestBlocksWorld(t *testing.T) {
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
 			//{"stack up a blue block and a blue pyramid", "OK1"},
+			//{"Put a blue block into the box", "OK"},
+			//{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
+			//{"Stack up 3 objects", "OK"},
+			//{"Stack up 3 objects", "OK"},
 		},
 	}
 

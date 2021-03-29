@@ -82,6 +82,14 @@ func (solver *ProblemSolverAsync) AddSolverFunctionBase(base api.SolverFunctionB
 	solver.solverFunctionBases = append(solver.solverFunctionBases, base)
 }
 
+func (solver *ProblemSolverAsync) PersistSessionBases() {
+	for _, factBase := range solver.factBases {
+		switch v := factBase.(type) {
+		case api.SessionBasedFactBase:
+			v.Persist()
+		}
+	}
+}
 
 func (solver *ProblemSolverAsync) ResetSession() {
 	for _, factBase := range solver.factBases {

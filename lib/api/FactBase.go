@@ -16,4 +16,5 @@ type FactBase interface {
 
 type SessionBasedFactBase interface {
 	ResetSession()
+	Persist()
 }

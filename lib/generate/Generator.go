@@ -52,8 +52,6 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 
 	words := []string{}
 
-	if generator.log.Active() { generator.log.StartDebug("Generate", fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue)) }
-
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
 	rule, binding, ok := generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
@@ -78,8 +76,6 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 
 		rule, binding, ok = generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 	}
-
-	if generator.log.Active() { generator.log.EndDebug("Generate", fmt.Sprintf("%v", words)) }
 
 	return words
 }

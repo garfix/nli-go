@@ -376,8 +376,6 @@ func (solver *ProblemSolverAsync) solveMultipleRelationSingleFactBase(relations 
 
 func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
 
-	if solver.log.Active() { solver.log.StartDebug("Database" + " " + factBase.GetName(), relation.String() + " " + bindings.String()) }
-
 	// todo: notice cannot handle second order predicates, since no handler
 
 	relationBindings, multiFound := solver.SolveMultipleBindings(nil, relation, bindings)
@@ -404,8 +402,6 @@ func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation men
 			}
 		}
 	}
-
-	if solver.log.Active() { solver.log.EndDebug("Database" + " " + factBase.GetName(), relationBindings.String()) }
 
 	return relationBindings
 }

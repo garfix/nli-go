@@ -18,3 +18,16 @@ taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
 narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
 shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);
+
+on(A, B) :-
+    go:wait_for(
+        go:user_select(['directly on the surface', 'anywhere on top of'], Sel))
+    go:if_then_else(
+        go:equals(Sel, 0),
+        support(B, A),
+        anywhere_on(A, B)
+    );
+
+anywhere_on(A, B) :- support(B, A);
+anywhere_on(A, B) :- support(C, A) anywhere_on(C, B);
+

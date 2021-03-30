@@ -1,3 +1,35 @@
+## 2021-03-30
+
+Next interaction (22):
+
+    U: How many things are not on top of green cubes?
+    H: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes",
+       do you mean:
+       1 - directly on the surface
+       2 - anywhere on top of
+    U: 2
+    H: three of them
+
+    "When there are several interpretations and none is clearly better, the system has to ask the user for more information. The paraphrases were included with the directory definition of "on", and the request for more information occurs automatically when the heuristics for resolving ambiguities aren't sufficient. A request like this can also occur when the meaning of a pronoun such as "it" or "they" is unclear."
+
+The preposition "on" is ambiguous. Winograd has put this ambiguitity in the dictionary. I will add rules for it. The `wait_for` / `user_select` construction allows me to do this.
+
+I will change the system's clarification to a simple "Did you mean?"
+
+"Things" must mean "block" or "pyramid", but not "table" and "box". 
+
+---
+
+I got an answer, from the system. But the answer was "two of them", not "three of them". What happened? 
+
+Apparently, in interaction 20 SHRDLU doesn't remove the long pyramid from the green block, but it _puts the small block next to it_, on the same block. The book doesn't have a picture of this situation, but it makes sense. This is why the long pyramid is placed in a corner of the block.
+
+Also, I got myself into a left recursion with
+
+    anywhere_on(A, B) :- anywhere_on(C, A) anywhere_on(C, B);
+
+I fixed it.
+
 ## 2021-03-29
 
 go:number_of() -> go:count()

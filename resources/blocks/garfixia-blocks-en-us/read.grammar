@@ -70,7 +70,9 @@
 { rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
 { rule: adjective(E1) -> 'large',                                      sense: dom:large(E1) }
 
+{ rule: pp(E1) -> 'not' pp(E1),                                        sense: go:not($pp) }
 { rule: pp(E1) -> 'in' np(E2),                                         sense: go:quant_check($np, dom:contain(_, E2, E1)) }
+{ rule: pp(E1) -> 'on' 'top' 'of' np(E2),                              sense: go:quant_check($np, dom:on(E1, E2)) }
 
 { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
 { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: go:quant_check($np, $tv_gerund) }
@@ -97,11 +99,14 @@
 
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }
+{ rule: noun(E1) -> 'thing',                                           sense: dom:object(E1) }
+{ rule: noun(E1) -> 'things',                                          sense: dom:object(E1) }
 { rule: noun(E1) -> 'object',                                          sense: dom:object(E1) }
 { rule: noun(E1) -> 'objects',                                         sense: dom:object(E1) }
 { rule: noun(E1) -> 'block',                                           sense: dom:block(E1) }
-{ rule: noun(E1) -> 'cube',                                            sense: dom:cube(E1) }
 { rule: noun(E1) -> 'blocks',                                          sense: dom:block(E1) }
+{ rule: noun(E1) -> 'cube',                                            sense: dom:cube(E1) }
+{ rule: noun(E1) -> 'cubes',                                           sense: dom:cube(E1) }
 { rule: noun(E1) -> 'pyramid',                                         sense: dom:pyramid(E1) }
 { rule: noun(E1) -> 'pyramids',                                        sense: dom:pyramid(E1) }
 { rule: noun(E1) -> 'table',                                           sense: dom:table(E1) }
@@ -143,7 +148,7 @@
 
 { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
 
-{ rule: how_many_clause(P1, E1) -> np(E1) copula(C1) 'not' pp(E1),                  sense: go:quant_check($np, go:not($pp)) }
+{ rule: how_many_clause(P1, E1) -> np(E1) copula(C1) pp(E1),                        sense: go:quant_check($np, $pp) }
 
 { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }

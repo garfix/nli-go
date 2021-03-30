@@ -333,8 +333,6 @@ func (base *SystemSolverFunctionBase) solveQuantifiedRelations(messenger api.Pro
 
 func (base *SystemSolverFunctionBase) solveQuants(messenger api.ProcessMessenger, quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) (mentalese.BindingSet, bool) {
 
-	if base.log.Active() { base.log.StartDebug("Quant", quant.String()) }
-
 	result := mentalese.NewBindingSet()
 	loading := false
 
@@ -358,8 +356,6 @@ func (base *SystemSolverFunctionBase) solveQuants(messenger api.ProcessMessenger
 		result, loading = base.solveSimpleQuant(messenger, quant, scopeSet, binding, continueAfterEnough)
 
 	}
-
-	if base.log.Active() { base.log.EndDebug("Quant", result.String()) }
 
 	return result, loading
 }

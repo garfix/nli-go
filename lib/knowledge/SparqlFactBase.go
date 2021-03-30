@@ -95,8 +95,6 @@ func (factBase *SparqlFactBase) GetSharedId(inId string, sort string) string {
 // Returns a set of bindings
 func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	if factBase.log.Active() { factBase.log.StartDebug("MatchRelationToDatabase", relation.String()) }
-
 	relation = relation.BindSingle(binding)
 
 	bindings := mentalese.NewBindingSet()
@@ -112,8 +110,6 @@ func (factBase *SparqlFactBase) MatchRelationToDatabase(relation mentalese.Relat
 	}
 
 	bindings = factBase.doQuery(relation)
-
-	if factBase.log.Active() { factBase.log.EndDebug("MatchRelationToDatabase", bindings.String()) }
 
 	return bindings
 }

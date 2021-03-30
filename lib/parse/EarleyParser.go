@@ -33,8 +33,6 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 // Returns parse tree roots
 func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []ParseTreeNode {
 
-	if parser.log.Active() { parser.log.StartDebug("Parse", strings.Join(words, ",")) }
-
 	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 
 	rootNodes := ExtractTreeRoots(chart)
@@ -57,7 +55,6 @@ func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVaria
 		for _, node := range rootNodes {
 			str += " " + node.String()
 		}
-		parser.log.EndDebug("Parse", str)
 	}
 
 	return rootNodes

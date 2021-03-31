@@ -131,7 +131,7 @@ pre {
     color: #846302;
 }
 
-#popup, #samples {
+#options-popup, #samples {
     position: absolute;
     left: 50%;
     top: 50%;

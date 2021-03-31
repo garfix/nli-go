@@ -4,12 +4,12 @@ $(function(){
     const samplePopup = document.getElementById('samples');
     const answerBox = document.getElementById('answer-box');
     const errorBox = document.getElementById('error-box');
-    const popup = document.getElementById('popup');
-    const popupCloseButton = document.getElementById('close');
+    const optionPopupCloseButton = document.getElementById('close');
     const sampleButton = document.getElementById('show-samples');
     const form = document.getElementById('f');
-    const optionsBox = document.getElementById('options-box');
+    const optionsPopup = document.getElementById('options-popup');
     const optionsHeader = document.getElementById('options-header');
+    const optionsHtml = document.getElementById('options-box');
     const logBox = document.getElementById("log");
     const monitor = document.getElementById("monitor");
     const resetButton = document.getElementById("reset");
@@ -24,12 +24,12 @@ $(function(){
     {
         monitor.style.height = displayHeight + "px";
 
-        popupCloseButton.onclick = function() {
-            hidePopup()
+        optionPopupCloseButton.onclick = function() {
+            hideOptionsPopup()
         };
 
-        sampleButton.onclick = function (event) {
-            showPopup()
+        sampleButton.onclick = function () {
+            showSamplePopup()
         };
 
         resetButton.onclick = function () {
@@ -46,7 +46,8 @@ $(function(){
 
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape') {
-                hidePopup()
+                hideSamplePopup()
+                hideOptionsPopup()
             }
         });
 
@@ -81,11 +82,11 @@ $(function(){
         document.getElementById('Anaphora-queue').innerHTML = "";
     }
 
-    function showPopup() {
+    function showSamplePopup() {
         samplePopup.style.display = "block";
     }
 
-    function hidePopup() {
+    function hideSamplePopup() {
         samplePopup.style.display = "none";
     }
 
@@ -197,8 +198,7 @@ $(function(){
                     asserts.push(assert)
                     break;
                 case 'go_user_select':
-                    // assert = initUserSelect(response[1])
-                    // asserts.push(assert)
+                    showOptionsPopup(relation)
                     break;
             }
         }
@@ -248,28 +248,36 @@ $(function(){
         }
     }
 
-    function showOptions(answer, optionKeys, optionValues) {
+    function showOptionsPopup(relation) {
+
+        let options = relation.arguments[0].list;
+
         let html = "<ol>";
-        let showOptions = optionKeys.length > 0;
-
-        for (let i = 0; i < optionKeys.length; i++) {
-            html += "<li><a href='" + optionKeys[i] + "'>" + optionValues[i] + "</a></li>";
+        for (let i = 0; i < options.length; i++) {
+            let argument = options[i];
+            html += "<li><a href='" + i + "'>" + argument.value + "</a></li>";
         }
-
         html += "</ol>"
 
-        optionsHeader.innerHTML = answer;
-        optionsBox.innerHTML = html;
+        optionsHtml.innerHTML = html;
+        optionsPopup.style.display = "block";
 
-        popup.style.display = showOptions ? "block" : "none";
-
-        let aTags = optionsBox.querySelectorAll('a');
+        let aTags = optionsHtml.querySelectorAll('a');
         for (let i = 0; i < aTags.length; i++) {
             aTags[i].onclick = function (event) {
                 event.preventDefault();
-                //sendRequest(event.currentTarget.getAttribute('href'));
+                hideOptionsPopup()
+                relation.arguments[1].type = "string"
+                relation.arguments[1].value = event.currentTarget.getAttribute('href');
+                let assert = getAssert(relation)
+                sendRequest([assert])
             };
         }
+    }
+
+    function hideOptionsPopup()
+    {
+        optionsPopup.style.display = "none";
     }
 
     function log(question, answer) {

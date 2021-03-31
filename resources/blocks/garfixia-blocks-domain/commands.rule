@@ -26,7 +26,21 @@ do_move(E1, X, Y, Z) :-
     do_pick_up(E1)
     do_put_down(E1, X, Y, Z);
 
-do_put_on(E1, E2) :-
+do_put_on_select(E1, E2) :-
+    go:if_then_else(
+        go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1),
+        do_put_on_position(E1, E2, X1, Y1),
+        do_cleartop(E2) do_put_on_center(E1, E2)
+    )
+;
+
+do_put_on_position(E1, E2, X1, Y1) :-
+    at(E2, _, _, Z2a)
+    height(E2, Height)
+    go:add(Z2a, Height, Z2b)
+    do_move(E1, X1, Y1, Z2b);
+
+do_put_on_center(E1, E2) :-
     at(E2, X1, Y1, Z1)
     bottom_corner_to_top_center(E2, X1, Y1, Z1, X2, Y2, Z2a)
     height(E1, Height)

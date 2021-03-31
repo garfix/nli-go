@@ -105,6 +105,11 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
+			if test.question == "Put the littlest pyramid on top of it" {
+				//log.SetDebug(true)
+				//log.SetPrint(true)
+			}
+
 			answer, options := system.Answer(test.question)
 
 			if options.HasOptions() {

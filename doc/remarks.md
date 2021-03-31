@@ -1,3 +1,9 @@
+## 2021-03-31
+
+Haha, I made it!
+
+![Initial blocks world](archive/blocksworld5.png)
+
 ## 2021-03-30
 
 Next interaction (22):

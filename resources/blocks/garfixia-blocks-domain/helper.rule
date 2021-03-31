@@ -55,7 +55,7 @@ stack_up_proper(List1, X, Y) :-
         go:if_then_else(
             go:equals(Base, `table:table`),
             block(E1) do_put_on_table(E1, X, Y),
-            block(Base) go:unify(B1, Base) do_put_on(E1, B1)
+            block(Base) go:unify(B1, Base) do_put_on_center(E1, B1)
         )
         go:let(Base, E1)
     );

@@ -28,8 +28,7 @@ do_put_on_smart(P1, E1, E2) :-
     go:assert(go:goal(
         do_clear_hand(_)
         do_cleartop(E1)
-        do_cleartop(E2)
-        do_put_on(E1, E2),
+        do_put_on_select(E1, E2),
         Uuid));
 
 do_stack_up_smart(P1, QBlocks) :-

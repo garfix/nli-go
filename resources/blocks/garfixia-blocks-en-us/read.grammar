@@ -19,7 +19,7 @@
 { rule: tv(P1, E1, E2) -> 'pick' 'up',                                 sense: dom:do_pick_up_smart(P1, E2) }
 { rule: tv(P1, E1, E2) -> 'grasp',                                     sense: dom:do_pick_up_smart(P1, E2) }
 { rule: tv(P1, E1, E2) -> 'find' }
-{ rule: tv(P1, E1, E2) -> 'own',                                       sense: dom:own(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
@@ -124,7 +124,7 @@
 { rule: and(C1) -> 'and' }
 
 { rule: assertion(P1) -> np(E1) copula(_) np(E2),                      sense: go:assert(
-                                                                       dom:own(A, B) :-
+                                                                       learn:own(A, B) :-
                                                                             go:quant_check($np1, go:quant_check($np2, go:equals(A, E2) go:equals(B, E1)))) }
 { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           sense: go:assert(
                                                                             -$tv :- go:quant_check($np1, go:quant_check($np2, go:equals(A, E1) go:equals(B, E2)))) }

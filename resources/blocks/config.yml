@@ -1,5 +1,6 @@
 uses:
   dom: garfixia-blocks-domain:1.0.0
+  learn: garfixia-blocks-learn:1.0.0
   en: garfixia-blocks-en-us:1.0.0
   db: garfixia-blocks-db:1.0.0
   sol: garfixia-blocks-solution:1.0.0

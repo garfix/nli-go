@@ -1,0 +1,7 @@
+type: domain
+version: 1.0.0
+storagetype: session
+write: [ write.yml ]
+rules:
+  - own.rule
+

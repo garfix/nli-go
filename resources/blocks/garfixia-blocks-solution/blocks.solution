@@ -111,7 +111,7 @@
 }
 /* Do I own? Yes: these things */
 {
-    condition: go:intent(yes_no) dom:own(_, B) dom:object(B),
+    condition: go:intent(yes_no) learn:own(_, B) dom:object(B),
     result: B,
     responses: 
         {

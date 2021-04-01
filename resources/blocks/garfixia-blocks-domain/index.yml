@@ -1,6 +1,7 @@
 type: domain
 version: 1.0.0
 sorts: sorts.yml
+storagetype: session
 write: [ write.yml ]
 rules:
   - sentence.rule

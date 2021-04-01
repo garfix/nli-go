@@ -59,7 +59,7 @@ func TestLocalVariables(t *testing.T) {
 		;
 	
 	`)
-	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
+	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)

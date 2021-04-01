@@ -89,6 +89,12 @@ func (solver *ProblemSolverAsync) PersistSessionBases() {
 			v.Persist()
 		}
 	}
+	for _, ruleBase := range solver.ruleBases {
+		switch v := ruleBase.(type) {
+		case api.SessionBasedFactBase:
+			v.Persist()
+		}
+	}
 }
 
 func (solver *ProblemSolverAsync) ResetSession() {
@@ -98,6 +104,14 @@ func (solver *ProblemSolverAsync) ResetSession() {
 			v.ResetSession()
 		}
 	}
+	for _, ruleBase := range solver.ruleBases {
+		switch v := ruleBase.(type) {
+		case api.SessionBasedFactBase:
+			v.ResetSession()
+		}
+	}
+	// relations are indexed by instance; so we need to reindex at least these
+	solver.Reindex()
 }
 
 func (s *ProblemSolverAsync) Reindex() {

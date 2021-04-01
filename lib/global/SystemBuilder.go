@@ -767,7 +767,16 @@ func (builder systemBuilder) importRuleBaseFromPath(index index, system *System,
 		return
 	}
 
-	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
+	storageType := index.StorageType
+
+	if storageType == "" {
+		storageType = common.StorageNone
+	}
+
+	path := builder.varDir + "/" + builder.getSystemName() + "/rules"
+	storage := common.NewFileStorage(path, builder.sessionId, storageType, applicationAlias, system.log)
+
+	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, storage, builder.log))
 }
 
 func (builder systemBuilder) readWritelist(index index, baseDir string, applicationAlias string) ([]string, bool) {

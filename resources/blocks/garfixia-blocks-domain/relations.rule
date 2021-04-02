@@ -21,7 +21,7 @@ behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);
 
 on(A, B) :-
     go:wait_for(
-        go:user_select(['directly on the surface', 'anywhere on top of'], Sel))
+        go:user_select('Which one?', ['directly on the surface', 'anywhere on top of'], Sel))
     go:if_then_else(
         go:equals(Sel, 0),
         support(B, A),

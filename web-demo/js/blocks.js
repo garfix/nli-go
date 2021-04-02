@@ -250,7 +250,7 @@ $(function(){
 
     function showOptionsPopup(relation) {
 
-        let options = relation.arguments[0].list;
+        let options = relation.arguments[1].list;
 
         let html = "<ol>";
         for (let i = 0; i < options.length; i++) {
@@ -259,6 +259,7 @@ $(function(){
         }
         html += "</ol>"
 
+        optionsHeader.innerHTML = relation.arguments[0].value
         optionsHtml.innerHTML = html;
         optionsPopup.style.display = "block";
 
@@ -267,8 +268,8 @@ $(function(){
             aTags[i].onclick = function (event) {
                 event.preventDefault();
                 hideOptionsPopup()
-                relation.arguments[1].type = "string"
-                relation.arguments[1].value = event.currentTarget.getAttribute('href');
+                relation.arguments[2].type = "string"
+                relation.arguments[2].value = event.currentTarget.getAttribute('href');
                 let assert = getAssert(relation)
                 sendRequest([assert])
             };

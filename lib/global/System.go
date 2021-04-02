@@ -173,10 +173,11 @@ func (system *System) getGoalId(input string) string {
 		if beforeLastFrame != nil {
 			if beforeLastFrame.Relations[beforeLastFrame.RelationIndex].Predicate == mentalese.PredicateWaitFor {
 				lastFrame := process.GetLastFrame()
-				if lastFrame.Relations[0].Predicate == mentalese.PredicateUserSelect {
+				firstRelation := lastFrame.Relations[0]
+				if firstRelation.Predicate == mentalese.PredicateUserSelect {
 					binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
-					boundRelation := lastFrame.Relations[0].BindSingle(binding)
-					boundRelation.Arguments[1] = mentalese.NewTermString(input)
+					boundRelation := firstRelation.BindSingle(binding)
+					boundRelation.Arguments[2] = mentalese.NewTermString(input)
 					system.assert(boundRelation)
 					goalId = process.GoalId
 					break
@@ -256,7 +257,7 @@ func (system *System) readAnswer() (string, *common.Options, bool) {
 			answer = firstRelation.Arguments[1].TermValue
 		}
 		if firstRelation.Predicate == mentalese.PredicateUserSelect {
-			for i, value := range firstRelation.Arguments[0].TermValueList.GetValues() {
+			for i, value := range firstRelation.Arguments[1].TermValueList.GetValues() {
 				options.AddOption(strconv.Itoa(i), value)
 			}
 			done = true

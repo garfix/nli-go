@@ -1,3 +1,9 @@
+## 2021-04-01
+
+The rule bases weren't stored in the session. They are now.
+
+I placed the learnable 'own' rules in a separate rules base (blocks world), to avoid storing all rules in the session. Only a few rules can be learned, so only these will need to be stored in the session.
+
 ## 2021-03-31
 
 Haha, I made it!

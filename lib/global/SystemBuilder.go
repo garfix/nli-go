@@ -14,6 +14,7 @@ import (
 	"nli-go/lib/parse"
 	"nli-go/lib/parse/morphology"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -423,11 +424,43 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 		grammar.SetTokenizer(parse.NewTokenizer(index.TokenExpression))
 	}
 
+	if index.Text != "" {
+		grammar.SetTexts(builder.importTexts(moduleBaseDir + "/" + index.Text))
+	}
+
 	if index.Morphology != nil {
 		grammar.SetMorphologicalAnalyzer(builder.importMorphologicalAnalyzer(index.Morphology, system, moduleBaseDir))
 	}
 
 	system.grammars = append(system.grammars, grammar)
+}
+
+func (builder *systemBuilder) importTexts(textFile string) map[string]string {
+	texts := map[string]string{}
+	csvString, err := common.ReadFile(textFile)
+	if err != nil {
+		builder.log.AddError(err.Error())
+		return texts
+	}
+
+	expression, _ := regexp.Compile("((?:\\\\,|[^,])+),((?:\\\\,|[^,])+)(?:\n|$)")
+
+	lines := expression.FindAllStringSubmatch(csvString, -1)
+
+	for _, parts := range lines {
+		source := parts[1]
+		translation := parts[2]
+
+		source = strings.ReplaceAll(source, "\\", "")
+		translation = strings.ReplaceAll(translation, "\\", "")
+
+		source = strings.Trim(source, " \t")
+		translation = strings.Trim(translation, " \t")
+
+		texts[source] = translation
+	}
+
+	return texts
 }
 
 func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyzer {

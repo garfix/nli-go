@@ -110,3 +110,16 @@ Creates a canned response, based on a canned template, and one or more arguments
 * `Ouput`: a string
 * `template`: an atom
 * `Argument`: a string
+
+## Translate
+
+Translated a canned text to a new text in a given locale.
+
+    go:translate(Source, Locale, Translation)
+
+* `Source`: the source text
+* `Locale`: the locale (i.e. en_US)
+* `Translation`: the outpur translation
+
+Use `go:locale(Locale)` to get the current locale.
+

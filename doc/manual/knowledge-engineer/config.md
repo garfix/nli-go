@@ -132,10 +132,33 @@ A sample index.yml:
     read: [ read.grammar ]
     write: [ write.grammar ]
     tokenexpression: ([_0-9a-zA-Z]+|[^\\s])
+    text: text.csv
     
 `read` and `write` contain names of files that hold [grammar rules](creating-a-grammar.md).    
 
 You can name the regular expression used to tokize a sentence if you are not satisfied with the standard expression.
+
+`text` is an optional CSV file that maps source strings to translations.
+
+These texts are used by `go:translate()`.
+
+The CSV file contains lines like:
+
+```
+red,Rot
+yellow,Gelb
+blue,Blau
+```
+
+Quite simple. Some notes:
+
+- all texts are trimmed of leading and trailing spaces and tabs
+- quote are not allowed  
+- if a text contains a comma, it must be escaped by a backslash, for example
+
+```
+red\, yellow\, and blue,Rot\, Geld und Blau
+``` 
 
 ### Db modules    
 

@@ -7,6 +7,7 @@ type index struct {
 	Locale			string
 	Read            []string
 	Write           []string
+	Text            string
 	Solution        []string
 	Rules           []string
 	Facts           []string

@@ -8,7 +8,8 @@ go:tell(Input) :-
 go:respond(Input) :-
     go:let(Output, '')
     go:ignore(
-        go:locale(Locale)
+        go:find_locale(Locale)
+        go:assert(go:locale(Locale))
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)
         go:relationize(ParseTree, Request, RequestBinding, UnresolvedName)

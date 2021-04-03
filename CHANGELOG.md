@@ -1,5 +1,9 @@
 # Changelog
 
+##
+
+* translation of canned texts using CSV files
+
 ## 1.13 asynchronous execution - 26-03-2021
 
 * asynchronous execution of mentalese code

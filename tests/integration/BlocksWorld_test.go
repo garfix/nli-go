@@ -73,7 +73,7 @@ func TestBlocksWorld(t *testing.T) {
 				{"Does the small red block support the green pyramid?", "Yes"},
 
 			// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
-			{"How many things are on top of green cubes?", " [0] directly on the surface [1] anywhere on top of"},
+			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
 			{"1", "Three of them"},
 		},
 		{

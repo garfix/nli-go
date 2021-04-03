@@ -10,3 +10,4 @@ write: [ write.grammar ]
 morphology:
   segmentation: morpho.segment
   parsing: morpho.grammar
+text: text.csv

@@ -47,21 +47,22 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		mentalese.PredicateLocale: base.locale,
-		mentalese.PredicateTokenize: base.tokenize,
-		mentalese.PredicateParse: base.parse,
-		mentalese.PredicateRelationize: base.relationize,
+		mentalese.PredicateFindLocale:   base.findLocale,
+		mentalese.PredicateTokenize:     base.tokenize,
+		mentalese.PredicateParse:        base.parse,
+		mentalese.PredicateRelationize:  base.relationize,
 		mentalese.PredicateGenerate:     base.generate,
 		mentalese.PredicateSurface:      base.surface,
 		mentalese.PredicateFindSolution: base.findSolution,
-		mentalese.PredicateSolve: base.solve,
+		mentalese.PredicateSolve:        base.solve,
 		mentalese.PredicateFindResponse: base.findResponse,
 		mentalese.PredicateCreateAnswer: base.createAnswer,
 		mentalese.PredicateCreateCanned: base.createCanned,
+		mentalese.PredicateTranslate:    base.translate,
 	}
 }
 
-func (base *LanguageBase) locale(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) findLocale(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -523,5 +524,29 @@ func (base *LanguageBase) createCanned(messenger api.ProcessMessenger, input men
 
 	newBinding := binding.Copy()
 	newBinding.Set(outputVar, mentalese.NewTermString(common.GetString(templateString, argumentString)))
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) translate(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ssv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	source := bound.Arguments[0].TermValue
+	locale := bound.Arguments[1].TermValue
+	translatedVar := input.Arguments[2].TermValue
+
+	grammar, found := base.getGrammar(locale)
+	if !found {
+		return mentalese.NewBindingSet()
+	}
+
+	translation := grammar.GetText(source)
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(translatedVar, mentalese.NewTermString(translation))
 	return mentalese.InitBindingSet(newBinding)
 }

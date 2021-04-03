@@ -1,3 +1,11 @@
+## 2021-04-02
+
+I added the function `go:translate(Source, Locale, Translation)` to translated canned texts to a chosen locale.
+
+`go:locale(Locale)` can be used to find the current locale.
+
+The translations can be stored in a simple CSV file in the grammar.
+
 ## 2021-04-01
 
 The rule bases weren't stored in the session. They are now.

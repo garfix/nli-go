@@ -20,8 +20,12 @@ shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), 
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);
 
 on(A, B) :-
+    go:locale(Locale)
+    go:translate('which one', Locale, Q)
+    go:translate('directly on the surface', Locale, A1)
+    go:translate('anywhere on top of', Locale, A2)
     go:wait_for(
-        go:user_select('Which one?', ['directly on the surface', 'anywhere on top of'], Sel))
+        go:user_select(Q, [A1, A2], Sel))
     go:if_then_else(
         go:equals(Sel, 0),
         support(B, A),

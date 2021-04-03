@@ -9,7 +9,7 @@ go:respond(Input) :-
     go:let(Output, '')
     go:ignore(
         go:find_locale(Locale)
-        go:assert(go:locale(Locale))
+        go:retract(go:locale(_)) go:assert(go:locale(Locale))
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)
         go:relationize(ParseTree, Request, RequestBinding, UnresolvedName)

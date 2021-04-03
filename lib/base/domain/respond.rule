@@ -20,7 +20,6 @@ go:respond(Input) :-
 
         go:cut(1,
             go:find_solution(Request, Solution)
-
             go:make_list(Solutions, Solution)
             go:exec_solution(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings)
         )

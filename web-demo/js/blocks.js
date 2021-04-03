@@ -20,8 +20,7 @@ $(function(){
     let scene = createScene();
     let currentInput = "";
 
-    function setup()
-    {
+    function setup() {
         monitor.style.height = displayHeight + "px";
 
         optionPopupCloseButton.onclick = function() {
@@ -44,7 +43,7 @@ $(function(){
             return false;
         };
 
-        document.addEventListener('keydown', function(event){
+        document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 hideSamplePopup()
                 hideOptionsPopup()
@@ -70,8 +69,7 @@ $(function(){
         updateScene(true)
     }
 
-    function clearProductions()
-    {
+    function clearProductions() {
         document.getElementById('Intro').innerHTML = "";
         document.getElementById('Ready').innerHTML = "";
         document.getElementById('Tokens').innerHTML = "";
@@ -171,8 +169,7 @@ $(function(){
         });
     }
 
-    function processResponse(response)
-    {
+    function processResponse(response) {
         let asserts = [];
         let assert;
         let maxDuration = 0;
@@ -276,8 +273,7 @@ $(function(){
         }
     }
 
-    function hideOptionsPopup()
-    {
+    function hideOptionsPopup() {
         optionsPopup.style.display = "none";
     }
 
@@ -290,8 +286,7 @@ $(function(){
         logBox.innerHTML = html + logBox.innerHTML;
     }
 
-    function updateScene(initial)
-    {
+    function updateScene(initial) {
         $.ajax({
             url: 'scene.php',
             data: { format: "json", action: "state" },

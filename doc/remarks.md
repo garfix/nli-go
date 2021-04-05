@@ -1,3 +1,56 @@
+## 2021-04-05
+
+SHRDLU uses a Time Semantic Structure to describe the interval that applies to a certain clause.
+
+    TSS
+        - tense (present, past)
+        - progressive (yes, no)
+        - start time (0, 1, ...; nil)
+        - end time (0, 1, ...; nil)
+
+So this structure is attached to each clause. I prefer to work with individual relations in stead of "object structures".
+
+    dom:tense(P1, past)
+    dom:progressive(P1)
+    dom:start_time(P1, 23)
+
+Current approach:
+
+- Evaluate "you put the green one on the little cube" into a start- and end time
+- Use the start time to create `dom:end_time(P1, End)`
+- Create a normal representation for "Had you touched any pyramid" into the main event, and extend it with `dom:tense(P1, past)`
+- Evaluate the main event with the function `dom:eval_in_time($event_description)`
+
+## 2021-04-03
+
+Interaction 23, shall we?
+
+    H: Had you touched any pyramid before you put the green one on the little cube?
+    C: Yes, the green one
+
+"The system deduces from its memory what event is being referred to, and can relate other events to it in time. The analysis includes complex tenses of verb groups, and there are special facilities for keeping track of the various forms of irregular verbs like "have""
+
+Interaction 23 to 33 form a new level of complexity. Daunting, but utterly fascinating. Only at the highest level have I an idea of how to deal with these. It will require a lot of thinking, trying, failing, and refactoring. But I have made all the preparations I could. So let's just get going.
+
+First remarks on the interaction:
+
+- The sentence is in past tense. It is about an action that was performed in some past period of time.
+- It can be paraphrases as "Did x happen, before time T (described by y)"
+- "you put the green one on the little cube" describes an action, so past actions must be stored in a form so that they can be recalled like this
+- "Had you touched any pyramid" also describes an action in the past
+- Another paraphrase: x(T1) y(T2) T1 < T2
+- "The green one" refers to "any pyramid" earlier in the same sentence.
+
+Earlier on I created the document "shrdlu-history.md" that collects information about SHRDLU's history.
+
+Coming questions about moving things in the past:
+
+    How many objects did you touch while you were doing it?
+    What did the red cube support before you started to clean it off?
+    Have you picked up superblock since we began?
+
+
+
 ## 2021-04-02
 
 I added the function `go:translate(Source, Locale, Translation)` to translated canned texts to a chosen locale.
@@ -22,13 +75,13 @@ Haha, I made it!
 
 Next interaction (22):
 
-    U: How many things are not on top of green cubes?
-    H: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes",
+    H: How many things are not on top of green cubes?
+    C: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes",
        do you mean:
        1 - directly on the surface
        2 - anywhere on top of
-    U: 2
-    H: three of them
+    H: 2
+    C: three of them
 
     "When there are several interpretations and none is clearly better, the system has to ask the user for more information. The paraphrases were included with the directory definition of "on", and the request for more information occurs automatically when the heuristics for resolving ambiguities aren't sufficient. A request like this can also occur when the meaning of a pronoun such as "it" or "they" is unclear."
 

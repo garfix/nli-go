@@ -59,3 +59,23 @@ Events are only created for top-level goals. So #PICKUP is a goal when the user 
         - name (:B1, :B6, ...)
         - location (X, Y, Z)
     
+## Time semantic structure
+
+8.1.8 describes the structure used to represent time
+
+    TSS
+        - tense (present, past)
+        - progressive (yes, no)
+        - start time (0, 1, ...; nil)
+        - end time (0, 1, ...; nil)
+
+The section describes setting up a time semantic structure (TSS) in detail.
+
+Every time a clause is parsed, a TSS is set up for it.
+
+"The question "Did you pick it up while you were building the stack?" is answered by first finding the event of building the stack (using a TSS for PAST tesne with no other limits), then using the beginning and ending of that event as limits for the TSS in the relation #PICKUP"
+
+The TSS is also used as a dialog context for the implicit time.
+
+"Whenever there are two successive PAST sentences and the second does not have any explicit time reference, the previous TSS is used. Long dialogs can appear in which the same time interval is used throughout, but is mentioned only in the first sentence."
+

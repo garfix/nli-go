@@ -98,3 +98,4 @@ color(`hand:hand`, black)
 call(`:shrdlu`, 'SHRDLU')
 call(`:friend`, 'YOU')
 
+time(0)

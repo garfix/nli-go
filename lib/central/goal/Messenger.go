@@ -10,14 +10,18 @@ type Messenger struct {
 	outBindings         mentalese.BindingSet
 	childFrame          *StackFrame
 	processInstructions map[string]string
+	oldSlots            map[string]mentalese.Term
+	newSlots			 map[string]mentalese.Term
 }
 
-func NewMessenger(cursor *StackFrameCursor) *Messenger {
+func NewMessenger(cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
 	return &Messenger{
 		cursor:              cursor,
 		outBindings:         mentalese.NewBindingSet(),
 		childFrame:          nil,
 		processInstructions: map[string]string{},
+		oldSlots:            slots,
+		newSlots:			 map[string]mentalese.Term{},
 	}
 }
 
@@ -72,6 +76,16 @@ func (i *Messenger) ExecuteChildStackFrameAsync(relations mentalese.RelationSet,
 		i.CreateChildStackFrame(relations, bindings)
 		return mentalese.NewBindingSet(), true
 	}
+}
+
+func (i *Messenger) GetProcessSlot(slot string) (mentalese.Term, bool) {
+	value, found := i.oldSlots[slot]
+	return value, found
+}
+
+func (i *Messenger) SetProcessSlot(slot string, value mentalese.Term) {
+	i.oldSlots[slot] = value
+	i.newSlots[slot] = value
 }
 
 func (i *Messenger) GetChildFrame() *StackFrame {

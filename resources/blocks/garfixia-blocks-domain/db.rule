@@ -6,7 +6,6 @@ Contains all retracts and asserts, and nothing more.
 
 */
 
-db_memo(P1) :- go:assert(P1);
 db_contain(A, B) :- go:assert(contain(123, A, B));
 db_uncontain(A, B) :- go:retract(contain(_, A, B));
 db_hand(X, Y, Z) :- go:retract(at(`hand:hand`, _, _, _)) go:assert(at(`hand:hand`, X, Y, Z));

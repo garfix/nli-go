@@ -1,0 +1,16 @@
+/*
+    Events - contains all time related rules.
+*/
+
+increase_time() :-
+    time(T)
+    go:add(T, 1, T2)
+    go:retract(time(_))
+    go:assert(time(T2))
+;
+
+before(Event1, Event2) :-
+    end_time(Event1, End)
+    start_time(Event2, Start)
+    go:less_than(End, Start)
+;

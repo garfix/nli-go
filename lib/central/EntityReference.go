@@ -3,12 +3,14 @@ package central
 type EntityReference struct {
 	Sort string
 	Id   string
+	Variable string
 }
 
-func CreateEntityReference(id string, sort string) EntityReference {
+func CreateEntityReference(id string, sort string, variable string) EntityReference {
 	return EntityReference{
 		Sort: sort,
 		Id:   id,
+		Variable: variable,
 	}
 }
 
@@ -17,7 +19,11 @@ func (ref EntityReference) Equals(otherRef EntityReference) bool {
 }
 
 func (ref EntityReference) String() string {
-	return ref.Sort + ":" + ref.Id
+	str := ref.Sort + ":" + ref.Id
+	if ref.Variable != "" {
+		str += " (" + ref.Variable + ")"
+	}
+	return str
 }
 
 type EntityReferenceGroup []EntityReference

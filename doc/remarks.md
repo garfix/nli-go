@@ -1,3 +1,60 @@
+## 2021-04-11
+
+I now have a case where I want to access information about the sentence I am currently processing. And I find that I don't have access to it any more.
+
+By turning sentence processing in a more general relation processing, I lost the sentence as a first class citizen.
+
+So I need to bring this back. I can't store sentence information in the nli database, because it is shared by other sentences (in the future nli-go will work on several sentences at once). Same thing for the dialog context.
+
+What I can do is store sentence information in the `process` object.
+
+---
+
+Some more thought: a process can have multiple relational representations of the same sentence. So storing the sense with the process is not possible.
+
+But what I can do is store the sense in a mutable variable, just like I did with the locale. This way, it won't be necessary to add another field to the process either.
+
+Or, like I thought I did. Because I was storing the locale in a the nli-go memory base. I should change that as well. 
+
+"Mutable variables" are then really turning into global (process scoped) variables. And I can use these variables "from the inside" as well. This is very convenient.
+
+
+
+## 2021-04-10
+
+This anaphora queue makes you wonder: what _is_ the best way to represent anaphoric relations? 
+
+According to Winograd, SHRDLU looks inspects the current and previous sentences. This is probably very time-consuming. There is no separate structure to hold anaphoric information.
+
+I just looked at James Allen's "Natural Language Understanding". He has a complete chapter on this. I should get into this a lot deeper. Later.
+
+## 2021-04-09
+
+If I just store the current variable with the entity in the queue, I can use this to determine if two entities share a relation in the current sentence. When the sentence is finished, I will remove the variables from the queue. This way I can determine from the presence of variables that an entity is mentioned in the present sentence or not.
+
+## 2021-04-08
+
+An error in the anphora queue generation was one of the problems causing int. 23 to fail. When I corrected it, int. 21 suddenly failed:
+
+    Put the littlest pyramid on top of it
+
+The system's interpretation now is: "Put the littlest pyramid on top of <the littlest pyramid>". This is because "it" refers to the last entry added to the anaphora queue, and this is now (as it should be) "the littlest pyramid".
+
+Here is a picture showing the system has put the little pyramid on top of itself (it's no longer there, of course):
+
+![Initial blocks world](archive/blocksworld6.png)
+
+The reason why this interpretation is wrong, is not so simple. The interpretation corresponds to the word "itself", but why is that?
+
+LFG would say that the antecedent of a reflexive pronouns like "itself" can only occur in the Minimal Complete Nucleus containing the pronoun.
+(Syntax and Semantics, Dalrymple, p. 280)
+
+This means, I think, that when the antecedent and the pronoun are part of the same relation, the pronoun is reflexive.
+
+Or that a non-reflexive pronoun must not refer to the subject of the same relation.
+
+Currently I am not storing this type of information in the anaphora queue, so that must change.
+
 ## 2021-04-05
 
 SHRDLU uses a Time Semantic Structure to describe the interval that applies to a certain clause.
@@ -20,6 +77,32 @@ Current approach:
 - Use the start time to create `dom:end_time(P1, End)`
 - Create a normal representation for "Had you touched any pyramid" into the main event, and extend it with `dom:tense(P1, past)`
 - Evaluate the main event with the function `dom:eval_in_time($event_description)`
+
+---
+
+I can store an past action in memory like this
+
+    do_pick_up(E1) :-
+        time(T1)
+        // implementation
+        time(T2)
+        go:uuid(Id)
+        go:assert(pick_up(Id, `:shrdlu`, E1))
+        go:assert(start_time(Id, T1))
+        go:assert(end_time(Id, T2));
+
+`before` can be implemented as
+
+    before(P1, P2) :-
+        end_time(P1, End)
+        start_time(P2, Start)
+        go:less_than(End, Start);
+
+New approach:
+
+- Look up "you put the green one on the little cube" (as `put_on(P1, E1, E2)`) in the system's event assertions, this gives event ID values for `P1`
+- Look up "Had you touched any pyramid" (as `touch(P1, E1, E2)`) in the assertions (gives no match) and use deduction to come from `touch` to `pick_up`
+- Given the values of P1 and P2, use `before(P1, P2)`
 
 ## 2021-04-03
 

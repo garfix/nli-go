@@ -47,6 +47,7 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
+		mentalese.PredicateStartInput:   base.startInput,
 		mentalese.PredicateFindLocale:   base.findLocale,
 		mentalese.PredicateTokenize:     base.tokenize,
 		mentalese.PredicateParse:        base.parse,
@@ -60,6 +61,13 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateCreateCanned: base.createCanned,
 		mentalese.PredicateTranslate:    base.translate,
 	}
+}
+
+func (base *LanguageBase) startInput(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	base.dialogContext.AnaphoraQueue.RemoveVariables()
+
+	return mentalese.InitBindingSet(mentalese.NewBinding())
 }
 
 func (base *LanguageBase) findLocale(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -208,11 +216,13 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	}
 
 	// names found and linked to id
-	for _, value := range entityIds.GetAll() {
+	for variable, value := range entityIds.GetAll() {
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(
-			central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort) })
+			central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort, variable) })
 	}
 	base.log.AddProduction("Named entities", entityIds.String())
+
+	messenger.SetProcessSlot(mentalese.SlotSense, mentalese.NewTermRelationSet(requestRelations))
 
 	newBinding := binding.Copy()
 
@@ -342,8 +352,9 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 		// queue ids
 		group := central.EntityReferenceGroup{}
-		for _, id := range resultBindings.GetIds(solution.Result.TermValue) {
-			group = append(group, central.CreateEntityReference(id.TermValue, id.TermSort))
+		variable := solution.Result.TermValue
+		for _, id := range resultBindings.GetIds(variable) {
+			group = append(group, central.CreateEntityReference(id.TermValue, id.TermSort, variable))
 		}
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 

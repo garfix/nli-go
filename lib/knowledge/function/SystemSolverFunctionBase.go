@@ -56,7 +56,9 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateNot: base.not,
 		mentalese.PredicateExec: base.exec,
 		mentalese.PredicateExecResponse: base.execResponse,
-		
+		mentalese.PredicateSlot: base.slot,
+
+
 		// list
 		mentalese.PredicateListOrder: base.listOrder,
 		mentalese.PredicateListAppend: base.listAppend,

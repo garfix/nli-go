@@ -369,8 +369,8 @@ func (base *SystemSolverFunctionBase) solveSimpleQuant(messenger api.ProcessMess
 		return mentalese.NewBindingSet(), true
 	}
 
-	scopeBindings, loading := base.solveScope(messenger, quant, scopeSet, rangeBindings, continueAfterEnough)
-	if loading {
+	scopeBindings, loading2 := base.solveScope(messenger, quant, scopeSet, rangeBindings, continueAfterEnough)
+	if loading2 {
 		return mentalese.NewBindingSet(), true
 	}
 
@@ -379,8 +379,8 @@ func (base *SystemSolverFunctionBase) solveSimpleQuant(messenger api.ProcessMess
 	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
 	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
 
-	success, loading := base.tryQuantifier(messenger, quant, rangeCount, scopeCount, true)
-	if loading {
+	success, loading3 := base.tryQuantifier(messenger, quant, rangeCount, scopeCount, true)
+	if loading3 {
 		return mentalese.NewBindingSet(), true
 	}
 
@@ -420,8 +420,8 @@ func (base *SystemSolverFunctionBase) SolveOrQuant(messenger api.ProcessMessenge
 	if loading {
 		return mentalese.NewBindingSet(), true
 	}
-	rightResultBindings, loading := base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough)
-	if loading {
+	rightResultBindings, loading2 := base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough)
+	if loading2 {
 		return mentalese.NewBindingSet(), true
 	}
 
@@ -454,6 +454,13 @@ func (base *SystemSolverFunctionBase) solveScope(messenger api.ProcessMessenger,
 	groupedScopeBindings := []mentalese.BindingSet{}
 
 	for _, rangeBinding := range rangeBindings.GetAll() {
+
+		value, found := rangeBinding.Get(rangeVariable)
+		if found && value.IsId() {
+			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, rangeVariable) }
+			base.anaphoraQueue.AddReferenceGroup(group)
+		}
+
 		//singleScopeBindings := base.solver.SolveRelationSet(scopeSet, mentalese.InitBindingSet(rangeBinding))
 		singleScopeBindings, loading := base.solveAsync(messenger, scopeSet, mentalese.InitBindingSet(rangeBinding))
 		if loading {
@@ -463,12 +470,6 @@ func (base *SystemSolverFunctionBase) solveScope(messenger api.ProcessMessenger,
 		if !singleScopeBindings.IsEmpty() {
 			groupedScopeBindings = append(groupedScopeBindings, singleScopeBindings)
 			scopeBindings.AddMultiple(singleScopeBindings)
-		}
-
-		value, found := rangeBinding.Get(rangeVariable)
-		if found && value.IsId() {
-			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort) }
-			base.anaphoraQueue.AddReferenceGroup(group)
 		}
 
 		rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)

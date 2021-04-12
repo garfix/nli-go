@@ -9,11 +9,16 @@ The movement of the hand is primary; the object drags along with the hand.
 
 /* pick up E1 and hold it in the hand */
 do_pick_up(E1) :-
+    time(T1)
     top_center(E1, X, Y, Z)
     phys_move_hand(X, Y, Z)
     phys_grasp(E1)
     phys_raise_hand(_)
-    db_memo(pick_up(123, `:shrdlu`, E1));
+    time(T2)
+    go:uuid(Id)
+    go:assert(pick_up(Id, `:shrdlu`, E1))
+    go:assert(start_time(Id, T1))
+    go:assert(end_time(Id, T2));
 
 /* (X, Y, Z) is the target lower left position */
 do_put_down(E1, X, Y, Z) :-
@@ -32,6 +37,12 @@ do_put_on_select(E1, E2) :-
         do_put_on_position(E1, E2, X1, Y1),
         do_cleartop(E2) do_put_on_center(E1, E2)
     )
+
+    time(T1)
+    go:uuid(Id)
+    go:assert(put_on(Id, E1, E2))
+    go:assert(start_time(Id, T1))
+    go:assert(end_time(Id, T1))
 ;
 
 do_put_on_position(E1, E2, X1, Y1) :-

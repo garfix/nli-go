@@ -285,3 +285,30 @@ func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenge
 
 	return mentalese.InitBindingSet( newBinding )
 }
+
+func (base *SystemSolverFunctionBase) slot(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	slotName := bound.Arguments[0].TermValue
+	slotField := bound.Arguments[1]
+
+	newBinding := mentalese.NewBinding()
+
+	if slotField.IsVariable() {
+
+		value, found := messenger.GetProcessSlot(slotName)
+		if found {
+			newBinding.Set(slotField.TermValue, value)
+		} else {
+			base.log.AddError("Slot not found: " + slotName)
+		}
+
+	} else {
+
+		messenger.SetProcessSlot(slotName, slotField)
+
+	}
+
+	return mentalese.InitBindingSet(newBinding)
+}

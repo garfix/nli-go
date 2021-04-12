@@ -10,6 +10,14 @@ func (queue *AnaphoraQueue) Initialize() {
 	(*queue) = []EntityReferenceGroup{}
 }
 
+func (queue *AnaphoraQueue) RemoveVariables() {
+	for i, group := range *queue {
+		for j := range group {
+			(*queue)[i][j].Variable = ""
+		}
+	}
+}
+
 func (queue *AnaphoraQueue) AddReferenceGroup(entityReferenceGroup EntityReferenceGroup) {
 
 	// empty group? ignore

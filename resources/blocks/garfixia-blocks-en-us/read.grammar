@@ -3,6 +3,7 @@
 { rule: qp(_) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
 { rule: quantifier(Result, Range) -> 'all',                            sense: go:equals(Result, Range) }
 { rule: quantifier(Result, Range) -> an(_),                            sense: go:greater_than(Result, 0) }
+{ rule: quantifier(Result, Range) -> 'any',                            sense: go:greater_than(Result, 0) }
 { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: go:greater_than(Result, 0) }
 { rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: go:equals(Result, 2) }
 { rule: quantifier(Result, Range) -> number(N1),                       sense: go:equals(Result, N1) }
@@ -50,6 +51,9 @@
 { rule: aux_do(A1) -> 'does' }
 { rule: aux_do(A1) -> 'do' }
 
+{ rule: aux_have(A1) -> 'had' }
+{ rule: aux_have(A1) -> 'have' }
+
 { rule: tell(P1) -> 'told' }
 { rule: contain(P1) -> 'contain' }
 { rule: can(P1) -> 'can' }
@@ -69,6 +73,7 @@
 { rule: adjective(E1) -> 'green',                                      sense: dom:green(E1) }
 { rule: adjective(E1) -> 'big',                                        sense: dom:big(E1) }
 { rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
+{ rule: adjective(E1) -> 'little',                                     sense: dom:small(E1) }
 { rule: adjective(E1) -> 'large',                                      sense: dom:large(E1) }
 
 { rule: pp(E1) -> 'not' pp(E1),                                        sense: go:not($pp) }
@@ -151,16 +156,31 @@
 
 { rule: how_many_clause(P1, E1) -> np(E1) copula(C1) pp(E1),                        sense: go:quant_check($np, $pp) }
 
+/* The non-intensional variant of the verb; how do you say it? */
+{ rule: mem_vp(P1) -> 'put' np(E1) 'on' np(E2),                                     sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:put_on(P1, E1, E2))) }
+
+{ rule: past_participle(P1, E1, E2) -> 'touched',                                  sense: dom:touch(P1, E1, E2) }
+
+{ rule: mem_vp(P1) -> np(E1) mem_vp(P1),                                                sense: go:quant_check($np, $mem_vp) }
+
+{ rule: time_modifier(P1, P2) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
+
 { rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }
 { rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: go:intent(how_many, E1) }
-{ rule: interrogative_clause(P1) -> copula(C1) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),              sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(C1) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
 { rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: go:intent(yes_no) }
-{ rule: interrogative_clause(P1) -> copula(C1) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }
 { rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: go:intent(yes_no) }
+
+/* todo: in a separate grammar? */
+{ rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1, P2),
+                                                                                    sense: go:intent(select, E2)
+                                                                                           go:quant_check($np1,
+                                                                                                go:quant_check($np2, $past_participle $time_modifier)) }
 
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 

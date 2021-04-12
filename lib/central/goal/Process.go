@@ -6,6 +6,7 @@ type Process struct {
 	GoalId           string
 	Stack            []*StackFrame
 	MutableVariables map[string]bool
+	Slots            map[string]mentalese.Term
 }
 
 func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
@@ -15,6 +16,7 @@ func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese
 			NewStackFrame(goalSet, bindings),
 		},
 		MutableVariables: map[string]bool{},
+		Slots: map[string]mentalese.Term{},
 	}
 }
 
@@ -114,13 +116,17 @@ func (p *Process) GetPreparedBinding(f *StackFrame) mentalese.Binding {
 func (p *Process) CreateMessenger() *Messenger {
 	frame := p.GetLastFrame()
 
-	return NewMessenger(frame.Cursor)
+	return NewMessenger(frame.Cursor, p.Slots)
 }
 
 func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) (*StackFrame, bool) {
 
 	outBindings := messenger.GetOutBindings()
 	hasStopped := false
+
+	for slot, value := range messenger.newSlots {
+		p.Slots[slot] = value
+	}
 
 	p.updateMutableVariables(outBindings)
 

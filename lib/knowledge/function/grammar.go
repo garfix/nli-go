@@ -2,6 +2,7 @@ package function
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/central"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 )
@@ -34,6 +35,8 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	newBindings := mentalese.NewBindingSet()
 
+	unscopedSense := base.getSense(messenger).UnScope()
+
 	for _, group := range *base.anaphoraQueue {
 
 		ref := group[0]
@@ -42,6 +45,10 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		b.Set(variable, mentalese.NewTermId(ref.Id, ref.Sort))
 
 		refBinding := binding.Merge(b)
+
+		if base.isReflexive(unscopedSense, variable, ref) {
+			continue
+		}
 
 		// empty set ("it")
 		if len(set) == 0 {
@@ -65,6 +72,46 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 	}
 
 	return newBindings, loading
+}
+
+func (base *SystemSolverFunctionBase) getSense(messenger api.ProcessMessenger) mentalese.RelationSet {
+	term, found := messenger.GetProcessSlot(mentalese.SlotSense)
+	if !found {
+		base.log.AddError("Slot 'sense' not found")
+	}
+
+	return term.TermValueRelationSet
+}
+
+// checks if a (irreflexive) pronoun does not refer to another element in a same relation
+func (base *SystemSolverFunctionBase) isReflexive(unscopedSense mentalese.RelationSet, referenceVariable string, antecedent central.EntityReference) bool {
+
+	antecedentvariable := antecedent.Variable
+
+	if antecedentvariable == "" {
+		return false
+	}
+
+	reflexive := false
+	for _, relation := range unscopedSense {
+		ref := false
+		ante := false
+		for _, argument := range relation.Arguments {
+			if argument.IsVariable() {
+				if argument.TermValue == antecedentvariable {
+					ante = true
+				}
+				if argument.TermValue == referenceVariable {
+					ref = true
+				}
+			}
+		}
+		if ref && ante {
+			reflexive = true
+		}
+	}
+
+	return reflexive
 }
 
 func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

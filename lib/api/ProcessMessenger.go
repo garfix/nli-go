@@ -10,4 +10,6 @@ type ProcessMessenger interface {
 	CreateChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet)
 	ExecuteChildStackFrameAsync(relations mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool)
 	AddProcessInstruction(name string, value string)
+	GetProcessSlot(slot string) (mentalese.Term, bool)
+	SetProcessSlot(slot string, value mentalese.Term)
 }

@@ -49,6 +49,14 @@ phys_raise_hand(_) :-
     phys_move_hand(X, Y, 600);
 
 phys_move_object(E1, X, Y, Z) :-
+    increase_time()
+
+    time(T1)
+    go:uuid(Id)
+    go:assert(touch(Id, `:shrdlu`, E1))
+    go:assert(start_time(Id, T1))
+    go:assert(end_time(Id, T1))
+
     db_object(E1, X, Y, Z)
     go:ignore(phys_remove_support_relations(E1))
     go:ignore(phys_create_support_relations(E1))

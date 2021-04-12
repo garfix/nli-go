@@ -23,7 +23,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Pick up a big red block", "OK"},
 				{"Does the table support the big red block?", "No"},
 
-			// todo "I don't understand which pyramid you mean"
+			//// todo "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "I don't understand which one you mean"},
 
 				{"Is the blue block in the box?", "No"},
@@ -75,6 +75,9 @@ func TestBlocksWorld(t *testing.T) {
 			// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
 			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
 			{"1", "Three of them"},
+
+			// Should be: yes the green one
+			{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green pyramid"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -106,7 +109,7 @@ func TestBlocksWorld(t *testing.T) {
 			log.Clear()
 
 			if test.question == "Put the littlest pyramid on top of it" {
-				//log.SetDebug(true)
+				log.SetDebug(false)
 				//log.SetPrint(true)
 			}
 

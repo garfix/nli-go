@@ -19,3 +19,10 @@ dom:pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
 dom:cleartop(E1) :- cleartop(E1);
 
 dom:grid(Grid, X, Y, Value) :- dom:grid(Grid, X, Y, Value);
+
+dom:time(T) :- time(T);
+dom:start_time(Id, Start) :- start_time(Id, Start);
+dom:end_time(Id, End) :- end_time(Id, End);
+
+dom:touch(P, A, B) :- touch(P, A, B);
+dom:put_on(P, A, B) :- put_on(P, A, B);

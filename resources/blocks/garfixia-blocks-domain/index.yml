@@ -9,4 +9,5 @@ rules:
   - physics.rule
   - db.rule
   - free_space.rule
+  - events.rule
 

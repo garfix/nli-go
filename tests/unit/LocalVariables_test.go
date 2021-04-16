@@ -32,7 +32,7 @@ func TestLocalVariables(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
-	functionBase := knowledge.NewSystemFunctionBase("function", log)
+	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
 	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)

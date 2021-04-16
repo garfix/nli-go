@@ -16,7 +16,8 @@ func TestFunctions(t *testing.T) {
 	parser := importer.NewInternalGrammarParser()
 	matcher := central.NewRelationMatcher(log)
 	solver := central.NewProblemSolverAsync(matcher, log)
-	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	meta := mentalese.NewMeta()
+	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)
@@ -126,7 +127,7 @@ func TestControlFunctions(t *testing.T) {
 	meta := mentalese.NewMeta()
 
 	solver := central.NewProblemSolverAsync(matcher, log)
-	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
 	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
@@ -168,7 +169,7 @@ func TestListFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	predicates := &mentalese.Meta{}
+	meta := mentalese.NewMeta()
 	parser := importer.NewInternalGrammarParser()
 
 	rules := parser.CreateRules(`
@@ -188,12 +189,12 @@ func TestListFunctions(t *testing.T) {
 	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
-	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
-	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)
@@ -249,7 +250,7 @@ func TestQuantFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	predicates := &mentalese.Meta{}
+	meta := mentalese.NewMeta()
 	parser := importer.NewInternalGrammarParser()
 
 	rules := parser.CreateRules(`
@@ -272,12 +273,12 @@ func TestQuantFunctions(t *testing.T) {
 	solver := central.NewProblemSolverAsync(matcher, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
-	functionBase := knowledge.NewSystemFunctionBase("name", log)
+	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
-	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, predicates, log)
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)

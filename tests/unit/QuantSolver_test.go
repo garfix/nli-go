@@ -108,7 +108,7 @@ func TestQuantSolver(t *testing.T) {
 	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), log)
 	solver.AddFactBase(factBase1)
 
-	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
+	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)
 
 	anaphoraQueue := central.NewAnaphoraQueue()

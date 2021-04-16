@@ -1,3 +1,49 @@
+## 2021-04-15
+
+The answer to #23 should still be
+
+    Yes, the green one
+
+Not: "Yes, the green pyramid". This is because the question already includes the type of the block: "Had you touched any pyramid".
+
+I also need this for the previous interaction "Is there a large block behind a pyramid??"
+
+---
+
+It looks like the active sentence is a knowledge source itself. "Is E1 a block?" This fact can only be found in the input sentence itself.
+
+---
+
+Another take at this, is to simply view the `sort` of a variable; if I need to know if `E5` is a block, I can check its sort. It's stored with the variable.
+
+I can introduce a new function, like this:
+
+    go:get_sort(E5, Sort)
+
+Or, allowing inheritance:
+
+    go:isa(E5, block)
+
+This works because the sort of an entity is deduced from the relations used in the quants of the input sentence.
+
+---
+
+Unfortunately, the type of the entity is not only determined in the relationization process. The identifiers of the entities also contain their type. This leads to an overfitting of the word "one".
+
+The meaning of the question "Had you touched any pyramid" should more explicitly contain the requested sort:
+
+"Describe the entity, of which it is given that it is a pyramid (no need to repeat that)", such that ...
+
+    describe(E1, Sort, Description)
+
+## 2021-04-12
+
+I added "slots" to the process entity. These are a sort of global variables needed to store some objects that need to be accessed from various places: like `locale` and the `sense` of a sentence. These slots can both be accessed from the outside (the Rule code) and the inside (the Go code).
+
+I managed to complete #23 this way.
+
+More about James Allen's "Natural Language Understanding": on page 367 he has a very interesting description of the difference between reflexive and irreflexive pronouns.
+
 ## 2021-04-11
 
 I now have a case where I want to access information about the sentence I am currently processing. And I find that I don't have access to it any more.

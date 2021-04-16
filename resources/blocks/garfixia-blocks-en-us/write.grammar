@@ -9,6 +9,7 @@
 { rule: nbar(E1) -> noun(E1) }
 
 { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
+{ rule: noun(E1) -> 'one',                                                  condition: dom:shape(E1, S) dom:default_shape(E1, S) }
 { rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
 { rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
 { rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }

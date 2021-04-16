@@ -145,3 +145,27 @@ Slots are like global variables, in the space of a process. They should be used 
 
     go:slot(locale, Locale)
 
+## Isa
+
+Checks an inheritance relation. The sort of the variable is deduced from the relations in the input sentence during the relationization process. 
+
+    go:isa(Var, Sort)
+
+* `Var`: a variable
+* `Sort`: a sort atom (see sorts.yml) 
+
+Example
+
+    go:isa(E1, block)
+
+
+## Get Sort
+
+Looks up the sort of a variable
+
+    go:get_sort(Var, Sort)
+
+* `Var`: a variable
+* `Sort`: a variable, to contain a sort atom
+
+

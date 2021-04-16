@@ -23,7 +23,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Pick up a big red block", "OK"},
 				{"Does the table support the big red block?", "No"},
 
-			//// todo "I don't understand which pyramid you mean"
+			// todo "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "I don't understand which one you mean"},
 
 				{"Is the blue block in the box?", "No"},
@@ -64,7 +64,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
 
 			// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
-			{"Is there a large block behind a pyramid?", "Yes, three of them: the red block, the large green cube and the blue block"},
+			{"Is there a large block behind a pyramid?", "Yes, three of them: the red one, the large green cube and the blue one"},
 
 			{"Put a small one onto the green cube which supports a pyramid", "OK"},
 
@@ -76,8 +76,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
 			{"1", "Three of them"},
 
-			// Should be: yes the green one
-			{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green pyramid"},
+			{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green one"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -109,7 +108,7 @@ func TestBlocksWorld(t *testing.T) {
 			log.Clear()
 
 			if test.question == "Put the littlest pyramid on top of it" {
-				log.SetDebug(false)
+				//log.SetDebug(true)
 				//log.SetPrint(true)
 			}
 
@@ -120,8 +119,9 @@ func TestBlocksWorld(t *testing.T) {
 			}
 
 			if answer != test.answer {
+				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				t.Errorf("\n%s", log.String())
+				//t.Errorf("\n%s", log.String())
 			}
 		}
 	}

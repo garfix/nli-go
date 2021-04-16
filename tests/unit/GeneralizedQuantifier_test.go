@@ -58,7 +58,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	anaphoraQueue := central.NewAnaphoraQueue()
 	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
-	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", log)
+	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)

@@ -10,4 +10,5 @@ rules:
   - db.rule
   - free_space.rule
   - events.rule
+  - describe.rule
 

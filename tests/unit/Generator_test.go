@@ -7,6 +7,7 @@ import (
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
+	"nli-go/lib/mentalese"
 	"strings"
 	"testing"
 )
@@ -30,7 +31,8 @@ func TestGenerator(t *testing.T) {
 		{ rule: named_number(2) -> 'two' }
 	`)
 	matcher := central.NewRelationMatcher(log)
-	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", log))
+	meta := mentalese.NewMeta()
+	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", meta, log))
 	generator := generate.NewGenerator(log, matcher)
 
 	tests := []struct {

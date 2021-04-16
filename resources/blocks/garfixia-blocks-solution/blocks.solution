@@ -20,7 +20,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And),
+            preparation: dom:describe(B, '', N) go:make_and(B, And),
             answer: dom:root({{ And }}) {{ N }}
         }
         {
@@ -36,7 +36,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(A, Desc),
+            preparation: go:get_sort(A, Sort) dom:describe(A, Sort, Desc),
             answer: dom:root(A) {{ Desc }}
         }
         {
@@ -68,7 +68,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And) go:count(B, Count),
+            preparation: go:get_sort(B, Sort) dom:describe(B, Sort, N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {
@@ -85,7 +85,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe_categoric(B, N) go:make_and(B, And) go:count(B, Count),
+            preparation: go:get_sort(B, Sort) dom:describe_categoric(B, Sort, N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {
@@ -101,7 +101,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And),
+            preparation: dom:describe(B, '', N) go:make_and(B, And),
             answer: dom:select_subject({{ And }}) {{ N }}
         }
         {
@@ -116,7 +116,7 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, N) go:make_and(B, And) go:count(B, Count),
+            preparation: dom:describe(B, '', N) go:make_and(B, And) go:count(B, Count),
             answer: dom:select({{ And }}, Count) {{ N }}
         }
         {

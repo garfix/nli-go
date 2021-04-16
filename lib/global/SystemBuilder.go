@@ -99,7 +99,9 @@ func (builder *systemBuilder) build(system *System) {
 
 func (builder *systemBuilder) buildBasic(system *System) {
 
-	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", builder.log)
+	system.meta = mentalese.NewMeta()
+
+	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", system.meta, builder.log)
 	matcher := central.NewRelationMatcher(builder.log)
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
@@ -109,7 +111,6 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(builder.log)
-	system.meta = mentalese.NewMeta()
 	system.internalGrammarParser = builder.parser
 	system.processList = goal.NewProcessList()
 

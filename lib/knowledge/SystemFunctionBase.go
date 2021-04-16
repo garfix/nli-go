@@ -14,11 +14,16 @@ import (
 type SystemFunctionBase struct {
 	KnowledgeBaseCore
 	matcher *central.RelationMatcher
+	meta          *mentalese.Meta
 	log *common.SystemLog
 }
 
-func NewSystemFunctionBase(name string, log *common.SystemLog) *SystemFunctionBase {
-	return &SystemFunctionBase{ log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name }, matcher: central.NewRelationMatcher(log) }
+func NewSystemFunctionBase(name string, meta *mentalese.Meta, log *common.SystemLog) *SystemFunctionBase {
+	return &SystemFunctionBase{
+		log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name },
+		meta: meta,
+		matcher: central.NewRelationMatcher(log),
+	}
 }
 
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
@@ -34,15 +39,17 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateNotEquals: base.notEquals,
 		mentalese.PredicateCompare: base.compare,
 		mentalese.PredicateUnify: base.unify,
-		mentalese.PredicateAdd: base.add,
-		mentalese.PredicateSubtract: base.subtract,
-		mentalese.PredicateMultiply: base.multiply,
-		mentalese.PredicateDivide: base.divide,
-		mentalese.PredicateMin: base.min,
-		mentalese.PredicateDateToday: base.dateToday,
+		mentalese.PredicateAdd:               base.add,
+		mentalese.PredicateSubtract:          base.subtract,
+		mentalese.PredicateMultiply:          base.multiply,
+		mentalese.PredicateDivide:            base.divide,
+		mentalese.PredicateMin:               base.min,
+		mentalese.PredicateDateToday:         base.dateToday,
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
-		mentalese.PredicateLog: base.debug,
-		mentalese.PredicateUuid: base.uuid,
+		mentalese.PredicateLog:               base.debug,
+		mentalese.PredicateUuid:              base.uuid,
+		mentalese.PredicateIsa:               base.isa,
+		mentalese.PredicateGetSort:           base.getSort,
 	}
 }
 
@@ -431,5 +438,39 @@ func (base *SystemFunctionBase) uuid(input mentalese.Relation, binding mentalese
 
 	newBinding.Set(u, mentalese.NewTermString(common.CreateUuid()))
 
+	return newBinding, true
+}
+
+func (base *SystemFunctionBase) isa(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "va", base.log) {
+		return mentalese.NewBinding(), false
+	}
+
+	subSort := bound.Arguments[0].TermSort
+	superSort := bound.Arguments[1].TermValue
+
+	if base.meta.MatchesSort(subSort, superSort) {
+		return mentalese.NewBinding(), true
+	} else {
+		return mentalese.NewBinding(), false
+	}
+}
+
+func (base *SystemFunctionBase) getSort(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "vv", base.log) {
+		return mentalese.NewBinding(), false
+	}
+
+	sort := bound.Arguments[0].TermSort
+	sortVariable := input.Arguments[1].TermValue
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(sortVariable, mentalese.NewTermAtom(sort))
 	return newBinding, true
 }

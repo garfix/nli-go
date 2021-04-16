@@ -9,6 +9,9 @@
 - extend a module with another module
 - interactive: arrow up/down for history
 
+- use parse tree as slot
+- if_then, if_then_else => if
+
 ## Performance
 - if the system is instantiated just to process messages, dont't install all language components; lazy load; specially for all grammars
 - on the other hand: maybe the rules take longer to parse, and they are always necessary
@@ -20,6 +23,8 @@
 
 ## Blocks
 The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
+
+- When the demo is done. Do it in German as well, as proof of multilinguality.
 
 * database mappings: allow a rule to be used only for given sorts; for performance
 * binding set -> results / binding list
@@ -34,6 +39,10 @@ The animation also reveals another problem: when the system builds a stack, it f
 * write a good tutorial
 * think of a better replacement to make_and() to an "and" sequence 
 * change rewrite rules from categories with variables to relations (see also Generator)
+
+## relations that I no longer use
+
+- go:isa(E, Sort)
 
 ## generation of multiple entities
 

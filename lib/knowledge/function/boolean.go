@@ -109,7 +109,7 @@ func (base *SystemSolverFunctionBase) xor(messenger api.ProcessMessenger, orRela
 		if !childBindings.IsEmpty() {
 			return childBindings
 		}
-		messenger.CreateChildStackFrame(second, childBindings)
+		messenger.CreateChildStackFrame(second, mentalese.InitBindingSet(binding))
 		return mentalese.NewBindingSet()
 	} else {
 		childBindings := cursor.GetChildFrameResultBindings()

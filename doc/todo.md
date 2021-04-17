@@ -11,6 +11,7 @@
 
 - use parse tree as slot
 - if_then, if_then_else => if
+- mutable variables now have global scope; this is really wrong and should be fixed => scope must be limited to declaring rule
 
 ## Performance
 - if the system is instantiated just to process messages, dont't install all language components; lazy load; specially for all grammars

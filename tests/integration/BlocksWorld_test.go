@@ -62,10 +62,7 @@ func TestBlocksWorld(t *testing.T) {
 				{"Does a green block support a pyramid?", "Yes"},
 
 			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
-
-			// todo: should be: Yes, three of them: a large red one, a large green cube and the blue one
-			{"Is there a large block behind a pyramid?", "Yes, three of them: the red one, the large green cube and the blue one"},
-
+			{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and the blue one"},
 			{"Put a small one onto the green cube which supports a pyramid", "OK"},
 
 				{"Does the small red block support the green pyramid?", "No"},

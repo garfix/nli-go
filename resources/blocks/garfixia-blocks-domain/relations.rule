@@ -16,7 +16,13 @@ volume(E, V) :- go:if_then_else( big(E), go:unify(V, big), go:unify(V, small));
 cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);
 taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
 narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
-shape(E, S) :- type(E, T) go:if_then_else( go:unify(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );
+/*shape(E, S) :- type(E, T) go:if_then_else( go:equals(T, block) size(E, X, X, X), go:unify(S, cube), go:unify(S, T) );*/
+
+shape(E, S) :- type(E, T) go:xor(
+    go:equals(T, block) size(E, X, X, X) go:unify(S, cube),
+    go:unify(S, T)
+);
+
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) go:greater_than(Y1, Y2);
 
 on(A, B) :-

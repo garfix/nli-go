@@ -2,6 +2,7 @@
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }
 
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
+{ rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
 { rule: qp(E1) -> 'the' }
 
 { rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:volume(E1, V) }

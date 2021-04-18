@@ -17,6 +17,7 @@ describe(E1, Sort, DescSet) :-
         /* Are the shape and color unique? */
         go:if_then(go:greater_than(Cc, 1),
             go:let(Set, {{ Set }} volume(E1, V))
+            /* Are the shape, color, and volume unique? */
             go:if_then(go:greater_than(Cv, 1),
                 /* Add the object it supports and presume that this is enough */
                 support(E1, E3) describe(E3, Sort, E3Desc)
@@ -27,21 +28,22 @@ describe(E1, Sort, DescSet) :-
     go:unify(DescSet, Set)
 ;
 
-/* Create a description that allows for indeterminate nouns */
+/* Create a description that uses indeterminate nouns in stead of complex refinements */
 describe_categoric(E1, Sort, DescSet) :-
 
+    type(E1, T)
     shape(E1, S)
     color(E1, C)
     volume(E1, V)
 
-    shape(E2, S) go:count(E2, Cs)
+    type(E2, T) go:count(E2, Ct)
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
     go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
 
     /* Is the shape unique? */
-    go:if_then(go:greater_than(Cs, 1),
+    go:if_then(go:greater_than(Ct, 1),
         go:let(Set, {{ Set }} color(E1, C))
         /* Are the shape and color unique? */
         go:if_then(go:greater_than(Cc, 1),

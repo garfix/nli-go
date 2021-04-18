@@ -1,3 +1,35 @@
+## 2021-04-18
+
+Some remarks about this interaction:
+
+    Is there a large block behind a pyramid?
+    Yes, three of them: a large red one, a large green cube and the blue one
+
+More specifically: "a large red one". 
+
+There are 5 blocks, 3 of which are cubes. The `type` of all blocks is `block`, but the `shape` of a cube is `cube`, and not (also) `block`.
+
+Now, to determine if we need to add "large" to distinguish two blocks, we should look at the _type_ of the object, not the _shape_. There is only one red object whose _shape_ is block (and not cube). But there are two objects whose _type_ is block.
+
+On the other hand, in
+
+    Is at least one of them narrower than the one which I told you to pick up?
+    Yes, the red cube
+
+it is not necessary to say "small red cube", since there is only one red cube.
+
+The point is that there's a difference between the presentation shape "cube" and all allowable shapes (a cube is also a block). 
+
+To determine the accurate description of an object, you must first determine the presentation shape of the object (the `characteristic_shape` I called it) and then check how many objects have this shape, by not checking the characteristic shape of these objects, but by checking the regular shape.
+
+If the characteristic shape of an object is `block`, you need to check how many blocks there are; and these should include cubes as well (even though, if you would ask to describe them, they would be called `cube`, not `block`).
+
+So there's
+
+- type: the database shape
+- shape: any of the shapes and subshapes that an object may be said to have (an object can be both a cube and a block)
+- characteristic shape: the most characteristic shape of the object (`cube` for a cubed block)
+
 ## 2021-04-15
 
 The answer to #23 should still be

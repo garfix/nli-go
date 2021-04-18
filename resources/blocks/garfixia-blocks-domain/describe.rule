@@ -1,7 +1,7 @@
 /* Create a description for an object in the world */
 describe(E1, Sort, DescSet) :-
 
-    shape(E1, S)
+    characteristic_shape(E1, S)
     color(E1, C)
     volume(E1, V)
 
@@ -31,19 +31,18 @@ describe(E1, Sort, DescSet) :-
 /* Create a description that uses indeterminate nouns in stead of complex refinements */
 describe_categoric(E1, Sort, DescSet) :-
 
-    type(E1, T)
-    shape(E1, S)
+    characteristic_shape(E1, S)
     color(E1, C)
     volume(E1, V)
 
-    type(E2, T) go:count(E2, Ct)
+    shape(E2, S) go:count(E2, Cs)
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
     go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
 
     /* Is the shape unique? */
-    go:if_then(go:greater_than(Ct, 1),
+    go:if_then(go:greater_than(Cs, 1),
         go:let(Set, {{ Set }} color(E1, C))
         /* Are the shape and color unique? */
         go:if_then(go:greater_than(Cc, 1),

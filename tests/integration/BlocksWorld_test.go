@@ -23,7 +23,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Pick up a big red block", "OK"},
 				{"Does the table support the big red block?", "No"},
 
-			// todo "I don't understand which pyramid you mean"
+			// original "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "I don't understand which one you mean"},
 
 				{"Is the blue block in the box?", "No"},

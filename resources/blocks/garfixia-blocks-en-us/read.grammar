@@ -13,7 +13,6 @@
 
 { rule: an(E1) -> 'a' }
 { rule: an(E1) -> 'an' }
-{ rule: the(E1) -> 'the' }
 
 /* verbs */
 
@@ -26,17 +25,32 @@
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
+{ rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
+{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
-{ rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: go:quant_foreach($np, $tv) }
+/* imperatives */
 { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'in' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'put' np(E1) 'on' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(P1, E1, E2))) }
 { rule: vp(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart(P1, $np) }
+
+/* past events */
+{ rule: mem_vp(P1) -> 'put' np(E1) 'on' np(E2),                        sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:put_on(P1, E1, E2))) }
+{ rule: mem_vp(P1) -> np(E1) mem_vp(P1),                                           sense: go:quant_check($np, $mem_vp) }
+
+{ rule: vp(P1) -> tv(P1, _, E1) np(E1),                                sense: go:quant_foreach($np, $tv) }
+{ rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),      sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
 { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
 { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) }
+{ rule: vp(P1, E1) -> np(E1) aux_be(_) 'sitting' 'on' np(E2),             sense: go:quant_check($np1, go:quant_check($np2, dom:support(E2, E1))) }
+{ rule: vp(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
+{ rule: vp(P1, E1) -> np(E1) copula(C1) pp(E1),                        sense: go:quant_check($np, $pp) }
+{ rule: vp(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: go:quant_check($np, dom:contain(P1, E1, E2)) }
+{ rule: vp(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: go:quant_check($np, $past_participle) }
+
 
 { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: go:quant_check($np, dom:tell(P1, $vp)) }
 
@@ -57,8 +71,6 @@
 { rule: tell(P1) -> 'told' }
 { rule: contain(P1) -> 'contain' }
 { rule: can(P1) -> 'can' }
-
-{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
 /* nouns */
 
@@ -86,7 +98,7 @@
 { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:quant_check($np, $tv)  }
 
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
-{ rule: np(E1) -> the(E1) nbar(E1),                                    sense: go:quant(some, E1, go:definite_reference(E1, $nbar)) }
+{ rule: np(E1) -> 'the' nbar(E1),                                    sense: go:quant(some, E1, go:definite_reference(E1, $nbar)) }
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
@@ -145,47 +157,29 @@
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
-{ rule: what_clause(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: go:quant_check($np, dom:contain(P1, E1, E2)) }
-{ rule: what_clause(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: go:quant_check($np, $past_participle) }
-
-{ rule: which_clause(P1, E2) -> aux_be(_) 'sitting' 'on' np(E1),                    sense: go:quant_check($np1, dom:support(E1, E2)) }
-
-{ rule: aux_clause(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),           sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
-
-{ rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
-
-{ rule: how_many_clause(P1, E1) -> np(E1) copula(C1) pp(E1),                        sense: go:quant_check($np, $pp) }
-
-/* The non-intensional variant of the verb; how do you say it? */
-{ rule: mem_vp(P1) -> 'put' np(E1) 'on' np(E2),                                     sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:put_on(P1, E1, E2))) }
-
-{ rule: past_participle(P1, E1, E2) -> 'touched',                                  sense: dom:touch(P1, E1, E2) }
-
-{ rule: mem_vp(P1) -> np(E1) mem_vp(P1),                                                sense: go:quant_check($np, $mem_vp) }
-
 { rule: time_modifier(P1, P2) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
 
-{ rule: interrogative_clause(P1) -> 'what' what_clause(P1, E1),                     sense: go:intent(what, E1) }
-{ rule: interrogative_clause(P1) -> 'which' np(E1) which_clause(P1, E1),            sense: go:intent(which, E1) go:quant_check($np1, $which_clause) }
-{ rule: interrogative_clause(P1) -> 'how' 'many' how_many_clause(P1, E1),           sense: go:intent(how_many, E1) }
+{ rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                            sense: go:intent(what, E1) }
+{ rule: interrogative_clause(P1) -> 'which' vp(P1, E1),                            sense: go:intent(which, E1) $vp }
+{ rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1),                       sense: go:intent(how_many, E1) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),              sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
+{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
-{ rule: interrogative_clause(P1) -> aux_be(_) aux_clause(_),                        sense: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> aux_be(_) vp(_),                               sense: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }
-{ rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                          sense: go:intent(yes_no) }
-{ rule: interrogative_clause(P1) -> aux_do(_) do_clause(P1),                        sense: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> can(_) vp(P1, E1, E2),                         sense: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> aux_do(_) vp(P1),                              sense: go:intent(yes_no) }
 
-/* todo: in a separate grammar? */
+/* history based */
 { rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1, P2),
-                                                                                    sense: go:intent(select, E2)
+                                                                                   sense: go:intent(select, E2)
                                                                                            go:quant_check($np1,
                                                                                                 go:quant_check($np2, $past_participle $time_modifier)) }
 
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
 { rule: imperative_clause(P1) -> vp(P1) }
-{ rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), sense: go:and($imperative_clause1, $imperative_clause2) }
+{ rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), sense: $imperative_clause1 $imperative_clause2 }
 
 { rule: imperative(P1) -> imperative_clause(P1) '.' }
 { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }

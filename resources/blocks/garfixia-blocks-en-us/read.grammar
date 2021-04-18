@@ -23,8 +23,10 @@
 { rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
+{ rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(E2, E1) }
 { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2) }
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
@@ -45,13 +47,13 @@
 { rule: vp(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),           sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp(P1, E1, E2) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),     sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
 { rule: vp(P1, E1, E2) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1), sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) }
-{ rule: vp(P1, E1) -> np(E1) aux_be(_) 'sitting' 'on' np(E2),             sense: go:quant_check($np1, go:quant_check($np2, dom:support(E2, E1))) }
-{ rule: vp(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
+{ rule: vp(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),   sense: go:quant_check($np1, go:quant_check($np2, $tv_gerund)) }
+{ rule: vp(P1) -> np(E1) tv(P1, E1, E2) np(E2),                        sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
 { rule: vp(P1, E1) -> np(E1) copula(C1) pp(E1),                        sense: go:quant_check($np, $pp) }
-{ rule: vp(P1, E2) -> aux_do(A1) np(E1) contain(P1),                       sense: go:quant_check($np, dom:contain(P1, E1, E2)) }
+{ rule: vp(P1, E2) -> aux_do(A1) np(E1) tv_infinitive(P1, E1, E2),      sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp(P1, E2) -> aux_be(A1) np(E1) past_participle(P1, E2, E1) 'by',  sense: go:quant_check($np, $past_participle) }
 
-
+/* long-distance dependencies */
 { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: go:quant_check($np, dom:tell(P1, $vp)) }
 
 { rule: dont(P1) -> 'don' '\'' 't' }
@@ -136,17 +138,20 @@
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
-/* Misc */
+/* Conjunction */
 
 { rule: and(C1) -> 'and' }
 
+/* Declaration */
+
 { rule: assertion(P1) -> np(E1) copula(_) np(E2),                      sense: go:assert(
-                                                                       learn:own(A, B) :-
-                                                                            go:quant_check($np1, go:quant_check($np2, go:equals(A, E2) go:equals(B, E1)))) }
+                                                                            learn:own(A, B) :-
+                                                                                go:quant_check($np1, go:quant_check($np2, go:equals(A, E2) go:equals(B, E1)))) }
 { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           sense: go:assert(
                                                                             -$tv :- go:quant_check($np1, go:quant_check($np2, go:equals(A, E1) go:equals(B, E2)))) }
 { rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                sense: go:assert(
-                                                                            $tv :- go:quant_check($np1, go:quant_check($np2, go:equals(A, E1) go:equals(B, E2) go:not( -$tv )))) }
+                                                                            $tv :- go:quant_check($np1,
+                                                                                go:quant_check($np2, go:equals(A, E1) go:equals(B, E2) go:not( -$tv )))) }
 
 { rule: exception(P1) -> 'but' assertion(P1) }
 { rule: exception(P1) -> ',' exception(P1) }

@@ -1,12 +1,12 @@
-/* these commands are robust:
+/*
+ * These commands are robust:
  * - the hand is made empty
  * - objects on top of the objects in focus are removed
+ *
+ * The command is not executed immediately; a plan may be made, but the actual execution is performed by a new goal.
  */
 
-/* make sure the following relations stay in tact */
-/* contain() support() at() */
-
-/* after making sure you can, pick up an object and hold it in the hand */
+/* pick up E1 and hold it in your hand */
 do_pick_up_smart(P1, E1) :-
     go:uuid(Uuid)
     go:assert(go:goal(
@@ -15,6 +15,7 @@ do_pick_up_smart(P1, E1) :-
         do_pick_up(E1),
         Uuid));
 
+/* pick up E1 and put it in E2 */
 do_put_in_smart(P1, E1, E2) :-
     go:uuid(Uuid)
     go:assert(go:goal(
@@ -23,6 +24,7 @@ do_put_in_smart(P1, E1, E2) :-
         do_put_in(E1, E2),
         Uuid));
 
+/* pick up E1 and put it on E2 */
 do_put_on_smart(P1, E1, E2) :-
     go:uuid(Uuid)
     go:assert(go:goal(
@@ -31,6 +33,7 @@ do_put_on_smart(P1, E1, E2) :-
         do_put_on_select(E1, E2),
         Uuid));
 
+/* pick up QBlocks, plan a proper stack, and build it */
 do_stack_up_smart(P1, QBlocks) :-
     create_plan_for_stack(QBlocks, SortedList)
     go:list_get(SortedList, 0, BaseBlock)

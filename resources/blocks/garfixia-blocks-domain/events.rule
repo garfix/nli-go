@@ -14,3 +14,4 @@ before(Event1, Event2) :-
     start_time(Event2, Start)
     go:less_than(End, Start)
 ;
+

@@ -51,3 +51,8 @@ describe_categoric(E1, Sort, DescSet) :-
     )
     go:unify(DescSet, Set)
 ;
+
+describe_event(P1, DescSet) :-
+    go:log(P1)
+    go:let(DescSet, description(P1))
+;

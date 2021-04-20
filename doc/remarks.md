@@ -1,3 +1,39 @@
+## 2021-04-20
+
+Another thing about
+
+    When did you pick it up?
+
+"When", in this case, refers to the time frame "before you put the green one on the little cube". If you just look for the occurrences where the green pyramid was picked up, there are two. The question just referes to the first of these occurrences.
+
+So I need to introduce a time frame for the dialog context, or "did you pick it up" itself must refer to the event "Had you touched" in the previous sentence. 
+
+## 2021-04-19
+
+Looking ahead to the coming interactions, it's a good idea to visualize the should goal structure that allows the system to answer the coming questions 25 - 30:
+
+    G1: stack_up([`block:big-red`, `block:green-back`, `block:small-red`])
+        Event1: put_on(`block:big-red`, `table:table`)
+        Event2: let_go(`block:big-red`)
+        Event3: put_on(`block:green-back`, `block:big-red`)
+        Event4: let_go(`block:green-back`)
+        Event5: put_on(`block:small-red`, `block:green-back`)
+            Event6: clean_off(`block:small-red`)
+                Event7: get_rid_of(`pyramid:green`)
+                    Event8:  pick_up(`pyramid:green`)
+        Event6: let_go(`block:small-red`)
+
+To answer the questions:
+
+    25: why? -> Event7
+    26: why did you do that? -> Event6
+    27: why did you clear of that block? -> Event5
+    28: why did you do that? -> G1
+    29: why did you do that? -> null ("Becaause you asked me to")
+    30: how did you do it? -> Event1, Event2, Event3, Event4, Event5, Event6
+
+I must now create a relation between goal-event and event-event.
+
 ## 2021-04-18
 
 Some remarks about this interaction:
@@ -29,6 +65,34 @@ So there's
 - type: the database shape
 - shape: any of the shapes and subshapes that an object may be said to have (an object can be both a cube and a block)
 - characteristic shape: the most characteristic shape of the object (`cube` for a cubed block)
+
+---
+
+Interaction 24:
+
+    H: When did you pick it up?
+    C: While I was stacking up the red cube, a large red block and a large green cube.
+
+Winograd's comment: "A time is described by naming the main goal which was being worked on."
+
+Winograd also writes on naming events in 8.3.3: "Naming events is relatively straightforward". This is a comfort, but it also comes at a surprise: "straightforward"?
+
+Let's do an initial analysis:
+
+- The question asks for an event. The event is described by the clause "you pick it up"; where "it" refers to the green pyramid from the last answer.
+- The answer describes the event by creating a clause from the predicate and the arguments
+
+So what's straightforward about it? Winograd:
+
+    With each event type (such as #PUTON or #STACKUP) we associate a small program which generates an English name for the event and combines it properly with the names of the objects involved.
+
+Ok, this makes sense. In stead of creating English names we will create a relational representation, that will be turned into English by the generator.
+
+This is enough to get started.
+
+---
+
+The "pick up" mentioned here is not an explicit command, like "pick up a big red block". This "pick up" event takes place every time an object is grasped.
 
 ## 2021-04-15
 

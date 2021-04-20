@@ -6,6 +6,7 @@ The layers are
 
 - sentence
 - command
+- events  
 - physics
 - database
 
@@ -16,6 +17,10 @@ This layer picks up command as they are given in natural language. It performs t
 ## Command layer
 
 Once the command is cleaned up to be executed immediately, it is handled by the command layer. It performs the commands that are named explicitly in the sentence. This layer should be simple to understand, because it does exactly what you would expect it to do as a user.
+
+## Events layer
+
+All rules in this layer create events that can be used later for introspection ("when", "why", "how"). They pass around the id of the parent event.
 
 ## Physical layer
 

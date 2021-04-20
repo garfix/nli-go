@@ -152,3 +152,18 @@
         }
     
 }
+
+/* When? */
+{
+    condition: go:intent(when, P1),
+    result: P1,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:describe_event(P1, Desc),
+            answer: dom:root(A) {{ Desc }}
+        }
+        {
+            answer: dom:dont_know()
+        }
+}

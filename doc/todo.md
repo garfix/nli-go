@@ -26,6 +26,7 @@
 The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
 
 - When the demo is done. Do it in German as well, as proof of multilinguality.
+- If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
 
 * database mappings: allow a rule to be used only for given sorts; for performance
 * binding set -> results / binding list

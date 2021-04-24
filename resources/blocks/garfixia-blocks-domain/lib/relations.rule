@@ -1,3 +1,7 @@
+/*
+ * These rules restrict possible entities by specifying the relations that hold between them.
+ */
+
 object(E1) :- block(E1);
 object(E1) :- pyramid(E1);
 object(E1) :- box(E1);

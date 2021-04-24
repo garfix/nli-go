@@ -52,10 +52,10 @@ phys_move_object(E1, X, Y, Z) :-
     increase_time()
 
     time(T1)
-    go:uuid(Id)
-    go:assert(touch(Id, `:shrdlu`, E1))
-    go:assert(start_time(Id, T1))
-    go:assert(end_time(Id, T1))
+    go:uuid(EventId)
+    go:assert(touch(EventId, `:shrdlu`, E1))
+    go:assert(start_time(EventId, T1))
+    go:assert(end_time(EventId, T1))
 
     db_object(E1, X, Y, Z)
     go:ignore(phys_remove_support_relations(E1))

@@ -1,0 +1,17 @@
+/*
+ * Algorithm for putting objects on other objects.
+ */
+
+do_put_on_position(ParentEventId, E1, E2, X1, Y1) :-
+    at(E2, _, _, Z2a)
+    height(E2, Height)
+    go:add(Z2a, Height, Z2b)
+    do_move(ParentEventId, E1, X1, Y1, Z2b);
+
+do_put_on_center(ParentEventId, E1, E2) :-
+    at(E2, X1, Y1, Z1)
+    bottom_corner_to_top_center(E2, X1, Y1, Z1, X2, Y2, Z2a)
+    height(E1, Height)
+    go:add(Z2a, Height, Z2b)
+    top_center_to_bottom_corner(E1, X2, Y2, Z2b, X3, Y3, Z3)
+    do_move(ParentEventId, E1, X3, Y3, Z3);

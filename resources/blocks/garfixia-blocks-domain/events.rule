@@ -15,3 +15,9 @@ before(Event1, Event2) :-
     go:less_than(End, Start)
 ;
 
+get_top_level_event(EventId, TopLevelEventId) :-
+    go:if_then_else(
+        parent_event(EventId, ParentEventId),
+        get_top_level_event(ParentEventId, TopLevelEventId),
+        go:unify(TopLevelEventId, EventId)
+    );

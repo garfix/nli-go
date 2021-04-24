@@ -14,13 +14,13 @@ The layers are
 
 This layer picks up command as they are given in natural language. It performs the implicit actions that are expected by the user, but which are not named. These include getting rid of the object one is holding when one is told to pick up a new object. 
 
+Creates top level events.
+
 ## Command layer
 
 Once the command is cleaned up to be executed immediately, it is handled by the command layer. It performs the commands that are named explicitly in the sentence. This layer should be simple to understand, because it does exactly what you would expect it to do as a user.
 
-## Events layer
-
-All rules in this layer create events that can be used later for introspection ("when", "why", "how"). They pass around the id of the parent event.
+Creates lower level events.
 
 ## Physical layer
 
@@ -29,11 +29,3 @@ Commands have "physical" effects. Since this is just a simulation of a blocks wo
 ## Database layer
 
 The database is only responsible for updating the database. It takes care of retracting and asserting knowledge.
-
-## Cross layer
-
-Each layer has a special rule file. Next to these files, there are two files that can be used by all layers:
-
-- helper
-- relations
-

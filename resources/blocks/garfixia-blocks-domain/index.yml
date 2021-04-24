@@ -3,12 +3,14 @@ version: 1.0.0
 sorts: sorts.yml
 rules:
   - sentence.rule
-  - commands.rule
-  - helper.rule
-  - relations.rule
+  - actions.rule
+  - events.rule
   - physics.rule
   - db.rule
-  - free_space.rule
-  - events.rule
-  - describe.rule
-
+  - lib/common.rule
+  - lib/relations.rule
+  - lib/conversion.rule
+  - lib/describe.rule
+  - lib/stack-up.rule
+  - lib/put-on.rule
+  - lib/free_space.rule

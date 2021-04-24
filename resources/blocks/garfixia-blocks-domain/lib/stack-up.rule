@@ -1,40 +1,6 @@
-
-/* move the block in the hand to a free space */
-do_get_rid_of(E1) :-
-    do_find_space_on_table(E1, X, Y)
-    do_put_on_table(E1, X, Y);
-
-do_put_on_table(E1, X, Y) :-
-    do_move(E1, X, Y, 0);
-
-/* if there is a block in the hand, it is put down */
-do_clear_hand(_) :- go:or(
-    go:not(grasping(`:shrdlu`, _)),
-    grasping(`:shrdlu`, E1) do_get_rid_of(E1)
-);
-
-/* remove all blocks that are on top of X */
-do_cleartop(E1) :- cleartop(E1);
-do_cleartop(E1) :- support(E1, E2) do_cleartop(E2) do_get_rid_of(E2);
-
-top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1) :-
-    size(E1, Width, Length, Height)
-    go:divide(Width, 2, Wh) go:divide(Length, 2, Lh)
-    go:subtract(X, Wh, X1) go:subtract(Y, Lh, Y1) go:subtract(Z, Height, Z1);
-
-bottom_corner_to_top_center(E1, X, Y, Z, X1, Y1, Z1) :-
-    size(E1, Width, Length, Height)
-    go:divide(Width, 2, Wh) go:divide(Length, 2, Lh)
-    go:add(X, Wh, X1) go:add(Y, Lh, Y1) go:add(Z, Height, Z1);
-
-do_find_space_on_table(E1, X1, Y1) :-
-    do_find_free_space(`table:table`, E1, X1, Y1);
-
-do_find_iter(X, Y, SugX, SugY) :- go:if_then_else(
-    at(E, SugX, SugY, _),
-    go:add(SugX, 10, A) do_find_iter(X, Y, A, SugY) ,
-    go:unify(X, SugX) go:unify(Y, SugY)
-);
+/*
+ * Algorithm for stacking up objects
+ */
 
 create_plan_for_stack(QBlocks, SortedList) :-
     go:quant_ordered_list(QBlocks, &by_easiness, List)
@@ -48,14 +14,19 @@ create_plan_for_stack(QBlocks, SortedList) :-
         )
     );
 
-stack_up_proper(List1, X, Y) :-
+stack_up_proper(ParentEventId, List1, X, Y) :-
     go:let(Base, `table:table`)
     go:list_foreach(List1, E1,
-        do_cleartop(E1)
+        do_cleartop(ParentEventId, E1)
         go:if_then_else(
             go:equals(Base, `table:table`),
-            block(E1) do_put_on_table(E1, X, Y),
-            block(Base) go:unify(B1, Base) do_put_on_center(E1, B1)
+
+            block(E1) do_put_on_table(ParentEventId, E1, X, Y),
+
+            block(Base)
+            go:unify(B1, Base)
+            do_put_on_center(ParentEventId, E1, B1)
+            do_let_go(ParentEventId)
         )
         go:let(Base, E1)
     );

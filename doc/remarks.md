@@ -1,3 +1,15 @@
+## 2021-04-24
+
+I added memory events in a number of strategic places. I displaced and renamed many of the blocks world files, to emphasize the role of the events.
+
+## 2021-04-22
+
+Not all relations cause memory events. Only the ones that are relevant for later recollection. These events are added explicitly.
+
+This probably does not correspond to the way long term memory works in humans.
+
+Myself, I would not have created a special event for "let go", but I will do it for the demo.
+
 ## 2021-04-20
 
 Another thing about

@@ -1,9 +1,15 @@
 { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }
 
+{ rule: s(P1) -> 'while' vp(P1),                                            condition: dom:root(P1) dom:event_description(P1) }
+
+{ rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' entities(S1),         condition: dom:stack_up(P1, Subject, go:and(S1, _)) }
+
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
 { rule: qp(E1) -> 'the' }
+
+{ rule: np(E1) -> 'I',                                                      condition: go:equals(E1, `:shrdlu`) }
 
 { rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:volume(E1, V) }
 { rule: nbar(E1) -> color(E1) nbar(E1),                                     condition: dom:color(E1, C) }
@@ -44,7 +50,7 @@
 { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
 { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-{ rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _))  }
+{ rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _)) }
 { rule: entities(E1) -> entity(E1),                                         condition: go:and(E1, E1) }
 { rule: entities(E1) -> entity(E1) ',' entities(E2),                        condition: go:and(E1, go:and(E2, _)) }
 { rule: entities(E1) -> entity(E1) 'and' entities(E2),                      condition: go:and(E1, E2) }

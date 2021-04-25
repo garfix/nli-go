@@ -75,7 +75,8 @@ func TestBlocksWorld(t *testing.T) {
 
 			{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green one"},
 
-			{"When did you pick it up?", "While I was stacking up the red cube, a large red block and a large green cube."},
+			// original: While I was stacking up the red cube, a large red block and a large green cube
+			{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -121,6 +122,7 @@ func TestBlocksWorld(t *testing.T) {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				t.Errorf("\n%s", log.String())
+				//t.Errorf("\n%s", log.GetErrors())
 			}
 		}
 	}

@@ -160,8 +160,8 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:describe_event(P1, Desc),
-            answer: dom:root(A) {{ Desc }}
+            preparation: dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
+            answer: dom:root(TopId) {{ Desc }}
         }
         {
             answer: dom:dont_know()

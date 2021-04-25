@@ -53,6 +53,9 @@ describe_categoric(E1, Sort, DescSet) :-
 ;
 
 describe_event(P1, DescSet) :-
-    go:log(P1)
-    go:let(DescSet, description(P1))
+    stack_up(P1, Subject, List)
+    go:list_expand(List, Item)
+    describe_categoric(Item, '', ItemDesc)
+    go:make_and(Item, And)
+    go:unify(DescSet, event_description(P1) stack_up(P1, Subject, {{ And }}) {{ ItemDesc }})
 ;

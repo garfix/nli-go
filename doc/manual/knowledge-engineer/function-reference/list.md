@@ -120,3 +120,12 @@ Creates a new binding for each of the elements of `List`
 * `List`: a list
 * `E`: a variable that will contain a term
 
+## List head
+
+Separates the head of the list from the tail.
+
+    go:list_head(List Head, Tail)
+
+* `List`: a list
+* `Head`: a variable to contain any element
+* `Tail`: a variable that will contain a list

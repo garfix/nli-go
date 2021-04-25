@@ -50,6 +50,9 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateUuid:              base.uuid,
 		mentalese.PredicateIsa:               base.isa,
 		mentalese.PredicateGetSort:           base.getSort,
+		mentalese.PredicateListLength: 		  base.listLength,
+		mentalese.PredicateListGet: 		  base.listGet,
+		mentalese.PredicateListHead: 		  base.listHead,
 	}
 }
 
@@ -472,5 +475,65 @@ func (base *SystemFunctionBase) getSort(input mentalese.Relation, binding mental
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(sortVariable, mentalese.NewTermAtom(sort))
+	return newBinding, true
+}
+
+func (base *SystemFunctionBase) listLength(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := relation.BindSingle(binding)
+
+	if !Validate(bound, "lv", base.log) { return mentalese.NewBinding(), false }
+
+	list := bound.Arguments[0].TermValueList
+	lengthVar := bound.Arguments[1].TermValue
+
+	length := len(list)
+
+	newBinding := binding.Copy()
+	newBinding.Set(lengthVar, mentalese.NewTermString(strconv.Itoa(length)))
+	return newBinding, true
+}
+
+func (base *SystemFunctionBase) listGet(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := relation.BindSingle(binding)
+
+	if !Validate(bound, "li*", base.log) { return mentalese.NewBinding(), false }
+
+	list := bound.Arguments[0].TermValueList
+	index := bound.Arguments[1].TermValue
+	termVar := relation.Arguments[2].TermValue
+
+	i, err := strconv.Atoi(index)
+	if err != nil {
+		base.log.AddError("Index should be an integer: " + index)
+		return mentalese.NewBinding(), false
+	}
+
+	if i < 0 || i >= len(list) {
+		return mentalese.NewBinding(), false
+	}
+
+	term := list[i]
+
+	newBinding := binding.Copy()
+	newBinding.Set(termVar, term)
+	return newBinding, true
+}
+
+
+func (base *SystemFunctionBase) listHead(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := relation.BindSingle(binding)
+
+	if !Validate(bound, "lvv", base.log) { return mentalese.NewBinding(), false }
+
+	list := bound.Arguments[0].TermValueList
+	headVar := bound.Arguments[1].TermValue
+	tailVar := relation.Arguments[2].TermValue
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(headVar, list[0])
+	newBinding.Set(tailVar, mentalese.NewTermList(list[1:]))
 	return newBinding, true
 }

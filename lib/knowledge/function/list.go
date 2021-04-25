@@ -167,49 +167,6 @@ func (base *SystemSolverFunctionBase) listIndex(messenger api.ProcessMessenger, 
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) listGet(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	bound := relation.BindSingle(binding)
-
-	if !knowledge.Validate(bound, "li*", base.log) { return mentalese.NewBindingSet() }
-
-	list := bound.Arguments[0].TermValueList
-	index := bound.Arguments[1].TermValue
-	termVar := relation.Arguments[2].TermValue
-
-	i, err := strconv.Atoi(index)
-	if err != nil {
-		base.log.AddError("Index should be an integer: " + index)
-		return mentalese.NewBindingSet()
-	}
-
-	if i < 0 || i >= len(list) {
-		return mentalese.NewBindingSet()
-	}
-
-	term := list[i]
-
-	newBinding := binding.Copy()
-	newBinding.Set(termVar, term)
-	return mentalese.InitBindingSet(newBinding)
-}
-
-func (base *SystemSolverFunctionBase) listLength(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	bound := relation.BindSingle(binding)
-
-	if !knowledge.Validate(bound, "lv", base.log) { return mentalese.NewBindingSet() }
-
-	list := bound.Arguments[0].TermValueList
-	lengthVar := bound.Arguments[1].TermValue
-
-	length := len(list)
-
-	newBinding := binding.Copy()
-	newBinding.Set(lengthVar, mentalese.NewTermString(strconv.Itoa(length)))
-	return mentalese.InitBindingSet(newBinding)
-}
-
 func (base *SystemSolverFunctionBase) listExpand(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

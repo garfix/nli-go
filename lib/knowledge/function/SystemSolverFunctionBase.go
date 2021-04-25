@@ -58,7 +58,6 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateExecResponse: base.execResponse,
 		mentalese.PredicateSlot: base.slot,
 
-
 		// list
 		mentalese.PredicateListOrder: base.listOrder,
 		mentalese.PredicateListAppend: base.listAppend,
@@ -66,8 +65,6 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateListDeduplicate: base.listDeduplicate,
 		mentalese.PredicateListSort: base.listSort,
 		mentalese.PredicateListIndex: base.listIndex,
-		mentalese.PredicateListGet: base.listGet,
-		mentalese.PredicateListLength: base.listLength,
 		mentalese.PredicateListExpand: base.listExpand,
 	}
 }

@@ -3,7 +3,7 @@
 
 { rule: s(P1) -> 'while' vp(P1),                                            condition: dom:root(P1) dom:event_description(P1) }
 
-{ rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' entities(S1),         condition: dom:stack_up(P1, Subject, go:and(S1, _)) }
+{ rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),             condition: dom:stack_up(P1, Subject, List) }
 
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
@@ -49,6 +49,10 @@
 { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }
 { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
 { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
+
+{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2) go:list_head(L1, Head, Tail) }
+{ rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) go:equals(Len, 2) go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }
+{ rule: list(L1) -> np(First),                                             condition: go:list_length(L1, Len) go:equals(Len, 1) go:list_get(L1, 0, First) }
 
 { rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _)) }
 { rule: entities(E1) -> entity(E1),                                         condition: go:and(E1, E1) }

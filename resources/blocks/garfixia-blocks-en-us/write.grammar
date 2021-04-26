@@ -37,10 +37,11 @@
 { rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
 { rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
 
-{ rule: s(S1) -> entities(S1),                                              condition: dom:root(go:and(S1, _))  }
-{ rule: s(S1) -> 'yes' ',' entities(S1),                                    condition: dom:select(go:and(S1, _), 1)  }
-{ rule: s(S1) -> 'yes' ',' describe_amount(Count) entities(S1),             condition: dom:select(go:and(S1, _), Count)  }
-{ rule: s(S1) -> 'yes' ',' 'by' entities(S1),                               condition: dom:select_subject(go:and(S1, _)) }
+{ rule: s(S1) -> list(S1),                                                  condition: dom:list(S1) }
+
+{ rule: s(S1) -> 'yes' ',' list(S1),                                    condition: dom:select(S1, 1)  }
+{ rule: s(S1) -> 'yes' ',' describe_amount(Count) list(S1),             condition: dom:select(S1, Count)  }
+{ rule: s(S1) -> 'yes' ',' 'by' list(S1),                               condition: dom:select_subject(S1) }
 { rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
 { rule: describe_amount(C) -> 'two' 'things' ':',                           condition: dom:select(_, 2) }
@@ -50,18 +51,11 @@
 { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
 { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2) go:list_head(L1, Head, Tail) }
-{ rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) go:equals(Len, 2) go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }
-{ rule: list(L1) -> np(First),                                             condition: go:list_length(L1, Len) go:equals(Len, 1) go:list_get(L1, 0, First) }
-
-{ rule: entities(And) -> entities(E1),                                      condition: go:unify(And, go:and(E1, _)) }
-{ rule: entities(E1) -> entity(E1),                                         condition: go:and(E1, E1) }
-{ rule: entities(E1) -> entity(E1) ',' entities(E2),                        condition: go:and(E1, go:and(E2, _)) }
-{ rule: entities(E1) -> entity(E1) 'and' entities(E2),                      condition: go:and(E1, E2) }
-{ rule: entities(E1) -> entity(E1),                                         condition: go:and(_, E1) }
-{ rule: entities(E1) -> entity(E1) }
-
-{ rule: entity(E1) -> np(E1),                                               condition: dom:description(E1) }
+{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2)
+                                                                                go:list_head(L1, Head, Tail) }
+{ rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) go:equals(Len, 2)
+                                                                                go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }
+{ rule: list(L1) -> np(First),                                             condition: go:list_get(L1, 0, First) }
 
 { rule: named_number(1) -> 'one' }
 { rule: named_number(2) -> 'two' }

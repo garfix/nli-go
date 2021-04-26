@@ -10,7 +10,6 @@
         {
             answer: go:canned('I can\'t')
         }
-    
 }
 
 /* What? */
@@ -20,13 +19,12 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:make_and(B, And),
-            answer: dom:root({{ And }}) {{ N }}
+            preparation: dom:describe(B, '', N) go:make_list(List, B),
+            answer: dom:list(List) {{ N }}
         }
         {
             answer: dom:dont_know()
         }
-    
 }
 
 /* Which? */
@@ -42,7 +40,6 @@
         {
             answer: dom:dont_know()
         }
-    
 }
 
 /* How many? */
@@ -58,7 +55,6 @@
         {
             answer: dom:none()
         }
-    
 }
 
 /* Is one? */
@@ -68,15 +64,13 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: go:get_sort(B, Sort) dom:describe(B, Sort, N) go:make_and(B, And) go:count(B, Count),
-            answer: dom:select({{ And }}, Count) {{ N }}
+            preparation: go:get_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
+            answer: dom:select(List, Count) {{ N }}
         }
         {
             answer: dom:none()
         }
-    
 }
-
 
 /* Is there? */
 {
@@ -85,13 +79,12 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: go:get_sort(B, Sort) dom:describe_categoric(B, Sort, N) go:make_and(B, And) go:count(B, Count),
-            answer: dom:select({{ And }}, Count) {{ N }}
+            preparation: go:get_sort(B, Sort) dom:describe_categoric(B, Sort, N) go:count(B, Count) go:make_list(List, B),
+            answer: dom:select(List, Count) {{ N }}
         }
         {
             answer: dom:none()
         }
-    
 }
 
 /* Is supported? Yes, by ... */
@@ -101,8 +94,8 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:make_and(B, And),
-            answer: dom:select_subject({{ And }}) {{ N }}
+            preparation: dom:describe(B, '', N) go:make_list(List, B),
+            answer: dom:select_subject(List) {{ N }}
         }
         {
             answer: dom:none()
@@ -116,14 +109,14 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:make_and(B, And) go:count(B, Count),
-            answer: dom:select({{ And }}, Count) {{ N }}
+            preparation: dom:describe(B, '', N) go:count(B, Count) go:make_list(List, B),
+            answer: dom:select(List, Count) {{ N }}
         }
         {
             answer: dom:result(false)
         }
-    
 }
+
 {
     condition: go:intent(yes_no),
     result: _,
@@ -135,7 +128,6 @@
         {
             answer: dom:result(false)
         }
-    
 }
 
 /* Declaration */
@@ -150,7 +142,6 @@
         {
             answer: dom:dont_understand()
         }
-    
 }
 
 /* When? */

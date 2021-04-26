@@ -39,7 +39,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 * clarification questions must be translatable (they must go through the generator)
 * use relations as functions (with special role for the last parameter as the return value)
 * write a good tutorial
-* think of a better replacement to make_and() to an "and" sequence 
 * change rewrite rules from categories with variables to relations (see also Generator)
 
 ## relations that I no longer use

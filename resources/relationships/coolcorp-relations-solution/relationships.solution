@@ -6,7 +6,6 @@
         {
             answer: go:canned('Ok')
         }
-    
 }
 {
     condition: go:intent(who, A) dom:marry(P1, A, B),
@@ -20,7 +19,6 @@
         {
             answer: dom:dont_know()
         }
-    
 }
 {
     condition: go:intent(yes_no) dom:marry(P1, A, B),
@@ -33,7 +31,6 @@
         {
             answer: dom:result(false)
         }
-    
 }
 {
     condition: go:intent(yes_no) dom:siblings(A, B),
@@ -46,7 +43,6 @@
         {
             answer: dom:result(false)
         }
-    
 }
 {
     condition: go:intent(how_many, A) dom:have_child(B, A),
@@ -60,7 +56,6 @@
         {
             answer: dom:none()
         }
-    
 }
 {
     condition: go:intent(which, A) dom:have_child(B, A),
@@ -68,13 +63,12 @@
     responses: 
         {
             condition: go:exists(),
-            preparation: dom:name(A, N) go:make_and(A, And),
-            answer: dom:root({{ And }}) dom:name(A, N)
+            preparation: dom:name(A, N) go:unify(A, C) go:make_list(List, C),
+            answer: dom:list(List) dom:name(A, N)
         }
         {
             answer: dom:none()
         }
-    
 }
 {
     condition: go:intent(yes_no) dom:have_child(B, A) dom:every(B),
@@ -87,7 +81,6 @@
         {
             answer: dom:none()
         }
-    
 }
 {
     condition: go:intent(yes_no) dom:have_child(B, A),
@@ -100,5 +93,4 @@
         {
             answer: dom:result(false)
         }
-    
 }

@@ -5,8 +5,8 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:make_and(A, And),
-            answer: dom:gender(B, G) dom:name(A, N) dom:married_to({{ And }}, B)
+            preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:unify(A, C) go:make_list(List, C),
+            answer: dom:gender(B, G) dom:name(A, N) dom:married_to(List, B)
         }
         {
             answer: dom:dont_know()
@@ -164,8 +164,8 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:name(B, N, canonical_name) go:make_and(B, And),
-            answer: dom:name(B, N)  dom:root({{ And }})
+            preparation: dom:name(B, N, canonical_name) go:unify(B, C) go:make_list(List, C),
+            answer: dom:name(B, N) dom:list(List)
         }
         {
             answer: dom:dont_know()
@@ -196,8 +196,8 @@
         /* What is the largest state? */
         {
             condition: go:exists() dom:label(B, L),
-            preparation: go:make_and(B, And),
-            answer: dom:name(B, L)  dom:root({{ And }})
+            preparation: go:unify(B, C) go:make_list(List, C),
+            answer: dom:name(B, L)  dom:list(List)
         }
         /* What is the population of X? */
         {

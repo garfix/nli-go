@@ -36,14 +36,6 @@ allows you to fetch this extra information.
 
 "answer" are just a passive set of relations passed to the generator. They are not processed in any way. All variable bindings must already be available at this point.
 
-A special function of "answer" is "make_and().
-
-    preparation: make_and(A, And, R)
-
-This construction allows you to create a nested structure of AND's, so that you can respond with
-
-    John, Kale and Louis
-
 ## Canned responses
 
 A canned response is just a literal text that may be used as an answer.

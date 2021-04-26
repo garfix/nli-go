@@ -28,7 +28,6 @@ func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiB
 		mentalese.PredicateSmallest: base.smallest,
 		mentalese.PredicateExists:   base.exists,
 		mentalese.PredicateCut:      base.cut,
-		mentalese.PredicateMakeAnd:  base.makeAnd,
 		mentalese.PredicateMakeList: base.makeList,
 	}
 }
@@ -377,50 +376,6 @@ func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, 
 	}
 
 	return mentalese.NewBindingSet()
-}
-
-func (base *SystemMultiBindingFunctionBase) makeAnd(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {
-
-	if !Validate(input, "vv", base.log) {
-		return mentalese.NewBindingSet()
-	}
-
-	entityVar := input.Arguments[0].TermValue
-	andVar := input.Arguments[1].TermValue
-
-	uniqueValues := bindings.GetDistinctValues(entityVar)
-	relation := mentalese.Relation{}
-	count := len(uniqueValues)
-
-	if count == 0 {
-		return bindings
-	} else if count == 1 {
-		relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
-			uniqueValues[0],
-			uniqueValues[0],
-		})
-	} else {
-		relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
-			uniqueValues[count - 2],
-			uniqueValues[count - 1],
-		})
-		for i := len(uniqueValues)-3; i >= 0 ; i-- {
-			relation = mentalese.NewRelation(false, mentalese.PredicateAnd, []mentalese.Term{
-				uniqueValues[i],
-				mentalese.NewTermRelationSet(mentalese.RelationSet{ relation }),
-			})
-		}
-	}
-
-	newBindings := mentalese.NewBindingSet()
-
-	for _, binding := range bindings.GetAll() {
-		newBinding := binding.Copy()
-		newBinding.Set(andVar, mentalese.NewTermRelationSet(mentalese.RelationSet{ relation }))
-		newBindings.Add(newBinding)
-	}
-
-	return newBindings
 }
 
 func (base *SystemMultiBindingFunctionBase) makeList(messenger api.ProcessMessenger, input mentalese.Relation, bindings mentalese.BindingSet) mentalese.BindingSet {

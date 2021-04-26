@@ -1,3 +1,7 @@
+## 2021-04-26
+
+Phased out `make_and()`. Now using lists to generate `and` sequences.
+
 ## 2021-04-24
 
 I added memory events in a number of strategic places. I displaced and renamed many of the blocks world files, to emphasize the role of the events.

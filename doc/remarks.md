@@ -1,3 +1,56 @@
+## 2021-04-27
+
+The system now correctly answers the question 24, but it is by chance that it describes the right event since both events (pick up green pyramid) are found.
+
+How can we have the system decide that "you pick it up" in  
+
+    When did you pick it up?
+
+Refers to the case where the pyramid was picked up in order to build a stack, and not the second case where the pyramid was picked up because the system was simply told to?
+
+It must be the case that
+
+    before you put the green one on the little cube
+
+constrains the deictic center to the period [0, t], where `t` is the start time of "put the green one on the little cube". 
+
+Or is it that "touched any pyramid" adds an event to the anaphora queue? If so, "you pick it up" must refer to that event; but this is not even a propnoun (like "it"). Perhaps its a 
+
+---
+
+As always, it is best to see what Winograd has to say about it. And he doesn't disappoint us. In 8.1.8 (p. 147) says something very specific about this:
+
+    There are discourse phenomena which involve time reference. First, there are specific back-references with words like "then" and phrases like "at that time". The system keeps track of the major time reference of the previous sentence, and substitutes it in the current sentence whenever such phrases are used. This time is also carried forward implicitly. Consider "Did you pick up a red block while you were building the tower?" "No." "Did you pick up a green one?" In this sequence, the second question involves a specific time interval although it is not mentioned again. 
+
+    Whenever there are two successive PAST sentences and the second does not have any explicit time reference, the previous TSS is used. Long dialogs can appear in which the same time interval is used throughout, but is mentioned only in the first sentence. 
+ 
+---
+
+Whereas anaphora referring to objects can be solved by built-in mechanisms that build an anaphora queue, this does not seem to be possible for the current time frame (or TSS). Time, in the blocks world, is discrete, and words like "before" are part of the grammar.
+
+But it is possible to create the time frame explicitly in the grammar.
+
+The time frame in "Had you touched any pyramid before you put the green one on the little cube?" is specified by
+
+    { rule: time_modifier(P1, P2) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
+
+To fix the time frame specifier we can change the rule like this
+
+    { rule: time_modifier(P1, P2) -> 'before' mem_vp(P2),                              sense: go:mark_timeframe(P1, $mem_vp dom:before(P1, P2) ) }
+
+If the following rule has no timeframe, the relations from this frame can be added. Where? At `apply_timeframe`:
+
+    { rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                             sense: go:intent(what, E1) go:apply_timeframe(P1) }
+
+---
+
+Can we simplify this? The variable passed to the category `s` always refers to the main clause. So `apply_timeframe` may be implicit. But is the timeframe always added to the main clause? Probably not.
+
+    Do you know when that happened?
+
+
+
+
 ## 2021-04-26
 
 Phased out `make_and()`. Now using lists to generate `and` sequences.

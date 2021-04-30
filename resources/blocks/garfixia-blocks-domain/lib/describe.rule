@@ -53,6 +53,26 @@ describe_categoric(E1, Sort, DescSet) :-
 ;
 
 describe_event(P1, DescSet) :-
+    pick_up(P1, Subject, Object)
+    describe_categoric(Object, '', ItemDesc)
+    go:unify(DescSet, event_description(P1) pick_up(P1, Subject, Object) {{ ItemDesc }})
+;
+
+describe_event(P1, DescSet) :-
+    put_on(P1, Subject, Object1, Object2)
+    describe_categoric(Object1, '', ItemDesc1)
+    describe_categoric(Object2, '', ItemDesc2)
+    go:unify(DescSet, event_description(P1) put_on(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }})
+;
+
+describe_event(P1, DescSet) :-
+    put_in(P1, Subject, Object1, Object2)
+    describe_categoric(Object1, '', ItemDesc1)
+    describe_categoric(Object2, '', ItemDesc2)
+    go:unify(DescSet, event_description(P1) put_in(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }})
+;
+
+describe_event(P1, DescSet) :-
     stack_up(P1, Subject, List)
     go:list_expand(List, Item)
     describe_categoric(Item, '', ItemDesc)

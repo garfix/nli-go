@@ -1,3 +1,15 @@
+## 2021-05-01
+
+I fixed the mutable variables: they are no longer stored in the process, but in the nearest cursor with a (lexical) scope type.
+
+## 2021-04-29
+
+The current problem, when tackled in a more comprehending way, leads to DRT, Discourse Representation Theory, that deals, among others with inter-sentential anaphora.
+
+I have been pushing this advanced topic away for a long time. But now I ordered "From Discourse to Logic" by Hans Kamp and Uwe Reyle. Kamp is the creator of DRT.
+
+If I want to do this project right, I will have to incorporate DRT.
+
 ## 2021-04-27
 
 The system now correctly answers the question 24, but it is by chance that it describes the right event since both events (pick up green pyramid) are found.

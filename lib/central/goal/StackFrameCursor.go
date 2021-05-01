@@ -6,6 +6,7 @@ import (
 
 type StackFrameCursor struct {
 	Type                     string
+	MutableVariables 		 map[string]bool
 	State                    map[string]int
 	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
@@ -14,10 +15,20 @@ type StackFrameCursor struct {
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
 		Type: 					  mentalese.FrameTypePlain,
+		MutableVariables: 		  map[string]bool{},
 		State:                    map[string]int{},
 		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
 	}
+}
+
+func (c *StackFrameCursor) HasMutableVariable(variable string) bool {
+	_, found := c.MutableVariables[variable]
+	return found
+}
+
+func (c *StackFrameCursor) AddMutableVariable(variable string) {
+	c.MutableVariables[variable] = true
 }
 
 func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentalese.Term) {

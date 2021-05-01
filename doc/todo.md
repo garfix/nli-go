@@ -51,7 +51,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 
 Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 
-- mutable variables now have global scope; this is really wrong and should be fixed => scope must be limited to declaring rule
 - if_then, if_then_else => if
 - let => var
 - functions calls for arguments
@@ -69,19 +68,7 @@ Test if this works or make it work. Create a stack of current relations to be so
 
     married_to(A, B) :- married_to(B, A);
     
-* Allow the dynamically added rules to be saved (in the session).
-* Specify which predicates a rule base allows to be added.    
 * change rewrite rules from categories with variables to relations (see also Generator)
-
-## Syntax
-
-- Perhaps replace the syntax of functions like number_of(N, X) to
-    count(X: N)
-    join('', firstName, lastName: name)
-    join('', firstName, lastName -> name)
-    name = join('', firstName, lastName)
-- should you be allowed to mix predicates of several sets? Is this confusing or a necessity to keep things manageable?
-- Must be able to write whword in place of whword(); but wait, maybe we need multiple variables as well?
 
 ## Relations
 

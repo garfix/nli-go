@@ -5,7 +5,6 @@ import "nli-go/lib/mentalese"
 type Process struct {
 	GoalId           string
 	Stack            []*StackFrame
-	MutableVariables map[string]bool
 	Slots            map[string]mentalese.Term
 }
 
@@ -15,18 +14,18 @@ func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},
-		MutableVariables: map[string]bool{},
 		Slots: map[string]mentalese.Term{},
 	}
 }
 
 func (p *Process) AddMutableVariable(variable string) {
-	p.MutableVariables[variable] = true
-}
-
-func (p* Process) IsMutableVariable(variable string) bool {
-	_, found := p.MutableVariables[variable]
-	return found
+	for i := len(p.Stack) - 1; i >= 0; i-- {
+		frame := p.Stack[i]
+		if frame.Cursor.GetType() == mentalese.FrameTypeScope {
+			frame.Cursor.AddMutableVariable(variable)
+			break
+		}
+	}
 }
 
 func (p *Process) PushFrame(frame *StackFrame) {
@@ -192,17 +191,25 @@ func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
 func (p *Process) updateMutableVariables(outBindings mentalese.BindingSet) {
 	for _, outBinding := range outBindings.GetAll() {
 		for variable, value := range outBinding.GetAll() {
-			if p.IsMutableVariable(variable) {
-				p.updateMutableVariable(variable, value)
-			}
+			p.updateMutableVariable(variable, value)
 		}
 	}
 }
 
 func (p *Process) updateMutableVariable(variable string, value mentalese.Term) {
 
+	found := false
 	for _, frame := range p.Stack {
-		frame.UpdateMutableVariable(variable, value)
+		if !found {
+			// cursor with mutable variable
+			if frame.Cursor.HasMutableVariable(variable) {
+				frame.Cursor.UpdateMutableVariable(variable, value)
+				found = true
+			}
+		} else {
+			// frames below cursor with variable
+			frame.UpdateMutableVariable(variable, value)
+		}
 	}
 }
 

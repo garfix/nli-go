@@ -39,7 +39,6 @@ func (f *StackFrame) UpdateMutableVariable(variable string, value mentalese.Term
 			binding.Set(variable, value)
 		}
 	}
-	f.Cursor.UpdateMutableVariable(variable, value)
 }
 
 func (f *StackFrame) IsDone() bool {

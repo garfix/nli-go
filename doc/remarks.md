@@ -1,3 +1,25 @@
+## 2021-05-08
+
+Anaphora may also be reference forward.
+
+    A stockbroker who knows him likes Bill.
+
+(From "From Discourse to Logic", p. 88)
+
+Also: the referent of an anaphoric expression sometimes can be found only by using world knowledge.
+
+DRT _stores_ the semantic representations of all sentences. I have not done that so far. But I will need to store the semantic representations of all entities. 
+
+## 2021-05-05
+
+Reading. "From Discourse to Logic" (Kamp, Reyle) 
+
+It contains the sentenses:
+
+    Jones owns Ulysses. It fascinates him.
+
+To find the right antecedents for "it" and "him", we need to know that "him" refers to +male entities and that "Jones" is male. This would normally be handled by using features (here: Gender). But it can be deal with by adding extra relational constraints (like `male(E1)`). The problem with features is that they form a second source of knowledge, syntactic in nature, and thus not accessible by knowledge rules, and containing in some cases knowledge that is also available relationally (so: double).
+
 ## 2021-05-01
 
 I fixed the mutable variables: they are no longer stored in the process, but in the nearest cursor with a (lexical) scope type.

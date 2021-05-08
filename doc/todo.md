@@ -1,5 +1,37 @@
 # Todo
 
+## The programming language "mentalese"
+
+Make it consistent, complete, robust, etc. Have it conform existing paradigms.
+
+- the syntax of the reasoning rules () :- () (); => () { () () }
+- add local variables to the reasoning rules syntax (a, b) [ let(a, 1) let(b, 2) ] { () () }
+- if_then, if_then_else => if
+- let => var
+- functions calls for arguments
+- typed arguments
+- operators > = [H|T]
+- keywords if/then
+- n-dimensional arrays as local variables
+- extend a module with another module
+* quant_foreach: add as second parameter the variable to which the ids must be bound
+* use relations as functions (with special role for the last parameter as the return value)
+
+## Code
+
+* binding set -> results / binding list
+* relation set -> relation list
+* better validation for built-in functions; especially multi-binding ones
+
+## Anaphora
+
+- indefinate descriptions ("Jones owns a Porsche. It fascinates him.")
+- Store the senses of the entities that go into the anaphora queue, for later matching
+- Forward references
+- The referent of an anaphoric expression sometimes can be found only by using world knowledge ("John beat Peter. He started to cry.")
+- Some antecedents depend on the syntactic role ("John supports Peter. He admires him.")
+- Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
+
 ## Parsing source files
 
 - check the correctness of all relations after parsing
@@ -37,30 +69,9 @@ The animation also reveals another problem: when the system builds a stack, it f
 
 * write a good tutorial
 
-## Code
-
-* binding set -> results / binding list
-* relation set -> relation list
-* better validation for built-in functions; especially multi-binding ones
-
 ## relations that I no longer use
 
 - go:isa(E, Sort)
-
-## The programming language "mentalese"
-
-Make it consistent, complete, robust, etc. Have it conform existing paradigms.
-
-- if_then, if_then_else => if
-- let => var
-- functions calls for arguments
-- typed arguments
-- operators > = [H|T]
-- keywords if/then  
-- n-dimensional arrays as local variables
-- extend a module with another module
-* quant_foreach: add as second parameter the variable to which the ids must be bound
-* use relations as functions (with special role for the last parameter as the return value)
 
 ## Rules
 

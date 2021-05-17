@@ -1,3 +1,16 @@
+## 2021-05-15
+
+Some things I am picking up from "From Discourse to Logic":
+
+- A sentence represents either a state or an event
+- If a state does not specify time, it (usually) takes place _during_ the current reference time (set by the previous event)
+- If an event does not specify time, it (usually) takes place _after_ the current reference time (set by the previous event)
+- There are exceptions, and they may be resolved by "discourse relations" but this theory is not computational enough (p.528, my wording)
+- Whenever a new time interval is specified, this time (t), or this event (e) becomes the new refrence point: `Rpt := e` (p. 523) 
+- There is also a refrenence time needed for the past perfect: the temporal perspective perspective point `TPpt` (p. 595)
+- There is no clear semantics for the progressive.
+- "for an hour" describes a period of time, without specifying the beginning or the end
+
 ## 2021-05-08
 
 Anaphora may also be reference forward.

@@ -1,3 +1,61 @@
+## 2021-05-22
+
+I made an error. Reference time should not be stored as a process slot, but as a dialog context slot. Processes are finished when the sentence finishes. And this information should be transferred to the next sentence; just like the anaphora queue.
+
+In fact, reference time is, just like reference location, often called:
+
+    deixis
+
+See https://en.wikipedia.org/wiki/Deixis
+
+## 2021-05-19
+
+I could make the construct more generic with
+
+    go:slot_extend(time, P1, $time_modifier)
+    go:slot_get(time, P1, TimeModifier) {{ TimeModifier }}
+    go:slot_clear(time)
+
+but I am not happy with the parameter `P1`. It doesn't fit. But what about this? This structure can be applied to other cases than time:
+
+    go:context_set(time, P1, $time_modifier)
+    go:context_extend(time, P1, $time_modifier)
+    go:context_clear(time)
+    go:context_call(time, P1)
+
+## 2021-05-17
+
+Back to 
+
+    When did you pick it up?
+
+Somehow this sentence must be processed with the additional constraint of "before you put the green one on the little cube".
+
+I can make this constraint either explicit or implicit. 
+
+You might also say that the sentence is to be processed in the context of "before you put the green one on the little cube". But while "context" sounds cool, it doesn't say anything about its implementation. Nevertheless, the earlier sentence can set, or extend, the time-context, by specifying
+
+    { rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1, P2),
+                                                                            sense: go:intent(select, E2)
+                                                                                   go:quant_check($np1,
+                                                                                        go:quant_check($np2, $past_participle $time_modifier))
+                                                                                   go:set_time_context(P1, $time_modifier) }
+
+The newer sentence can then pick up this context as follows:
+
+    { rule: mem_vp(P1) -> np(E1) mem_vp(P1),                               sense: go:quant_check($np, $mem_vp) 
+                                                                                  go:time_get_context(P1, Context) {{ Context }} }
+
+or
+
+    { rule: mem_vp(P1) -> np(E1) mem_vp(P1),                               sense: go:quant_check($np, $mem_vp) go:time_apply_context(P1) }
+
+The new time functions would store the time context in a process slot.
+
+And I will need
+
+    go:clear_time_context()
+
 ## 2021-05-15
 
 Some things I am picking up from "From Discourse to Logic":
@@ -6,7 +64,7 @@ Some things I am picking up from "From Discourse to Logic":
 - If a state does not specify time, it (usually) takes place _during_ the current reference time (set by the previous event)
 - If an event does not specify time, it (usually) takes place _after_ the current reference time (set by the previous event)
 - There are exceptions, and they may be resolved by "discourse relations" but this theory is not computational enough (p.528, my wording)
-- Whenever a new time interval is specified, this time (t), or this event (e) becomes the new refrence point: `Rpt := e` (p. 523) 
+- Whenever a new time interval is specified, this time (t), or this event (e) becomes the new reference point: `Rpt := e` (p. 523) 
 - There is also a refrenence time needed for the past perfect: the temporal perspective perspective point `TPpt` (p. 595)
 - There is no clear semantics for the progressive.
 - "for an hour" describes a period of time, without specifying the beginning or the end

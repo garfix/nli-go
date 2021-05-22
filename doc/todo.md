@@ -26,7 +26,7 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 ## Anaphora
 
 - Donkey sentences: "If Pedro owns some donkey, he beats it." "Some donkey" creates a discourse entity; and "it" refers to it. (Also: "Pedro owns a donkey. He beats it.") 
-- indefinate descriptions ("Jones owns a Porsche. It fascinates him.")
+- indefinite descriptions ("Jones owns a Porsche. It fascinates him.")
 - Store the senses of the entities that go into the anaphora queue, for later matching
 - Forward references
 - The referent of an anaphoric expression sometimes can be found only by using world knowledge ("John beat Peter. He started to cry.")

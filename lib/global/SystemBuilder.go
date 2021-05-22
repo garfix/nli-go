@@ -121,8 +121,9 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	anaphoraQueue := central.NewAnaphoraQueue()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, system.processList)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, system.meta, builder.log)
+	deicticCenter := central.NewDeicticCenter()
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync

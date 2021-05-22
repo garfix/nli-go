@@ -116,6 +116,11 @@ const PredicateCreateCanned = "go_create_canned"
 
 const PredicateUserSelect = "go_user_select"
 
+const PredicateContextSet = "go_context_set"
+const PredicateContextExtend = "go_context_extend"
+const PredicateContextCall = "go_context_call"
+const PredicateContextClear = "go_context_clear"
+
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"
 const CategoryProperNounGroup = "proper_noun_group"

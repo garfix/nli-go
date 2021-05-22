@@ -35,7 +35,8 @@ func TestLocalVariables(t *testing.T) {
 	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
-	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
+	deicticCenter := central.NewDeicticCenter()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :- 

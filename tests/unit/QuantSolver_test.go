@@ -112,7 +112,8 @@ func TestQuantSolver(t *testing.T) {
 	solver.AddFunctionBase(systemFunctionBase)
 
 	anaphoraQueue := central.NewAnaphoraQueue()
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, meta, log)
+	deicticCenter := central.NewDeicticCenter()
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)

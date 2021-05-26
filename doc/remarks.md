@@ -1,3 +1,74 @@
+## 2021-05-26
+
+Or this:
+
+    { rule: interrogative_clause(P1) -> 'why',    sense: go:intent(why, P1) go:ellipsis(wh_phrase) }
+
+but that would mean that the semantics only gets available when the sentence is being executed. That's not good.
+
+What about
+
+    { rule: interrogative_clause(P1) -> 'why' ?wh_phrase(P1),    sense: go:intent(why, P1) }
+
+where `?wh_phrase` refers to a wh_phrase near in the parse forest. But the `?` can also be interpreted as _optional_.
+
+    { rule: interrogative_clause(P1) -> 'why' ^wh_phrase(P1),    sense: go:intent(why, P1) }
+    { rule: interrogative_clause(P1) -> 'why' ellipsis:wh_phrase(P1),    sense: go:intent(why, P1) }
+
+In some cases ellipsis uses placeholder words, like "too", and "hers".
+
+    John can play the guitar; Mary can play the guitar, too.
+    If Doris tries my chili, I will try hers.
+
+Examples from https://en.wikipedia.org/wiki/Ellipsis_(linguistics)
+
+And there are constraints on the location where to find the antecendents of the ellipsis. So it would be nice if we could locate these:
+
+    { rule: possessive(P1) -> ellipsis('hers', 'her' [^ ^ np possessive]) }
+    { rule: interrogative_clause(P1) -> 'why' ellipsis('', [^^ interrogative_clause comp]) }
+
+LFG has such paths. Not only do they make it easier to look up the referents; the constraints may be necessary as well.
+
+As for processing ellipsical phrases: I think this phase goes _after_ parsing and _before_ relationizing:
+
+* parse
+* ellipsis resolution: replace the ellipsis placeholder by the words in the referent 
+* relationizing
+
+Note that ellipsis resolution retrieves words, not semantics. It's a purely syntactic operation.
+
+## 2021-05-25
+
+I think I will implement ellipsis by specifying it in the grammar, explicitly. So something like this:
+
+    { rule: interrogative_clause(P1) -> 'why' wh_phrase(P1),    sense: go:intent(why, P1), ellipsis: wh_phrase }
+
+## 2021-05-24
+
+I think I will need to use ellipsis anyway, because the event of the previous question is only the second-last event mentioned in the discourse. The last event would be the one in the response. So a back reference would result in the event from the answer.
+
+## 2021-05-23
+
+Ellipsis is actually quite important for a user-friendly NLI system. But it seems such a complicated thing to do.
+
+I found that "Natural Language Understanding" (James Allen) actually has a good section on ellipsis (14.6). He writes that it is a matter of treating the elliptic text syntactically; by matching its syntactic tree to the syntax tree of the previous sentence.
+
+Ellipsis is a branch of linguistics in itself, with many variations :D
+
+https://en.wikipedia.org/wiki/Ellipsis_(linguistics)
+
+The form of ellisis found in #25 is called "sluicing": https://en.wikipedia.org/wiki/Sluicing
+
+===
+
+While ellipsis can be treated as the omission of some words, or even the whole sentence, its implementation may not be straightforward. There are various forms, there are exceptions, and Wikipedia even questions if constituent grammars are the right way to handle ellipsis.
+
+Perhaps different forms of ellipsis can best be treated in different ways. The sentence "Why?" can be treated with a backreference to an event. As in
+
+    { rule: interrogative_clause(P1) -> 'why',                             sense: go:intent(why, P1) go:back_reference(P1) }
+
+For this to work, events must be added to the anaphora queue, and the back reference must refer to an event, not an (non-event) entity.
+
 ## 2021-05-22
 
 I made an error. Reference time should not be stored as a process slot, but as a dialog context slot. Processes are finished when the sentence finishes. And this information should be transferred to the next sentence; just like the anaphora queue.
@@ -7,6 +78,21 @@ In fact, reference time is, just like reference location, often called:
     deixis
 
 See https://en.wikipedia.org/wiki/Deixis
+
+---
+
+I introduced the deictic center in the dialog context, to conclude interaction #24. It uses specialized functions to modify the deictic center (of time) explicitly.
+
+Proceeding with #25:
+
+    H: Why?
+    C: To get rid of it.
+
+Winograd: "The system remembers immediately previous sentences to understand questions like this and the following ones." "By keeping track of selected parts of the original subgoal tree, the system has some understanding of its own motives."
+
+The question "Why?" shows ellipsis (leaving out part of the sentence, to avoid repetition); the full sentence is "Why did you pick it up?". 
+
+Do I need the extend "Why?" with part of the previous sentence, to find the sentence to be answered? Or is it enough to push the event "Pick up X" to the anaphora queue, and use it to answer "Why?"
 
 ## 2021-05-19
 

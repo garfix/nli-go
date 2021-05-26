@@ -89,7 +89,7 @@ Find a way to ensure completeness of information about all relations used in a s
 
 * convert number words into numbers
 
-# Quantifier Scoping
+## Quantifier Scoping
 
 - Make "more than" "less than" work
 - A range itself can contain quantified nouns (the oldest child in every family). The algorithm is not up to it. (See CLE)
@@ -97,3 +97,9 @@ Find a way to ensure completeness of information about all relations used in a s
 ## Stuff I'm not happy with
 
 * the RelationTransformer; is only used in solutions, but should be removed from there as well, if possible
+
+## Interesting stuff
+
+The catena concept may be interesting (for ellipsis a.o.):
+
+    https://en.wikipedia.org/wiki/Catena_(linguistics)

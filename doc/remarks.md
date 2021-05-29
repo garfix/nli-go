@@ -1,3 +1,78 @@
+## 2021-05-29
+
+I am not going to implement all of this right now, but since I am at it, I may as well create a mini path-language:
+
+`/` divides the steps in the path
+
+Any step "down" will not come back to a node that has just been left behind. So if A has two vp sub-nodes: B and C, and the path is defined in C, then ../vp means: go up, then go to B; but when the path is defined in B, then it means: go up, then go to C.
+
+* `..` moves up one node
+* `cat` moves down to the (first) `cat` sub-node (that has not been visited)
+* `cat[2]` moves down to the second `cat` sub-node (that has not been visited)
+* `[next]` moves to next sibling node
+* `[prev]` moves to previous  sibling node
+* `[sibling]` moves to either next or previous sibling node
+* `[root]` moves to the root node of current sentence
+
+In this tree
+
+    + and
+    +--+ vp
+       +-- np
+       +-- verb A
+    +-- verb
+       +-- np
+       +-- verb B
+
+Suppose we're in B, then `[prev]` points to A.
+When we're in A, then `[next]` points to B.
+Suppose we're in either A or B, then `[sibling]` points to resp. B or A.
+
+If we're in any node, then `[root]/[prev]` points to the root of previous sentence. 
+
+I like the sibling approach, but how it works out, only actual experience with complex ellipsis will learn.
+
+## 2021-05-27
+
+Using a path to specify the missing piece, looks like a good way to go. It is better than to specify contrived grammar rules for ellipsis. I will now check if this method will handle all cases named in the Wikipedia article.
+
+This is just a brainstorm session; these examples may or may not work in practise. 
+
+    Fred took a picture of you, and Susan (took a picture) of me.
+    { rule: vp(P1) -> np(P1) ['' -> ../vp/vbar] }
+
+Took this path notation from file systems.
+
+    She persuaded him to do the homework, and he (persuaded) her (to do the homework).
+    { rule: vp(P1) -> np(P1) ['' -> ../vp/vbar] np(P1) ['' -> ../vp/pp] }
+
+    Sam has attempted problem 1 twice, and (he has attempted) problem 2 also.
+    { rule: vp(P1) -> ['' -> ../vp/np,vbar] np(P1) }
+
+Notice ^ the expression `np,vbar` for the sequence of `np` and `vbar`.
+
+    Sally is working on Monday, (she is) not (working) (on) Tuesday.
+    { rule: vp(P1) -> ['' -> ../vp/np,aux_be] `not` [../vp/vbar/verb] [../vp/vbar/pp/preposition] time(P1) }
+
+This ^ is looking contrived; and it probably is; I am going for "possible", here, not "simple". The reason is that the missing text is not a single phrase. It is a known problem with constituent grammars (see Wikipedia article).
+
+    John can play the guitar; Mary can (play the guitar), too.    
+    { rule: vp(P1) -> ['too' -> ../vp/np,vbar] np(P1) }
+
+First case with a placeholder ("too").
+
+===
+
+Alternative syntax:
+
+    { rule: vp(P1) -> np(E1) 'can' too', sense: ../vp/vbar(P1) np(P1) }
+
+===
+
+    { rule: interrogative_clause(P1) -> 'why', sense: [root]/[prev]/comp(P1) }
+
+`//` means main constituent of the sentense; `/` means S-clause. `[prev]` means one sentence back, and start at the top-level constituent.
+
 ## 2021-05-26
 
 Or this:

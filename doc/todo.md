@@ -17,6 +17,10 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 * quant_foreach: add as second parameter the variable to which the ids must be bound
 * use relations as functions (with special role for the last parameter as the return value)
 
+## Solutions
+
+Call solutions "intents", just like everybody else.
+
 ## Code
 
 * binding set -> results / binding list

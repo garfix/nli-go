@@ -36,6 +36,8 @@ const (
 	t_opening_brace
 	t_closing_brace
 	t_negative
+	t_slash
+	t_up
 	_newline
 	_other
 )
@@ -62,7 +64,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_anonymousVariable, "_"},
 		{t_id, "`[^`]+`"},
 		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
-		{t_regExp, "/(?:\\\\/|\\\\\\\\|[^/])*/"},
+		{t_regExp, "~(?:\\\\~|\\\\\\\\|[^~])*~"},
 		{t_number, "-?[0-9]+"},
 		{t_comma, ","},
 		{t_rewrite, "->"},
@@ -80,6 +82,8 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_opening_brace, "\\{"},
 		{t_closing_brace, "\\}"},
 		{t_negative, "-"},
+		{t_slash, "/"},
+		{t_up, "\\.\\."},
 		{_newline, "(?:\r\n|\n|\r)"},
 		{_other, "."},
 	}

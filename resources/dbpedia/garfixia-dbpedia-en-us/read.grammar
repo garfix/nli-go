@@ -73,7 +73,7 @@
 
 /* misc */
 
-{ rule: number(N1) -> /^[0-9]+/ }
+{ rule: number(N1) -> ~^[0-9]+~ }
 { rule: number(N1) -> 'two',                                            sense: go:unify(N1, 2) }
 { rule: number(N1) -> 'three',                                          sense: go:unify(N1, 3) }
 { rule: ordinal(N1) -> 'second',                                        sense: go:unify(N1, 2) }

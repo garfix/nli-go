@@ -34,7 +34,7 @@
 
 /* misc */
 
-{ rule: number(N1) -> /^[0-9]+/ }
+{ rule: number(N1) -> ~^[0-9]+~ }
 
 /* sentence */
 

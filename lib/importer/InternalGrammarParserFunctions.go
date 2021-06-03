@@ -237,7 +237,7 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (parse.GrammarRule, int, bool) {
 
 	rule := parse.GrammarRule{}
-	ruleFound, senseFound := false, false
+	ruleFound, senseFound, ellipsisFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -252,6 +252,10 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 				rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
 				ok = ok && !senseFound
 				senseFound = true
+			case field_ellipsis:
+				rule.Ellipsis, startIndex, ok = parser.parseCategoryPaths(tokens, startIndex)
+				ok = ok && !ellipsisFound
+				ellipsisFound = true
 			default:
 				ok = false
 		}
@@ -352,6 +356,107 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	}
 
 	return syntacticCategories, entityVariables, positionTypes, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseCategoryPaths(tokens []Token, startIndex int) ([]parse.CategoryPath, int, bool) {
+	paths := []parse.CategoryPath{}
+	ok := true
+
+	for ok {
+		path, newStartIndex, found := parser.parseCategoryPath(tokens, startIndex)
+		if found {
+			paths = append(paths, path)
+			startIndex = newStartIndex
+		} else {
+			ok = false
+		}
+	}
+
+	return paths, startIndex, true
+}
+
+func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startIndex int) (parse.CategoryPath, int, bool) {
+	path := parse.CategoryPath{}
+	slash := true
+
+	node, newStartIndex, ok := parser.parseCategoryPathNode(tokens, startIndex)
+	if ok {
+		path = append(path, node)
+		startIndex = newStartIndex
+
+		for ok {
+			_, newStartIndex, slash = parser.parseSingleToken(tokens, startIndex, t_slash)
+			if !slash {
+				break
+			}
+			startIndex = newStartIndex
+			node, newStartIndex, ok = parser.parseCategoryPathNode(tokens, startIndex)
+			if ok {
+				path = append(path, node)
+				startIndex = newStartIndex
+			}
+		}
+	}
+
+	return path, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, startIndex int) (parse.CategoryPathNode, int, bool) {
+	node := parse.CategoryPathNode{}
+	name := ""
+
+	{
+		_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+		if ok {
+			startIndex = newStartIndex
+			name, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+			if ok {
+				startIndex = newStartIndex
+				_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+				if ok {
+					startIndex = newStartIndex
+					nodeType := ""
+					if name == parse.NodeTypeRoot {
+						nodeType = parse.NodeTypeRoot
+					} else if name == parse.NodeTypePrev {
+						nodeType = parse.NodeTypePrev
+					} else {
+						ok = false
+					}
+					node = parse.NewCategoryPathNode(nodeType, "", []string{})
+				}
+			}
+			goto end
+		}
+	}
+
+	{
+		_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_up)
+		if ok {
+			startIndex = newStartIndex
+			node = parse.NewCategoryPathNode(parse.NodeTypeUp, "", []string{})
+			goto end
+		}
+	}
+
+	{
+		relation, newStartIndex, ok := parser.parseRelation(tokens, startIndex, false)
+		if ok {
+			startIndex = newStartIndex
+			variables := []string{}
+			for _, argument := range relation.Arguments {
+				variables = append(variables, argument.TermValue)
+			}
+			node = parse.NewCategoryPathNode(parse.NodeTypeCategory, relation.Predicate, variables)
+			goto end
+		}
+	}
+
+	return node, startIndex, false
+
+	end:
+
+	return node, startIndex, true
 }
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int, useAlias bool) ([]mentalese.Relation, int, bool) {

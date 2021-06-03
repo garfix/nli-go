@@ -26,7 +26,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	
 																			sense: go:or($quantifier1, $quantifier2) }
 
-		{ rule: number(N1) -> /^[0-9]+/ }
+		{ rule: number(N1) -> ~^[0-9]+~ }
 
 		{ rule: nbar(E1) -> 'books', 										sense: book(E1) }
 		{ rule: np(E1) -> qp(_) nbar(E1), 									sense: go:quant($qp, E1, $nbar) }

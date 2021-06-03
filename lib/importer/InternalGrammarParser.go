@@ -10,6 +10,7 @@ import (
 
 const (
 	field_sense           = "sense"
+	field_ellipsis        = "ellipsis"
 	field_condition       = "condition"
 	field_result		  = "result"
 	field_transformations = "transformations"

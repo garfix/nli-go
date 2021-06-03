@@ -314,7 +314,7 @@ func (term Term) String() string {
 			s = "'" + term.TermValue + "'"
 		}
 	case TermTypeRegExp:
-		s = "/" + term.TermValue + "/"
+		s = "~" + term.TermValue + "~"
 	case TermTypeAnonymousVariable:
 		s = "_"
 	case TermTypeRelationSet:

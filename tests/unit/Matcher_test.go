@@ -33,7 +33,7 @@ func TestMatchTwoTerms(t *testing.T) {
 		{"E1", "uncle", "{}", "{E1: uncle}", true},
 		{"E1", "123", "{}", "{E1: 123}", true},
 		{"E1", "`:id11`", "{}", "{E1: `:id11`}", true},
-		{"E1", "/deer/", "{}", "{E1: /deer/}", true},
+		{"E1", "~deer~", "{}", "{E1: ~deer~}", true},
 		{"E1", "'grass'", "{}", "{E1: 'grass'}", true},
 		{"E1", "son_of(blagger)", "{}", "{E1: son_of(blagger)}", true},
 		{"E1", "[a, b]]", "{}", "{E1: [a, b]}", true},

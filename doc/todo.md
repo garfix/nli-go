@@ -37,6 +37,10 @@ Call solutions "intents", just like everybody else.
 - Some antecedents depend on the syntactic role ("John supports Peter. He admires him.")
 - Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
 
+## Long distance dependencies
+
+The technique of ellipsis can possibly play a role in gapping / long distance relations too.
+
 ## Parsing source files
 
 - check the correctness of all relations after parsing

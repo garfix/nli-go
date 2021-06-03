@@ -50,7 +50,9 @@ When binding the varables of this relation set, `{{ VarB }}` will be expanded to
     { rule: tv(P1, E1, E2) -> like(P1, E1, E2),         sense: like(P1, E1, E2) }
     { rule: like(P1, E1, E2) -> 'likes' }
     { rule: noun(E1) -> 'cat',                          sense: cat(E1) }
-    { rule: number(E1) -> /^[0-9]+$/ }
+    { rule: number(E1) -> ~^[0-9]+$~ }
+
+    ellipsis: [root] [prev] .. catname(V)
 
 ## Inference rules
 

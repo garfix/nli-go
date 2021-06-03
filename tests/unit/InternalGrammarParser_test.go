@@ -67,6 +67,9 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateRelationSet("sort([])")
 	parser.CreateRelationSet("sort([5])")
 	parser.CreateRelationSet("sort([5,2,3,1])")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: ../vp(P) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [root] }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [root]/[prev]/rel(E1, E2) }")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {

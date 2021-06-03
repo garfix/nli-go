@@ -13,6 +13,7 @@ type GrammarRule struct {
 	// (P1, E1) -> (E1) (P1, E1)
 	EntityVariables     [][]string
 	Sense               mentalese.RelationSet
+	Ellipsis            []CategoryPath
 }
 
 const PosTypeRelation = "relation"
@@ -25,6 +26,7 @@ func NewGrammarRule(positionTypes []string, syntacticCategories []string, entity
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
 		Sense:               sense,
+		Ellipsis:			 []CategoryPath{},
 	}
 }
 

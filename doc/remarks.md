@@ -1,3 +1,47 @@
+## 2021-05-31
+
+The path syntax could also borrow from CSS specifiers: inbetween nodes need not be named explicitly.
+
+  path: a / b / c / d
+  ellipsis: a / d       // note: b and c are skipped
+
+## 2021-05-30
+
+The syntax I used up to now didn't really work. Now is the time to fix it. I need to
+
+- connect the entities
+- make sure the deeper senses are connected as well
+- choose the right place in the processing pipline
+
+Example sentences:
+
+    { rule: vp(P1) -> np(E1) 'can' too' [vbar(P1)], sense: ../vp/vbar(P1) np(P1) }
+    { rule: interrogative_clause(P1) -> 'why', sense: [root]/[prev]/comp(P1) }
+
+I thin I found it: the order of processing is still
+
+- parsing
+- ellipsis
+- relationizing
+
+In the parse phrase the ellipsis structs are skipped. In the ellipsis phase, this happens:
+
+- go through the tree
+- if you find an ellipsis struct:
+    - find the antecedent node
+    - copy the subtree of this node (both phrases and senses)
+    - update the variables
+    - append it to the tree
+
+Example sentences:
+
+    { rule: vp(P1) -> np(E1) 'can' too', ellipsis: ../vp/vbar(P1), sense: $vbar $np }
+    { rule: interrogative_clause(P1) -> 'why', ellipsis: [root]/[prev]/comp(P1), sense: $comp }
+
+In this form, ellipsis is clearly separated. This is clearer I think. And processing is easier.
+
+Note that this technique can possibly play a role in gapping / long distance relations too. I may come back to this later. 
+
 ## 2021-05-29
 
 I am not going to implement all of this right now, but since I am at it, I may as well create a mini path-language:

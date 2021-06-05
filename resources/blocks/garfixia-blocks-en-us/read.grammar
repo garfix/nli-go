@@ -178,10 +178,11 @@
 { rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                             sense: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' vp(P1, E1),                            sense: go:intent(which, E1) $vp }
 { rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1),                       sense: go:intent(how_many, E1) }
-{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             sense: go:intent(when, P1)
-                                                                                            $mem_vp
-                                                                                            go:context_call(time, P1) }
-{ rule: interrogative_clause(P1) -> 'why',   ellipsis: [root]/[prev]/mem_vp(P1),   sense: go:intent(why, P1) $mem_vp }
+{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),
+  sense: go:intent(when, P1) $mem_vp go:context_call(time, P1) }
+{ rule: interrogative_clause(P1) -> 'why',
+  ellipsis: [root]/[prev]/mem_vp(P1),
+  sense: go:intent(why, P1) $mem_vp }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }

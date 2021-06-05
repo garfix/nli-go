@@ -77,7 +77,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			// original: While I was stacking up the red cube, a large red block and a large green cube
 			{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube"},
-			//{"Why?", "To get rid of it."},
+			{"Why?", "To get rid of it."},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

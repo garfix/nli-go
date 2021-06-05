@@ -7,7 +7,7 @@ import (
 
 const MaxSizeAnaphoraQueue = 10
 
-// The dialog context stores session data that needs not and should not be available to mentalese programs
+// The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
 	storage *common.FileStorage
 	AnaphoraQueue *AnaphoraQueue

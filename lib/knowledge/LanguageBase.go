@@ -52,6 +52,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateTokenize:     base.tokenize,
 		mentalese.PredicateParse:        base.parse,
 		mentalese.PredicateRelationize:  base.relationize,
+		mentalese.PredicateEllipsize:    base.ellipsize,
 		mentalese.PredicateGenerate:     base.generate,
 		mentalese.PredicateSurface:      base.surface,
 		mentalese.PredicateFindSolution: base.findSolution,
@@ -176,6 +177,28 @@ func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.
 	}
 
 	return newBindings
+}
+
+func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "jv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	ellipsisVar := input.Arguments[1].TermValue
+	var parseTree parse.ParseTreeNode
+
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	ellipsizer := parse.NewEllipsizer()
+	newParseTree := ellipsizer.Ellipsize(parseTree)
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(ellipsisVar, mentalese.NewTermJson(newParseTree))
+
+	return mentalese.InitBindingSet(newBinding)
 }
 
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

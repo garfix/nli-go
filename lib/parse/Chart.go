@@ -28,8 +28,8 @@ func NewChart(words []string, rootCategory string, rootVariables []string) *char
 
 func (chart *chart) buildIncompleteGammaState() chartState {
 	return newChartState(
-		NewGrammarRule(
-			[]string{PosTypeRelation, PosTypeRelation},
+		mentalese.NewGrammarRule(
+			[]string{mentalese.PosTypeRelation, mentalese.PosTypeRelation},
 			[]string{"gamma", chart.rootCategory},
 			[][]string{{"G"}, chart.rootVariables},
 			mentalese.RelationSet{},

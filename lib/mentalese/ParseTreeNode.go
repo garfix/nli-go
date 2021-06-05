@@ -1,4 +1,4 @@
-package parse
+package mentalese
 
 type ParseTreeNode struct {
 	Category     string

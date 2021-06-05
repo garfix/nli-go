@@ -12,12 +12,12 @@ import (
 // It is the basic algorithm (p 381). Semantics (sense) is only calculated after the parse is isComplete.
 
 type EarleyParser struct {
-	grammarRules          *GrammarRules
+	grammarRules          *mentalese.GrammarRules
 	morphologicalAnalyzer *MorphologicalAnalyzer
 	log                   *common.SystemLog
 }
 
-func NewParser(grammarRules *GrammarRules, log *common.SystemLog) *EarleyParser {
+func NewParser(grammarRules *mentalese.GrammarRules, log *common.SystemLog) *EarleyParser {
 	return &EarleyParser{
 		grammarRules:          grammarRules,
 		morphologicalAnalyzer: nil,
@@ -31,7 +31,7 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []mentalese.ParseTreeNode {
 
 	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 
@@ -61,7 +61,7 @@ func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVaria
 }
 
 // The body of Earley's algorithm
-func (parser *EarleyParser) buildChart(grammarRules *GrammarRules, words []string, rootCategory string, rootVariables []string) (*chart) {
+func (parser *EarleyParser) buildChart(grammarRules *mentalese.GrammarRules, words []string, rootCategory string, rootVariables []string) (*chart) {
 
 	chart := NewChart(words, rootCategory, rootVariables)
 	wordCount := len(words)
@@ -101,7 +101,7 @@ func (parser *EarleyParser) buildChart(grammarRules *GrammarRules, words []strin
 }
 
 // Adds all entries to the chart that have the current consequent of $state as their antecedent.
-func (parser *EarleyParser) predict(grammarRules *GrammarRules, chart *chart, state chartState) {
+func (parser *EarleyParser) predict(grammarRules *mentalese.GrammarRules, chart *chart, state chartState) {
 
 	consequentIndex := state.dotPosition - 1
 	nextConsequent := state.rule.GetConsequent(consequentIndex)
@@ -131,18 +131,18 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	endWordIndex := state.endWordIndex
 	endWord := chart.words[endWordIndex]
 	lexItemFound := false
-	newPosType := PosTypeRelation
+	newPosType := mentalese.PosTypeRelation
 	sense := mentalese.RelationSet{}
 
 	if parser.log.Active() { parser.log.AddDebug("scan", state.ToString(chart)) }
 
 	// regular expression
-	if nextPosType == PosTypeRegExp {
+	if nextPosType == mentalese.PosTypeRegExp {
 		expression, err := regexp.Compile(nextConsequent)
 		if err == nil {
 			if expression.FindString(endWord) != "" {
 				lexItemFound = true
-				newPosType = PosTypeRegExp
+				newPosType = mentalese.PosTypeRegExp
 			}
 		}
 	}
@@ -156,20 +156,20 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	if !lexItemFound {
 		if (nextConsequent == strings.ToLower(endWord)) && (len(nextVariables) == 0) {
 			lexItemFound = true
-			newPosType = PosTypeWordForm
+			newPosType = mentalese.PosTypeWordForm
 		}
 	}
 
 	// morphological analysis
-	if !lexItemFound && nextPosType == PosTypeRelation {
+	if !lexItemFound && nextPosType == mentalese.PosTypeRelation {
 		if parser.morphologicalAnalyzer != nil {
 			sense, lexItemFound = parser.morphologicalAnalyzer.Analyse(endWord, nextConsequent, nextVariables)
 		}
 	}
 
 	if lexItemFound {
-		rule := NewGrammarRule(
-			[]string{newPosType, PosTypeWordForm},
+		rule := mentalese.NewGrammarRule(
+			[]string{newPosType, mentalese.PosTypeWordForm},
 			[]string{nextConsequent, endWord},
 			[][]string{nextVariables, {terminal}},
 			sense)

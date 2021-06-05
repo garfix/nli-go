@@ -1,4 +1,4 @@
-package parse
+package mentalese
 
 const NodeTypeRoot = "root"
 const NodeTypePrev = "prev"

@@ -2,7 +2,6 @@ package importer
 
 import (
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 	"nli-go/lib/parse/morphology"
 	"regexp"
 	"strconv"
@@ -193,9 +192,9 @@ func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startInd
 	return resultHandler, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int) (*parse.GrammarRules, int, bool) {
+func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int) (*mentalese.GrammarRules, int, bool) {
 
-	grammar := parse.NewGrammarRules()
+	grammar := mentalese.NewGrammarRules()
 	ok := true
 	found := false
 
@@ -213,9 +212,9 @@ func (parser *InternalGrammarParser) parseGrammar(tokens []Token, startIndex int
 	return grammar, startIndex, found
 }
 
-func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*parse.GrammarRules, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, startIndex int) (*mentalese.GrammarRules, int, bool) {
 
-	grammar := parse.NewGrammarRules()
+	grammar := mentalese.NewGrammarRules()
 	ok := true
 	found := false
 
@@ -234,9 +233,9 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 }
 
 // rule: s(S) -> np(E) vp(S), sense: declaration(S) object(S, E);
-func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (parse.GrammarRule, int, bool) {
+func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (mentalese.GrammarRule, int, bool) {
 
-	rule := parse.GrammarRule{}
+	rule := mentalese.GrammarRule{}
 	ruleFound, senseFound, ellipsisFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
@@ -268,9 +267,9 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 	return rule, startIndex,  ok
 }
 
-func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (parse.GrammarRule, int, bool) {
+func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (mentalese.GrammarRule, int, bool) {
 
-	rule := parse.GrammarRule{}
+	rule := mentalese.GrammarRule{}
 	ruleFound, conditionFound := false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
@@ -310,7 +309,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	headRelation, startIndex, ok = parser.parseRelation(tokens, startIndex, false)
 	if ok {
 		syntacticCategories = append(syntacticCategories, headRelation.Predicate)
-		positionTypes = append(positionTypes, parse.PosTypeRelation)
+		positionTypes = append(positionTypes, mentalese.PosTypeRelation)
 
 		list = []string{}
 		for _, argument := range headRelation.Arguments {
@@ -324,7 +323,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 			if isRelation {
 				startIndex = newStartIndex
 				syntacticCategories = append(syntacticCategories, tailRelation.Predicate)
-				positionTypes = append(positionTypes, parse.PosTypeRelation)
+				positionTypes = append(positionTypes, mentalese.PosTypeRelation)
 
 				list = []string{}
 				for _, argument := range tailRelation.Arguments {
@@ -336,14 +335,14 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 				if isString {
 					startIndex = newStartIndex
 					syntacticCategories = append(syntacticCategories, tailString)
-					positionTypes = append(positionTypes, parse.PosTypeWordForm)
+					positionTypes = append(positionTypes, mentalese.PosTypeWordForm)
 					entityVariables = append(entityVariables, []string{})
 				} else {
 					tailRegExp, newStartIndex, isRegExp := parser.parseSingleToken(tokens, startIndex, t_regExp)
 					if isRegExp {
 						startIndex = newStartIndex
 						syntacticCategories = append(syntacticCategories, tailRegExp)
-						positionTypes = append(positionTypes, parse.PosTypeRegExp)
+						positionTypes = append(positionTypes, mentalese.PosTypeRegExp)
 						entityVariables = append(entityVariables, []string{})
 					} else {
 						break
@@ -358,8 +357,8 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 	return syntacticCategories, entityVariables, positionTypes, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseCategoryPaths(tokens []Token, startIndex int) ([]parse.CategoryPath, int, bool) {
-	paths := []parse.CategoryPath{}
+func (parser *InternalGrammarParser) parseCategoryPaths(tokens []Token, startIndex int) ([]mentalese.CategoryPath, int, bool) {
+	paths := []mentalese.CategoryPath{}
 	ok := true
 
 	for ok {
@@ -375,8 +374,8 @@ func (parser *InternalGrammarParser) parseCategoryPaths(tokens []Token, startInd
 	return paths, startIndex, true
 }
 
-func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startIndex int) (parse.CategoryPath, int, bool) {
-	path := parse.CategoryPath{}
+func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startIndex int) (mentalese.CategoryPath, int, bool) {
+	path := mentalese.CategoryPath{}
 	slash := true
 
 	node, newStartIndex, ok := parser.parseCategoryPathNode(tokens, startIndex)
@@ -401,8 +400,8 @@ func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startInde
 	return path, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, startIndex int) (parse.CategoryPathNode, int, bool) {
-	node := parse.CategoryPathNode{}
+func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, startIndex int) (mentalese.CategoryPathNode, int, bool) {
+	node := mentalese.CategoryPathNode{}
 	name := ""
 
 	{
@@ -416,14 +415,14 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 				if ok {
 					startIndex = newStartIndex
 					nodeType := ""
-					if name == parse.NodeTypeRoot {
-						nodeType = parse.NodeTypeRoot
-					} else if name == parse.NodeTypePrev {
-						nodeType = parse.NodeTypePrev
+					if name == mentalese.NodeTypeRoot {
+						nodeType = mentalese.NodeTypeRoot
+					} else if name == mentalese.NodeTypePrev {
+						nodeType = mentalese.NodeTypePrev
 					} else {
 						ok = false
 					}
-					node = parse.NewCategoryPathNode(nodeType, "", []string{})
+					node = mentalese.NewCategoryPathNode(nodeType, "", []string{})
 				}
 			}
 			goto end
@@ -434,7 +433,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 		_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_up)
 		if ok {
 			startIndex = newStartIndex
-			node = parse.NewCategoryPathNode(parse.NodeTypeUp, "", []string{})
+			node = mentalese.NewCategoryPathNode(mentalese.NodeTypeUp, "", []string{})
 			goto end
 		}
 	}
@@ -447,7 +446,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 			for _, argument := range relation.Arguments {
 				variables = append(variables, argument.TermValue)
 			}
-			node = parse.NewCategoryPathNode(parse.NodeTypeCategory, relation.Predicate, variables)
+			node = mentalese.NewCategoryPathNode(mentalese.NodeTypeCategory, relation.Predicate, variables)
 			goto end
 		}
 	}

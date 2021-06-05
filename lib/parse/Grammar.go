@@ -1,9 +1,11 @@
 package parse
 
+import "nli-go/lib/mentalese"
+
 type Grammar struct {
 	locale 			      string
-	readRules             *GrammarRules
-	writeRules            *GrammarRules
+	readRules             *mentalese.GrammarRules
+	writeRules            *mentalese.GrammarRules
 	tokenizer             *Tokenizer
 	morphologicalAnalyzer *MorphologicalAnalyzer
 	texts				  map[string]string
@@ -12,8 +14,8 @@ type Grammar struct {
 func NewGrammar(locale string) Grammar {
 	return Grammar{
 		locale: 			   locale,
-		readRules:             NewGrammarRules(),
-		writeRules:            NewGrammarRules(),
+		readRules:             mentalese.NewGrammarRules(),
+		writeRules:            mentalese.NewGrammarRules(),
 		tokenizer:             NewTokenizer(DefaultTokenizerExpression),
 		morphologicalAnalyzer: nil,
 		texts:				   map[string]string{},
@@ -53,10 +55,10 @@ func (grammar *Grammar) GetLocale() string {
 	return grammar.locale
 }
 
-func (grammar *Grammar) GetReadRules() *GrammarRules {
+func (grammar *Grammar) GetReadRules() *mentalese.GrammarRules {
 	return grammar.readRules
 }
 
-func (grammar *Grammar) GetWriteRules() *GrammarRules {
+func (grammar *Grammar) GetWriteRules() *mentalese.GrammarRules {
 	return grammar.writeRules
 }

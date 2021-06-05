@@ -6,7 +6,6 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 )
 
 type Generator struct {
@@ -24,7 +23,7 @@ func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Gene
 }
 
 // Creates an array of words that forms the surface representation of a mentalese sense
-func (generator *Generator) Generate(grammarRules *parse.GrammarRules, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) Generate(grammarRules *mentalese.GrammarRules, sentenceSense mentalese.RelationSet) []string {
 
 	usedRules := &map[string]bool{}
 
@@ -48,7 +47,7 @@ func (generator *Generator) Generate(grammarRules *parse.GrammarRules, sentenceS
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
@@ -80,11 +79,11 @@ func (generator *Generator) GenerateNode(grammarRules *parse.GrammarRules, usedR
 	return words
 }
 
-func (generator *Generator) getConsequentValue(rule parse.GrammarRule, i int, binding mentalese.Binding) mentalese.Term {
+func (generator *Generator) getConsequentValue(rule mentalese.GrammarRule, i int, binding mentalese.Binding) mentalese.Term {
 	consequentValue := mentalese.NewTermString("")
 	found := false
 
-	if rule.GetConsequentPositionType(i) != parse.PosTypeWordForm {
+	if rule.GetConsequentPositionType(i) != mentalese.PosTypeWordForm {
 		consequentVariable := rule.GetConsequentVariables(i)[0]
 		consequentValue, found = binding.Get(consequentVariable)
 		if !found {
@@ -98,10 +97,10 @@ func (generator *Generator) getConsequentValue(rule parse.GrammarRule, i int, bi
 // From a set of rules (with a shared antecedent), find the first one whose conditions match
 // antecedent: i.e. np(E1)
 // bindingL i.e { E1: 3 }
-func (generator *Generator) findMatchingRule(grammarRules *parse.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) (parse.GrammarRule, mentalese.Binding, bool) {
+func (generator *Generator) findMatchingRule(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) (mentalese.GrammarRule, mentalese.Binding, bool) {
 
 	found := false
-	resultRule := parse.GrammarRule{}
+	resultRule := mentalese.GrammarRule{}
 	binding := mentalese.NewBinding()
 
 	rules := grammarRules.FindRules(antecedentCategory, 1)
@@ -158,17 +157,17 @@ func (generator *Generator) val2term(val string) mentalese.Term {
 	return generator.parser.CreateTerm(val)
 }
 
-func (generator *Generator) createRuleHash(rule parse.GrammarRule, binding mentalese.Binding) string {
+func (generator *Generator) createRuleHash(rule mentalese.GrammarRule, binding mentalese.Binding) string {
 	return rule.BindSimple(binding).String()
 }
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(grammarRules *parse.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
-	if positionType == parse.PosTypeWordForm {
+	if positionType == mentalese.PosTypeWordForm {
 		words = append(words, category)
 	} else if category == mentalese.CategoryText {
 		text := value

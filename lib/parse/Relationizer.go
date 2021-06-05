@@ -20,7 +20,7 @@ func NewRelationizer(log *common.SystemLog) *Relationizer {
 	}
 }
 
-func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, rootVariables []string) (mentalese.RelationSet, mentalese.Binding) {
+func (relationizer Relationizer) Relationize(rootNode mentalese.ParseTreeNode, rootVariables []string) (mentalese.RelationSet, mentalese.Binding) {
 	if rootVariables == nil {
 		rootVariables = []string{ relationizer.senseBuilder.GetNewVariable("Sentence") }
 	}
@@ -32,7 +32,7 @@ func (relationizer Relationizer) Relationize(rootNode ParseTreeNode, rootVariabl
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)
-func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
+func (relationizer Relationizer) extractSenseFromNode(node mentalese.ParseTreeNode, antecedentVariables []string) (mentalese.RelationSet, mentalese.Binding, mentalese.Binding) {
 
 	constantBinding := mentalese.NewBinding()
 	relationSet := mentalese.RelationSet{}
@@ -56,7 +56,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)
 
-		if node.Rule.GetConsequentPositionType(i) == PosTypeRegExp {
+		if node.Rule.GetConsequentPositionType(i) == mentalese.PosTypeRegExp {
 			constantBinding.Set(antecedentVariables[0], mentalese.NewTermString(childNode.Form))
 		}
 	}
@@ -68,7 +68,7 @@ func (relationizer Relationizer) extractSenseFromNode(node ParseTreeNode, antece
 	return relationSet, nameBinding, constantBinding
 }
 
-func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVariables []string) mentalese.Binding {
+func (relationizer Relationizer) extractName(node mentalese.ParseTreeNode, antecedentVariables []string) mentalese.Binding {
 
 	names := mentalese.NewBinding()
 
@@ -92,7 +92,7 @@ func (relationizer Relationizer) extractName(node ParseTreeNode, antecedentVaria
 // Adds all childSets to parentSet
 // Special case: if parentSet contains relation set placeholders [], like `quantification(X, [], Y, [])`, then these placeholders
 // will be filled with the child set of the preceding variable
-func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule GrammarRule) mentalese.RelationSet {
+func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.RelationSet, childSets []mentalese.RelationSet, rule mentalese.GrammarRule) mentalese.RelationSet {
 
 	referencedChildrenIndexes := []int{}
 	compoundRelations := mentalese.RelationSet{}
@@ -117,7 +117,7 @@ func (relationizer Relationizer) combineParentsAndChildren(parentSet mentalese.R
 }
 
 // replaces `sem(N)` in parentRelation
-func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int, rule GrammarRule) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Relation, childSets []mentalese.RelationSet, childIndexes []int, rule mentalese.GrammarRule) (mentalese.RelationSet, []int) {
 
 	newParentRelationSet := mentalese.RelationSet{}
 
@@ -168,7 +168,7 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 	return newParentRelationSet, childIndexes
 }
 
-func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int, rule GrammarRule) (mentalese.RelationSet, []int) {
+func (relationizer Relationizer) includeChildSensesInSet(parentRelations mentalese.RelationSet, childSets []mentalese.RelationSet, childIndexes []int, rule mentalese.GrammarRule) (mentalese.RelationSet, []int) {
 
 	newSet := mentalese.RelationSet{}
 	for _, relation := range parentRelations {

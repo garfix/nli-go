@@ -1,17 +1,19 @@
 package parse
 
+import "nli-go/lib/mentalese"
+
 // A simple wrapper around a parse tree node, adding a parent pointer
 type BidirectionalParseTreeNode struct {
-	source ParseTreeNode
+	source mentalese.ParseTreeNode
 	parent *BidirectionalParseTreeNode
 	children []*BidirectionalParseTreeNode
 }
 
-func CreateBidirectionalParseTree(root ParseTreeNode) *BidirectionalParseTreeNode {
+func CreateBidirectionalParseTree(root mentalese.ParseTreeNode) *BidirectionalParseTreeNode {
 	return createBidirectionalParseTreeNode(nil, root)
 }
 
-func createBidirectionalParseTreeNode(parent *BidirectionalParseTreeNode, source ParseTreeNode) *BidirectionalParseTreeNode {
+func createBidirectionalParseTreeNode(parent *BidirectionalParseTreeNode, source mentalese.ParseTreeNode) *BidirectionalParseTreeNode {
 	node := BidirectionalParseTreeNode{
 		source: source,
 		parent: parent,

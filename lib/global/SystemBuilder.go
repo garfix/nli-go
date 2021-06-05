@@ -467,7 +467,7 @@ func (builder *systemBuilder) importTexts(textFile string) map[string]string {
 
 func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyzer {
 
-	parsingRules := parse.NewGrammarRules()
+	parsingRules := mentalese.NewGrammarRules()
 	segmentationRules := morphology.NewSegmentationRules()
 
 	segmenterPath, found := parts["segmentation"]
@@ -508,19 +508,19 @@ func (builder *systemBuilder) readSegmentationRulesFromPath(path string) *morpho
 	return rules
 }
 
-func (builder *systemBuilder) readGrammarFromPath(path string) *parse.GrammarRules {
+func (builder *systemBuilder) readGrammarFromPath(path string) *mentalese.GrammarRules {
 
 	grammarString, err := common.ReadFile(path)
 	if err != nil {
 		builder.log.AddError(err.Error())
-		return parse.NewGrammarRules()
+		return mentalese.NewGrammarRules()
 	}
 
 	rules := builder.parser.CreateGrammarRules(grammarString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing grammar file " + path + " (" + lastResult.String() + ")")
-		return parse.NewGrammarRules()
+		return mentalese.NewGrammarRules()
 	}
 
 	return rules

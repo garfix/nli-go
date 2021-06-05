@@ -188,7 +188,7 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 	}
 
 	ellipsisVar := input.Arguments[1].TermValue
-	var parseTree parse.ParseTreeNode
+	var parseTree mentalese.ParseTreeNode
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
@@ -215,7 +215,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	senseVar := input.Arguments[1].TermValue
 	requestBindingVar := input.Arguments[2].TermValue
 	unboundNameVar := input.Arguments[3].TermValue
-	var parseTree parse.ParseTreeNode
+	var parseTree mentalese.ParseTreeNode
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 	relationizer := parse.NewRelationizer(base.log)

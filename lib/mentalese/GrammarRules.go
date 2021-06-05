@@ -1,4 +1,4 @@
-package parse
+package mentalese
 
 type GrammarRules struct {
 	index map[string]map[int][]GrammarRule

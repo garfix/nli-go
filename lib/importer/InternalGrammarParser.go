@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/parse"
 	"nli-go/lib/parse/morphology"
 )
 
@@ -72,9 +71,9 @@ func (parser *InternalGrammarParser) CreateRules(source string) []mentalese.Rule
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGrammarRules(source string) *parse.GrammarRules {
+func (parser *InternalGrammarParser) CreateGrammarRules(source string) *mentalese.GrammarRules {
 
-	grammar := parse.NewGrammarRules()
+	grammar := mentalese.NewGrammarRules()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
@@ -93,9 +92,9 @@ func (parser *InternalGrammarParser) CreateGrammarRules(source string) *parse.Gr
 }
 
 // Parses source into a grammar
-func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *parse.GrammarRules {
+func (parser *InternalGrammarParser) CreateGenerationGrammar(source string) *mentalese.GrammarRules {
 
-	grammar := parse.NewGrammarRules()
+	grammar := mentalese.NewGrammarRules()
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0

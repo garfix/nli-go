@@ -1,17 +1,18 @@
 package parse
 
 import (
+	"nli-go/lib/mentalese"
 	"strconv"
 )
 
 type chartState struct {
-	rule           GrammarRule
+	rule           mentalese.GrammarRule
 	dotPosition    int
 	startWordIndex int
 	endWordIndex   int
 }
 
-func newChartState(rule GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
+func newChartState(rule mentalese.GrammarRule, dotPosition int, startWordIndex int, endWordIndex int) chartState {
 	return chartState{
 		rule:           rule,
 		dotPosition:    dotPosition,

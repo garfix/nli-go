@@ -1,9 +1,10 @@
 package parse
 
+import "nli-go/lib/mentalese"
 
 type workingStep struct {
 	states     	[]chartState
-	nodes       []*ParseTreeNode
+	nodes       []*mentalese.ParseTreeNode
 	stateIndex 	int
 }
 
@@ -11,12 +12,12 @@ func (step workingStep) getCurrentState() chartState {
 	return step.states[step.stateIndex - 1]
 }
 
-func (step workingStep) getCurrentNode() *ParseTreeNode {
+func (step workingStep) getCurrentNode() *mentalese.ParseTreeNode {
 	return step.nodes[step.stateIndex - 1]
 }
 
 type treeInProgress struct {
-	root *ParseTreeNode
+	root *mentalese.ParseTreeNode
 	path []workingStep
 }
 
@@ -26,7 +27,7 @@ func (tip treeInProgress) clone() treeInProgress {
 
 	newSteps := []workingStep{}
 	for _, step := range tip.path {
-		newNodes := []*ParseTreeNode{}
+		newNodes := []*mentalese.ParseTreeNode{}
 		for _, node := range step.nodes {
 			newNode, _ := aMap[node]
 			newNodes = append(newNodes, newNode)
@@ -48,23 +49,23 @@ func (tip treeInProgress) clone() treeInProgress {
 }
 
 
-func (tip *treeInProgress) cloneTree(tree *ParseTreeNode) (*ParseTreeNode, map[*ParseTreeNode]*ParseTreeNode) {
+func (tip *treeInProgress) cloneTree(tree *mentalese.ParseTreeNode) (*mentalese.ParseTreeNode, map[*mentalese.ParseTreeNode]*mentalese.ParseTreeNode) {
 
-	aMap := map[*ParseTreeNode]*ParseTreeNode{}
+	aMap := map[*mentalese.ParseTreeNode]*mentalese.ParseTreeNode{}
 	newTree := tip.cloneNodeWithMap(tree, &aMap)
 
 	return newTree, aMap
 }
 
-func (tip *treeInProgress) cloneNodeWithMap(node *ParseTreeNode, aMap *map[*ParseTreeNode]*ParseTreeNode) *ParseTreeNode {
+func (tip *treeInProgress) cloneNodeWithMap(node *mentalese.ParseTreeNode, aMap *map[*mentalese.ParseTreeNode]*mentalese.ParseTreeNode) *mentalese.ParseTreeNode {
 
-	constituents := []*ParseTreeNode{}
+	constituents := []*mentalese.ParseTreeNode{}
 	for _, constituent := range node.Constituents {
 		clone := tip.cloneNodeWithMap(constituent, aMap)
 		constituents = append(constituents, clone)
 	}
 
-	newNode := &ParseTreeNode{
+	newNode := &mentalese.ParseTreeNode{
 		Category:     node.Category,
 		Constituents: constituents,
 		Form:         node.Form,

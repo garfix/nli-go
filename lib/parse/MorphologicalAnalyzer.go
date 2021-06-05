@@ -8,13 +8,13 @@ import (
 
 type MorphologicalAnalyzer struct {
 	segmenter *morphology.Segmenter
-	parsingRules *GrammarRules
+	parsingRules *mentalese.GrammarRules
 	parser *EarleyParser
 	relationizer *Relationizer
 	log *common.SystemLog
 }
 
-func NewMorphologicalAnalyzer(parsingRules *GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
+func NewMorphologicalAnalyzer(parsingRules *mentalese.GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
 	return &MorphologicalAnalyzer{
 		segmenter: segmenter,
 		parsingRules: parsingRules,

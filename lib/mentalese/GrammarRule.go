@@ -1,8 +1,7 @@
-package parse
+package mentalese
 
 import (
 	"nli-go/lib/common"
-	"nli-go/lib/mentalese"
 )
 
 type GrammarRule struct {
@@ -11,16 +10,16 @@ type GrammarRule struct {
 	// vp -> np vbar
 	SyntacticCategories []string
 	// (P1, E1) -> (E1) (P1, E1)
-	EntityVariables     [][]string
-	Sense               mentalese.RelationSet
-	Ellipsis            []CategoryPath
+	EntityVariables [][]string
+	Sense           RelationSet
+	Ellipsis        []CategoryPath
 }
 
 const PosTypeRelation = "relation"
 const PosTypeWordForm = "word-form"
 const PosTypeRegExp = "reg-exp"
 
-func NewGrammarRule(positionTypes []string, syntacticCategories []string, entityVariables [][]string, sense mentalese.RelationSet) GrammarRule {
+func NewGrammarRule(positionTypes []string, syntacticCategories []string, entityVariables [][]string, sense RelationSet) GrammarRule {
 	return GrammarRule{
 		PositionTypes: 		 positionTypes,
 		SyntacticCategories: syntacticCategories,
@@ -62,7 +61,7 @@ func (rule GrammarRule) GetConsequentCount() int {
 	return len(rule.SyntacticCategories) - 1
 }
 
-func (rule GrammarRule) BindSimple(binding mentalese.Binding) GrammarRule {
+func (rule GrammarRule) BindSimple(binding Binding) GrammarRule {
 	bound := rule.Copy()
 
 	for i, variables := range rule.EntityVariables {

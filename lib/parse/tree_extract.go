@@ -1,23 +1,25 @@
 package parse
 
+import "nli-go/lib/mentalese"
+
 // no backtracking! uses custom stacks
 
 type treeExtracter struct {
-	trees []*ParseTreeNode
+	trees []*mentalese.ParseTreeNode
 	chart *chart
 }
 
-func ExtractTreeRoots(chart *chart) []ParseTreeNode {
+func ExtractTreeRoots(chart *chart) []mentalese.ParseTreeNode {
 
 	extracter := &treeExtracter{
-		trees: []*ParseTreeNode{},
+		trees: []*mentalese.ParseTreeNode{},
 		chart: chart,
 	}
 
 	extracter.extract()
 
 	// the sentence node is the first child
-	roots := []ParseTreeNode{}
+	roots := []mentalese.ParseTreeNode{}
 	for _, root := range extracter.trees {
 		if len(root.Constituents) > 0 {
 			roots = append(roots, *root.Constituents[0])
@@ -31,7 +33,7 @@ func (ex *treeExtracter) extract() {
 
 	completedGammaState := ex.chart.buildCompleteGammaState()
 
-	rootNode := &ParseTreeNode{
+	rootNode := &mentalese.ParseTreeNode{
 		Category:     "gamma",
 		Constituents: nil,
 		Form:         "",
@@ -45,7 +47,7 @@ func (ex *treeExtracter) extract() {
 		path: []workingStep{
 		{
 			states:      []chartState{completedGammaState},
-			nodes:       []*ParseTreeNode{rootNode },
+			nodes:       []*mentalese.ParseTreeNode{rootNode },
 			stateIndex: 0,
 		},
 	}}
@@ -82,7 +84,7 @@ func (ex *treeExtracter) addChildren(tree treeInProgress) {
 			newTree := newTrees[i]
 			parentNode := newTree.peek().getCurrentNode()
 
-			childNodes := []*ParseTreeNode{}
+			childNodes := []*mentalese.ParseTreeNode{}
 			for _, childState := range childStates {
 				childNodes = append(childNodes, ex.createNode(childState))
 			}
@@ -123,16 +125,16 @@ func (ex *treeExtracter) forkTrees(tree treeInProgress, count int) []treeInProgr
 }
 
 // creates a single parse tree node
-func (ex *treeExtracter) createNode(state chartState) *ParseTreeNode {
+func (ex *treeExtracter) createNode(state chartState) *mentalese.ParseTreeNode {
 
 	form := ""
 	if state.isTerminal() {
 		form = state.rule.GetConsequent(0)
 	}
 
-	return &ParseTreeNode{
+	return &mentalese.ParseTreeNode{
 		Category:     state.rule.GetAntecedent(),
-		Constituents: []*ParseTreeNode{},
+		Constituents: []*mentalese.ParseTreeNode{},
 		Form:         form,
 		Rule:         state.rule,
 	}

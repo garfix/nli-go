@@ -19,7 +19,7 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 	value := bound.Arguments[1]
 
 	if !relation.Arguments[0].IsVariable() {
-		base.log.AddError("Let: variable already in use. Value: " + variable)
+		base.log.AddError("Let: variable already in use. GetCategory: " + variable)
 		return mentalese.NewBindingSet()
 	}
 

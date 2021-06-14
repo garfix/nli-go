@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/morphology"
 	"regexp"
@@ -385,10 +386,12 @@ func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startInde
 
 		for ok {
 			_, newStartIndex, slash = parser.parseSingleToken(tokens, startIndex, t_slash)
-			if !slash {
+			if slash {
+				startIndex = newStartIndex
+			} else {
 				break
 			}
-			startIndex = newStartIndex
+
 			node, newStartIndex, ok = parser.parseCategoryPathNode(tokens, startIndex)
 			if ok {
 				path = append(path, node)
@@ -402,60 +405,91 @@ func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startInde
 
 func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, startIndex int) (mentalese.CategoryPathNode, int, bool) {
 	node := mentalese.CategoryPathNode{}
-	name := ""
+	nodeType := ""
+	newStartIndex := 0
+	ok := true
+	categoryRequired := false
+	category := ""
+	variables := []string{}
+	allowIndirect := false
 
-	{
-		_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_up)
+	if ok {
+		startIndex = newStartIndex
+		nodeType = mentalese.NodeTypeParent
+		goto category
+	}
+
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_positive)
+	if ok {
+		startIndex = newStartIndex
+		nodeType = mentalese.NodeTypeNextSibling
+
+		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
 		if ok {
 			startIndex = newStartIndex
-			name, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+			nodeType = mentalese.NodeTypeSibling
+		}
+
+		ok = true
+		goto category
+	}
+
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
+	if ok {
+		startIndex = newStartIndex
+		nodeType = mentalese.NodeTypePrevSibling
+		goto category
+	}
+
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	if ok {
+		startIndex = newStartIndex
+		nodeType, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		if ok {
+			startIndex = newStartIndex
+			_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 			if ok {
 				startIndex = newStartIndex
-				_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
-				if ok {
-					startIndex = newStartIndex
-					nodeType := ""
-					if name == mentalese.NodeTypeRoot {
-						nodeType = mentalese.NodeTypeRoot
-					} else if name == mentalese.NodeTypePrev {
-						nodeType = mentalese.NodeTypePrev
-					} else {
-						ok = false
-					}
-					node = mentalese.NewCategoryPathNode(nodeType, "", []string{})
+				if !common.StringArrayContains([]string{ mentalese.NodeTypePrevSentence }, nodeType) {
+					ok = false
 				}
+				goto done
 			}
-			goto end
 		}
 	}
 
-	{
-		_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_up)
-		if ok {
-			startIndex = newStartIndex
-			node = mentalese.NewCategoryPathNode(mentalese.NodeTypeUp, "", []string{})
-			goto end
-		}
+	nodeType = mentalese.NodeTypeChild
+	categoryRequired = true
+	ok = true
+
+	_, newStartIndex, allowIndirect = parser.parseSingleToken(tokens, startIndex, t_slash)
+	if allowIndirect {
+		startIndex = newStartIndex
 	}
+
+	category:
 
 	{
 		relation, newStartIndex, ok := parser.parseRelation(tokens, startIndex, false)
 		if ok {
+			category = relation.Predicate
 			startIndex = newStartIndex
-			variables := []string{}
 			for _, argument := range relation.Arguments {
 				variables = append(variables, argument.TermValue)
 			}
-			node = mentalese.NewCategoryPathNode(mentalese.NodeTypeCategory, relation.Predicate, variables)
-			goto end
 		}
 	}
 
-	return node, startIndex, false
+	done:
 
-	end:
+	node = mentalese.NewCategoryPathNode(nodeType, category, variables, allowIndirect)
 
-	return node, startIndex, true
+	if categoryRequired && (category == "") {
+		ok = false
+	}
+
+	return node, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int, useAlias bool) ([]mentalese.Relation, int, bool) {

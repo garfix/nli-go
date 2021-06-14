@@ -151,7 +151,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: go:log(P1) dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
+            preparation: dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
             answer: dom:root(TopId) {{ Desc }}
         }
         {

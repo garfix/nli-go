@@ -3,7 +3,7 @@ package tests
 import (
 	"fmt"
 	"nli-go/lib/importer"
-	"nli-go/lib/parse"
+	"nli-go/lib/mentalese"
 	"testing"
 )
 
@@ -60,16 +60,25 @@ func TestInternalGrammarParser(t *testing.T) {
 		t.Error("No rules found")
 	}
 
-	grammar = &parse.GrammarRules{}
+	grammar = &mentalese.GrammarRules{}
 
 	parser.CreateRelationSet("assert(at(5, 3))")
 	parser.CreateRelationSet("learn(own(X, Y) :- fish(Y))")
 	parser.CreateRelationSet("sort([])")
 	parser.CreateRelationSet("sort([5])")
 	parser.CreateRelationSet("sort([5,2,3,1])")
-	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: ../vp(P) }")
-	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [root] }")
-	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [root]/[prev]/rel(E1, E2) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [prev_sentence] }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: np(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: .. }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: ..s(P) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: - }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: -np(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: + }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: +np(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: +- }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: +-np(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: ..np(E)/vp(P)/+noun(E)/-noun(E)/+-noun(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: vp(P)//noun(E) }")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {

@@ -10,11 +10,11 @@ const MaxSizeAnaphoraQueue = 10
 
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
-	storage *common.FileStorage
+	storage       *common.FileStorage
 	AnaphoraQueue *AnaphoraQueue
 	DeicticCenter *DeicticCenter
-	PreviousSentences []*mentalese.ParseTreeNode
-	ProcessList *goal.ProcessList
+	Sentences     []*mentalese.ParseTreeNode
+	ProcessList   *goal.ProcessList
 }
 
 func NewDialogContext(storage *common.FileStorage, anaphoraQueue *AnaphoraQueue, deicticCenter *DeicticCenter, processList *goal.ProcessList) *DialogContext {
@@ -22,8 +22,8 @@ func NewDialogContext(storage *common.FileStorage, anaphoraQueue *AnaphoraQueue,
 		storage:       storage,
 		AnaphoraQueue: anaphoraQueue,
 		DeicticCenter: deicticCenter,
-		PreviousSentences: []*mentalese.ParseTreeNode{},
-		ProcessList: processList,
+		Sentences:     []*mentalese.ParseTreeNode{},
+		ProcessList:   processList,
 	}
 	dialogContext.Initialize()
 
@@ -35,6 +35,7 @@ func NewDialogContext(storage *common.FileStorage, anaphoraQueue *AnaphoraQueue,
 func (dc *DialogContext) Initialize() {
 	dc.AnaphoraQueue.Initialize()
 	dc.DeicticCenter.Initialize()
+	dc.Sentences = []*mentalese.ParseTreeNode{}
 	dc.ProcessList.Initialize()
 }
 

@@ -1,3 +1,17 @@
+## 2021-06-13
+
+If you ask the question
+
+> Why?
+
+and the system cannot find an antecedent, it might reply
+
+> Why what?
+
+but currently it doesn't.
+
+XPath can serve as a guideline for the path syntax I use: https://www.w3schools.com/xml/xpath_syntax.asp
+
 ## 2021-05-31
 
 The path syntax could also borrow from CSS specifiers: inbetween nodes need not be named explicitly.

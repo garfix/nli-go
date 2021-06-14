@@ -9,5 +9,5 @@ type SortInfo struct {
 }
 
 const NameVar = "Name"
-const ValueVar = "Value"
+const ValueVar = "GetCategory"
 const IdVar = "Id"

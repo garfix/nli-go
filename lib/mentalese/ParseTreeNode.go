@@ -15,19 +15,14 @@ func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
 	return node.Constituents
 }
 
-//func (node ParseTreeNode) Copy() ParseTreeNode {
-//	constituents := []*ParseTreeNode{}
-//	for _, c := range node.Constituents {
-//		aCopy := c.Copy()
-//		constituents = append(constituents, &aCopy)
-//	}
-//	return ParseTreeNode{
-//		Category:     node.Category,
-//		Constituents: constituents,
-//		Form:         node.Form,
-//		Rule:         node.Rule.Copy(),
-//	}
-//}
+func (node ParseTreeNode) ShallowCopy() ParseTreeNode {
+	return ParseTreeNode{
+		Category:     node.Category,
+		Constituents: []*ParseTreeNode{},
+		Form:         node.Form,
+		Rule:         node.Rule.Copy(),
+	}
+}
 
 func (node ParseTreeNode) String() string {
 

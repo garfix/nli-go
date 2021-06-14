@@ -36,6 +36,7 @@ const (
 	t_opening_brace
 	t_closing_brace
 	t_negative
+	t_positive
 	t_slash
 	t_up
 	_newline
@@ -82,6 +83,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{t_opening_brace, "\\{"},
 		{t_closing_brace, "\\}"},
 		{t_negative, "-"},
+		{t_positive, "\\+"},
 		{t_slash, "/"},
 		{t_up, "\\.\\."},
 		{_newline, "(?:\r\n|\n|\r)"},

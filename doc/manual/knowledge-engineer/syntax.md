@@ -92,6 +92,22 @@ When binding the varables of this relation set, `{{ VarB }}` will be expanded to
             }
     }
 
+## Category path
+
+Ellipsis uses category paths to specify the route from one node to another. `/` is the path separator. The nodes may be
+
+- `..` up one node
+- `..<cat>` up until a node has a `<cat>` category
+- `<cat>` all `<cat>` categories directly below
+- `/<cat>` all `<cat>` categories directly and indirectly below
+- `-` previous sibling node
+- `-<cat>` previous sibling node with a `<cat>` category
+- `+` next sibling node with a `<cat>` category
+- `+<cat>` next sibling node with a `<cat>` category
+- `+-` any sibling node with a `<cat>` category
+- `+-<cat>` any sibling node with a `<cat>` category
+- `[prev_sentence]` to the root node of the sentence previous in the dialog context
+
 ## Binding
 
 {

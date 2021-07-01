@@ -1,3 +1,27 @@
+## 2021-06-16
+
+I managed to fill in the ellipsis of "Why?" with "did you pick it up". This is awesome, but a new problem just presented itself:
+
+The system now interprets the "it" as SHRDLU. This is what happens:
+
+  H: Had you touched [any pyramid] before you put the green one on the little cube?
+  S: Yes, [the green one]
+  H: When did you pick [it] up?
+  S: While [I] was stacking up a large red block, a large green cube and the red cube
+  H: Why (did you pick [it] up)?
+  S: -- does not find an instance of SHRDLU picking up SHRDLU --
+
+"It" must now refer to the same object it referred before. The system should not try to interpret it again; it should remember its previous binding.
+
+While this seems to call for replacing the ellipsis with its _semantic_ antecedent, this is undesirable in some cases.
+
+James Allen (Natural Language Understanding, p.450) mentions the "sloppy identity problem":
+
+  Jack kissed his wife
+  Sam did too
+
+Here: "Sam did too" should be replaced with "Sam kissed his wife", and then be reinterpreted to mean that Sam kissed his own wife (not Jack's wife). If the meaning of the previous sentence was taken, the second sentence would mean that Sam kissed Jack's wife.
+
 ## 2021-06-13
 
 If you ask the question

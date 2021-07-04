@@ -39,7 +39,7 @@ This is how the system knows which entities to refer to later.
 
 ## Adding entities
 
-Any entity that is named in the input is added to the queue. This is allows a user to type the name just once and
+Any entity that is named in the input is added to the queue. This allows a user to type the name just once and
 henceforth refer to him/her with a pronoun.
 
 Any entity that is part of the range of a quant is added to the queue. This allows a user to refer to entities in the

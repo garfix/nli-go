@@ -1,3 +1,98 @@
+## 2021-07-04
+
+What about treating anaphora as ellipsis? That is: if we take
+
+  Jones owns a Porsche. It fascinates him.
+
+Can we replace "it" by "a Porsche"?
+
+  Jones owns a Porsche. A Porsche fascinates him.
+
+No, not really; it doesn't show that the second "a Porsche" is the same one as the first. But what if we copy the anaphoric reference as well?
+
+I would need to introduce an entity id for the indefinite description. This id would live in the discourse
+
+  Dialog context:
+    - deictic center
+    - sentences
+    - process list
+    - discourse entities
+
+Now some entities can reside in the database and some only in the dialog context. Do the entities that are already in the database need to reside in the dialog context as well? What is the link of the dialog entitie with the database entities? Their id may be the same. But what if we introduce a discourse entity that later turns out to have a database reference?
+
+  John owns a Porsch. There it is: the red one with the license plate LOOK-MA.
+
+Currently the only reason to introduce discourse entities is to handle indefinite description. But once we've introduced discourse entities, any entity should be a discourse entity. And they may or may not have a reference to the database. (They may reside in multiple databases; but in this system we use shared ids for that).
+
+The interesting consequence of this is that we can provide discourse entity ids to all entities as soon as they come up. We don't need to wait to assign the id until we have found the entity in the database.
+
+  Dialog context:
+    - entity id generator [1, ...]
+    - discourse entities
+
+  "Jones owns a Porsche" => owns(`discourse:1`, `discourse:2`) porsche(`discourse:2`) 
+
+  Discourse entities:
+    - `discourse:1` { db: `mycorp:1288` }
+    - `discourse:2` { db: null }
+
+  But I can't use id's when I am querying the database. I can't query "a red block `discourse:11`". Because the discourse id is not in the database. I would still need a variable. 
+
+Can I not use dialog-wide discourse variables?
+
+Dialog context:
+- entity variable id generator [1, ...]
+- discourse entities
+    - D1: `mycorp:1288`
+    - DB2: null
+
+The dialog-wide variable then represents the discourse entity. And this immediately solves the problem in "John owns a Porsch. There it is: the red one with the license plate LOOK-MA.": once the id is known it is assigned to the dialog variable; and from that moment, the disocurse entity is linked to the database entity. It also solves the problem of the anaphoric reference. Once the variable is bound, it does not need to be looked up again.
+
+The problem with "Why (did you pick [it] up)?" is then resolved if we have `back_reference` check if the variable in its first argument is already bound (in which case we need not search).
+
+But I want to also take the step of using "ellipsis" for anaphora. It is useful for forward references and for indefinite decriptions. Because "it" can be simply replaced by an id; but "a red block" cannot. "I own a red block. Pick one up." But the problem is still the sense-restriction. 
+
+===
+
+The sense restriction does not need to be resolved in the parse step; it can be resolved in the ellipsis step.
+
+If I want to treat anaphora as ellipsis, I will need to invent category paths for all placed where referents can be found:
+
+- proper nouns in the same sentence
+- np's in the same sentence
+- np's in previous sentences
+- np's in the previous answer
+
+The last one is the most difficult, I guess.
+
+A big advantage of replacing the anaphora queue with category paths is that the method is even more explicit and declarative. It is even possible to specify the order in which to search for referents. 
+
+todo:
+
+- start using dialog-wide variables for entities
+- have `back-reference` check if the variable is already bound
+- implement anaphora resolution as ellipsis
+- add the answer (sentence) of the system to the sentences list in the dialog context  
+- Replace the keyword `ellipsis` by `import`
+
+## 2021-07-03
+
+Is it possible to use the syntactic path method for anaphora too? This way I could do forward references. 
+
+  go:back_reference(E1, gender(E1, male))
+
+would be
+
+  rule: np(E1) :- "he", 
+  ellipsis: ..np(E1)/noun(E1),
+  sense: gender(E1, male)
+
+I need to find a solution for the relation set; it can't be resolved in the syntax phase. Unless, of course, I change the relation set into a feature.
+
+In any case, I can store the anaphoric reference in the dialog, along with the sentences.
+
+Take into account: indefinite descriptions ("Jones owns a Porsche. It fascinates him.")
+
 ## 2021-06-16
 
 I managed to fill in the ellipsis of "Why?" with "did you pick it up". This is awesome, but a new problem just presented itself:

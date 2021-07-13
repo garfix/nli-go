@@ -16,7 +16,8 @@ func TestInMemoryRuleBase(t *testing.T) {
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)

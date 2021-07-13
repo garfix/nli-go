@@ -1,33 +1,17 @@
 package parse
 
 import (
-	"fmt"
 	"nli-go/lib/mentalese"
 )
 
 type SenseBuilder struct {
-	varIndexCounter map[string]int
+	variableGenerator *mentalese.VariableGenerator
 }
 
-func NewSenseBuilder() SenseBuilder {
+func NewSenseBuilder(variableGenerator *mentalese.VariableGenerator) SenseBuilder {
 	return SenseBuilder{
-		varIndexCounter: map[string]int{},
+		variableGenerator: variableGenerator,
 	}
-}
-
-// Returns a new variable name
-func (builder SenseBuilder) GetNewVariable(formalVariable string) string {
-
-	initial := formalVariable[0:1]
-
-	_, present := builder.varIndexCounter[initial]
-	if !present {
-		builder.varIndexCounter[initial] = 5
-	} else {
-		builder.varIndexCounter[initial]++
-	}
-
-	return fmt.Sprint(initial, builder.varIndexCounter[initial])
 }
 
 // Creates a map of formal variables to actual variables (new variables are created)
@@ -48,7 +32,7 @@ func (builder SenseBuilder) CreateVariableMap(actualAntecedents []string, antece
 
 			_, present := m[consequentVariable]
 			if !present {
-				m[consequentVariable] = mentalese.NewTermVariable(builder.GetNewVariable(consequentVariable))
+				m[consequentVariable] = mentalese.NewTermVariable(builder.variableGenerator.GenerateVariable(consequentVariable).TermValue)
 			}
 		}
 	}
@@ -64,7 +48,7 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 				variable := argument.TermValue
 				_, present := variableMap[variable]
 				if !present {
-					variableMap[variable] = mentalese.NewTermVariable(builder.GetNewVariable(variable))
+					variableMap[variable] = mentalese.NewTermVariable(builder.variableGenerator.GenerateVariable(variable).TermValue)
 				}
 			} else if argument.IsRelationSet() {
 				childMap := builder.ExtendVariableMap(argument.TermValueRelationSet, variableMap)

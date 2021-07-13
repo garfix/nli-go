@@ -52,7 +52,8 @@ func TestGeneralizedQuantifier(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	factBase := knowledge.NewInMemoryFactBase("in-memory", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
@@ -70,15 +71,15 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"did Abraham read all books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
-		{"did Abraham read 3 books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
+		{"did Abraham read all books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read 3 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
 		{"did Abraham read 2 books", "[]"},
-		{"did Abraham read more than 2 books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
+		{"did Abraham read more than 2 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
 		{"did Abraham read more than 3 books", "[]"},
-		{"did Abraham read 2 or 3 books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
-		{"did Abraham read 3 or 4 books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
+		{"did Abraham read 2 or 3 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read 3 or 4 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
 		{"did Abraham read 4 or 5 books", "[]"},
-		{"did Abraham read some books", "[{E5:'Dracula'} {E5:'Frankenstein'} {E5:'Curse of the mummy'}]"},
+		{"did Abraham read some books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
 		{"did Abraham read no books", "[]"},
 	}
 
@@ -90,7 +91,8 @@ func TestGeneralizedQuantifier(t *testing.T) {
 			t.Errorf("Cannot parse: %s", test.input)
 			continue
 		}
-		relationizer := parse.NewRelationizer(log)
+		variableGenerator := mentalese.NewVariableGenerator()
+		relationizer := parse.NewRelationizer(variableGenerator, log)
 		input, _ := relationizer.Relationize(trees[0], []string{ "S"})
 		result := runner.RunRelationSetWithBindings(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {

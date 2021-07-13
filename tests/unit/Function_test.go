@@ -15,7 +15,8 @@ func TestFunctions(t *testing.T) {
 	log := common.NewSystemLog()
 	parser := importer.NewInternalGrammarParser()
 	matcher := central.NewRelationMatcher(log)
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	meta := mentalese.NewMeta()
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
@@ -71,7 +72,8 @@ func TestAggregateFunctions(t *testing.T) {
 
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	multiBindingBase := knowledge.NewSystemMultiBindingBase("name", log)
 	solver.AddMultipleBindingBase(multiBindingBase)
 	runner := central.NewProcessRunner(solver, log)
@@ -126,7 +128,8 @@ func TestControlFunctions(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
 
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
@@ -187,7 +190,8 @@ func TestListFunctions(t *testing.T) {
 	`)
 	writeMap := []mentalese.Rule{}
 
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
@@ -272,7 +276,8 @@ func TestQuantFunctions(t *testing.T) {
 	`)
 	writeMap := []mentalese.Rule{}
 
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, nil, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)

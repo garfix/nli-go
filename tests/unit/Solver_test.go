@@ -44,7 +44,8 @@ func TestSolver(t *testing.T) {
 
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
 
-	solver := central.NewProblemSolverAsync(matcher, log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	solver.AddFactBase(factBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(solver, log)
@@ -132,7 +133,7 @@ func TestSolver(t *testing.T) {
 	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, nil, log)
 	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, []string{}, nil, log)
 
-	solver2 := central.NewProblemSolverAsync(matcher, log)
+	solver2 := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	solver2.AddFactBase(factBase2)
 	solver2.AddRuleBase(ruleBase2)
 	solver2.Reindex()

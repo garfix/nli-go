@@ -105,7 +105,8 @@ func TestQuantSolver(t *testing.T) {
 
 	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, nil, log)
 	meta := mentalese.NewMeta()
-	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), variableGenerator, log)
 	solver.AddFactBase(factBase1)
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)

@@ -25,8 +25,7 @@ type ProblemSolverAsync struct {
 	log                   *common.SystemLog
 }
 
-func NewProblemSolverAsync(matcher *RelationMatcher, log *common.SystemLog) *ProblemSolverAsync {
-	variableGenerator := mentalese.NewVariableGenerator()
+func NewProblemSolverAsync(matcher *RelationMatcher, variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *ProblemSolverAsync {
 	async := ProblemSolverAsync{
 		factBases:         []api.FactBase{},
 		ruleBases:         []api.RuleBase{},
@@ -38,13 +37,15 @@ func NewProblemSolverAsync(matcher *RelationMatcher, log *common.SystemLog) *Pro
 		matcher: matcher,
 		variableGenerator: variableGenerator,
 		relationHandlers: map[string][]api.RelationHandler{},
-		modifier:          NewFactBaseModifier(log, variableGenerator),
 		log: log,
 	}
 
 	return &async
 }
 
+func (solver *ProblemSolverAsync) SetModifier(modifier *FactBaseModifier) {
+	solver.modifier = modifier
+}
 
 func (solver *ProblemSolverAsync) AddFactBase(base api.FactBase) {
 	solver.factBases = append(solver.factBases, base)
@@ -236,6 +237,9 @@ func (s *ProblemSolverAsync) createFactBaseModificationHandlers() {
 
 func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+		if s.modifier == nil {
+			return mentalese.NewBindingSet()
+		}
 		if relation.Arguments[0].IsRelationSet() {
 			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
@@ -259,6 +263,9 @@ func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.Rela
 
 func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+		if s.modifier == nil {
+			return mentalese.NewBindingSet()
+		}
 		if relation.Arguments[0].IsRelationSet() {
 			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)

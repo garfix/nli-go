@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"testing"
 )
@@ -44,7 +45,8 @@ func TestEarleyParser(test *testing.T) {
 	rawInput := "the small shy girl speaks up"
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 	parser := parse.NewParser(grammarRules, log)
-	relationizer := parse.NewRelationizer(log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	{
 		wordArray := tokenizer.Process(rawInput)
@@ -58,7 +60,7 @@ func TestEarleyParser(test *testing.T) {
 
 		relations, _ := relationizer.Relationize(trees[0], []string{ "S"})
 
-		if relations.String() != "isa(D5, the) isa(E5, girl) determiner(E5, D5) predication(S, speak_up) subject(S, E5)" {
+		if relations.String() != "isa(D$1, the) isa(E$1, girl) determiner(E$1, D$1) predication(S, speak_up) subject(S, E$1)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))
 		}
 		if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [speaks speaks] [up up]]]]" {

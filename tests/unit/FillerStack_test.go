@@ -3,6 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"testing"
 )
@@ -30,7 +31,8 @@ func TestFillerStack(t *testing.T) {
 	log := common.NewSystemLog()
 	parser := parse.NewParser(grammarRules, log)
 
-	relationizer := parse.NewRelationizer(log)
+	variableGenerator := mentalese.NewVariableGenerator()
+	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"}, "s", []string{"S"})
 
@@ -41,7 +43,7 @@ func TestFillerStack(t *testing.T) {
 
 	result, _ := relationizer.Relationize(parseTrees[0], []string{ "S"})
 
-	want := "which(E5) quant_check(quant(_, some(_), E5, baby(E5)), quant_check(quant(Q5, the(Q5), E6, toy(E6)), easiest(S) take_from(S, E6, E5)))"
+	want := "which(E1$1) quant_check(quant(_, some(_), E1$1, baby(E1$1)), quant_check(quant(Q1$1, the(Q1$1), E2$1, toy(E2$1)), easiest(S) take_from(S, E2$1, E1$1)))"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}

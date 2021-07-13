@@ -2,12 +2,12 @@ package tests
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
-	"testing"
 	"nli-go/lib/mentalese"
-	"nli-go/lib/central"
+	"testing"
 )
 
 func TestFactBase(t *testing.T) {
@@ -40,8 +40,9 @@ func TestFactBase(t *testing.T) {
 	writeMap := []mentalese.Rule{}
 
 	matcher := central.NewRelationMatcher(log)
+	variableGenerator := mentalese.NewVariableGenerator()
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
-	solver := central.NewProblemSolverAsync(matcher, log)
+	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 
 	tests := []struct {
 		input         string

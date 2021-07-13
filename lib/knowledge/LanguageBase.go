@@ -15,6 +15,7 @@ type LanguageBase struct {
 	KnowledgeBaseCore
 	matcher 			  *central.RelationMatcher
 	grammars              []parse.Grammar
+	relationizer          *parse.Relationizer
 	meta                  *mentalese.Meta
 	dialogContext         *central.DialogContext
 	nameResolver          *central.NameResolver
@@ -26,6 +27,7 @@ type LanguageBase struct {
 func NewLanguageBase(
 	name string,
 	grammars []parse.Grammar,
+	relationizer *parse.Relationizer,
 	meta *mentalese.Meta,
 	dialogContext *central.DialogContext,
 	nameResolver *central.NameResolver,
@@ -36,6 +38,7 @@ func NewLanguageBase(
 		KnowledgeBaseCore: KnowledgeBaseCore{ name },
 		matcher: central.NewRelationMatcher(log),
 		grammars: grammars,
+		relationizer: relationizer,
 		meta: meta,
 		dialogContext: dialogContext,
 		nameResolver: nameResolver,
@@ -226,10 +229,9 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	var parseTree mentalese.ParseTreeNode
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
-	relationizer := parse.NewRelationizer(base.log)
 	sortFinder := central.NewSortFinder(base.meta)
 
-	requestRelations, names := relationizer.Relationize(parseTree, []string{ "S"})
+	requestRelations, names := base.relationizer.Relationize(parseTree, []string{ "S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 

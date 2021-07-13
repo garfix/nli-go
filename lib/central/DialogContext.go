@@ -15,15 +15,23 @@ type DialogContext struct {
 	DeicticCenter *DeicticCenter
 	Sentences     []*mentalese.ParseTreeNode
 	ProcessList   *goal.ProcessList
+	VariableGenerator *mentalese.VariableGenerator
 }
 
-func NewDialogContext(storage *common.FileStorage, anaphoraQueue *AnaphoraQueue, deicticCenter *DeicticCenter, processList *goal.ProcessList) *DialogContext {
+func NewDialogContext(
+	storage *common.FileStorage,
+	anaphoraQueue *AnaphoraQueue,
+	deicticCenter *DeicticCenter,
+	processList *goal.ProcessList,
+	variableGenerator *mentalese.VariableGenerator,
+	) *DialogContext {
 	dialogContext := &DialogContext{
 		storage:       storage,
 		AnaphoraQueue: anaphoraQueue,
 		DeicticCenter: deicticCenter,
 		Sentences:     []*mentalese.ParseTreeNode{},
 		ProcessList:   processList,
+		VariableGenerator: variableGenerator,
 	}
 	dialogContext.Initialize()
 
@@ -37,6 +45,7 @@ func (dc *DialogContext) Initialize() {
 	dc.DeicticCenter.Initialize()
 	dc.Sentences = []*mentalese.ParseTreeNode{}
 	dc.ProcessList.Initialize()
+	dc.VariableGenerator.Initialize()
 }
 
 func (dc *DialogContext) Store() {

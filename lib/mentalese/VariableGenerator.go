@@ -3,23 +3,36 @@ package mentalese
 import "strconv"
 
 type VariableGenerator struct {
-	variables map[string]int
+	Variables map[string]int
 }
 
 func NewVariableGenerator() *VariableGenerator {
 	return &VariableGenerator{
-		variables: map[string]int{},
+		Variables: map[string]int{},
 	}
 }
 
-func (gen  *VariableGenerator) GenerateVariable(initial string) Term {
+func (gen  *VariableGenerator) Initialize() {
+	gen.Variables = map[string]int{}
+}
 
-	_, present := gen.variables[initial]
-	if !present {
-		gen.variables[initial] = 1
-	} else {
-		gen.variables[initial]++
+func (gen  *VariableGenerator) GenerateVariable(name string) Term {
+
+	baseName := name
+	length := len(name)
+
+	for i := length - 1; i > 0; i-- {
+		if baseName[i] >= '0' && baseName[i] <= '9' {
+			baseName = baseName[0:length - 1]
+		}
 	}
 
-	return NewTermVariable(initial + "$" + strconv.Itoa(gen.variables[initial]))
+	_, present := gen.Variables[baseName]
+	if !present {
+		gen.Variables[baseName] = 1
+	} else {
+		gen.Variables[baseName]++
+	}
+
+	return NewTermVariable(baseName + "$" + strconv.Itoa(gen.Variables[baseName]))
 }

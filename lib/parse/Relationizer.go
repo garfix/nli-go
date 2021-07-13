@@ -13,16 +13,16 @@ type Relationizer struct {
 	log          *common.SystemLog
 }
 
-func NewRelationizer(log *common.SystemLog) *Relationizer {
+func NewRelationizer(variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *Relationizer {
 	return &Relationizer{
-		senseBuilder: NewSenseBuilder(),
+		senseBuilder: NewSenseBuilder(variableGenerator),
 		log:          log,
 	}
 }
 
 func (relationizer Relationizer) Relationize(rootNode mentalese.ParseTreeNode, rootVariables []string) (mentalese.RelationSet, mentalese.Binding) {
 	if rootVariables == nil {
-		rootVariables = []string{ relationizer.senseBuilder.GetNewVariable("Sentence") }
+		rootVariables = []string{ relationizer.senseBuilder.variableGenerator.GenerateVariable("Sentence").TermValue }
 	}
 	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, rootVariables )
 	sense = sense.BindSingle(constantBinding)

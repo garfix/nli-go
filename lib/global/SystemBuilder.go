@@ -91,7 +91,16 @@ func (builder *systemBuilder) build(system *System) {
 		builder.loadModule(moduleSpec, &indexes, system)
 	}
 
-	languageBase := knowledge.NewLanguageBase("language", system.grammars, system.meta, system.dialogContext, system.nameResolver, system.answerer, system.generator, builder.log)
+	languageBase := knowledge.NewLanguageBase(
+		"language",
+		system.grammars,
+		system.relationizer,
+		system.meta,
+		system.dialogContext,
+		system.nameResolver,
+		system.answerer,
+		system.generator,
+		builder.log)
 	system.solverAsync.AddSolverFunctionBase(languageBase)
 
 	system.solverAsync.Reindex()
@@ -109,20 +118,26 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	path := builder.varDir + "/" + builder.getSystemName() + "/session"
 	storage := common.NewFileStorage(path, builder.sessionId, common.StorageSession, "session", system.log)
 
+	variableGenerator := mentalese.NewVariableGenerator()
+	system.variableGenerator = variableGenerator
+
 	system.grammars = []parse.Grammar{}
-	system.relationizer = parse.NewRelationizer(builder.log)
+	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
 	system.internalGrammarParser = builder.parser
 	system.processList = goal.NewProcessList()
 
-	solverAsync := central.NewProblemSolverAsync(matcher, builder.log)
+	modifier := central.NewFactBaseModifier(builder.log, variableGenerator)
+
+	solverAsync := central.NewProblemSolverAsync(matcher, variableGenerator, builder.log)
 	solverAsync.AddFunctionBase(systemFunctionBase)
+	solverAsync.SetModifier(modifier)
 
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList)
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
@@ -486,7 +501,7 @@ func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]strin
 		parsingRules,
 		segmenter,
 		parse.NewParser(parsingRules, system.log),
-		parse.NewRelationizer(system.log),
+		parse.NewRelationizer(system.variableGenerator, system.log),
 		system.log)
 }
 

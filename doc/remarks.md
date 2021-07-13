@@ -1,3 +1,35 @@
+## 2021-07-11
+
+Still struggling with anaphora within elliptic constructs.
+
+It's still about
+
+    C: Yes: the green one
+    H: When did you pick it up?
+    C: ...
+    H: Why?
+
+When the ellipsis in "Why?" is filled with "did you pick it up", the "it" in the new sentence should copy the referent in the original sentence. How?
+    
+And now this is maybe how it can be solved:
+
+- When did you pick it up?
+- Parse
+- Ellipsis resolution: When did you pick the green one up?
+- Why?
+- Ellipsis resolution: Why did you pick the green one up?
+
+This will work, but still we see that the last sentence still contains the word "one", that should have been replaced by block.
+It only works because we do anaphora in the ellipsis phase. It would not work if we handled "back_reference()" in the solution phase.
+
+The problem with "one" is that the system knows that it's "block" (it even knows its exact identity) so we shouldn't need to figure that out.
+
+And I'm also thinking about the fact that anaphora may refer to an entity that was not explicitly named in the text before. Like "I am going to marry tomorrow." "O, I didn't even know he proposed to you". "He" must be inferred from the context. And this is not possible while parsing. But this is far fetched, and one can wonder if this is important in an NLI system.
+
+## 2021-07-07
+
+I am reading "Grokking Simplicity" by Eric Normand. Great book on functional programming in a pragmatic way. I will implement its ideas in this project at some time.
+
 ## 2021-07-04
 
 What about treating anaphora as ellipsis? That is: if we take

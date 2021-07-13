@@ -26,6 +26,7 @@ Call solutions "intents", just like everybody else.
 * binding set -> results / binding list
 * relation set -> relation list
 * better validation for built-in functions; especially multi-binding ones
+* use functional programming: make all data immutable; use copy-on-write everywhere; stop making deep copies
 
 ## Anaphora
 

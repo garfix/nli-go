@@ -43,27 +43,31 @@ func TestRelationizer(t *testing.T) {
 	parser := parse.NewParser(grammarRules, log)
 
 	variableGenerator := mentalese.NewVariableGenerator()
+	dialogizer := parse.NewDialogizer(variableGenerator)
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	parseTrees := parser.Parse([]string{"the", "book", "falls", "."}, "s", []string{"S"})
-	result, _ := relationizer.Relationize(parseTrees[0], []string{ "S"})
+	parseTree := dialogizer.Dialogize(&parseTrees[0])
+	result, _ := relationizer.Relationize(*parseTree, []string{ "S"})
 
-	want := "isa(S, fall) subject(S, E1$1) isa(D1$1, the) isa(E1$1, book) determiner(E1$1, D1$1) declaration(S)"
+	want := "isa(Sentence$1, fall) subject(Sentence$1, E$1) isa(D$1, the) isa(E$1, book) determiner(E$1, D$1) declaration(Sentence$1)"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	result, _ = relationizer.Relationize(parseTrees[0], []string{ "S"})
+	result, _ = relationizer.Relationize(*parseTree, []string{ "S"})
 
-	want = "isa(S, fall) subject(S, E1$2) isa(D1$2, the) isa(E1$2, book) determiner(E1$2, D1$2) declaration(S)"
+	want = "isa(Sentence$1, fall) subject(Sentence$1, E$1) isa(D$1, the) isa(E$1, book) determiner(E$1, D$1) declaration(Sentence$1)"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
 	parseTrees2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."}, "s", []string{"S"})
-	result2, _ := relationizer.Relationize(parseTrees2[0], []string{ "S"})
+	parseTree2 := dialogizer.Dialogize(&parseTrees2[0])
+	result2, _ := relationizer.Relationize(*parseTree2, []string{ "S"})
 
-	want2 := "isa(S, fall) isa(P1$2, on) isa(D1$4, the) isa(P1$1, ground) determiner(P1$1, D1$4) case(P1$1, P1$2) mod(S, P1$1) subject(S, E1$3) isa(D1$3, the) isa(E1$3, book) determiner(E1$3, D1$3) declaration(S)"
+	want2 := "isa(Sentence$2, fall) isa(P$2, on) isa(D$3, the) isa(P$1, ground) determiner(P$1, D$3) case(P$1, P$2) mod(Sentence$2, P$1) subject(Sentence$2, E$2) isa(D$2, the) isa(E$2, book) determiner(E$2, D$2) declaration(Sentence$2)"
+
 	if result2.String() != want2 {
 		t.Errorf("got %s, want %s", result2.String(), want2)
 	}

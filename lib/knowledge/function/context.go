@@ -94,3 +94,32 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 
 	return newBindings
 }
+
+func (base *SystemSolverFunctionBase) dialogReadBindings(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	someBindingVar := input.Arguments[0].TermValue
+
+	responseBinding := (*base.dialogBinding).Copy()
+
+	newBinding := binding.Copy()
+	newBinding.Set(someBindingVar, mentalese.NewTermJson(responseBinding.ToRaw()))
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := input.BindSingle(binding)
+
+	someBindings := mentalese.NewBindingSet()
+	someBindingsRaw := []map[string]mentalese.Term{}
+	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
+	someBindings.FromRaw(someBindingsRaw)
+
+	// todo multiple bindings should not be merged into a single binding
+	for _, someBinding := range someBindings.GetAll() {
+		for key, value := range someBinding.GetAll() {
+			base.dialogBinding.Set(key, value)
+		}
+	}
+
+	return mentalese.InitBindingSet(binding)
+}

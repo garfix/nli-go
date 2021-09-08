@@ -37,6 +37,12 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	unscopedSense := base.getSense(messenger).UnScope()
 
+	if base.dialogBinding.ContainsVariable(variable) {
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(variable, base.dialogBinding.MustGet(variable))
+		return mentalese.InitBindingSet(newBinding), false
+	}
+
 	for _, group := range *base.anaphoraQueue {
 
 		ref := group[0]

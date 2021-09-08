@@ -151,8 +151,23 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
+            preparation: go:log(P1) dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
             answer: dom:root(TopId) {{ Desc }}
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
+
+/* Why? */
+{
+    condition: go:intent(why, P1),
+    result: P1,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: go:log(P1) dom:parent_event(P1, ParentEventId) dom:describe_event(ParentEventId, Desc),
+            answer: dom:root(ParentEventId) {{ Desc }}
         }
         {
             answer: dom:dont_know()

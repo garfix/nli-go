@@ -15,7 +15,7 @@ func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
 	return node.Constituents
 }
 
-func (node ParseTreeNode) ShallowCopy() ParseTreeNode {
+func (node ParseTreeNode) PartialCopy() ParseTreeNode {
 	return ParseTreeNode{
 		Category:     node.Category,
 		Constituents: []*ParseTreeNode{},

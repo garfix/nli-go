@@ -74,7 +74,7 @@ func (builder SenseBuilder) ExtendVariableMap(sense mentalese.RelationSet, varia
 }
 
 // Create actual relations given a set of templates and a variable map (formal to actual variables)
-func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet, variableMap map[string]mentalese.Term) mentalese.RelationSet {
+func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentalese.RelationSet) mentalese.RelationSet {
 
 	relations := mentalese.RelationSet{}
 
@@ -86,18 +86,18 @@ func (builder SenseBuilder) CreateGrammarRuleRelations(relationTemplates mentale
 
 			if argument.IsVariable() {
 
-				newRelation.Arguments[a].TermType = variableMap[argument.TermValue].TermType
-				newRelation.Arguments[a].TermValue = variableMap[argument.TermValue].TermValue
+				newRelation.Arguments[a].TermType = argument.TermType
+				newRelation.Arguments[a].TermValue = argument.TermValue
 
 			} else if argument.IsRelationSet() {
 
 				newRelation.Arguments[a].TermType = mentalese.TermTypeRelationSet
-				newRelation.Arguments[a].TermValueRelationSet = builder.CreateGrammarRuleRelations(argument.TermValueRelationSet, variableMap)
+				newRelation.Arguments[a].TermValueRelationSet = builder.CreateGrammarRuleRelations(argument.TermValueRelationSet)
 
 			} else if argument.IsRule() {
 
-				newGoal := builder.CreateGrammarRuleRelations(mentalese.RelationSet{ argument.TermValueRule.Goal }, variableMap)
-				newPattern := builder.CreateGrammarRuleRelations(argument.TermValueRule.Pattern, variableMap)
+				newGoal := builder.CreateGrammarRuleRelations(mentalese.RelationSet{ argument.TermValueRule.Goal })
+				newPattern := builder.CreateGrammarRuleRelations(argument.TermValueRule.Pattern)
 				newRule := mentalese.Rule{ Goal: newGoal[0], Pattern: newPattern }
 				newRelation.Arguments[a].TermType = mentalese.TermTypeRule
 				newRelation.Arguments[a].TermValueRule = &newRule

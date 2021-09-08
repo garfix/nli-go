@@ -54,8 +54,9 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateFindLocale:   base.findLocale,
 		mentalese.PredicateTokenize:     base.tokenize,
 		mentalese.PredicateParse:        base.parse,
-		mentalese.PredicateRelationize:  base.relationize,
+		mentalese.PredicateDialogize:    base.dialogize,
 		mentalese.PredicateEllipsize:    base.ellipsize,
+		mentalese.PredicateRelationize:  base.relationize,
 		mentalese.PredicateGenerate:     base.generate,
 		mentalese.PredicateSurface:      base.surface,
 		mentalese.PredicateFindSolution: base.findSolution,
@@ -182,6 +183,33 @@ func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.
 	return newBindings
 }
 
+func (base *LanguageBase) dialogize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "jv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	ellipsisVar := input.Arguments[1].TermValue
+	var parseTree mentalese.ParseTreeNode
+
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	dialogizer := parse.NewDialogizer(base.dialogContext.VariableGenerator)
+	newParseTree := dialogizer.Dialogize(&parseTree)
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(ellipsisVar, mentalese.NewTermJson(newParseTree))
+
+	base.log.AddProduction("Ellipsized parse tree", newParseTree.IndentedString(""))
+
+	// save complete tree in dialog context
+	base.dialogContext.Sentences = append(base.dialogContext.Sentences, newParseTree)
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
@@ -231,6 +259,11 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	bound.Arguments[0].GetJsonValue(&parseTree)
 	sortFinder := central.NewSortFinder(base.meta)
 
+	requestBinding := mentalese.NewBinding()
+	requestBindingsRaw := map[string]mentalese.Term{}
+	bound.Arguments[2].GetJsonValue(&requestBindingsRaw)
+	requestBinding.FromRaw(requestBindingsRaw)
+
 	requestRelations, names := base.relationizer.Relationize(parseTree, []string{ "S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
@@ -248,6 +281,8 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
+	requestBinding = requestBinding.Merge(entityIds)
+
 	// names found and linked to id
 	for variable, value := range entityIds.GetAll() {
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(
@@ -260,7 +295,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	newBinding := binding.Copy()
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
-	newBinding.Set(requestBindingVar, mentalese.NewTermJson(entityIds.ToRaw()))
+	newBinding.Set(requestBindingVar, mentalese.NewTermJson(requestBinding.ToRaw()))
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)

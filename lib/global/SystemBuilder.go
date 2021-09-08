@@ -121,6 +121,9 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	variableGenerator := mentalese.NewVariableGenerator()
 	system.variableGenerator = variableGenerator
 
+	binding := mentalese.NewBinding()
+	system.dialogBinding = &binding
+
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
 	system.internalGrammarParser = builder.parser
@@ -137,8 +140,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, system.meta, builder.log)
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &binding)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &binding, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync

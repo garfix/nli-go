@@ -12,7 +12,7 @@ type GrammarRule struct {
 	// (P1, E1) -> (E1) (P1, E1)
 	EntityVariables [][]string
 	Sense           RelationSet
-	Ellipsis        []CategoryPath
+	Ellipsis        CategoryPathList
 }
 
 const PosTypeRelation = "relation"
@@ -25,7 +25,7 @@ func NewGrammarRule(positionTypes []string, syntacticCategories []string, entity
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
 		Sense:               sense,
-		Ellipsis:			 []CategoryPath{},
+		Ellipsis:			 CategoryPathList{},
 	}
 }
 
@@ -74,6 +74,7 @@ func (rule GrammarRule) BindSimple(binding Binding) GrammarRule {
 	}
 
 	bound.Sense = bound.Sense.BindSingle(binding)
+	bound.Ellipsis = bound.Ellipsis.BindSingle(binding)
 
 	return bound
 }
@@ -122,11 +123,13 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 }
 
 func (rule GrammarRule) Copy() GrammarRule {
+
 	return GrammarRule{
 		PositionTypes:		 common.StringArrayCopy(rule.PositionTypes),
 		SyntacticCategories: common.StringArrayCopy(rule.SyntacticCategories),
 		EntityVariables:     common.StringMatrixCopy(rule.EntityVariables),
 		Sense:               rule.Sense.Copy(),
+		Ellipsis: 			 rule.Ellipsis.Copy(),
 	}
 }
 

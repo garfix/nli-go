@@ -38,7 +38,6 @@ func (relationizer Relationizer) extractSenseFromNode(node mentalese.ParseTreeNo
 	relationSet := mentalese.RelationSet{}
 
 	nameBinding := relationizer.extractName(node, antecedentVariables)
-	variableMap := relationizer.senseBuilder.CreateVariableMap(antecedentVariables, node.Rule.GetAntecedentVariables(), node.Rule.GetAllConsequentVariables())
 
 	// create relations for each of the children
 	boundChildSets := []mentalese.RelationSet{}
@@ -46,12 +45,7 @@ func (relationizer Relationizer) extractSenseFromNode(node mentalese.ParseTreeNo
 
 		consequentVariables := node.Rule.GetConsequentVariables(i)
 
-		mappedConsequentVariables := []string{}
-		for _, consequentVariable := range consequentVariables {
-			mappedConsequentVariables = append(mappedConsequentVariables, variableMap[consequentVariable].TermValue)
-		}
-
-		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(*childNode, mappedConsequentVariables)
+		childRelations, childNameBinding, childConstantBinding := relationizer.extractSenseFromNode(*childNode, consequentVariables)
 		nameBinding = nameBinding.Merge(childNameBinding)
 		boundChildSets = append(boundChildSets, childRelations)
 		constantBinding = constantBinding.Merge(childConstantBinding)
@@ -61,8 +55,7 @@ func (relationizer Relationizer) extractSenseFromNode(node mentalese.ParseTreeNo
 		}
 	}
 
-	variableMap = relationizer.senseBuilder.ExtendVariableMap(node.Rule.Sense, variableMap)
-	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.Rule.Sense, variableMap)
+	boundParentSet := relationizer.senseBuilder.CreateGrammarRuleRelations(node.Rule.Sense)
 	relationSet = relationizer.combineParentsAndChildren(boundParentSet, boundChildSets, node.Rule)
 
 	return relationSet, nameBinding, constantBinding

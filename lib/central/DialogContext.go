@@ -10,12 +10,13 @@ const MaxSizeAnaphoraQueue = 10
 
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
-	storage       *common.FileStorage
-	AnaphoraQueue *AnaphoraQueue
-	DeicticCenter *DeicticCenter
-	Sentences     []*mentalese.ParseTreeNode
-	ProcessList   *goal.ProcessList
+	storage           *common.FileStorage
+	AnaphoraQueue     *AnaphoraQueue
+	DeicticCenter     *DeicticCenter
+	Sentences         []*mentalese.ParseTreeNode
+	ProcessList       *goal.ProcessList
 	VariableGenerator *mentalese.VariableGenerator
+	Binding           *mentalese.Binding
 }
 
 func NewDialogContext(
@@ -24,14 +25,16 @@ func NewDialogContext(
 	deicticCenter *DeicticCenter,
 	processList *goal.ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
+	binding *mentalese.Binding,
 	) *DialogContext {
 	dialogContext := &DialogContext{
-		storage:       storage,
-		AnaphoraQueue: anaphoraQueue,
-		DeicticCenter: deicticCenter,
-		Sentences:     []*mentalese.ParseTreeNode{},
-		ProcessList:   processList,
+		storage:           storage,
+		AnaphoraQueue:     anaphoraQueue,
+		DeicticCenter:     deicticCenter,
+		Sentences:         []*mentalese.ParseTreeNode{},
+		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
+		Binding:           binding,
 	}
 	dialogContext.Initialize()
 
@@ -46,6 +49,9 @@ func (dc *DialogContext) Initialize() {
 	dc.Sentences = []*mentalese.ParseTreeNode{}
 	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()
+
+	binding := mentalese.NewBinding()
+	dc.Binding = &binding
 }
 
 func (dc *DialogContext) Store() {

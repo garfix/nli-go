@@ -6,6 +6,7 @@ go:tell(Input) :-
             Uuid));
 
 go:respond(Input) :-
+/*go:log(Input)*/
     go:let(Output, '')
     go:ignore(
         go:start_input()
@@ -13,8 +14,11 @@ go:respond(Input) :-
         go:slot(locale, Locale)
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)
-        go:ellipsize(ParseTree, CompletedParseTree)
+        go:dialogize(ParseTree, DialogParseTree)
+        go:ellipsize(DialogParseTree, CompletedParseTree)
+go:dialog_read_bindings(RequestBinding)
         go:relationize(CompletedParseTree, Request, RequestBinding, UnresolvedName)
+go:log(Request)
         go:if_then(
             go:not_equals(UnresolvedName, ''),
             go:create_canned(Output, name_not_found, UnresolvedName)
@@ -25,11 +29,13 @@ go:respond(Input) :-
             go:find_solution(Request, Solution)
             go:make_list(Solutions, Solution)
             go:exec_solution(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings)
+/*go:log(Accepted)
+go:log(AcceptedBindings)*/
         )
 
         go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
         go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
-
+go:dialog_write_bindings(ResponseBindings)
         go:generate(Locale, Answer, OutTokens)
         go:surface(OutTokens, Output)
     )

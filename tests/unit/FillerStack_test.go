@@ -32,6 +32,7 @@ func TestFillerStack(t *testing.T) {
 	parser := parse.NewParser(grammarRules, log)
 
 	variableGenerator := mentalese.NewVariableGenerator()
+	dialogizer := parse.NewDialogizer(variableGenerator)
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"}, "s", []string{"S"})
@@ -41,9 +42,10 @@ func TestFillerStack(t *testing.T) {
 		return
 	}
 
-	result, _ := relationizer.Relationize(parseTrees[0], []string{ "S"})
+	tree := dialogizer.Dialogize(&parseTrees[0])
+	result, _ := relationizer.Relationize(*tree, []string{ "S"})
 
-	want := "which(E1$1) quant_check(quant(_, some(_), E1$1, baby(E1$1)), quant_check(quant(Q1$1, the(Q1$1), E2$1, toy(E2$1)), easiest(S) take_from(S, E2$1, E1$1)))"
+	want := "which(E$1) quant_check(quant(_, some(_), E$1, baby(E$1)), quant_check(quant(Q$1, the(Q$1), E$2, toy(E$2)), easiest(Sentence$1) take_from(Sentence$1, E$2, E$1)))"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}

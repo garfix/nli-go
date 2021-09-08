@@ -1,3 +1,70 @@
+## 2021-09-05
+
+No, this #24 is not really forthcoming. Main point now is saving the entities of the response in the dialog and later loading them for the next sentence.
+
+What if there are multiple entities for a single variable? How do I load them in the next sentence? They should go in a single binding. And so there's only one way to do this. I will need to create a relation set for this entity that consists of an or: go:or(go:eq(E21, 18), go:eq(E21, 56))
+
+But for now I will just work out the case where the entity has only a single ID.
+
+todo:
+- create go:dialog_read_bindings and go:dialog_write_bindings
+- update go:relationize by changing RequestBinding into in/out   
+- have `back-reference` check if the variable is already bound
+
+## 2021-07-26
+
+No, anaphora cannot be treated like ellipsis. In many cases it is not syntactic in nature. This is exophora, it refers to expressions outside of the dialog. And I think, in natural language these are quite common. References to entities that are implied by the text but not explicitly mentioned. 
+
+These entities are conjured up by the active _script_. I have not used this concept in this project before, but at some point it will need to make an entry.
+
+todo:
+
+- start using dialog-wide variables for entities
+- have `back-reference` check if the variable is already bound
+
+## 2021-07-24
+
+I am still struggling with pronouns: they can be treated in syntactic ways (with category paths), but sometimes it needs to be done semantically (referring to an entity that is only implicit).
+
+Can I make two variants? A syntactic and a semantic one? 
+
+==
+
+https://en.wikipedia.org/wiki/Anaphora_(linguistics)
+
+Note: anaphora is per definition a back-reference; whereas cataphora is a forward reference. The generic term is endophora. (Why haven't I heard of this? Doesn't anyone use this term?)
+
+https://en.wikipedia.org/wiki/Endophora
+
+Referring to something outside of context is an exophoric expression.
+
+https://en.wikipedia.org/wiki/Cataphora
+
+Ok, here it says that anaphora is also used as the more generic term.
+
+Cataphora across sentences exists! O no!
+
+    "He's the biggest slob I know. He's really stupid. He's so cruel. He's my boyfriend Nick."
+
+===
+
+Shouldn't I make a distinction between ordinary NP's and NP's that are the focus (or the topic) of the sentence? With respect to anaphora and what is stored in the queue?
+
+What is focus? 
+
+    a grammatical category that conveys which part of the sentence contributes new, non-derivable, or contrastive information
+    https://en.wikipedia.org/wiki/Focus_(linguistics)
+
+What is the topic of a sentence?
+
+    the topic, or theme, of a sentence is what is being talked about
+    https://en.wikipedia.org/wiki/Topic_and_comment
+
+What is a discourse topic?
+
+    the central participant or idea of a stretch of connected discourse or dialogue
+    https://en.wikipedia.org/wiki/Discourse_topic
+
 ## 2021-07-11
 
 Still struggling with anaphora within elliptic constructs.
@@ -78,7 +145,7 @@ Dialog context:
     - D1: `mycorp:1288`
     - DB2: null
 
-The dialog-wide variable then represents the discourse entity. And this immediately solves the problem in "John owns a Porsch. There it is: the red one with the license plate LOOK-MA.": once the id is known it is assigned to the dialog variable; and from that moment, the disocurse entity is linked to the database entity. It also solves the problem of the anaphoric reference. Once the variable is bound, it does not need to be looked up again.
+The dialog-wide variable then represents the discourse entity. And this immediately solves the problem in "John owns a Porsch. There it is: the red one with the license plate LOOK-MA.": once the id is known it is assigned to the dialog variable; and from that moment, the discourse entity is linked to the database entity. It also solves the problem of the anaphoric reference. Once the variable is bound, it does not need to be looked up again.
 
 The problem with "Why (did you pick [it] up)?" is then resolved if we have `back_reference` check if the variable in its first argument is already bound (in which case we need not search).
 

@@ -14,15 +14,18 @@ type SystemSolverFunctionBase struct {
 	solverAsync   *central.ProblemSolverAsync
 	anaphoraQueue *central.AnaphoraQueue
 	deicticCenter *central.DeicticCenter
+	dialogBinding *mentalese.Binding
 	meta          *mentalese.Meta
 	log           *common.SystemLog
 }
 
-func NewSystemSolverFunctionBase(anaphoraQueue *central.AnaphoraQueue, deicticCenter *central.DeicticCenter, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
+func NewSystemSolverFunctionBase(anaphoraQueue *central.AnaphoraQueue, deicticCenter *central.DeicticCenter, dialogBinding *mentalese.Binding,
+	meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
 	return &SystemSolverFunctionBase{
 		KnowledgeBaseCore: knowledge.KnowledgeBaseCore{ Name: "nested-structure" },
 		anaphoraQueue:     anaphoraQueue,
 		deicticCenter: 	   deicticCenter,
+		dialogBinding:    dialogBinding,
 		meta:              meta,
 		log:               log,
 	}
@@ -65,6 +68,8 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateContextExtend: base.contextExtend,
 		mentalese.PredicateContextClear:  base.contextClear,
 		mentalese.PredicateContextCall:   base.contextCall,
+		mentalese.PredicateDialogReadBindings: base.dialogReadBindings,
+		mentalese.PredicateDialogWriteBindings: base.dialogWriteBindings,
 
 		// list
 		mentalese.PredicateListOrder: base.listOrder,

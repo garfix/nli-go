@@ -71,15 +71,15 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"did Abraham read all books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
-		{"did Abraham read 3 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read all books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
+		{"did Abraham read 3 books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
 		{"did Abraham read 2 books", "[]"},
-		{"did Abraham read more than 2 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read more than 2 books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
 		{"did Abraham read more than 3 books", "[]"},
-		{"did Abraham read 2 or 3 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
-		{"did Abraham read 3 or 4 books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read 2 or 3 books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
+		{"did Abraham read 3 or 4 books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
 		{"did Abraham read 4 or 5 books", "[]"},
-		{"did Abraham read some books", "[{E1$1:'Dracula'} {E1$1:'Frankenstein'} {E1$1:'Curse of the mummy'}]"},
+		{"did Abraham read some books", "[{E$1:'Dracula'} {E$1:'Frankenstein'} {E$1:'Curse of the mummy'}]"},
 		{"did Abraham read no books", "[]"},
 	}
 
@@ -92,8 +92,10 @@ func TestGeneralizedQuantifier(t *testing.T) {
 			continue
 		}
 		variableGenerator := mentalese.NewVariableGenerator()
+		dialogizer := parse.NewDialogizer(variableGenerator)
 		relationizer := parse.NewRelationizer(variableGenerator, log)
-		input, _ := relationizer.Relationize(trees[0], []string{ "S"})
+		tree := dialogizer.Dialogize(&trees[0])
+		input, _ := relationizer.Relationize(*tree, []string{ "S"})
 		result := runner.RunRelationSetWithBindings(input, mentalese.InitBindingSet( mentalese.NewBinding() ))
 		if result.String() != test.want {
 			t.Errorf("%s: got '%s', want '%s'", test.input, result.String(), test.want)

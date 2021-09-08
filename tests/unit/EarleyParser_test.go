@@ -19,7 +19,7 @@ func TestEarleyParser(test *testing.T) {
 		{ rule: nbar(E) -> noun(E) }
 		{ rule: nbar(E) -> adj(E) nbar(E) }
 		{ rule: vp(P) -> verb(P) }
-		{ rule: det(E1) -> 'the', sense: isa(E1, the) }
+		{ rule: det(D1) -> 'the', sense: isa(D1, the) }
 		{ rule: det(E1) -> 'a' }
 		{ rule: adj(E1) -> 'shy' }
 		{ rule: adj(E1) -> 'small' }
@@ -46,6 +46,7 @@ func TestEarleyParser(test *testing.T) {
 	tokenizer := parse.NewTokenizer(parse.DefaultTokenizerExpression)
 	parser := parse.NewParser(grammarRules, log)
 	variableGenerator := mentalese.NewVariableGenerator()
+	dialogizer := parse.NewDialogizer(variableGenerator)
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	{
@@ -58,9 +59,10 @@ func TestEarleyParser(test *testing.T) {
 			return
 		}
 
-		relations, _ := relationizer.Relationize(trees[0], []string{ "S"})
+		tree := dialogizer.Dialogize(&trees[0])
+		relations, _ := relationizer.Relationize(*tree, []string{ "S"})
 
-		if relations.String() != "isa(D$1, the) isa(E$1, girl) determiner(E$1, D$1) predication(S, speak_up) subject(S, E$1)" {
+		if relations.String() != "isa(D$1, the) isa(E$1, girl) determiner(E$1, D$1) predication(Sentence$1, speak_up) subject(Sentence$1, E$1)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))
 		}
 		if trees[0].String() != "[s [np [det [the the]] [nbar [adj [small small]] [nbar [adj [shy shy]] [nbar [noun [girl girl]]]]]] [vp [verb [speaks speaks] [up up]]]]" {

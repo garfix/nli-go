@@ -59,7 +59,7 @@ func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode) (*mentalese
 		ok = false
 	}
 
-	newSource := node.source.ShallowCopy()
+	newSource := node.source.PartialCopy()
 	newSource.Constituents = newConstituents
 	for i, ellipsisConstituent := range ellipsisConstituents {
 		categoryPath := node.source.Rule.Ellipsis[i]
@@ -167,8 +167,8 @@ func (e *Ellipsizer) navigateParent(currentNode *BidirectionalParseTreeNode, cat
 
 func (e *Ellipsizer) navigatePrevSentence(currentNode *BidirectionalParseTreeNode) []*BidirectionalParseTreeNode {
 	var newNode *BidirectionalParseTreeNode = nil
-	if len(e.sentences) > 0 {
-		sentence := e.sentences[len(e.sentences) - 1]
+	if len(e.sentences) > 1 {
+		sentence := e.sentences[len(e.sentences) - 2]
 		// todo: this `prev` always goes to the last sentence
 		newNode = CreateBidirectionalParseTree(*sentence)
 	} else {

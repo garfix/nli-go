@@ -21,11 +21,12 @@ type System struct {
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
+	dialogBinding         *mentalese.Binding
 	solverAsync           *central.ProblemSolverAsync
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
-	processList	          *goal.ProcessList
+	processList           *goal.ProcessList
 	processRunner         *central.ProcessRunner
 }
 

@@ -14,7 +14,7 @@ func TestDBPedia(t *testing.T) {
 	}{
 		{
 			{"How many children has Madonna?", "She has 4 children"},
-			{"How old is she", "She is 62 years old ( born on August 16, 1958 )"},
+			{"How old is she", "She is 63 years old ( born on August 16, 1958 )"},
 			//{"When is her birthday?", "August 16, 1958", "", ""},
 		},
 		{
@@ -22,7 +22,7 @@ func TestDBPedia(t *testing.T) {
 			{"When is Madonna's birthday?", "August 16, 1958"},
 			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie"},
 			{"Who is Sean Penn's wife?", "Robin Wright and Madonna"},
-			{"How old is Madonna?", "She is 62 years old ( born on August 16, 1958 )"},
+			{"How old is Madonna?", "She is 63 years old ( born on August 16, 1958 )"},
 			{"How old is percy florence shelley?", "He was 70 years old ( born on November 12, 1819 ; died on December 05, 1889 )"},
 			{"Who married Anne Isabella Milbanke?", "Lord Byron married her"},
 			{"Who was Ada Lovelace's father?", "Lord Byron was her father"},

@@ -98,7 +98,7 @@ do_get_rid_of(ParentEventId, E1) :-
     go:assert(start_time(EventId, T1))
 
     do_find_space_on_table(E1, X, Y)
-    do_put_on_table(ParentEventId, E1, X, Y)
+    do_put_on_table(EventId, E1, X, Y)
 
     time(T2)
     go:assert(end_time(EventId, T2))

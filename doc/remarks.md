@@ -1,3 +1,12 @@
+## 2021-09-09
+
+Almost there.
+
+    GOT:
+        To get rid of the green pyramid
+    WANT:
+        To get rid of it.
+
 ## 2021-09-05
 
 No, this #24 is not really forthcoming. Main point now is saving the entities of the response in the dialog and later loading them for the next sentence.

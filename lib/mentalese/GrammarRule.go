@@ -133,6 +133,19 @@ func (rule GrammarRule) Copy() GrammarRule {
 	}
 }
 
+func (rule GrammarRule) ReplaceVariable(fromVar string, toVar string)  GrammarRule {
+	newRule := rule.Copy()
+	for i, entityVariableArray := range rule.EntityVariables {
+		for j, entityVariable := range entityVariableArray {
+			if entityVariable == fromVar {
+				newRule.EntityVariables[i][j] = toVar
+			}
+		}
+	}
+	newRule.Sense = newRule.Sense.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
+	return newRule
+}
+
 func (rule GrammarRule) BasicForm() string {
 
 	s := rule.SyntacticCategories[0] + "("

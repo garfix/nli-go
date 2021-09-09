@@ -25,9 +25,22 @@ func (e *Ellipsizer) Ellipsize(tree mentalese.ParseTreeNode) (mentalese.ParseTre
 
 	biDirTree := CreateBidirectionalParseTree(tree)
 
-	newTree, ok := e.ellipsizeNode(biDirTree)
+	variableMapping := &map[string]string{}
+	newTree, ok := e.ellipsizeNode(biDirTree, variableMapping)
+	updatedTree := e.replaceVariables(newTree, variableMapping)
 
-	return *newTree, ok
+	return *updatedTree, ok
+}
+
+func (e *Ellipsizer) replaceVariables(node *mentalese.ParseTreeNode, variableMapping *map[string]string) *mentalese.ParseTreeNode {
+
+	newNode := *node
+
+	for fromVar, toVar := range *variableMapping {
+		newNode = newNode.ReplaceVariable(fromVar, toVar)
+	}
+
+	return &newNode
 }
 
 // quick check
@@ -40,13 +53,13 @@ func (e *Ellipsizer) hasEllipsis(node mentalese.ParseTreeNode) bool {
 }
 
 // Handle ellipsis in a single node
-func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode) (*mentalese.ParseTreeNode, bool) {
+func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode, variableMapping *map[string]string) (*mentalese.ParseTreeNode, bool) {
 	ok := true
 
 	// add original constituents, having been ellipsized
 	newConstituents := []*mentalese.ParseTreeNode{}
 	for _, child := range node.children {
-		newConstituent, success := e.ellipsizeNode(child)
+		newConstituent, success := e.ellipsizeNode(child, variableMapping)
 		if !success {
 			ok = false
 		}
@@ -54,7 +67,7 @@ func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode) (*mentalese
 	}
 
 	// add new constituents, from ellipsis
-	ellipsisConstituents := e.createEllipsisConstituents(node)
+	ellipsisConstituents := e.createEllipsisConstituents(node, variableMapping)
 	if len(node.source.Rule.Ellipsis) != len(ellipsisConstituents) {
 		ok = false
 	}
@@ -74,7 +87,7 @@ func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode) (*mentalese
 }
 
 // Create syntactic / semantic constituents to replace the ellipsis
-func (e *Ellipsizer) createEllipsisConstituents(node *BidirectionalParseTreeNode) []*mentalese.ParseTreeNode {
+func (e *Ellipsizer) createEllipsisConstituents(node *BidirectionalParseTreeNode, variableMapping *map[string]string) []*mentalese.ParseTreeNode {
 	ellipsisConstituents := []*mentalese.ParseTreeNode{}
 
 	source := node.source
@@ -82,10 +95,18 @@ func (e *Ellipsizer) createEllipsisConstituents(node *BidirectionalParseTreeNode
 		newConstituent := e.processCategoryPath(node, categoryPath)
 		if newConstituent != nil {
 			ellipsisConstituents = append(ellipsisConstituents, newConstituent)
+			e.mapVariables(categoryPath[len(categoryPath) - 1].Variables, newConstituent.Rule.GetAntecedentVariables(), variableMapping)
 		}
 	}
 
 	return ellipsisConstituents
+}
+
+func (e *Ellipsizer) mapVariables(pathNodeVariables []string, antecedentVariables []string, variableMapping *map[string]string) {
+	for i, pathNodeVariable := range pathNodeVariables {
+		antecedentVariable := antecedentVariables[i]
+		(*variableMapping)[pathNodeVariable] = antecedentVariable
+	}
 }
 
 // Handle a single path

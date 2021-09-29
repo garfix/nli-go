@@ -125,6 +125,7 @@ const PredicateContextClear = "go_context_clear"
 
 const PredicateDialogReadBindings = "go_dialog_read_bindings"
 const PredicateDialogWriteBindings = "go_dialog_write_bindings"
+const PredicateDialogAnaphoraQueueLast = "go_dialog_anaphora_queue_last"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

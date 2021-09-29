@@ -16,7 +16,7 @@ type DialogContext struct {
 	Sentences         []*mentalese.ParseTreeNode
 	ProcessList       *goal.ProcessList
 	VariableGenerator *mentalese.VariableGenerator
-	Binding           *mentalese.Binding
+	DiscourseEntities *mentalese.Binding
 }
 
 func NewDialogContext(
@@ -25,7 +25,7 @@ func NewDialogContext(
 	deicticCenter *DeicticCenter,
 	processList *goal.ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
-	binding *mentalese.Binding,
+	discourseEntities *mentalese.Binding,
 	) *DialogContext {
 	dialogContext := &DialogContext{
 		storage:           storage,
@@ -34,7 +34,7 @@ func NewDialogContext(
 		Sentences:         []*mentalese.ParseTreeNode{},
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
-		Binding:           binding,
+		DiscourseEntities: discourseEntities,
 	}
 	dialogContext.Initialize()
 
@@ -51,7 +51,7 @@ func (dc *DialogContext) Initialize() {
 	dc.VariableGenerator.Initialize()
 
 	binding := mentalese.NewBinding()
-	dc.Binding = &binding
+	dc.DiscourseEntities = &binding
 }
 
 func (dc *DialogContext) Store() {

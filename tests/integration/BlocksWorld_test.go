@@ -123,7 +123,7 @@ func TestBlocksWorld(t *testing.T) {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				//t.Errorf("\n%s", log.String())
-				//t.Errorf("\n%s", log.GetErrors())
+				t.Errorf("\n%s", log.GetErrors())
 			}
 		}
 	}

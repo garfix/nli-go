@@ -21,7 +21,7 @@ type System struct {
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
-	dialogBinding         *mentalese.Binding
+	discourseEntities     *mentalese.Binding
 	solverAsync           *central.ProblemSolverAsync
 	answerer              *central.Answerer
 	generator             *generate.Generator

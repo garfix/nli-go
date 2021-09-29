@@ -75,6 +75,7 @@ The animation also reveals another problem: when the system builds a stack, it f
 - When the demo is done. Do it in German as well, as proof of multilinguality.
 - Add an autoplay function for demo mode; show characters in response one-by-one  
 - If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
+- get rid of `d_color` and `d_volume` and remove the `describe` routines 
 
 ## Documentation
 

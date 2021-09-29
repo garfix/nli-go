@@ -121,8 +121,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	variableGenerator := mentalese.NewVariableGenerator()
 	system.variableGenerator = variableGenerator
 
-	binding := mentalese.NewBinding()
-	system.dialogBinding = &binding
+	discourseEntities := mentalese.NewBinding()
+	system.discourseEntities = &discourseEntities
 
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
@@ -140,8 +140,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &binding)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &binding, system.meta, builder.log)
+	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &discourseEntities)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &discourseEntities, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync
@@ -149,7 +149,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)
-	system.generator = generate.NewGenerator(builder.log, matcher)
+	system.generator = generate.NewGenerator(builder.log, matcher, solverAsync)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
 	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")

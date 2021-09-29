@@ -19,3 +19,8 @@ When the group of entities is to be used in a single binding, each entity must h
 "Jack's brother" may not be bound to an actual ID. In that case, it is only represented by its dialog variable. 
 
 Lesson: use entity groups in your examples as soon as you can. Don't start by assuming that an entity is always a single person.
+
+## Dialog entities
+
+The dialog representation itself is a small database that consists of the entities that are used in the dialog.
+

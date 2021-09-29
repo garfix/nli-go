@@ -1,5 +1,5 @@
 { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
-{ rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }
+{ rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:d_support(E1, E2) }
 
 { rule: s(P1) -> 'while' vp(P1),                                            condition: dom:time_description(P1) }
 { rule: s(P1) -> 'to' vp(P1),                                               condition: dom:cause_description(P1) }
@@ -7,30 +7,31 @@
 { rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),             condition: dom:stack_up(P1, Subject, List) }
 { rule: vp(P1) -> 'get' 'rid' 'of' np(A),                                   condition: dom:get_rid_of(P1, Subject, A) }
 
+/*{ rule: np(E1) -> 'it',                                                     condition: go:dialog_anaphora_queue_last(L1, dom:object(L1)) go:equals(L1, E1) }*/
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
 { rule: qp(E1) -> 'the' }
 
 { rule: np(E1) -> 'I',                                                      condition: go:equals(E1, `:shrdlu`) }
 
-{ rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:volume(E1, V) }
-{ rule: nbar(E1) -> color(E1) nbar(E1),                                     condition: dom:color(E1, C) }
+{ rule: nbar(E1) -> volume(E1) nbar(E1),                                    condition: dom:d_volume(E1, V) }
+{ rule: nbar(E1) -> color(E1) nbar(E1),                                     condition: dom:d_color(E1, C) }
 { rule: nbar(E1) -> noun(E1) }
 
 { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
-{ rule: noun(E1) -> 'one',                                                  condition: dom:shape(E1, S) dom:default_shape(E1, S) }
-{ rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
-{ rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
-{ rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }
-{ rule: noun(E1) -> 'box',                                                  condition: dom:shape(E1, box) }
-{ rule: noun(E1) -> 'table',                                                condition: dom:shape(E1, table) }
+{ rule: noun(E1) -> 'one',                                                  condition: dom:d_shape(E1, S) dom:default_shape(E1, S) }
+{ rule: noun(E1) -> 'pyramid',                                              condition: dom:d_shape(E1, pyramid) }
+{ rule: noun(E1) -> 'block',                                                condition: dom:d_shape(E1, block) }
+{ rule: noun(E1) -> 'cube',                                                 condition: dom:d_shape(E1, cube) }
+{ rule: noun(E1) -> 'box',                                                  condition: dom:d_shape(E1, box) }
+{ rule: noun(E1) -> 'table',                                                condition: dom:d_shape(E1, table) }
 
-{ rule: color(E1) -> 'red',                                                 condition: dom:color(E1, red) }
-{ rule: color(E1) -> 'green',                                               condition: dom:color(E1, green) }
-{ rule: color(E1) -> 'blue',                                                condition: dom:color(E1, blue) }
+{ rule: color(E1) -> 'red',                                                 condition: dom:d_color(E1, red) }
+{ rule: color(E1) -> 'green',                                               condition: dom:d_color(E1, green) }
+{ rule: color(E1) -> 'blue',                                                condition: dom:d_color(E1, blue) }
 
-{ rule: volume(E1) -> 'large',                                              condition: dom:volume(E1, big) }
-{ rule: volume(E1) -> 'small',                                              condition: dom:volume(E1, small) }
+{ rule: volume(E1) -> 'large',                                              condition: dom:d_volume(E1, big) }
+{ rule: volume(E1) -> 'small',                                              condition: dom:d_volume(E1, small) }
 
 { rule: s(S1) -> boolean(S1),                                               condition: dom:result(S1) }
 { rule: boolean(B1) -> 'yes',                                               condition: dom:result(true) }

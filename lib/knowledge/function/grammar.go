@@ -37,9 +37,9 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	unscopedSense := base.getSense(messenger).UnScope()
 
-	if base.dialogBinding.ContainsVariable(variable) {
+	if base.discourseEntities.ContainsVariable(variable) {
 		newBinding := mentalese.NewBinding()
-		newBinding.Set(variable, base.dialogBinding.MustGet(variable))
+		newBinding.Set(variable, base.discourseEntities.MustGet(variable))
 		return mentalese.InitBindingSet(newBinding), false
 	}
 

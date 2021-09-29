@@ -9,19 +9,19 @@ describe(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
+    go:let(Set, description(E1) default_shape(E1, Sort) d_shape(E1, S) )
 
     /* Is the shape unique? */
     go:if_then(go:greater_than(Cs, 1),
-        go:let(Set, {{ Set }} color(E1, C))
+        go:let(Set, {{ Set }} d_color(E1, C))
         /* Are the shape and color unique? */
         go:if_then(go:greater_than(Cc, 1),
-            go:let(Set, {{ Set }} volume(E1, V))
+            go:let(Set, {{ Set }} d_volume(E1, V))
             /* Are the shape, color, and volume unique? */
             go:if_then(go:greater_than(Cv, 1),
                 /* Add the object it supports and presume that this is enough */
                 support(E1, E3) describe(E3, Sort, E3Desc)
-                go:let(Set, {{ Set }} support(E1, E3) description(E3) {{ E3Desc }})
+                go:let(Set, {{ Set }} d_support(E1, E3) description(E3) {{ E3Desc }})
             )
         )
     )
@@ -39,14 +39,14 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
+    go:let(Set, description(E1) default_shape(E1, Sort) d_shape(E1, S) )
 
     /* Is the shape unique? */
     go:if_then(go:greater_than(Cs, 1),
-        go:let(Set, {{ Set }} color(E1, C))
+        go:let(Set, {{ Set }} d_color(E1, C))
         /* Are the shape and color unique? */
         go:if_then(go:greater_than(Cc, 1),
-            go:let(Set, {{ Set }} volume(E1, V) indeterminate(E1))
+            go:let(Set, {{ Set }} d_volume(E1, V) indeterminate(E1))
         )
     )
     go:unify(DescSet, Set)

@@ -1,3 +1,104 @@
+## 2021-09-29
+
+I solved this problem by introducing predicates like `d_color`. Not pretty, but I just want to get #24 done at the moment. Technically `d_color` is a custom predicate specially used for the generation phase. This is a normal thing to do, except that this one feels (and is) a bit odd. 
+
+The conditions now look for `d_color` and not `color`, and will find only the ones from the result; not the ones from the database. Yes, it exchanges one problem for another, but this problem is fixable, while the other wasn't, otherwise.
+
+## 2021-09-28
+
+I am working out this possibility. But I find that generation can only use simple functions, because it uses the matcher and this only allows simple functions. Now that I need to nested function I have to change that. Generation then allows all functions available, because it uses the solver.
+
+This has the consequence that more relations are matched, like the ones in the knowledge bases. For example: there is a condition 
+
+    dom:color(E1)
+
+It now matches for the box, because it has a color in the knowledge base (white). While before, in the description that was composed, no color was given to the box, because the box needs no further identifier.
+
+## 2021-09-25
+
+What about this:
+
+    { rule: noun(E1) -> 'it',   condition: go:dialog_anaphora_queue_last(L1, go:object(L1)) go:equals(E1, L1) }
+
+This means: use "it" if the entity is in the anaphora queue, and it's the last `object` (i.e. block or pyramid) added to the queue.
+
+## 2021-09-22
+
+"Building natural language generation systems" p. 151 contains a conservative algorithm for generation pronouns.
+
+Also: "The important role of world knowledge in the interpretation of anaphoric references and the difficulties inherent in modelling world knowledge means that we do not currently know how to build an algorithm which produces pronominal references in all and only those cases where pronouns could be used and understood by people."
+
+## 2021-09-19
+
+I found this term in Halliday's book:
+
+    referential chain
+
+p 606. It is a chain that starts with a referent ("green pyramid") and is followed by a series of pronouns ("it" - "it" - "it").
+
+The book also refers to J.R. Martin's "English Text: system and structure" (1992) for more in-depth information on reference.
+And indeed it has 60 pages on the subject.
+
+https://books.google.nl/books?id=11mdy0PgSaMC&pg=PR1&lpg=PR1&dq=english+text+system+and+structure&source=bl&ots=arzDTfjjWB&sig=ACfU3U1nwMU3_fsPdLb3NGWgUAu3lQf5Mg&hl=nl&sa=X&ved=2ahUKEwi8_sSdno7zAhUFsKQKHQ7oD9Y4FBDoAXoECBEQAw#v=onepage&q=english%20text%20system%20and%20structure&f=false
+
+But does it answer the question: at what time should one stop referring to an entity as "it". When has the other entity come into focus?
+
+https://books.google.nl/books?id=AzqB8oLEIUsC&printsec=frontcover&hl=nl#v=onepage&q&f=false
+
+Same book, different pages. Page 156-157:
+
+    Finally the major limitation on the account of partificipant identification in this chapter needs to be acknowledged - that is, it's (sic) lack of attention to the 'process' of identifying participans. ... The account thus falls short of the specificity required for computer implementation and text generation.
+
+Thanks, this saves me the cost of buying the book :)
+
+I am beginning to think that systemic functional grammar is not very interesting for computational linguistics. And this is funny because it's Winograds grammar of choice.
+
+I need to dive into "Natural Language Understanding" by James Allen again. It has very good material on this subject.
+
+## 2021-09-18
+
+Answer: no, absolutely not.
+
+Now reading: Halliday's Introduction to Functional Grammar - 4th edition
+
+Interaction #24 is simply the first time a reference "it" is used in a response (rather than a request). SHRDLU can use "it" when the entity was recently used. However, it does not need to be a topic (or theme).
+
+Winograd has information about this as on page 169:
+
+    The system has heuristics which lead it to use "it" to refer to an object in an event it is describing whenever:
+    (1) the same object was called "it" in the question;
+    (2) the object was called "it" in the question preceding the current one, and "it" was not used in the current one;
+    (3) the object has already been named in the current answer, and was the first object in the answer; or
+    (4) no objects have been named in the current answer, and the object was the only one named in the previous answer.
+
+The first case applies here. But this type of heuristic is not acceptable for NLI-GO. It would complicate the generation process badly.
+
+As for a solution: how about checking if the entity is on top of the anaphora queue?
+
+    { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
+    { rule: noun(E1) -> 'one',                                                  condition: dom:shape(E1, S) dom:default_shape(E1, S) }
+    { rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
+    { rule: noun(E1) -> 'it',                                                   condition: go:dialog_anaphora_last(L1) go:equals(L1, E1) }
+
+
+## 2021-09-14
+
+Is the anaphora queue actually a topic queue? Just asking.
+
+## 2021-09-12
+
+How should NLI-GO know when to use the pronoun "it" in stead of the full description?
+
+I may have found an answer here:
+
+    When a sentence continues discussing a previously established topic, it is likely to use pronouns to refer to the topic. Such topics tend to be subjects.
+
+See https://en.wikipedia.org/wiki/Topic_and_comment
+
+If I can keep track of the topic in a discourse, I can use it to choose for a pronoun.
+
+Information structure is about this as well. Very important for a good dialog. https://en.wikipedia.org/wiki/Information_structure
+
 ## 2021-09-09
 
 Almost there.

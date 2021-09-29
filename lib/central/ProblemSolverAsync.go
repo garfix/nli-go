@@ -342,6 +342,48 @@ func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *goal.Messenger, re
 	return newBindings, multiFound
 }
 
+// tries to match needleSet to haystackSet;
+// if a relation doesn't match, it is tried with the available knowledge bases
+func (s *ProblemSolverAsync) SolveSequenceToSet(messenger api.ProcessMessenger, needleSet mentalese.RelationSet, haystackSet mentalese.RelationSet, binding mentalese.Binding) (mentalese.BindingSet, bool) {
+
+	match := true
+	newBindings := mentalese.InitBindingSet(binding)
+
+	for _, needle := range needleSet {
+
+		subResultBindings := mentalese.NewBindingSet()
+
+		// match to haystack
+		for _, newBinding := range newBindings.GetAll() {
+			someBindings, _ := s.matcher.MatchRelationToSet(needle, haystackSet, newBinding)
+			subResultBindings.AddMultiple(someBindings)
+		}
+
+		if subResultBindings.IsEmpty() {
+
+			// match to knowledge bases
+			knowledgeBaseBindings := mentalese.NewBindingSet()
+			for _, handler := range s.GetHandlers(needle) {
+				for _, newBinding := range newBindings.GetAll() {
+					knowledgeBaseBindings.AddMultiple(handler(messenger, needle, newBinding))
+				}
+			}
+			if !knowledgeBaseBindings.IsEmpty() {
+				subResultBindings = knowledgeBaseBindings
+			} else {
+				match = false
+				goto end
+			}
+		}
+
+		newBindings = subResultBindings
+	}
+
+	end:
+
+	return newBindings, match
+}
+
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
 func (solver *ProblemSolverAsync) FindFacts(factBase api.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 

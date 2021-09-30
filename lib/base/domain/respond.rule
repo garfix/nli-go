@@ -15,7 +15,7 @@ go:respond(Input) :-
         go:parse(Locale, InTokens, ParseTree)
         go:dialogize(ParseTree, DialogParseTree)
         go:ellipsize(DialogParseTree, CompletedParseTree)
-go:dialog_read_bindings(RequestBinding)
+        go:dialog_read_bindings(RequestBinding)
         go:relationize(CompletedParseTree, Request, RequestBinding, UnresolvedName)
 
         go:if_then(
@@ -32,7 +32,7 @@ go:dialog_read_bindings(RequestBinding)
 
         go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
         go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
-go:dialog_write_bindings(ResponseBindings)
+        go:dialog_write_bindings(ResponseBindings)
         go:generate(Locale, Answer, OutTokens)
         go:surface(OutTokens, Output)
     )

@@ -149,7 +149,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)
-	system.generator = generate.NewGenerator(builder.log, matcher, solverAsync)
+	system.generator = generate.NewGenerator(builder.log, matcher)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
 	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")

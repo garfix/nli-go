@@ -7,7 +7,7 @@
 { rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),             condition: dom:stack_up(P1, Subject, List) }
 { rule: vp(P1) -> 'get' 'rid' 'of' np(A),                                   condition: dom:get_rid_of(P1, Subject, A) }
 
-/*{ rule: np(E1) -> 'it',                                                     condition: go:dialog_anaphora_queue_last(L1, dom:object(L1)) go:equals(L1, E1) }*/
+/*{ rule: np(E1) -> 'it',                                                     condition: go:equals(F1, `:notnotnot`) }*/
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
 { rule: qp(E1) -> 'the' }

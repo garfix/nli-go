@@ -2,7 +2,6 @@ package generate
 
 import (
 	"fmt"
-	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
@@ -11,23 +10,21 @@ import (
 
 type Generator struct {
 	matcher *central.RelationMatcher
-	solver *central.ProblemSolverAsync
 	parser *importer.InternalGrammarParser
 	log     *common.SystemLog
 }
 
-func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher, solver *central.ProblemSolverAsync) *Generator {
+func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Generator {
 	
 	return &Generator{
 		matcher: matcher,
-		solver: solver,
 		parser: importer.NewInternalGrammarParser(),
 		log: log,
 	}
 }
 
 // Creates an array of words that forms the surface representation of a mentalese sense
-func (generator *Generator) Generate(messenger api.ProcessMessenger, grammarRules *mentalese.GrammarRules, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) Generate(grammarRules *mentalese.GrammarRules, sentenceSense mentalese.RelationSet) []string {
 
 	usedRules := &map[string]bool{}
 
@@ -45,19 +42,19 @@ func (generator *Generator) Generate(messenger api.ProcessMessenger, grammarRule
 
 	generator.log.AddDebug("Unscoped 2", fmt.Sprintf("%v", boundSense))
 
-	return generator.GenerateNode(messenger, grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense)
+	return generator.GenerateNode(grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense)
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(messenger api.ProcessMessenger, grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
-	rule, binding, ok := generator.findMatchingRule(messenger, grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
+	rule, binding, ok := generator.findMatchingRule(grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 
 	if ok {
 
@@ -66,7 +63,7 @@ func (generator *Generator) GenerateNode(messenger api.ProcessMessenger, grammar
 		for i, consequentCategory := range rule.GetConsequents() {
 			consequentValue := generator.getConsequentValue(rule, i, binding)
 			consequent := generator.generateSingleConsequent(
-				messenger, grammarRules, usedRules, consequentCategory, consequentValue, rule.GetConsequentPositionType(i), sentenceSense)
+				grammarRules, usedRules, consequentCategory, consequentValue, rule.GetConsequentPositionType(i), sentenceSense)
 			words = append(words, consequent...)
 		}
 	} else {
@@ -100,7 +97,7 @@ func (generator *Generator) getConsequentValue(rule mentalese.GrammarRule, i int
 // From a set of rules (with a shared antecedent), find the first one whose conditions match
 // antecedent: i.e. np(E1)
 // bindingL i.e { E1: 3 }
-func (generator *Generator) findMatchingRule(messenger api.ProcessMessenger, grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) (mentalese.GrammarRule, mentalese.Binding, bool) {
+func (generator *Generator) findMatchingRule(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) (mentalese.GrammarRule, mentalese.Binding, bool) {
 
 	found := false
 	resultRule := mentalese.GrammarRule{}
@@ -127,7 +124,7 @@ func (generator *Generator) findMatchingRule(messenger api.ProcessMessenger, gra
 		} else {
 
 			// match the condition
-			matchBindings, match := generator.solver.SolveSequenceToSet(messenger, rule.Sense, sentenceSense, binding)
+			matchBindings, match := generator.matcher.MatchSequenceToSet(rule.Sense, sentenceSense, binding)
 
 			if match {
 				binding = matchBindings.Get(0)
@@ -166,7 +163,7 @@ func (generator *Generator) createRuleHash(rule mentalese.GrammarRule, binding m
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(messenger api.ProcessMessenger, grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet) []string {
 
 	words := []string{}
 
@@ -176,7 +173,7 @@ func (generator *Generator) generateSingleConsequent(messenger api.ProcessMessen
 		text := value
 		words = append(words, text.TermValue)
 	} else {
-		words = generator.GenerateNode(messenger, grammarRules, usedRules, category, value, sentenceSense)
+		words = generator.GenerateNode(grammarRules, usedRules, category, value, sentenceSense)
 	}
 
 	return words

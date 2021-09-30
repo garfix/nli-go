@@ -75,7 +75,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 - When the demo is done. Do it in German as well, as proof of multilinguality.
 - Add an autoplay function for demo mode; show characters in response one-by-one  
 - If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
-- get rid of `d_color` and `d_volume` and remove the `describe` routines 
 
 ## Documentation
 
@@ -107,6 +106,7 @@ Find a way to ensure completeness of information about all relations used in a s
 ## Stuff I'm not happy with
 
 * the RelationTransformer; is only used in solutions, but should be removed from there as well, if possible
+* the async routines are too complex
 
 ## Interesting stuff
 

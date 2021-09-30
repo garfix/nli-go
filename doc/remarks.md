@@ -1,3 +1,7 @@
+## 2021-09-30
+
+I tried to add the full power of the solver to the generation conditions. It failed, because eventually it came down to the point that I had to add the result relations as a temporary separate knowledge base. This felt wrong. And it is wrong, because we don't want to solve problems in the generation fase. There we just want to generate the sentence. If we gave this full power, the conditions could become extemely complex, slow, and complicated. It would give the programmer the power to make generation complex, slow, and complicated. So I undid this. All complicated work must be done in the preperatory phase. The generation process must make quick decisions, not do (extensive / any) calculations.
+
 ## 2021-09-29
 
 I solved this problem by introducing predicates like `d_color`. Not pretty, but I just want to get #24 done at the moment. Technically `d_color` is a custom predicate specially used for the generation phase. This is a normal thing to do, except that this one feels (and is) a bit odd. 

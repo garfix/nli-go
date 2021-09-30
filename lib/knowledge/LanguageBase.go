@@ -549,7 +549,7 @@ func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentale
 		return mentalese.NewBindingSet()
 	}
 
-	tokens := base.generator.Generate(messenger, grammar.GetWriteRules(), answerRelations)
+	tokens := base.generator.Generate(grammar.GetWriteRules(), answerRelations)
 
 	tokenTerms := []mentalese.Term{}
 	for _, token := range tokens {

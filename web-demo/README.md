@@ -4,7 +4,7 @@ To deploy an application on a web server
 
 ## Build the executable
 
-Inside the directory 'app', create the executable on the platform of choice (i.e. Linux)
+Inside the directory 'bin', create the executable on the platform of choice (i.e. Linux)
 
  go build nli.go
 

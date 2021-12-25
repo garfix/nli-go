@@ -1,10 +1,92 @@
+## 2021-12-25
+
+I started a new job, at eLEAF. It has taken up all of my time for the last months. I see now that I left this project in a broken state and without even committing the comments. 
+
+## 2021-10-03
+
+Some observations
+
+- any quant can be a reference
+- a pronoun is just a special reference (him == "that male")
+- you could use paths for pronouns, but not for definite references
+
+Perhaps make an extra collection of paths that are used for references.
+
+===
+
+What about this: create a separate phase for pronoun resolution. It checks all quants in the sentence, tries to resolve them, and changes the variables to the variables of their referents. This works for definite and indefinite reference. If a variable was bound to id's earlier, this binding will also be applied for the new sentence. Quants that are not resolved automatically serve as nonanaphoric references. All quant entities will be added to the anaphora queue.
+
+Anaphora resolution then has these parts:
+
+- name binding phase: named entities are added to the queue
+- resolution phase: 
+  - unify variables with ones from the queue (U)
+  - add all quant entities to the queue 
+- *solving phase: no entities are added to the queue any more   
+- result phase: entities in the result are added to the queue
+
+The anaphora queue is also used in the generation phase.
+
+Phase U (unify variables; the actual reference resolution) is obviously most complicated.
+I need to go into it much more:
+
+- go through all quants of the sentence
+    - go through all the entities (variables) of the anaphora queue
+        - check if the range matches - no
+        - check if the sort matches - no
+    
+This seems impossible. I can't match anything. I would only be able to match the sort if the sort was present on the variable - not the id. But this is not enough.
+
+## 2021-10-02
+
+The idea of adding variables and then changing the variable of the reference to that of its referent sounds nice but I don't think it's possible to do reference resolution in a separate step. 
+
+Consider this very sought example: 
+
+    Drop the block. Pick up a new object and put the little red block on top of it.
+
+If "a new object" is a pyramid, the little red block cannot be put on top of it and thus it must be put on top of "the block" mentioned earlier.
+This is nonsense. Language doesn't work like that.
+
+===
+
+Currently I am copying ids when I do anaphora resolution. Merging variables would be much better. This way the entities are explicitly identified. That is, they are the same sense, not just the same reference.
+
+Is it possible to use the path construction for anaphora? It might mean the anaphora queue could go. It may also mean that I could turn anaphora resolution into a separate step. (It is a separate step in CLE) It would also mean that the rules for anaphora could not be hard-coded, but programmable (this is good). 
+
+What about 
+
+    Grasp the pyramid
+    I don't understand which one you mean
+
+"the pyramid" is a definite reference, but it might be anaphoric (refer to a previous discouse entity) or nonanaphoric (refer to an object in the scene).
+
+===
+
+An alternative is to make the anaphora queue at least an explicit variable in `respond.rule`. Or several variables for several versions of the queue. This way we can use different versions of the queue explicitly in the handling relations.
+
+It is probably a good idea anyway to make the anaphora queue an explicit entity in the processing of a sentence.
+
+## 2021-10-01
+
+Number 25 is now solved, but I am not done because an earlier interaction is broken:
+
+    H: Is there a large block behind a pyramid? 
+    C: Yes, three of them: a large red one, a large green cube and it
+
+"it" here refers to the blue cube. This blue cube had not been mentioned recently, so it is odd that it is referred to. First I thought that it was because the response is generated after the results are added to the anaphora queue (and the response relations refer to the response entities). But when I fixed that the problem is still there. 
+
+The problem is deeper. Whenever a quant is processed it adds entities to the queue. Way too many entities are added. The reason I add entities to the queue while solving the question is that I need to be able to backreference entities in the same sentence. Entities that are not known beforehand.
+
+What I should do, is that I should not add id's to the anaphora queue, I should add variables. That is, I should make the distinction between discourse entities (variables) and the knowledge base ids.
+
 ## 2021-09-30
 
 I tried to add the full power of the solver to the generation conditions. It failed, because eventually it came down to the point that I had to add the result relations as a temporary separate knowledge base. This felt wrong. And it is wrong, because we don't want to solve problems in the generation fase. There we just want to generate the sentence. If we gave this full power, the conditions could become extemely complex, slow, and complicated. It would give the programmer the power to make generation complex, slow, and complicated. So I undid this. All complicated work must be done in the preperatory phase. The generation process must make quick decisions, not do (extensive / any) calculations.
 
 ## 2021-09-29
 
-I solved this problem by introducing predicates like `d_color`. Not pretty, but I just want to get #24 done at the moment. Technically `d_color` is a custom predicate specially used for the generation phase. This is a normal thing to do, except that this one feels (and is) a bit odd. 
+I solved this problem by introducing predicates like `d_color`. Not pretty, but I just want to get #25 done at the moment. Technically `d_color` is a custom predicate specially used for the generation phase. This is a normal thing to do, except that this one feels (and is) a bit odd. 
 
 The conditions now look for `d_color` and not `color`, and will find only the ones from the result; not the ones from the database. Yes, it exchanges one problem for another, but this problem is fixable, while the other wasn't, otherwise.
 
@@ -65,7 +147,7 @@ Answer: no, absolutely not.
 
 Now reading: Halliday's Introduction to Functional Grammar - 4th edition
 
-Interaction #24 is simply the first time a reference "it" is used in a response (rather than a request). SHRDLU can use "it" when the entity was recently used. However, it does not need to be a topic (or theme).
+Interaction #25 is simply the first time a reference "it" is used in a response (rather than a request). SHRDLU can use "it" when the entity was recently used. However, it does not need to be a topic (or theme).
 
 Winograd has information about this as on page 169:
 
@@ -114,7 +196,7 @@ Almost there.
 
 ## 2021-09-05
 
-No, this #24 is not really forthcoming. Main point now is saving the entities of the response in the dialog and later loading them for the next sentence.
+No, this #25 is not really forthcoming. Main point now is saving the entities of the response in the dialog and later loading them for the next sentence.
 
 What if there are multiple entities for a single variable? How do I load them in the next sentence? They should go in a single binding. And so there's only one way to do this. I will need to create a relation set for this entity that consists of an or: go:or(go:eq(E21, 18), go:eq(E21, 56))
 
@@ -319,7 +401,7 @@ The system now interprets the "it" as SHRDLU. This is what happens:
   H: Why (did you pick [it] up)?
   S: -- does not find an instance of SHRDLU picking up SHRDLU --
 
-"It" must now refer to the same object it referred before. The system should not try to interpret it again; it should remember its previous binding.
+"It" must now refer to the same object it referred to before. The system should not try to interpret it again; it should remember its previous binding.
 
 While this seems to call for replacing the ellipsis with its _semantic_ antecedent, this is undesirable in some cases.
 
@@ -357,7 +439,7 @@ The syntax I used up to now didn't really work. Now is the time to fix it. I nee
 
 - connect the entities
 - make sure the deeper senses are connected as well
-- choose the right place in the processing pipline
+- choose the right place in the processing pipeline
 
 Example sentences:
 

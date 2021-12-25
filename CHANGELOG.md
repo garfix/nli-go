@@ -3,6 +3,8 @@
 ##
 
 * translation of canned texts using CSV files
+* ellipsis / path DSL
+* discourse entities
 
 ## 1.13 asynchronous execution - 26-03-2021
 

@@ -114,7 +114,8 @@ func TestQuantSolver(t *testing.T) {
 
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, meta, log)
+	discourseEntities := mentalese.NewBinding()
+	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)
@@ -130,7 +131,7 @@ func TestQuantSolver(t *testing.T) {
 		quant := internalGrammarParser.CreateRelation(test.quant)
 		binding := internalGrammarParser.CreateBinding(test.binding)
 
-		result := runner.RunRelationSetWithBindings(mentalese.RelationSet{quant }, mentalese.InitBindingSet(binding))
+		result := runner.RunRelationSetWithBindings(mentalese.RelationSet{quant}, mentalese.InitBindingSet(binding))
 
 		resultString := ""
 		for _, result := range result.GetAll() {

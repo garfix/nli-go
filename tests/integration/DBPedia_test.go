@@ -9,8 +9,8 @@ import (
 func TestDBPedia(t *testing.T) {
 
 	var tests = [][]struct {
-		question      string
-		answer        string
+		question string
+		answer   string
 	}{
 		{
 			{"How many children has Madonna?", "She has 4 children"},
@@ -57,14 +57,13 @@ func TestDBPedia(t *testing.T) {
 			{"What is the largest state of America by population?", "California"},
 			{"What is america's largest state by population?", "California"},
 		},
-		{
-		},
+		{},
 	}
 
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/dbpedia", "dbpedia-demo", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir()+"/../../resources/dbpedia", "dbpedia-demo", common.Dir()+"/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

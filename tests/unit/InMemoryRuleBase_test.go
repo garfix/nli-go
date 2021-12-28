@@ -37,7 +37,8 @@ func TestInMemoryRuleBase(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, meta, log)
+	discourseEntities := mentalese.NewBinding()
+	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	runner := central.NewProcessRunner(solver, log)
 	rules := parser.CreateRules(`
@@ -71,7 +72,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{goal }, mentalese.InitBindingSet(binding)).String()
+		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{goal}, mentalese.InitBindingSet(binding)).String()
 
 		if !log.IsOk() {
 			t.Errorf(log.String())

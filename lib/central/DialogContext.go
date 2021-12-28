@@ -26,7 +26,7 @@ func NewDialogContext(
 	processList *goal.ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
 	discourseEntities *mentalese.Binding,
-	) *DialogContext {
+) *DialogContext {
 	dialogContext := &DialogContext{
 		storage:           storage,
 		AnaphoraQueue:     anaphoraQueue,
@@ -50,8 +50,7 @@ func (dc *DialogContext) Initialize() {
 	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()
 
-	binding := mentalese.NewBinding()
-	dc.DiscourseEntities = &binding
+	dc.DiscourseEntities.Clear()
 }
 
 func (dc *DialogContext) Store() {

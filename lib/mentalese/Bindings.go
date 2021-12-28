@@ -11,18 +11,20 @@ type BindingSet struct {
 	Lookup   *map[string]bool
 }
 
-func NewBindingSet() BindingSet{
-	return BindingSet{ Bindings: &[]Binding{}, Lookup: &map[string]bool{} }
+func NewBindingSet() BindingSet {
+	return BindingSet{Bindings: &[]Binding{}, Lookup: &map[string]bool{}}
 }
 
-func InitBindingSet(binding Binding) BindingSet{
-	return BindingSet{ Bindings: &[]Binding{binding }, Lookup: &map[string]bool{} }
+func InitBindingSet(binding Binding) BindingSet {
+	return BindingSet{Bindings: &[]Binding{binding}, Lookup: &map[string]bool{}}
 }
 
 func (set BindingSet) Add(binding Binding) {
 	serialized := binding.String()
 	_, found := (*set.Lookup)[serialized]
-	if found { return }
+	if found {
+		return
+	}
 	(*set.Lookup)[serialized] = true
 	*set.Bindings = append(*set.Bindings, binding)
 }
@@ -59,10 +61,10 @@ func (set BindingSet) ToJson() string {
 	arr := array{}
 
 	for _, item := range set.GetAll() {
-	i := aMap{}
-	for k, v := range item.GetAll() {
-		i[k] = v.String()
-	}
+		i := aMap{}
+		for k, v := range item.GetAll() {
+			i[k] = v.String()
+		}
 		arr = append(arr, i)
 	}
 
@@ -75,7 +77,7 @@ func (set BindingSet) Reverse() BindingSet {
 	newSet := NewBindingSet()
 	lastIndex := len(*set.Bindings) - 1
 	for i, _ := range *set.Bindings {
-		binding := (*set.Bindings)[lastIndex - i]
+		binding := (*set.Bindings)[lastIndex-i]
 		newSet.Add(binding)
 	}
 	return newSet
@@ -86,7 +88,9 @@ func (set BindingSet) GetTermType(variable string) (string, bool) {
 
 	for _, binding := range *set.Bindings {
 		term, found := binding.Key2vvalue[variable]
-		if !found { continue }
+		if !found {
+			continue
+		}
 
 		if aType == "" {
 			aType = term.TermType
@@ -98,11 +102,12 @@ func (set BindingSet) GetTermType(variable string) (string, bool) {
 	return aType, true
 }
 
-
 func (set BindingSet) IsIntegerSet(variable string) bool {
 	for _, binding := range *set.Bindings {
 		term, found := binding.Key2vvalue[variable]
-		if !found { continue }
+		if !found {
+			continue
+		}
 
 		if !term.IsInteger() {
 			return false
@@ -200,6 +205,11 @@ func (set BindingSet) GetAll() []Binding {
 }
 
 func (set BindingSet) Get(index int) Binding {
+
+	if len(*set.Bindings) == 0 {
+		*set.Bindings = nil
+	}
+
 	return (*set.Bindings)[index]
 }
 

@@ -13,15 +13,15 @@ import (
 
 type LanguageBase struct {
 	KnowledgeBaseCore
-	matcher 			  *central.RelationMatcher
-	grammars              []parse.Grammar
-	relationizer          *parse.Relationizer
-	meta                  *mentalese.Meta
-	dialogContext         *central.DialogContext
-	nameResolver          *central.NameResolver
-	answerer 			  *central.Answerer
-	generator	  		  *generate.Generator
-	log 			      *common.SystemLog
+	matcher       *central.RelationMatcher
+	grammars      []parse.Grammar
+	relationizer  *parse.Relationizer
+	meta          *mentalese.Meta
+	dialogContext *central.DialogContext
+	nameResolver  *central.NameResolver
+	answerer      *central.Answerer
+	generator     *generate.Generator
+	log           *common.SystemLog
 }
 
 func NewLanguageBase(
@@ -35,16 +35,16 @@ func NewLanguageBase(
 	generator *generate.Generator,
 	log *common.SystemLog) *LanguageBase {
 	return &LanguageBase{
-		KnowledgeBaseCore: KnowledgeBaseCore{ name },
-		matcher: central.NewRelationMatcher(log),
-		grammars: grammars,
-		relationizer: relationizer,
-		meta: meta,
-		dialogContext: dialogContext,
-		nameResolver: nameResolver,
-		answerer: answerer,
-		generator: generator,
-		log: log,
+		KnowledgeBaseCore: KnowledgeBaseCore{name},
+		matcher:           central.NewRelationMatcher(log),
+		grammars:          grammars,
+		relationizer:      relationizer,
+		meta:              meta,
+		dialogContext:     dialogContext,
+		nameResolver:      nameResolver,
+		answerer:          answerer,
+		generator:         generator,
+		log:               log,
 	}
 }
 
@@ -244,7 +244,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "jvvv", base.log) {
+	if !Validate(bound, "jvjvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -252,19 +252,19 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	cursor.SetState("childIndex", 0)
 
 	senseVar := input.Arguments[1].TermValue
-	requestBindingVar := input.Arguments[2].TermValue
-	unboundNameVar := input.Arguments[3].TermValue
+	requestBindingVar := input.Arguments[3].TermValue
+	unboundNameVar := input.Arguments[4].TermValue
 	var parseTree mentalese.ParseTreeNode
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 	sortFinder := central.NewSortFinder(base.meta)
 
-	requestBinding := mentalese.NewBinding()
-	requestBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[2].GetJsonValue(&requestBindingsRaw)
-	requestBinding.FromRaw(requestBindingsRaw)
+	dialogBinding := mentalese.NewBinding()
+	dialogBindingsRaw := map[string]mentalese.Term{}
+	bound.Arguments[2].GetJsonValue(&dialogBindingsRaw)
+	dialogBinding.FromRaw(dialogBindingsRaw)
 
-	requestRelations, names := base.relationizer.Relationize(parseTree, []string{ "S"})
+	requestRelations, names := base.relationizer.Relationize(parseTree, []string{"S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
@@ -272,7 +272,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	sorts, sortFound := sortFinder.FindSorts(requestRelations)
 	if !sortFound {
 		// conflicting sorts
-		base.log.AddProduction("Break", "Breaking due to conflicting sorts: " + sorts.String())
+		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
 		return mentalese.NewBindingSet()
 	}
 
@@ -281,12 +281,12 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	requestBinding = requestBinding.Merge(entityIds)
+	requestBinding := dialogBinding.Merge(entityIds)
 
 	// names found and linked to id
 	for variable, value := range entityIds.GetAll() {
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(
-			central.EntityReferenceGroup{ central.CreateEntityReference(value.TermValue, value.TermSort, variable) })
+			central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, variable)})
 	}
 	base.log.AddProduction("Named entities", entityIds.String())
 
@@ -314,7 +314,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		sort, found := sorts[variable]
 		if !found {
 			base.log.AddProduction("Info",
-				"The name '" + name.TermValue + "' could not be looked up because no sort could be derived from the relations.")
+				"The name '"+name.TermValue+"' could not be looked up because no sort could be derived from the relations.")
 			if nameNotFound == "" {
 				nameNotFound = name.TermValue
 			}
@@ -325,7 +325,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort)
 		if len(nameInformations) == 0 {
 			base.log.AddProduction("Info",
-				"Database lookup for name '" + name.TermValue + "'  with sort '" + sort + "' did not give any results")
+				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort+"' did not give any results")
 			nameNotFound = name.TermValue
 			goto next
 		}
@@ -345,7 +345,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		}
 	}
 
-	next:
+next:
 
 	return entityIds, nameNotFound, false
 }
@@ -459,7 +459,7 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 		if !responseBindings.IsEmpty() {
 			newBinding := mentalese.NewBinding()
 			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
-			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index - 1)))
+			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index-1)))
 			return mentalese.InitBindingSet(newBinding)
 		}
 	}
@@ -476,7 +476,7 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 		}
 	}
 
-	messenger.GetCursor().SetState("index", index + 1)
+	messenger.GetCursor().SetState("index", index+1)
 
 	return mentalese.NewBindingSet()
 }

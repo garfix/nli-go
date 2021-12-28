@@ -10,7 +10,7 @@ type Binding struct {
 }
 
 func NewBinding() Binding {
-	return Binding{ Key2vvalue: map[string]Term{} }
+	return Binding{Key2vvalue: map[string]Term{}}
 }
 
 func (b Binding) ToRaw() map[string]Term {
@@ -21,6 +21,10 @@ func (p Binding) FromRaw(raw map[string]Term) {
 	for key, value := range raw {
 		p.Set(key, value)
 	}
+}
+
+func (b *Binding) Clear() {
+	b.Key2vvalue = map[string]Term{}
 }
 
 func (b Binding) ContainsVariable(variable string) bool {

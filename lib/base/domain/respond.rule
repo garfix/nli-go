@@ -15,8 +15,8 @@ go:respond(Input) :-
         go:parse(Locale, InTokens, ParseTree)
         go:dialogize(ParseTree, DialogParseTree)
         go:ellipsize(DialogParseTree, CompletedParseTree)
-        go:dialog_read_bindings(RequestBinding)
-        go:relationize(CompletedParseTree, Request, RequestBinding, UnresolvedName)
+        go:dialog_read_bindings(DialogBinding)
+        go:relationize(CompletedParseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
         go:if_then(
             go:not_equals(UnresolvedName, ''),

@@ -6,7 +6,7 @@
 { rule: vp(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),             condition: dom:stack_up(P1, Subject, List) }
 { rule: vp(P1) -> 'get' 'rid' 'of' np(A),                                   condition: dom:get_rid_of(P1, Subject, A) }
 
-{ rule: np(E1) -> 'it',                                                     condition: dom:center(E1) }
+/*{ rule: np(E1) -> 'it',                                                     condition: dom:center(E1) }*/
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }

@@ -98,6 +98,10 @@ Find a way to ensure completeness of information about all relations used in a s
 
 * convert number words into numbers
 
+## Language features
+
+- Parse multiple sentences in a single line of input. 
+
 ## Quantifier Scoping
 
 - Make "more than" "less than" work

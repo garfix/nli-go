@@ -11,7 +11,7 @@ func TestRelationships(t *testing.T) {
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/relationships", "", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir()+"/../../resources/relationships", "", common.Dir()+"/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
@@ -44,7 +44,7 @@ func TestRelationships(t *testing.T) {
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-			t.Error(log.String())
+			//t.Error(log.String())
 		}
 	}
 }

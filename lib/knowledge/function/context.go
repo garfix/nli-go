@@ -117,7 +117,9 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	// todo multiple bindings should not be merged into a single binding
 	for _, someBinding := range someBindings.GetAll() {
 		for key, value := range someBinding.GetAll() {
-			base.discourseEntities.Set(key, value)
+			if value.IsId() {
+				base.discourseEntities.Set(key, value)
+			}
 		}
 	}
 
@@ -138,7 +140,9 @@ func (base *SystemSolverFunctionBase) dialogAnaphoraQueueLast(messenger api.Proc
 
 	for _, group := range *base.anaphoraQueue {
 
-		if len(group) > 1 { continue }
+		if len(group) > 1 {
+			continue
+		}
 
 		ref := group[0]
 

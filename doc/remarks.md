@@ -1,3 +1,51 @@
+## 2021-12-27
+
+I will solve the problem by implementing the ideas of centering theory. It requires that the system knows about subjects and objects because a subject has a higher chance of becoming the center. I have not needed syntactice functions before, but have planned them for a long time, because many theories need them. 
+
+I need to add functions to the grammar. I will treat them as a sort of tags, so that I can extend them later.
+
+Compound sentences will need to be split up, so that the clauses can be treated separately. This issue expresses itself most in the sentence "Find a block which is taller than the one you are holding and put it into the box.". When split into two clauses, the pronoun "it" refers to the previous clause, and there's no need for building the anaphora queue as the sentence is processed. 
+
+Implementing centering theory basically means that I will merge the anaphora queue and the discourse entities of the dialog context into a new structure that groups the discourse entities per clause (not sentence), and annotates (tags) the entities with meta information. Meta information will consist then first of the syntactic functions: subject and object, but later may contain the words that have been used to refer to an entity in the context. This structure is based on variables, not ids (like discourse entities).
+
+todo:
+- extend the read gramma with syntactic functions / syntactic tags 
+- merge anaphora queue and discourse entities in a new structure that groups by clause
+- add an extra processing step to respond.rule that adds a new node (or multiple nodes) to this structure (centering)
+- make sure this new structure is used in all places that first used the old structures
+- ??? does the 2-clause sentence now work? "it" -> find forward looking center (the active clause must be clear)
+- replace `dialog_anaphora_queue_last` (in `describe.rule`) by `dialog_anaphora_queue_find_forward_looking_center(constraint_relation)`
+
+## 2021-12-26
+
+The problem I was working on:
+
+    H: Is there a large block behind a pyramid? 
+    C: Yes, three of them: a large red one, a large green cube and it
+
+This should not say "it" but "the blue one". 
+
+The problem is either:
+- "It" (in a response) cannot just refer to the last object on the anaphora queue.
+- Too many objects enter the anaphora queue
+
+I would like to use "it" in a response in very specific cases only. But at the moment I don't even have a means to check if an object was called "it" in the question. Maybe I should annotate discourse entities.
+
+Looking for information on what a pronoun may refer to I found
+
+    https://en.wikipedia.org/wiki/Anaphora_(linguistics)#Anaphora_resolution_%E2%80%93_centering_theory
+
+Which refers to 
+
+    PROVIDING A UNIFIED ACCOUNT OF DEFINITE NOUN PHRASES IN DISCOURSE - Grosz, Joshi, Weinstein (1983)
+    https://aclanthology.org/P83-1007.pdf
+
+A later paper (1995) by the authors:
+
+    Centering: A Framework for Modeling the Local Coherence of Discourse - Grosz, Joshi, Weinstein (1995)
+    https://aclanthology.org/J95-2003.pdf
+
+
 ## 2021-12-25
 
 I started a new job, at eLEAF. It has taken up all of my time for the last months. I see now that I left this project in a broken state and without even committing the comments. 

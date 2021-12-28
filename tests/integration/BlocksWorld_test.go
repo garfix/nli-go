@@ -15,21 +15,21 @@ import (
 func TestBlocksWorld(t *testing.T) {
 
 	var tests = [][]struct {
-		question      string
-		answer        string
+		question string
+		answer   string
 	}{
 		{
-				{"Does the table support the big red block?", "Yes"},
+			{"Does the table support the big red block?", "Yes"},
 			{"Pick up a big red block", "OK"},
-				{"Does the table support the big red block?", "No"},
+			{"Does the table support the big red block?", "No"},
 
 			// original "I don't understand which pyramid you mean"
 			{"Grasp the pyramid", "I don't understand which one you mean"},
 
-				{"Is the blue block in the box?", "No"},
+			{"Is the blue block in the box?", "No"},
 			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
-				{"Is the blue block in the box?", "Yes"},
+			{"Is the blue block in the box?", "Yes"},
 
 			{"What does the box contain?", "The blue pyramid and the blue block"},
 			{"What is the pyramid supported by?", "The box"},
@@ -42,32 +42,32 @@ func TestBlocksWorld(t *testing.T) {
 			{"Can a pyramid support a pyramid?", "No"},
 			{"Stack up two pyramids.", "I can't"},
 
-				{"Do I own the blue pyramid?", "No"},
+			{"Do I own the blue pyramid?", "No"},
 			{"The blue pyramid is mine", "I understand"},
-				{"Do I own the blue pyramid?", "Yes"},
+			{"Do I own the blue pyramid?", "Yes"},
 
-				{"Do I own a green block?", "No"},
+			{"Do I own a green block?", "No"},
 			{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand"},
-				{"Do I own a green block?", "Yes"},
-				{"Do I own all green blocks?", "No"},
+			{"Do I own a green block?", "Yes"},
+			{"Do I own all green blocks?", "No"},
 
 			{"Do I own the box?", "No"},
 
 			{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid"},
 
-				{"Does a green block support a pyramid?", "Yes"},
+			{"Does a green block support a pyramid?", "Yes"},
 			{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
-				{"Is the small red block supported by a green block?", "Yes"},
-				{"Is a green block supported by the big red block?", "Yes"},
-				{"Does a green block support a pyramid?", "Yes"},
+			{"Is the small red block supported by a green block?", "Yes"},
+			{"Is a green block supported by the big red block?", "Yes"},
+			{"Does a green block support a pyramid?", "Yes"},
 
 			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
 			{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and the blue one"},
 			{"Put a small one onto the green cube which supports a pyramid", "OK"},
 
-				{"Does the small red block support the green pyramid?", "No"},
+			{"Does the small red block support the green pyramid?", "No"},
 			{"Put the littlest pyramid on top of it", "OK"},
-				{"Does the small red block support the green pyramid?", "Yes"},
+			{"Does the small red block support the green pyramid?", "Yes"},
 
 			// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
 			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
@@ -93,7 +93,7 @@ func TestBlocksWorld(t *testing.T) {
 
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir() + "/../../resources/blocks", "blocks-demo", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
@@ -139,7 +139,7 @@ func createGrid(system *global.System) {
 		//fmt.Println(binding.String())
 		h, _ := strconv.Atoi(binding.MustGet("H").TermValue)
 		v, _ := strconv.Atoi(binding.MustGet("V").TermValue)
-		g[v][h]="x"
+		g[v][h] = "x"
 	}
 	for h := 9; h < 20; h++ {
 		for v := 0; v < 10; v++ {
@@ -185,12 +185,12 @@ func createImage(system *global.System) {
 		y1 := (y - 500) / scale
 		z1 := (z + 50) / zScale
 
-		x2 := x1 + width / scale
-		y2 := y1 + height / scale
-		z2 := z1 + length / zScale
+		x2 := x1 + width/scale
+		y2 := y1 + height/scale
+		z2 := z1 + length/zScale
 
 		if theType == "pyramid" {
-			drawPyramid(p, x1, y1, z1, width / scale, height / scale, length / zScale)
+			drawPyramid(p, x1, y1, z1, width/scale, height/scale, length/zScale)
 		} else {
 			p.DrawCube(x1, y1, z1, x2, y2, z2)
 		}
@@ -209,21 +209,21 @@ func createImage(system *global.System) {
 		p.End()
 	}
 
-	p.SavePNG(common.Dir() + "/blocksworld.png", 800, 800, nil)
+	p.SavePNG(common.Dir()+"/blocksworld.png", 800, 800, nil)
 }
 
 func drawPyramid(p *pinhole.Pinhole, x float64, y float64, z float64, width float64, height float64, length float64) {
-	topX := x + width / 2
+	topX := x + width/2
 	topY := y + height
-	topZ := z + length / 2
+	topZ := z + length/2
 
-	p.DrawLine(x, y, z, x + width, y, z)
-	p.DrawLine(x + width, y, z, x + width, y, z + length)
-	p.DrawLine(x + width, y, z + length, x, y, z + length)
-	p.DrawLine(x, y, z + length, x, y, z)
+	p.DrawLine(x, y, z, x+width, y, z)
+	p.DrawLine(x+width, y, z, x+width, y, z+length)
+	p.DrawLine(x+width, y, z+length, x, y, z+length)
+	p.DrawLine(x, y, z+length, x, y, z)
 
 	p.DrawLine(x, y, z, topX, topY, topZ)
-	p.DrawLine(x + width, y, z, topX, topY, topZ)
-	p.DrawLine(x + width, y, z + length, topX, topY, topZ)
-	p.DrawLine(x, y, z + length, topX, topY, topZ)
+	p.DrawLine(x+width, y, z, topX, topY, topZ)
+	p.DrawLine(x+width, y, z+length, topX, topY, topZ)
+	p.DrawLine(x, y, z+length, topX, topY, topZ)
 }

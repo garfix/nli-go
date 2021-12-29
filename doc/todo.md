@@ -102,6 +102,14 @@ Find a way to ensure completeness of information about all relations used in a s
 
 - Parse multiple sentences in a single line of input. 
 
+Agreement (see 2021-12-28)
+
+An example of the syntax I will use for feature structures and unification:
+
+    { rule: vp(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            agree: number(P1, E1) }
+    { rule: noun(E1) -> 'blocks',                                                   tag: number(E1,  plural) }
+
+
 ## Quantifier Scoping
 
 - Make "more than" "less than" work

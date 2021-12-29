@@ -1,3 +1,62 @@
+## 2021-12-29
+
+This sentence still caused me trouble:
+
+    Find a block which is taller than the one you are holding and put it into the box.
+
+If I do a centering analysis on the sentence, I will find two clauses, each with its own center. The `back_reference` relations that will then be performed need to know on which clause they are acting.
+
+It is netter to split the sentence up into two sentences:
+
+    Find a block which is taller than the one you are holding
+    put it into the box.
+
+A sentence with "and" at the topmost level only occurs with declarative and imperative sentences. I can split up the sentence into root-clauses. 
+
+An additional advantage is that I can then use the existing grammar to parse __multiple sentences__ at once! A long awaited feature.
+
+* Parse the text
+* Find the root clauses
+* Process all root clauses in sequence
+
+The grammar will "tag" the root clauses of a sentence.
+I wanted to have a special category for root clauses, but this is not possible.
+
+## 2021-12-28
+
+An example of the syntax I will use for feature structures and unification:
+
+    { rule: vp(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            agree: number(P1, E1) }
+    { rule: noun(E1) -> 'blocks',                                                   tag: number(E1,  plural) }
+
+The features are an open ended set, that can be extended at will, but the most common ones are:
+
+    number (singular, plural)
+    person (1, 2, 3)
+    function (subject, direct-object, indirect-object)
+
+Keys and values are not abbreviated.
+
+I realize that this is an unusual way of handling features. "Speech and language processing" has an extensive chapter on feature structures. Nli-go has used this technique and it proved to be too hard to use, so I dropped it. The form I now use is a simplification.
+
+- I don't use nested features, because they are not necessary, I think
+- I don't use DAG's because they are hard to reason about
+- I use agreement implicity where the book uses it explicitly; in my technique every feature needs to agree
+- I am applying agreement on entities, not phrases, because that's how my grammar works, I think it will work
+
+I will implement agreement later, as a separate phase.
+
+===
+
+Since this morning I am back at this problem:
+
+    GOT:
+        To get rid of the green pyramid
+    WANT:
+        To get rid of it.
+
+I want to solve it by noticing that the green pyramid is - using the language of centering theory - the most highly ranked forward looking center of the previous utterance ("Why did you pick it up"); it is most highly ranked because of the _center continuation_ criterium: because it was the center, it is most likely to be the new center.   
+
 ## 2021-12-27
 
 I will solve the problem by implementing the ideas of centering theory. It requires that the system knows about subjects and objects because a subject has a higher chance of becoming the center. I have not needed syntactice functions before, but have planned them for a long time, because many theories need them. 
@@ -11,7 +70,7 @@ Implementing centering theory basically means that I will merge the anaphora que
 todo:
 - extend the read gramma with syntactic functions / syntactic tags 
 - merge anaphora queue and discourse entities in a new structure that groups by clause
-- add an extra processing step to respond.rule that adds a new node (or multiple nodes) to this structure (centering)
+- add an extra processing step to `respond.rule` that adds a new node (or multiple nodes) to this structure (centering)
 - make sure this new structure is used in all places that first used the old structures
 - ??? does the 2-clause sentence now work? "it" -> find forward looking center (the active clause must be clear)
 - replace `dialog_anaphora_queue_last` (in `describe.rule`) by `dialog_anaphora_queue_find_forward_looking_center(constraint_relation)`

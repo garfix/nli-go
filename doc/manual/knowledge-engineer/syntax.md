@@ -46,13 +46,28 @@ When binding the varables of this relation set, `{{ VarB }}` will be expanded to
 
 ## Grammar
 
+A grammar rule looks like this:
+
+    { rule: r, sense: s, ellipsis: e, tag: t }
+
+Only `rule` is required.
+
+`rule` forms the syntactic rewrite rule, `sense` forms the meaning, `ellipsis` is a path to the missing phrase, `tag` adds syntactic information.
+
+Here are some examples:
+
     { rule: s(P1) -> np(E1) vp(P, E1) }
     { rule: tv(P1, E1, E2) -> like(P1, E1, E2),         sense: like(P1, E1, E2) }
     { rule: like(P1, E1, E2) -> 'likes' }
     { rule: noun(E1) -> 'cat',                          sense: cat(E1) }
     { rule: number(E1) -> ~^[0-9]+$~ }
 
-    ellipsis: [root] [prev] .. catname(V)
+    { rule: ...,                                        ellipsis: [root] [prev] .. catname(V) }
+
+    { rule: noun(E1) -> 'cats',                         tag: number(E1, plural) }
+    { rule: noun(E1) -> 'eats',                         tag: number(E1, singular) person(E1, 2) }
+    { rule: S(P) -> np(E1) vp(P),                       tag: function(E1, subject) }
+    { rule: S(P) -> s(P1) 'and' s(P2),                  tag: root_clause(P1) root_clause(P2) }
 
 ## Inference rules
 

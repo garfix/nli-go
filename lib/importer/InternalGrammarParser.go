@@ -10,8 +10,9 @@ import (
 const (
 	field_sense           = "sense"
 	field_ellipsis        = "ellipsis"
+	field_tag             = "tag"
 	field_condition       = "condition"
-	field_result		  = "result"
+	field_result          = "result"
 	field_transformations = "transformations"
 	field_rule            = "rule"
 	field_preparation     = "preparation"
@@ -32,7 +33,7 @@ func NewInternalGrammarParser() *InternalGrammarParser {
 		tokenizer:        new(GrammarTokenizer),
 		lastParsedResult: ParseResult{},
 		panicOnParseFail: true,
-		aliasMap: map[string]string{"": "", "go": "go"},
+		aliasMap:         map[string]string{"": "", "go": "go"},
 	}
 }
 

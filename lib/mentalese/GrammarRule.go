@@ -6,13 +6,14 @@ import (
 
 type GrammarRule struct {
 	// relation -> relation word-form
-	PositionTypes 		[]string
+	PositionTypes []string
 	// vp -> np vbar
 	SyntacticCategories []string
 	// (P1, E1) -> (E1) (P1, E1)
 	EntityVariables [][]string
 	Sense           RelationSet
 	Ellipsis        CategoryPathList
+	Tag             RelationSet
 }
 
 const PosTypeRelation = "relation"
@@ -21,11 +22,11 @@ const PosTypeRegExp = "reg-exp"
 
 func NewGrammarRule(positionTypes []string, syntacticCategories []string, entityVariables [][]string, sense RelationSet) GrammarRule {
 	return GrammarRule{
-		PositionTypes: 		 positionTypes,
+		PositionTypes:       positionTypes,
 		SyntacticCategories: syntacticCategories,
 		EntityVariables:     entityVariables,
 		Sense:               sense,
-		Ellipsis:			 CategoryPathList{},
+		Ellipsis:            CategoryPathList{},
 	}
 }
 
@@ -125,15 +126,15 @@ func (rule GrammarRule) Equals(otherRule GrammarRule) bool {
 func (rule GrammarRule) Copy() GrammarRule {
 
 	return GrammarRule{
-		PositionTypes:		 common.StringArrayCopy(rule.PositionTypes),
+		PositionTypes:       common.StringArrayCopy(rule.PositionTypes),
 		SyntacticCategories: common.StringArrayCopy(rule.SyntacticCategories),
 		EntityVariables:     common.StringMatrixCopy(rule.EntityVariables),
 		Sense:               rule.Sense.Copy(),
-		Ellipsis: 			 rule.Ellipsis.Copy(),
+		Ellipsis:            rule.Ellipsis.Copy(),
 	}
 }
 
-func (rule GrammarRule) ReplaceVariable(fromVar string, toVar string)  GrammarRule {
+func (rule GrammarRule) ReplaceVariable(fromVar string, toVar string) GrammarRule {
 	newRule := rule.Copy()
 	for i, entityVariableArray := range rule.EntityVariables {
 		for j, entityVariable := range entityVariableArray {

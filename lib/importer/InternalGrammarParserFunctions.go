@@ -237,27 +237,31 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (mentalese.GrammarRule, int, bool) {
 
 	rule := mentalese.GrammarRule{}
-	ruleFound, senseFound, ellipsisFound := false, false, false
+	ruleFound, senseFound, ellipsisFound, tagFound := false, false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
 		ok := true
 
 		switch key {
-			case field_rule:
-				rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
-				ok = ok && !ruleFound
-				ruleFound = true
-			case field_sense:
-				rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
-				ok = ok && !senseFound
-				senseFound = true
-			case field_ellipsis:
-				rule.Ellipsis, startIndex, ok = parser.parseCategoryPaths(tokens, startIndex)
-				ok = ok && !ellipsisFound
-				ellipsisFound = true
-			default:
-				ok = false
+		case field_rule:
+			rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
+			ok = ok && !ruleFound
+			ruleFound = true
+		case field_sense:
+			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			ok = ok && !senseFound
+			senseFound = true
+		case field_ellipsis:
+			rule.Ellipsis, startIndex, ok = parser.parseCategoryPaths(tokens, startIndex)
+			ok = ok && !ellipsisFound
+			ellipsisFound = true
+		case field_tag:
+			rule.Tag, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			ok = ok && !tagFound
+			tagFound = true
+		default:
+			ok = false
 		}
 
 		return startIndex, ok, ruleFound
@@ -265,7 +269,7 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
 
-	return rule, startIndex,  ok
+	return rule, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, startIndex int) (mentalese.GrammarRule, int, bool) {
@@ -278,16 +282,16 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 		ok := true
 
 		switch key {
-			case field_rule:
-				rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
-				ok = ok && !ruleFound
-				ruleFound = true
-			case field_condition:
-				rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
-				ok = ok && !conditionFound
-				conditionFound = true
-			default:
-				ok = false
+		case field_rule:
+			rule.SyntacticCategories, rule.EntityVariables, rule.PositionTypes, startIndex, ok = parser.parseSyntacticRewriteRule(tokens, startIndex)
+			ok = ok && !ruleFound
+			ruleFound = true
+		case field_condition:
+			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			ok = ok && !conditionFound
+			conditionFound = true
+		default:
+			ok = false
 		}
 
 		return startIndex, ok, ruleFound
@@ -295,7 +299,7 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
 
-	return rule, startIndex,  ok
+	return rule, startIndex, ok
 }
 
 func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, startIndex int) ([]string, [][]string, []string, int, bool) {
@@ -451,7 +455,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 			_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 			if ok {
 				startIndex = newStartIndex
-				if !common.StringArrayContains([]string{ mentalese.NodeTypePrevSentence }, nodeType) {
+				if !common.StringArrayContains([]string{mentalese.NodeTypePrevSentence}, nodeType) {
 					ok = false
 				}
 				goto done
@@ -468,7 +472,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 		startIndex = newStartIndex
 	}
 
-	category:
+category:
 
 	{
 		relation, newStartIndex, ok := parser.parseRelation(tokens, startIndex, false)
@@ -481,7 +485,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 		}
 	}
 
-	done:
+done:
 
 	node = mentalese.NewCategoryPathNode(nodeType, category, variables, allowIndirect)
 
@@ -497,7 +501,7 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 	relation := mentalese.Relation{}
 	relationSet := mentalese.RelationSet{}
 	newStartIndex := 0
-	found:= false
+	found := false
 	ok := false
 
 	for startIndex < len(tokens) {
@@ -675,7 +679,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			}
 
 		}
-		relation = mentalese.NewRelation(negate, prefix + predicate, arguments)
+		relation = mentalese.NewRelation(negate, prefix+predicate, arguments)
 	}
 
 	return relation, startIndex, ok
@@ -832,7 +836,7 @@ func (parser *InternalGrammarParser) parseTermList(tokens []Token, startIndex in
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
 	}
 
-	end:
+end:
 
 	return list, startIndex, ok
 }
@@ -875,7 +879,7 @@ func (parser *InternalGrammarParser) parseRuleReference(tokens []Token, startInd
 
 	term = mentalese.NewTermAtom(prefix + predicate)
 
-	end:
+end:
 
 	return term, startIndex, ok
 }
@@ -1132,7 +1136,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 		}
 	}
 
-	end:
+end:
 
 	return term, startIndex, ok
 }

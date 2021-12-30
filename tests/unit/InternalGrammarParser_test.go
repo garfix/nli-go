@@ -49,7 +49,7 @@ func TestInternalGrammarParser(t *testing.T) {
 
 	grammar = parser.CreateGrammarRules(
 		"{ rule: s(P) -> np(E) vp(P),    sense: subject(P, E) }" +
-		"{ rule: np(P) -> nbar(E) }")
+			"{ rule: np(P) -> nbar(E) }")
 
 	rules = grammar.FindRules("s", 1)
 	if len(rules) != 1 {
@@ -79,6 +79,8 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: +-np(E) }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: ..np(E)/vp(P)/+noun(E)/-noun(E)/+-noun(E) }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: vp(P)//noun(E) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), tag: function(P, subject) }")
+	parser.CreateGrammarRules("{ rule: a(P) -> b(P), tag: number(P, singular) person(P, 3) }")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {

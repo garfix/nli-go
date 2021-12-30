@@ -166,7 +166,7 @@ What about
     Grasp the pyramid
     I don't understand which one you mean
 
-"the pyramid" is a definite reference, but it might be anaphoric (refer to a previous discouse entity) or nonanaphoric (refer to an object in the scene).
+"the pyramid" is a definite reference, but it might be anaphoric (refer to a previous discourse entity) or nonanaphoric (refer to an object in the scene).
 
 ===
 

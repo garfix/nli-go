@@ -2,21 +2,22 @@ package parse
 
 import "nli-go/lib/mentalese"
 
+// Replaces the entity variables in a parse tree with discourse entities (discourse-wide variables)
 type Dialogizer struct {
 	variableGenerator *mentalese.VariableGenerator
-	senseBuilder SenseBuilder
+	senseBuilder      SenseBuilder
 }
 
 func NewDialogizer(variableGenerator *mentalese.VariableGenerator) *Dialogizer {
 	return &Dialogizer{
 		variableGenerator: variableGenerator,
-		senseBuilder: NewSenseBuilder(variableGenerator),
+		senseBuilder:      NewSenseBuilder(variableGenerator),
 	}
 }
 
 func (d *Dialogizer) Dialogize(node *mentalese.ParseTreeNode) *mentalese.ParseTreeNode {
 
-	rootVariables := []string{ d.variableGenerator.GenerateVariable("Sentence").TermValue }
+	rootVariables := []string{d.variableGenerator.GenerateVariable("Sentence").TermValue}
 
 	return d.dialogizeNode(node, rootVariables)
 }
@@ -57,7 +58,7 @@ func (d *Dialogizer) dialogizeNode(node *mentalese.ParseTreeNode, actualAntecede
 	return &newSource
 }
 
-func (d *Dialogizer) dialogizeRule(rule mentalese.GrammarRule, variableMap map[string] mentalese.Term) mentalese.GrammarRule {
+func (d *Dialogizer) dialogizeRule(rule mentalese.GrammarRule, variableMap map[string]mentalese.Term) mentalese.GrammarRule {
 	binding := mentalese.NewBinding()
 	for key, value := range variableMap {
 		binding.Set(key, value)

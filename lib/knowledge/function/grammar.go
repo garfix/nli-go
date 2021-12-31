@@ -128,14 +128,18 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 	cursor.SetState("childIndex", 0)
 
 	newBindings, loading := base.doBackReference(messenger, relation, binding)
-	if loading { return mentalese.NewBindingSet() }
+	if loading {
+		return mentalese.NewBindingSet()
+	}
 
 	if newBindings.IsEmpty() {
 		newBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
-		if loading { return mentalese.NewBindingSet() }
+		if loading {
+			return mentalese.NewBindingSet()
+		}
 
 		if newBindings.GetLength() > 1 {
-			loading = base.rangeIndexClarification(messenger)
+			base.rangeIndexClarification(messenger)
 			newBindings = mentalese.NewBindingSet()
 		}
 	}
@@ -144,28 +148,9 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 }
 
 // ask the user which of the specified entities he/she means
-func (base *SystemSolverFunctionBase) rangeIndexClarification(messenger api.ProcessMessenger) bool {
+func (base *SystemSolverFunctionBase) rangeIndexClarification(messenger api.ProcessMessenger) {
 
-	cursor := messenger.GetCursor()
-	state := cursor.GetState("state", 0)
-	cursor.SetState("state", state + 1)
-
-	if state == 0 {
-
-		set := mentalese.RelationSet{
-			mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-				mentalese.NewTermRelationSet(mentalese.RelationSet{
-					mentalese.NewRelation(false, mentalese.PredicateOutput, []mentalese.Term{
-						mentalese.NewTermString("I don't understand which one you mean"),
-					})}),
-			}),
-		}
-		messenger.CreateChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-		return true
-
-	} else {
-		return false
-	}
+	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString("I don't understand which one you mean"))
 }
 
 func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -206,7 +191,9 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
 		newBindings, loading = messenger.ExecuteChildStackFrameAsync(sortRelationSet, mentalese.InitBindingSet(binding))
-		if loading { return mentalese.NewBindingSet() }
+		if loading {
+			return mentalese.NewBindingSet()
+		}
 		break
 	}
 

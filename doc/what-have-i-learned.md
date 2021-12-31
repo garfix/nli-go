@@ -35,3 +35,24 @@ Anaphora has the following aspects
 - back-references (anaphoric) vs forward references (cataphoric)
 - direct references ("the car") vs indirect references (referring to an entity that can be deduced) ("related objects", NLU1, p346)
 - it may refer to NP's but also to VP's and S's.
+
+## Parsing multiple sentences
+
+An old problem of a parser is that it can only parse one sentence at a time. Sometimes people enter two or more sentences on the same line, however. How can we solve this?
+
+The sentence terminator period is problematic. Sentences contain periods in abbreviations as well.
+
+There is however a simple solution: parse multiple sentences just like single sentences:
+
+    { rule: S(P) -> S(P1) S(P2) }
+
+This solution has a single problem: where do the subsentences start? In this example this is simple. But what if you want to treat sentences with top-level conjunctons in the same way?
+
+    Find a block which is taller than the one you are holding and put it into the box.
+
+    { rule: S(P) -> imperative(P1) 'and' imperative(P2) }
+
+To solve this we can manually tag where the root clauses start:
+
+    { rule: S(P) -> imperative(P1) 'and' imperative(P2),    tag: go:root_clause(P1) go:root_clause(P2) }
+

@@ -154,6 +154,8 @@ const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
 
+const SlotSolutionOutput = "solution-output"
+
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{
 		Negate:    negate,

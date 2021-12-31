@@ -75,12 +75,11 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
     go:subtract(SolSize, 1, LastSol)
     go:list_foreach(Solutions, Index, Sol,
 
-        go:retract(go:output(_))
-        go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount)
+        go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput)
 
-        /* If there was a problem, stop */
-        go:if_then(go:output(O),
-            go:let(Output, O)
+        /* If there was a problem, or a request for clarification, stop */
+        go:if_then(go:not_equals(SolveOutput, ''),
+            go:let(Output, SolveOutput)
             go:return()
         )
         /* If there were solutions, good! */

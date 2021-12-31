@@ -5,6 +5,8 @@
 * translation of canned texts using CSV files
 * ellipsis / path DSL
 * discourse entities
+* centering
+* parsing multiple sentences on a line 
 
 ## 1.13 asynchronous execution - 26-03-2021
 

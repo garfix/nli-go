@@ -4,9 +4,9 @@ Now implementing:
 
 todo:
 - [done] extend the read gramma with syntactic functions / syntactic tags
-- add `root_clause`'s to the block's world grammar
+- [done] add `root_clause`'s to the block's world grammar
+- [done] add an extra processing step to `respond.rule` that splits up a sentence into root clauses
 - merge anaphora queue and discourse entities in a new structure that groups by root clause
-- add an extra processing step to `respond.rule` that splits up a sentence into root clauses
 - add an extra processing step to `respond.rule` that adds a new node (or multiple nodes) to this structure (centering)
 - make sure this new structure is used in all places that first used the old structures
 - replace `dialog_anaphora_queue_last` (in `describe.rule`) by `dialog_anaphora_queue_find_forward_looking_center(constraint_relation)`

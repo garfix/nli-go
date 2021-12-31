@@ -6,22 +6,30 @@ go:tell(Input) :-
             Uuid));
 
 go:respond(Input) :-
+
+    /* We use `let` here because there can be Outputs that may be overridden later */
     go:let(Output, '')
+
     go:ignore(
-        go:start_input()
+
+/* ? remove variables from anaphora queue */
+go:start_input()
+
         go:find_locale(Locale)
         go:slot(locale, Locale)
         go:dialog_read_bindings(DialogBinding)
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)
 
-        /* If there are multiple parse trees, stop at the first successfully processed one */
+        /* Stop at the first successfully processed parse tree */
         go:cut(1,
             go:dialogize(ParseTree, DialogParseTree)
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
-            go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, LastOutput, ContinueLooking)
-            go:let(Output, LastOutput)
+            go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
+            go:let(Output, RootClauseOutput)
+
+            /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
             go:if_then(go:equals(ContinueLooking, true),
                 go:fail()
             )
@@ -42,6 +50,7 @@ go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, Co
         go:return()
     )
 
+    /* Stop at the first successfully processed solution */
     go:cut(1,
         go:find_solution(Request, Solution)
         go:make_list(Solutions, Solution)
@@ -64,32 +73,29 @@ go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, Co
 go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings) :-
     go:list_length(Solutions, SolSize)
     go:subtract(SolSize, 1, LastSol)
-    go:let(Success, false)
     go:list_foreach(Solutions, Index, Sol,
 
         go:retract(go:output(_))
         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount)
 
+        /* If there was a problem, stop */
         go:if_then(go:output(O),
-            go:let(Success, true)
             go:let(Output, O)
             go:return()
         )
+        /* If there were solutions, good! */
         go:if_then(go:greater_than(ResultCount, 0),
-            go:let(Success, true)
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
             go:let(Output, '')
             go:return()
         )
+        /* If this is the last available solution, take it anyway */
         go:if_then(go:equals(LastSol, Index),
-            go:let(Success, true)
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
             go:let(Output, '')
             go:return()
         )
     )
-    go:log('fail')
-    go:fail()
 ;

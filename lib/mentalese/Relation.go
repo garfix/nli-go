@@ -13,6 +13,7 @@ type Relation struct {
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
 const ProcessInstructionCancel = "cancel"
+const ProcessInstructionReturn = "return"
 const ProcessInstructionStop = "stop"
 
 const FrameTypePlain = "plain"
@@ -46,6 +47,7 @@ const PredicateXor = "go_xor"
 const PredicateIfThen = "go_if_then"
 const PredicateIfThenElse = "go_if_then_else"
 const PredicateFail = "go_fail"
+const PredicateReturn = "go_return"
 const PredicateCall = "go_call"
 const PredicateIgnore = "go_ignore"
 const PredicateAssert = "go_assert"
@@ -106,6 +108,7 @@ const PredicateParse = "go_parse"
 const PredicateDialogize = "go_dialogize"
 const PredicateEllipsize = "go_ellipsize"
 const PredicateRelationize = "go_relationize"
+const PredicateExtractRootClauses = "go_extract_root_clauses"
 const PredicateGenerate = "go_generate"
 const PredicateSurface = "go_surface"
 const PredicateTranslate = "go_translate"
@@ -130,6 +133,8 @@ const PredicateDialogAnaphoraQueueLast = "go_dialog_anaphora_queue_last"
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"
 const CategoryProperNounGroup = "proper_noun_group"
+
+const TagRootClause = "go_root_clause"
 
 const AtomNone = "none"
 const AtomSome = "some"
@@ -271,7 +276,6 @@ func (relation Relation) String() string {
 	return sign + relation.Predicate + "(" + args + ")"
 }
 
-
 func (relation Relation) IndentedString(indent string) string {
 
 	args := ""
@@ -280,7 +284,7 @@ func (relation Relation) IndentedString(indent string) string {
 	for _, Argument := range relation.Arguments {
 
 		if Argument.IsRelationSet() {
-			args += sep + Argument.TermValueRelationSet.IndentedString(indent + "    ")
+			args += sep + Argument.TermValueRelationSet.IndentedString(indent+"    ")
 		} else {
 			args += sep + Argument.String()
 		}

@@ -13,7 +13,9 @@ func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relati
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "**", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "**", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
@@ -75,7 +77,7 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 
 	cursor := messenger.GetCursor()
 	state := cursor.GetState("state", 0)
-	cursor.SetState("state", state + 1)
+	cursor.SetState("state", state+1)
 
 	if state == 0 {
 
@@ -102,6 +104,19 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 func (base *SystemSolverFunctionBase) fail(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	return mentalese.NewBindingSet()
+}
+
+func (base *SystemSolverFunctionBase) returnStatement(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	messenger.AddProcessInstruction(mentalese.ProcessInstructionReturn, "")
+
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -168,7 +183,7 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 
 	cursor := messenger.GetCursor()
 	index := cursor.GetState("index", start)
-	cursor.SetState("index", index + 1)
+	cursor.SetState("index", index+1)
 
 	if index == start {
 		cursor.SetType(mentalese.FrameTypeLoop)
@@ -191,7 +206,9 @@ func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, re
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	messenger.AddProcessInstruction(mentalese.ProcessInstructionBreak, "")
 
@@ -202,7 +219,9 @@ func (base *SystemSolverFunctionBase) cancel(messenger api.ProcessMessenger, rel
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	messenger.AddProcessInstruction(mentalese.ProcessInstructionCancel, "")
 
@@ -243,7 +262,9 @@ func (base *SystemSolverFunctionBase) exec(messenger api.ProcessMessenger, input
 	command := bound.Arguments[0].TermValue
 	args := []string{}
 	for i := range bound.Arguments {
-		if i == 0 { continue }
+		if i == 0 {
+			continue
+		}
 		args = append(args, bound.Arguments[i].TermValue)
 	}
 	cmd := exec.Command(command, args...)
@@ -254,9 +275,8 @@ func (base *SystemSolverFunctionBase) exec(messenger api.ProcessMessenger, input
 
 	newBinding := binding.Copy()
 
-	return mentalese.InitBindingSet( newBinding )
+	return mentalese.InitBindingSet(newBinding)
 }
-
 
 func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
@@ -270,7 +290,9 @@ func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenge
 	command := bound.Arguments[1].TermValue
 	args := []string{}
 	for i := range bound.Arguments {
-		if i < 2 { continue }
+		if i < 2 {
+			continue
+		}
 		args = append(args, bound.Arguments[i].TermValue)
 	}
 	cmd := exec.Command(command, args...)
@@ -283,7 +305,7 @@ func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenge
 
 	newBinding.Set(responseVar, mentalese.NewTermString(string(output)))
 
-	return mentalese.InitBindingSet( newBinding )
+	return mentalese.InitBindingSet(newBinding)
 }
 
 func (base *SystemSolverFunctionBase) slot(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

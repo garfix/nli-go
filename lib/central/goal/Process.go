@@ -3,9 +3,9 @@ package goal
 import "nli-go/lib/mentalese"
 
 type Process struct {
-	GoalId           string
-	Stack            []*StackFrame
-	Slots            map[string]mentalese.Term
+	GoalId string
+	Stack  []*StackFrame
+	Slots  map[string]mentalese.Term
 }
 
 func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
@@ -154,6 +154,9 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame 
 		case mentalese.ProcessInstructionCancel:
 			outBindings = mentalese.NewBindingSet()
 			currentFrame = p.executeBreak(currentFrame)
+		case mentalese.ProcessInstructionReturn:
+			outBindings = currentFrame.InBindings
+			currentFrame = p.executeReturn(currentFrame)
 		case mentalese.ProcessInstructionStop:
 			hasStopped = true
 		}
@@ -181,6 +184,24 @@ func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
 			// todo: log error: break without loop
 			done = true
 		default:
+			p.PopFrame()
+		}
+	}
+
+	return currentFrame
+}
+
+func (p *Process) executeReturn(currentFrame *StackFrame) *StackFrame {
+	for true {
+		frame := p.GetLastFrame()
+
+		if frame == nil {
+			break
+		}
+		if frame.Cursor.GetType() == mentalese.FrameTypeScope {
+			currentFrame = frame
+			break
+		} else {
 			p.PopFrame()
 		}
 	}
@@ -238,7 +259,7 @@ func (p *Process) GetLastFrame() *StackFrame {
 	if len(p.Stack) == 0 {
 		return nil
 	} else {
-		return p.Stack[len(p.Stack) - 1]
+		return p.Stack[len(p.Stack)-1]
 	}
 }
 
@@ -246,12 +267,12 @@ func (p *Process) GetBeforeLastFrame() *StackFrame {
 	if len(p.Stack) < 2 {
 		return nil
 	} else {
-		return p.Stack[len(p.Stack) - 2]
+		return p.Stack[len(p.Stack)-2]
 	}
 }
 
 func (p *Process) PopFrame() {
-	p.Stack = p.Stack[0 : len(p.Stack) - 1]
+	p.Stack = p.Stack[0 : len(p.Stack)-1]
 }
 
 func (p *Process) IsDone() bool {

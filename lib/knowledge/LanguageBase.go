@@ -50,21 +50,22 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		mentalese.PredicateStartInput:   base.startInput,
-		mentalese.PredicateFindLocale:   base.findLocale,
-		mentalese.PredicateTokenize:     base.tokenize,
-		mentalese.PredicateParse:        base.parse,
-		mentalese.PredicateDialogize:    base.dialogize,
-		mentalese.PredicateEllipsize:    base.ellipsize,
-		mentalese.PredicateRelationize:  base.relationize,
-		mentalese.PredicateGenerate:     base.generate,
-		mentalese.PredicateSurface:      base.surface,
-		mentalese.PredicateFindSolution: base.findSolution,
-		mentalese.PredicateSolve:        base.solve,
-		mentalese.PredicateFindResponse: base.findResponse,
-		mentalese.PredicateCreateAnswer: base.createAnswer,
-		mentalese.PredicateCreateCanned: base.createCanned,
-		mentalese.PredicateTranslate:    base.translate,
+		mentalese.PredicateStartInput:         base.startInput,
+		mentalese.PredicateFindLocale:         base.findLocale,
+		mentalese.PredicateTokenize:           base.tokenize,
+		mentalese.PredicateParse:              base.parse,
+		mentalese.PredicateDialogize:          base.dialogize,
+		mentalese.PredicateEllipsize:          base.ellipsize,
+		mentalese.PredicateRelationize:        base.relationize,
+		mentalese.PredicateExtractRootClauses: base.extractRootClauses,
+		mentalese.PredicateGenerate:           base.generate,
+		mentalese.PredicateSurface:            base.surface,
+		mentalese.PredicateFindSolution:       base.findSolution,
+		mentalese.PredicateSolve:              base.solve,
+		mentalese.PredicateFindResponse:       base.findResponse,
+		mentalese.PredicateCreateAnswer:       base.createAnswer,
+		mentalese.PredicateCreateCanned:       base.createCanned,
+		mentalese.PredicateTranslate:          base.translate,
 	}
 }
 
@@ -238,6 +239,33 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 	base.dialogContext.Sentences = append(base.dialogContext.Sentences, &newParseTree)
 
 	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) extractRootClauses(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "jv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	rootClauseVar := input.Arguments[1].TermValue
+
+	var parseTree mentalese.ParseTreeNode
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	rootClauseExtracter := parse.NewRootClauseExtracter()
+	rootClauses := rootClauseExtracter.Extract(&parseTree)
+
+	newBindings := mentalese.NewBindingSet()
+
+	for _, rootClause := range rootClauses {
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(rootClauseVar, mentalese.NewTermJson(rootClause))
+		newBindings.Add(newBinding)
+	}
+
+	return newBindings
 }
 
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

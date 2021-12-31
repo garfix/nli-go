@@ -119,6 +119,12 @@ Breaks a loop and discards all bindings built so far.
 
     go:cancel()
 
+## Return
+
+Ends a function and keeps all bindings.
+
+    go:return()
+
 ## Wait for
 
 This relation tries `Condition` until it succeeds.

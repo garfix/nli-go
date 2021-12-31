@@ -193,13 +193,14 @@
 
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
-{ rule: imperative_clause(P1) -> vp(P1) }
-{ rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), sense: $imperative_clause1 $imperative_clause2 }
+{ rule: imperative_clause(P1) -> vp(P1),                                            sense: go:intent(command) }
+{ rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), sense: $imperative_clause1 $imperative_clause2,
+                                                                                    tag: go:root_clause(P1) go:root_clause(P2) }
 
 { rule: imperative(P1) -> imperative_clause(P1) '.' }
 { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }
 { rule: imperative(P1) -> imperative_clause(P1) }
 
 { rule: s(S1) -> declarative(S1),                                       sense: go:intent(declaration) }
-{ rule: s(S1) -> imperative(S1),                                        sense: go:intent(command) }
+{ rule: s(S1) -> imperative(S1) }
 { rule: s(S1) -> interrogative(S1),                                     sense: go:intent(question) }

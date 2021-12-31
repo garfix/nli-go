@@ -27,6 +27,7 @@ func NewGrammarRule(positionTypes []string, syntacticCategories []string, entity
 		EntityVariables:     entityVariables,
 		Sense:               sense,
 		Ellipsis:            CategoryPathList{},
+		Tag:                 RelationSet{},
 	}
 }
 
@@ -76,6 +77,7 @@ func (rule GrammarRule) BindSimple(binding Binding) GrammarRule {
 
 	bound.Sense = bound.Sense.BindSingle(binding)
 	bound.Ellipsis = bound.Ellipsis.BindSingle(binding)
+	bound.Tag = bound.Tag.BindSingle(binding)
 
 	return bound
 }
@@ -131,6 +133,7 @@ func (rule GrammarRule) Copy() GrammarRule {
 		EntityVariables:     common.StringMatrixCopy(rule.EntityVariables),
 		Sense:               rule.Sense.Copy(),
 		Ellipsis:            rule.Ellipsis.Copy(),
+		Tag:                 rule.Tag.Copy(),
 	}
 }
 

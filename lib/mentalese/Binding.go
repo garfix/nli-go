@@ -58,6 +58,14 @@ func (b Binding) GetAll() map[string]Term {
 	return all
 }
 
+func (b Binding) GetKeys() []string {
+	all := []string{}
+	for key := range b.Key2vvalue {
+		all = append(all, key)
+	}
+	return all
+}
+
 // Returns a new Binding that is a copy of b, merged with b2
 func (b Binding) Merge(b2 Binding) Binding {
 

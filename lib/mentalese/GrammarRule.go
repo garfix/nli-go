@@ -147,6 +147,7 @@ func (rule GrammarRule) ReplaceVariable(fromVar string, toVar string) GrammarRul
 		}
 	}
 	newRule.Sense = newRule.Sense.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
+	newRule.Tag = newRule.Tag.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
 	return newRule
 }
 

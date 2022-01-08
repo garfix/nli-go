@@ -17,6 +17,7 @@ type DialogContext struct {
 	ProcessList       *goal.ProcessList
 	VariableGenerator *mentalese.VariableGenerator
 	DiscourseEntities *mentalese.Binding
+	ClauseList        *mentalese.ClauseList
 }
 
 func NewDialogContext(
@@ -35,12 +36,19 @@ func NewDialogContext(
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
 		DiscourseEntities: discourseEntities,
+		ClauseList:        mentalese.NewClauseList(),
 	}
 	dialogContext.Initialize()
 
-	storage.Read(dialogContext)
+	if storage != nil {
+		storage.Read(dialogContext)
+	}
 
 	return dialogContext
+}
+
+func (dc *DialogContext) GetClauseList() *mentalese.ClauseList {
+	return dc.ClauseList
 }
 
 func (dc *DialogContext) Initialize() {
@@ -51,8 +59,11 @@ func (dc *DialogContext) Initialize() {
 	dc.VariableGenerator.Initialize()
 
 	dc.DiscourseEntities.Clear()
+	dc.ClauseList.Clear()
 }
 
 func (dc *DialogContext) Store() {
-	dc.storage.Write(dc)
+	if dc.storage != nil {
+		dc.storage.Write(dc)
+	}
 }

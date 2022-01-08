@@ -42,7 +42,8 @@
 { rule: mem_vp(P1) -> 'put' np(E1) 'on' np(E2),                        sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:put_on(P1, _, E1, E2))) }
 { rule: mem_vp(P1) -> np(E1) mem_vp(P1),                               sense: go:quant_check($np, $mem_vp) }
 
-{ rule: mem_vp(P1) -> aux_do(_) np(E1) 'pick' np(E2) 'up',             sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
+{ rule: mem_vp(P1) -> aux_do(_) np(E1) 'pick' np(E2) 'up',             sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))),
+                                                                       tag: go:function(E1, subject) go:function(E2, object) }
 
 { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                         sense: go:quant_foreach($np, $tv) }
 { rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }

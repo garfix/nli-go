@@ -126,6 +126,37 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := input.BindSingle(binding)
+
+	essentialResponseBindings := mentalese.NewBindingSet()
+	someBindingsRaw := []map[string]mentalese.Term{}
+	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
+	essentialResponseBindings.FromRaw(someBindingsRaw)
+
+	entities := []*mentalese.ClauseEntity{}
+	for _, binding := range essentialResponseBindings.GetAll() {
+		for _, variable := range binding.GetKeys() {
+			entities = append(entities, mentalese.NewClauseEntity(variable, mentalese.AtomFunctionObject))
+		}
+	}
+
+	clause := mentalese.NewClause(nil, true, entities)
+
+	if len(entities) > 0 {
+		clause.Center = entities[0]
+	} else {
+		previousClause := base.dialogContext.ClauseList.GetLastClause()
+		if previousClause != nil {
+			clause.Center = previousClause.Center
+		}
+	}
+
+	base.dialogContext.GetClauseList().AddClause(clause)
+
+	return mentalese.InitBindingSet(binding)
+}
+
 func (base *SystemSolverFunctionBase) dialogAnaphoraQueueLast(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)

@@ -39,9 +39,8 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-/*    go:if_then_else(
-        go:dialog_anaphora_queue_last(L1, object(L1)) go:equals(E1, L1),
-        go:let(Set, center(E1)), */
+    go:if_then_else(go:dialog_get_center(L1) go:log(L1) go:equals(E1, L1),
+        go:let(Set, center(E1)),
 
         go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
 
@@ -53,7 +52,7 @@ describe_categoric(E1, Sort, DescSet) :-
                 go:let(Set, {{ Set }} volume(E1, V) indeterminate(E1))
             )
         )
-    /*)*/
+    )
     go:unify(DescSet, Set)
 ;
 

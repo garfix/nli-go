@@ -7,6 +7,8 @@ go:tell(Input) :-
 
 go:respond(Input) :-
 
+go:log(Input)
+
     /* We use `let` here because there can be Outputs that may be overridden later */
     go:let(Output, '')
 
@@ -42,6 +44,9 @@ go:start_input()
 ;
 
 go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, ContinueLooking) :-
+
+/*    go:dialog_add_root_clause(RootClauseTree, false)
+*/
     go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
     go:if_then(go:not_equals(UnresolvedName, ''),
@@ -54,7 +59,7 @@ go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, Co
     go:cut(1,
         go:find_solution(Request, Solution)
         go:make_list(Solutions, Solution)
-        go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings)
+        go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
         go:if_then(go:not_equals(AnOutput, ''),
              go:unify(Output, AnOutput)
              go:unify(ContinueLooking, false)
@@ -62,20 +67,25 @@ go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, Co
         )
     )
 
+
+go:dialog_write_bindings(AcceptedBindings)
+go:dialog_add_root_clause(RootClauseTree, false)
+
     go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
     go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
     go:dialog_write_bindings(ResponseBindings)
+    go:dialog_add_response_clause(EssentialBindings)
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)
     go:unify(ContinueLooking, false)
 ;
 
-go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings) :-
+go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
     go:list_length(Solutions, SolSize)
     go:subtract(SolSize, 1, LastSol)
     go:list_foreach(Solutions, Index, Sol,
 
-        go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput)
+        go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
 
         /* If there was a problem, or a request for clarification, stop */
         go:if_then(go:not_equals(SolveOutput, ''),
@@ -86,6 +96,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
         go:if_then(go:greater_than(ResultCount, 0),
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
+            go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
             go:return()
         )
@@ -93,6 +104,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
         go:if_then(go:equals(LastSol, Index),
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
+            go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
             go:return()
         )

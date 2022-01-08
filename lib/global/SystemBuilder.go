@@ -21,8 +21,8 @@ import (
 type systemBuilder struct {
 	log                *common.SystemLog
 	baseDir            string
-	sessionId		   string
-	varDir			   string
+	sessionId          string
+	varDir             string
 	parser             *importer.InternalGrammarParser
 	loadedModules      []string
 	applicationAliases map[string]string
@@ -33,7 +33,7 @@ type systemBuilder struct {
 // log: the log file that will store progress and errors
 func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog) *System {
 
-	system := &System{ log: log }
+	system := &System{log: log}
 
 	absolutePath, err := filepath.Abs(systemDir)
 	if err != nil {
@@ -52,12 +52,12 @@ func newSystemBuilder(baseDir string, sessionId string, varDir string, log *comm
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
-	return &systemBuilder {
-		baseDir: baseDir,
+	return &systemBuilder{
+		baseDir:   baseDir,
 		sessionId: sessionId,
-		varDir:  varDir,
-		parser:  parser,
-		log:     log,
+		varDir:    varDir,
+		parser:    parser,
+		log:       log,
 	}
 }
 
@@ -86,7 +86,7 @@ func (builder *systemBuilder) build(system *System) {
 		builder.applicationAliases[moduleName] = alias
 	}
 
-	builder.loadedModules = []string{ "go" }
+	builder.loadedModules = []string{"go"}
 	for _, moduleSpec := range config.Uses {
 		builder.loadModule(moduleSpec, &indexes, system)
 	}
@@ -141,7 +141,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
 	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &discourseEntities)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &discourseEntities, system.meta, builder.log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync
@@ -154,11 +154,11 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")
 	if ok {
-		builder.buildDomain(domainIndex, system, common.Dir() + "/../base/domain", "go")
+		builder.buildDomain(domainIndex, system, common.Dir()+"/../base/domain", "go")
 	}
 	dbIndex, ok := builder.buildIndex(common.Dir() + "/../base/db")
 	if ok {
-		builder.buildInternalDatabase(dbIndex, system, common.Dir() + "/../base/db", "nligo-db")
+		builder.buildInternalDatabase(dbIndex, system, common.Dir()+"/../base/db", "nligo-db")
 	}
 }
 
@@ -261,7 +261,7 @@ func (builder *systemBuilder) checkVersion(moduleName string, expectedVersion st
 func (builder *systemBuilder) createAliasMap(index index, moduleName string) map[string]string {
 
 	aliasMap := map[string]string{
-		"": builder.GetApplicationAlias(moduleName),
+		"":   builder.GetApplicationAlias(moduleName),
 		"go": "go",
 	}
 
@@ -312,26 +312,28 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 	}
 
 	for _, fileInfo := range files {
-		if !fileInfo.IsDir() { continue }
+		if !fileInfo.IsDir() {
+			continue
+		}
 
 		dirName := fileInfo.Name()
 		anIndex := index{}
 		anIndex, ok = builder.buildIndex(builder.baseDir + "/" + dirName)
-		if ! ok {
+		if !ok {
 			goto end
 		}
 
 		indexes[dirName] = anIndex
 	}
 
-	end:
+end:
 
 	return indexes, ok
 }
 
 func (builder *systemBuilder) buildIndex(dirName string) (index, bool) {
 
-	index := index{ }
+	index := index{}
 	indexPath := dirName + "/index.yml"
 
 	ok := true
@@ -360,8 +362,8 @@ func (builder *systemBuilder) buildIndex(dirName string) (index, bool) {
 		goto end
 	}
 
-	end:
-		return index, ok
+end:
+	return index, ok
 }
 
 func (builder *systemBuilder) GetApplicationAlias(module string) string {
@@ -434,10 +436,10 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 	grammar := parse.NewGrammar(index.Locale)
 
 	for _, read := range index.Read {
-		builder.importGrammarFromPath(&grammar, moduleBaseDir + "/" + read)
+		builder.importGrammarFromPath(&grammar, moduleBaseDir+"/"+read)
 	}
 	for _, write := range index.Write {
-		builder.importGenerationGrammarFromPath(&grammar, moduleBaseDir + "/" + write)
+		builder.importGenerationGrammarFromPath(&grammar, moduleBaseDir+"/"+write)
 	}
 
 	if index.TokenExpression != "" {
@@ -583,7 +585,7 @@ func (builder *systemBuilder) importGenerationGrammarFromPath(grammar *parse.Gra
 func (builder *systemBuilder) buildSolution(index index, system *System, moduleBaseDir string) {
 
 	for _, solution := range index.Solution {
-		builder.importSolutionBaseFromPath(system, moduleBaseDir + "/" + solution)
+		builder.importSolutionBaseFromPath(system, moduleBaseDir+"/"+solution)
 	}
 }
 
@@ -636,7 +638,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.varDir + "/sparql-cache", builder.log)
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.varDir+"/sparql-cache", builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {
@@ -657,14 +659,14 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 		prefix = applicationAlias + "_"
 	}
 
-	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, writeMap,  builder.log)
+	database := knowledge.NewMySqlFactBase(applicationAlias, index.Username, index.Password, index.Database, system.matcher, readMap, writeMap, builder.log)
 
 	for _, table := range index.Tables {
 		columns := []string{}
 		for _, column := range table.Columns {
 			columns = append(columns, column.Name)
 		}
-		database.AddTableDescription(prefix + table.Name, table.Name, columns)
+		database.AddTableDescription(prefix+table.Name, table.Name, columns)
 	}
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
@@ -771,7 +773,7 @@ func (builder systemBuilder) buildNames(index index, baseDir string, application
 	}
 
 	for key, value := range configMap {
-		names[applicationAlias + "_" + key] = value
+		names[applicationAlias+"_"+key] = value
 	}
 
 	return names, true

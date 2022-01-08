@@ -2,6 +2,7 @@ package tests
 
 import (
 	"nli-go/lib/central"
+	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
@@ -38,7 +39,9 @@ func TestInMemoryRuleBase(t *testing.T) {
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	nestedBase := function.NewSystemSolverFunctionBase(anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
+	processList := goal.NewProcessList()
+	dialogContext := central.NewDialogContext(nil, anaphoraQueue, deicticCenter, processList, variableGenerator, &discourseEntities)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	runner := central.NewProcessRunner(solver, log)
 	rules := parser.CreateRules(`

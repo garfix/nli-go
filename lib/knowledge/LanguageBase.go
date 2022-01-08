@@ -50,22 +50,24 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		mentalese.PredicateStartInput:         base.startInput,
-		mentalese.PredicateFindLocale:         base.findLocale,
-		mentalese.PredicateTokenize:           base.tokenize,
-		mentalese.PredicateParse:              base.parse,
-		mentalese.PredicateDialogize:          base.dialogize,
-		mentalese.PredicateEllipsize:          base.ellipsize,
-		mentalese.PredicateRelationize:        base.relationize,
-		mentalese.PredicateExtractRootClauses: base.extractRootClauses,
-		mentalese.PredicateGenerate:           base.generate,
-		mentalese.PredicateSurface:            base.surface,
-		mentalese.PredicateFindSolution:       base.findSolution,
-		mentalese.PredicateSolve:              base.solve,
-		mentalese.PredicateFindResponse:       base.findResponse,
-		mentalese.PredicateCreateAnswer:       base.createAnswer,
-		mentalese.PredicateCreateCanned:       base.createCanned,
-		mentalese.PredicateTranslate:          base.translate,
+		mentalese.PredicateStartInput:          base.startInput,
+		mentalese.PredicateFindLocale:          base.findLocale,
+		mentalese.PredicateTokenize:            base.tokenize,
+		mentalese.PredicateParse:               base.parse,
+		mentalese.PredicateDialogize:           base.dialogize,
+		mentalese.PredicateEllipsize:           base.ellipsize,
+		mentalese.PredicateRelationize:         base.relationize,
+		mentalese.PredicateExtractRootClauses:  base.extractRootClauses,
+		mentalese.PredicateDialogAddRootClause: base.dialogAddRootClause,
+		mentalese.PredicateDialogGetCenter:     base.dialogGetCenter,
+		mentalese.PredicateGenerate:            base.generate,
+		mentalese.PredicateSurface:             base.surface,
+		mentalese.PredicateFindSolution:        base.findSolution,
+		mentalese.PredicateSolve:               base.solve,
+		mentalese.PredicateFindResponse:        base.findResponse,
+		mentalese.PredicateCreateAnswer:        base.createAnswer,
+		mentalese.PredicateCreateCanned:        base.createCanned,
+		mentalese.PredicateTranslate:           base.translate,
 	}
 }
 
@@ -268,6 +270,52 @@ func (base *LanguageBase) extractRootClauses(messenger api.ProcessMessenger, inp
 	return newBindings
 }
 
+func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "ja", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	authorIsSystem := input.Arguments[1].TermValue
+
+	var parseTree mentalese.ParseTreeNode
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	clauseList := base.dialogContext.GetClauseList()
+	entitities := mentalese.ExtractEntities(&parseTree)
+	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entitities)
+	clause.UpdateCenter(clauseList, base.dialogContext.DiscourseEntities)
+	clauseList.AddClause(clause)
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	if !Validate(input, "v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	centerVar := input.Arguments[0].TermValue
+
+	center := mentalese.NewTermAtom("none")
+	clause := base.dialogContext.GetClauseList().GetLastClause()
+	if clause != nil && clause.Center != nil {
+		variable := clause.Center.DiscourseVariable
+		value, found := base.dialogContext.DiscourseEntities.Get(variable)
+		if found {
+			center = value
+		}
+	}
+
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(centerVar, center)
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
@@ -409,7 +457,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	transformer := central.NewRelationTransformer(base.matcher, base.log)
 
 	//Request, RequestBinding, Solution, ResultBindings
-	if !Validate(bound, "rjjvvv", base.log) {
+	if !Validate(bound, "rjjvvvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -420,6 +468,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	resultBindingsVar := input.Arguments[3].TermValue
 	resultCountVar := input.Arguments[4].TermValue
 	outputVar := input.Arguments[5].TermValue
+	essentialVar := input.Arguments[6].TermValue
 
 	requestBinding := mentalese.NewBinding()
 	requestBindingRaw := map[string]mentalese.Term{}
@@ -459,6 +508,15 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 			group = append(group, central.CreateEntityReference(id.TermValue, id.TermSort, variable))
 		}
 		base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+
+		essential := mentalese.NewBindingSet()
+		for _, id := range resultBindings.GetIds(variable) {
+			b := mentalese.NewBinding()
+			b.Set(variable, id)
+			essential.Add(b)
+		}
+
+		newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
 
 		return mentalese.InitBindingSet(newBinding)
 

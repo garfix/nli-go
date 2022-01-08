@@ -1,15 +1,29 @@
+## 2022-01-07
+
+On 5 January I managed to run all 25 interactions without any errors (!)
+
+I still have to replace the anaphora queue and the sentences list with the new clause list.
+
+## 2022-01-05
+
+I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
+
+## 2022-01-01
+
+Perhaps there can be an extra processing step in `respond.rule` that locates the backward-looking center of the new sentence.
+
 ## 2021-12-30
 
 Now implementing:
 
 todo:
-- [done] extend the read gramma with syntactic functions / syntactic tags
+- [done] extend the read grammar with syntactic functions / syntactic tags
 - [done] add `root_clause`'s to the block's world grammar
 - [done] add an extra processing step to `respond.rule` that splits up a sentence into root clauses
-- merge anaphora queue and discourse entities in a new structure that groups by root clause
-- add an extra processing step to `respond.rule` that adds a new node (or multiple nodes) to this structure (centering)
-- make sure this new structure is used in all places that first used the old structures
-- replace `dialog_anaphora_queue_last` (in `describe.rule`) by `dialog_anaphora_queue_find_forward_looking_center(constraint_relation)`
+- annotate the grammar with syntactic functions
+- [done] add an extra processing step to `respond.rule` that adds a new node (or multiple nodes) to this structure (centering)
+- make sure this new structure is used in all places that first used the old structures / remove anaphora queue and sentences from dialog context
+- [done] replace `dialog_anaphora_queue_last` (in `describe.rule`) by `dialog_get_center(constraint_relation)`
 
 ## 2021-12-29
 

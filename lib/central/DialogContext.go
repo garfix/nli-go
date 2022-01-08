@@ -13,7 +13,6 @@ type DialogContext struct {
 	storage           *common.FileStorage
 	AnaphoraQueue     *AnaphoraQueue
 	DeicticCenter     *DeicticCenter
-	Sentences         []*mentalese.ParseTreeNode
 	ProcessList       *goal.ProcessList
 	VariableGenerator *mentalese.VariableGenerator
 	DiscourseEntities *mentalese.Binding
@@ -32,7 +31,6 @@ func NewDialogContext(
 		storage:           storage,
 		AnaphoraQueue:     anaphoraQueue,
 		DeicticCenter:     deicticCenter,
-		Sentences:         []*mentalese.ParseTreeNode{},
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
 		DiscourseEntities: discourseEntities,
@@ -54,7 +52,6 @@ func (dc *DialogContext) GetClauseList() *mentalese.ClauseList {
 func (dc *DialogContext) Initialize() {
 	dc.AnaphoraQueue.Initialize()
 	dc.DeicticCenter.Initialize()
-	dc.Sentences = []*mentalese.ParseTreeNode{}
 	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()
 

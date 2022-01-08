@@ -10,6 +10,16 @@ func NewClauseList() *ClauseList {
 	}
 }
 
+func (e *ClauseList) GetRootNodes() []*ParseTreeNode {
+	rootNodes := []*ParseTreeNode{}
+
+	for _, clause := range e.Clauses {
+		rootNodes = append(rootNodes, clause.ParseTree)
+	}
+
+	return rootNodes
+}
+
 func (e *ClauseList) Clear() {
 	e.Clauses = []*Clause{}
 }

@@ -208,9 +208,6 @@ func (base *LanguageBase) dialogize(messenger api.ProcessMessenger, input mental
 
 	base.log.AddProduction("Ellipsized parse tree", newParseTree.IndentedString(""))
 
-	// save complete tree in dialog context
-	base.dialogContext.Sentences = append(base.dialogContext.Sentences, newParseTree)
-
 	return mentalese.InitBindingSet(newBinding)
 }
 
@@ -227,7 +224,8 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
-	ellipsizer := parse.NewEllipsizer(base.dialogContext.Sentences, base.log)
+	clauses := base.dialogContext.GetClauseList().GetRootNodes()
+	ellipsizer := parse.NewEllipsizer(clauses, base.log)
 	newParseTree, ok := ellipsizer.Ellipsize(parseTree)
 	if !ok {
 		return mentalese.NewBindingSet()
@@ -237,9 +235,6 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 	newBinding.Set(ellipsisVar, mentalese.NewTermJson(newParseTree))
 
 	base.log.AddProduction("Ellipsized parse tree", newParseTree.IndentedString(""))
-
-	// save complete tree in dialog context
-	base.dialogContext.Sentences = append(base.dialogContext.Sentences, &newParseTree)
 
 	return mentalese.InitBindingSet(newBinding)
 }

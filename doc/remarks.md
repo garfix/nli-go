@@ -4,6 +4,34 @@ On 5 January I managed to run all 25 interactions without any errors (!)
 
 I still have to replace the anaphora queue and the sentences list with the new clause list.
 
+===
+
+A single root clause can contain multiple clauses. They may have references within the root clause.
+
+    John mended the vase that he broke.
+
+Highlighting the centers in the last interactions of the dialog:
+
+[] = new center
+() = retain center
+
+    H: Had [you] touched any pyramid before you put the green one on the little cube?     // subject has highest prio (syntax)
+    S: Yes, [the green one]                                                               // the answer entity gets to be the center (auto)  
+    H: When did you pick (it) up?                                                         // back_reference() is calculated and yields the entity (solve!)  
+    S: While I was stacking up a large red block, a large green cube and the red cube     // has no answer entities, so keep (it) ! (auto)
+    H: Why (did you pick (it) up)?                                                        // ellipsis resolution creates the same entity for 'it' (auto)  
+    S: To get rid of (it)                                                                 // note: write grammar (lookup of center)
+
+Problems to solve
+
+- `back_reference` needs access to the active clause of current input
+- `update center` needs the sentence to be solved because it needs the result of the `back_reference()`s   
+
+Todo
+
+- I need to do `go:dialog_add_root_clause(RootClauseTree, false)` before the `solve` phase so that `back_reference` can use the latest clause.
+- Update the center at a later time (when?) create a new relation for it
+
 ## 2022-01-05
 
 I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.

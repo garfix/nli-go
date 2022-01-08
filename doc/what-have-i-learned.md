@@ -36,6 +36,12 @@ Anaphora has the following aspects
 - direct references ("the car") vs indirect references (referring to an entity that can be deduced) ("related objects", NLU1, p346)
 - it may refer to NP's but also to VP's and S's.
 
+A discourse entity may be
+
+- unbound: a boy (E1: null)
+- bound by one database entry, or entries in multiple databases (E1: 13, 211)
+- refer to another entity ("it", E1: E2)
+
 ## Parsing multiple sentences
 
 An old problem of a parser is that it can only parse one sentence at a time. Sometimes people enter two or more sentences on the same line, however. How can we solve this?

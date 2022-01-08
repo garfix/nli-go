@@ -39,7 +39,7 @@ func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
 	var center *ClauseEntity = nil
 	var priority = 0
 
-	previousClause := list.GetLastClause()
+	previousClause := list.GetPreviousClause()
 	if previousClause != nil {
 		previousCenter = previousClause.Center
 	}

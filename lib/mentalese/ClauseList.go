@@ -25,3 +25,11 @@ func (e *ClauseList) GetLastClause() *Clause {
 		return e.Clauses[len(e.Clauses)-1]
 	}
 }
+
+func (e *ClauseList) GetPreviousClause() *Clause {
+	if len(e.Clauses) < 2 {
+		return nil
+	} else {
+		return e.Clauses[len(e.Clauses)-2]
+	}
+}

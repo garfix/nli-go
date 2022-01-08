@@ -59,6 +59,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateRelationize:         base.relationize,
 		mentalese.PredicateExtractRootClauses:  base.extractRootClauses,
 		mentalese.PredicateDialogAddRootClause: base.dialogAddRootClause,
+		mentalese.PredicateDialogUpdateCenter:  base.dialogUpdateCenter,
 		mentalese.PredicateDialogGetCenter:     base.dialogGetCenter,
 		mentalese.PredicateGenerate:            base.generate,
 		mentalese.PredicateSurface:             base.surface,
@@ -284,10 +285,17 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
 	clauseList := base.dialogContext.GetClauseList()
-	entitities := mentalese.ExtractEntities(&parseTree)
-	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entitities)
-	clause.UpdateCenter(clauseList, base.dialogContext.DiscourseEntities)
+	entities := mentalese.ExtractEntities(&parseTree)
+	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entities)
 	clauseList.AddClause(clause)
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	clauseList := base.dialogContext.GetClauseList()
+	clause := clauseList.GetLastClause()
+	clause.UpdateCenter(clauseList, base.dialogContext.DiscourseEntities)
 
 	return mentalese.InitBindingSet(binding)
 }

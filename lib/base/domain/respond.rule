@@ -28,7 +28,7 @@ go:start_input()
             go:dialogize(ParseTree, DialogParseTree)
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
-            go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
+            go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
             go:let(Output, RootClauseOutput)
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
@@ -43,10 +43,9 @@ go:start_input()
     )
 ;
 
-go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, ContinueLooking) :-
+go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, ContinueLooking) :-
 
-/*    go:dialog_add_root_clause(RootClauseTree, false)
-*/
+    go:dialog_add_root_clause(RootClauseTree, false)
     go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
     go:if_then(go:not_equals(UnresolvedName, ''),
@@ -67,10 +66,8 @@ go:single_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, Co
         )
     )
 
-
-go:dialog_write_bindings(AcceptedBindings)
-go:dialog_add_root_clause(RootClauseTree, false)
-
+    go:dialog_write_bindings(AcceptedBindings)
+    go:dialog_update_center()
     go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
     go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
     go:dialog_write_bindings(ResponseBindings)

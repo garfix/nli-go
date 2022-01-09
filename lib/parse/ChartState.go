@@ -25,7 +25,7 @@ func (state chartState) isTerminal() bool {
 	if len(state.rule.GetConsequentVariables(0)) == 0 {
 		return false
 	}
-	return state.rule.GetConsequentVariables(0)[0] == terminal
+	return state.rule.GetConsequentVariables(0)[0] == mentalese.Terminal
 }
 
 func (state chartState) isComplete() bool {
@@ -55,12 +55,12 @@ func (state chartState) StartForm() string {
 func (state chartState) ToString(chart *chart) string {
 	s := state.rule.GetAntecedent() + " ->"
 	for i, category := range state.rule.GetConsequents() {
-		if i + 1 == state.dotPosition {
+		if i+1 == state.dotPosition {
 			s += " *"
 		}
 		s += " " + category
 	}
-	if len(state.rule.GetConsequents()) + 1 == state.dotPosition {
+	if len(state.rule.GetConsequents())+1 == state.dotPosition {
 		s += " *"
 	}
 

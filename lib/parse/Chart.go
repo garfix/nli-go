@@ -4,25 +4,23 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-const terminal = "terminal"
-
 type chart struct {
-	rootCategory     string
-	rootVariables    []string
-	words            []string
-	states           [][]chartState
-	advanced         map[string][][]chartState
-	completed        map[string][][]chartState
+	rootCategory  string
+	rootVariables []string
+	words         []string
+	states        [][]chartState
+	advanced      map[string][][]chartState
+	completed     map[string][][]chartState
 }
 
 func NewChart(words []string, rootCategory string, rootVariables []string) *chart {
 	return &chart{
-		rootCategory: 	  rootCategory,
-		rootVariables:    rootVariables,
-		words:            words,
-		states:           make([][]chartState, len(words) + 1),
-		advanced:         map[string][][]chartState{},
-		completed:        map[string][][]chartState{},
+		rootCategory:  rootCategory,
+		rootVariables: rootVariables,
+		words:         words,
+		states:        make([][]chartState, len(words)+1),
+		advanced:      map[string][][]chartState{},
+		completed:     map[string][][]chartState{},
 	}
 }
 
@@ -56,7 +54,7 @@ func (chart *chart) updateAdvancedStatesIndex(completedState chartState, advance
 
 	children := []chartState{}
 	if completedConsequentsCount == 0 {
-		children = []chartState{ completedState }
+		children = []chartState{completedState}
 		chart.addAdvancedStateIndex(advancedState, children)
 	} else {
 		for _, previousChildren := range chart.advanced[canonical] {

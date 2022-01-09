@@ -41,7 +41,7 @@ func TestLocalVariables(t *testing.T) {
 	discourseEntities := mentalese.NewBinding()
 	processList := goal.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, anaphoraQueue, deicticCenter, processList, variableGenerator, &discourseEntities)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :- 

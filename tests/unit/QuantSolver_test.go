@@ -118,7 +118,7 @@ func TestQuantSolver(t *testing.T) {
 	discourseEntities := mentalese.NewBinding()
 	processList := goal.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, anaphoraQueue, deicticCenter, processList, variableGenerator, &discourseEntities)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)

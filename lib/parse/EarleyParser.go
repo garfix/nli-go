@@ -61,7 +61,7 @@ func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVaria
 }
 
 // The body of Earley's algorithm
-func (parser *EarleyParser) buildChart(grammarRules *mentalese.GrammarRules, words []string, rootCategory string, rootVariables []string) (*chart) {
+func (parser *EarleyParser) buildChart(grammarRules *mentalese.GrammarRules, words []string, rootCategory string, rootVariables []string) *chart {
 
 	chart := NewChart(words, rootCategory, rootVariables)
 	wordCount := len(words)
@@ -108,7 +108,9 @@ func (parser *EarleyParser) predict(grammarRules *mentalese.GrammarRules, chart 
 	nextConsequentVariables := state.rule.GetConsequentVariables(consequentIndex)
 	endWordIndex := state.endWordIndex
 
-	if parser.log.Active() { parser.log.AddDebug("predict", state.ToString(chart)) }
+	if parser.log.Active() {
+		parser.log.AddDebug("predict", state.ToString(chart))
+	}
 
 	// go through all rules that have the next consequent as their antecedent
 	for _, rule := range grammarRules.FindRules(nextConsequent, len(nextConsequentVariables)) {
@@ -116,7 +118,9 @@ func (parser *EarleyParser) predict(grammarRules *mentalese.GrammarRules, chart 
 		predictedState := newChartState(rule, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
-		if parser.log.Active() { parser.log.AddDebug("> predicted", predictedState.ToString(chart)) }
+		if parser.log.Active() {
+			parser.log.AddDebug("> predicted", predictedState.ToString(chart))
+		}
 	}
 }
 
@@ -134,7 +138,9 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	newPosType := mentalese.PosTypeRelation
 	sense := mentalese.RelationSet{}
 
-	if parser.log.Active() { parser.log.AddDebug("scan", state.ToString(chart)) }
+	if parser.log.Active() {
+		parser.log.AddDebug("scan", state.ToString(chart))
+	}
 
 	// regular expression
 	if nextPosType == mentalese.PosTypeRegExp {
@@ -171,13 +177,15 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 		rule := mentalese.NewGrammarRule(
 			[]string{newPosType, mentalese.PosTypeWordForm},
 			[]string{nextConsequent, endWord},
-			[][]string{nextVariables, {terminal}},
+			[][]string{nextVariables, {mentalese.Terminal}},
 			sense)
 
 		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)
 		chart.enqueue(scannedState, endWordIndex+1)
 
-		if parser.log.Active() { parser.log.AddDebug("> scanned", scannedState.ToString(chart) + " " + endWord) }
+		if parser.log.Active() {
+			parser.log.AddDebug("> scanned", scannedState.ToString(chart)+" "+endWord)
+		}
 	}
 }
 
@@ -191,7 +199,9 @@ func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 
 	completedAntecedent := completedState.rule.GetAntecedent()
 
-	if parser.log.Active() { parser.log.AddDebug("complete", completedState.ToString(chart)) }
+	if parser.log.Active() {
+		parser.log.AddDebug("complete", completedState.ToString(chart))
+	}
 
 	for _, chartedState := range chart.states[completedState.startWordIndex] {
 
@@ -199,7 +209,7 @@ func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 		rule := chartedState.rule
 
 		// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition - 1) != completedAntecedent) {
+		if (dotPosition > rule.GetConsequentCount()) || (rule.GetConsequent(dotPosition-1) != completedAntecedent) {
 			continue
 		}
 
@@ -217,6 +227,8 @@ func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 		// enqueue the new state
 		chart.enqueue(advancedState, completedState.endWordIndex)
 
-		if parser.log.Active() { parser.log.AddDebug("> advanced", advancedState.ToString(chart)) }
+		if parser.log.Active() {
+			parser.log.AddDebug("> advanced", advancedState.ToString(chart))
+		}
 	}
 }

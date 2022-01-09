@@ -1,5 +1,7 @@
 package mentalese
 
+import "nli-go/lib/common"
+
 type Clause struct {
 	AuthorIsSystem bool
 	ParseTree      *ParseTreeNode
@@ -17,21 +19,71 @@ func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*Clause
 }
 
 func ExtractEntities(node *ParseTreeNode) []*ClauseEntity {
+	variables := collectVariables(node)
+	functions := collectFunctions(node)
+
 	entities := []*ClauseEntity{}
 
-	for _, tag := range node.Rule.Tag {
-		if tag.Predicate == TagFunction {
-			variable := tag.Arguments[0].TermValue
-			value := tag.Arguments[1].TermValue
-			entities = append(entities, NewClauseEntity(variable, value))
+	for _, variable := range variables {
+		function, found := functions[variable]
+		if !found {
+			function = AtomFunctionNone
+		}
+		entities = append(entities, NewClauseEntity(variable, function))
+	}
+
+	return entities
+}
+
+func collectVariables(node *ParseTreeNode) []string {
+	variables := []string{}
+
+	for _, entityVariables := range node.Rule.EntityVariables {
+		for _, entityVariable := range entityVariables {
+			if entityVariable == Terminal {
+				continue
+			}
+			if !common.StringArrayContains(variables, entityVariable) {
+				variables = append(variables, entityVariable)
+			}
 		}
 	}
 
 	for _, constituent := range node.Constituents {
-		entities = append(entities, ExtractEntities(constituent)...)
+		for _, entityVariable := range collectVariables(constituent) {
+			if !common.StringArrayContains(variables, entityVariable) {
+				variables = append(variables, entityVariable)
+			}
+		}
 	}
 
-	return entities
+	return variables
+}
+
+func collectFunctions(node *ParseTreeNode) map[string]string {
+	functions := map[string]string{}
+
+	for _, tag := range node.Rule.Tag {
+		if tag.Predicate == TagFunction {
+			variable := tag.Arguments[0].TermValue
+			function := tag.Arguments[1].TermValue
+			functions[variable] = function
+		}
+	}
+
+	for _, constituent := range node.Constituents {
+		childFunctions := collectFunctions(constituent)
+		for variable, function := range childFunctions {
+			existingFunction, found := functions[variable]
+			if found && existingFunction != function {
+				// todo handle better
+				panic(variable + " cannot be both " + existingFunction + " and " + function)
+			}
+			functions[variable] = function
+		}
+	}
+
+	return functions
 }
 
 func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {

@@ -20,7 +20,7 @@ func (base *SystemSolverFunctionBase) contextSet(messenger api.ProcessMessenger,
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
 	if slotName == central.DeixisTime {
-		base.deicticCenter.SetTime(boundRelations)
+		base.dialogContext.DeicticCenter.SetTime(boundRelations)
 	}
 
 	return mentalese.InitBindingSet(binding)
@@ -38,13 +38,13 @@ func (base *SystemSolverFunctionBase) contextExtend(messenger api.ProcessMesseng
 	slotRelations := mentalese.RelationSet{}
 
 	if slotName == central.DeixisTime {
-		slotRelations = base.deicticCenter.GetTime()
+		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
 	if slotName == central.DeixisTime {
-		base.deicticCenter.SetTime(slotRelations.Merge(boundRelations))
+		base.dialogContext.DeicticCenter.SetTime(slotRelations.Merge(boundRelations))
 	}
 
 	return mentalese.InitBindingSet(binding)
@@ -58,7 +58,7 @@ func (base *SystemSolverFunctionBase) contextClear(messenger api.ProcessMessenge
 	slotName := bound.Arguments[0].TermValue
 
 	if slotName == central.DeixisTime {
-		base.deicticCenter.SetTime(mentalese.RelationSet{})
+		base.dialogContext.DeicticCenter.SetTime(mentalese.RelationSet{})
 	}
 
 	return mentalese.InitBindingSet(binding)
@@ -75,7 +75,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 	slotRelations := mentalese.RelationSet{}
 
 	if slotName == central.DeixisTime {
-		slotRelations = base.deicticCenter.GetTime()
+		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
 	unboundRelations := slotRelations.ReplaceTerm(mentalese.NewTermAtom(contextVariableAtom), mainEntityVar)
@@ -99,7 +99,7 @@ func (base *SystemSolverFunctionBase) dialogReadBindings(messenger api.ProcessMe
 
 	someBindingVar := input.Arguments[0].TermValue
 
-	responseBinding := (*base.discourseEntities).Copy()
+	responseBinding := (*base.dialogContext.DiscourseEntities).Copy()
 
 	newBinding := binding.Copy()
 	newBinding.Set(someBindingVar, mentalese.NewTermJson(responseBinding.ToRaw()))
@@ -118,7 +118,7 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	for _, someBinding := range someBindings.GetAll() {
 		for key, value := range someBinding.GetAll() {
 			if value.IsId() {
-				base.discourseEntities.Set(key, value)
+				base.dialogContext.DiscourseEntities.Set(key, value)
 			}
 		}
 	}
@@ -155,42 +155,4 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 	base.dialogContext.GetClauseList().AddClause(clause)
 
 	return mentalese.InitBindingSet(binding)
-}
-
-func (base *SystemSolverFunctionBase) dialogAnaphoraQueueLast(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	bound := input.BindSingle(binding)
-	variable := bound.Arguments[0].TermValue
-	description := bound.Arguments[1].TermValueRelationSet
-	loading := false
-
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
-
-	newBindings := mentalese.NewBindingSet()
-
-	for _, group := range *base.anaphoraQueue {
-
-		if len(group) > 1 {
-			continue
-		}
-
-		ref := group[0]
-
-		//b := binding.Copy()
-		b := mentalese.NewBinding()
-		b.Set(variable, mentalese.NewTermId(ref.Id, ref.Sort))
-
-		testRangeBindings := mentalese.BindingSet{}
-		testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(description, mentalese.InitBindingSet(b))
-		if loading {
-			return mentalese.NewBindingSet()
-		}
-		if testRangeBindings.GetLength() > 0 {
-			newBindings = testRangeBindings
-			break
-		}
-	}
-
-	return newBindings
 }

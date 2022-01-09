@@ -10,6 +10,8 @@ type Relation struct {
 	Arguments []Term `json:"arguments"`
 }
 
+const Terminal = "terminal"
+
 const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
 const ProcessInstructionCancel = "cancel"
@@ -101,7 +103,6 @@ const PredicateIsa = "go_isa"
 const PredicateGetSort = "go_get_sort"
 
 const PredicateRespond = "go_respond"
-const PredicateStartInput = "go_start_input"
 const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"
 const PredicateDialogize = "go_dialogize"
@@ -131,7 +132,6 @@ const PredicateContextClear = "go_context_clear"
 const PredicateDialogReadBindings = "go_dialog_read_bindings"
 const PredicateDialogWriteBindings = "go_dialog_write_bindings"
 const PredicateDialogAddResponseClause = "go_dialog_add_response_clause"
-const PredicateDialogAnaphoraQueueLast = "go_dialog_anaphora_queue_last"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"
@@ -142,6 +142,7 @@ const TagFunction = "go_function"
 
 const AtomFunctionSubject = "subject"
 const AtomFunctionObject = "object"
+const AtomFunctionNone = "none"
 
 const AtomNone = "none"
 const AtomSome = "some"

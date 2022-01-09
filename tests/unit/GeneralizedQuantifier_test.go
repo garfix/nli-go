@@ -62,7 +62,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	discourseEntities := mentalese.NewBinding()
 	processList := goal.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, anaphoraQueue, deicticCenter, processList, variableGenerator, &discourseEntities)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)

@@ -50,7 +50,6 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		mentalese.PredicateStartInput:          base.startInput,
 		mentalese.PredicateFindLocale:          base.findLocale,
 		mentalese.PredicateTokenize:            base.tokenize,
 		mentalese.PredicateParse:               base.parse,
@@ -70,13 +69,6 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateCreateCanned:        base.createCanned,
 		mentalese.PredicateTranslate:           base.translate,
 	}
-}
-
-func (base *LanguageBase) startInput(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	base.dialogContext.AnaphoraQueue.RemoveVariables()
-
-	return mentalese.InitBindingSet(mentalese.NewBinding())
 }
 
 func (base *LanguageBase) findLocale(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -653,8 +645,6 @@ func (base *LanguageBase) generate(messenger api.ProcessMessenger, input mentale
 
 	newBinding := binding.Copy()
 	newBinding.Set(tokenVar, mentalese.NewTermList(tokenTerms))
-
-	base.log.AddProduction("Anaphora queue", base.dialogContext.AnaphoraQueue.FormattedString())
 
 	return mentalese.InitBindingSet(newBinding)
 }

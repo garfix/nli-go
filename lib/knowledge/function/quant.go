@@ -58,7 +58,7 @@ func (base *SystemSolverFunctionBase) addToQueue(relation mentalese.Relation, bi
 		value, found := rangeBinding.Get(rangeVariable)
 		if found && value.IsId() {
 			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, rangeVariable)}
-			base.anaphoraQueue.AddReferenceGroup(group)
+			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 		}
 	}
 

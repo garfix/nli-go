@@ -141,7 +141,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
 	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &discourseEntities)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, anaphoraQueue, deicticCenter, &discourseEntities, system.meta, builder.log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
 	system.solverAsync = solverAsync

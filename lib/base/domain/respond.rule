@@ -14,9 +14,6 @@ go:log(Input)
 
     go:ignore(
 
-/* ? remove variables from anaphora queue */
-go:start_input()
-
         go:find_locale(Locale)
         go:slot(locale, Locale)
         go:dialog_read_bindings(DialogBinding)

@@ -37,13 +37,13 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	unscopedSense := base.getSense(messenger).UnScope()
 
-	if base.discourseEntities.ContainsVariable(variable) {
+	if base.dialogContext.DiscourseEntities.ContainsVariable(variable) {
 		newBinding := mentalese.NewBinding()
-		newBinding.Set(variable, base.discourseEntities.MustGet(variable))
+		newBinding.Set(variable, base.dialogContext.DiscourseEntities.MustGet(variable))
 		return mentalese.InitBindingSet(newBinding), false
 	}
 
-	for _, group := range *base.anaphoraQueue {
+	for _, group := range *base.dialogContext.AnaphoraQueue {
 
 		ref := group[0]
 
@@ -162,7 +162,7 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	for _, group := range *base.anaphoraQueue {
+	for _, group := range *base.dialogContext.AnaphoraQueue {
 
 		sort := ""
 

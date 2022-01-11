@@ -114,11 +114,24 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
 	someBindings.FromRaw(someBindingsRaw)
 
-	// todo multiple bindings should not be merged into a single binding
 	for _, someBinding := range someBindings.GetAll() {
 		for key, value := range someBinding.GetAll() {
 			if value.IsId() {
-				base.dialogContext.DiscourseEntities.Set(key, value)
+				existingValue, found := base.dialogContext.DiscourseEntities.Get(key)
+				if found {
+					if existingValue.IsList() {
+						if !existingValue.ListContains(value) {
+							list := existingValue.TermValueList
+							list = append(list, value)
+							base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
+						}
+					} else if !existingValue.Equals(value) {
+						list := []mentalese.Term{existingValue, value}
+						base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
+					}
+				} else {
+					base.dialogContext.DiscourseEntities.Set(key, value)
+				}
 			}
 		}
 	}
@@ -152,7 +165,7 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 		}
 	}
 
-	base.dialogContext.GetClauseList().AddClause(clause)
+	base.dialogContext.ClauseList.AddClause(clause)
 
 	return mentalese.InitBindingSet(binding)
 }

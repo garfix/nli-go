@@ -1,3 +1,20 @@
+## 2022-01-10
+
+A discourse variable often contains multiple values. Up until now I used a simple binding for discourse variables, but they could not store multiple values per variable. I thought of creating a new structure, but then I thought: what if I create a new type of term type: entity ids? But then I saw I already had an array type: the list.
+
+Combinding multiple bindings in a single binding with multiple lists is all fine. But what about extracting these lists into multiple bindings? This can lead very quickly to a large number of bindings in an ongoing dialog.
+
+The discourse entities may contain lists, and that's ok. These lists are not actively used any more.
+
+"Had you touched any pyramid before you put [the green one] on the little cube?" contains a within-clause reference. And it causes a problem with the new implementation.
+
+## 2022-01-09
+
+Whenever a definite reference is asked, the system creates a temporary anaphora queue. It is built like this:
+
+    for each of the root clauses, from last to first
+        add all entities in order of priority
+
 ## 2022-01-07
 
 On 5 January I managed to run all 25 interactions without any errors (!)

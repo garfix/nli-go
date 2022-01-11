@@ -216,7 +216,7 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
-	clauses := base.dialogContext.GetClauseList().GetRootNodes()
+	clauses := base.dialogContext.ClauseList.GetRootNodes()
 	ellipsizer := parse.NewEllipsizer(clauses, base.log)
 	newParseTree, ok := ellipsizer.Ellipsize(parseTree)
 	if !ok {
@@ -271,7 +271,7 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 	var parseTree mentalese.ParseTreeNode
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
-	clauseList := base.dialogContext.GetClauseList()
+	clauseList := base.dialogContext.ClauseList
 	entities := mentalese.ExtractEntities(&parseTree)
 	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entities)
 	clauseList.AddClause(clause)
@@ -280,7 +280,7 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 }
 
 func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-	clauseList := base.dialogContext.GetClauseList()
+	clauseList := base.dialogContext.ClauseList
 	clause := clauseList.GetLastClause()
 	clause.UpdateCenter(clauseList, base.dialogContext.DiscourseEntities)
 
@@ -296,7 +296,7 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 	centerVar := input.Arguments[0].TermValue
 
 	center := mentalese.NewTermAtom("none")
-	clause := base.dialogContext.GetClauseList().GetLastClause()
+	clause := base.dialogContext.ClauseList.GetLastClause()
 	if clause != nil && clause.Center != nil {
 		variable := clause.Center.DiscourseVariable
 		value, found := base.dialogContext.DiscourseEntities.Get(variable)
@@ -305,10 +305,20 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 		}
 	}
 
-	newBinding := mentalese.NewBinding()
-	newBinding.Set(centerVar, center)
+	newBindings := mentalese.NewBindingSet()
+	if center.IsList() {
+		for _, item := range center.TermValueList {
+			newBinding := mentalese.NewBinding()
+			newBinding.Set(centerVar, item)
+			newBindings.Add(newBinding)
+		}
+	} else {
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(centerVar, center)
+		newBindings.Add(newBinding)
+	}
 
-	return mentalese.InitBindingSet(newBinding)
+	return newBindings
 }
 
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

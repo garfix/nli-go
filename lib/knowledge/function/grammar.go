@@ -38,12 +38,30 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 	unscopedSense := base.getSense(messenger).UnScope()
 
 	if base.dialogContext.DiscourseEntities.ContainsVariable(variable) {
-		newBinding := mentalese.NewBinding()
-		newBinding.Set(variable, base.dialogContext.DiscourseEntities.MustGet(variable))
-		return mentalese.InitBindingSet(newBinding), false
+		value := base.dialogContext.DiscourseEntities.MustGet(variable)
+		newBindings := mentalese.NewBindingSet()
+		if value.IsList() {
+			for _, item := range value.TermValueList {
+				newBinding := mentalese.NewBinding()
+				newBinding.Set(variable, item)
+				newBindings.Add(newBinding)
+			}
+		} else {
+			newBinding := mentalese.NewBinding()
+			newBinding.Set(variable, value)
+			newBindings.Add(newBinding)
+		}
+
+		return newBindings, false
 	}
 
-	for _, group := range *base.dialogContext.AnaphoraQueue {
+	q := *base.dialogContext.AnaphoraQueue
+	q = q
+
+	q2 := base.dialogContext.GetAnaphoraQueue()
+	q2 = q2
+
+	for _, group := range q2 {
 
 		ref := group[0]
 
@@ -162,7 +180,13 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	for _, group := range *base.dialogContext.AnaphoraQueue {
+	q := *base.dialogContext.AnaphoraQueue
+	q = q
+
+	q2 := base.dialogContext.GetAnaphoraQueue()
+	q2 = q2
+
+	for _, group := range q2 {
 
 		sort := ""
 

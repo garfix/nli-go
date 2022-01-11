@@ -8,12 +8,12 @@ import (
 )
 
 type Term struct {
-	TermType             string         `json:"type"`
-	TermValue            string			`json:"value,omitempty"`
-	TermSort             string			`json:"sort,omitempty"`
-	TermValueRelationSet RelationSet	`json:"set,omitempty"`
-	TermValueRule        *Rule			`json:"rule,omitempty"`
-	TermValueList        TermList		`json:"list,omitempty"`
+	TermType             string      `json:"type"`
+	TermValue            string      `json:"value,omitempty"`
+	TermSort             string      `json:"sort,omitempty"`
+	TermValueRelationSet RelationSet `json:"set,omitempty"`
+	TermValueRule        *Rule       `json:"rule,omitempty"`
+	TermValueList        TermList    `json:"list,omitempty"`
 }
 
 const TermTypeVariable = "variable"
@@ -28,35 +28,35 @@ const TermTypeList = "list"
 const TermTypeJson = "json"
 
 func NewTermVariable(name string) Term {
-	return Term{ TermType: TermTypeVariable, TermValue: name, TermValueRelationSet: nil}
+	return Term{TermType: TermTypeVariable, TermValue: name, TermValueRelationSet: nil}
 }
 
 func NewTermAnonymousVariable() Term {
-	return Term{ TermType: TermTypeAnonymousVariable, TermValue: "", TermValueRelationSet: nil}
+	return Term{TermType: TermTypeAnonymousVariable, TermValue: "", TermValueRelationSet: nil}
 }
 
 func NewTermString(value string) Term {
-	return Term{ TermType: TermTypeStringConstant, TermValue: value, TermValueRelationSet: nil}
+	return Term{TermType: TermTypeStringConstant, TermValue: value, TermValueRelationSet: nil}
 }
 
 func NewTermAtom(value string) Term {
-	return Term{ TermType: TermTypePredicateAtom, TermValue: value, TermValueRelationSet: nil}
+	return Term{TermType: TermTypePredicateAtom, TermValue: value, TermValueRelationSet: nil}
 }
 
 func NewTermRelationSet(value RelationSet) Term {
-	return Term{ TermType: TermTypeRelationSet, TermValue: "", TermValueRelationSet: value}
+	return Term{TermType: TermTypeRelationSet, TermValue: "", TermValueRelationSet: value}
 }
 
 func NewTermRule(rule Rule) Term {
-	return Term{ TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: &rule}
+	return Term{TermType: TermTypeRule, TermValue: "", TermValueRelationSet: nil, TermValueRule: &rule}
 }
 
 func NewTermId(id string, sort string) Term {
-	return Term{ TermType: TermTypeId, TermValue: id, TermSort: sort, TermValueRelationSet: nil}
+	return Term{TermType: TermTypeId, TermValue: id, TermSort: sort, TermValueRelationSet: nil}
 }
 
 func NewTermList(list TermList) Term {
-	return Term{ TermType: TermTypeList, TermValueList: list }
+	return Term{TermType: TermTypeList, TermValueList: list}
 }
 
 func NewTermJson(value interface{}) Term {
@@ -64,7 +64,7 @@ func NewTermJson(value interface{}) Term {
 	bytes, _ := json.Marshal(value)
 	jsonString := string(bytes)
 
-	return Term{ TermType: TermTypeJson, TermValue: jsonString }
+	return Term{TermType: TermTypeJson, TermValue: jsonString}
 }
 
 func (term Term) IsVariable() bool {
@@ -139,6 +139,17 @@ func (term Term) IsRule() bool {
 
 func (term Term) IsList() bool {
 	return term.TermType == TermTypeList
+}
+
+func (term Term) ListContains(t Term) bool {
+	contains := false
+	for _, item := range term.TermValueList {
+		if item.Equals(t) {
+			contains = true
+			break
+		}
+	}
+	return contains
 }
 
 func (term Term) IsJson() bool {
@@ -288,10 +299,10 @@ func (term Term) Resolve(binding Binding) Term {
 	resolved := term
 
 	if term.IsVariable() {
-		 value, found := binding.Get(term.TermValue)
-		 if found {
-		 	resolved = value
-		 }
+		value, found := binding.Get(term.TermValue)
+		if found {
+			resolved = value
+		}
 	}
 
 	return resolved

@@ -7,8 +7,6 @@ go:tell(Input) :-
 
 go:respond(Input) :-
 
-go:log(Input)
-
     /* We use `let` here because there can be Outputs that may be overridden later */
     go:let(Output, '')
 

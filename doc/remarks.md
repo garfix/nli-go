@@ -1,3 +1,42 @@
+## 2022-01-14
+
+This is what I did: update these discourse entity values while processing the sentence. For example in `addToQueue`? This would not _add to the queue_, but update the discourse entity variables.
+
+This then finally allowed me to run all 25 interactions, and remove the anaphora queue. But it became very clear to me that anaphora resolution is far from solved. The list of open problems is large. There's a long way to go before this subject is solved to satisfaction. 
+
+## 2022-01-12
+
+Great article "The defeat of the Winograd Schema Challenge" https://arxiv.org/pdf/2201.02387v1.pdf
+
+It refers to this article that may be interesting:
+
+A. Kehler, L. Kertz, H. Rohde, J. L. Elman, Coherence and coreference revisited, Journal of semantics 25 (2008) 1–44.
+
+from this, an example of subject preference
+
+    a. Bush narrowly defeated Kerry, and special interests promptly began lobbying him. [¼Bush]
+    b. Kerry was narrowly defeated by Bush, and special interests promptly began lobbying him. [¼Kerry]
+
+    "The alternation found in examples (6a,b) can be used to argue for the existence of a grammatical subject preference."
+
+also
+
+    the grammatical role parallelism preference which favours referents that occupy the same grammatical role as the pronoun.
+
+===
+
+Maybe I can update these discourse entity values while processing the sentence? For example in `addToQueue`? This would not _add to the queue_, but update it.
+
+The problem is that `back_reference()` needs access to non-local information.
+
+Is it possible to do anaphora resolution as a separate step?
+
+## 2022-01-11
+
+Nested entities have less priority than root entities.
+
+Discourse entity values are not present while creating the anaphora queue, since they are only added at the end...
+
 ## 2022-01-10
 
 A discourse variable often contains multiple values. Up until now I used a simple binding for discourse variables, but they could not store multiple values per variable. I thought of creating a new structure, but then I thought: what if I create a new type of term type: entity ids? But then I saw I already had an array type: the list.

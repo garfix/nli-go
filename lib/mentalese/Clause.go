@@ -21,16 +21,7 @@ func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*Clause
 func ExtractEntities(node *ParseTreeNode) []*ClauseEntity {
 	variables := collectVariables(node)
 	functions := collectFunctions(node)
-
-	entities := []*ClauseEntity{}
-
-	for _, variable := range variables {
-		function, found := functions[variable]
-		if !found {
-			function = AtomFunctionNone
-		}
-		entities = append(entities, NewClauseEntity(variable, function))
-	}
+	entities := createOrderedEntities(variables, functions)
 
 	return entities
 }
@@ -84,6 +75,26 @@ func collectFunctions(node *ParseTreeNode) map[string]string {
 	}
 
 	return functions
+}
+
+func createOrderedEntities(variables []string, functions map[string]string) []*ClauseEntity {
+	entities := []*ClauseEntity{}
+
+	allFunctions := []string{AtomFunctionSubject, AtomFunctionObject, AtomFunctionNone}
+
+	for _, aFunction := range allFunctions {
+		for _, variable := range variables {
+			function, found := functions[variable]
+			if !found {
+				function = AtomFunctionNone
+			}
+			if function == aFunction {
+				entities = append(entities, NewClauseEntity(variable, function))
+			}
+		}
+	}
+
+	return entities
 }
 
 func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {

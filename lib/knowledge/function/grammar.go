@@ -55,20 +55,18 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		return newBindings, false
 	}
 
-	q := *base.dialogContext.AnaphoraQueue
-	q = q
-
-	q2 := base.dialogContext.GetAnaphoraQueue()
-	q2 = q2
-
-	for _, group := range q2 {
+	for _, group := range base.dialogContext.GetAnaphoraQueue() {
 
 		ref := group[0]
 
-		b := mentalese.NewBinding()
-		b.Set(variable, mentalese.NewTermId(ref.Id, ref.Sort))
+		newBindings1 := mentalese.NewBindingSet()
+		for _, r1 := range group {
+			b := mentalese.NewBinding()
+			b.Set(variable, mentalese.NewTermId(r1.Id, r1.Sort))
 
-		refBinding := binding.Merge(b)
+			refBinding := binding.Merge(b)
+			newBindings1.Add(refBinding)
+		}
 
 		if base.isReflexive(unscopedSense, variable, ref) {
 			continue
@@ -76,7 +74,7 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 		// empty set ("it")
 		if len(set) == 0 {
-			newBindings = mentalese.InitBindingSet(refBinding)
+			newBindings = newBindings1
 			break
 		}
 
@@ -85,7 +83,7 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		}
 
 		testRangeBindings := mentalese.BindingSet{}
-		testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(refBinding))
+		testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, newBindings1)
 		if loading {
 			return mentalese.NewBindingSet(), true
 		}
@@ -180,13 +178,7 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	q := *base.dialogContext.AnaphoraQueue
-	q = q
-
-	q2 := base.dialogContext.GetAnaphoraQueue()
-	q2 = q2
-
-	for _, group := range q2 {
+	for _, group := range base.dialogContext.GetAnaphoraQueue() {
 
 		sort := ""
 

@@ -138,9 +138,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
-	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(storage, anaphoraQueue, deicticCenter, system.processList, variableGenerator, &discourseEntities)
+	system.dialogContext = central.NewDialogContext(storage, deicticCenter, system.processList, variableGenerator, &discourseEntities)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 

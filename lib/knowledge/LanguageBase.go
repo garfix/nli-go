@@ -364,11 +364,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	requestBinding := dialogBinding.Merge(entityIds)
 
-	// names found and linked to id
-	for variable, value := range entityIds.GetAll() {
-		base.dialogContext.AnaphoraQueue.AddReferenceGroup(
-			central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, variable)})
-	}
 	base.log.AddProduction("Named entities", entityIds.String())
 
 	messenger.SetProcessSlot(mentalese.SlotSense, mentalese.NewTermRelationSet(requestRelations))
@@ -507,12 +502,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 		newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
 
 		// queue ids
-		group := central.EntityReferenceGroup{}
 		variable := solution.Result.TermValue
-		for _, id := range resultBindings.GetIds(variable) {
-			group = append(group, central.CreateEntityReference(id.TermValue, id.TermSort, variable))
-		}
-		base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
 
 		essential := mentalese.NewBindingSet()
 		for _, id := range resultBindings.GetIds(variable) {

@@ -2,7 +2,6 @@ package function
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/central"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -57,8 +56,7 @@ func (base *SystemSolverFunctionBase) addToQueue(relation mentalese.Relation, bi
 
 		value, found := rangeBinding.Get(rangeVariable)
 		if found && value.IsId() {
-			group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, rangeVariable)}
-			base.dialogContext.AnaphoraQueue.AddReferenceGroup(group)
+			base.dialogContext.DiscourseEntities.Set(rangeVariable, value)
 		}
 	}
 
@@ -476,13 +474,11 @@ func (base *SystemSolverFunctionBase) solveScope(messenger api.ProcessMessenger,
 
 	for _, rangeBinding := range rangeBindings.GetAll() {
 
-		//value, found := rangeBinding.Get(rangeVariable)
-		//if found && value.IsId() {
-		//	group := central.EntityReferenceGroup{central.CreateEntityReference(value.TermValue, value.TermSort, rangeVariable)}
-		//	base.anaphoraQueue.AddReferenceGroup(group)
-		//}
+		value, found := rangeBinding.Get(rangeVariable)
+		if found && value.IsId() {
+			base.dialogContext.DiscourseEntities.Set(rangeVariable, value)
+		}
 
-		//singleScopeBindings := base.solver.SolveRelationSet(scopeSet, mentalese.InitBindingSet(rangeBinding))
 		singleScopeBindings, loading := base.solveAsync(messenger, scopeSet, mentalese.InitBindingSet(rangeBinding))
 		if loading {
 			return mentalese.NewBindingSet(), true

@@ -36,11 +36,10 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
-	anaphoraQueue := central.NewAnaphoraQueue()
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
 	processList := goal.NewProcessList()
-	dialogContext := central.NewDialogContext(nil, anaphoraQueue, deicticCenter, processList, variableGenerator, &discourseEntities)
+	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`

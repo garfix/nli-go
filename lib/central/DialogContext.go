@@ -11,7 +11,6 @@ const MaxSizeAnaphoraQueue = 10
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
 	storage           *common.FileStorage
-	AnaphoraQueue     *AnaphoraQueue
 	DeicticCenter     *DeicticCenter
 	ProcessList       *goal.ProcessList
 	VariableGenerator *mentalese.VariableGenerator
@@ -21,7 +20,6 @@ type DialogContext struct {
 
 func NewDialogContext(
 	storage *common.FileStorage,
-	anaphoraQueue *AnaphoraQueue,
 	deicticCenter *DeicticCenter,
 	processList *goal.ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
@@ -29,7 +27,6 @@ func NewDialogContext(
 ) *DialogContext {
 	dialogContext := &DialogContext{
 		storage:           storage,
-		AnaphoraQueue:     anaphoraQueue,
 		DeicticCenter:     deicticCenter,
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
@@ -74,7 +71,6 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 }
 
 func (dc *DialogContext) Initialize() {
-	dc.AnaphoraQueue.Initialize()
 	dc.DeicticCenter.Initialize()
 	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()

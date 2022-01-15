@@ -27,9 +27,9 @@ go:respond(Input) :-
             go:let(Output, RootClauseOutput)
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
-            go:if_then(go:equals(ContinueLooking, true),
+            if go:equals(ContinueLooking, true) then
                 go:fail()
-            )
+            end
         )
     )
     go:uuid(Uuid)
@@ -43,22 +43,23 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     go:dialog_add_root_clause(RootClauseTree, false)
     go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
-    go:if_then(go:not_equals(UnresolvedName, ''),
+    if go:not_equals(UnresolvedName, '')
+    then
         go:create_canned(Output, name_not_found, UnresolvedName)
         go:unify(ContinueLooking, true)
         go:return()
-    )
+    end
 
     /* Stop at the first successfully processed solution */
     go:cut(1,
         go:find_solution(Request, Solution)
         go:make_list(Solutions, Solution)
         go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
-        go:if_then(go:not_equals(AnOutput, ''),
+        if go:not_equals(AnOutput, '') then
              go:unify(Output, AnOutput)
              go:unify(ContinueLooking, false)
              go:return()
-        )
+        end
     )
 
     go:dialog_write_bindings(AcceptedBindings)
@@ -80,25 +81,25 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
 
         /* If there was a problem, or a request for clarification, stop */
-        go:if_then(go:not_equals(SolveOutput, ''),
+        if go:not_equals(SolveOutput, '') then
             go:let(Output, SolveOutput)
             go:return()
-        )
+        end
         /* If there were solutions, good! */
-        go:if_then(go:greater_than(ResultCount, 0),
+        if go:greater_than(ResultCount, 0) then
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
             go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
             go:return()
-        )
+        end
         /* If this is the last available solution, take it anyway */
-        go:if_then(go:equals(LastSol, Index),
+        if go:equals(LastSol, Index) then
             go:let(Accepted, Sol)
             go:let(AcceptedBindings, ResultBindings)
             go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
             go:return()
-        )
+        end
     )
 ;

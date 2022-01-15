@@ -602,6 +602,66 @@ func (parser *InternalGrammarParser) parseSortRelation(tokens []Token, startInde
 	return sortRelation, startIndex, ok
 }
 
+func (parser *InternalGrammarParser) parseKeyword(tokens []Token, startIndex int, keyword string) (int, bool) {
+	value, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_predicate)
+	if ok && value == keyword {
+		return newStartIndex, true
+	} else {
+		return 0, false
+	}
+}
+
+func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startIndex int, useAlias bool) (mentalese.Relation, int, bool) {
+
+	keyword := ""
+	ok := false
+	ok1 := false
+	ok2 := false
+	ok3 := false
+	ok4 := false
+	ok5 := false
+	relation := mentalese.Relation{}
+	s1 := mentalese.RelationSet{}
+	s2 := mentalese.RelationSet{}
+	s3 := mentalese.RelationSet{}
+	newStartIndex := 0
+
+	keyword, startIndex, ok1 = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	if ok1 {
+		switch keyword {
+		case "if":
+			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex, useAlias)
+			startIndex, ok2 = parser.parseKeyword(tokens, startIndex, "then")
+			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex, useAlias)
+			newStartIndex, ok4 = parser.parseKeyword(tokens, startIndex, "else")
+			if ok4 {
+				startIndex = newStartIndex
+				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex, useAlias)
+			}
+			startIndex, ok5 = parser.parseKeyword(tokens, startIndex, "end")
+			ok = ok1 && ok2 && ok3 && ok5
+			if ok {
+				if ok4 {
+					relation = mentalese.NewRelation(false, "go_$if_then_else", []mentalese.Term{
+						mentalese.NewTermRelationSet(s1),
+						mentalese.NewTermRelationSet(s2),
+						mentalese.NewTermRelationSet(s3),
+					})
+				} else {
+					relation = mentalese.NewRelation(false, "go_$if_then", []mentalese.Term{
+						mentalese.NewTermRelationSet(s1),
+						mentalese.NewTermRelationSet(s2),
+					})
+				}
+			}
+		default:
+			ok = false
+		}
+	}
+
+	return relation, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex int, useAlias bool) (mentalese.Relation, int, bool) {
 
 	ok := true
@@ -613,6 +673,12 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 	newStartIndex := 0
 	negate := false
 	relation := mentalese.Relation{}
+	keywordRelation := mentalese.Relation{}
+
+	keywordRelation, newStartIndex, ok = parser.parseKeywordRelation(tokens, startIndex, useAlias)
+	if ok {
+		return keywordRelation, newStartIndex, ok
+	}
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
 	if ok {

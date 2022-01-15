@@ -12,19 +12,19 @@ describe(E1, Sort, DescSet) :-
     go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
 
     /* Is the shape unique? */
-    go:if_then(go:greater_than(Cs, 1),
+    if go:greater_than(Cs, 1) then
         go:let(Set, {{ Set }} color(E1, C))
         /* Are the shape and color unique? */
-        go:if_then(go:greater_than(Cc, 1),
+        if go:greater_than(Cc, 1) then
             go:let(Set, {{ Set }} volume(E1, V))
             /* Are the shape, color, and volume unique? */
-            go:if_then(go:greater_than(Cv, 1),
+            if go:greater_than(Cv, 1) then
                 /* Add the object it supports and presume that this is enough */
                 support(E1, E3) describe(E3, Sort, E3Desc)
                 go:let(Set, {{ Set }} support(E1, E3) description(E3) {{ E3Desc }})
-            )
-        )
-    )
+            end
+        end
+    end
     go:unify(DescSet, Set)
 ;
 
@@ -39,20 +39,20 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    go:if_then_else(go:dialog_get_center(L1) go:equals(E1, L1),
-        go:let(Set, center(E1)),
-
+    if go:dialog_get_center(L1) go:equals(E1, L1) then
+        go:let(Set, center(E1))
+    else
         go:let(Set, description(E1) default_shape(E1, Sort) shape(E1, S) )
 
         /* Is the shape unique? */
-        go:if_then(go:greater_than(Cs, 1),
+        if go:greater_than(Cs, 1) then
             go:let(Set, {{ Set }} color(E1, C))
             /* Are the shape and color unique? */
-            go:if_then(go:greater_than(Cc, 1),
+            if go:greater_than(Cc, 1) then
                 go:let(Set, {{ Set }} volume(E1, V) indeterminate(E1))
-            )
-        )
-    )
+            end
+        end
+    end
     go:unify(DescSet, Set)
 ;
 

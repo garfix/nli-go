@@ -1,5 +1,9 @@
 # Changelog
 
+## 
+
+* keywords if/then/else/end
+
 ## 1.14 the "why?" release - 15-01-2022
 
 * translation of canned texts using CSV files

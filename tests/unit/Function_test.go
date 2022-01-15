@@ -151,8 +151,8 @@ func TestControlFunctions(t *testing.T) {
 		{"go:xor(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1}]"},
 		{"go:and(go:unify(E, 1), go:unify(E, 2))", "{}", "[]"},
 		{"go:or(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1} {E:2}]"},
-		{"go:if_then_else(go:greater_than(6, 5), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:1, X:3}]"},
-		{"go:if_then_else(go:greater_than(5, 6), go:unify(E, 1), go:unify(E, 2))", "{X:3}", "[{E:2, X:3}]"},
+		{"if go:greater_than(6, 5) then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:1, X:3}]"},
+		{"if go:greater_than(5, 6) then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:2, X:3}]"},
 	}
 
 	for _, test := range tests {

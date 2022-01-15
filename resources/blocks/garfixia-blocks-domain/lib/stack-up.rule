@@ -8,60 +8,61 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:list_length(SortedList, Size)
     go:subtract(Size, 1, Last)
     go:list_foreach(SortedList, Index, E1,
-        go:if_then(
-            go:not_equals(Index, Last) go:not(block(E1)),
+        if go:not_equals(Index, Last) go:not(block(E1)) then
             go:cancel()
-        )
+        end
     );
 
 stack_up_proper(ParentEventId, List1, X, Y) :-
     go:let(Base, `table:table`)
     go:list_foreach(List1, E1,
         do_cleartop(ParentEventId, E1)
-        go:if_then_else(
-            go:equals(Base, `table:table`),
-
-            block(E1) do_put_on_table(ParentEventId, E1, X, Y),
-
+        if go:equals(Base, `table:table`) then
+            block(E1) do_put_on_table(ParentEventId, E1, X, Y)
+        else
             block(Base)
             go:unify(B1, Base)
             do_put_on_center(ParentEventId, E1, B1)
             do_let_go(ParentEventId)
-        )
+        end
         go:let(Base, E1)
     );
 
 by_easiness(E1, E2, R) :-
-    go:if_then_else(
-        pyramid(E1),
-        go:if_then_else( pyramid(E2), go:unify(R, 0), go:unify(R, 1) ),
-        go:if_then_else( pyramid(E2), go:unify(R, -1),
-            go:if_then_else( cleartop(E1),
-                go:if_then_else( cleartop(E2), go:unify(R, 0), go:unify(R, -1) ),
-                go:if_then_else( cleartop(E2), go:unify(R, 1), go:unify(R, 0) ) )
-        )
-    );
+    if pyramid(E1) then
+        if pyramid(E2) then go:unify(R, 0) else go:unify(R, 1) end
+    else
+        if pyramid(E2) then
+            go:unify(R, -1)
+        else
+            if cleartop(E1) then
+                if cleartop(E2) then go:unify(R, 0) else go:unify(R, -1) end
+            else
+                if cleartop(E2) then go:unify(R, 1) else go:unify(R, 0) end
+            end
+        end
+    end
+;
 
 /* Order decreasingly by width or depth */
 by_size(E1, E2, R) :-
-    go:if_then_else(
-        pyramid(E1),
-        go:unify(R, 1),
-
-        go:if_then_else(
-            pyramid(E2),
-            go:unify(R, -1),
-
+    if pyramid(E1) then
+        go:unify(R, 1)
+    else
+        if pyramid(E2) then
+            go:unify(R, -1)
+        else
             size(E1, Width1, Depth1, _)
             size(E2, Width2, Depth2, _)
-            go:if_then_else(
-                go:equals(Width1, Width2),
-                go:compare(Depth2, Depth1, R),
-                go:if_then_else(
-                    go:equals(Depth1, Depth2),
-                    go:compare(Width2, Width1, R),
+            if go:equals(Width1, Width2) then
+                go:compare(Depth2, Depth1, R)
+            else
+                if go:equals(Depth1, Depth2) then
+                    go:compare(Width2, Width1, R)
+                else
                     go:min(Width1, Depth1, Min1) go:min(Width2, Depth2, Min2) go:compare(Min2, Min1, R)
-                )
-            )
-        )
-    );
+                end
+            end
+        end
+    end
+;

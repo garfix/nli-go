@@ -45,13 +45,11 @@ do_put_on(ParentEventId, E1, E2) :-
     go:assert(put_on(EventId, `:shrdlu`, E1, E2))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
-
-    go:if_then_else(
-        go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1),
-        do_put_on_position(ParentEventId, E1, E2, X1, Y1),
+    if go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1) then
+        do_put_on_position(ParentEventId, E1, E2, X1, Y1)
+    else
         do_cleartop(ParentEventId, E2) do_put_on_center(ParentEventId, E1, E2)
-    )
-
+    end
     time(T2)
     go:assert(end_time(EventId, T2))
 ;

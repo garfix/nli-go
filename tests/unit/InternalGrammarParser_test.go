@@ -81,6 +81,9 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: vp(P)//noun(E) }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), tag: function(P, subject) }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), tag: number(P, singular) person(P, 3) }")
+	parser.CreateRules("describe_event(P1, DescSet) :- pick_up(P1, Subject, Object);")
+	parser.CreateRules("describe_event(P1, DescSet) :- if a(1) a(2) then b(1) b(2) end;")
+	parser.CreateRules("describe_event(P1, DescSet) :- if a(1) a(2) then b(1) b(2) else c(1) c(2) end;")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {

@@ -56,18 +56,6 @@ A variant on the boolean function `not` that works with bindings. If executing `
     
 * `A`: a relation set   
 
-## If / then
-
-If `Condition` succeeds, then `Action` is executed. If not, then the relation is skipped.
-
-    go:if_then(Condition, Action)     
-
-## If / then / else
-
-If `Condition` succeeds, then `Action` is executed. If not, then `Alternative` is executed. 
-
-    go:if_then_else(Condition, Action, Alternative)     
-
 ## Fail
 
 Returns no bindings. In combination with if/then can fail a relation set under given conditions.

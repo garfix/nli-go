@@ -218,15 +218,6 @@ func TestListFunctions(t *testing.T) {
 		{"go:list_order([`:B`, `:C`, `:A`], by_name, Ordered)", "{}", "[{Ordered: [`:A`, `:B`, `:C`]}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], E, go:unify(F, E))", "{}", "[{E:`:B`, F:`:B`} {E:`:C`, F:`:C`} {E:`:A`, F:`:A`}]"},
 		{"go:list_foreach([`:B`, `:C`, `:A`], I, E, go:unify(F, E) go:unify(G, I))", "{}", "[{E:`:B`, F:`:B`, G:0, I:0} {E:`:C`, F:`:C`, G:1, I:1} {E:`:A`, F:`:A`, G:2, I:2}]"},
-		//{`
-		//	go:let(C, 0) go:list_foreach([1,2,3], I, E,
-		//		go:list_foreach([1,2,3], J, F,
-		//			go:add(C, 1, C) go:add(C, 2, C) go:break() go:add(C, 4, C)
-		//		)
-		//		go:add(C, 8, C)
-		//		go:equals(E, 2)
-		//		go:break()
-		//	)`, "{A: 5}", "[{A: 5, C: 22}]"},
 		{"go:list_deduplicate(ListA, ListB)", "{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`]}", "[{ListA:[`:B`, `:C`, `:A`, `:B`, `:C`],ListB:[`:B`, `:C`, `:A`]}]"},
 		{"go:list_sort(ListA, ListB)", "{ListA:['B', 'C', 'A', 'B', 'C']}", "[{ListA:['B', 'C', 'A', 'B', 'C'],ListB:['A', 'B', 'B', 'C', 'C']}]"},
 		{"go:list_sort(ListA, ListB)", "{ListA:[2, 3, 12, 1, 2, 3]}", "[{ListA:[2, 3, 12, 1, 2, 3],ListB:[1, 2, 2, 3, 3, 12]}]"},

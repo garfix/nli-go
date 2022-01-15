@@ -47,6 +47,13 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 			ok = true
 		}
 	}
+	if ok {
+		for _, argument := range rule.Goal.Arguments {
+			if argument.IsMutableVariable() {
+				ok = false
+			}
+		}
+	}
 
 	return rule, startIndex, ok
 }
@@ -550,7 +557,7 @@ func (parser *InternalGrammarParser) parseRelationTag(tokens []Token, startIndex
 
 	_, startIndex, found = parser.parseSingleToken(tokens, startIndex, tDoubleOpeningBrace)
 	if found {
-		tag, startIndex, found = parser.parseSingleToken(tokens, startIndex, tVariable)
+		tag, startIndex, found = parser.parseVariable(tokens, startIndex)
 		if found {
 			relation = mentalese.NewRelation(false, mentalese.PredicateIncludeRelations, []mentalese.Term{
 				mentalese.NewTermVariable(tag),
@@ -621,13 +628,16 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 	ok4 := false
 	ok5 := false
 	relation := mentalese.Relation{}
+	variable := ""
+	value := mentalese.Term{}
 	s1 := mentalese.RelationSet{}
 	s2 := mentalese.RelationSet{}
 	s3 := mentalese.RelationSet{}
 	newStartIndex := 0
 
-	keyword, startIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tPredicate)
+	keyword, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok1 {
+		startIndex = newStartIndex
 		switch keyword {
 		case "if":
 			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex, useAlias)
@@ -668,6 +678,22 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			ok = true
 		default:
 			ok = false
+		}
+	} else {
+		_, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
+		if ok1 {
+			startIndex = newStartIndex
+			variable, startIndex, ok2 = parser.parseVariable(tokens, startIndex)
+			_, startIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tEquals)
+			value, startIndex, ok4 = parser.parseTerm(tokens, startIndex)
+			_, startIndex, ok5 = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
+			ok = ok1 && ok2 && ok3 && ok4 && ok5
+			if ok {
+				relation = mentalese.NewRelation(false, mentalese.PredicateAssign, []mentalese.Term{
+					mentalese.NewTermVariable(variable),
+					value,
+				})
+			}
 		}
 	}
 
@@ -789,7 +815,7 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 			}
 		}
 
-		variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tVariable)
+		variable, startIndex, ok = parser.parseVariable(tokens, startIndex)
 		if ok {
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tColon)
 			if ok {
@@ -1116,6 +1142,18 @@ func (parser *InternalGrammarParser) parseSegmentPattern(text string) ([]morphol
 	return pattern, ok
 }
 
+func (parser *InternalGrammarParser) parseVariable(tokens []Token, startIndex int) (string, int, bool) {
+	variable := ""
+	prefix := ""
+	_, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, tColon)
+	if ok {
+		startIndex = newStartIndex
+		prefix = ":"
+	}
+	variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tVariable)
+	return prefix + variable, startIndex, ok
+}
+
 func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (mentalese.Term, int, bool) {
 
 	ok := false
@@ -1123,7 +1161,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 	term := mentalese.Term{}
 	newStartIndex := 0
 
-	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tVariable)
+	tokenValue, startIndex, ok = parser.parseVariable(tokens, startIndex)
 	if ok {
 		term.TermType = mentalese.TermTypeVariable
 		term.TermValue = tokenValue

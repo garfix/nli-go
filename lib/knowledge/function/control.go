@@ -8,24 +8,28 @@ import (
 	"strconv"
 )
 
-// todo: remove
-func (base *SystemSolverFunctionBase) let(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
+func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "**", base.log) {
+	if !knowledge.Validate(bound, "v*", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
 
-	if !relation.Arguments[0].IsVariable() {
-		base.log.AddError("Let: variable already in use. GetCategory: " + variable)
-		return mentalese.NewBindingSet()
+	if relation.Arguments[0].IsMutableVariable() {
+		messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
+	} else {
+		existingValue, found := binding.Get(variable)
+		if found {
+			if !existingValue.Equals(value) {
+				base.log.AddError("Attempt to assign new value to " + variable + "(" + existingValue.String() + " -> " + value.String() + ")")
+				return mentalese.NewBindingSet()
+			}
+		}
 	}
 
-	messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
 	binding = binding.Copy()
 	binding.Set(variable, value)
 

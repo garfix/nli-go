@@ -5,14 +5,9 @@
 Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 
 - I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
-- the syntax of the reasoning rules () :- () (); => () { () () }
-- add local variables to the reasoning rules syntax (a, b) [ let(a, 1) let(b, 2) ] { () () }
-- if_then, if_then_else => if
-- let => var
 - functions calls for arguments
 - typed arguments
 - operators > = [H|T]
-- keywords if/then
 - n-dimensional arrays as local variables
 - extend a module with another module
 * quant_foreach: add as second parameter the variable to which the ids must be bound

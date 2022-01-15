@@ -12,11 +12,10 @@ each of the relations may be an invocation of a rule which itself instantiates m
 
 ## Rule scope
 
-When a rule is instantiated, a local scope is created for it. Within this scope it is possible to create rewritable variables, with the `go:let()` function:
+When a rule is instantiated, a local scope is created for it. Within this scope it is possible to create mutable variables, with assigment:
 
-    go:let(X, 123)
+    [:X = 123]
     
-This rewritable variable may ge assigned a new variable, just like this
+This mutable variable may ge assigned a new variable, just like this
 
-    go:let(X, 456)
-    
+    [:X = 456]

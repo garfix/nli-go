@@ -24,9 +24,9 @@ narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
 characteristic_shape(E, S) :-
     type(E, T)
     if go:equals(T, block) size(E, X, X, X) then
-        go:unify(S, cube)
+        [S = cube]
     else
-        go:unify(S, T)
+        [S = T]
     end
 ;
 

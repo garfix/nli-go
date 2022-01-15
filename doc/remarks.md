@@ -20,6 +20,8 @@ new:
 
 I created the keywords `return`, `fail`, `break` and `cancel`.
 
+I removed `let()` and introduced `[X = n]` for both `let()` and most forms of `unify()`. I kept `unify()` because there were some valid use cases for it. 
+
 ## 2022-01-14
 
 This is what I did: update these discourse entity values while processing the sentence. For example in `addToQueue`? This would not _add to the queue_, but update the discourse entity variables.

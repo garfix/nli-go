@@ -14,6 +14,7 @@ const (
 	tComment
 	tPredicate
 	tVariable
+	tEquals
 	tPlaceholder
 	tAnonymousVariable
 	tId
@@ -61,6 +62,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tComment, "/\\*.*?\\*/"},
 		{tPredicate, "[a-z][a-z0-9_]*"},
 		{tVariable, "[A-Z][a-zA-Z0-9]*"},
+		{tEquals, "="},
 		{tPlaceholder, "\\$"},
 		{tAnonymousVariable, "_"},
 		{tId, "`[^`]+`"},

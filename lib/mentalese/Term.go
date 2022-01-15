@@ -71,6 +71,10 @@ func (term Term) IsVariable() bool {
 	return term.TermType == TermTypeVariable
 }
 
+func (term Term) IsMutableVariable() bool {
+	return term.TermType == TermTypeVariable && term.TermValue[0:1] == ":"
+}
+
 func (term Term) IsInteger() bool {
 	if term.TermType != TermTypeStringConstant {
 		return false

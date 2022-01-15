@@ -2,20 +2,6 @@
 
 These predicates just affect the flow of data in an application.
 
-## Let
-
-Introduce a local variable. Local variable are only visible within the rule in which they are executed. Their values may be overwritten.
-
-    go:let(A, B)
-
-* `A`: a variable
-* `B`: a value (any term)    
-
-Example 
-
-    go:let(Name, "Byron")
-    go:let(X, 0)
-
 ## And
 
 A variant on the boolean function `and` that works with bindings.

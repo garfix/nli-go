@@ -7,8 +7,8 @@ go:tell(Input) :-
 
 go:respond(Input) :-
 
-    /* We use `let` here because there can be Outputs that may be overridden later */
-    go:let(Output, '')
+    /* We use a mutable variable here because there can be Outputs that may be overridden later */
+    [:Output = '']
 
     go:ignore(
 
@@ -24,7 +24,7 @@ go:respond(Input) :-
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
             go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
-            go:let(Output, RootClauseOutput)
+            [:Output = RootClauseOutput]
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
             if go:equals(ContinueLooking, true) then
@@ -34,7 +34,7 @@ go:respond(Input) :-
     )
     go:uuid(Uuid)
     go:wait_for(
-        go:print(Uuid, Output)
+        go:print(Uuid, :Output)
     )
 ;
 
@@ -46,7 +46,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     if go:not_equals(UnresolvedName, '')
     then
         go:create_canned(Output, name_not_found, UnresolvedName)
-        go:unify(ContinueLooking, true)
+        [ContinueLooking = true]
         return
     end
 
@@ -56,8 +56,8 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         go:make_list(Solutions, Solution)
         go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
         if go:not_equals(AnOutput, '') then
-             go:unify(Output, AnOutput)
-             go:unify(ContinueLooking, false)
+             [Output = AnOutput]
+             [ContinueLooking = false]
              return
         end
     )
@@ -70,7 +70,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     go:dialog_add_response_clause(EssentialBindings)
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)
-    go:unify(ContinueLooking, false)
+    [ContinueLooking = false]
 ;
 
 go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
@@ -82,23 +82,23 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
 
         /* If there was a problem, or a request for clarification, stop */
         if go:not_equals(SolveOutput, '') then
-            go:let(Output, SolveOutput)
+            [Output = SolveOutput]
             return
         end
         /* If there were solutions, good! */
         if go:greater_than(ResultCount, 0) then
-            go:let(Accepted, Sol)
-            go:let(AcceptedBindings, ResultBindings)
-            go:let(EssentialBindings, EssentialBindings1)
-            go:let(Output, '')
+            [Accepted = Sol]
+            [AcceptedBindings = ResultBindings]
+            [EssentialBindings = EssentialBindings1]
+            [Output = '']
             return
         end
         /* If this is the last available solution, take it anyway */
         if go:equals(LastSol, Index) then
-            go:let(Accepted, Sol)
-            go:let(AcceptedBindings, ResultBindings)
-            go:let(EssentialBindings, EssentialBindings1)
-            go:let(Output, '')
+            [Accepted = Sol]
+            [AcceptedBindings = ResultBindings]
+            [EssentialBindings = EssentialBindings1]
+            [Output = '']
             return
         end
     )

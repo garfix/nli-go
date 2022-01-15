@@ -2,7 +2,8 @@
 
 ## 
 
-* keywords if/then/else/end
+* keywords if/then/else/end 
+* assignment via [X = n]
 
 ## 1.14 the "why?" release - 15-01-2022
 

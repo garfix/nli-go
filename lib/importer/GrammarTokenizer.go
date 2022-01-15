@@ -11,34 +11,34 @@ import (
 
 const (
 	_ = iota // number these constants 1, 2, ...
-	t_comment
-	t_predicate
-	t_variable
-	t_placeholder
-	t_anonymousVariable
-	t_id
-	t_stringConstant
-	t_regExp
-	t_number
-	t_comma
-	t_rewrite
-	t_implication
-	t_colon
-	t_ampersand
-	t_semicolon
-	t_gt
-	t_opening_parenthesis
-	t_closing_parenthesis
-	t_opening_bracket
-	t_closing_bracket
-	t_double_opening_brace
-	t_double_closing_brace
-	t_opening_brace
-	t_closing_brace
-	t_negative
-	t_positive
-	t_slash
-	t_up
+	tComment
+	tPredicate
+	tVariable
+	tPlaceholder
+	tAnonymousVariable
+	tId
+	tStringConstant
+	tRegExp
+	tNumber
+	tComma
+	tRewrite
+	tImplication
+	tColon
+	tAmpersand
+	tSemicolon
+	tGt
+	tOpeningParenthesis
+	tClosingParenthesis
+	tOpeningBracket
+	tClosingBracket
+	tDoubleOpeningBrace
+	tDoubleClosingBrace
+	tOpeningBrace
+	tClosingBrace
+	tNegative
+	tPositive
+	tSlash
+	tUp
 	_newline
 	_other
 )
@@ -58,34 +58,34 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		id      int
 		pattern string
 	}{
-		{t_comment, "/\\*.*?\\*/"},
-		{t_predicate, "[a-z][a-z0-9_]*"},
-		{t_variable, "[A-Z][a-zA-Z0-9]*"},
-		{t_placeholder, "\\$"},
-		{t_anonymousVariable, "_"},
-		{t_id, "`[^`]+`"},
-		{t_stringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
-		{t_regExp, "~(?:\\\\~|\\\\\\\\|[^~])*~"},
-		{t_number, "-?[0-9]+"},
-		{t_comma, ","},
-		{t_rewrite, "->"},
-		{t_implication, ":-"},
-		{t_colon, ":"},
-		{t_ampersand, "&"},
-		{t_semicolon, ";"},
-		{t_gt, ">"},
-		{t_opening_parenthesis, "\\("},
-		{t_closing_parenthesis, "\\)"},
-		{t_opening_bracket, "\\["},
-		{t_closing_bracket, "\\]"},
-		{t_double_opening_brace, "\\{\\{"},
-		{t_double_closing_brace, "\\}\\}"},
-		{t_opening_brace, "\\{"},
-		{t_closing_brace, "\\}"},
-		{t_negative, "-"},
-		{t_positive, "\\+"},
-		{t_slash, "/"},
-		{t_up, "\\.\\."},
+		{tComment, "/\\*.*?\\*/"},
+		{tPredicate, "[a-z][a-z0-9_]*"},
+		{tVariable, "[A-Z][a-zA-Z0-9]*"},
+		{tPlaceholder, "\\$"},
+		{tAnonymousVariable, "_"},
+		{tId, "`[^`]+`"},
+		{tStringConstant, "'(?:\\\\'|\\\\\\\\|[^'])*'"},
+		{tRegExp, "~(?:\\\\~|\\\\\\\\|[^~])*~"},
+		{tNumber, "-?[0-9]+"},
+		{tComma, ","},
+		{tRewrite, "->"},
+		{tImplication, ":-"},
+		{tColon, ":"},
+		{tAmpersand, "&"},
+		{tSemicolon, ";"},
+		{tGt, ">"},
+		{tOpeningParenthesis, "\\("},
+		{tClosingParenthesis, "\\)"},
+		{tOpeningBracket, "\\["},
+		{tClosingBracket, "\\]"},
+		{tDoubleOpeningBrace, "\\{\\{"},
+		{tDoubleClosingBrace, "\\}\\}"},
+		{tOpeningBrace, "\\{"},
+		{tClosingBrace, "\\}"},
+		{tNegative, "-"},
+		{tPositive, "\\+"},
+		{tSlash, "/"},
+		{tUp, "\\.\\."},
 		{_newline, "(?:\r\n|\n|\r)"},
 		{_other, "."},
 	}
@@ -118,18 +118,18 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		if tokenId == _newline {
 			lineNumber++
 			continue
-		} else if tokenId == t_comment {
+		} else if tokenId == tComment {
 			lineNumber += strings.Count(tokenValue, "\n")
 			continue
-		} else if tokenId == t_stringConstant {
+		} else if tokenId == tStringConstant {
 			tokenValue = strings.Replace(tokenValue, "\\'", "'", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
 			tokenValue = tokenValue[1 : len(tokenValue)-1]
-		} else if tokenId == t_id {
+		} else if tokenId == tId {
 			tokenValue = strings.Replace(tokenValue, "\\`", "`", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
 			tokenValue = tokenValue[1 : len(tokenValue)-1]
-		} else if tokenId == t_regExp {
+		} else if tokenId == tRegExp {
 			tokenValue = strings.Replace(tokenValue, "\\/", "/", -1)
 			tokenValue = strings.Replace(tokenValue, "\\\\", "\\", -1)
 			tokenValue = tokenValue[1 : len(tokenValue)-1]

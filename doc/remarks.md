@@ -1,3 +1,25 @@
+## 2022-01-15
+
+I added some keywords to mentalese:
+
+old:
+
+    go:if_then_else(
+        go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1),
+        do_put_on_position(ParentEventId, E1, E2, X1, Y1),
+        do_cleartop(ParentEventId, E2) do_put_on_center(ParentEventId, E1, E2)
+    )
+
+new:
+
+    if go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1) then
+        do_put_on_position(ParentEventId, E1, E2, X1, Y1)
+    else
+        do_cleartop(ParentEventId, E2) do_put_on_center(ParentEventId, E1, E2)
+    end
+
+I created the keywords `return`, `fail`, `break` and `cancel`.
+
 ## 2022-01-14
 
 This is what I did: update these discourse entity values while processing the sentence. For example in `addToQueue`? This would not _add to the queue_, but update the discourse entity variables.

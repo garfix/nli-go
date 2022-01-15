@@ -20,7 +20,7 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 		if !ok {
 			break
 		}
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_semicolon)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tSemicolon)
 		if !ok {
 			break
 		}
@@ -38,7 +38,7 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 
 	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, true)
 	if ok {
-		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_implication)
+		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tImplication)
 		if ok {
 			startIndex = newStartIndex
 			rule.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
@@ -73,17 +73,17 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 
 	ok, done, allRequiredItemsFound := true, false, false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBrace)
 
 	for ok && !done {
 		field := ""
-		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		field, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tColon)
 			if ok {
 				startIndex, ok, allRequiredItemsFound = parseCustomValue(tokens, startIndex, field)
 				if ok {
-					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, t_comma)
+					_, newStartIndex, separatorFound := parser.parseSingleToken(tokens, startIndex, tComma)
 					if separatorFound {
 						startIndex = newStartIndex
 					} else {
@@ -95,7 +95,7 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 	}
 
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
 	}
 
 	if !allRequiredItemsFound {
@@ -322,7 +322,7 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 		}
 		entityVariables = append(entityVariables, list)
 
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_rewrite)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tRewrite)
 		for ok {
 			tailRelation, newStartIndex, isRelation := parser.parseRelation(tokens, startIndex, false)
 			if isRelation {
@@ -336,14 +336,14 @@ func (parser *InternalGrammarParser) parseSyntacticRewriteRule(tokens []Token, s
 				}
 				entityVariables = append(entityVariables, list)
 			} else {
-				tailString, newStartIndex, isString := parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+				tailString, newStartIndex, isString := parser.parseSingleToken(tokens, startIndex, tStringConstant)
 				if isString {
 					startIndex = newStartIndex
 					syntacticCategories = append(syntacticCategories, tailString)
 					positionTypes = append(positionTypes, mentalese.PosTypeWordForm)
 					entityVariables = append(entityVariables, []string{})
 				} else {
-					tailRegExp, newStartIndex, isRegExp := parser.parseSingleToken(tokens, startIndex, t_regExp)
+					tailRegExp, newStartIndex, isRegExp := parser.parseSingleToken(tokens, startIndex, tRegExp)
 					if isRegExp {
 						startIndex = newStartIndex
 						syntacticCategories = append(syntacticCategories, tailRegExp)
@@ -389,7 +389,7 @@ func (parser *InternalGrammarParser) parseCategoryPath(tokens []Token, startInde
 		startIndex = newStartIndex
 
 		for ok {
-			_, newStartIndex, slash = parser.parseSingleToken(tokens, startIndex, t_slash)
+			_, newStartIndex, slash = parser.parseSingleToken(tokens, startIndex, tSlash)
 			if slash {
 				startIndex = newStartIndex
 			} else {
@@ -417,19 +417,19 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 	variables := []string{}
 	allowIndirect := false
 
-	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_up)
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tUp)
 	if ok {
 		startIndex = newStartIndex
 		nodeType = mentalese.NodeTypeParent
 		goto category
 	}
 
-	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_positive)
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tPositive)
 	if ok {
 		startIndex = newStartIndex
 		nodeType = mentalese.NodeTypeNextSibling
 
-		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
+		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tNegative)
 		if ok {
 			startIndex = newStartIndex
 			nodeType = mentalese.NodeTypeSibling
@@ -439,20 +439,20 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 		goto category
 	}
 
-	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tNegative)
 	if ok {
 		startIndex = newStartIndex
 		nodeType = mentalese.NodeTypePrevSibling
 		goto category
 	}
 
-	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 	if ok {
 		startIndex = newStartIndex
-		nodeType, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		nodeType, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {
 			startIndex = newStartIndex
-			_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+			_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
 			if ok {
 				startIndex = newStartIndex
 				if !common.StringArrayContains([]string{mentalese.NodeTypePrevSentence}, nodeType) {
@@ -467,7 +467,7 @@ func (parser *InternalGrammarParser) parseCategoryPathNode(tokens []Token, start
 	categoryRequired = true
 	ok = true
 
-	_, newStartIndex, allowIndirect = parser.parseSingleToken(tokens, startIndex, t_slash)
+	_, newStartIndex, allowIndirect = parser.parseSingleToken(tokens, startIndex, tSlash)
 	if allowIndirect {
 		startIndex = newStartIndex
 	}
@@ -525,7 +525,7 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 	}
 
 	if !ok {
-		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, t_predicate)
+		tokenValue, newStartIndex, found := parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if found {
 			if tokenValue == mentalese.AtomNone {
 				startIndex = newStartIndex
@@ -534,7 +534,7 @@ func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex i
 		}
 	}
 
-	_, _, found = parser.parseSingleToken(tokens, startIndex, t_implication)
+	_, _, found = parser.parseSingleToken(tokens, startIndex, tImplication)
 	if found {
 		ok = false
 	}
@@ -548,14 +548,14 @@ func (parser *InternalGrammarParser) parseRelationTag(tokens []Token, startIndex
 	relation := mentalese.Relation{}
 	tag := ""
 
-	_, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_double_opening_brace)
+	_, startIndex, found = parser.parseSingleToken(tokens, startIndex, tDoubleOpeningBrace)
 	if found {
-		tag, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_variable)
+		tag, startIndex, found = parser.parseSingleToken(tokens, startIndex, tVariable)
 		if found {
 			relation = mentalese.NewRelation(false, mentalese.PredicateIncludeRelations, []mentalese.Term{
 				mentalese.NewTermVariable(tag),
 			})
-			_, startIndex, found = parser.parseSingleToken(tokens, startIndex, t_double_closing_brace)
+			_, startIndex, found = parser.parseSingleToken(tokens, startIndex, tDoubleClosingBrace)
 		}
 	}
 
@@ -588,11 +588,11 @@ func (parser *InternalGrammarParser) parseSortRelation(tokens []Token, startInde
 	superSort := ""
 	subSort := ""
 
-	superSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	superSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_gt)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tGt)
 		if ok {
-			subSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+			subSort, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 			if ok {
 				sortRelation = mentalese.NewSortRelation(superSort, subSort)
 			}
@@ -603,7 +603,7 @@ func (parser *InternalGrammarParser) parseSortRelation(tokens []Token, startInde
 }
 
 func (parser *InternalGrammarParser) parseKeyword(tokens []Token, startIndex int, keyword string) (int, bool) {
-	value, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_predicate)
+	value, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok && value == keyword {
 		return newStartIndex, true
 	} else {
@@ -626,7 +626,7 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 	s3 := mentalese.RelationSet{}
 	newStartIndex := 0
 
-	keyword, startIndex, ok1 = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	keyword, startIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok1 {
 		switch keyword {
 		case "if":
@@ -692,7 +692,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 		return keywordRelation, newStartIndex, ok
 	}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_negative)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tNegative)
 	if ok {
 		negate = true
 	}
@@ -705,9 +705,9 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 		if useAlias {
 			alias := ""
 			possibleAlias := ""
-			possibleAlias, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+			possibleAlias, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 			if ok {
-				predicate, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, t_colon)
+				predicate, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, tColon)
 				if ok {
 					alias = possibleAlias
 					startIndex = newStartIndex
@@ -722,14 +722,14 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 			}
 		}
 
-		predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_parenthesis)
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningParenthesis)
 			for ok {
 				if len(arguments) > 0 {
 
 					// second and further arguments
-					_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
+					_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, tComma)
 					if !commaFound {
 						break
 					} else {
@@ -753,7 +753,7 @@ func (parser *InternalGrammarParser) parseRelation(tokens []Token, startIndex in
 				}
 			}
 			if ok {
-				_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_parenthesis)
+				_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingParenthesis)
 			}
 
 		}
@@ -773,25 +773,25 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 	variable := ""
 	value := mentalese.Term{}
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_brace)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBrace)
 	for ok {
 		if len(binding.GetAll()) > 0 {
 			// second and further bindings
-			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, t_comma)
+			_, startIndex, commaFound = parser.parseSingleToken(tokens, startIndex, tComma)
 			if !commaFound {
 				break
 			}
 		} else {
 			// check for zero bindings
-			_, _, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+			_, _, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
 			if ok {
 				break
 			}
 		}
 
-		variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
+		variable, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tVariable)
 		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tColon)
 			if ok {
 				value, startIndex, ok = parser.parseTerm(tokens, startIndex)
 				if ok {
@@ -801,7 +801,7 @@ func (parser *InternalGrammarParser) parseBinding(tokens []Token, startIndex int
 		}
 	}
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_brace)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
 	}
 
 	return binding, startIndex, ok
@@ -813,7 +813,7 @@ func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex in
 	bindings := mentalese.NewBindingSet()
 	ok := true
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 
 	for ok {
 		binding, newStartIndex, bindingFound := parser.parseBinding(tokens, startIndex)
@@ -826,7 +826,7 @@ func (parser *InternalGrammarParser) parseBindings(tokens []Token, startIndex in
 	}
 
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
 	}
 
 	return bindings, startIndex, ok
@@ -837,7 +837,7 @@ func (parser *InternalGrammarParser) parseId(tokens []Token, startIndex int) (st
 	id := ""
 	sort := ""
 
-	token, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, t_id)
+	token, newStartIndex, ok := parser.parseSingleToken(tokens, startIndex, tId)
 	if ok {
 		i := strings.Index(token, ":")
 		if i == -1 {
@@ -858,10 +858,10 @@ func (parser *InternalGrammarParser) parsePlaceholder(tokens []Token, startIndex
 	placeholder := mentalese.Relation{}
 	ok := false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_placeholder)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPlaceholder)
 	if ok {
 
-		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {
 			myRegex, _ := regexp.Compile("^([^\\d]+)(\\d*)$")
 			result := myRegex.FindStringSubmatch(tokenValue)
@@ -888,7 +888,7 @@ func (parser *InternalGrammarParser) parseTermList(tokens []Token, startIndex in
 	ok := false
 	newStartIndex := 0
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_opening_bracket)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 	if ok {
 		term, newStartIndex, ok = parser.parseTerm(tokens, startIndex)
 		if ok {
@@ -896,7 +896,7 @@ func (parser *InternalGrammarParser) parseTermList(tokens []Token, startIndex in
 			startIndex = newStartIndex
 
 			for startIndex < len(tokens) {
-				_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_comma)
+				_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tComma)
 				if ok {
 					startIndex = newStartIndex
 					term, newStartIndex, ok = parser.parseTerm(tokens, startIndex)
@@ -911,7 +911,7 @@ func (parser *InternalGrammarParser) parseTermList(tokens []Token, startIndex in
 				}
 			}
 		}
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_closing_bracket)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
 	}
 
 end:
@@ -931,14 +931,14 @@ func (parser *InternalGrammarParser) parseRuleReference(tokens []Token, startInd
 	applicationAlias := ""
 	found := false
 
-	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_ampersand)
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tAmpersand)
 	if !ok {
 		goto end
 	}
 
-	possibleAlias, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	possibleAlias, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok {
-		predicate, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, t_colon)
+		predicate, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, tColon)
 		if ok {
 			alias = possibleAlias
 			startIndex = newStartIndex
@@ -953,7 +953,7 @@ func (parser *InternalGrammarParser) parseRuleReference(tokens []Token, startInd
 		prefix = applicationAlias + "_"
 	}
 
-	predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	predicate, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 
 	term = mentalese.NewTermAtom(prefix + predicate)
 
@@ -1006,9 +1006,9 @@ func (parser *InternalGrammarParser) parseCharacterClass(tokens []Token, startIn
 	name := ""
 	list := mentalese.TermList{}
 
-	name, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	name, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tColon)
 		if ok {
 			list, startIndex, ok = parser.parseTermList(tokens, startIndex)
 			termType, _ := list.GetTermType()
@@ -1034,7 +1034,7 @@ func (parser *InternalGrammarParser) parseSegmentationRule(tokens []Token, start
 
 	antecedent, startIndex, ok = parser.parseSegmentationNode(tokens, startIndex)
 	if ok {
-		_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, t_rewrite)
+		_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, tRewrite)
 		if found {
 			startIndex = newStartIndex
 			for true {
@@ -1045,7 +1045,7 @@ func (parser *InternalGrammarParser) parseSegmentationRule(tokens []Token, start
 				} else {
 					break
 				}
-				_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, t_comma)
+				_, newStartIndex, found = parser.parseSingleToken(tokens, startIndex, tComma)
 				if found {
 					startIndex = newStartIndex
 				} else {
@@ -1068,11 +1068,11 @@ func (parser *InternalGrammarParser) parseSegmentationNode(tokens []Token, start
 	pattern := []morphology.SegmentPatternCharacter{}
 	node := morphology.SegmentNode{}
 
-	category, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+	category, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok {
-		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_colon)
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tColon)
 		if ok {
-			text, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+			text, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tStringConstant)
 			if ok {
 				pattern, ok = parser.parseSegmentPattern(text)
 				if ok {
@@ -1123,25 +1123,25 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 	term := mentalese.Term{}
 	newStartIndex := 0
 
-	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_variable)
+	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tVariable)
 	if ok {
 		term.TermType = mentalese.TermTypeVariable
 		term.TermValue = tokenValue
 		goto end
 	}
-	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_number)
+	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tNumber)
 	if ok {
 		term.TermType = mentalese.TermTypeStringConstant
 		term.TermValue = tokenValue
 		goto end
 	}
-	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_stringConstant)
+	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tStringConstant)
 	if ok {
 		term.TermType = mentalese.TermTypeStringConstant
 		term.TermValue = tokenValue
 		goto end
 	}
-	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_anonymousVariable)
+	tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tAnonymousVariable)
 	if ok {
 		term.TermType = mentalese.TermTypeAnonymousVariable
 		term.TermValue = tokenValue
@@ -1179,7 +1179,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 		}
 	}
 	{
-		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, t_predicate)
+		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {
 			term.TermType = mentalese.TermTypePredicateAtom
 			term.TermValue = tokenValue
@@ -1205,7 +1205,7 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 			goto end
 		}
 		{
-			tokenValue, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, t_regExp)
+			tokenValue, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tRegExp)
 			if ok {
 				term.TermType = mentalese.TermTypeRegExp
 				term.TermValue = tokenValue

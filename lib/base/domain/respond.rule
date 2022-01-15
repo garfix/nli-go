@@ -28,7 +28,7 @@ go:respond(Input) :-
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
             if go:equals(ContinueLooking, true) then
-                go:fail()
+                fail
             end
         )
     )
@@ -47,7 +47,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     then
         go:create_canned(Output, name_not_found, UnresolvedName)
         go:unify(ContinueLooking, true)
-        go:return()
+        return
     end
 
     /* Stop at the first successfully processed solution */
@@ -58,7 +58,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         if go:not_equals(AnOutput, '') then
              go:unify(Output, AnOutput)
              go:unify(ContinueLooking, false)
-             go:return()
+             return
         end
     )
 
@@ -83,7 +83,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
         /* If there was a problem, or a request for clarification, stop */
         if go:not_equals(SolveOutput, '') then
             go:let(Output, SolveOutput)
-            go:return()
+            return
         end
         /* If there were solutions, good! */
         if go:greater_than(ResultCount, 0) then
@@ -91,7 +91,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
             go:let(AcceptedBindings, ResultBindings)
             go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
-            go:return()
+            return
         end
         /* If this is the last available solution, take it anyway */
         if go:equals(LastSol, Index) then
@@ -99,7 +99,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
             go:let(AcceptedBindings, ResultBindings)
             go:let(EssentialBindings, EssentialBindings1)
             go:let(Output, '')
-            go:return()
+            return
         end
     )
 ;

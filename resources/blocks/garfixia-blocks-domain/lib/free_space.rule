@@ -82,13 +82,13 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
                 go:greater_than_equals(SpanLength, Length)
                 go:let(A1, X)
                 go:let(B1, StartY)
-                go:break()
+                break
             else
                 go:let(StartY, Y2)
             end
         )
         go:not_equals(A1, -1)
-        go:break()
+        break
     )
 
     go:not_equals(A1, -1)
@@ -103,7 +103,7 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
         go:subtract(Line, X1, W)
         go:greater_than_equals(W, Width)
         go:subtract(Index, ColIndex, ColSpan)
-        go:break()
+        break
     )
 ;
 
@@ -112,7 +112,8 @@ span_free(ColStart, ColEnd, RowIndex, Grid) :-
 
     go:range_foreach(ColStart, ColEnd, ColIndex,
         if grid(Grid, RowIndex, ColIndex, 1) then
-            go:let(Success, false) go:break()
+            go:let(Success, false)
+            break
         end
     )
 

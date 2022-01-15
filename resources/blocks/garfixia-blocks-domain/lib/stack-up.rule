@@ -9,7 +9,7 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:subtract(Size, 1, Last)
     go:list_foreach(SortedList, Index, E1,
         if go:not_equals(Index, Last) go:not(block(E1)) then
-            go:cancel()
+            cancel
         end
     );
 

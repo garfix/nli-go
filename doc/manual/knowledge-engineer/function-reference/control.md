@@ -56,12 +56,6 @@ A variant on the boolean function `not` that works with bindings. If executing `
     
 * `A`: a relation set   
 
-## Fail
-
-Returns no bindings. In combination with if/then can fail a relation set under given conditions.
-
-    go:fail()
-
 ## Call
 
 This relation just processes its single argument, that is a relation set. The purpose of this is to implement words like "tell", whose argument is a clause.
@@ -94,24 +88,6 @@ Example:
     go:range_foreach(1, 10, I,
         go:multiply(Result, I, Result)
     )     
-
-## Break
-
-Breaks a loop and keeps the bindings built so far.
-
-    go:break()
-
-## Cancel
-
-Breaks a loop and discards all bindings built so far.
-
-    go:cancel()
-
-## Return
-
-Ends a function and keeps all bindings.
-
-    go:return()
 
 ## Wait for
 

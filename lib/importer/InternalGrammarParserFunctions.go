@@ -642,18 +642,30 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			ok = ok1 && ok2 && ok3 && ok5
 			if ok {
 				if ok4 {
-					relation = mentalese.NewRelation(false, "go_$if_then_else", []mentalese.Term{
+					relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse, []mentalese.Term{
 						mentalese.NewTermRelationSet(s1),
 						mentalese.NewTermRelationSet(s2),
 						mentalese.NewTermRelationSet(s3),
 					})
 				} else {
-					relation = mentalese.NewRelation(false, "go_$if_then", []mentalese.Term{
+					relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
 						mentalese.NewTermRelationSet(s1),
 						mentalese.NewTermRelationSet(s2),
 					})
 				}
 			}
+		case "return":
+			relation = mentalese.NewRelation(false, mentalese.PredicateReturn, []mentalese.Term{})
+			ok = true
+		case "fail":
+			relation = mentalese.NewRelation(false, mentalese.PredicateFail, []mentalese.Term{})
+			ok = true
+		case "break":
+			relation = mentalese.NewRelation(false, mentalese.PredicateBreak, []mentalese.Term{})
+			ok = true
+		case "cancel":
+			relation = mentalese.NewRelation(false, mentalese.PredicateCancel, []mentalese.Term{})
+			ok = true
 		default:
 			ok = false
 		}

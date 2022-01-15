@@ -19,3 +19,19 @@ or if/then/else
     end
 
 The whitespacing is not required, but this is the preferred way of writing
+
+## break
+
+`break` breaks a loop and keeps the bindings built so far.
+
+## cancel
+
+`cancel` breaks a loop and discards all bindings built so far.
+
+## return
+
+`return` ends a procedure immediately, succeeding (with bindings)
+
+## fail
+
+`fail` ends a procedure immediately, failing (no bindings)

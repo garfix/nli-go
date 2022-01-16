@@ -9,23 +9,23 @@ describe(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    [:Set = description(E1) default_shape(E1, Sort) shape(E1, S)]
+    [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
 
     /* Is the shape unique? */
     if [Cs > 1] then
-        [:Set = {{ :Set }} color(E1, C)]
+        [:Set := {{ :Set }} color(E1, C)]
         /* Are the shape and color unique? */
         if [Cc > 1] then
-            [:Set = {{ :Set }} volume(E1, V)]
+            [:Set := {{ :Set }} volume(E1, V)]
             /* Are the shape, color, and volume unique? */
             if [Cv > 1] then
                 /* Add the object it supports and presume that this is enough */
                 support(E1, E3) describe(E3, Sort, E3Desc)
-                [:Set = {{ :Set }} support(E1, E3) description(E3) {{ E3Desc }}]
+                [:Set := {{ :Set }} support(E1, E3) description(E3) {{ E3Desc }}]
             end
         end
     end
-    [DescSet = :Set]
+    [DescSet := :Set]
 ;
 
 /* Create a description that uses indeterminate nouns in stead of complex refinements */
@@ -40,51 +40,51 @@ describe_categoric(E1, Sort, DescSet) :-
     volume(E2, V) go:count(E2, Cv)
 
     if go:dialog_get_center(L1) [E1 == L1] then
-        [:Set = center(E1)]
+        [:Set := center(E1)]
     else
-        [:Set = description(E1) default_shape(E1, Sort) shape(E1, S)]
+        [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
 
         /* Is the shape unique? */
         if [Cs > 1] then
-            [:Set = {{ :Set }} color(E1, C)]
+            [:Set := {{ :Set }} color(E1, C)]
             /* Are the shape and color unique? */
             if [Cc > 1] then
-                [:Set = {{ :Set }} volume(E1, V) indeterminate(E1)]
+                [:Set := {{ :Set }} volume(E1, V) indeterminate(E1)]
             end
         end
     end
-    [DescSet = :Set]
+    [DescSet := :Set]
 ;
 
 describe_event(P1, DescSet) :-
     pick_up(P1, Subject, Object)
     describe_categoric(Object, '', ItemDesc)
-    [DescSet = pick_up(P1, Subject, Object) {{ ItemDesc }}]
+    [DescSet := pick_up(P1, Subject, Object) {{ ItemDesc }}]
 ;
 
 describe_event(P1, DescSet) :-
     put_on(P1, Subject, Object1, Object2)
     describe_categoric(Object1, '', ItemDesc1)
     describe_categoric(Object2, '', ItemDesc2)
-    [DescSet = put_on(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
+    [DescSet := put_on(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
 ;
 
 describe_event(P1, DescSet) :-
     put_in(P1, Subject, Object1, Object2)
     describe_categoric(Object1, '', ItemDesc1)
     describe_categoric(Object2, '', ItemDesc2)
-    [DescSet = put_in(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
+    [DescSet := put_in(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
 ;
 
 describe_event(P1, DescSet) :-
     stack_up(P1, Subject, List)
     go:list_expand(List, Item)
     describe_categoric(Item, '', ItemDesc)
-    [DescSet = stack_up(P1, Subject, List) {{ ItemDesc }}]
+    [DescSet := stack_up(P1, Subject, List) {{ ItemDesc }}]
 ;
 
 describe_event(P1, DescSet) :-
     get_rid_of(P1, Subject, A)
     describe_categoric(A, '', ItemDesc)
-    [DescSet = get_rid_of(P1, Subject, A) {{ ItemDesc }}]
+    [DescSet := get_rid_of(P1, Subject, A) {{ ItemDesc }}]
 ;

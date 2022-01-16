@@ -61,9 +61,9 @@ do_init_grid(Grid, Objects, HorLines, VerLines) :-
 ;
 
 do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
-    [:A1 = -1]
-    [:B1 = -1]
-    [:StartY = -1]
+    [:A1 := -1]
+    [:B1 := -1]
+    [:StartY := -1]
 
     size(E1, Width, Length, _)
 
@@ -80,11 +80,11 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
             then
                 go:subtract(Y2, :StartY, SpanLength)
                 [SpanLength >= Length]
-                [:A1 = X]
-                [:B1 = :StartY]
+                [:A1 := X]
+                [:B1 := :StartY]
                 break
             else
-                [:StartY = Y2]
+                [:StartY := Y2]
             end
         )
         [:A1 != -1]
@@ -92,8 +92,8 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
     )
 
     [:A1 != -1]
-    [ResultX = :A1]
-    [ResultY = :B1]
+    [ResultX := :A1]
+    [ResultY := :B1]
 ;
 
 find_span(Width, VerLines, ColIndex, ColSpan) :-
@@ -108,11 +108,11 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
 ;
 
 span_free(ColStart, ColEnd, RowIndex, Grid) :-
-    [:Success = true]
+    [:Success := true]
 
     go:range_foreach(ColStart, ColEnd, ColIndex,
         if grid(Grid, RowIndex, ColIndex, 1) then
-            [:Success = false]
+            [:Success := false]
             break
         end
     )

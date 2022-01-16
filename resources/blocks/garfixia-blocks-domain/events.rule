@@ -19,6 +19,6 @@ get_top_level_event(EventId, TopLevelEventId) :-
     if parent_event(EventId, ParentEventId) then
         get_top_level_event(ParentEventId, TopLevelEventId)
     else
-        [TopLevelEventId = EventId]
+        [TopLevelEventId := EventId]
     end
 ;

@@ -69,7 +69,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tVariable, "[A-Z][a-zA-Z0-9]*"},
 		{tEquals, "=="},
 		{tNotEquals, "!="},
-		{tAssign, "="},
+		{tAssign, ":="},
 		{tPlaceholder, "\\$"},
 		{tAnonymousVariable, "_"},
 		{tId, "`[^`]+`"},

@@ -24,9 +24,9 @@ narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
 characteristic_shape(E, S) :-
     type(E, T)
     if [T == block] size(E, X, X, X) then
-        [S = cube]
+        [S := cube]
     else
-        [S = T]
+        [S := T]
     end
 ;
 

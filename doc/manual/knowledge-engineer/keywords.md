@@ -6,13 +6,13 @@ Mentalese has some keywords that make programs easier to read:
 
 To assign a value to a free variable, do
 
-    [X = n]
+    [X := n]
 
 Where `X` is a (unmutable) variable and `n` any term. 
 
 The same expression is used for mutable variables
 
-    [:X = n]
+    [:X := n]
 
 any existing value is overwritten by the new value. 
 

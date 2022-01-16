@@ -7,7 +7,7 @@ go:tell(Input) :-
 
 go:respond(Input) :-
 
-    [:Output = '']
+    [:Output := '']
 
     go:ignore(
 
@@ -23,7 +23,7 @@ go:respond(Input) :-
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
             go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
-            [:Output = RootClauseOutput]
+            [:Output := RootClauseOutput]
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
             if [ContinueLooking == true] then
@@ -44,7 +44,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
 
     if [UnresolvedName != ''] then
         go:create_canned(Output, name_not_found, UnresolvedName)
-        [ContinueLooking = true]
+        [ContinueLooking := true]
         return
     end
 
@@ -54,8 +54,8 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         go:make_list(Solutions, Solution)
         go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
         if [AnOutput != ''] then
-             [Output = AnOutput]
-             [ContinueLooking = false]
+             [Output := AnOutput]
+             [ContinueLooking := false]
              return
         end
     )
@@ -68,7 +68,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     go:dialog_add_response_clause(EssentialBindings)
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)
-    [ContinueLooking = false]
+    [ContinueLooking := false]
 ;
 
 go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
@@ -80,23 +80,23 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
 
         /* If there was a problem, or a request for clarification, stop */
         if [SolveOutput != ''] then
-            [Output = SolveOutput]
+            [Output := SolveOutput]
             return
         end
         /* If there were solutions, good! */
         if [ResultCount > 0] then
-            [Accepted = Sol]
-            [AcceptedBindings = ResultBindings]
-            [EssentialBindings = EssentialBindings1]
-            [Output = '']
+            [Accepted := Sol]
+            [AcceptedBindings := ResultBindings]
+            [EssentialBindings := EssentialBindings1]
+            [Output := '']
             return
         end
         /* If this is the last available solution, take it anyway */
         if [LastSol == Index] then
-            [Accepted = Sol]
-            [AcceptedBindings = ResultBindings]
-            [EssentialBindings = EssentialBindings1]
-            [Output = '']
+            [Accepted := Sol]
+            [AcceptedBindings := ResultBindings]
+            [EssentialBindings := EssentialBindings1]
+            [Output := '']
             return
         end
     )

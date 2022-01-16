@@ -44,22 +44,22 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :- 
-			[:Result = 1]
+			[:Result := 1]
 			go:range_foreach(1, Number, _,
 				go:multiply(:Result, Base, :Result)
 			)
-			[Pow = :Result];	
+			[Pow := :Result];	
 
 		first(In, Out) :-
-			[:X = In]
-			[:Y = 13]
+			[:X := In]
+			[:Y := 13]
 			times_three(:X, :Y)
 			go:add(:Y, 1, :X)
-			[Out = :X]
+			[Out := :X]
 		;
 
 		times_three(In, Out) :-
-			[:X = 3]
+			[:X := 3]
 			go:multiply(:X, In, Out)
 		;
 	

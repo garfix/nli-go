@@ -70,6 +70,35 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 	return ids
 }
 
+func (e *DialogContext) GetAnaphoraQueue1() []mentalese.Term {
+	ids := []mentalese.Term{}
+	clauses := e.ClauseList.Clauses
+
+	for i := len(clauses) - 1; i >= 0; i-- {
+		clause := clauses[i]
+		for _, entity := range clause.Entities {
+			value, found := e.DiscourseEntities.Get(entity.DiscourseVariable)
+			if found {
+				ids = append(ids, value)
+				//if value.IsList() {
+				//	group := EntityReferenceGroup{}
+				//	for _, item := range value.TermValueList {
+				//		reference := EntityReference{item.TermSort, item.TermValue, entity.DiscourseVariable}
+				//		group = append(group, reference)
+				//	}
+				//	ids = append(ids, group)
+				//} else {
+				//	reference := EntityReference{value.TermSort, value.TermValue, entity.DiscourseVariable}
+				//	group := EntityReferenceGroup{reference}
+				//	ids = append(ids, group)
+				//}
+			}
+		}
+	}
+
+	return ids
+}
+
 func (dc *DialogContext) Initialize() {
 	dc.DeicticCenter.Initialize()
 	dc.ProcessList.Initialize()

@@ -19,10 +19,10 @@ func TestGeneralizedQuantifier(t *testing.T) {
 
 	grammarRules := internalGrammarParser.CreateGrammarRules(`
 		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: go:quantifier(Result, Range, $quantifier) }
-		{ rule: quantifier(Result, Range) -> 'all', 						sense: go:equals(Result, Range) } 
+		{ rule: quantifier(Result, Range) -> 'all', 						sense: [Result == Range] } 
 		{ rule: quantifier(Result, Range) -> 'some', 						sense: go:greater_than(Result, 0) }
-		{ rule: quantifier(Result, Range) -> 'no', 							sense: go:equals(Result, 0) }
-		{ rule: quantifier(Result, Range) -> number(N1), 	    			sense: go:equals(Result, N1) }
+		{ rule: quantifier(Result, Range) -> 'no', 							sense: [Result == 0] }
+		{ rule: quantifier(Result, Range) -> number(N1), 	    			sense: [Result == N1] }
 		{ rule: quantifier(Result, Range) -> 'more' 'than' number(N1),		sense: go:greater_than(Result, N1) }
 		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	
 																			sense: go:or($quantifier1, $quantifier2) }

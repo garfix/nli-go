@@ -1,8 +1,8 @@
 /* quantification */
 
 { rule: qp(_) -> quantifier(Result, Range),                     sense: go:quantifier(Result, Range, $quantifier) }
-{ rule: quantifier(Result, Range) -> 'every',                   sense: go:equals(Result, Range) }
-{ rule: quantifier(Result, Range) -> number(N1),                sense: go:equals(Result, N1) }
+{ rule: quantifier(Result, Range) -> 'every',                   sense: [Result == Range] }
+{ rule: quantifier(Result, Range) -> number(N1),                sense: [Result == N1] }
 
 /* noun */
 

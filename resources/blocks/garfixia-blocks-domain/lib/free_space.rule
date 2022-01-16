@@ -28,7 +28,7 @@ rectangle(R1, X1, X2, Y1, Y2) :-
 
 do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines) :-
     rectangle(O1, X1, X2, Y1, Y2)
-    go:not_equals(O1, Container)
+    [O1 != Container]
     object(O1)
     go:greater_than_equals(X2, BoundX1)
     go:less_than_equals(X1, BoundX2)
@@ -87,11 +87,11 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
                 [:StartY = Y2]
             end
         )
-        go:not_equals(:A1, -1)
+        [:A1 != -1]
         break
     )
 
-    go:not_equals(:A1, -1)
+    [:A1 != -1]
     [ResultX = :A1]
     [ResultY = :B1]
 ;
@@ -117,5 +117,5 @@ span_free(ColStart, ColEnd, RowIndex, Grid) :-
         end
     )
 
-    go:equals(:Success, true)
+    [:Success == true]
 ;

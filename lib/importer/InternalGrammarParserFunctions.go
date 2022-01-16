@@ -628,8 +628,8 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 	ok4 := false
 	ok5 := false
 	relation := mentalese.Relation{}
-	variable := ""
-	value := mentalese.Term{}
+	term1 := mentalese.Term{}
+	term2 := mentalese.Term{}
 	s1 := mentalese.RelationSet{}
 	s2 := mentalese.RelationSet{}
 	s3 := mentalese.RelationSet{}
@@ -680,18 +680,36 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			ok = false
 		}
 	} else {
+		predicate := ""
 		_, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 		if ok1 {
 			startIndex = newStartIndex
-			variable, startIndex, ok2 = parser.parseVariable(tokens, startIndex)
-			_, startIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tEquals)
-			value, startIndex, ok4 = parser.parseTerm(tokens, startIndex)
+			term1, startIndex, ok2 = parser.parseTerm(tokens, startIndex)
+			_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tAssign)
+			if ok3 {
+				startIndex = newStartIndex
+				predicate = mentalese.PredicateAssign
+				ok3 = term1.IsVariable()
+			} else {
+				_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tEquals)
+				if ok3 {
+					startIndex = newStartIndex
+					predicate = mentalese.PredicateEquals
+				} else {
+					_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tNotEquals)
+					if ok3 {
+						startIndex = newStartIndex
+						predicate = mentalese.PredicateNotEquals
+					}
+				}
+			}
+			term2, startIndex, ok4 = parser.parseTerm(tokens, startIndex)
 			_, startIndex, ok5 = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
 			ok = ok1 && ok2 && ok3 && ok4 && ok5
 			if ok {
-				relation = mentalese.NewRelation(false, mentalese.PredicateAssign, []mentalese.Term{
-					mentalese.NewTermVariable(variable),
-					value,
+				relation = mentalese.NewRelation(false, predicate, []mentalese.Term{
+					term1,
+					term2,
 				})
 			}
 		}

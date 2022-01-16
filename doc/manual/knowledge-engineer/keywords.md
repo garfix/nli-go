@@ -16,6 +16,25 @@ The same expression is used for mutable variables
 
 any existing value is overwritten by the new value. 
 
+
+## equals
+
+    [T1 == T2]
+
+This expression compares two terms.
+
+* `T1`: a free variable, or any other term
+* `T2`: a free variable, or any other term
+
+## not_equals
+
+This expression just compares two terms. If either their types or their values are unequal, it fails
+
+    [T1 != T2]
+
+* `T1`: a free variable, or any other term
+* `T2`: a free variable, or any other term
+
 ## if then (else) end
 
 This is the common if then construction:
@@ -26,7 +45,7 @@ This is the common if then construction:
 
 or if/then/else
 
-    if go:equals(Sel, 0) then
+    if [Sel == 0] then
         support(B, A)
     else
         anywhere_on(A, B)
@@ -48,4 +67,4 @@ The whitespacing is not required, but this is the preferred way of writing
 
 ## fail
 
-`fail` ends a procedure immediately, failing (no bindings)
+`fail` ends a scope immediately, failing (no bindings)

@@ -85,27 +85,7 @@ Compares two integers. Succeeds if N1 <= N2.
 * `N1`: a string, representing an integer
 * `N2`: a string, representing an integer
 
-The function does not bind new variables. It just removes existing bindings if the comparison fails.
-
-## equals
-
-This function compares two terms. Next to its obvious comparison function, it is also powerful as a destructuring function.
-
-    go:equals(T1, T2)
-    
-* `T1`: a free variable, or any other term
-* `T2`: a free variable, or any other term
-
-Examples:
-
-If N1 is an unbound variable, this function is an assignment (N1 becomes 2).
-If N1 is a bound variable, this function checks if both the type and the value are identical.
-
-    go:equals(N1, 2)
-    
-Destructuring. If Q1 holds a quant() relation, this equals, binds its arguments to new variables (`R1`).
-    
-    go:equals(Q1, quant(_, _, R1, _)        
+The function does not bind new variables. It just removes existing bindings if the comparison fails. 
     
 # unify
     
@@ -127,14 +107,6 @@ Destructuring. If Q1 holds a quant() relation, this equals, binds its arguments 
     
     go:unify(Q1, quant(_, _, R1, _)
 
-## not_equals
-
-This function just compares two terms. If either their types or their values are unequal, it fails 
-
-    go:not_equals(T1, T2)
-    
-* `T1`: a free variable, or any other term
-* `T2`: a free variable, or any other term
 
 ## add
 

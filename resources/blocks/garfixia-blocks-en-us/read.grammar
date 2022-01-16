@@ -1,13 +1,13 @@
 /* quantifiers */
 
 { rule: qp(_) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
-{ rule: quantifier(Result, Range) -> 'all',                            sense: go:equals(Result, Range) }
+{ rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
 { rule: quantifier(Result, Range) -> an(_),                            sense: go:greater_than(Result, 0) }
 { rule: quantifier(Result, Range) -> 'any',                            sense: go:greater_than(Result, 0) }
 { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: go:greater_than(Result, 0) }
-{ rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: go:equals(Result, 2) }
-{ rule: quantifier(Result, Range) -> number(N1),                       sense: go:equals(Result, N1) }
-{ rule: quantifier(Result, Range) -> 'two',                            sense: go:equals(Result, 2) }
+{ rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: [Result == 2] }
+{ rule: quantifier(Result, Range) -> number(N1),                       sense: [Result == N1] }
+{ rule: quantifier(Result, Range) -> 'two',                            sense: [Result == 2] }
 
 { rule: number(N1) -> ~^[0-9]+~ }
 
@@ -150,12 +150,12 @@
 
 { rule: assertion(P1) -> np(E1) copula(_) np(E2),                      sense: go:assert(
                                                                             learn:own(A, B) :-
-                                                                                go:quant_check($np1, go:quant_check($np2, go:equals(A, E2) go:equals(B, E1)))) }
+                                                                                go:quant_check($np1, go:quant_check($np2, [A == E2] [B == E1]))) }
 { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           sense: go:assert(
-                                                                            -$tv :- go:quant_check($np1, go:quant_check($np2, go:equals(A, E1) go:equals(B, E2)))) }
+                                                                            -$tv :- go:quant_check($np1, go:quant_check($np2, [A == E1] [B == E2]))) }
 { rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                sense: go:assert(
                                                                             $tv :- go:quant_check($np1,
-                                                                                go:quant_check($np2, go:equals(A, E1) go:equals(B, E2) go:not( -$tv )))) }
+                                                                                go:quant_check($np2, [A == E1] [B == E2] go:not( -$tv )))) }
 
 { rule: exception(P1) -> 'but' assertion(P1) }
 { rule: exception(P1) -> ',' exception(P1) }

@@ -39,7 +39,7 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    if go:dialog_get_center(L1) go:equals(E1, L1) then
+    if go:dialog_get_center(L1) [E1 == L1] then
         [:Set = center(E1)]
     else
         [:Set = description(E1) default_shape(E1, Sort) shape(E1, S)]

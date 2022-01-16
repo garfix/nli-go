@@ -69,6 +69,8 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateRelationSet("sort([5,2,3,1])")
 	parser.CreateRelationSet("[A = 1]")
 	parser.CreateRelationSet("[A = :B]")
+	parser.CreateRelationSet("[A == B]")
+	parser.CreateRelationSet("[A != B]")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: [prev_sentence] }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: np(E) }")
 	parser.CreateGrammarRules("{ rule: a(P) -> b(P), ellipsis: .. }")

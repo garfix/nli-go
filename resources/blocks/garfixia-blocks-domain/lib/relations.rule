@@ -17,13 +17,13 @@ big(E) :- size(E, Width, Length, Height) go:greater_than(Width, 128) go:greater_
 large(E) :- size(E, Width, Length, Height) go:greater_than(Height, 128);
 small(E) :- size(E, Width, Length, Height) go:less_than(Width, 128) go:less_than(Length, 128) go:less_than(Height, 128);
 volume(E, V) :- if big(E) then go:unify(V, big) else go:unify(V, small) end;
-cube(E) :- block(E) size(E, Width, Length, Height) go:equals(Width, Length) go:equals(Length, Height);
+cube(E) :- block(E) size(E, Width, Length, Height) [Width == Length] [Length == Height];
 taller(A, B) :- height(A, Ha) height(B, Hb) go:greater_than(Ha, Hb);
 narrower(A, B) :- width(A, Wa) width(B, Wb) go:less_than(Wa, Wb);
 
 characteristic_shape(E, S) :-
     type(E, T)
-    if go:equals(T, block) size(E, X, X, X) then
+    if [T == block] size(E, X, X, X) then
         [S = cube]
     else
         [S = T]
@@ -42,7 +42,7 @@ on(A, B) :-
     go:translate('anywhere on top of', Locale, A2)
     go:wait_for(
         go:user_select(Q, [A1, A2], Sel))
-    if go:equals(Sel, 0) then
+    if [Sel == 0] then
         support(B, A)
     else
         anywhere_on(A, B)

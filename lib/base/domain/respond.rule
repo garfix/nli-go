@@ -7,7 +7,6 @@ go:tell(Input) :-
 
 go:respond(Input) :-
 
-    /* We use a mutable variable here because there can be Outputs that may be overridden later */
     [:Output = '']
 
     go:ignore(
@@ -27,7 +26,7 @@ go:respond(Input) :-
             [:Output = RootClauseOutput]
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
-            if go:equals(ContinueLooking, true) then
+            if [ContinueLooking == true] then
                 fail
             end
         )
@@ -43,8 +42,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     go:dialog_add_root_clause(RootClauseTree, false)
     go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
-    if go:not_equals(UnresolvedName, '')
-    then
+    if [UnresolvedName != ''] then
         go:create_canned(Output, name_not_found, UnresolvedName)
         [ContinueLooking = true]
         return
@@ -55,7 +53,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         go:find_solution(Request, Solution)
         go:make_list(Solutions, Solution)
         go:exec_solutions(Request, RequestBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
-        if go:not_equals(AnOutput, '') then
+        if [AnOutput != ''] then
              [Output = AnOutput]
              [ContinueLooking = false]
              return
@@ -81,7 +79,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
 
         /* If there was a problem, or a request for clarification, stop */
-        if go:not_equals(SolveOutput, '') then
+        if [SolveOutput != ''] then
             [Output = SolveOutput]
             return
         end
@@ -94,7 +92,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
             return
         end
         /* If this is the last available solution, take it anyway */
-        if go:equals(LastSol, Index) then
+        if [LastSol == Index] then
             [Accepted = Sol]
             [AcceptedBindings = ResultBindings]
             [EssentialBindings = EssentialBindings1]

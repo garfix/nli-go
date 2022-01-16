@@ -1,7 +1,7 @@
 { rule: proper_noun_group(N1) -> proper_noun(N1) proper_noun(N1) }
 
 { rule: qp(_) -> quantifier(Result, Range),                             sense: go:quantifier(Result, Range, $quantifier) }
-{ rule: quantifier(Result, Range) -> 'the',                             sense: go:equals(Result, 1) }
+{ rule: quantifier(Result, Range) -> 'the',                             sense: [Result == 1] }
 
 { rule: np(E1) -> proper_noun_group(E1) }
 { rule: np(R1) -> qp(_) nbar(R1),                                       sense: go:quant($qp, R1, $nbar) }

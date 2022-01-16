@@ -45,7 +45,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	runner := central.NewProcessRunner(solver, log)
 	rules := parser.CreateRules(`
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
-		-sibling(A, B) :- go:equals(A, B);
+		-sibling(A, B) :- [A == B];
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)

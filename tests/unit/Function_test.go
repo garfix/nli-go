@@ -37,10 +37,10 @@ func TestFunctions(t *testing.T) {
 		{"go:less_than(E1, E2)", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
 		{"go:add(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'3'}]"},
 		{"go:subtract(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'-1'}]"},
-		{"go:not_equals(E1, E2)", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
-		{"go:not_equals(E1, E2)", "{E1:2, E2:2}", "[]"},
-		{"go:equals(E1, E2)", "{E1:1, E2:2}", "[]"},
-		{"go:equals(E1, E2)", "{E1:2, E2:2}", "[{E1:2, E2:2}]"},
+		{"[E1 != E2]", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
+		{"[E1 != E2]", "{E1:2, E2:2}", "[]"},
+		{"[E1 == E2]", "{E1:1, E2:2}", "[]"},
+		{"[E1 == E2]", "{E1:2, E2:2}", "[{E1:2, E2:2}]"},
 		{"go:unify(quant(Q2, none, R2, none), quant(Q1, none, R1, none))", "{R2:5}", "[{R1:5, R2:5}]"},
 		{"go:unify(X, 0)", "{Z:0}", "[{X:0, Z:0}]"},
 		{"go:unify(0, Y)", "{Z:0}", "[{Y:0, Z:0}]"},
@@ -297,7 +297,7 @@ func TestQuantFunctions(t *testing.T) {
 		{`
 			go:quant_foreach(
 				go:quant(
-					go:quantifier(Result, Range, go:equals(Result, 3)),
+					go:quantifier(Result, Range, [Result == 3]),
 					E,
 					person(E, _)),
 				List)`,
@@ -305,7 +305,7 @@ func TestQuantFunctions(t *testing.T) {
 		{`
 			go:quant_ordered_list(
 				go:quant(
-					go:quantifier(Result, Range, go:equals(Result, 3)),
+					go:quantifier(Result, Range, [Result == 3]),
 					E,
 					person(E, _)),
 				&by_name,
@@ -315,11 +315,11 @@ func TestQuantFunctions(t *testing.T) {
 			go:quant_ordered_list(
 				go:and(
 					go:quant(
-						go:quantifier(Result, Range, go:equals(Result, 3)),
+						go:quantifier(Result, Range, [Result == 3]),
 						E,
 						person(E, _)),
 					go:quant(
-						go:quantifier(Result, Range, go:equals(Result, 1)),
+						go:quantifier(Result, Range, [Result == 1]),
 						E,
 						person_named_edward(E))
 				),
@@ -330,11 +330,11 @@ func TestQuantFunctions(t *testing.T) {
 			go:quant_ordered_list(
 				go:or(
 					go:quant(
-						go:quantifier(Result, Range, go:equals(Result, 3)),
+						go:quantifier(Result, Range, [Result == 3]),
 						E,
 						person(E, _)),
 					go:quant(
-						go:quantifier(Result, Range, go:equals(Result, 1)),
+						go:quantifier(Result, Range, [Result == 1]),
 						E,
 						person_named_bernhard(E))
 				),
@@ -345,16 +345,16 @@ func TestQuantFunctions(t *testing.T) {
 			go:quant_ordered_list(
 				go:or(
 					go:quant(
-						go:quantifier(Result, Range, go:equals(Result, 3)),
+						go:quantifier(Result, Range, [Result == 3]),
 						E,
 						person(E, _)),
 					go:and(
 						go:quant(
-							go:quantifier(Result, Range, go:equals(Result, 3)),
+							go:quantifier(Result, Range, [Result == 3]),
 							E,
 							person_named_bernhard(E)),
 						go:quant(
-							go:quantifier(Result, Range, go:equals(Result, 1)),
+							go:quantifier(Result, Range, [Result == 1]),
 							E,
 							person_named_abraham(E))
 					)

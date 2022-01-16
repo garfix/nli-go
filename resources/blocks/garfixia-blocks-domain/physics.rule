@@ -74,7 +74,7 @@ phys_create_support_relations(E1) :-
     at(E2, Left2, Front2, Bottom2)
     size(E2, Width2, Length2, Height2)
     go:add(Bottom2, Height2, Top2)
-    go:equals(Top2, Bottom1)                       /* main check, as early as possible */
+    [Top2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     go:add(Left1, Width1, Right1)
     go:add(Front1, Length1, Back1)
@@ -95,7 +95,7 @@ phys_create_contain_relations(E1) :-
     at(E1, Left1, Front1, Bottom1)
     box(E2)
     at(E2, Left2, Front2, Bottom2)
-    go:equals(Bottom2, Bottom1)                       /* main check, as early as possible */
+    [Bottom2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     size(E2, Width2, Length2, Height2)
     go:add(Left1, Width1, Right1)

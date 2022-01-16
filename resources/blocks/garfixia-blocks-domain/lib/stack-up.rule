@@ -8,7 +8,7 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:list_length(SortedList, Size)
     go:subtract(Size, 1, Last)
     go:list_foreach(SortedList, Index, E1,
-        if go:not_equals(Index, Last) go:not(block(E1)) then
+        if [Index != Last] go:not(block(E1)) then
             cancel
         end
     );
@@ -17,7 +17,7 @@ stack_up_proper(ParentEventId, List1, X, Y) :-
     [:Base = `table:table`]
     go:list_foreach(List1, E1,
         do_cleartop(ParentEventId, E1)
-        if go:equals(:Base, `table:table`) then
+        if [:Base == `table:table`] then
             block(E1) do_put_on_table(ParentEventId, E1, X, Y)
         else
             block(:Base)
@@ -55,10 +55,10 @@ by_size(E1, E2, R) :-
         else
             size(E1, Width1, Depth1, _)
             size(E2, Width2, Depth2, _)
-            if go:equals(Width1, Width2) then
+            if [Width1 == Width2] then
                 go:compare(Depth2, Depth1, R)
             else
-                if go:equals(Depth1, Depth2) then
+                if [Depth1 == Depth2] then
                     go:compare(Width2, Width1, R)
                 else
                     go:min(Width1, Depth1, Min1) go:min(Width2, Depth2, Min2) go:compare(Min2, Min1, R)

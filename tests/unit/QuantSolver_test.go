@@ -53,7 +53,7 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 2 children?
 			`
 				go:quant_check(
-					go:quant(go:quantifier(ResultCount, RangeCount, go:equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
+					go:quant(go:quantifier(ResultCount, RangeCount, [ResultCount == RangeCount]), S1, isa(S1, parent)), 
 					have_child(S1, O1) go:count(O1, 2))`,
 			"{}",
 			"{O1:2, S1:4}{O1:3, S1:4}{O1:7, S1:1}{O1:8, S1:1}{O1:9, S1:8}{O1:10, S1:8}",
@@ -62,9 +62,9 @@ func TestQuantSolver(t *testing.T) {
 			// does every parent have 3 children?
 			`
 				go:quant_check(
-					go:quant(go:quantifier(ResultCount1, RangeCount1, go:equals(ResultCount1, RangeCount1)), S1, isa(S1, parent)),
+					go:quant(go:quantifier(ResultCount1, RangeCount1, [ResultCount1 == RangeCount1]), S1, isa(S1, parent)),
 					go:quant_check(
-						go:quant(go:quantifier(ResultCount2, RangeCount2, go:equals(ResultCount1, 3)), O1, isa(O1, child))
+						go:quant(go:quantifier(ResultCount2, RangeCount2, [ResultCount1 == 3]), O1, isa(O1, child))
 				, 
 				have_child(S1, O1)))`,
 			"{}",
@@ -74,7 +74,7 @@ func TestQuantSolver(t *testing.T) {
 			// keep extra bindings?
 			`
 				go:quant_check(
-					go:quant(go:quantifier(ResultCount, RangeCount, go:equals(ResultCount, RangeCount)), S1, isa(S1, parent)), 
+					go:quant(go:quantifier(ResultCount, RangeCount, [ResultCount == RangeCount]), S1, isa(S1, parent)), 
 					have_child(S1, O1) go:count(O1, 2)
 				)`,
 			"{X: 3}",
@@ -87,12 +87,12 @@ func TestQuantSolver(t *testing.T) {
 				go:quant_check(
 					go:or(	
 						go:and(
-							go:quant(some, S1, is_person(S1) go:equals(S1, 8)),
+							go:quant(some, S1, is_person(S1) [S1 == 8]),
 							go:quant(some, S1, is_person(S1) have_child(S1, 9))
 						),
 						go:xor(
-							go:quant(some, S1, is_person(S1) go:equals(S1, 4)),
-							go:quant(some, S1, is_person(S1) go:equals(S1, 1))
+							go:quant(some, S1, is_person(S1) [S1 == 4]),
+							go:quant(some, S1, is_person(S1) [S1 == 1])
 						)
 					),
 					go:or(have_child(S1, 7), have_child(S1, 10))

@@ -10,8 +10,8 @@ dom:person_name(A, N) :- birth_name(A, N) type(A, `:http://dbpedia.org/ontology/
 dom:person_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/ontology/Person`);
 
 dom:country_name(A, N) :- foaf_name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatCountries`);
-dom:country_name(A, N) :- go:equals(N, 'America') go:unify(A, `:http://dbpedia.org/resource/United_States`);
-dom:country_name(A, N) :- go:equals(N, 'america') go:unify(A, `:http://dbpedia.org/resource/United_States`);
+dom:country_name(A, N) :- [N == 'America'] go:unify(A, `:http://dbpedia.org/resource/United_States`);
+dom:country_name(A, N) :- [N == 'america'] go:unify(A, `:http://dbpedia.org/resource/United_States`);
 dom:state_name(A, N) :- name(A, N) type(A, `:http://dbpedia.org/class/yago/WikicatStatesOfTheUnitedStates`);
 
 dom:name(A, N, canonical_name) :- foaf_name(A, N) go:first();
@@ -35,7 +35,7 @@ dom:has_son(A, B) :- child(A, B) gender(B, 'male');
 
 dom:founding_date(E, D) :- founding_date(E, D);
 dom:has_capital(A, B) :- has_capital(A, B);
-dom:has_state(A, B) :- go:equals(A, `:http://dbpedia.org/resource/United_States`) type(B, `:http://dbpedia.org/class/yago/WikicatStatesOfTheUnitedStates`);
+dom:has_state(A, B) :- [A == `:http://dbpedia.org/resource/United_States`] type(B, `:http://dbpedia.org/class/yago/WikicatStatesOfTheUnitedStates`);
 
 dom:birth_date(E, D) :- birth_date(E, D);
 dom:death_date(E, D) :- death_date(E, D);

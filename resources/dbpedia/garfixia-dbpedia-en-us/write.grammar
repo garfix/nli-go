@@ -30,7 +30,7 @@
 
 { rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2)
                                                                                 go:list_head(L1, Head, Tail) }
-{ rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) go:equals(Len, 2)
+{ rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) [Len == 2]
                                                                                 go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }
 { rule: list(L1) -> np(First),                                             condition: go:list_get(L1, 0, First) }
 
@@ -53,7 +53,7 @@
 { rule: father(E1) -> 'father' }
 { rule: mother(E1) -> 'mother' }
 { rule: child(E1) -> 'children' }
-{ rule: year(E1) -> 'year',                                                   condition: go:equals(E1, 1) }
+{ rule: year(E1) -> 'year',                                                   condition: [E1 == 1] }
 { rule: year(E1) -> 'years' }
 { rule: old(E1) -> 'old' }
 

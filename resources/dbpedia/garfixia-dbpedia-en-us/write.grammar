@@ -28,7 +28,7 @@
 { rule: date_formatted(Date) -> month_name(M) text(D) ',' text(Y),         condition: dom:date(Date, D, M, Y) }
 
 
-{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2)
+{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) [Len > 2]
                                                                                 go:list_head(L1, Head, Tail) }
 { rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) [Len == 2]
                                                                                 go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }

@@ -32,9 +32,9 @@ func TestFunctions(t *testing.T) {
 		{"go:split(W1, '-', S1, S2)", "{W1:'aap-noot'}", "[{S1:'aap', S2:'noot', W1:'aap-noot'}]"},
 		{"go:join(W1, '-', S1, S2)", "{S1:'aap', S2:'noot'}", "[{S1:'aap', S2:'noot', W1:'aap-noot'}]"},
 		{"go:concat(W1, S1, S2)", "{S1:'aap', S2:'noot'}", "[{S1:'aap', S2:'noot', W1:'aapnoot'}]"},
-		{"go:greater_than(2, 1)", "{E1:1}", "[{E1:1}]"},
-		{"go:greater_than(1, 2)", "{E1:1}", "[]"},
-		{"go:less_than(E1, E2)", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
+		{"[2 > 1]", "{E1:1}", "[{E1:1}]"},
+		{"[1 > 2]", "{E1:1}", "[]"},
+		{"[E1 < E2]", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
 		{"go:add(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'3'}]"},
 		{"go:subtract(E1, E2, S)", "{E1:1, E2:2}", "[{E1:1, E2:2, S:'-1'}]"},
 		{"[E1 != E2]", "{E1:1, E2:2}", "[{E1:1, E2:2}]"},
@@ -151,8 +151,8 @@ func TestControlFunctions(t *testing.T) {
 		{"go:xor(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1}]"},
 		{"go:and(go:unify(E, 1), go:unify(E, 2))", "{}", "[]"},
 		{"go:or(go:unify(E, 1), go:unify(E, 2))", "{}", "[{E:1} {E:2}]"},
-		{"if go:greater_than(6, 5) then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:1, X:3}]"},
-		{"if go:greater_than(5, 6) then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:2, X:3}]"},
+		{"if [6 > 5] then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:1, X:3}]"},
+		{"if [5 > 6] then go:unify(E, 1) else go:unify(E, 2) end", "{X:3}", "[{E:2, X:3}]"},
 	}
 
 	for _, test := range tests {

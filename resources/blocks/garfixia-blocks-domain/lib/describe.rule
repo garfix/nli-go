@@ -12,13 +12,13 @@ describe(E1, Sort, DescSet) :-
     [:Set = description(E1) default_shape(E1, Sort) shape(E1, S)]
 
     /* Is the shape unique? */
-    if go:greater_than(Cs, 1) then
+    if [Cs > 1] then
         [:Set = {{ :Set }} color(E1, C)]
         /* Are the shape and color unique? */
-        if go:greater_than(Cc, 1) then
+        if [Cc > 1] then
             [:Set = {{ :Set }} volume(E1, V)]
             /* Are the shape, color, and volume unique? */
-            if go:greater_than(Cv, 1) then
+            if [Cv > 1] then
                 /* Add the object it supports and presume that this is enough */
                 support(E1, E3) describe(E3, Sort, E3Desc)
                 [:Set = {{ :Set }} support(E1, E3) description(E3) {{ E3Desc }}]
@@ -45,10 +45,10 @@ describe_categoric(E1, Sort, DescSet) :-
         [:Set = description(E1) default_shape(E1, Sort) shape(E1, S)]
 
         /* Is the shape unique? */
-        if go:greater_than(Cs, 1) then
+        if [Cs > 1] then
             [:Set = {{ :Set }} color(E1, C)]
             /* Are the shape and color unique? */
-            if go:greater_than(Cc, 1) then
+            if [Cc > 1] then
                 [:Set = {{ :Set }} volume(E1, V) indeterminate(E1)]
             end
         end

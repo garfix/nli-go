@@ -42,51 +42,7 @@ Same as `go:join`, with empty string as separator.
 
 * `Whole`: a variable (for a string)
 * `Part1`, `Part2`: strings
-
-## greater_than
-
-Compares two integers. Succeeds if N1 > N2.
-
-    go:greater_than(N1, N2)
-    
-* `N1`: a string, representing an integer
-* `N2`: a string, representing an integer
-
-The function does not bind new variables. It just removes existing bindings if the comparison fails.
-
-## less_than
-
-Compares two integers. Succeeds if N1 < N2.
-
-    go:less_than(N1, N2)
-    
-* `N1`: a string, representing an integer
-* `N2`: a string, representing an integer
-
-The function does not bind new variables. It just removes existing bindings if the comparison fails.
-
-## greater_than_equals
-
-Compares two integers. Succeeds if N1 >= N2.
-
-    go:greater_than_equals(N1, N2)
-    
-* `N1`: a string, representing an integer
-* `N2`: a string, representing an integer
-
-The function does not bind new variables. It just removes existing bindings if the comparison fails.
-
-## less_than_equals
-
-Compares two integers. Succeeds if N1 <= N2.
-
-    go:less_than_equals(N1, N2)
-    
-* `N1`: a string, representing an integer
-* `N2`: a string, representing an integer
-
-The function does not bind new variables. It just removes existing bindings if the comparison fails. 
-    
+   
 # unify
     
 This function unifies two terms. This can be used for assignment and destructuring. Assignment only works for variables that had not been previously assigned.

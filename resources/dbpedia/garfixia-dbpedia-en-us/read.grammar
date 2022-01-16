@@ -81,7 +81,7 @@
 
 { rule: possessive_marker(P) -> '\'' 's' }
 
-{ rule: pp(E1) -> 'above' number(N1),                                   sense: go:greater_than(E1, N1) }
+{ rule: pp(E1) -> 'above' number(N1),                                   sense: [E1 > N1] }
 
 /* sentence */
 

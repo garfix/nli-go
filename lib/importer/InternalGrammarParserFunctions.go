@@ -681,26 +681,30 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 		}
 	} else {
 		predicate := ""
+		operators := map[int]string{
+			tAssign:    mentalese.PredicateAssign,
+			tEquals:    mentalese.PredicateEquals,
+			tNotEquals: mentalese.PredicateNotEquals,
+			tGt:        mentalese.PredicateGreaterThan,
+			tGtEq:      mentalese.PredicateGreaterThanEquals,
+			tLt:        mentalese.PredicateLessThan,
+			tLtEq:      mentalese.PredicateLessThanEquals,
+		}
 		_, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 		if ok1 {
 			startIndex = newStartIndex
 			term1, startIndex, ok2 = parser.parseTerm(tokens, startIndex)
-			_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tAssign)
-			if ok3 {
-				startIndex = newStartIndex
-				predicate = mentalese.PredicateAssign
-				ok3 = term1.IsVariable()
-			} else {
-				_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tEquals)
+			for operator, aPredicate := range operators {
+				_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, operator)
 				if ok3 {
 					startIndex = newStartIndex
-					predicate = mentalese.PredicateEquals
-				} else {
-					_, newStartIndex, ok3 = parser.parseSingleToken(tokens, startIndex, tNotEquals)
-					if ok3 {
-						startIndex = newStartIndex
-						predicate = mentalese.PredicateNotEquals
+					predicate = aPredicate
+
+					// extra operand checks
+					if predicate == mentalese.PredicateAssign {
+						ok3 = term1.IsVariable()
 					}
+					break
 				}
 			}
 			term2, startIndex, ok4 = parser.parseTerm(tokens, startIndex)

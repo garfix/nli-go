@@ -220,7 +220,7 @@
     responses:
         /* The person has died already */
         {
-            condition: dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) go:less_than(YearsSinceDeath, 0),
+            condition: dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) [YearsSinceDeath < 0],
             preparation: dom:gender(E1, Gender) go:date_subtract_years(DeathDate, BirthDate, Age) go:split(BirthDate, '-', Year1, Month1, Day1) go:split(DeathDate, '-', Year2, Month2, Day2),
             answer: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
         }

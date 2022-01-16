@@ -84,7 +84,7 @@ go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, Accepted
             return
         end
         /* If there were solutions, good! */
-        if go:greater_than(ResultCount, 0) then
+        if [ResultCount > 0] then
             [Accepted = Sol]
             [AcceptedBindings = ResultBindings]
             [EssentialBindings = EssentialBindings1]

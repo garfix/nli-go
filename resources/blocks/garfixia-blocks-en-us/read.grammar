@@ -2,9 +2,9 @@
 
 { rule: qp(_) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
 { rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
-{ rule: quantifier(Result, Range) -> an(_),                            sense: go:greater_than(Result, 0) }
-{ rule: quantifier(Result, Range) -> 'any',                            sense: go:greater_than(Result, 0) }
-{ rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: go:greater_than(Result, 0) }
+{ rule: quantifier(Result, Range) -> an(_),                            sense: [Result > 0] }
+{ rule: quantifier(Result, Range) -> 'any',                            sense: [Result > 0] }
+{ rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: [Result > 0] }
 { rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: [Result == 2] }
 { rule: quantifier(Result, Range) -> number(N1),                       sense: [Result == N1] }
 { rule: quantifier(Result, Range) -> 'two',                            sense: [Result == 2] }
@@ -119,7 +119,7 @@
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
-{ rule: superlative(E1) -> super(E1),                                  sense: $super go:count(E1, N) go:greater_than(N, 1) go:first() }
+{ rule: superlative(E1) -> super(E1),                                  sense: $super go:count(E1, N) [N > 1] go:first() }
 
 { rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }

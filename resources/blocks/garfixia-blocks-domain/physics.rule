@@ -80,10 +80,10 @@ phys_create_support_relations(E1) :-
     go:add(Front1, Length1, Back1)
     go:add(Left2, Width2, Right2)
     go:add(Front2, Length2, Back2)
-    go:less_than_equals(Left2, Right1)
-    go:greater_than_equals(Right2, Left1)
-    go:less_than_equals(Front2, Back1)
-    go:greater_than_equals(Back2, Front1)
+    [Left2 <= Right1]
+    [Right2 >= Left1]
+    [Front2 <= Back1]
+    [Back2 >= Front1]
     db_support(E2, E1)
     db_uncleartop(E2)
 ;
@@ -102,9 +102,9 @@ phys_create_contain_relations(E1) :-
     go:add(Front1, Length1, Back1)
     go:add(Left2, Width2, Right2)
     go:add(Front2, Length2, Back2)
-    go:less_than_equals(Left2, Left1)
-    go:greater_than_equals(Right2, Right1)
-    go:less_than_equals(Front2, Front1)
-    go:greater_than_equals(Back2, Back1)
+    [Left2 <= Left1]
+    [Right2 >= Right1]
+    [Front2 <= Front1]
+    [Back2 >= Back1]
     db_contain(E2, E1)
 ;

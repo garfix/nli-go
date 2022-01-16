@@ -37,7 +37,7 @@
 { rule: boolean(B1) -> 'yes',                                               condition: dom:result(true) }
 { rule: boolean(B1) -> 'no',                                                condition: dom:result(false) }
 
-{ rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) go:less_than(N, 11) }
+{ rule: s(N) -> named_number(N) 'of' 'them',                                condition: dom:a_number(N) [N < 11] }
 { rule: s(N) -> text(N) 'of' 'them',                                        condition: dom:a_number(N) }
 
 { rule: s(S1) -> list(S1),                                                  condition: dom:list(S1) }
@@ -54,7 +54,7 @@
 { rule: s(S1) -> 'I don\'t understand',                                     condition: dom:dont_understand() }
 { rule: s(S1) -> 'I don\'t know',                                           condition: dom:dont_know() }
 
-{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) go:greater_than(Len, 2)
+{ rule: list(L1) -> np(Head) ',' list(Tail),                                condition: go:list_length(L1, Len) [Len > 2]
                                                                                 go:list_head(L1, Head, Tail) }
 { rule: list(L1) -> np(First) 'and' np(Second),                            condition: go:list_length(L1, Len) [Len == 2]
                                                                                 go:list_get(L1, 0, First) go:list_get(L1, 1, Second) }

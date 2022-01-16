@@ -29,7 +29,10 @@ const (
 	tColon
 	tAmpersand
 	tSemicolon
+	tGtEq
 	tGt
+	tLtEq
+	tLt
 	tOpeningParenthesis
 	tClosingParenthesis
 	tOpeningBracket
@@ -79,7 +82,10 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tColon, ":"},
 		{tAmpersand, "&"},
 		{tSemicolon, ";"},
+		{tGtEq, ">="},
 		{tGt, ">"},
+		{tLtEq, "<="},
+		{tLt, "<"},
 		{tOpeningParenthesis, "\\("},
 		{tClosingParenthesis, "\\)"},
 		{tOpeningBracket, "\\["},

@@ -30,10 +30,10 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines
     rectangle(O1, X1, X2, Y1, Y2)
     [O1 != Container]
     object(O1)
-    go:greater_than_equals(X2, BoundX1)
-    go:less_than_equals(X1, BoundX2)
-    go:greater_than_equals(Y2, BoundY1)
-    go:less_than_equals(Y1, BoundY2)
+    [X2 >= BoundX1]
+    [X1 <= BoundX2]
+    [Y2 >= BoundY1]
+    [Y1 <= BoundY2]
     go:make_list(Objects, O1)
     go:make_list(V1, BoundX1, X1, X2, BoundX2)
     go:make_list(H1, BoundY1, Y1, Y2, BoundY2)
@@ -73,13 +73,13 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
         go:add(ColIndex, ColSpan, V1)
         go:subtract(V1, 1, ColEnd)
         go:list_foreach(HorLines, LineIndex, Y2,
-            go:greater_than(LineIndex, 0)
+            [LineIndex > 0]
             go:subtract(LineIndex, 1, RowIndex)
             if
                 span_free(ColIndex, ColEnd, RowIndex, Grid)
             then
                 go:subtract(Y2, :StartY, SpanLength)
-                go:greater_than_equals(SpanLength, Length)
+                [SpanLength >= Length]
                 [:A1 = X]
                 [:B1 = :StartY]
                 break
@@ -101,7 +101,7 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
 
     go:list_foreach(VerLines, Index, Line,
         go:subtract(Line, X1, W)
-        go:greater_than_equals(W, Width)
+        [W >= Width]
         go:subtract(Index, ColIndex, ColSpan)
         break
     )

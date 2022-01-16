@@ -16,7 +16,6 @@ The same expression is used for mutable variables
 
 any existing value is overwritten by the new value. 
 
-
 ## equals
 
     [T1 == T2]
@@ -34,6 +33,51 @@ This expression just compares two terms. If either their types or their values a
 
 * `T1`: a free variable, or any other term
 * `T2`: a free variable, or any other term
+
+
+## greater_than
+
+Compares two integers. Succeeds if N1 > N2.
+
+    [N1 > N2]
+
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
+
+## less_than
+
+Compares two integers. Succeeds if N1 < N2.
+
+    [N1 < N2]
+
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
+
+## greater_than_equals
+
+Compares two integers. Succeeds if N1 >= N2.
+
+    [N1 >= N2]
+
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
+
+## less_than_equals
+
+Compares two integers. Succeeds if N1 <= N2.
+
+    [N1 <= N2]
+
+* `N1`: a string, representing an integer
+* `N2`: a string, representing an integer
+
+The function does not bind new variables. It just removes existing bindings if the comparison fails.
 
 ## if then (else) end
 

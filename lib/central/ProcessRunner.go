@@ -11,14 +11,14 @@ import (
 
 type ProcessRunner struct {
 	solver *ProblemSolverAsync
-	log *common.SystemLog
-	list goal.ProcessList
+	log    *common.SystemLog
+	list   goal.ProcessList
 }
 
 func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
 	return &ProcessRunner{
 		solver: solver,
-		log: log,
+		log:    log,
 	}
 }
 
@@ -69,7 +69,8 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 		if handler == nil {
 			return true
 		} else {
-			outBindings := handler(messenger, relation, preparedBinding)
+			preparedRelation := p.evaluateArguments(relation, preparedBinding)
+			outBindings := handler(messenger, preparedRelation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
 			currentFrame, hasStopped = process.ProcessMessenger(messenger, currentFrame)
 		}
@@ -85,6 +86,42 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 	}
 
 	return hasStopped
+}
+
+func (p *ProcessRunner) evaluateArguments(relation mentalese.Relation, binding mentalese.Binding) mentalese.Relation {
+	newRelation := relation
+
+	for i, argument := range relation.Arguments {
+		if argument.IsRelationSet() && len(argument.TermValueRelationSet) == 1 {
+			firstRelation := argument.TermValueRelationSet[0]
+			for j, arg := range firstRelation.Arguments {
+				if arg.IsAtom() && arg.TermValue == mentalese.AtomReturnValue {
+					newRelation = newRelation.Copy()
+					newRelation.Arguments[i] = p.evaluateFunction(firstRelation, j, binding)
+					break
+				}
+			}
+		}
+	}
+
+	return newRelation
+}
+
+func (p *ProcessRunner) evaluateFunction(relation mentalese.Relation, returnVariableIndex int, binding mentalese.Binding) mentalese.Term {
+	variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
+	newRelation := relation.Copy()
+	newRelation.Arguments[returnVariableIndex] = variable
+	resultBindings := p.RunRelationSetWithBindings(mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
+	if resultBindings.GetLength() == 0 {
+		return mentalese.NewTermAtom(mentalese.AtomNone)
+	} else {
+		returnValue, found := resultBindings.Get(0).Get(variable.TermValue)
+		if found {
+			return returnValue
+		} else {
+			return mentalese.NewTermAtom(mentalese.AtomNone)
+		}
+	}
 }
 
 func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *goal.StackFrame, process *goal.Process) api.RelationHandler {

@@ -27,7 +27,7 @@
 
 { rule: superlative(E1) -> super(E1),                                 sense: $super go:first() }
 { rule: superlative(E1) -> number(N1) super(E1),                      sense: $super go:first(N1) }
-{ rule: superlative(E1) -> ordinal(N1) super(E1),                     sense: $super go:subtract(N1, 1, I1) go:get(I1) }
+{ rule: superlative(E1) -> ordinal(N1) super(E1),                     sense: $super [I1 := [N1 - 1]] go:get(I1) }
 
 { rule: super(E1) -> 'largest',                                       sense: go:order(E1, desc) }
 { rule: super(E1) -> 'smallest',                                      sense: go:order(E1, asc) }

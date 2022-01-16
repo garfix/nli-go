@@ -46,7 +46,7 @@ func TestLocalVariables(t *testing.T) {
 		pow(Base, Number, Pow) :- 
 			[:Result := 1]
 			go:range_foreach(1, Number, _,
-				go:multiply(:Result, Base, :Result)
+				[:Result := [:Result * Base]]
 			)
 			[Pow := :Result];	
 
@@ -54,13 +54,13 @@ func TestLocalVariables(t *testing.T) {
 			[:X := In]
 			[:Y := 13]
 			times_three(:X, :Y)
-			go:add(:Y, 1, :X)
+			[:X := [:Y + 1]]
 			[Out := :X]
 		;
 
 		times_three(In, Out) :-
 			[:X := 3]
-			go:multiply(:X, In, Out)
+			[Out := [:X * In]]
 		;
 	
 	`)

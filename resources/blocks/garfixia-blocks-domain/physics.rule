@@ -73,17 +73,13 @@ phys_create_support_relations(E1) :-
     at(E1, Left1, Front1, Bottom1)
     at(E2, Left2, Front2, Bottom2)
     size(E2, Width2, Length2, Height2)
-    go:add(Bottom2, Height2, Top2)
+    [Top2 := [Bottom2 + Height2]]
     [Top2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
-    go:add(Left1, Width1, Right1)
-    go:add(Front1, Length1, Back1)
-    go:add(Left2, Width2, Right2)
-    go:add(Front2, Length2, Back2)
-    [Left2 <= Right1]
-    [Right2 >= Left1]
-    [Front2 <= Back1]
-    [Back2 >= Front1]
+    [Left2 <= [Left1 + Width1]]
+    [[Left2 + Width2] >= Left1]
+    [Front2 <= [Front1 + Length1]]
+    [[Front2 + Length2] >= Front1]
     db_support(E2, E1)
     db_uncleartop(E2)
 ;
@@ -98,10 +94,10 @@ phys_create_contain_relations(E1) :-
     [Bottom2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     size(E2, Width2, Length2, Height2)
-    go:add(Left1, Width1, Right1)
-    go:add(Front1, Length1, Back1)
-    go:add(Left2, Width2, Right2)
-    go:add(Front2, Length2, Back2)
+    [Right1 := [Left1 + Width1]]
+    [Back1 := [Front1 + Length1]]
+    [Right2 := [Left2 + Width2]]
+    [Back2 := [Front2 + Length2]]
     [Left2 <= Left1]
     [Right2 >= Right1]
     [Front2 <= Front1]

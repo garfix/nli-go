@@ -63,47 +63,6 @@ Destructuring. If Q1 holds a quant() relation, this equals, binds its arguments 
     
     go:unify(Q1, quant(_, _, R1, _)
 
-
-## add
-
-Adds two numbers `N1` and `N2` and places the result in `Sum`. If `Sum  is a number and it is not the sum of the arguments, the function fails.  
-
-    go:add(N1, N2, Sum)
-    
-* `N1`: a number
-* `N2`: a number
-* `Sum`: a variable (to contain a number) or a number
-
-## subtract
-
-Subtracts two numbers `N1` and `N2` and places the result in `Diff`. If `Diff  is a number and it is not the diff of the arguments, the function fails.  
-
-    go:subtract(N1, N2, Diff)
-    
-* `N1`: a number
-* `N2`: a number
-* `Sum`: a variable (to contain a number) or a number
-
-## multiply
-
-Multiplies two numbers `N1` and `N2` and places the result in `Product`. If `Product  is a number and it is not the diff of the arguments, the function fails.  
-
-    go:multiply(N1, N2, Product)
-    
-* `N1`: a number
-* `N2`: a number
-* `Product`: a variable (to contain a number) or a number
-
-## divide
-
-Divides two numbers `N1` and `N2` and places the result in `Result`.
-
-    go:divide(N1, N2, Result)
-
-* `N1`: a number
-* `N2`: a number
-* `Result`: a variable (to contain a number) or a number
-
 ## min
 
 Sets `Min` to the smallest of `N1` and `N2.  

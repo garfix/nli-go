@@ -3,7 +3,9 @@
 ## 
 
 * keywords if/then/else/end 
-* assignment via [X = n]
+* assignment via [X := n]
+* expressions for common procedure calls
+* use procedures as functions
 
 ## 1.14 the "why?" release - 15-01-2022
 

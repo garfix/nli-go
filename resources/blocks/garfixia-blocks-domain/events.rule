@@ -4,7 +4,7 @@
 
 increase_time() :-
     time(T)
-    go:add(T, 1, T2)
+    [T2 := [T + 1]]
     go:retract(time(_))
     go:assert(time(T2))
 ;

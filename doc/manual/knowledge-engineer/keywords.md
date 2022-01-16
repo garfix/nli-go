@@ -79,6 +79,42 @@ Compares two integers. Succeeds if N1 <= N2.
 
 The function does not bind new variables. It just removes existing bindings if the comparison fails.
 
+## add
+
+Adds two numbers `N1` and `N2`. The expression is then replaced by the result, and can be used in another expression. 
+
+    [N1 + N2]
+
+* `N1`: a number
+* `N2`: a number
+
+## subtract
+
+Subtracts two numbers `N1` and `N2`. The expression is then replaced by the result, and can be used in another expression. 
+
+    [N1 - N2]
+
+* `N1`: a number
+* `N2`: a number
+
+## multiply
+
+Multiplies two numbers `N1` and `N2`. The expression is then replaced by the result, and can be used in another expression.
+
+    [N1 * N2]
+
+* `N1`: a number
+* `N2`: a number
+
+## divide
+
+Divides two numbers `N1` and `N2`. The expression is then replaced by the result, and can be used in another expression.
+
+    [N1 / N2]
+
+* `N1`: a number
+* `N2`: a number
+
 ## if then (else) end
 
 This is the common if then construction:

@@ -22,8 +22,8 @@ do_find_free_space(Container, E1, X1, Y1) :-
 rectangle(R1, X1, X2, Y1, Y2) :-
     at(R1, X1, Y1, _)
     size(R1, Width, Length, _)
-    go:add(X1, Width, X2)
-    go:add(Y1, Length, Y2)
+    [X2 := [X1 + Width]]
+    [Y2 := [Y1 + Length]]
 ;
 
 do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines) :-
@@ -51,10 +51,8 @@ do_init_grid(Grid, Objects, HorLines, VerLines) :-
     go:list_index(VerLines, X2, V2)
     go:list_index(HorLines, Y1, H1)
     go:list_index(HorLines, Y2, H2)
-    go:subtract(V2, 1, V2Min)
-    go:subtract(H2, 1, H2Min)
-    go:range_foreach(V1, V2Min, V,
-        go:range_foreach(H1, H2Min, H,
+    go:range_foreach(V1, [V2 - 1], V,
+        go:range_foreach(H1, [H2 - 1], H,
              go:assert( grid(Grid, H, V, 1) )
         )
     )
@@ -70,15 +68,15 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
     go:list_foreach(VerLines, ColIndex, X,
         go:list_get(HorLines, 0, :StartY)
         find_span(Width, VerLines, ColIndex, ColSpan)
-        go:add(ColIndex, ColSpan, V1)
-        go:subtract(V1, 1, ColEnd)
+        [V1 := [ColIndex + ColSpan]]
+        [ColEnd := [V1 - 1]]
         go:list_foreach(HorLines, LineIndex, Y2,
             [LineIndex > 0]
-            go:subtract(LineIndex, 1, RowIndex)
+            [RowIndex := [LineIndex - 1]]
             if
                 span_free(ColIndex, ColEnd, RowIndex, Grid)
             then
-                go:subtract(Y2, :StartY, SpanLength)
+                [SpanLength := [Y2 - :StartY]]
                 [SpanLength >= Length]
                 [:A1 := X]
                 [:B1 := :StartY]
@@ -100,9 +98,9 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
     go:list_get(VerLines, ColIndex, X1)
 
     go:list_foreach(VerLines, Index, Line,
-        go:subtract(Line, X1, W)
+        [W := [Line - X1]]
         [W >= Width]
-        go:subtract(Index, ColIndex, ColSpan)
+        [ColSpan := [Index - ColIndex]]
         break
     )
 ;

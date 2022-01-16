@@ -6,7 +6,7 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:quant_ordered_list(QBlocks, &by_easiness, List)
     go:list_order(List, &by_size, SortedList)
     go:list_length(SortedList, Size)
-    go:subtract(Size, 1, Last)
+    [Last := [Size - 1]]
     go:list_foreach(SortedList, Index, E1,
         if [Index != Last] go:not(block(E1)) then
             cancel

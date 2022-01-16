@@ -44,6 +44,7 @@ const (
 	tNegative
 	tPositive
 	tSlash
+	tMultiply
 	tUp
 	_newline
 	_other
@@ -97,6 +98,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tNegative, "-"},
 		{tPositive, "\\+"},
 		{tSlash, "/"},
+		{tMultiply, "\\*"},
 		{tUp, "\\.\\."},
 		{_newline, "(?:\r\n|\n|\r)"},
 		{_other, "."},

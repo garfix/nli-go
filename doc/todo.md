@@ -1,5 +1,10 @@
 # Todo
 
+- equals() -> [term == term]
+- not_equals() [term != term]
+- only the first clause is executed in the web blocks demo!
+- create a full specification of anaphora resolution and describe all problems 
+
 ## The programming language "mentalese"
 
 Make it consistent, complete, robust, etc. Have it conform existing paradigms.
@@ -29,10 +34,13 @@ Call solutions "intents", just like everybody else.
 - Donkey sentences: "If Pedro owns some donkey, he beats it." "Some donkey" creates a discourse entity; and "it" refers to it. (Also: "Pedro owns a donkey. He beats it.") 
 - indefinite descriptions ("Jones owns a Porsche. It fascinates him.")
 - Store the senses of the entities that go into the anaphora queue, for later matching
+- Plurals. "Pick them up."
 - Forward references
 - The referent of an anaphoric expression sometimes can be found only by using world knowledge ("John beat Peter. He started to cry.")
 - Some antecedents depend on the syntactic role ("John supports Peter. He admires him.")
+- one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
 - Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
+- Discourse entities are represented in mentalese and "under water"; this is very unclear
 
 ## Long distance dependencies
 

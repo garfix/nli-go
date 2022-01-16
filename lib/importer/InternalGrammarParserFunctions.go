@@ -689,6 +689,10 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			tGtEq:      mentalese.PredicateGreaterThanEquals,
 			tLt:        mentalese.PredicateLessThan,
 			tLtEq:      mentalese.PredicateLessThanEquals,
+			tPositive:  mentalese.PredicateAdd,
+			tNegative:  mentalese.PredicateSubtract,
+			tMultiply:  mentalese.PredicateMultiply,
+			tSlash:     mentalese.PredicateDivide,
 		}
 		_, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
 		if ok1 {
@@ -711,10 +715,24 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			_, startIndex, ok5 = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
 			ok = ok1 && ok2 && ok3 && ok4 && ok5
 			if ok {
-				relation = mentalese.NewRelation(false, predicate, []mentalese.Term{
-					term1,
-					term2,
-				})
+				if common.StringArrayContains(
+					[]string{
+						mentalese.PredicateAdd,
+						mentalese.PredicateSubtract,
+						mentalese.PredicateMultiply,
+						mentalese.PredicateDivide},
+					predicate) {
+					relation = mentalese.NewRelation(false, predicate, []mentalese.Term{
+						term1,
+						term2,
+						mentalese.NewTermAtom(mentalese.AtomReturnValue),
+					})
+				} else {
+					relation = mentalese.NewRelation(false, predicate, []mentalese.Term{
+						term1,
+						term2,
+					})
+				}
 			}
 		}
 	}

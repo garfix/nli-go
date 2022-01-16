@@ -25,11 +25,14 @@ func TestInMemoryRuleBase(t *testing.T) {
 		parent(vince, bob)
 		parent(pat, bob)
 		parent(sue, cyrill)
+		age(pat, 51)
+		age(sue, 49)
 		-sibling(alice, bob)
 	`)
 	readMap := parser.CreateRules(`
 		parent(A, B) :- parent(A, B);
 		-sibling(A, B) :- -sibling(A, B);
+		age(X, Y) :- age(X, Y);
 	`)
 	writeMap := []mentalese.Rule{}
 	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
@@ -46,6 +49,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	rules := parser.CreateRules(`
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
 		-sibling(A, B) :- [A == B];
+		older(A, B) :- [age(A, rv) > age(B, rv)];
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)
@@ -67,6 +71,9 @@ func TestInMemoryRuleBase(t *testing.T) {
 		{"-sibling(X, Y)", "{X:alice, Y:bob}", "[{X:alice, Y:bob}]"},
 		// negative fail
 		{"-sibling(X, Y)", "{X:john, Y:sue}", "[]"},
+		// facts as functions
+		{"older(A, B)", "{A:pat, B:sue}", "[{A:pat, B:sue}]"},
+		{"older(A, B)", "{B:pat, A: sue}", "[]"},
 	}
 
 	for _, test := range tests {

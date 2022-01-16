@@ -73,7 +73,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
 
 go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
     go:list_length(Solutions, SolSize)
-    go:subtract(SolSize, 1, LastSol)
+    [LastSol := [SolSize - 1]]
     go:list_foreach(Solutions, Index, Sol,
 
         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)

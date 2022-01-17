@@ -1,7 +1,5 @@
 # Todo
 
-- equals() -> [term == term]
-- not_equals() [term != term]
 - only the first clause is executed in the web blocks demo!
 - create a full specification of anaphora resolution and describe all problems 
 
@@ -28,19 +26,6 @@ Call solutions "intents", just like everybody else.
 * relation set -> relation list
 * better validation for built-in functions; especially multi-binding ones
 * use functional programming: make all data immutable; use copy-on-write everywhere; stop making deep copies
-
-## Anaphora
-
-- Donkey sentences: "If Pedro owns some donkey, he beats it." "Some donkey" creates a discourse entity; and "it" refers to it. (Also: "Pedro owns a donkey. He beats it.") 
-- indefinite descriptions ("Jones owns a Porsche. It fascinates him.")
-- Store the senses of the entities that go into the anaphora queue, for later matching
-- Plurals. "Pick them up."
-- Forward references
-- The referent of an anaphoric expression sometimes can be found only by using world knowledge ("John beat Peter. He started to cry.")
-- Some antecedents depend on the syntactic role ("John supports Peter. He admires him.")
-- one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
-- Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
-- Discourse entities are represented in mentalese and "under water"; this is very unclear
 
 ## Long distance dependencies
 

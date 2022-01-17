@@ -73,9 +73,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
         go:list_foreach(HorLines, LineIndex, Y2,
             [LineIndex > 0]
             [RowIndex := [LineIndex - 1]]
-            if
-                span_free(ColIndex, ColEnd, RowIndex, Grid)
-            then
+            if span_free(ColIndex, ColEnd, RowIndex, Grid) then
                 [SpanLength := [Y2 - :StartY]]
                 [SpanLength >= Length]
                 [:A1 := X]

@@ -16,3 +16,5 @@ Yes we can, except that the function `add(A, B, C)` has three arguments and we n
     process(add(A, B, rv))
 
 Internally, NLI-GO replaces `rv` by a temporary variable, whose value replaces the call `add(A, B, rv)` in the call to `process`.
+
+Note: in the current implementation functions return only a single binding for a value; the first one returned.

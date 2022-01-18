@@ -11,6 +11,7 @@ Anaphora has the following aspects
 - references to discourse entities (anaphoric) vs references without discourse entities; these refer to the world (nonanaphoric)
 - references to determinate entities ("the", names) (definite references) vs indeterminate entities ("a") (indefinite references)
 - definite vs indefinte references ("the car", "a car") ("If Pedro owns some donkey, he beats it.")
+- references to concepts ("whats the action radius of an electric car?") 
 - plural vs singular references ("they", "she")
 - pronouns ("it") vs descriptions ("the blue car")
 - the type of entity is often specified ("the car")
@@ -22,11 +23,11 @@ Anaphora has the following aspects
 - it may refer to NP's but also to VP's and S's.
 - one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
 
-What are the features of the entities (anaphors) refered to? They have
+What are the linguistically relevant features of the entities (anaphors) refered to? They have
 
 - a gender: male, female
 - animatedness: animate, inanimate
-- a number: singular, plural (entities that are known as a group)
+- number: singular, plural (entities that are known as a group)
 - a type: car, person, thing, activity
 - selectional restrictions: (the things they can do, "birds fly", "cars brake down")
 - a domain: in the discourse, in a conceptual structure, in the world

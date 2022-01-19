@@ -22,6 +22,10 @@ Anaphora has the following aspects
 - may require complex interpretation via world knowledge / selectional restrictions ("The city councilmen refused the demonstrators a permit because they [feared/advocated] violence.")
 - it may refer to NP's but also to VP's and S's.
 - one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
+- bound variables. "Every student has received his grade"
+- pleonastic/expletive use "It is raining". Is not a reference.
+
+## Entities
 
 What are the linguistically relevant features of the entities (anaphors) refered to? They have
 
@@ -31,6 +35,8 @@ What are the linguistically relevant features of the entities (anaphors) refered
 - a type: car, person, thing, activity
 - selectional restrictions: (the things they can do, "birds fly", "cars brake down")
 - a domain: in the discourse, in a conceptual structure, in the world
+
+## References
 
 What are the features of the references? They have
 
@@ -45,8 +51,34 @@ What are the features of the references? They have
 - a direction: anaphora (backward), cataphora (forward)
 - a phrase type: noun, verb
 
+## Heuristics
+
+Using inference to resolve anaphora quickly becomes very complicated (see references below for examples). It is interesting to know that this form of resolution leads to much more certain resolution, but in any case it would require the user of an NLI system to go to great trouble to handle the cases of anaphora resolution which she hoped would be tackled automatically. A second best solution is to go with the heuristics that provide good results in most cases. Which heuristics are known?
+
+Hard constraints
+
+- gender agreement ("she" can't match "the boy")
+- number agreement ("they" can't match "a block")
+- animatedness agreement ("it", can't match "the man")
+- selectional restrictions: relations have argument type restrictions (a table can't be "picked up", a block can't be put "into a block")
+- reflexivity in lexical scope: ("himself" can only match an entity in the same clause, and not a subclause)
+- increasing focus: ("a block" can't refer to an entity before referred to as "the block") 
+- centering: 
+
+Soft constraints
+
+- paralellism: a reference in subject position is more likely to refer to entity that is also in subject position; idem for object position
+
 ## References
 
-- Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
 - https://en.wikipedia.org/wiki/Anaphora_(linguistics)
-- 
+
+On using inference to determine anaphoric relations: 
+
+Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
+Coherence and-coreference - Jerry R. Hobbs (1979)
+Coherence and Coreference Revisited - ANDREW KEHLER, LAURA KERTZ, HANNAH ROHDE AND JEFFREY L. ELMAN (2008)
+
+Coreference and Bound variables
+
+https://en.wikipedia.org/wiki/Coreference

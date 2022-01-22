@@ -77,7 +77,7 @@ $(function(){
         document.getElementById('Relations').innerHTML = "";
         document.getElementById('Solution').innerHTML = "";
         document.getElementById('Answer').innerHTML = "";
-        document.getElementById('Anaphora-queue').innerHTML = "";
+        document.getElementById('Dialog-entities').innerHTML = "";
     }
 
     function showSamplePopup() {

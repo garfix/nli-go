@@ -671,6 +671,8 @@ func (base *LanguageBase) surface(messenger api.ProcessMessenger, input mentales
 	newBinding := binding.Copy()
 	newBinding.Set(surfaceVar, mentalese.NewTermString(surface))
 
+	base.log.AddProduction("Dialog-entities", base.dialogContext.DiscourseEntities.String())
+
 	return mentalese.InitBindingSet(newBinding)
 }
 

@@ -15,8 +15,15 @@ $varDir = __DIR__ . '/../var';
 
 $start = microtime(true);
 
-$message = escapeshellarg($request);
-$fullCommand = sprintf('%s send -s %s -a %s -o %s %s', $command, $sessionId, $configPath, $varDir, $message);
+$message = json_decode($request);
+$json = json_encode([
+    "SessionId" => $sessionId,
+    "ApplicationDir" => $configPath,
+    "WorkDir" => $varDir,
+    "Command" => "send",
+    "Message" => $message,
+]);
+$fullCommand = sprintf("echo %s | netcat localhost 3333", escapeshellarg($json));
 exec($fullCommand, $output);
 
 $end = microtime(true);

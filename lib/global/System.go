@@ -9,6 +9,7 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"strconv"
+	"sync"
 )
 
 type System struct {
@@ -28,6 +29,11 @@ type System struct {
 	surfacer              *generate.SurfaceRepresentation
 	processList           *goal.ProcessList
 	processRunner         *central.ProcessRunner
+	mutex                 sync.Mutex
+}
+
+func (system *System) GetLog() *common.SystemLog {
+	return system.log
 }
 
 // Low-level function to inspect the internal state of the system
@@ -45,13 +51,30 @@ func (system *System) SendMessage(relations mentalese.RelationSet) []mentalese.R
 
 	system.processRunner.RunRelationSet(relations)
 
-	system.run()
+	system.singleRun()
 
 	relationSets := system.getWaitingMessages()
 
 	system.persistSession()
 
 	return relationSets
+}
+
+func (system *System) HandleMessage(message mentalese.RelationSet) mentalese.RelationSet {
+	system.processRunner.RunRelationSet(message)
+
+	responseMessage := mentalese.RelationSet{}
+
+	system.mutex.Lock()
+	system.singleRun()
+	responses := system.getWaitingMessages()
+	system.mutex.Unlock()
+
+	if len(responses) > 0 {
+		responseMessage = responses[0]
+	}
+
+	return responseMessage
 }
 
 // processes input and return the answer, respond to all waiting relations
@@ -64,12 +87,12 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	done := false
 
 	// find or create a goal
-	system.getGoalId(input)
+	system.createOrUpdateGoal(input)
 
 	for !done {
 
 		// execute all goals
-		system.run()
+		system.singleRun()
 
 		if len(system.log.GetErrors()) > 0 {
 			break
@@ -85,7 +108,7 @@ func (system *System) Answer(input string) (string, *common.Options) {
 		}
 	}
 
-	system.persistSession()
+	//system.persistSession()
 
 	return answer, options
 }
@@ -104,7 +127,7 @@ func (system *System) persistSession() {
 
 // returns the children of all `wait_for` relations
 func (system *System) getWaitingMessages() []mentalese.RelationSet {
-	kessages := []mentalese.RelationSet{}
+	messages := []mentalese.RelationSet{}
 
 	for _, process := range system.processList.GetProcesses() {
 		beforeLastFrame := process.GetBeforeLastFrame()
@@ -113,12 +136,12 @@ func (system *System) getWaitingMessages() []mentalese.RelationSet {
 				lastFrame := process.GetLastFrame()
 				binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
 				boundRelations := lastFrame.Relations.BindSingle(binding)
-				kessages = append(kessages, boundRelations)
+				messages = append(messages, boundRelations)
 			}
 		}
 	}
 
-	return kessages
+	return messages
 }
 
 func (system *System) assert(relation mentalese.Relation) {
@@ -164,7 +187,7 @@ func (system *System) deleteGoal(goalId string) {
 	system.processRunner.RunRelationSet(set)
 }
 
-func (system *System) getGoalId(input string) string {
+func (system *System) createOrUpdateGoal(input string) {
 
 	goalId := ""
 
@@ -189,10 +212,8 @@ func (system *System) getGoalId(input string) string {
 	}
 
 	if goalId == "" {
-		goalId = system.createAnswerGoal(input)
+		system.createAnswerGoal(input)
 	}
-
-	return goalId
 }
 
 func (system *System) getAllGoals() ([]string, []mentalese.RelationSet) {
@@ -226,7 +247,7 @@ func (system *System) getAllGoals() ([]string, []mentalese.RelationSet) {
 	return ids, sets
 }
 
-func (system *System) run() {
+func (system *System) singleRun() {
 
 	goalIds, goalSets := system.getAllGoals()
 
@@ -234,7 +255,7 @@ func (system *System) run() {
 	for i, goalId := range goalIds {
 		goalSet := goalSets[i]
 
-		// run the process
+		// singleRun the process
 		process := system.processList.GetOrCreateProcess(goalId, goalSet)
 		system.processRunner.RunProcess(process)
 

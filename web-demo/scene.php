@@ -12,10 +12,21 @@ $varDir = __DIR__ . '/../var';
 
 if ($action == "state") {
     $query = "dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)";
-    $fullCommand = sprintf('%s query -s %s -a %s -o %s "%s"', $command, $sessionId, $configPath, $varDir, $query);
+    $json = json_encode([
+        "SessionId" => $sessionId,
+        "ApplicationDir" => $configPath,
+        "WorkDir" => $varDir,
+        "Command" => "query",
+        "Query" => $query
+    ]);
+    $fullCommand = sprintf("echo %s | netcat localhost 3333", escapeshellarg($json));
+
 } else if ($action == "reset") {
-    $fullCommand = sprintf('%s reset -s %s -a %s -o %s', $command, $sessionId, $configPath, $varDir);
-    $output = json_encode([]);
+    $json = json_encode([
+        "SessionId" => $sessionId,
+        "Command" => "reset"
+    ]);
+    $fullCommand = sprintf("echo %s | netcat localhost 3333", escapeshellarg($json));
 } else {
     die("Unknown action: " . $action);
 }

@@ -128,9 +128,25 @@ func TestBlocksWorld(t *testing.T) {
 		}
 	}
 
+	c := a(1)
+	c()
+
 	//createGrid(system)
 
 	createImage(system)
+}
+
+type cb func()
+
+func a(x int) cb {
+
+	b := 1
+
+	c := func() {
+		println(b)
+	}
+
+	return c
 }
 
 func createGrid(system *global.System) {

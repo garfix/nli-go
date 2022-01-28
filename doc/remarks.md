@@ -1,3 +1,22 @@
+## 2022-01-22
+
+The interactive demo doesn't work anymore. I know what's wrong with it: the dialog context is being rebuild at times that it shouldn't and this disturbs the process. The reason is that the process is restarted many times during the ansering of a single sentence. And that's ok for the processes, but not for the dialog entities and the clause list.
+
+This is the drop. The process was already too slow; it had to redo the same code multiple times; and the grammars had to be reloaded. I've had enought: I'm going to build a real service. I'll turn nli-go into a service that keeps running. Nice!
+
+===
+
+There will be an application that listens to a port for incoming JSON messages. 
+A dispatcher listens for incoming messages. A message will have a dialog id.
+When this id is new, a new dialog context is created, and started. Then the message is passed to the dialog context.
+
+I found this example https://gist.github.com/miguelmota/301340db93de42b537df5588c1380863
+
+send message to port:
+
+    echo "Hello" | netcat localhost 3333
+
+
 ## 2022-01-16
 
 Changed go:equals() and go:not_equals() to    

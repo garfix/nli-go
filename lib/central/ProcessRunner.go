@@ -2,7 +2,6 @@ package central
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"strconv"
@@ -11,8 +10,8 @@ import (
 
 type ProcessRunner struct {
 	solver *ProblemSolverAsync
-	log    *common.SystemLog
-	list   goal.ProcessList
+	log  *common.SystemLog
+	list ProcessList
 }
 
 func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
@@ -28,14 +27,14 @@ func (p *ProcessRunner) RunRelationSet(relationSet mentalese.RelationSet) mental
 }
 
 func (p *ProcessRunner) RunRelationSetWithBindings(relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
-	process := goal.NewProcess("", relationSet, bindings)
+	process := NewProcess("", relationSet, bindings)
 	frame := process.Stack[0]
 	p.RunProcess(process)
 	// note: frame has already been deleted; frame is now just the last reference
 	return frame.InBindings
 }
 
-func (p *ProcessRunner) RunProcess(process *goal.Process) {
+func (p *ProcessRunner) RunProcess(process *Process) {
 	for !process.IsDone() {
 		hasStopped := p.step(process)
 		if hasStopped {
@@ -44,13 +43,13 @@ func (p *ProcessRunner) RunProcess(process *goal.Process) {
 	}
 }
 
-func (p *ProcessRunner) step(process *goal.Process) bool {
+func (p *ProcessRunner) step(process *Process) bool {
 	currentFrame := process.GetLastFrame()
 	hasStopped := false
 
 	debug := p.before(process, currentFrame, len(process.Stack))
 
-	messenger := process.CreateMessenger()
+	messenger := process.CreateMessenger(p)
 	relation := currentFrame.GetCurrentRelation()
 
 	_, found := p.solver.multiBindingFunctions[relation.Predicate]
@@ -70,7 +69,21 @@ func (p *ProcessRunner) step(process *goal.Process) bool {
 			return true
 		} else {
 			preparedRelation := p.evaluateArguments(relation, preparedBinding)
+
+			//if currentFrame.callback {
+			//	currentFrame.callback()
+			//} else {
+
 			outBindings := handler(messenger, preparedRelation, preparedBinding)
+
+			//}
+			//
+			//if outBindings == ignoreThis {
+			//	push new frames
+			//	currentFrameOfZo.callback = messenger.callback
+			//	return true
+			//}
+
 			messenger.AddOutBindings(outBindings)
 			currentFrame, hasStopped = process.ProcessMessenger(messenger, currentFrame)
 		}
@@ -124,7 +137,7 @@ func (p *ProcessRunner) evaluateFunction(relation mentalese.Relation, returnVari
 	}
 }
 
-func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *goal.StackFrame, process *goal.Process) api.RelationHandler {
+func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *StackFrame, process *Process) api.RelationHandler {
 
 	handlers := p.solver.GetHandlers(relation)
 
@@ -142,7 +155,7 @@ func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *goal.
 	return handlers[frame.HandlerIndex]
 }
 
-func (p *ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, stackDepth int) string {
+func (p *ProcessRunner) before(process *Process, frame *StackFrame, stackDepth int) string {
 
 	padding := strings.Repeat("  ", stackDepth)
 
@@ -168,7 +181,7 @@ func (p *ProcessRunner) before(process *goal.Process, frame *goal.StackFrame, st
 	return padding + text
 }
 
-func (p *ProcessRunner) after(process *goal.Process, frame *goal.StackFrame) string {
+func (p *ProcessRunner) after(process *Process, frame *StackFrame) string {
 	debug := ": " + frame.OutBindings.String()
 	if process.GetLastFrame() != frame {
 		debug = ""

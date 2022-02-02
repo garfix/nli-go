@@ -1,4 +1,4 @@
-package goal
+package central
 
 import (
 	"nli-go/lib/api"
@@ -6,22 +6,24 @@ import (
 )
 
 type Messenger struct {
+	processRunner       *ProcessRunner
 	cursor              *StackFrameCursor
 	outBindings         mentalese.BindingSet
 	childFrame          *StackFrame
 	processInstructions map[string]string
 	oldSlots            map[string]mentalese.Term
-	newSlots			 map[string]mentalese.Term
+	newSlots            map[string]mentalese.Term
 }
 
-func NewMessenger(cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
+func NewMessenger(processRunner *ProcessRunner, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
 	return &Messenger{
+		processRunner:       processRunner,
 		cursor:              cursor,
 		outBindings:         mentalese.NewBindingSet(),
 		childFrame:          nil,
 		processInstructions: map[string]string{},
 		oldSlots:            slots,
-		newSlots:			 map[string]mentalese.Term{},
+		newSlots:            map[string]mentalese.Term{},
 	}
 }
 
@@ -56,7 +58,7 @@ func (i *Messenger) ExecuteChildStackFrameAsync(relations mentalese.RelationSet,
 	loading := cursor.GetState("loading", 0)
 	allStepBindings := cursor.GetAllStepBindings()
 
-	i.GetCursor().SetState("childIndex", childIndex + 1)
+	i.GetCursor().SetState("childIndex", childIndex+1)
 
 	// has the child been done before?
 	if childIndex < len(allStepBindings) {

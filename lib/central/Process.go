@@ -1,6 +1,8 @@
-package goal
+package central
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+)
 
 type Process struct {
 	GoalId string
@@ -112,10 +114,10 @@ func (p *Process) GetPreparedBinding(f *StackFrame) mentalese.Binding {
 	return binding
 }
 
-func (p *Process) CreateMessenger() *Messenger {
+func (p *Process) CreateMessenger(processRunner *ProcessRunner) *Messenger {
 	frame := p.GetLastFrame()
 
-	return NewMessenger(frame.Cursor, p.Slots)
+	return NewMessenger(processRunner, frame.Cursor, p.Slots)
 }
 
 func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) (*StackFrame, bool) {

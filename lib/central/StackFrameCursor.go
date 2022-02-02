@@ -1,4 +1,4 @@
-package goal
+package central
 
 import (
 	"nli-go/lib/mentalese"

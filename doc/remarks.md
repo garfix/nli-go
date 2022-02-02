@@ -1,3 +1,53 @@
+## 2022-01-31
+
+Make sure the process keeps running so that the call-stack is not broken down; it can't be rebuilt.
+
+todo:
+
+- continue fixing all `CreateChildStackFrame` calls, until you run into a problem (then undo the last one)
+- register with the process for `wait for` messages
+- have `wait for` retry for 1 minute, make it notify the event listeners, and continue running the process
+- when a `wait for` is caught, return the `wait for` message
+- on `break`, `return`, etc, break down the call stack
+- continue fixing all `CreateChildStackFrame` calls
+- clean up the rubbish
+
+## 2022-01-30
+
+About "simply processing a relation set": it is not simply possible to execute it and disregard the process stack. The process stack serves functions like `break` and `return`. Functions that require the call stack.
+
+I'm thinking of the following technique for calling child relation sets. When a function F needs to execute a child set, it:
+
+- adds a callback function to the current function F in the current stack frame
+- places the child set on the stack
+- returns a binding constant that says: ignore me
+
+When the child set is executed, the process runner returns to F, it notices the callback function, and calls this callback, in stead of the function (it resumes where it left off). Before calling the callback, it clears the callback.
+
+When a `break` or `return` occurs, F will be deleted and the process runner will not execute the callback. 
+
+===
+
+One callback function would not have been so bad, but some functions have a large substructure of helper functions, each of which may call a child relation set (`quant_ordered_list` comes to mind). Basically you just want to call child sets; and there are only a few problems: `break`, `cancel`, `return`, `fail`. All of which break down some part of the stack. 
+
+After the stack has been broken down, the functions that execute these stack frames need to stop, immediately. This can be done by try/catch, or in Go, with panic/recover. Each function is wrapped by a panic/recover, and this wrapper checks if more of the calling functions need to be stopped, and if so, panic again.
+
+Each of the keywords that tear down part of the stack, calls "panic", with a special control flag. The recover that catches this panic then checks if the call-stack-depth matches the process stack depth; if not, it panics again. Until the call stack depth matches the process stack depth. 
+
+## 2022-01-29
+
+I also want to simplify the process runner. Processes are currently very robust, but also very hard to understand. I dread having to make changes to functions that process relation sets as part of their procedure.
+
+I thought about it for a long time and found myself coming back to the idea that a process, once started, should just keep running until its done. This is by far conceptually easiest to understand. Of course there were reasons for processes to interrupt: a user needed to answer a clarification question, or the user interface should update its state (moving blocks).
+
+I worked this out. When a process is started, it simply processes a relation set. When the relation set is processed, the process is finished. A relation itself may also start processing another relation set. In the new scheme it can do this inline and wait for the result.
+
+What about the callbacks to the user? The `wait for` relation that before stopped the process, will now continue to execute, _for a short amount of time_. It will wait for a fact, check 10 times a second, for a period of, say a minute. When the minute is over withouyt success, the `wait for` fails. The `wait for` will notify the wait-for-listeners, so that they don't waste time polling for `wait for`s.
+
+## 2022-01-28
+
+I introduced the server. It's a service that listens on a port for incomming messages, and in the background keeps all systems alive. The system now stays alive for the entire dialog with the user.
+
 ## 2022-01-22
 
 The interactive demo doesn't work anymore. I know what's wrong with it: the dialog context is being rebuild at times that it shouldn't and this disturbs the process. The reason is that the process is restarted many times during the ansering of a single sentence. And that's ok for the processes, but not for the dialog entities and the clause list.

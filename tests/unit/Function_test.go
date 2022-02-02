@@ -3,7 +3,6 @@ package tests
 import (
 	"fmt"
 	"nli-go/lib/central"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
@@ -136,7 +135,7 @@ func TestControlFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := goal.NewProcessList()
+	processList := central.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
@@ -204,7 +203,7 @@ func TestListFunctions(t *testing.T) {
 	solver.AddRuleBase(ruleBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := goal.NewProcessList()
+	processList := central.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
@@ -283,7 +282,7 @@ func TestQuantFunctions(t *testing.T) {
 	solver.AddRuleBase(ruleBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := goal.NewProcessList()
+	processList := central.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)

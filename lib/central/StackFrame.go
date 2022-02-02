@@ -20,9 +20,9 @@ func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSe
 		Relations:      relations,
 		InBindings:     bindings,
 		OutBindings:    mentalese.NewBindingSet(),
-		HandlerCount: 0,
+		HandlerCount:   0,
 		InBindingIndex: 0,
-		HandlerIndex: 0,
+		HandlerIndex:   0,
 		RelationIndex:  0,
 		Cursor:         NewStackFrameCursor(),
 	}
@@ -46,6 +46,9 @@ func (f *StackFrame) IsDone() bool {
 }
 
 func (f *StackFrame) GetCurrentRelation() mentalese.Relation {
+	if f.RelationIndex >= len(f.Relations) {
+		f.RelationIndex = f.RelationIndex
+	}
 	return f.Relations[f.RelationIndex]
 }
 

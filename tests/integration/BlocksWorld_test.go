@@ -30,7 +30,7 @@ func TestBlocksWorld(t *testing.T) {
 			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
 			{"Is the blue block in the box?", "Yes"},
-
+			//
 			{"What does the box contain?", "The blue pyramid and the blue block"},
 			{"What is the pyramid supported by?", "The box"},
 			{"How many blocks are not in the box?", "Four of them"},
@@ -128,25 +128,9 @@ func TestBlocksWorld(t *testing.T) {
 		}
 	}
 
-	c := a(1)
-	c()
-
 	//createGrid(system)
 
 	createImage(system)
-}
-
-type cb func()
-
-func a(x int) cb {
-
-	b := 1
-
-	c := func() {
-		println(b)
-	}
-
-	return c
 }
 
 func createGrid(system *global.System) {

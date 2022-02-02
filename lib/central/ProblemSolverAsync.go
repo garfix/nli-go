@@ -3,7 +3,6 @@ package central
 import (
 	"fmt"
 	"nli-go/lib/api"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -27,17 +26,17 @@ type ProblemSolverAsync struct {
 
 func NewProblemSolverAsync(matcher *RelationMatcher, variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *ProblemSolverAsync {
 	async := ProblemSolverAsync{
-		factBases:         []api.FactBase{},
-		ruleBases:         []api.RuleBase{},
-		functionBases:     []api.FunctionBase{},
-		multiBindingBases: []api.MultiBindingBase{},
-		solverFunctionBases: []api.SolverFunctionBase{},
+		factBases:             []api.FactBase{},
+		ruleBases:             []api.RuleBase{},
+		functionBases:         []api.FunctionBase{},
+		multiBindingBases:     []api.MultiBindingBase{},
+		solverFunctionBases:   []api.SolverFunctionBase{},
 		simpleFunctions:       map[string][]api.SimpleFunction{},
 		multiBindingFunctions: map[string][]api.MultiBindingFunction{},
-		matcher: matcher,
-		variableGenerator: variableGenerator,
-		relationHandlers: map[string][]api.RelationHandler{},
-		log: log,
+		matcher:               matcher,
+		variableGenerator:     variableGenerator,
+		relationHandlers:      map[string][]api.RelationHandler{},
+		log:                   log,
 	}
 
 	return &async
@@ -144,7 +143,7 @@ func (s *ProblemSolverAsync) createFactBaseHandlers() {
 	}
 }
 
-func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase, mapping mentalese.Rule) api.RelationHandler{
+func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase, mapping mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		return s.findFactsSingleMapping(base, mapping, relation, binding)
 	}
@@ -161,7 +160,7 @@ func (s *ProblemSolverAsync) createRuleHandlers() {
 func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-		_, match  := s.matcher.MatchTwoRelations(relation, rule.Goal, binding)
+		_, match := s.matcher.MatchTwoRelations(relation, rule.Goal, binding)
 		if !match {
 			return mentalese.NewBindingSet()
 		}
@@ -229,8 +228,8 @@ func (s *ProblemSolverAsync) createFactBaseModificationHandlers() {
 	for _, base := range s.factBases {
 
 		for _, mapping := range base.GetWriteMappings() {
-			s.addRelationHandler(mentalese.PredicateAssert + handleLinkChar + mapping.Goal.Predicate, s.createAssertFactClosure(base))
-			s.addRelationHandler(mentalese.PredicateRetract + handleLinkChar + mapping.Goal.Predicate, s.createRetractFactClosure(base))
+			s.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+mapping.Goal.Predicate, s.createAssertFactClosure(base))
+			s.addRelationHandler(mentalese.PredicateRetract+handleLinkChar+mapping.Goal.Predicate, s.createRetractFactClosure(base))
 		}
 	}
 }
@@ -285,7 +284,7 @@ func (s *ProblemSolverAsync) createRuleBaseModificationHandlers() {
 
 	for _, base := range s.ruleBases {
 		for _, predicate := range base.GetWritablePredicates() {
-			s.addRelationHandler(mentalese.PredicateAssert + handleLinkChar + predicate, s.createAssertRuleClosure(base))
+			s.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+predicate, s.createAssertRuleClosure(base))
 		}
 	}
 }
@@ -325,7 +324,7 @@ func (s *ProblemSolverAsync) GetHandlers(relation mentalese.Relation) []api.Rela
 	}
 }
 
-func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *goal.Messenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *Messenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := mentalese.NewBindingSet()
 	multiFound := false
@@ -360,10 +359,14 @@ func (solver *ProblemSolverAsync) findFactsSingleMapping(factBase api.FactBase, 
 	dbBindings := mentalese.NewBindingSet()
 
 	activeBinding, match := solver.matcher.MatchTwoRelations(relation, ds2db.Goal, mentalese.NewBinding())
-	if !match { return dbBindings }
+	if !match {
+		return dbBindings
+	}
 
 	activeBinding2, match2 := solver.matcher.MatchTwoRelations(ds2db.Goal, relation, mentalese.NewBinding())
-	if !match2 { return dbBindings }
+	if !match2 {
+		return dbBindings
+	}
 
 	dbRelations := ds2db.Pattern.ConvertVariables(activeBinding2, solver.variableGenerator)
 

@@ -114,13 +114,13 @@ func (p *Process) GetPreparedBinding(f *StackFrame) mentalese.Binding {
 	return binding
 }
 
-func (p *Process) CreateMessenger(processRunner *ProcessRunner) *Messenger {
+func (p *Process) CreateMessenger(processRunner *ProcessRunner, process *Process) *Messenger {
 	frame := p.GetLastFrame()
 
-	return NewMessenger(processRunner, frame.Cursor, p.Slots)
+	return NewMessenger(processRunner, process, frame.Cursor, p.Slots)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame) (*StackFrame, bool) {
+func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFrame) (*StackFrame, bool) {
 
 	outBindings := messenger.GetOutBindings()
 	hasStopped := false
@@ -131,15 +131,15 @@ func (p *Process) ProcessMessenger(messenger *Messenger, currentFame *StackFrame
 
 	p.updateMutableVariables(outBindings)
 
-	currentFame, outBindings, hasStopped = p.executeProcessInstructions(messenger, currentFame, outBindings)
+	currentFrame, outBindings, hasStopped = p.executeProcessInstructions(messenger, currentFrame, outBindings)
 
-	currentFame.AddOutBindings(currentFame.GetCurrentInBinding(), outBindings)
+	currentFrame.AddOutBindings(currentFrame.GetCurrentInBinding(), outBindings)
 
 	if messenger.GetChildFrame() != nil {
 		p.PushFrame(messenger.GetChildFrame())
 	}
 
-	return currentFame, hasStopped
+	return currentFrame, hasStopped
 }
 
 func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet, bool) {

@@ -7,6 +7,7 @@ import (
 
 type Messenger struct {
 	processRunner       *ProcessRunner
+	process             *Process
 	cursor              *StackFrameCursor
 	outBindings         mentalese.BindingSet
 	childFrame          *StackFrame
@@ -15,9 +16,10 @@ type Messenger struct {
 	newSlots            map[string]mentalese.Term
 }
 
-func NewMessenger(processRunner *ProcessRunner, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
+func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
 	return &Messenger{
 		processRunner:       processRunner,
+		process:             process,
 		cursor:              cursor,
 		outBindings:         mentalese.NewBindingSet(),
 		childFrame:          nil,
@@ -53,31 +55,43 @@ func (i *Messenger) CreateChildStackFrame(relations mentalese.RelationSet, bindi
 
 func (i *Messenger) ExecuteChildStackFrameAsync(relations mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
-	cursor := i.GetCursor()
-	childIndex := cursor.GetState("childIndex", 0)
-	loading := cursor.GetState("loading", 0)
-	allStepBindings := cursor.GetAllStepBindings()
-
-	i.GetCursor().SetState("childIndex", childIndex+1)
-
-	// has the child been done before?
-	if childIndex < len(allStepBindings) {
-		return allStepBindings[childIndex], false
+	if len(relations) == 0 {
+		return bindings, false
 	}
 
-	// have we just done the child?
-	if loading == 1 {
-		cursor.SetState("loading", 0)
-		// yes: collect the results
-		childBindings := cursor.GetChildFrameResultBindings()
-		cursor.AddStepBindings(childBindings)
-		return childBindings, false
-	} else {
-		// do it now
-		cursor.SetState("loading", 1)
-		i.CreateChildStackFrame(relations, bindings)
-		return mentalese.NewBindingSet(), true
-	}
+	newBindings := mentalese.NewBindingSet()
+
+	level := len(i.process.Stack)
+	i.process.PushFrame(NewStackFrame(relations, bindings))
+	newBindings = i.processRunner.RunProcessLevel(i.process, level)
+
+	return newBindings, false
+	//
+	//cursor := i.GetCursor()
+	//childIndex := cursor.GetState("childIndex", 0)
+	//loading := cursor.GetState("loading", 0)
+	//allStepBindings := cursor.GetAllStepBindings()
+	//
+	//i.GetCursor().SetState("childIndex", childIndex+1)
+	//
+	//// has the child been done before?
+	//if childIndex < len(allStepBindings) {
+	//	return allStepBindings[childIndex], false
+	//}
+	//
+	//// have we just done the child?
+	//if loading == 1 {
+	//	cursor.SetState("loading", 0)
+	//	// yes: collect the results
+	//	childBindings := cursor.GetChildFrameResultBindings()
+	//	cursor.AddStepBindings(childBindings)
+	//	return childBindings, false
+	//} else {
+	//	// do it now
+	//	cursor.SetState("loading", 1)
+	//	i.CreateChildStackFrame(relations, bindings)
+	//	return mentalese.NewBindingSet(), true
+	//}
 }
 
 func (i *Messenger) GetProcessSlot(slot string) (mentalese.Term, bool) {

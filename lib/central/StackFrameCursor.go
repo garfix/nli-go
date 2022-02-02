@@ -6,7 +6,7 @@ import (
 
 type StackFrameCursor struct {
 	Type                     string
-	MutableVariables 		 map[string]bool
+	MutableVariables         map[string]bool
 	State                    map[string]int
 	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
@@ -14,8 +14,8 @@ type StackFrameCursor struct {
 
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
-		Type: 					  mentalese.FrameTypePlain,
-		MutableVariables: 		  map[string]bool{},
+		Type:                     mentalese.FrameTypePlain,
+		MutableVariables:         map[string]bool{},
 		State:                    map[string]int{},
 		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
@@ -63,7 +63,7 @@ func (c *StackFrameCursor) GetState(name string, fallback int) int {
 	}
 }
 
-func (c *StackFrameCursor) SetState(name string, value int)  {
+func (c *StackFrameCursor) SetState(name string, value int) {
 	c.State[name] = value
 }
 

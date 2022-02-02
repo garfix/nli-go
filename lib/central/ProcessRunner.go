@@ -10,8 +10,8 @@ import (
 
 type ProcessRunner struct {
 	solver *ProblemSolverAsync
-	log  *common.SystemLog
-	list ProcessList
+	log    *common.SystemLog
+	list   ProcessList
 }
 
 func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
@@ -43,13 +43,24 @@ func (p *ProcessRunner) RunProcess(process *Process) {
 	}
 }
 
+func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.BindingSet {
+	for len(process.Stack) > level {
+		hasStopped := p.step(process)
+		if hasStopped {
+			break
+		}
+	}
+
+	return process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
+}
+
 func (p *ProcessRunner) step(process *Process) bool {
 	currentFrame := process.GetLastFrame()
 	hasStopped := false
 
 	debug := p.before(process, currentFrame, len(process.Stack))
 
-	messenger := process.CreateMessenger(p)
+	messenger := process.CreateMessenger(p, process)
 	relation := currentFrame.GetCurrentRelation()
 
 	_, found := p.solver.multiBindingFunctions[relation.Predicate]
@@ -69,21 +80,7 @@ func (p *ProcessRunner) step(process *Process) bool {
 			return true
 		} else {
 			preparedRelation := p.evaluateArguments(relation, preparedBinding)
-
-			//if currentFrame.callback {
-			//	currentFrame.callback()
-			//} else {
-
 			outBindings := handler(messenger, preparedRelation, preparedBinding)
-
-			//}
-			//
-			//if outBindings == ignoreThis {
-			//	push new frames
-			//	currentFrameOfZo.callback = messenger.callback
-			//	return true
-			//}
-
 			messenger.AddOutBindings(outBindings)
 			currentFrame, hasStopped = process.ProcessMessenger(messenger, currentFrame)
 		}

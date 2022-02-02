@@ -80,17 +80,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 
 	unboundRelations := slotRelations.ReplaceTerm(mentalese.NewTermAtom(contextVariableAtom), mainEntityVar)
 
-	cursor := messenger.GetCursor()
-	state := cursor.GetState("state", 0)
-	cursor.SetState("state", 1)
-
-	newBindings := mentalese.NewBindingSet()
-
-	if state == 0 {
-		messenger.CreateChildStackFrame(unboundRelations, mentalese.InitBindingSet(binding))
-	} else {
-		newBindings = cursor.GetChildFrameResultBindings()
-	}
+	newBindings, _ := messenger.ExecuteChildStackFrameAsync(unboundRelations, mentalese.InitBindingSet(binding))
 
 	return newBindings
 }

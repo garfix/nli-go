@@ -149,10 +149,7 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 	}
 
 	if newBindings.IsEmpty() {
-		newBindings, loading = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
-		if loading {
-			return mentalese.NewBindingSet()
-		}
+		newBindings, _ = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
 
 		if newBindings.GetLength() > 1 {
 			base.rangeIndexClarification(messenger)

@@ -2,7 +2,6 @@ package tests
 
 import (
 	"nli-go/lib/central"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
 	"nli-go/lib/knowledge"
@@ -38,7 +37,7 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := goal.NewProcessList()
+	processList := central.NewProcessList()
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)

@@ -1,7 +1,6 @@
 package central
 
 import (
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
@@ -12,7 +11,7 @@ const MaxSizeAnaphoraQueue = 10
 type DialogContext struct {
 	storage           *common.FileStorage
 	DeicticCenter     *DeicticCenter
-	ProcessList       *goal.ProcessList
+	ProcessList       *ProcessList
 	VariableGenerator *mentalese.VariableGenerator
 	DiscourseEntities *mentalese.Binding
 	ClauseList        *mentalese.ClauseList
@@ -21,7 +20,7 @@ type DialogContext struct {
 func NewDialogContext(
 	storage *common.FileStorage,
 	deicticCenter *DeicticCenter,
-	processList *goal.ProcessList,
+	processList *ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
 	discourseEntities *mentalese.Binding,
 ) *DialogContext {

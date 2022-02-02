@@ -4,7 +4,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"nli-go/lib/central"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
@@ -127,7 +126,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
 	system.internalGrammarParser = builder.parser
-	system.processList = goal.NewProcessList()
+	system.processList = central.NewProcessList()
 
 	modifier := central.NewFactBaseModifier(builder.log, variableGenerator)
 

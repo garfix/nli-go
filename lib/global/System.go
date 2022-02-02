@@ -2,7 +2,6 @@ package global
 
 import (
 	"nli-go/lib/central"
-	"nli-go/lib/central/goal"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
 	"nli-go/lib/importer"
@@ -27,7 +26,7 @@ type System struct {
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
-	processList           *goal.ProcessList
+	processList           *central.ProcessList
 	processRunner         *central.ProcessRunner
 	mutex                 sync.Mutex
 }

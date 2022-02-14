@@ -14,31 +14,32 @@ import (
 type SystemFunctionBase struct {
 	KnowledgeBaseCore
 	matcher *central.RelationMatcher
-	meta          *mentalese.Meta
-	log *common.SystemLog
+	meta    *mentalese.Meta
+	log     *common.SystemLog
 }
 
 func NewSystemFunctionBase(name string, meta *mentalese.Meta, log *common.SystemLog) *SystemFunctionBase {
 	return &SystemFunctionBase{
-		log: log, KnowledgeBaseCore: KnowledgeBaseCore{ name },
-		meta: meta,
-		matcher: central.NewRelationMatcher(log),
+		log:               log,
+		KnowledgeBaseCore: KnowledgeBaseCore{name},
+		meta:              meta,
+		matcher:           central.NewRelationMatcher(log),
 	}
 }
 
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
-		mentalese.PredicateSplit: base.split,
-		mentalese.PredicateJoin: base.join,
-		mentalese.PredicateConcat: base.concat,
-		mentalese.PredicateGreaterThan: base.greaterThan,
-		mentalese.PredicateLessThan: base.lessThan,
+		mentalese.PredicateSplit:             base.split,
+		mentalese.PredicateJoin:              base.join,
+		mentalese.PredicateConcat:            base.concat,
+		mentalese.PredicateGreaterThan:       base.greaterThan,
+		mentalese.PredicateLessThan:          base.lessThan,
 		mentalese.PredicateGreaterThanEquals: base.greaterThanEquals,
-		mentalese.PredicateLessThanEquals: base.lessThanEquals,
-		mentalese.PredicateEquals: base.equals,
-		mentalese.PredicateNotEquals: base.notEquals,
-		mentalese.PredicateCompare: base.compare,
-		mentalese.PredicateUnify: base.unify,
+		mentalese.PredicateLessThanEquals:    base.lessThanEquals,
+		mentalese.PredicateEquals:            base.equals,
+		mentalese.PredicateNotEquals:         base.notEquals,
+		mentalese.PredicateCompare:           base.compare,
+		mentalese.PredicateUnify:             base.unify,
 		mentalese.PredicateAdd:               base.add,
 		mentalese.PredicateSubtract:          base.subtract,
 		mentalese.PredicateMultiply:          base.multiply,
@@ -50,9 +51,9 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateUuid:              base.uuid,
 		mentalese.PredicateIsa:               base.isa,
 		mentalese.PredicateGetSort:           base.getSort,
-		mentalese.PredicateListLength: 		  base.listLength,
-		mentalese.PredicateListGet: 		  base.listGet,
-		mentalese.PredicateListHead: 		  base.listHead,
+		mentalese.PredicateListLength:        base.listLength,
+		mentalese.PredicateListGet:           base.listGet,
+		mentalese.PredicateListHead:          base.listHead,
 	}
 }
 
@@ -482,7 +483,9 @@ func (base *SystemFunctionBase) listLength(relation mentalese.Relation, binding 
 
 	bound := relation.BindSingle(binding)
 
-	if !Validate(bound, "lv", base.log) { return mentalese.NewBinding(), false }
+	if !Validate(bound, "lv", base.log) {
+		return mentalese.NewBinding(), false
+	}
 
 	list := bound.Arguments[0].TermValueList
 	lengthVar := bound.Arguments[1].TermValue
@@ -498,7 +501,9 @@ func (base *SystemFunctionBase) listGet(relation mentalese.Relation, binding men
 
 	bound := relation.BindSingle(binding)
 
-	if !Validate(bound, "li*", base.log) { return mentalese.NewBinding(), false }
+	if !Validate(bound, "li*", base.log) {
+		return mentalese.NewBinding(), false
+	}
 
 	list := bound.Arguments[0].TermValueList
 	index := bound.Arguments[1].TermValue
@@ -521,12 +526,13 @@ func (base *SystemFunctionBase) listGet(relation mentalese.Relation, binding men
 	return newBinding, true
 }
 
-
 func (base *SystemFunctionBase) listHead(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := relation.BindSingle(binding)
 
-	if !Validate(bound, "lvv", base.log) { return mentalese.NewBinding(), false }
+	if !Validate(bound, "lvv", base.log) {
+		return mentalese.NewBinding(), false
+	}
 
 	list := bound.Arguments[0].TermValueList
 	headVar := bound.Arguments[1].TermValue

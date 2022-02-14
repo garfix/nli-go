@@ -1,3 +1,14 @@
+## 2022-02-12
+
+Rebuilding the server.
+
+Each client can tell the process runner to start a process.
+Processes can run in parallel, but processes consist of step and the step is executed in a mutexed area: no two steps are executed together.
+A process can create new processes; they are managed by the process list.
+Once a process is done, it is removed from the process list; the system is ready when there are no more processes.
+
+Need more mutexes.
+
 ## 2022-01-31
 
 Make sure the process keeps running so that the call-stack is not broken down; it can't be rebuilt.

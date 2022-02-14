@@ -69,6 +69,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateDialogReadBindings:      base.dialogReadBindings,
 		mentalese.PredicateDialogWriteBindings:     base.dialogWriteBindings,
 		mentalese.PredicateDialogAddResponseClause: base.dialogAddResponseClause,
+		mentalese.PredicateCreateGoal:              base.createGoal,
 
 		// list
 		mentalese.PredicateListOrder:       base.listOrder,

@@ -9,16 +9,16 @@ import (
 
 // uses SharedId() relations to create new sense() relations, that hold the SharedId's of the entities of different knowledge bases
 type NameResolver struct {
-	solverAsync   *ProblemSolverAsync
-	meta          *mentalese.Meta
-	log           *common.SystemLog
+	solverAsync *ProblemSolverAsync
+	meta        *mentalese.Meta
+	log         *common.SystemLog
 }
 
 func NewNameResolver(solverAsync *ProblemSolverAsync, meta *mentalese.Meta, log *common.SystemLog) *NameResolver {
 	return &NameResolver{
-		solverAsync:   solverAsync,
-		meta:          meta,
-		log:           log,
+		solverAsync: solverAsync,
+		meta:        meta,
+		log:         log,
 	}
 }
 
@@ -46,7 +46,7 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 		}),
 	}
 
-	bindings, loading := messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	bindings, loading := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 	if loading {
 		return resolvedInformations, true
 	}

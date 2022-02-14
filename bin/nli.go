@@ -66,11 +66,6 @@ func main() {
 	querySes := queryCmd.String(optSession, "", txtSession)
 	queryOut := queryCmd.String(optOutput, defaultOutputDir, txtOutput)
 
-	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
-	sendApp := sendCmd.String(optApplication, "", txtApplication)
-	sendSes := sendCmd.String(optSession, "", txtSession)
-	sendOut := sendCmd.String(optOutput, defaultOutputDir, txtOutput)
-
 	flag.Parse()
 
 	if len(os.Args) < 2 {
@@ -102,13 +97,6 @@ func main() {
 			}
 			system := buildSystem(log, workingDir, *queryApp, *querySes, *queryOut)
 			performQuery(system, queryCmd.Arg(0))
-		case "send":
-			sendCmd.Parse(os.Args[2:])
-			if *sendApp == "" || sendCmd.Arg(0) == "" {
-				showUsage()
-			}
-			system := buildSystem(log, workingDir, *sendApp, *sendSes, *sendOut)
-			performSend(system, log, sendCmd.Arg(0))
 		case "reset":
 			resetCmd.Parse(os.Args[2:])
 			if *resetApp == "" || *resetSes == "" {
@@ -130,7 +118,7 @@ func main() {
 	}
 }
 
-func showUsage()  {
+func showUsage() {
 	fmt.Println("NLI-GO")
 	fmt.Println("")
 	fmt.Println("Answer a single question/command:")
@@ -168,7 +156,7 @@ func buildSystem(log *common.SystemLog, workingDir string, applicationPath strin
 	return system
 }
 
-func performQuery(system *global.System, query string)  {
+func performQuery(system *global.System, query string) {
 
 	// the actual system call
 	bindings := system.Query(query)
@@ -176,37 +164,6 @@ func performQuery(system *global.System, query string)  {
 	response := bindings.ToJson() + "\n"
 
 	fmt.Printf(response)
-}
-
-func performSend(system *global.System, log *common.SystemLog, relationJson string)  {
-
-	message := mentalese.RelationSet{}
-	relations := mentalese.RelationSet{}
-
-	err := json.Unmarshal([]byte(relationJson), &relations)
-	if err != nil {
-		log.AddError(err.Error() + " in: " + relationJson)
-	} else {
-
-		// the actual system call
-		responses := system.SendMessage(relations)
-
-		if len(responses) > 0 {
-			message = responses[0]
-		}
-	}
-
-	result := Result2{
-		Success:     log.IsOk(),
-		ErrorLines:  log.GetErrors(),
-		Productions: log.GetProductions(),
-		Message:     message,
-	}
-
-	responseRaw, _ := json.MarshalIndent(result, "", "    ")
-	responseString := string(responseRaw) + "\n"
-
-	fmt.Printf(responseString)
 }
 
 func answer(system *global.System, log *common.SystemLog, sentence string, returnType string) (string, *common.Options) {
@@ -254,7 +211,7 @@ func goInteractive(system *global.System, log *common.SystemLog, configPath stri
 func optionIndexToOptionKey(index int, options *common.Options) string {
 
 	for i, key := range options.GetKeys() {
-		if i == index - 1 {
+		if i == index-1 {
 			return key
 		}
 	}
@@ -283,7 +240,7 @@ func createResponseString(log *common.SystemLog, answer string, options *common.
 			response = answer + "\n"
 			values := options.GetValues()
 			for i := range options.GetKeys() {
-				response += strconv.Itoa(i + 1) + ") " + values[i] + "\n"
+				response += strconv.Itoa(i+1) + ") " + values[i] + "\n"
 			}
 
 		} else {

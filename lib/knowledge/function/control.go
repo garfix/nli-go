@@ -6,6 +6,7 @@ import (
 	"nli-go/lib/mentalese"
 	"os/exec"
 	"strconv"
+	"time"
 )
 
 func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -44,11 +45,11 @@ func (base *SystemSolverFunctionBase) ifThen(messenger api.ProcessMessenger, ifT
 
 	newBindings := mentalese.NewBindingSet()
 
-	conditionBindings, _ := messenger.ExecuteChildStackFrameAsync(condition, mentalese.InitBindingSet(binding))
+	conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	if conditionBindings.IsEmpty() {
 		newBindings = mentalese.InitBindingSet(binding)
 	} else {
-		newBindings, _ = messenger.ExecuteChildStackFrameAsync(action, conditionBindings)
+		newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
 	}
 
 	return newBindings
@@ -85,11 +86,11 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 
 	}
 
-	//conditionBindings, _ := messenger.ExecuteChildStackFrameAsync(condition, mentalese.InitBindingSet(binding))
+	//conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	//if !conditionBindings.IsEmpty() {
-	//	newBindings, _ = messenger.ExecuteChildStackFrameAsync(action, conditionBindings)
+	//	newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
 	//} else {
-	//	newBindings, _ = messenger.ExecuteChildStackFrameAsync(alternative, mentalese.InitBindingSet(binding))
+	//	newBindings, _ = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
 	//}
 
 	return newBindings
@@ -117,7 +118,7 @@ func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relat
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	newBindings, _ := messenger.ExecuteChildStackFrameAsync(child, mentalese.InitBindingSet(binding))
+	newBindings, _ := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 
 	return newBindings
 }
@@ -126,7 +127,7 @@ func (base *SystemSolverFunctionBase) ignore(messenger api.ProcessMessenger, rel
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	childBindings, _ := messenger.ExecuteChildStackFrameAsync(child, mentalese.InitBindingSet(binding))
+	childBindings, _ := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 	if childBindings.IsEmpty() {
 		return mentalese.InitBindingSet(binding)
 	} else {
@@ -209,19 +210,30 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 
 	newBindings := mentalese.NewBindingSet()
 
-	cursor := messenger.GetCursor()
-	state := cursor.GetState("state", 0)
-	cursor.SetState("state", 1)
+	sent := false
 
-	if state == 0 {
-		messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
-	} else {
-		newBindings = cursor.GetChildFrameResultBindings()
-		if newBindings.IsEmpty() {
-			messenger.CreateChildStackFrame(child, mentalese.InitBindingSet(binding))
-			messenger.AddProcessInstruction(mentalese.ProcessInstructionStop, "")
+	messenger.GetProcess().SetWaitingFor(child.BindSingle(binding))
+
+	const timeout = 12000
+
+	// todo: refine, timeout configurable
+	for i := 0; i < timeout; i++ {
+
+		//println("waiting... " + strconv.Itoa(i))
+
+		newBindings, _ = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
+		if !newBindings.IsEmpty() {
+			break
 		}
+		if !sent {
+			sent = true
+			messenger.SendMessage(child.BindSingle(binding))
+		}
+
+		time.Sleep(100 * time.Microsecond)
 	}
+
+	messenger.GetProcess().SetWaitingFor(nil)
 
 	return newBindings
 }

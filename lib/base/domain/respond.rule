@@ -1,9 +1,7 @@
 go:tell(Input) :-
-    go:uuid(Uuid)
-    go:assert(
-        go:goal(
-            go:respond(Input),
-            Uuid));
+    go:create_goal(
+        go:respond(Input)
+    );
 
 go:respond(Input) :-
 

@@ -9,8 +9,10 @@ import (
 )
 
 func (base *SystemSolverFunctionBase) entityQuickSort(messenger api.ProcessMessenger, ids []mentalese.Term, orderFunction string) ([]mentalese.Term, bool) {
-	loading := base.entityQuickSortRange(messenger, &ids, 0, len(ids) - 1, orderFunction)
-	if loading { return []mentalese.Term{}, true }
+	loading := base.entityQuickSortRange(messenger, &ids, 0, len(ids)-1, orderFunction)
+	if loading {
+		return []mentalese.Term{}, true
+	}
 	return ids, false
 }
 
@@ -19,11 +21,17 @@ func (base *SystemSolverFunctionBase) entityQuickSortRange(messenger api.Process
 	if lo < hi {
 		p := 0
 		p, loading = base.partition(messenger, ids, lo, hi, orderFunction)
-		if loading { return true }
+		if loading {
+			return true
+		}
 		loading = base.entityQuickSortRange(messenger, ids, lo, p, orderFunction)
-		if loading { return true }
-		loading = base.entityQuickSortRange(messenger, ids, p + 1, hi, orderFunction)
-		if loading { return true }
+		if loading {
+			return true
+		}
+		loading = base.entityQuickSortRange(messenger, ids, p+1, hi, orderFunction)
+		if loading {
+			return true
+		}
 	}
 	return false
 }
@@ -43,7 +51,9 @@ func (base *SystemSolverFunctionBase) partition(messenger api.ProcessMessenger, 
 			if loading {
 				return 0, true
 			}
-			if result >= 0 { break }
+			if result >= 0 {
+				break
+			}
 		}
 		for {
 			j = j - 1
@@ -52,14 +62,20 @@ func (base *SystemSolverFunctionBase) partition(messenger api.ProcessMessenger, 
 			if loading {
 				return 0, true
 			}
-			if result <= 0 { break }
-			if j == 0 { break }
+			if result <= 0 {
+				break
+			}
+			if j == 0 {
+				break
+			}
 		}
 		if i >= j {
 			return j, false
 		}
 		// swap id i with id j
-		temp := (*ids)[i]; (*ids)[i] = (*ids)[j]; (*ids)[j] = temp
+		temp := (*ids)[i]
+		(*ids)[i] = (*ids)[j]
+		(*ids)[j] = temp
 	}
 }
 
@@ -83,7 +99,7 @@ func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id
 	bindings := mentalese.NewBindingSet()
 	loading := false
 
-	bindings, loading = messenger.ExecuteChildStackFrameAsync(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
+	bindings, loading = messenger.ExecuteChildStackFrame(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
 	if loading {
 		return 0, true
 	}

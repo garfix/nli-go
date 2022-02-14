@@ -91,12 +91,12 @@ func (server *Server) getSystem(request Request) *global.System {
 func buildSystem(workingDir string, applicationPath string, sessionId string, outputDir string) *global.System {
 	absApplicationPath := common.AbsolutePath(workingDir, applicationPath)
 
-	log := common.NewSystemLog()
+	systemLog := common.NewSystemLog()
 
 	outputDir, _ = filepath.Abs(outputDir)
 	outputDir = filepath.Clean(outputDir)
 
-	system := global.NewSystem(absApplicationPath, sessionId, outputDir, log)
+	system := global.NewSystem(absApplicationPath, sessionId, outputDir, systemLog)
 
 	return system
 }

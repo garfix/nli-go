@@ -93,6 +93,17 @@ func (set RelationSet) Merge(newSet RelationSet) RelationSet {
 	return mergedSet
 }
 
+func (set RelationSet) MergeMultiple(newSets []RelationSet) RelationSet {
+
+	mergedSet := set
+
+	for _, newSet := range newSets {
+		mergedSet = mergedSet.Merge(newSet)
+	}
+
+	return mergedSet
+}
+
 func (set RelationSet) Contains(needle Relation) bool {
 
 	for _, relation := range set {
@@ -136,7 +147,7 @@ func (relations RelationSet) ConvertVariables(variableMapping Binding, variableG
 	variables := relations.GetVariableNames()
 
 	// extend binding with extra variables in set
-	for _, variable  := range variables {
+	for _, variable := range variables {
 		_, found := variableMapping.Get(variable)
 		if !found {
 			variableMapping.Set(variable, variableGenerator.GenerateVariable(variable))
@@ -185,7 +196,6 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 
 	return newRelations
 }
-
 
 // Returns a new relation set, that has all variables bound to bindings
 func (relations RelationSet) BindSingle(binding Binding) RelationSet {
@@ -318,9 +328,9 @@ func (set RelationSet) ExpandChildren() RelationSet {
 // Returns all relations with variable as argument; those relations have other variables, find all relations with those as well
 func (set RelationSet) findRelationsStartingWithVariable(variable string) RelationSet {
 
-	foundVariables := map[string]bool{ variable: true }
+	foundVariables := map[string]bool{variable: true}
 	markedRelationIndexes := map[int]bool{}
-	awaitingVariables := []string{ variable }
+	awaitingVariables := []string{variable}
 
 	// process a stack with variables
 	for len(awaitingVariables) != 0 {

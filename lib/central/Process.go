@@ -5,9 +5,10 @@ import (
 )
 
 type Process struct {
-	GoalId string
-	Stack  []*StackFrame
-	Slots  map[string]mentalese.Term
+	GoalId     string
+	Stack      []*StackFrame
+	Slots      map[string]mentalese.Term
+	WaitingFor mentalese.RelationSet
 }
 
 func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
@@ -16,8 +17,17 @@ func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},
-		Slots: map[string]mentalese.Term{},
+		Slots:      map[string]mentalese.Term{},
+		WaitingFor: nil,
 	}
+}
+
+func (p *Process) SetWaitingFor(set mentalese.RelationSet) {
+	p.WaitingFor = set
+}
+
+func (p *Process) GetWaitingFor() mentalese.RelationSet {
+	return p.WaitingFor
 }
 
 func (p *Process) AddMutableVariable(variable string) {
@@ -120,10 +130,9 @@ func (p *Process) CreateMessenger(processRunner *ProcessRunner, process *Process
 	return NewMessenger(processRunner, process, frame.Cursor, p.Slots)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFrame) (*StackFrame, bool) {
+func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFrame) *StackFrame {
 
 	outBindings := messenger.GetOutBindings()
-	hasStopped := false
 
 	for slot, value := range messenger.newSlots {
 		p.Slots[slot] = value
@@ -131,7 +140,7 @@ func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFram
 
 	p.updateMutableVariables(outBindings)
 
-	currentFrame, outBindings, hasStopped = p.executeProcessInstructions(messenger, currentFrame, outBindings)
+	currentFrame, outBindings = p.executeProcessInstructions(messenger, currentFrame, outBindings)
 
 	currentFrame.AddOutBindings(currentFrame.GetCurrentInBinding(), outBindings)
 
@@ -139,12 +148,10 @@ func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFram
 		p.PushFrame(messenger.GetChildFrame())
 	}
 
-	return currentFrame, hasStopped
+	return currentFrame
 }
 
-func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet, bool) {
-
-	hasStopped := false
+func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet) {
 
 	for instruction, value := range messenger.GetProcessInstructions() {
 		switch instruction {
@@ -159,12 +166,15 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame 
 		case mentalese.ProcessInstructionReturn:
 			outBindings = currentFrame.InBindings
 			currentFrame = p.executeReturn(currentFrame)
-		case mentalese.ProcessInstructionStop:
-			hasStopped = true
+			//case mentalese.ProcessInstructionSendMessage:
+			//	lastFrame := p.GetLastFrame()
+			//	binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
+			//	boundRelations := lastFrame.Relations.BindSingle(binding)
+			//	p.messageManager.NotifyListeners(boundRelations)
 		}
 	}
 
-	return currentFrame, outBindings, hasStopped
+	return currentFrame, outBindings
 }
 
 func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
@@ -261,7 +271,8 @@ func (p *Process) GetLastFrame() *StackFrame {
 	if len(p.Stack) == 0 {
 		return nil
 	} else {
-		return p.Stack[len(p.Stack)-1]
+		frame := p.Stack[len(p.Stack)-1]
+		return frame
 	}
 }
 

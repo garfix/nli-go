@@ -27,7 +27,7 @@ func (base *SystemSolverFunctionBase) not(messenger api.ProcessMessenger, notRel
 	//	return resultBindings
 	//}
 
-	newBindings, _ := messenger.ExecuteChildStackFrameAsync(scope, mentalese.InitBindingSet(binding))
+	newBindings, _ := messenger.ExecuteChildStackFrame(scope, mentalese.InitBindingSet(binding))
 	if !newBindings.IsEmpty() {
 		return mentalese.NewBindingSet()
 	} else {
@@ -62,11 +62,11 @@ func (base *SystemSolverFunctionBase) and(messenger api.ProcessMessenger, andRel
 	//	newBindings = childBindings
 	//}
 
-	childBindings, _ := messenger.ExecuteChildStackFrameAsync(first, newBindings)
+	childBindings, _ := messenger.ExecuteChildStackFrame(first, newBindings)
 	if childBindings.IsEmpty() {
 		newBindings = childBindings
 	} else {
-		newBindings, _ = messenger.ExecuteChildStackFrameAsync(second, childBindings)
+		newBindings, _ = messenger.ExecuteChildStackFrame(second, childBindings)
 	}
 
 	return newBindings
@@ -100,9 +100,9 @@ func (base *SystemSolverFunctionBase) or(messenger api.ProcessMessenger, orRelat
 	//	}
 	//}
 
-	childBindings, _ := messenger.ExecuteChildStackFrameAsync(first, mentalese.InitBindingSet(binding))
+	childBindings, _ := messenger.ExecuteChildStackFrame(first, mentalese.InitBindingSet(binding))
 	newBindings.AddMultiple(childBindings)
-	childBindings, _ = messenger.ExecuteChildStackFrameAsync(second, mentalese.InitBindingSet(binding))
+	childBindings, _ = messenger.ExecuteChildStackFrame(second, mentalese.InitBindingSet(binding))
 	newBindings.AddMultiple(childBindings)
 
 	return newBindings
@@ -135,11 +135,11 @@ func (base *SystemSolverFunctionBase) xor(messenger api.ProcessMessenger, orRela
 	//	newBindings = childBindings
 	//}
 
-	childBindings, _ := messenger.ExecuteChildStackFrameAsync(first, mentalese.InitBindingSet(binding))
+	childBindings, _ := messenger.ExecuteChildStackFrame(first, mentalese.InitBindingSet(binding))
 	if !childBindings.IsEmpty() {
 		newBindings = childBindings
 	} else {
-		childBindings, _ = messenger.ExecuteChildStackFrameAsync(second, mentalese.InitBindingSet(binding))
+		childBindings, _ = messenger.ExecuteChildStackFrame(second, mentalese.InitBindingSet(binding))
 		newBindings = childBindings
 	}
 

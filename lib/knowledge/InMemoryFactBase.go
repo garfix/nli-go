@@ -4,26 +4,28 @@ import (
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"sync"
 )
 
 type InMemoryFactBase struct {
 	KnowledgeBaseCore
-	originalFacts     mentalese.RelationSet
-	facts     mentalese.RelationSet
-	readMap   []mentalese.Rule
-	writeMap  []mentalese.Rule
-	entities  mentalese.Entities
-	sharedIds SharedIds
-	matcher   *central.RelationMatcher
-	storage *common.FileStorage
-	log       *common.SystemLog
-	changed bool
+	originalFacts mentalese.RelationSet
+	facts         mentalese.RelationSet
+	readMap       []mentalese.Rule
+	writeMap      []mentalese.Rule
+	entities      mentalese.Entities
+	sharedIds     SharedIds
+	matcher       *central.RelationMatcher
+	storage       *common.FileStorage
+	log           *common.SystemLog
+	changed       bool
+	mutex         sync.Mutex
 }
 
 func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, storage *common.FileStorage, log *common.SystemLog) *InMemoryFactBase {
 	factBase := InMemoryFactBase{
-		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name },
-		originalFacts: 	   facts,
+		KnowledgeBaseCore: KnowledgeBaseCore{Name: name},
+		originalFacts:     facts,
 		facts:             facts.Copy(),
 		readMap:           readMap,
 		writeMap:          writeMap,
@@ -31,7 +33,7 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *cent
 		matcher:           matcher,
 		storage:           storage,
 		log:               log,
-		changed: 		   false,
+		changed:           false,
 	}
 
 	if storage != nil {
@@ -57,7 +59,9 @@ func (factBase *InMemoryFactBase) GetLocalId(inId string, sort string) string {
 	outId := ""
 
 	_, found := factBase.sharedIds[sort]
-	if !found { return inId }
+	if !found {
+		return inId
+	}
 
 	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == sharedId {
@@ -73,7 +77,9 @@ func (factBase *InMemoryFactBase) GetSharedId(inId string, sort string) string {
 	outId := ""
 
 	_, found := factBase.sharedIds[sort]
-	if !found { return inId }
+	if !found {
+		return inId
+	}
 
 	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == localId {
@@ -91,25 +97,39 @@ func (factBase *InMemoryFactBase) GetRelations() mentalese.RelationSet {
 
 func (factBase *InMemoryFactBase) MatchRelationToDatabase(needleRelation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
+	factBase.mutex.Lock()
+
 	bindings, _ := factBase.matcher.MatchRelationToSet(needleRelation, factBase.facts, binding)
+
+	factBase.mutex.Unlock()
+
 	return bindings
 }
 
 func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
 
+	factBase.mutex.Lock()
+
 	for _, fact := range factBase.facts {
 		_, found := factBase.matcher.MatchTwoRelations(relation, fact, mentalese.NewBinding())
 		if found {
-			return
+			goto end
 		}
 	}
 
 	factBase.facts = append(factBase.facts, relation)
 	factBase.changed = true
+
+end:
+
+	factBase.mutex.Unlock()
 }
 
 // Removes all facts that match relation
 func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
+
+	factBase.mutex.Lock()
+
 	newFacts := []mentalese.Relation{}
 
 	for _, fact := range factBase.facts {
@@ -121,17 +141,29 @@ func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
 
 	factBase.facts = newFacts
 	factBase.changed = true
+
+	factBase.mutex.Unlock()
 }
 
 func (factBase *InMemoryFactBase) ResetSession() {
+
+	factBase.mutex.Lock()
+
 	factBase.facts = factBase.originalFacts.Copy()
 	factBase.changed = true
+
+	factBase.mutex.Unlock()
 }
 
 func (factBase *InMemoryFactBase) Persist() {
+
+	factBase.mutex.Lock()
+
 	if factBase.storage != nil {
 		if factBase.changed {
 			factBase.storage.Write(factBase.facts)
 		}
 	}
+
+	factBase.mutex.Unlock()
 }

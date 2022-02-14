@@ -11,23 +11,22 @@ type RequestHandler struct {
 	conn net.Conn
 }
 
-func (handler *RequestHandler) handleMessage(system *global.System, message mentalese.RelationSet) {
+func (handler *RequestHandler) handleMessage(system *global.System, inMessage mentalese.RelationSet) {
 
-	result := system.HandleMessage(message)
 	log := system.GetLog()
+	outMMessage := system.SendAndWaitForResponse(inMessage)
 
 	response := Response{
 		Success:     log.IsOk(),
 		ErrorLines:  log.GetErrors(),
 		Productions: log.GetProductions(),
-		Message:     result,
+		Message:     outMMessage,
 	}
 
 	responseRaw, _ := json.MarshalIndent(response, "", "    ")
 	responseString := string(responseRaw) + "\n"
 	handler.conn.Write([]byte(responseString))
 	handler.conn.Close()
-	print(responseString)
 }
 
 func (handler *RequestHandler) handleQuery(system *global.System, query string) {

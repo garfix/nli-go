@@ -108,10 +108,13 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			if test.question == "Put the littlest pyramid on top of it" {
+			if test.question == "1" {
+				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)
 			}
+
+			fmt.Println(test.question)
 
 			answer, options := system.Answer(test.question)
 
@@ -124,6 +127,7 @@ func TestBlocksWorld(t *testing.T) {
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				//t.Errorf("\n%s", log.String())
 				t.Errorf("\n%s", log.GetErrors())
+				break
 			}
 		}
 	}

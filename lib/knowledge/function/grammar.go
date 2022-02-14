@@ -83,7 +83,7 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		}
 
 		testRangeBindings := mentalese.BindingSet{}
-		testRangeBindings, loading = messenger.ExecuteChildStackFrameAsync(set, newBindings1)
+		testRangeBindings, loading = messenger.ExecuteChildStackFrame(set, newBindings1)
 		if loading {
 			return mentalese.NewBindingSet(), true
 		}
@@ -149,7 +149,7 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 	}
 
 	if newBindings.IsEmpty() {
-		newBindings, _ = messenger.ExecuteChildStackFrameAsync(set, mentalese.InitBindingSet(binding))
+		newBindings, _ = messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
 
 		if newBindings.GetLength() > 1 {
 			base.rangeIndexClarification(messenger)
@@ -203,7 +203,7 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
-		newBindings, loading = messenger.ExecuteChildStackFrameAsync(sortRelationSet, mentalese.InitBindingSet(binding))
+		newBindings, loading = messenger.ExecuteChildStackFrame(sortRelationSet, mentalese.InitBindingSet(binding))
 		if loading {
 			return mentalese.NewBindingSet()
 		}

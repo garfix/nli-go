@@ -9,7 +9,7 @@ import (
 
 func (base *SystemSolverFunctionBase) solveAsync(messenger api.ProcessMessenger, set mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
-	return messenger.ExecuteChildStackFrameAsync(set, bindings)
+	return messenger.ExecuteChildStackFrame(set, bindings)
 }
 
 // quant_check(quant() quant(), relationset)

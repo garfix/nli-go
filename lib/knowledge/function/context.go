@@ -80,7 +80,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 
 	unboundRelations := slotRelations.ReplaceTerm(mentalese.NewTermAtom(contextVariableAtom), mainEntityVar)
 
-	newBindings, _ := messenger.ExecuteChildStackFrameAsync(unboundRelations, mentalese.InitBindingSet(binding))
+	newBindings, _ := messenger.ExecuteChildStackFrame(unboundRelations, mentalese.InitBindingSet(binding))
 
 	return newBindings
 }
@@ -125,6 +125,31 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 			}
 		}
 	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *SystemSolverFunctionBase) createGoal(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	set := bound.Arguments[0].TermValueRelationSet
+
+	//uuid := common.CreateUuid()
+
+	//assert := mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+	//	mentalese.NewTermRelationSet([]mentalese.Relation{
+	//		mentalese.NewRelation(false, mentalese.PredicateGoal, []mentalese.Term{
+	//			mentalese.NewTermRelationSet(set),
+	//			mentalese.NewTermString(uuid),
+	//		}),
+	//	}),
+	//})
+	//
+	//messenger.ExecuteChildStackFrame([]mentalese.Relation{assert}, mentalese.InitBindingSet(binding))
+
+	// add it to the list; run it (async); remove it from the list
+	messenger.StartProcess(set, binding)
 
 	return mentalese.InitBindingSet(binding)
 }

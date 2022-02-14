@@ -6,19 +6,36 @@ import (
 	"nli-go/lib/mentalese"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type ProcessRunner struct {
-	solver *ProblemSolverAsync
-	log    *common.SystemLog
-	list   ProcessList
+	solver       *ProblemSolverAsync
+	log          *common.SystemLog
+	list         *ProcessList
+	mutex        sync.Mutex
+	mutexProcess *Process
 }
 
-func NewProcessRunner(solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
+func NewProcessRunner(list *ProcessList, solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
 	return &ProcessRunner{
 		solver: solver,
 		log:    log,
+		list:   list,
 	}
+}
+
+func (p *ProcessRunner) StartProcess(relationSet mentalese.RelationSet, binding mentalese.Binding) {
+	process := p.list.CreateProcess("", relationSet, mentalese.InitBindingSet(binding))
+	go p.StartProcessNow(process)
+}
+
+func (p *ProcessRunner) StartProcessNow(process *Process) {
+	p.list.Add(process)
+	p.RunProcessLevel(process, 0)
+	p.list.Remove(process)
+	// notify listeners we're done
+	p.list.NotifyListeners(mentalese.RelationSet{})
 }
 
 func (p *ProcessRunner) RunRelationSet(relationSet mentalese.RelationSet) mentalese.BindingSet {
@@ -26,32 +43,43 @@ func (p *ProcessRunner) RunRelationSet(relationSet mentalese.RelationSet) mental
 	return p.RunRelationSetWithBindings(relationSet, bindings)
 }
 
+func (p *ProcessRunner) PushAndRun(process *Process, relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
+	level := len(process.Stack)
+	process.PushFrame(NewStackFrame(relations, bindings))
+	return p.RunProcessLevel(process, level)
+}
+
 func (p *ProcessRunner) RunRelationSetWithBindings(relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
-	process := NewProcess("", relationSet, bindings)
+	process := p.list.CreateProcess("", relationSet, bindings)
 	frame := process.Stack[0]
-	p.RunProcess(process)
+	p.RunProcessLevel(process, 0)
 	// note: frame has already been deleted; frame is now just the last reference
 	return frame.InBindings
 }
 
-func (p *ProcessRunner) RunProcess(process *Process) {
-	for !process.IsDone() {
-		hasStopped := p.step(process)
-		if hasStopped {
-			break
-		}
-	}
-}
-
 func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.BindingSet {
 	for len(process.Stack) > level {
+		//recurrent := p.mutexProcess == process
+		//
+		//if !recurrent {
+		//	p.mutex.Lock()
+		//	p.mutexProcess = process
+		//}
 		hasStopped := p.step(process)
+		//if !recurrent {
+		//	p.mutex.Unlock()
+		//	p.mutexProcess = nil
+		//}
 		if hasStopped {
 			break
 		}
 	}
 
-	return process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
+	if level == 0 {
+		return mentalese.NewBindingSet()
+	} else {
+		return process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
+	}
 }
 
 func (p *ProcessRunner) step(process *Process) bool {
@@ -79,10 +107,10 @@ func (p *ProcessRunner) step(process *Process) bool {
 		if handler == nil {
 			return true
 		} else {
-			preparedRelation := p.evaluateArguments(relation, preparedBinding)
+			preparedRelation := p.evaluateArguments(process, relation, preparedBinding)
 			outBindings := handler(messenger, preparedRelation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
-			currentFrame, hasStopped = process.ProcessMessenger(messenger, currentFrame)
+			currentFrame = process.ProcessMessenger(messenger, currentFrame)
 		}
 	}
 
@@ -98,7 +126,7 @@ func (p *ProcessRunner) step(process *Process) bool {
 	return hasStopped
 }
 
-func (p *ProcessRunner) evaluateArguments(relation mentalese.Relation, binding mentalese.Binding) mentalese.Relation {
+func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.Relation, binding mentalese.Binding) mentalese.Relation {
 	newRelation := relation
 
 	for i, argument := range relation.Arguments {
@@ -107,7 +135,7 @@ func (p *ProcessRunner) evaluateArguments(relation mentalese.Relation, binding m
 			for j, arg := range firstRelation.Arguments {
 				if arg.IsAtom() && arg.TermValue == mentalese.AtomReturnValue {
 					newRelation = newRelation.Copy()
-					newRelation.Arguments[i] = p.evaluateFunction(firstRelation, j, binding)
+					newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, j, binding)
 					break
 				}
 			}
@@ -117,10 +145,11 @@ func (p *ProcessRunner) evaluateArguments(relation mentalese.Relation, binding m
 	return newRelation
 }
 
-func (p *ProcessRunner) evaluateFunction(relation mentalese.Relation, returnVariableIndex int, binding mentalese.Binding) mentalese.Term {
+func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Relation, returnVariableIndex int, binding mentalese.Binding) mentalese.Term {
 	variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
 	newRelation := relation.Copy()
 	newRelation.Arguments[returnVariableIndex] = variable
+	//resultBindings := p.PushAndRun(process, mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
 	resultBindings := p.RunRelationSetWithBindings(mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
 	if resultBindings.GetLength() == 0 {
 		return mentalese.NewTermAtom(mentalese.AtomNone)

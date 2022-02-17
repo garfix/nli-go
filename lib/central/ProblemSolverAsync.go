@@ -188,6 +188,13 @@ func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.Relation
 		}
 
 		return mentalese.NewBindingSet()
+
+		//cursor := messenger.GetCursor()
+		//cursor.SetType(mentalese.FrameTypeScope)
+		//
+		//newBindings, _ := messenger.ExecuteChildStackFrame(mappedPattern, mentalese.InitBindingSet(binding))
+		//return newBindings
+
 	}
 }
 

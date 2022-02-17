@@ -14,7 +14,7 @@ type SystemMultiBindingFunctionBase struct {
 }
 
 func NewSystemMultiBindingBase(name string, log *common.SystemLog) *SystemMultiBindingFunctionBase {
-	return &SystemMultiBindingFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{ Name: name }, log: log}
+	return &SystemMultiBindingFunctionBase{KnowledgeBaseCore: KnowledgeBaseCore{Name: name}, log: log}
 }
 
 func (base *SystemMultiBindingFunctionBase) GetFunctions() map[string]api.MultiBindingFunction {
@@ -40,7 +40,7 @@ func (base *SystemMultiBindingFunctionBase) numberOf(messenger api.ProcessMessen
 
 	subjectVariable := input.Arguments[0].TermValue
 	numberArgumentValue := input.Arguments[1].TermValue
-	number :=  bindings.GetDistinctValueCount(subjectVariable)
+	number := bindings.GetDistinctValueCount(subjectVariable)
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -194,7 +194,7 @@ func (base *SystemMultiBindingFunctionBase) get(messenger api.ProcessMessenger, 
 
 	newBindings := mentalese.NewBindingSet()
 	all := bindings.GetAll()
-	for i := start; i < start + length; i++ {
+	for i := start; i < start+length; i++ {
 		if i < 0 {
 			continue
 		}
@@ -347,12 +347,37 @@ func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, 
 
 	cursor := messenger.GetCursor()
 
-	index := cursor.GetState("index", 0)
-	passed := cursor.GetState("passed", 0)
+	//index := cursor.GetState("index", 0)
+	passed := 0
 
-	if index > 0 {
-		childBindings := cursor.GetChildFrameResultBindings()
+	//if index > 0 {
+	//	childBindings := cursor.GetChildFrameResultBindings()
+	//
+	//	if !childBindings.IsEmpty() {
+	//		cursor.AddStepBindings(childBindings)
+	//		passed += 1
+	//		cursor.SetState("passed", passed)
+	//
+	//		if passed == count {
+	//			resultBindings := mentalese.NewBindingSet()
+	//			for _, bindingSet := range cursor.GetAllStepBindings() {
+	//				resultBindings.AddMultiple(bindingSet)
+	//			}
+	//			return resultBindings
+	//		}
+	//	}
+	//}
+	//
+	//if index < bindings.GetLength() {
+	//	binding := bindings.Get(index)
+	//	messenger.CreateChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
+	//
+	//	cursor.SetState("index", index + 1)
+	//}
 
+	for index := 0; index < bindings.GetLength(); index++ {
+		binding := bindings.Get(index)
+		childBindings, _ := messenger.ExecuteChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
 		if !childBindings.IsEmpty() {
 			cursor.AddStepBindings(childBindings)
 			passed += 1
@@ -368,13 +393,6 @@ func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, 
 		}
 	}
 
-	if index < bindings.GetLength() {
-		binding := bindings.Get(index)
-		messenger.CreateChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
-
-		cursor.SetState("index", index + 1)
-	}
-
 	return mentalese.NewBindingSet()
 }
 
@@ -388,7 +406,9 @@ func (base *SystemMultiBindingFunctionBase) makeList(messenger api.ProcessMessen
 
 	variables := []string{}
 	for i, argument := range input.Arguments {
-		if i == 0 { continue }
+		if i == 0 {
+			continue
+		}
 		variable := argument.TermValue
 		variables = append(variables, variable)
 		for _, value := range bindings.GetDistinctValues(variable) {

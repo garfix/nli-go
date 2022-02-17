@@ -4,12 +4,18 @@ import (
 	"nli-go/lib/mentalese"
 )
 
+const PhaseCanceled = "canceled"
+const PhaseOk = "ok"
+const PhaseBreaked = "breaked"
+const PhaseIgnore = "ignore"
+
 type StackFrameCursor struct {
 	Type                     string
 	MutableVariables         map[string]bool
 	State                    map[string]int
 	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
+	Phase                    string
 }
 
 func NewStackFrameCursor() *StackFrameCursor {
@@ -19,6 +25,7 @@ func NewStackFrameCursor() *StackFrameCursor {
 		State:                    map[string]int{},
 		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
+		Phase:                    PhaseOk,
 	}
 }
 
@@ -44,6 +51,14 @@ func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentales
 			binding.Set(variable, value)
 		}
 	}
+}
+
+func (c *StackFrameCursor) SetPhase(phase string) {
+	c.Phase = phase
+}
+
+func (c *StackFrameCursor) GetPhase() string {
+	return c.Phase
 }
 
 func (c *StackFrameCursor) SetType(t string) {

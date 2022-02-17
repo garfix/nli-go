@@ -63,35 +63,12 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 
 	newBindings := mentalese.NewBindingSet()
 
-	cursor := messenger.GetCursor()
-	state := cursor.GetState("state", 0)
-	cursor.SetState("state", state+1)
-
-	if state == 0 {
-
-		messenger.CreateChildStackFrame(condition, mentalese.InitBindingSet(binding))
-
-	} else if state == 1 {
-
-		conditionBindings := cursor.GetChildFrameResultBindings()
-		if !conditionBindings.IsEmpty() {
-			messenger.CreateChildStackFrame(action, conditionBindings)
-		} else {
-			messenger.CreateChildStackFrame(alternative, mentalese.InitBindingSet(binding))
-		}
-
+	conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
+	if !conditionBindings.IsEmpty() {
+		newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
 	} else {
-
-		newBindings = cursor.GetChildFrameResultBindings()
-
+		newBindings, _ = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
 	}
-
-	//conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
-	//if !conditionBindings.IsEmpty() {
-	//	newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
-	//} else {
-	//	newBindings, _ = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
-	//}
 
 	return newBindings
 }
@@ -158,21 +135,15 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 	}
 
 	cursor := messenger.GetCursor()
-	index := cursor.GetState("index", start)
-	cursor.SetState("index", index+1)
+	cursor.SetType(mentalese.FrameTypeLoop)
 
-	if index == start {
-		cursor.SetType(mentalese.FrameTypeLoop)
-	} else {
-		newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
-	}
-
-	if index <= end {
+	for index := start; index <= end; index++ {
 		scopedBinding := binding.Copy()
 		if !variableTerm.IsAnonymousVariable() {
 			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(index)))
 		}
-		messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+		newBindings.AddMultiple(childBindings)
 	}
 
 	return newBindings

@@ -159,25 +159,20 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame 
 			p.AddMutableVariable(value)
 		case mentalese.ProcessInstructionBreak:
 			outBindings = currentFrame.InBindings
-			currentFrame = p.executeBreak(currentFrame)
+			currentFrame = p.executeBreak(currentFrame, false)
 		case mentalese.ProcessInstructionCancel:
 			outBindings = mentalese.NewBindingSet()
-			currentFrame = p.executeBreak(currentFrame)
+			currentFrame = p.executeBreak(currentFrame, true)
 		case mentalese.ProcessInstructionReturn:
 			outBindings = currentFrame.InBindings
 			currentFrame = p.executeReturn(currentFrame)
-			//case mentalese.ProcessInstructionSendMessage:
-			//	lastFrame := p.GetLastFrame()
-			//	binding := lastFrame.InBindings.Get(lastFrame.InBindingIndex)
-			//	boundRelations := lastFrame.Relations.BindSingle(binding)
-			//	p.messageManager.NotifyListeners(boundRelations)
 		}
 	}
 
 	return currentFrame, outBindings
 }
 
-func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
+func (p *Process) executeBreak(currentFrame *StackFrame, cancel bool) *StackFrame {
 	done := false
 	for !done {
 		frame := p.GetLastFrame()
@@ -188,8 +183,15 @@ func (p *Process) executeBreak(currentFrame *StackFrame) *StackFrame {
 
 		frameType := frame.Cursor.GetType()
 
+		frame.Cursor.SetPhase(PhaseIgnore)
+
 		switch frameType {
 		case mentalese.FrameTypeLoop:
+			if cancel {
+				frame.Cursor.SetPhase(PhaseCanceled)
+			} else {
+				frame.Cursor.SetPhase(PhaseBreaked)
+			}
 			currentFrame = frame
 			done = true
 		case mentalese.FrameTypeScope:
@@ -210,7 +212,11 @@ func (p *Process) executeReturn(currentFrame *StackFrame) *StackFrame {
 		if frame == nil {
 			break
 		}
+
+		frame.Cursor.SetPhase(PhaseIgnore)
+
 		if frame.Cursor.GetType() == mentalese.FrameTypeScope {
+			frame.Cursor.SetPhase(PhaseBreaked)
 			currentFrame = frame
 			break
 		} else {

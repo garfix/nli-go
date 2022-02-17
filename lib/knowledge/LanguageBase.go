@@ -475,47 +475,78 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	bound.Arguments[1].GetJsonValue(&requestBindingRaw)
 	requestBinding.FromRaw(requestBindingRaw)
 
-	child := messenger.GetCursor().GetState("child", 0)
-	if child == 0 {
+	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
 
-		base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
+	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
 
-		messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
+	messenger.GetCursor().SetState("child", 1)
 
-		messenger.GetCursor().SetState("child", 1)
+	// apply transformation, if available
+	transformedRequest := transformer.Replace(solution.Transformations, request)
 
-		// apply transformation, if available
-		transformedRequest := transformer.Replace(solution.Transformations, request)
+	resultBindings, _ := messenger.ExecuteChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
+	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
 
-		messenger.CreateChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
-		return mentalese.NewBindingSet()
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
+	newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
 
-	} else {
+	// queue ids
+	variable := solution.Result.TermValue
 
-		resultBindings := messenger.GetCursor().GetChildFrameResultBindings()
-
-		output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
-
-		newBinding := mentalese.NewBinding()
-		newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
-		newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
-		newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
-
-		// queue ids
-		variable := solution.Result.TermValue
-
-		essential := mentalese.NewBindingSet()
-		for _, id := range resultBindings.GetIds(variable) {
-			b := mentalese.NewBinding()
-			b.Set(variable, id)
-			essential.Add(b)
-		}
-
-		newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
-
-		return mentalese.InitBindingSet(newBinding)
-
+	essential := mentalese.NewBindingSet()
+	for _, id := range resultBindings.GetIds(variable) {
+		b := mentalese.NewBinding()
+		b.Set(variable, id)
+		essential.Add(b)
 	}
+
+	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
+
+	return mentalese.InitBindingSet(newBinding)
+
+	//child := messenger.GetCursor().GetState("child", 0)
+	//if child == 0 {
+	//
+	//	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
+	//
+	//	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
+	//
+	//	messenger.GetCursor().SetState("child", 1)
+	//
+	//	// apply transformation, if available
+	//	transformedRequest := transformer.Replace(solution.Transformations, request)
+	//
+	//	messenger.CreateChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
+	//	return mentalese.NewBindingSet()
+	//
+	//} else {
+	//
+	//	resultBindings := messenger.GetCursor().GetChildFrameResultBindings()
+	//
+	//	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
+	//
+	//	newBinding := mentalese.NewBinding()
+	//	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+	//	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
+	//	newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
+	//
+	//	// queue ids
+	//	variable := solution.Result.TermValue
+	//
+	//	essential := mentalese.NewBindingSet()
+	//	for _, id := range resultBindings.GetIds(variable) {
+	//		b := mentalese.NewBinding()
+	//		b.Set(variable, id)
+	//		essential.Add(b)
+	//	}
+	//
+	//	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
+	//
+	//	return mentalese.InitBindingSet(newBinding)
+	//
+	//}
 }
 
 func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -538,20 +569,34 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 	responseBindingsVar := input.Arguments[2].TermValue
 	responseIndexVar := input.Arguments[3].TermValue
 
-	index := messenger.GetCursor().GetState("index", 0)
+	//index := messenger.GetCursor().GetState("index", 0)
 
 	// process child results
-	if index > 0 {
-		responseBindings := messenger.GetCursor().GetChildFrameResultBindings()
-		if !responseBindings.IsEmpty() {
-			newBinding := mentalese.NewBinding()
-			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
-			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index-1)))
-			return mentalese.InitBindingSet(newBinding)
-		}
-	}
+	//if index > 0 {
+	//	responseBindings := messenger.GetCursor().GetChildFrameResultBindings()
+	//	if !responseBindings.IsEmpty() {
+	//		newBinding := mentalese.NewBinding()
+	//		newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
+	//		newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index-1)))
+	//		return mentalese.InitBindingSet(newBinding)
+	//	}
+	//}
+	//
+	//if index < len(solution.Responses) {
+	//	response := solution.Responses[index]
+	//	if response.Condition.IsEmpty() {
+	//		newBinding := mentalese.NewBinding()
+	//		newBinding.Set(responseBindingsVar, mentalese.NewTermJson(resultBindings))
+	//		newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
+	//		return mentalese.InitBindingSet(newBinding)
+	//	} else {
+	//		messenger.CreateChildStackFrame(response.Condition, resultBindings)
+	//	}
+	//}
+	//
+	//messenger.GetCursor().SetState("index", index+1)
 
-	if index < len(solution.Responses) {
+	for index := 0; index < len(solution.Responses); index++ {
 		response := solution.Responses[index]
 		if response.Condition.IsEmpty() {
 			newBinding := mentalese.NewBinding()
@@ -559,11 +604,15 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 			return mentalese.InitBindingSet(newBinding)
 		} else {
-			messenger.CreateChildStackFrame(response.Condition, resultBindings)
+			responseBindings, _ := messenger.ExecuteChildStackFrame(response.Condition, resultBindings)
+			if !responseBindings.IsEmpty() {
+				newBinding := mentalese.NewBinding()
+				newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
+				newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
+				return mentalese.InitBindingSet(newBinding)
+			}
 		}
 	}
-
-	messenger.GetCursor().SetState("index", index+1)
 
 	return mentalese.NewBindingSet()
 }
@@ -588,25 +637,27 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	responseIndex, _ := bound.Arguments[2].GetIntValue()
 	answerVar := input.Arguments[3].TermValue
 
-	index := messenger.GetCursor().GetState("index", 0)
+	//index := messenger.GetCursor().GetState("index", 0)
 
 	solutionBindings := resultBindings
 	resultHandler := solution.Responses[responseIndex]
 
-	if index == 0 {
+	//if index == 0 {
+	//
+	//	messenger.GetCursor().SetState("index", 1)
+	//
+	//	if !resultHandler.Preparation.IsEmpty() {
+	//		messenger.CreateChildStackFrame(resultHandler.Preparation, resultBindings)
+	//		return mentalese.NewBindingSet()
+	//	}
+	//
+	//} else {
+	//
+	//	solutionBindings = messenger.GetCursor().GetChildFrameResultBindings()
+	//
+	//}
 
-		messenger.GetCursor().SetState("index", 1)
-
-		if !resultHandler.Preparation.IsEmpty() {
-			messenger.CreateChildStackFrame(resultHandler.Preparation, resultBindings)
-			return mentalese.NewBindingSet()
-		}
-
-	} else {
-
-		solutionBindings = messenger.GetCursor().GetChildFrameResultBindings()
-
-	}
+	solutionBindings, _ = messenger.ExecuteChildStackFrame(resultHandler.Preparation, resultBindings)
 
 	// create answer relation sets by binding 'answer' to solutionBindings
 	answer := base.answerer.Build(resultHandler.Answer, solutionBindings)

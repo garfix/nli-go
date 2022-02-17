@@ -11,7 +11,9 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "lav", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "lav", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
@@ -35,7 +37,9 @@ func (base *SystemSolverFunctionBase) listAppend(messenger api.ProcessMessenger,
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "l*v", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "l*v", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	list := bound.Arguments[0].TermValueList
 	element := bound.Arguments[1]
@@ -56,7 +60,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 
 	cursor := messenger.GetCursor()
 	index := cursor.GetState("index", 0)
-	cursor.SetState("index", index + 1)
+	cursor.SetState("index", index+1)
 
 	if len(relation.Arguments) == 3 {
 
@@ -105,6 +109,60 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 		}
 	}
 
+	//if len(relation.Arguments) == 3 {
+	//
+	//	list := bound.Arguments[0].TermValueList
+	//	elementVar := relation.Arguments[1].TermValue
+	//	children := relation.Arguments[2].TermValueRelationSet
+	//
+	//	cursor.SetType(mentalese.FrameTypeLoop)
+	//
+	//	for index := 0; index < len(list); index++ {
+	//
+	//		element := list[index]
+	//
+	//		scopedBinding := binding.Copy()
+	//		scopedBinding.Set(elementVar, element)
+	//
+	//		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+	//		newBindings.AddMultiple(childBindings)
+	//		if cursor.GetPhase() == central.PhaseBreaked {
+	//			return newBindings
+	//		}
+	//		if cursor.GetPhase() == central.PhaseCanceled || cursor.GetPhase() == central.PhaseIgnore {
+	//			return mentalese.NewBindingSet()
+	//		}
+	//	}
+	//
+	//} else if len(relation.Arguments) == 4 {
+	//
+	//	list := bound.Arguments[0].TermValueList
+	//	indexVar := relation.Arguments[1].TermValue
+	//	elementVar := relation.Arguments[2].TermValue
+	//	children := relation.Arguments[3].TermValueRelationSet
+	//
+	//	cursor.SetType(mentalese.FrameTypeLoop)
+	//
+	//	for index := 0; index < len(list); index++ {
+	//
+	//		element := list[index]
+	//
+	//		scopedBinding := binding.Copy()
+	//		scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
+	//		scopedBinding.Set(elementVar, element)
+	//
+	//		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+	//		newBindings.AddMultiple(childBindings)
+	//
+	//		if cursor.GetPhase() == central.PhaseBreaked {
+	//			return newBindings
+	//		}
+	//		if cursor.GetPhase() == central.PhaseCanceled || cursor.GetPhase() == central.PhaseIgnore {
+	//			return mentalese.NewBindingSet()
+	//		}
+	//	}
+	//}
+
 	return newBindings
 }
 
@@ -112,7 +170,9 @@ func (base *SystemSolverFunctionBase) listDeduplicate(messenger api.ProcessMesse
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "lv", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "lv", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	list := bound.Arguments[0].TermValueList
 	newlistVar := bound.Arguments[1].TermValue
@@ -128,7 +188,9 @@ func (base *SystemSolverFunctionBase) listSort(messenger api.ProcessMessenger, r
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "lv", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "lv", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	list := bound.Arguments[0].TermValueList
 	newlistVar := bound.Arguments[1].TermValue
@@ -148,7 +210,9 @@ func (base *SystemSolverFunctionBase) listIndex(messenger api.ProcessMessenger, 
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "l*v", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "l*v", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	list := bound.Arguments[0].TermValueList
 	term := bound.Arguments[1]
@@ -171,7 +235,9 @@ func (base *SystemSolverFunctionBase) listExpand(messenger api.ProcessMessenger,
 
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "lv", base.log) { return mentalese.NewBindingSet() }
+	if !knowledge.Validate(bound, "lv", base.log) {
+		return mentalese.NewBindingSet()
+	}
 
 	list := bound.Arguments[0].TermValueList
 	termVar := bound.Arguments[1].TermValue

@@ -59,17 +59,7 @@ func (p *ProcessRunner) RunRelationSetWithBindings(relationSet mentalese.Relatio
 
 func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.BindingSet {
 	for len(process.Stack) > level {
-		//recurrent := p.mutexProcess == process
-		//
-		//if !recurrent {
-		//	p.mutex.Lock()
-		//	p.mutexProcess = process
-		//}
 		hasStopped := p.step(process)
-		//if !recurrent {
-		//	p.mutex.Unlock()
-		//	p.mutexProcess = nil
-		//}
 		if hasStopped {
 			break
 		}
@@ -109,6 +99,9 @@ func (p *ProcessRunner) step(process *Process) bool {
 		} else {
 			preparedRelation := p.evaluateArguments(process, relation, preparedBinding)
 			outBindings := handler(messenger, preparedRelation, preparedBinding)
+			//if messenger.cursor.GetPhase() == PhaseIgnore {
+			//	return false
+			//}
 			messenger.AddOutBindings(outBindings)
 			currentFrame = process.ProcessMessenger(messenger, currentFrame)
 		}

@@ -59,7 +59,6 @@ do_init_grid(Grid, Objects, HorLines, VerLines) :-
 ;
 
 do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
-go:log(' start')
     [:A1 := -1]
     [:B1 := -1]
     [:StartY := -1]

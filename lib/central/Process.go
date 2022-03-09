@@ -149,68 +149,61 @@ func (p *Process) CreateMessenger(processRunner *ProcessRunner, process *Process
 	return NewMessenger(processRunner, process, frame.Cursor, p.Slots)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, currentFrame *StackFrame) *StackFrame {
-
-	outBindings := messenger.GetOutBindings()
+func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) *StackFrame {
 
 	for slot, value := range messenger.newSlots {
 		p.Slots[slot] = value
 	}
 
-	// assign the outbound mutable variables
-	//relationVariables1 := currentFrame.GetCurrentRelation().GetVariableNames()
-	//mutBindings := outBindings.FilterMutableVariables()
-	//for _, v := range relationVariables1 {
-	//	val, found := mutBindings.Get(v)
-	//	if found {
-	//		p.GetCurrentScope().Cursor.MutableVariableValues.Set(v, val)
-	//	}
-	//}
-
+	outBindings := messenger.GetOutBindings()
 	outBindingsWithoutMutables := outBindings.RemoveMutableVariables()
 
 	processedOutBindings := mentalese.NewBindingSet()
+	relationVariables := frame.GetCurrentRelation().GetVariableNames()
 	for _, outBinding := range outBindingsWithoutMutables.GetAll() {
-		relationVariables := currentFrame.GetCurrentRelation().GetVariableNames()
-
 		// filter out temporary variables
 		cleanBinding := outBinding.FilterVariablesByName(relationVariables)
 		// make sure the original values are present
-		cleanBinding = cleanBinding.Merge(currentFrame.GetCurrentInBinding())
+		cleanBinding = cleanBinding.Merge(frame.GetCurrentInBinding())
 		processedOutBindings.Add(cleanBinding)
 	}
 
-	outBindings2 := mentalese.NewBindingSet()
-	currentFrame, outBindings2 = p.executeProcessInstructions(messenger, currentFrame, processedOutBindings)
+	outBindings = p.executeProcessInstructions(messenger, processedOutBindings)
 
-	currentFrame.AddOutBindings(currentFrame.GetCurrentInBinding(), outBindings2)
+	frame.OutBindings.AddMultiple(outBindings)
 
-	//if messenger.GetChildFrame() != nil {
-	//	p.PushFrame(messenger.GetChildFrame())
-	//}
-
-	return currentFrame
+	return frame
 }
 
-func (p *Process) executeProcessInstructions(messenger *Messenger, currentFrame *StackFrame, outBindings mentalese.BindingSet) (*StackFrame, mentalese.BindingSet) {
+func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *StackFrame) {
+
+	outBindings := messenger.GetOutBindings()
+	outBindingsWithoutMutables := outBindings.RemoveMutableVariables()
+
+	// add bindings without variable validation
+	frame.OutBindings.AddMultiple(outBindingsWithoutMutables)
+
+	// skip all bindings
+	frame.InBindingIndex = frame.InBindings.GetLength() - 1
+}
+
+func (p *Process) executeProcessInstructions(messenger *Messenger, outBindings mentalese.BindingSet) mentalese.BindingSet {
 
 	for instruction, _ := range messenger.GetProcessInstructions() {
 		switch instruction {
-		//case mentalese.ProcessInstructionLet:
-		//	p.AddMutableVariable(value)
 		case mentalese.ProcessInstructionBreak:
-			currentFrame = p.executeBreak(currentFrame, outBindings, false)
-			outBindings = mentalese.NewBindingSet() //currentFrame.InBindings
+			p.executeBreak(outBindings)
+			outBindings = mentalese.NewBindingSet()
 		case mentalese.ProcessInstructionCancel:
-			currentFrame = p.executeBreak(currentFrame, outBindings, true)
+			p.executeBreak(outBindings)
 			outBindings = mentalese.NewBindingSet()
 		case mentalese.ProcessInstructionReturn:
-			currentFrame = p.executeReturn(currentFrame, outBindings)
-			outBindings = mentalese.NewBindingSet() //currentFrame.InBindings
+			p.executeReturn(outBindings)
+			outBindings = mentalese.NewBindingSet()
 		}
 	}
 
-	return currentFrame, outBindings
+	return outBindings
 }
 
 func (p *Process) SetMutableVariable(variable string, value mentalese.Term) {
@@ -256,7 +249,7 @@ func (p *Process) GetContextScope() *StackFrame {
 	return scope
 }
 
-func (p *Process) executeBreak(currentFrame *StackFrame, bindings mentalese.BindingSet, cancel bool) *StackFrame {
+func (p *Process) executeBreak(bindings mentalese.BindingSet) {
 	done := false
 	i := len(p.Stack) - 1
 
@@ -264,27 +257,18 @@ func (p *Process) executeBreak(currentFrame *StackFrame, bindings mentalese.Bind
 
 		frame := p.Stack[i]
 		frameType := frame.Cursor.GetType()
+		frame.Cursor.SetState(StateInterrupted)
 
 		if frameType == mentalese.FrameTypeLoop {
-			frame.Cursor.SetPhase(PhaseInterrupted)
-			if cancel {
-				//frame.Cursor.SetPhase(PhaseCanceled)
-			} else {
-				frame.Cursor.ChildFrameResultBindings.AddMultiple(bindings)
-				//frame.Cursor.SetPhase(PhaseBreaked)
-			}
+			frame.Cursor.ChildFrameResultBindings.AddMultiple(bindings)
 			done = true
-		} else {
-			frame.Cursor.SetPhase(PhaseInterrupted)
 		}
 
 		i--
 	}
-
-	return currentFrame
 }
 
-func (p *Process) executeReturn(currentFrame *StackFrame, bindings mentalese.BindingSet) *StackFrame {
+func (p *Process) executeReturn(bindings mentalese.BindingSet) {
 	done := false
 	i := len(p.Stack) - 1
 
@@ -292,29 +276,14 @@ func (p *Process) executeReturn(currentFrame *StackFrame, bindings mentalese.Bin
 		frame := p.Stack[i]
 
 		if frame.Cursor.GetType() == mentalese.FrameTypeScope {
-			//frame.Cursor.SetPhase(PhaseInterrupted)
 			frame.Cursor.ChildFrameResultBindings.AddMultiple(bindings)
 			done = true
 		} else {
-			frame.Cursor.SetPhase(PhaseInterrupted)
+			frame.Cursor.SetState(StateInterrupted)
 		}
 
 		i--
 	}
-
-	return currentFrame
-}
-
-func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *StackFrame) {
-
-	outBindings := messenger.GetOutBindings()
-	outBindingsWithoutMutables := outBindings.RemoveMutableVariables()
-
-	// add bindings without variable validation
-	frame.OutBindings.AddMultiple(outBindingsWithoutMutables)
-
-	// skip the bindings
-	frame.InBindingIndex = frame.InBindings.GetLength() - 1
 }
 
 func (p *Process) GetCursor() *StackFrameCursor {

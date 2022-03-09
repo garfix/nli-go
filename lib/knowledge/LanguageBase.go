@@ -329,9 +329,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
-
 	senseVar := input.Arguments[1].TermValue
 	requestBindingVar := input.Arguments[3].TermValue
 	unboundNameVar := input.Arguments[4].TermValue
@@ -471,8 +468,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
 
 	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
-
-	messenger.GetCursor().SetState("child", 1)
 
 	// apply transformation, if available
 	transformedRequest := transformer.Replace(solution.Transformations, request)

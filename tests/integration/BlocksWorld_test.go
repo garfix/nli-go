@@ -114,7 +114,7 @@ func TestBlocksWorld(t *testing.T) {
 				//log.SetPrint(true)
 			}
 
-			fmt.Println(test.question)
+			//fmt.Println(test.question)
 
 			answer, options := system.Answer(test.question)
 

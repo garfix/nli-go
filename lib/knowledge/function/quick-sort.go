@@ -8,9 +8,9 @@ import (
 	"strconv"
 )
 
-func (base *SystemSolverFunctionBase) entityQuickSort(messenger api.ProcessMessenger, ids []mentalese.Term, orderFunction string) ([]mentalese.Term, bool) {
+func (base *SystemSolverFunctionBase) entityQuickSort(messenger api.ProcessMessenger, ids []mentalese.Term, orderFunction string) []mentalese.Term {
 	base.entityQuickSortRange(messenger, &ids, 0, len(ids)-1, orderFunction)
-	return ids, false
+	return ids
 }
 
 func (base *SystemSolverFunctionBase) entityQuickSortRange(messenger api.ProcessMessenger, ids *[]mentalese.Term, lo int, hi int, orderFunction string) bool {

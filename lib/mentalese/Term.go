@@ -74,7 +74,11 @@ func (term Term) IsVariable() bool {
 }
 
 func (term Term) IsMutableVariable() bool {
-	return term.TermType == TermTypeVariable && term.TermValue[0:1] == ":"
+	return term.TermType == TermTypeVariable && IsMutableVariable(term.TermValue)
+}
+
+func IsMutableVariable(variable string) bool {
+	return variable[0:1] == ":"
 }
 
 func (term Term) IsInteger() bool {

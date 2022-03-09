@@ -6,15 +6,12 @@ import (
 	"nli-go/lib/mentalese"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 type ProcessRunner struct {
-	solver       *ProblemSolverAsync
-	log          *common.SystemLog
-	list         *ProcessList
-	mutex        sync.Mutex
-	mutexProcess *Process
+	solver *ProblemSolverAsync
+	log    *common.SystemLog
+	list   *ProcessList
 }
 
 func NewProcessRunner(list *ProcessList, solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
@@ -89,7 +86,6 @@ func (p *ProcessRunner) step(process *Process) bool {
 	if found {
 
 		preparedBindings := process.AddMutableVariablesMultiple(relation, currentFrame.InBindings)
-		//preparedBindings := currentFrame.InBindings
 		outBindings, _ = p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
 		messenger.AddOutBindings(outBindings)
 		process.ProcessMessengerMultipleBindings(messenger, currentFrame)
@@ -107,19 +103,15 @@ func (p *ProcessRunner) step(process *Process) bool {
 			messenger.AddOutBindings(outBindings)
 			currentFrame = process.ProcessMessenger(messenger, currentFrame)
 		}
-
 	}
 
 	debug = p.after(process, currentFrame, outBindings, len(process.Stack))
 	p.log.AddDebug("frame", debug)
 
-	if messenger.GetCursor().GetPhase() == PhaseInterrupted {
+	if messenger.GetCursor().GetState() == StateInterrupted {
 
 		debug = p.breaked(len(process.Stack))
 		p.log.AddDebug("frame", debug)
-
-		//currentFrame.InBindings = currentFrame.OutBindings
-		//process.advanceFrame(currentFrame)
 	}
 
 	if currentFrame == process.GetLastFrame() {
@@ -205,10 +197,6 @@ func (p *ProcessRunner) before(process *Process, frame *StackFrame, stackDepth i
 	}
 
 	fromChild := ""
-	if len(frame.Cursor.State) > 0 {
-		fromChild = "╰ "
-	}
-
 	handlerIndex := strconv.Itoa(frame.HandlerIndex)
 
 	text := fromChild + frame.Relations[frame.RelationIndex].String() + ":" + handlerIndex + "  " + prepared + " " + child

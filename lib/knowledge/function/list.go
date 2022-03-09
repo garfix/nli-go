@@ -15,14 +15,11 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 		return mentalese.NewBindingSet()
 	}
 
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
-
 	list := bound.Arguments[0].TermValueList.Copy()
 	orderFunction := bound.Arguments[1].TermValue
 	listVariable := bound.Arguments[2].TermValue
 
-	orderedList, _ := base.entityQuickSort(messenger, list, orderFunction)
+	orderedList := base.entityQuickSort(messenger, list, orderFunction)
 
 	newBinding := binding.Copy()
 	newBinding.Set(listVariable, mentalese.NewTermList(orderedList))
@@ -56,9 +53,6 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 	newBindings := mentalese.NewBindingSet()
 
 	cursor := messenger.GetCursor()
-	index := cursor.GetState("index", 0)
-	cursor.SetState("index", index+1)
-
 	cursor.SetType(mentalese.FrameTypeLoop)
 
 	if len(relation.Arguments) == 3 {
@@ -76,13 +70,6 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 
 			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 			newBindings.AddMultiple(childBindings)
-
-			//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
-			//	return newBindings
-			//}
-			//if cursor.GetPhase() == central.PhaseCanceled {
-			//	return mentalese.NewBindingSet()
-			//}
 		}
 
 	} else if len(relation.Arguments) == 4 {
@@ -102,13 +89,6 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 
 			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 			newBindings.AddMultiple(childBindings)
-
-			//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
-			//	return newBindings
-			//}
-			//if cursor.GetPhase() == central.PhaseCanceled {
-			//	return mentalese.NewBindingSet()
-			//}
 		}
 	}
 	return newBindings

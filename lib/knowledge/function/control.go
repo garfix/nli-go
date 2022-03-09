@@ -25,9 +25,7 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 	}
 
 	if relation.Arguments[0].IsMutableVariable() {
-		//messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
 		messenger.GetProcess().SetMutableVariable(variable, value)
-
 	} else {
 		existingValue, found := binding.Get(variable)
 		if found {
@@ -151,12 +149,6 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 		}
 		childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 		newBindings.AddMultiple(childBindings)
-		//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
-		//	return newBindings
-		//}
-		//if cursor.GetPhase() == central.PhaseCanceled {
-		//	return mentalese.NewBindingSet()
-		//}
 	}
 
 	return newBindings

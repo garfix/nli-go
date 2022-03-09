@@ -48,10 +48,9 @@ func NewSimpleMessenger() *Messenger {
 func (i *Messenger) SetOutBinding(variable string, value mentalese.Term) {
 	i.suggestedOutBinding.Set(variable, value)
 
-	if variable[0:1] == ":" {
-		i.process.GetCurrentScope().Cursor.MutableVariableValues.Set(variable, value)
+	if mentalese.IsMutableVariable(variable) {
+		i.process.SetMutableVariable(variable, value)
 	}
-	
 }
 
 func (i *Messenger) GetOutBinding() mentalese.Binding {
@@ -92,7 +91,7 @@ func (i *Messenger) SendMessage(message mentalese.RelationSet) {
 
 func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	if i.cursor.GetPhase() == PhaseInterrupted {
+	if i.cursor.GetState() == StateInterrupted {
 		return mentalese.NewBindingSet()
 	}
 

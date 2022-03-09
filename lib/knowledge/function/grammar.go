@@ -20,9 +20,6 @@ func (base *SystemSolverFunctionBase) intent(messenger api.ProcessMessenger, inp
 
 func (base *SystemSolverFunctionBase) backReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
-
 	result, _ := base.doBackReference(messenger, relation, binding)
 	return result
 }
@@ -135,10 +132,6 @@ func (base *SystemSolverFunctionBase) isReflexive(unscopedSense mentalese.Relati
 func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	set := relation.Arguments[1].TermValueRelationSet
-
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
-
 	newBindings, _ := base.doBackReference(messenger, relation, binding)
 
 	if newBindings.IsEmpty() {
@@ -163,9 +156,6 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 	variable := relation.Arguments[0].TermValue
 	newBindings := mentalese.NewBindingSet()
-
-	cursor := messenger.GetCursor()
-	cursor.SetState("childIndex", 0)
 
 	for _, group := range base.dialogContext.GetAnaphoraQueue() {
 

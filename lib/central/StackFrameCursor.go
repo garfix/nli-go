@@ -4,14 +4,14 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-const PhaseCanceled = "canceled"
 const PhaseOk = "ok"
+const PhaseInterrupted = "interrupted"
 const PhaseBreaked = "breaked"
-const PhaseIgnore = "ignore"
+const PhaseCanceled = "canceled"
 
 type StackFrameCursor struct {
 	Type                     string
-	MutableVariables         map[string]bool
+	MutableVariableValues    mentalese.Binding
 	State                    map[string]int
 	AllStepBindings          []mentalese.BindingSet
 	ChildFrameResultBindings mentalese.BindingSet
@@ -21,7 +21,7 @@ type StackFrameCursor struct {
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
 		Type:                     mentalese.FrameTypePlain,
-		MutableVariables:         map[string]bool{},
+		MutableVariableValues:    mentalese.NewBinding(),
 		State:                    map[string]int{},
 		AllStepBindings:          []mentalese.BindingSet{},
 		ChildFrameResultBindings: mentalese.NewBindingSet(),
@@ -29,29 +29,20 @@ func NewStackFrameCursor() *StackFrameCursor {
 	}
 }
 
-func (c *StackFrameCursor) HasMutableVariable(variable string) bool {
-	_, found := c.MutableVariables[variable]
-	return found
-}
-
-func (c *StackFrameCursor) AddMutableVariable(variable string) {
-	c.MutableVariables[variable] = true
-}
-
-func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentalese.Term) {
-	for _, bindingSet := range c.AllStepBindings {
-		for _, binding := range bindingSet.GetAll() {
-			if binding.ContainsVariable(variable) {
-				binding.Set(variable, value)
-			}
-		}
-	}
-	for _, binding := range c.ChildFrameResultBindings.GetAll() {
-		if binding.ContainsVariable(variable) {
-			binding.Set(variable, value)
-		}
-	}
-}
+//func (c *StackFrameCursor) UpdateMutableVariable(variable string, value mentalese.Term) {
+//	for _, bindingSet := range c.AllStepBindings {
+//		for _, binding := range bindingSet.GetAll() {
+//			if binding.ContainsVariable(variable) {
+//				binding.Set(variable, value)
+//			}
+//		}
+//	}
+//	for _, binding := range c.ChildFrameResultBindings.GetAll() {
+//		if binding.ContainsVariable(variable) {
+//			binding.Set(variable, value)
+//		}
+//	}
+//}
 
 func (c *StackFrameCursor) SetPhase(phase string) {
 	c.Phase = phase
@@ -80,14 +71,6 @@ func (c *StackFrameCursor) GetState(name string, fallback int) int {
 
 func (c *StackFrameCursor) SetState(name string, value int) {
 	c.State[name] = value
-}
-
-func (c *StackFrameCursor) GetAllStepBindings() []mentalese.BindingSet {
-	return c.AllStepBindings
-}
-
-func (c *StackFrameCursor) AddStepBindings(bindings mentalese.BindingSet) {
-	c.AllStepBindings = append(c.AllStepBindings, bindings)
 }
 
 func (c *StackFrameCursor) GetChildFrameResultBindings() mentalese.BindingSet {

@@ -68,7 +68,9 @@ func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.B
 	if level == 0 {
 		return mentalese.NewBindingSet()
 	} else {
-		return process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
+		resultBindings := process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
+		process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings = mentalese.NewBindingSet()
+		return resultBindings
 	}
 }
 
@@ -77,15 +79,18 @@ func (p *ProcessRunner) step(process *Process) bool {
 	hasStopped := false
 
 	debug := p.before(process, currentFrame, len(process.Stack))
+	p.log.AddDebug("frame", debug)
 
 	messenger := process.CreateMessenger(p, process)
 	relation := currentFrame.GetCurrentRelation()
+	outBindings := mentalese.NewBindingSet()
 
 	_, found := p.solver.multiBindingFunctions[relation.Predicate]
 	if found {
 
-		preparedBindings := currentFrame.InBindings
-		outBindings, _ := p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
+		preparedBindings := process.AddMutableVariablesMultiple(relation, currentFrame.InBindings)
+		//preparedBindings := currentFrame.InBindings
+		outBindings, _ = p.solver.SolveMultipleBindings(messenger, relation, preparedBindings)
 		messenger.AddOutBindings(outBindings)
 		process.ProcessMessengerMultipleBindings(messenger, currentFrame)
 
@@ -98,17 +103,24 @@ func (p *ProcessRunner) step(process *Process) bool {
 			return true
 		} else {
 			preparedRelation := p.evaluateArguments(process, relation, preparedBinding)
-			outBindings := handler(messenger, preparedRelation, preparedBinding)
-			//if messenger.cursor.GetPhase() == PhaseIgnore {
-			//	return false
-			//}
+			outBindings = handler(messenger, preparedRelation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
 			currentFrame = process.ProcessMessenger(messenger, currentFrame)
 		}
+
 	}
 
-	debug += p.after(process, currentFrame)
+	debug = p.after(process, currentFrame, outBindings, len(process.Stack))
 	p.log.AddDebug("frame", debug)
+
+	if messenger.GetCursor().GetPhase() == PhaseInterrupted {
+
+		debug = p.breaked(len(process.Stack))
+		p.log.AddDebug("frame", debug)
+
+		//currentFrame.InBindings = currentFrame.OutBindings
+		//process.advanceFrame(currentFrame)
+	}
 
 	if currentFrame == process.GetLastFrame() {
 		process.Advance()
@@ -117,6 +129,10 @@ func (p *ProcessRunner) step(process *Process) bool {
 	}
 
 	return hasStopped
+}
+
+func (p *ProcessRunner) removeMutableVariables(bindings mentalese.BindingSet) mentalese.BindingSet {
+	return bindings.RemoveMutableVariables()
 }
 
 func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.Relation, binding mentalese.Binding) mentalese.Relation {
@@ -142,8 +158,7 @@ func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Re
 	variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
 	newRelation := relation.Copy()
 	newRelation.Arguments[returnVariableIndex] = variable
-	//resultBindings := p.PushAndRun(process, mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
-	resultBindings := p.RunRelationSetWithBindings(mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
+	resultBindings := p.PushAndRun(process, mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
 	if resultBindings.GetLength() == 0 {
 		return mentalese.NewTermAtom(mentalese.AtomNone)
 	} else {
@@ -200,10 +215,16 @@ func (p *ProcessRunner) before(process *Process, frame *StackFrame, stackDepth i
 	return padding + text
 }
 
-func (p *ProcessRunner) after(process *Process, frame *StackFrame) string {
-	debug := ": " + frame.OutBindings.String()
+func (p *ProcessRunner) after(process *Process, frame *StackFrame, bindings mentalese.BindingSet, stackDepth int) string {
+	padding := strings.Repeat("  ", stackDepth)
+	debug := padding + "╰ " + bindings.String()
 	if process.GetLastFrame() != frame {
 		debug = ""
 	}
 	return debug
+}
+
+func (p *ProcessRunner) breaked(stackDepth int) string {
+	padding := strings.Repeat("  ", stackDepth)
+	return padding + "* breaked"
 }

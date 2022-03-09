@@ -57,7 +57,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	}
 }
 
-func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) split(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -75,7 +75,7 @@ func (base *SystemFunctionBase) split(input mentalese.Relation, binding mentales
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) join(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -96,7 +96,7 @@ func (base *SystemFunctionBase) join(input mentalese.Relation, binding mentalese
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) concat(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -115,7 +115,7 @@ func (base *SystemFunctionBase) concat(input mentalese.Relation, binding mentale
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) greaterThan(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -133,7 +133,7 @@ func (base *SystemFunctionBase) greaterThan(input mentalese.Relation, binding me
 	}
 }
 
-func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) lessThan(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -151,7 +151,7 @@ func (base *SystemFunctionBase) lessThan(input mentalese.Relation, binding menta
 	}
 }
 
-func (base *SystemFunctionBase) greaterThanEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) greaterThanEquals(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -169,7 +169,7 @@ func (base *SystemFunctionBase) greaterThanEquals(input mentalese.Relation, bind
 	}
 }
 
-func (base *SystemFunctionBase) lessThanEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) lessThanEquals(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -187,7 +187,7 @@ func (base *SystemFunctionBase) lessThanEquals(input mentalese.Relation, binding
 	}
 }
 
-func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) add(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -206,7 +206,7 @@ func (base *SystemFunctionBase) add(input mentalese.Relation, binding mentalese.
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) subtract(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -225,7 +225,7 @@ func (base *SystemFunctionBase) subtract(input mentalese.Relation, binding menta
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) multiply(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -244,7 +244,7 @@ func (base *SystemFunctionBase) multiply(input mentalese.Relation, binding menta
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) divide(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) divide(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -263,7 +263,7 @@ func (base *SystemFunctionBase) divide(input mentalese.Relation, binding mentale
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) min(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -285,7 +285,7 @@ func (base *SystemFunctionBase) min(input mentalese.Relation, binding mentalese.
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) compare(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -304,7 +304,7 @@ func (base *SystemFunctionBase) compare(input mentalese.Relation, binding mental
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) equals(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "--", base.log) {
@@ -318,7 +318,7 @@ func (base *SystemFunctionBase) equals(input mentalese.Relation, binding mentale
 	}
 }
 
-func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) unify(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	if !Validate(input, "--", base.log) {
 		return mentalese.NewBinding(), false
@@ -338,7 +338,7 @@ func (base *SystemFunctionBase) unify(input mentalese.Relation, binding mentales
 	}
 }
 
-func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) notEquals(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -353,7 +353,7 @@ func (base *SystemFunctionBase) notEquals(input mentalese.Relation, binding ment
 	}
 }
 
-func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) dateToday(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -370,7 +370,7 @@ func (base *SystemFunctionBase) dateToday(input mentalese.Relation, binding ment
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) dateSubtractYears(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -407,7 +407,7 @@ func (base *SystemFunctionBase) dateSubtractYears(input mentalese.Relation, bind
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) debug(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -428,7 +428,7 @@ func (base *SystemFunctionBase) debug(input mentalese.Relation, binding mentales
 	return binding, true
 }
 
-func (base *SystemFunctionBase) uuid(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) uuid(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -445,7 +445,7 @@ func (base *SystemFunctionBase) uuid(input mentalese.Relation, binding mentalese
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) isa(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) isa(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -463,7 +463,7 @@ func (base *SystemFunctionBase) isa(input mentalese.Relation, binding mentalese.
 	}
 }
 
-func (base *SystemFunctionBase) getSort(input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) getSort(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := input.BindSingle(binding)
 
@@ -479,7 +479,7 @@ func (base *SystemFunctionBase) getSort(input mentalese.Relation, binding mental
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) listLength(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) listLength(messenger api.SimpleMessenger, relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := relation.BindSingle(binding)
 
@@ -497,7 +497,7 @@ func (base *SystemFunctionBase) listLength(relation mentalese.Relation, binding 
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) listGet(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) listGet(messenger api.SimpleMessenger, relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := relation.BindSingle(binding)
 
@@ -523,10 +523,13 @@ func (base *SystemFunctionBase) listGet(relation mentalese.Relation, binding men
 
 	newBinding := binding.Copy()
 	newBinding.Set(termVar, term)
+
+	messenger.SetOutBinding(termVar, term)
+
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) listHead(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) listHead(messenger api.SimpleMessenger, relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
 	bound := relation.BindSingle(binding)
 

@@ -12,7 +12,5 @@ type ProcessCursor interface {
 	SetType(string)
 	GetState(string, int) int
 	SetState(string, int)
-	AddStepBindings(bindings mentalese.BindingSet)
-	GetAllStepBindings() []mentalese.BindingSet
 	GetChildFrameResultBindings() mentalese.BindingSet
 }

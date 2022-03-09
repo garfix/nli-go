@@ -19,8 +19,15 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 	variable := relation.Arguments[0].TermValue
 	value := bound.Arguments[1]
 
+	if value.IsVariable() {
+		base.log.AddError("Value of " + variable + " is unassigned")
+		return mentalese.NewBindingSet()
+	}
+
 	if relation.Arguments[0].IsMutableVariable() {
-		messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
+		//messenger.AddProcessInstruction(mentalese.ProcessInstructionLet, variable)
+		messenger.GetProcess().SetMutableVariable(variable, value)
+
 	} else {
 		existingValue, found := binding.Get(variable)
 		if found {
@@ -45,11 +52,11 @@ func (base *SystemSolverFunctionBase) ifThen(messenger api.ProcessMessenger, ifT
 
 	newBindings := mentalese.NewBindingSet()
 
-	conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
+	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	if conditionBindings.IsEmpty() {
 		newBindings = mentalese.InitBindingSet(binding)
 	} else {
-		newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
+		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
 	}
 
 	return newBindings
@@ -63,11 +70,11 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 
 	newBindings := mentalese.NewBindingSet()
 
-	conditionBindings, _ := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
+	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	if !conditionBindings.IsEmpty() {
-		newBindings, _ = messenger.ExecuteChildStackFrame(action, conditionBindings)
+		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
 	} else {
-		newBindings, _ = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
+		newBindings = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
 	}
 
 	return newBindings
@@ -95,7 +102,7 @@ func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relat
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	newBindings, _ := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
+	newBindings := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 
 	return newBindings
 }
@@ -104,7 +111,7 @@ func (base *SystemSolverFunctionBase) ignore(messenger api.ProcessMessenger, rel
 
 	child := relation.Arguments[0].TermValueRelationSet
 
-	childBindings, _ := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
+	childBindings := messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 	if childBindings.IsEmpty() {
 		return mentalese.InitBindingSet(binding)
 	} else {
@@ -142,8 +149,14 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 		if !variableTerm.IsAnonymousVariable() {
 			scopedBinding.Set(variable, mentalese.NewTermString(strconv.Itoa(index)))
 		}
-		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+		childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
 		newBindings.AddMultiple(childBindings)
+		//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
+		//	return newBindings
+		//}
+		//if cursor.GetPhase() == central.PhaseCanceled {
+		//	return mentalese.NewBindingSet()
+		//}
 	}
 
 	return newBindings
@@ -190,9 +203,7 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 	// todo: refine, timeout configurable
 	for i := 0; i < timeout; i++ {
 
-		//println("waiting... " + strconv.Itoa(i))
-
-		newBindings, _ = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
+		newBindings = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 		if !newBindings.IsEmpty() {
 			break
 		}

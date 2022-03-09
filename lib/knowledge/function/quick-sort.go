@@ -9,29 +9,16 @@ import (
 )
 
 func (base *SystemSolverFunctionBase) entityQuickSort(messenger api.ProcessMessenger, ids []mentalese.Term, orderFunction string) ([]mentalese.Term, bool) {
-	loading := base.entityQuickSortRange(messenger, &ids, 0, len(ids)-1, orderFunction)
-	if loading {
-		return []mentalese.Term{}, true
-	}
+	base.entityQuickSortRange(messenger, &ids, 0, len(ids)-1, orderFunction)
 	return ids, false
 }
 
 func (base *SystemSolverFunctionBase) entityQuickSortRange(messenger api.ProcessMessenger, ids *[]mentalese.Term, lo int, hi int, orderFunction string) bool {
-	loading := false
 	if lo < hi {
 		p := 0
-		p, loading = base.partition(messenger, ids, lo, hi, orderFunction)
-		if loading {
-			return true
-		}
-		loading = base.entityQuickSortRange(messenger, ids, lo, p, orderFunction)
-		if loading {
-			return true
-		}
-		loading = base.entityQuickSortRange(messenger, ids, p+1, hi, orderFunction)
-		if loading {
-			return true
-		}
+		p, _ = base.partition(messenger, ids, lo, hi, orderFunction)
+		base.entityQuickSortRange(messenger, ids, lo, p, orderFunction)
+		base.entityQuickSortRange(messenger, ids, p+1, hi, orderFunction)
 	}
 	return false
 }
@@ -42,15 +29,11 @@ func (base *SystemSolverFunctionBase) partition(messenger api.ProcessMessenger, 
 	i := lo - 1
 	j := hi + 1
 	result := 0
-	loading := false
 	for {
 		for {
 			i = i + 1
 			id := (*ids)[i]
-			result, loading = base.compare(messenger, id, pivotId, orderFunction)
-			if loading {
-				return 0, true
-			}
+			result, _ = base.compare(messenger, id, pivotId, orderFunction)
 			if result >= 0 {
 				break
 			}
@@ -58,10 +41,7 @@ func (base *SystemSolverFunctionBase) partition(messenger api.ProcessMessenger, 
 		for {
 			j = j - 1
 			id := (*ids)[j]
-			result, loading = base.compare(messenger, id, pivotId, orderFunction)
-			if loading {
-				return 0, true
-			}
+			result, _ = base.compare(messenger, id, pivotId, orderFunction)
 			if result <= 0 {
 				break
 			}
@@ -96,13 +76,7 @@ func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id
 	b.Set("E1", id1)
 	b.Set("E2", id2)
 
-	bindings := mentalese.NewBindingSet()
-	loading := false
-
-	bindings, loading = messenger.ExecuteChildStackFrame(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
-	if loading {
-		return 0, true
-	}
+	bindings := messenger.ExecuteChildStackFrame(mentalese.RelationSet{relation}, mentalese.InitBindingSet(b))
 
 	values := bindings.GetDistinctValues("R")
 

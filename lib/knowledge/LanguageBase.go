@@ -357,10 +357,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	entityIds, nameNotFound, loading := base.findNames(messenger, names, sorts)
-	if loading {
-		return mentalese.NewBindingSet()
-	}
+	entityIds, nameNotFound, _ := base.findNames(messenger, names, sorts)
 
 	requestBinding := dialogBinding.Merge(entityIds)
 
@@ -408,11 +405,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 
 		// make the user choose one entity from multiple with the same name
 		if len(nameInformations) > 1 {
-			loading := false
-			nameInformations, loading = base.nameResolver.Choose(messenger, nameInformations)
-			if loading {
-				return entityIds, nameNotFound, true
-			}
+			nameInformations, _ = base.nameResolver.Choose(messenger, nameInformations)
 		}
 
 		// link variable to ID
@@ -484,7 +477,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	// apply transformation, if available
 	transformedRequest := transformer.Replace(solution.Transformations, request)
 
-	resultBindings, _ := messenger.ExecuteChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
+	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
 	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
 
 	newBinding := mentalese.NewBinding()
@@ -505,48 +498,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
 
 	return mentalese.InitBindingSet(newBinding)
-
-	//child := messenger.GetCursor().GetState("child", 0)
-	//if child == 0 {
-	//
-	//	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
-	//
-	//	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
-	//
-	//	messenger.GetCursor().SetState("child", 1)
-	//
-	//	// apply transformation, if available
-	//	transformedRequest := transformer.Replace(solution.Transformations, request)
-	//
-	//	messenger.CreateChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
-	//	return mentalese.NewBindingSet()
-	//
-	//} else {
-	//
-	//	resultBindings := messenger.GetCursor().GetChildFrameResultBindings()
-	//
-	//	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
-	//
-	//	newBinding := mentalese.NewBinding()
-	//	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
-	//	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
-	//	newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
-	//
-	//	// queue ids
-	//	variable := solution.Result.TermValue
-	//
-	//	essential := mentalese.NewBindingSet()
-	//	for _, id := range resultBindings.GetIds(variable) {
-	//		b := mentalese.NewBinding()
-	//		b.Set(variable, id)
-	//		essential.Add(b)
-	//	}
-	//
-	//	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
-	//
-	//	return mentalese.InitBindingSet(newBinding)
-	//
-	//}
 }
 
 func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -604,7 +555,7 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 			return mentalese.InitBindingSet(newBinding)
 		} else {
-			responseBindings, _ := messenger.ExecuteChildStackFrame(response.Condition, resultBindings)
+			responseBindings := messenger.ExecuteChildStackFrame(response.Condition, resultBindings)
 			if !responseBindings.IsEmpty() {
 				newBinding := mentalese.NewBinding()
 				newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
@@ -637,27 +588,10 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	responseIndex, _ := bound.Arguments[2].GetIntValue()
 	answerVar := input.Arguments[3].TermValue
 
-	//index := messenger.GetCursor().GetState("index", 0)
-
 	solutionBindings := resultBindings
 	resultHandler := solution.Responses[responseIndex]
 
-	//if index == 0 {
-	//
-	//	messenger.GetCursor().SetState("index", 1)
-	//
-	//	if !resultHandler.Preparation.IsEmpty() {
-	//		messenger.CreateChildStackFrame(resultHandler.Preparation, resultBindings)
-	//		return mentalese.NewBindingSet()
-	//	}
-	//
-	//} else {
-	//
-	//	solutionBindings = messenger.GetCursor().GetChildFrameResultBindings()
-	//
-	//}
-
-	solutionBindings, _ = messenger.ExecuteChildStackFrame(resultHandler.Preparation, resultBindings)
+	solutionBindings = messenger.ExecuteChildStackFrame(resultHandler.Preparation, resultBindings)
 
 	// create answer relation sets by binding 'answer' to solutionBindings
 	answer := base.answerer.Build(resultHandler.Answer, solutionBindings)

@@ -61,7 +61,7 @@ func TestDBPedia(t *testing.T) {
 	}
 
 	log := common.NewSystemLog()
-	//log.SetDebug(true)
+	log.SetDebug(true)
 	//log.SetPrint(true)
 	system := global.NewSystem(common.Dir()+"/../../resources/dbpedia", "dbpedia-demo", common.Dir()+"/../../var", log)
 
@@ -84,7 +84,9 @@ func TestDBPedia(t *testing.T) {
 				answer += options.String()
 			}
 
-			if answer != test.answer {
+			if !log.IsOk() {
+				t.Errorf("\n%s", log.String())
+			} else if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
 				t.Errorf("\n%s", log.String())
 			}

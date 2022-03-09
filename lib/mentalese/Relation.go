@@ -12,10 +12,8 @@ type Relation struct {
 
 const Terminal = "terminal"
 
-const ProcessInstructionLet = "let"
 const ProcessInstructionBreak = "break"
 const ProcessInstructionCancel = "cancel"
-const ProcessInstructionWaitFor = "waitFor"
 const ProcessInstructionReturn = "return"
 
 const FrameTypePlain = "plain"
@@ -76,7 +74,6 @@ const PredicateDateSubtractYears = "go_date_subtract_years"
 const PredicateSem = "go_sem"
 const PredicateLog = "go_log"
 const PredicateWaitFor = "go_wait_for"
-const PredicateGoal = "go_goal"
 const PredicateCreateGoal = "go_create_goal"
 const PredicateUuid = "go_uuid"
 const PredicatePrint = "go_print"

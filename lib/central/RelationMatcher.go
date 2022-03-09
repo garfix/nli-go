@@ -16,14 +16,14 @@ import (
 // haystack: the base of relations that serve as matching candidates
 
 type RelationMatcher struct {
-	simpleFunctions     map[string]api.SimpleFunction
-	log             	*common.SystemLog
+	simpleFunctions map[string]api.SimpleFunction
+	log             *common.SystemLog
 }
 
 func NewRelationMatcher(log *common.SystemLog) *RelationMatcher {
 	return &RelationMatcher{
-		simpleFunctions:    map[string]api.SimpleFunction{},
-		log: 			    log,
+		simpleFunctions: map[string]api.SimpleFunction{},
+		log:             log,
 	}
 }
 
@@ -58,7 +58,7 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence mentalese.Rela
 
 			// functions like join(N, ' ', F, I, L)
 			functionBinding, functionFound, success := matcher.ExecuteFunction(needleRelation, node.Binding)
-			if functionFound  && success {
+			if functionFound && success {
 				newIndexes := node.Indexes
 				newNodes = append(newNodes, solutionNode{functionBinding, newIndexes})
 				nodeMatches = true
@@ -89,7 +89,6 @@ func (matcher *RelationMatcher) MatchSequenceToSet(needleSequence mentalese.Rela
 	return newBindings, match
 }
 
-
 // functions like join(N, ' ', F, I, L)
 // returns a binding with only one variable
 func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool, bool) {
@@ -98,11 +97,12 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relatio
 	resultBinding := mentalese.NewBinding()
 	functionFound := false
 	success := false
+	simpleMessenger := NewSimpleMessenger()
 
 	function, found := matcher.simpleFunctions[needleRelation.Predicate]
 	if found {
-		resultBinding, success = function(needleRelation, binding)
-		newBinding = resultBinding
+		resultBinding, success = function(simpleMessenger, needleRelation, binding)
+		newBinding = resultBinding.Merge(simpleMessenger.GetOutBinding())
 		functionFound = true
 	}
 
@@ -156,7 +156,6 @@ func (matcher *RelationMatcher) MatchTwoRelations(needleRelation mentalese.Relat
 
 	return newBinding, match
 }
-
 
 // Extends the Binding with new variable bindings for the variables of subjectArgument
 func (matcher *RelationMatcher) MatchTerm(subjectArgument mentalese.Term, patternArgument mentalese.Term, subjectBinding mentalese.Binding) (mentalese.Binding, bool) {
@@ -229,10 +228,12 @@ func (matcher *RelationMatcher) MatchTerm(subjectArgument mentalese.Term, patter
 		} else if patternArgument.IsList() {
 			success = true
 			if len(subjectArgument.TermValueList) == len(patternArgument.TermValueList) {
-				for i, subjectElement := range  subjectArgument.TermValueList {
+				for i, subjectElement := range subjectArgument.TermValueList {
 					patternElement := patternArgument.TermValueList[i]
 					newBinding, success = matcher.MatchTerm(subjectElement, patternElement, newBinding)
-					if !success { break }
+					if !success {
+						break
+					}
 				}
 			} else {
 				success = false

@@ -37,7 +37,8 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
@@ -61,20 +62,40 @@ func TestLocalVariables(t *testing.T) {
 			[:X := 3]
 			[Out := [:X * In]]
 		;
+
+		break_out(Start, End, Result) :-
+			go:range_foreach(Start, End, Index, 
+				if [Index == 5] then
+					[Result := Index]
+					break
+				end
+			)
+		;
+
+		return_out(Start, End, Result) :-
+			go:list_foreach([1, 2, 3, 4, 5, 6, 7], Index, 
+				if [Index == 5] then
+					[Result := Index]
+					return
+				end
+			)
+		;
 	
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
 	solver.AddRuleBase(ruleBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 
 	tests := []struct {
 		goal           string
 		binding        string
 		resultBindings string
 	}{
+		//{"break_out(1, 10, Result)", "{}", "[{} {Result:5}]"},
+		//{"return_out(1, 10, Result)", "{}", "[{} {Result:5}]"},
 		{"pow(2, 3, Pow)", "{}", "[{Pow:8}]"},
-		{"first(5, Result)", "{}", "[{Result:16}]"},
+		//{"first(5, Result)", "{}", "[{Result:16}]"},
 	}
 
 	for _, test := range tests {

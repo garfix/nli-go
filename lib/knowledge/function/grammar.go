@@ -31,7 +31,6 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 
 	variable := relation.Arguments[0].TermValue
 	set := relation.Arguments[1].TermValueRelationSet
-	loading := false
 
 	newBindings := mentalese.NewBindingSet()
 
@@ -83,17 +82,14 @@ func (base *SystemSolverFunctionBase) doBackReference(messenger api.ProcessMesse
 		}
 
 		testRangeBindings := mentalese.BindingSet{}
-		testRangeBindings, loading = messenger.ExecuteChildStackFrame(set, newBindings1)
-		if loading {
-			return mentalese.NewBindingSet(), true
-		}
+		testRangeBindings = messenger.ExecuteChildStackFrame(set, newBindings1)
 		if testRangeBindings.GetLength() == 1 {
 			newBindings = testRangeBindings
 			break
 		}
 	}
 
-	return newBindings, loading
+	return newBindings, false
 }
 
 func (base *SystemSolverFunctionBase) getSense(messenger api.ProcessMessenger) mentalese.RelationSet {
@@ -143,13 +139,10 @@ func (base *SystemSolverFunctionBase) definiteReference(messenger api.ProcessMes
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
 
-	newBindings, loading := base.doBackReference(messenger, relation, binding)
-	if loading {
-		return mentalese.NewBindingSet()
-	}
+	newBindings, _ := base.doBackReference(messenger, relation, binding)
 
 	if newBindings.IsEmpty() {
-		newBindings, _ = messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
+		newBindings = messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
 
 		if newBindings.GetLength() > 1 {
 			base.rangeIndexClarification(messenger)
@@ -170,7 +163,6 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 	variable := relation.Arguments[0].TermValue
 	newBindings := mentalese.NewBindingSet()
-	loading := false
 
 	cursor := messenger.GetCursor()
 	cursor.SetState("childIndex", 0)
@@ -203,10 +195,7 @@ func (base *SystemSolverFunctionBase) sortalBackReference(messenger api.ProcessM
 
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
-		newBindings, loading = messenger.ExecuteChildStackFrame(sortRelationSet, mentalese.InitBindingSet(binding))
-		if loading {
-			return mentalese.NewBindingSet()
-		}
+		newBindings = messenger.ExecuteChildStackFrame(sortRelationSet, mentalese.InitBindingSet(binding))
 		break
 	}
 

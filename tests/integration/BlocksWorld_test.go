@@ -108,7 +108,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			if test.question == "1" {
+			if test.question == "Find a block which is taller than the one you are holding and put it into the box." {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)
@@ -126,7 +126,7 @@ func TestBlocksWorld(t *testing.T) {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				//t.Errorf("\n%s", log.String())
-				t.Errorf("\n%s", log.GetErrors())
+				//t.Errorf("\n%s", log.GetErrors())
 				break
 			}
 		}

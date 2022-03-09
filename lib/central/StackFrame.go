@@ -58,14 +58,14 @@ func (f *StackFrame) GetCurrentInBinding() mentalese.Binding {
 
 func (f *StackFrame) AddOutBinding(inBinding mentalese.Binding, outBinding mentalese.Binding) {
 
-	relationVariables := f.GetCurrentRelation().GetVariableNames()
+	//relationVariables := f.GetCurrentRelation().GetVariableNames()
+	//
+	//// filter out temporary variables
+	//cleanBinding := outBinding.FilterVariablesByName(relationVariables)
+	//// make sure the original values are present
+	//cleanBinding = cleanBinding.Merge(inBinding)
 
-	// filter out temporary variables
-	cleanBinding := outBinding.FilterVariablesByName(relationVariables)
-	// make sure the original values are present
-	cleanBinding = cleanBinding.Merge(inBinding)
-
-	f.OutBindings.Add(cleanBinding)
+	f.OutBindings.Add(outBinding) //cleanBinding)
 }
 
 func (f *StackFrame) AddOutBindings(inBinding mentalese.Binding, outBindings mentalese.BindingSet) {

@@ -14,6 +14,7 @@ type Messenger struct {
 	processInstructions map[string]string
 	oldSlots            map[string]mentalese.Term
 	newSlots            map[string]mentalese.Term
+	suggestedOutBinding mentalese.Binding
 }
 
 func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
@@ -26,7 +27,35 @@ func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackF
 		processInstructions: map[string]string{},
 		oldSlots:            slots,
 		newSlots:            map[string]mentalese.Term{},
+		suggestedOutBinding: mentalese.NewBinding(),
 	}
+}
+
+func NewSimpleMessenger() *Messenger {
+	return &Messenger{
+		processRunner:       nil,
+		process:             nil,
+		cursor:              nil,
+		outBindings:         mentalese.NewBindingSet(),
+		childFrame:          nil,
+		processInstructions: map[string]string{},
+		oldSlots:            nil,
+		newSlots:            map[string]mentalese.Term{},
+		suggestedOutBinding: mentalese.NewBinding(),
+	}
+}
+
+func (i *Messenger) SetOutBinding(variable string, value mentalese.Term) {
+	i.suggestedOutBinding.Set(variable, value)
+
+	if variable[0:1] == ":" {
+		i.process.GetCurrentScope().Cursor.MutableVariableValues.Set(variable, value)
+	}
+	
+}
+
+func (i *Messenger) GetOutBinding() mentalese.Binding {
+	return i.suggestedOutBinding
 }
 
 func (i *Messenger) GetProcess() api.Process {
@@ -61,15 +90,21 @@ func (i *Messenger) SendMessage(message mentalese.RelationSet) {
 	i.processRunner.list.messageManager.NotifyListeners(message)
 }
 
-func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
-	if len(relations) == 0 {
-		return bindings, false
+	if i.cursor.GetPhase() == PhaseInterrupted {
+		return mentalese.NewBindingSet()
 	}
 
-	newBindings := i.processRunner.PushAndRun(i.process, relations, bindings)
+	if len(relations) == 0 {
+		return bindings
+	}
 
-	return newBindings, false
+	if bindings.GetLength() == 0 {
+		return bindings
+	}
+
+	return i.processRunner.PushAndRun(i.process, relations, bindings)
 }
 
 func (i *Messenger) StartProcess(relations mentalese.RelationSet, binding mentalese.Binding) {

@@ -40,11 +40,12 @@ func TestInMemoryRuleBase(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 	rules := parser.CreateRules(`
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
 		-sibling(A, B) :- [A == B];

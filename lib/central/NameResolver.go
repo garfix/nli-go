@@ -46,10 +46,7 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 		}),
 	}
 
-	bindings, loading := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-	if loading {
-		return resolvedInformations, true
-	}
+	bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 
 	for _, binding := range bindings.GetAll() {
 		selection := binding.MustGet("Selection")

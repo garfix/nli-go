@@ -14,9 +14,11 @@ type Term struct {
 	TermValueRelationSet RelationSet `json:"set,omitempty"`
 	TermValueRule        *Rule       `json:"rule,omitempty"`
 	TermValueList        TermList    `json:"list,omitempty"`
+	sharedTerm           *Term
 }
 
 const TermTypeVariable = "variable"
+const TermTypeMutableVariable = "mutable-variable"
 const TermTypePredicateAtom = "atom"
 const TermTypeStringConstant = "string"
 const TermTypeAnonymousVariable = "anonymous"

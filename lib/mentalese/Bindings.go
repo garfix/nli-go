@@ -315,3 +315,24 @@ func (s BindingSet) FilterOutVariablesByName(variableNames []string) BindingSet 
 
 	return newBindings
 }
+
+func (s BindingSet) RemoveMutableVariables() BindingSet {
+	newBindings := NewBindingSet()
+
+	for _, binding := range *s.Bindings {
+		newBindings.Add(binding.RemoveMutableVariables())
+	}
+
+	return newBindings
+}
+
+func (s BindingSet) FilterMutableVariables() Binding {
+
+	newBinding := NewBinding()
+
+	for _, binding := range *s.Bindings {
+		newBinding = newBinding.Merge(binding.FilterMutableVariables())
+	}
+
+	return newBinding
+}

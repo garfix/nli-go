@@ -114,7 +114,8 @@ func TestQuantSolver(t *testing.T) {
 
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
@@ -123,7 +124,7 @@ func TestQuantSolver(t *testing.T) {
 	solver.AddMultipleBindingBase(aggregateBase)
 
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 
 	for _, test := range tests {
 

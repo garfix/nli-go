@@ -59,6 +59,7 @@ do_init_grid(Grid, Objects, HorLines, VerLines) :-
 ;
 
 do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
+go:log(' start')
     [:A1 := -1]
     [:B1 := -1]
     [:StartY := -1]
@@ -66,7 +67,9 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
     size(E1, Width, Length, _)
 
     go:list_foreach(VerLines, ColIndex, X,
+
         go:list_get(HorLines, 0, :StartY)
+
         find_span(Width, VerLines, ColIndex, ColSpan)
         [V1 := [ColIndex + ColSpan]]
         [ColEnd := [V1 - 1]]

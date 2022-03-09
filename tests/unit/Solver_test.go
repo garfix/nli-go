@@ -1,6 +1,5 @@
 package tests
 
-
 import (
 	"fmt"
 	"nli-go/lib/central"
@@ -48,7 +47,9 @@ func TestSolver(t *testing.T) {
 	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	solver.AddFactBase(factBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
+	runner := central.NewProcessRunner(processList, solver, log)
 
 	tests := []struct {
 		input            string
@@ -109,7 +110,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{input }, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{input}, mentalese.InitBindingSet(binding))
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)
@@ -138,7 +139,7 @@ func TestSolver(t *testing.T) {
 	solver2.AddRuleBase(ruleBase2)
 	solver2.Reindex()
 
-	runner2 := central.NewProcessRunner(solver2, log)
+	runner2 := central.NewProcessRunner(processList, solver2, log)
 
 	tests3 := []struct {
 		input              string
@@ -153,7 +154,7 @@ func TestSolver(t *testing.T) {
 
 		input := parser.CreateRelation(test.input)
 		binding := parser.CreateBinding(test.binding)
-		resultBindings := runner2.RunRelationSetWithBindings(mentalese.RelationSet{input }, mentalese.InitBindingSet(binding))
+		resultBindings := runner2.RunRelationSetWithBindings(mentalese.RelationSet{input}, mentalese.InitBindingSet(binding))
 
 		if fmt.Sprintf("%v", resultBindings) != test.wantResultBindings {
 			t.Errorf("SolverTest: got %v, want %s", resultBindings, test.wantResultBindings)

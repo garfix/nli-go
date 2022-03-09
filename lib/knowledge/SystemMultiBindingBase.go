@@ -345,50 +345,15 @@ func (base *SystemMultiBindingFunctionBase) cut(messenger api.ProcessMessenger, 
 	count, _ := input.Arguments[0].GetIntValue()
 	childRelations := input.Arguments[1].TermValueRelationSet
 
-	cursor := messenger.GetCursor()
-
-	//index := cursor.GetState("index", 0)
 	passed := 0
-
-	//if index > 0 {
-	//	childBindings := cursor.GetChildFrameResultBindings()
-	//
-	//	if !childBindings.IsEmpty() {
-	//		cursor.AddStepBindings(childBindings)
-	//		passed += 1
-	//		cursor.SetState("passed", passed)
-	//
-	//		if passed == count {
-	//			resultBindings := mentalese.NewBindingSet()
-	//			for _, bindingSet := range cursor.GetAllStepBindings() {
-	//				resultBindings.AddMultiple(bindingSet)
-	//			}
-	//			return resultBindings
-	//		}
-	//	}
-	//}
-	//
-	//if index < bindings.GetLength() {
-	//	binding := bindings.Get(index)
-	//	messenger.CreateChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
-	//
-	//	cursor.SetState("index", index + 1)
-	//}
 
 	for index := 0; index < bindings.GetLength(); index++ {
 		binding := bindings.Get(index)
-		childBindings, _ := messenger.ExecuteChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
+		childBindings := messenger.ExecuteChildStackFrame(childRelations, mentalese.InitBindingSet(binding))
 		if !childBindings.IsEmpty() {
-			cursor.AddStepBindings(childBindings)
 			passed += 1
-			cursor.SetState("passed", passed)
-
 			if passed == count {
-				resultBindings := mentalese.NewBindingSet()
-				for _, bindingSet := range cursor.GetAllStepBindings() {
-					resultBindings.AddMultiple(bindingSet)
-				}
-				return resultBindings
+				return childBindings
 			}
 		}
 	}

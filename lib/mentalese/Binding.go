@@ -13,6 +13,10 @@ func NewBinding() Binding {
 	return Binding{Key2vvalue: map[string]Term{}}
 }
 
+func (b Binding) IsEmpty() bool {
+	return len(b.Key2vvalue) == 0
+}
+
 func (b Binding) ToRaw() map[string]Term {
 	return b.Key2vvalue
 }
@@ -207,6 +211,30 @@ func (b Binding) FilterOutVariablesByName(variableNames []string) Binding {
 	for key, value := range b.Key2vvalue {
 		if !common.StringArrayContains(variableNames, key) {
 			result.Key2vvalue[key] = value
+		}
+	}
+
+	return result
+}
+
+func (b Binding) FilterMutableVariables() Binding {
+	result := NewBinding()
+
+	for key, value := range b.Key2vvalue {
+		if key[0] == ':' {
+			result.Set(key, value)
+		}
+	}
+
+	return result
+}
+
+func (b Binding) RemoveMutableVariables() Binding {
+	result := NewBinding()
+
+	for key, value := range b.Key2vvalue {
+		if key[0] != ':' {
+			result.Set(key, value)
 		}
 	}
 

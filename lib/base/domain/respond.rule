@@ -45,7 +45,6 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         [ContinueLooking := true]
         return
     end
-
     /* Stop at the first successfully processed solution */
     go:cut(1,
         go:find_solution(Request, Solution)
@@ -72,30 +71,39 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
 go:exec_solutions(Request, RequestBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
     go:list_length(Solutions, SolSize)
     [LastSol := [SolSize - 1]]
+    [:Output := '']
+    [:Accepted := none]
+    [:AcceptedBindings := none]
+    [:EssentialBindings := none]
+
     go:list_foreach(Solutions, Index, Sol,
 
         go:solve(Request, RequestBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
 
         /* If there was a problem, or a request for clarification, stop */
         if [SolveOutput != ''] then
-            [Output := SolveOutput]
-            return
+            [:Output := SolveOutput]
+            break
         end
         /* If there were solutions, good! */
         if [ResultCount > 0] then
-            [Accepted := Sol]
-            [AcceptedBindings := ResultBindings]
-            [EssentialBindings := EssentialBindings1]
-            [Output := '']
-            return
+            [:Accepted := Sol]
+            [:AcceptedBindings := ResultBindings]
+            [:EssentialBindings := EssentialBindings1]
+            [:Output := '']
+            break
         end
         /* If this is the last available solution, take it anyway */
         if [LastSol == Index] then
-            [Accepted := Sol]
-            [AcceptedBindings := ResultBindings]
-            [EssentialBindings := EssentialBindings1]
-            [Output := '']
-            return
+            [:Accepted := Sol]
+            [:AcceptedBindings := ResultBindings]
+            [:EssentialBindings := EssentialBindings1]
+            [:Output := '']
+            break
         end
     )
+    [Output := :Output]
+    [Accepted := :Accepted]
+    [AcceptedBindings := :AcceptedBindings]
+    [EssentialBindings := :EssentialBindings]
 ;

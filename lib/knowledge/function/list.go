@@ -22,10 +22,7 @@ func (base *SystemSolverFunctionBase) listOrder(messenger api.ProcessMessenger, 
 	orderFunction := bound.Arguments[1].TermValue
 	listVariable := bound.Arguments[2].TermValue
 
-	orderedList, loading := base.entityQuickSort(messenger, list, orderFunction)
-	if loading {
-		return mentalese.NewBindingSet()
-	}
+	orderedList, _ := base.entityQuickSort(messenger, list, orderFunction)
 
 	newBinding := binding.Copy()
 	newBinding.Set(listVariable, mentalese.NewTermList(orderedList))
@@ -62,26 +59,30 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 	index := cursor.GetState("index", 0)
 	cursor.SetState("index", index+1)
 
+	cursor.SetType(mentalese.FrameTypeLoop)
+
 	if len(relation.Arguments) == 3 {
 
 		list := bound.Arguments[0].TermValueList
 		elementVar := relation.Arguments[1].TermValue
 		children := relation.Arguments[2].TermValueRelationSet
 
-		if index == 0 {
-			cursor.SetType(mentalese.FrameTypeLoop)
-		} else {
-			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
-		}
-
-		if index < len(list) {
+		for index := 0; index < len(list); index++ {
 
 			element := list[index]
 
 			scopedBinding := binding.Copy()
 			scopedBinding.Set(elementVar, element)
 
-			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+			newBindings.AddMultiple(childBindings)
+
+			//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
+			//	return newBindings
+			//}
+			//if cursor.GetPhase() == central.PhaseCanceled {
+			//	return mentalese.NewBindingSet()
+			//}
 		}
 
 	} else if len(relation.Arguments) == 4 {
@@ -91,13 +92,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 		elementVar := relation.Arguments[2].TermValue
 		children := relation.Arguments[3].TermValueRelationSet
 
-		if index == 0 {
-			cursor.SetType(mentalese.FrameTypeLoop)
-		} else {
-			newBindings.AddMultiple(cursor.GetChildFrameResultBindings())
-		}
-
-		if index < len(list) {
+		for index := 0; index < len(list); index++ {
 
 			element := list[index]
 
@@ -105,64 +100,17 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 			scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
 			scopedBinding.Set(elementVar, element)
 
-			messenger.CreateChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
+			newBindings.AddMultiple(childBindings)
+
+			//if cursor.GetPhase() == central.PhaseBreaked || cursor.GetPhase() == central.PhaseInterrupted {
+			//	return newBindings
+			//}
+			//if cursor.GetPhase() == central.PhaseCanceled {
+			//	return mentalese.NewBindingSet()
+			//}
 		}
 	}
-
-	//if len(relation.Arguments) == 3 {
-	//
-	//	list := bound.Arguments[0].TermValueList
-	//	elementVar := relation.Arguments[1].TermValue
-	//	children := relation.Arguments[2].TermValueRelationSet
-	//
-	//	cursor.SetType(mentalese.FrameTypeLoop)
-	//
-	//	for index := 0; index < len(list); index++ {
-	//
-	//		element := list[index]
-	//
-	//		scopedBinding := binding.Copy()
-	//		scopedBinding.Set(elementVar, element)
-	//
-	//		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-	//		newBindings.AddMultiple(childBindings)
-	//		if cursor.GetPhase() == central.PhaseBreaked {
-	//			return newBindings
-	//		}
-	//		if cursor.GetPhase() == central.PhaseCanceled || cursor.GetPhase() == central.PhaseIgnore {
-	//			return mentalese.NewBindingSet()
-	//		}
-	//	}
-	//
-	//} else if len(relation.Arguments) == 4 {
-	//
-	//	list := bound.Arguments[0].TermValueList
-	//	indexVar := relation.Arguments[1].TermValue
-	//	elementVar := relation.Arguments[2].TermValue
-	//	children := relation.Arguments[3].TermValueRelationSet
-	//
-	//	cursor.SetType(mentalese.FrameTypeLoop)
-	//
-	//	for index := 0; index < len(list); index++ {
-	//
-	//		element := list[index]
-	//
-	//		scopedBinding := binding.Copy()
-	//		scopedBinding.Set(indexVar, mentalese.NewTermString(strconv.Itoa(index)))
-	//		scopedBinding.Set(elementVar, element)
-	//
-	//		childBindings, _ := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-	//		newBindings.AddMultiple(childBindings)
-	//
-	//		if cursor.GetPhase() == central.PhaseBreaked {
-	//			return newBindings
-	//		}
-	//		if cursor.GetPhase() == central.PhaseCanceled || cursor.GetPhase() == central.PhaseIgnore {
-	//			return mentalese.NewBindingSet()
-	//		}
-	//	}
-	//}
-
 	return newBindings
 }
 

@@ -1,3 +1,22 @@
+## 2022-02-28
+
+Another idea: both break and cancel immediately return with no bindings. This stops the flow for that binding. Other bindings continue. But the break will also add its latest binding as a child-frame-bindings to the loop-cursor. Return does the same to the scope cursor.
+
+## 2022-02-27
+
+Still rebuilding the server, and making the processes synchronous.
+
+I stumbled on a problem that I nadn't realized before. What if the process currently had multiple bindings, and the program flow is different for these bindings: 
+
+- one binding causes the execution of child procedures, while the other doesn't
+- one binding breaks while the other doesn't
+
+Before I hadn't thought about this problem, while it was there all along. Actually, by executing child procedures _inline_, as I am doing now, I solved the first problem. But I stumbled on it only because of the second problem.
+
+At the moment, if one binding causes a break, all bindings break. 
+
+Yesterday, for a few hours, I thought that this would collapse my entire process structure. But it doesn't have to be so catastrophic. What I need to do is to keep the state of the program flow, per binding. And treat bindings as program flows. Program flows that may have breaked, and they should store this. Once a flow has breaked, it should not execute more steps, until the root of the break (the loop or the procedure), is reached.  
+
 ## 2022-02-12
 
 Rebuilding the server.

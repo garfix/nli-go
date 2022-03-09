@@ -22,7 +22,9 @@ func TestFunctions(t *testing.T) {
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
+	runner := central.NewProcessRunner(processList, solver, log)
 	tests := []struct {
 		input        string
 		binding      string
@@ -77,7 +79,9 @@ func TestAggregateFunctions(t *testing.T) {
 	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
 	multiBindingBase := knowledge.NewSystemMultiBindingBase("name", log)
 	solver.AddMultipleBindingBase(multiBindingBase)
-	runner := central.NewProcessRunner(solver, log)
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
+	runner := central.NewProcessRunner(processList, solver, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input        string
@@ -135,12 +139,13 @@ func TestControlFunctions(t *testing.T) {
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 	parser := importer.NewInternalGrammarParser()
 	tests := []struct {
 		input        string
@@ -203,12 +208,13 @@ func TestListFunctions(t *testing.T) {
 	solver.AddRuleBase(ruleBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 	tests := []struct {
 		input        string
 		binding      string
@@ -282,12 +288,13 @@ func TestQuantFunctions(t *testing.T) {
 	solver.AddRuleBase(ruleBase)
 	deicticCenter := central.NewDeicticCenter()
 	discourseEntities := mentalese.NewBinding()
-	processList := central.NewProcessList()
+	messageManager := central.NewMessageManager()
+	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	solver.Reindex()
-	runner := central.NewProcessRunner(solver, log)
+	runner := central.NewProcessRunner(processList, solver, log)
 	tests := []struct {
 		input        string
 		binding      string

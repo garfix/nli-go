@@ -102,7 +102,7 @@ func (matcher *RelationMatcher) ExecuteFunction(needleRelation mentalese.Relatio
 	function, found := matcher.simpleFunctions[needleRelation.Predicate]
 	if found {
 		resultBinding, success = function(simpleMessenger, needleRelation, binding)
-		newBinding = resultBinding.Merge(simpleMessenger.GetOutBinding())
+		newBinding = resultBinding
 		functionFound = true
 	}
 

@@ -19,6 +19,7 @@ const ProcessInstructionReturn = "return"
 const FrameTypePlain = "plain"
 const FrameTypeScope = "scope"
 const FrameTypeLoop = "loop"
+const FrameTypeComplex = "complex"
 
 const SlotSense = "sense"
 

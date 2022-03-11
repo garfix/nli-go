@@ -156,10 +156,18 @@ func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) *Sta
 	}
 
 	outBindings := messenger.GetOutBindings()
+	relationVariables := frame.GetCurrentRelation().GetVariableNames()
+
+	if messenger.cursor.GetType() == mentalese.FrameTypePlain {
+		mutableBindings := outBindings.FilterMutableVariables()
+		for k, v := range mutableBindings.FilterVariablesByName(relationVariables).GetAll() {
+			p.SetMutableVariable(k, v)
+		}
+	}
+
 	outBindingsWithoutMutables := outBindings.RemoveMutableVariables()
 
 	processedOutBindings := mentalese.NewBindingSet()
-	relationVariables := frame.GetCurrentRelation().GetVariableNames()
 	for _, outBinding := range outBindingsWithoutMutables.GetAll() {
 		// filter out temporary variables
 		cleanBinding := outBinding.FilterVariablesByName(relationVariables)

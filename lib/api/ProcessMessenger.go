@@ -14,6 +14,4 @@ type ProcessMessenger interface {
 	AddProcessInstruction(name string, value string)
 	GetProcessSlot(slot string) (mentalese.Term, bool)
 	SetProcessSlot(slot string, value mentalese.Term)
-	SetOutBinding(variable string, value mentalese.Term)
-	GetOutBinding() mentalese.Binding
 }

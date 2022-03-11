@@ -524,8 +524,6 @@ func (base *SystemFunctionBase) listGet(messenger api.SimpleMessenger, relation 
 	newBinding := binding.Copy()
 	newBinding.Set(termVar, term)
 
-	messenger.SetOutBinding(termVar, term)
-
 	return newBinding, true
 }
 

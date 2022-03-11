@@ -173,26 +173,6 @@ func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.Relation
 
 		mappedPattern := rule.Pattern.ConvertVariables(mapping, s.variableGenerator)
 
-		//if false {
-		//
-		//	cursor := messenger.GetCursor()
-		//	state := cursor.GetState("state", 0)
-		//
-		//	// process child frame bindings
-		//	if state == 0 {
-		//		cursor.SetState("state", 1)
-		//		// turn the cursor into a scope
-		//		cursor.SetType(mentalese.FrameTypeScope)
-		//		// push the child relations
-		//		messenger.CreateChildStackFrame(mappedPattern, mentalese.InitBindingSet(binding))
-		//	} else {
-		//		return cursor.GetChildFrameResultBindings()
-		//	}
-		//
-		//	return mentalese.NewBindingSet()
-		//
-		//} else {
-
 		cursor := messenger.GetCursor()
 		cursor.SetType(mentalese.FrameTypeScope)
 
@@ -426,11 +406,7 @@ func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation men
 			if found {
 				handlers := solver.GetHandlers(relation)
 				simpleMessenger := NewSimpleMessenger()
-				resultBindings1 := handlers[0](simpleMessenger, relation, binding)
-				resultBindings = mentalese.NewBindingSet()
-				for _, r := range resultBindings1.GetAll() {
-					resultBindings.Add(r.Merge(simpleMessenger.GetOutBinding()))
-				}
+				resultBindings = handlers[0](simpleMessenger, relation, binding)
 			} else {
 				resultBindings = factBase.MatchRelationToDatabase(relation, binding)
 			}

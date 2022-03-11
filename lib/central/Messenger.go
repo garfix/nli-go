@@ -14,7 +14,6 @@ type Messenger struct {
 	processInstructions map[string]string
 	oldSlots            map[string]mentalese.Term
 	newSlots            map[string]mentalese.Term
-	suggestedOutBinding mentalese.Binding
 }
 
 func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
@@ -27,7 +26,6 @@ func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackF
 		processInstructions: map[string]string{},
 		oldSlots:            slots,
 		newSlots:            map[string]mentalese.Term{},
-		suggestedOutBinding: mentalese.NewBinding(),
 	}
 }
 
@@ -41,20 +39,7 @@ func NewSimpleMessenger() *Messenger {
 		processInstructions: map[string]string{},
 		oldSlots:            nil,
 		newSlots:            map[string]mentalese.Term{},
-		suggestedOutBinding: mentalese.NewBinding(),
 	}
-}
-
-func (i *Messenger) SetOutBinding(variable string, value mentalese.Term) {
-	i.suggestedOutBinding.Set(variable, value)
-
-	if mentalese.IsMutableVariable(variable) {
-		i.process.SetMutableVariable(variable, value)
-	}
-}
-
-func (i *Messenger) GetOutBinding() mentalese.Binding {
-	return i.suggestedOutBinding
 }
 
 func (i *Messenger) GetProcess() api.Process {
@@ -91,6 +76,14 @@ func (i *Messenger) SendMessage(message mentalese.RelationSet) {
 
 func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
+	// mark the calling function as non-plain;
+	// checking for plain-ness is done when bindings of mutable variables need to be stored in the scope
+	// function `ProcessMessenger`
+	if i.cursor.GetType() == mentalese.FrameTypePlain {
+		i.cursor.SetType(mentalese.FrameTypeComplex)
+	}
+
+	// when a loop has been breaked, the remaining calls are nullified
 	if i.cursor.GetState() == StateInterrupted {
 		return mentalese.NewBindingSet()
 	}

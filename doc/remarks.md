@@ -1,3 +1,7 @@
+## 2022-03-11
+
+The server is complete.
+
 ## 2022-02-28
 
 Another idea: both break and cancel immediately return with no bindings. This stops the flow for that binding. Other bindings continue. But the break will also add its latest binding as a child-frame-bindings to the loop-cursor. Return does the same to the scope cursor.

@@ -14,6 +14,8 @@ type RequestHandler struct {
 func (handler *RequestHandler) handleMessage(system *global.System, inMessage mentalese.RelationSet) {
 
 	log := system.GetLog()
+	log.Clear()
+
 	outMMessage := system.SendAndWaitForResponse(inMessage)
 
 	response := Response{

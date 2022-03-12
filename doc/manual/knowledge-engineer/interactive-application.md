@@ -21,9 +21,9 @@ When the user types a sentence, the client sends this message (in JSON) to the s
 The message simply consists of a list of relations and in this case just the single relation `go:tell()`. The relations are processed by nli-go's function `System:SendMessage`. The relation / procedure `go:tell` is located in `respond.rule` and looks like this:
 
     go:tell(Input) :-
-        go:uuid(Uuid)
-        go:assert(
-            go:goal(go:respond(Input), Uuid));
+        go:create_goal(
+            go:respond(Input)
+        );
 
 `go:tell` doesn't really do anything. It just creates a goal: respond to input, and adds it to the list of goals of the dialog context.
 

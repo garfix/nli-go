@@ -55,21 +55,21 @@ func (system *System) RemoveListener(l central.MessageListener) {
 	system.processList.RemoveListener(l)
 }
 
-func (system *System) SendAndWaitForResponse(message mentalese.RelationSet) mentalese.RelationSet {
+func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet) mentalese.RelationSet {
 
 	responseMessage := mentalese.RelationSet{}
 
 	done := make(chan struct{})
 
 	println("")
-	println("in: " + message.String())
+	println("in: " + clientMessage.String())
 
-	callback := func(message mentalese.RelationSet) {
+	callback := func(serverMessage mentalese.RelationSet) {
 
-		fmt.Println("message: " + message.String())
+		fmt.Println("server: " + serverMessage.String())
 
-		if len(message) > 0 {
-			responseMessage = responseMessage.Merge(message)
+		if len(serverMessage) > 0 {
+			responseMessage = responseMessage.Merge(serverMessage)
 			close(done)
 		} else {
 			if system.processList.IsEmpty() {
@@ -83,10 +83,8 @@ func (system *System) SendAndWaitForResponse(message mentalese.RelationSet) ment
 
 	defer system.RemoveListener(callback)
 
-	println("running: " + message.String())
-
 	// enter the message into the system
-	system.processRunner.RunRelationSet(message)
+	system.processRunner.RunRelationSet(clientMessage)
 
 	// wait until done
 	<-done

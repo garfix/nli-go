@@ -153,15 +153,16 @@ $(function(){
             type: 'POST',
             success: function (data) {
 
-                if (data.ErrorLines.length > 0) {
+                showProductions(data.Productions);
+
+                if (data.Success) {
+                    processResponse(data.Message)
+                    showError([]);
+                } else {
                     showAnswer("")
                     showError(data.ErrorLines);
                     log(currentInput, errorToHtml(data.ErrorLines))
-                } else {
-                    processResponse(data.Message)
-                    showError([]);
                 }
-                showProductions(data.Productions);
             },
             error: function (request, status, error) {
                 showError(error)

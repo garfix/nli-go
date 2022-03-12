@@ -7,7 +7,7 @@ if (!in_array($app, ['dbpedia', 'blocks'])) {
     die('Unsupported app');
 }
 session_start();
-$sessionId = session_id();
+$sessionId = $app . "_" . session_id();
 
 $command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/' . $app;

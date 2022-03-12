@@ -2,22 +2,16 @@
 
 To deploy an application on a web server
 
-## Build the executable
+## Build and run the server 
 
-Inside the directory 'bin', create the executable on the platform of choice (i.e. Linux)
+Inside the directory 'bin', create the server on the platform of choice (i.e. Linux)
 
- go build nli.go
+    go build server.go
 
-This will create a file 'nli' in the directory of nli.go
+This will create a file 'server' in the directory. Then run the server at port 3333
 
-## File structure
+    ./server 3333
 
-Create the following directory structure on the server:
+## Web apps
 
- public_html
-    css
-    img
-    js
- resources
-
-And copy all files of the web app, and the necessary resources (for example dbpedia), to the server.
+There are two web apps: `index.html` (the DBpedia app) and `block.html` (the blocks world app)

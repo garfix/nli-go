@@ -190,7 +190,7 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 
 	messenger.GetProcess().SetWaitingFor(child.BindSingle(binding))
 
-	const timeout = 12000
+	const timeout = 5000
 
 	// todo: refine, timeout configurable
 	for i := 0; i < timeout; i++ {
@@ -204,7 +204,7 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 			messenger.SendMessage(child.BindSingle(binding))
 		}
 
-		time.Sleep(100 * time.Microsecond)
+		time.Sleep(time.Millisecond)
 	}
 
 	messenger.GetProcess().SetWaitingFor(nil)

@@ -1,11 +1,12 @@
 # Changelog
 
-## 
+## 1.15 client / server - 12-03-2022
 
+* a permanent server keeps processes active
 * keywords if/then/else/end 
 * assignment via [X := n]
 * expressions for common procedure calls
-* use procedures as functions
+* use procedure-calls as arguments
 
 ## 1.14 the "why?" release - 15-01-2022
 

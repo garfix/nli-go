@@ -35,33 +35,25 @@ if ($result === null) {
     $response = "ERROR executing\n" . $fullCommand . "\n" . implode($output);
 }
 
-logResult($result, $duration, $sessionId);
+logResult($request, $result, $duration, $sessionId);
 
 header('content-type: application/json');
 echo $response;
 
-function logResult($result, $duration, $sessionId)
+function logResult($request, $result, $duration, $sessionId)
 {
     $handle = fopen(__DIR__ . '/../var/log/' . date('Y-m') . '-queries.log', 'a');
 
-    $answer = $result['Answer'];
-    $optionKeys = $result['OptionKeys'];
-    $optionValues = $result['OptionValues'];
-    $errorLines = $result['ErrorLines'];
+    if ($result) {
+        unset($result['Productions']);
+    }
 
+    $answer = json_encode($result);
     $answer = strlen($answer) < 300 ? $answer : substr($answer, 0, 300) . "...";
 
     fwrite($handle, "#  " . date('Y-m-d H:i:s') . " " . $sessionId .  " (" . $duration . "s)\n");
-    fwrite($handle, "Q: " . $query . "\n");
+    fwrite($handle, "Q: " . $request . "\n");
     fwrite($handle, "A: " . $answer . "\n");
-
-    foreach ($optionKeys as $i => $optionKey) {
-        fwrite($handle, " * " . $optionKey . " (" . $optionValues[$i] . ")\n");
-    }
-
-    foreach ($errorLines as $errorLine) {
-        fwrite($handle, "E: " . $errorLine . "\n");
-    }
 
     fwrite($handle, "\n");
     fclose($handle);

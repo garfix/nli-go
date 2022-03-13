@@ -9,6 +9,8 @@ if (!in_array($app, ['dbpedia', 'blocks'])) {
 session_start();
 $sessionId = $app . "_" . session_id();
 
+session_write_close();
+
 $command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/' . $app;
 $varDir = __DIR__ . '/../var';

@@ -190,18 +190,24 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 
 	messenger.GetProcess().SetWaitingFor(child.BindSingle(binding))
 
-	const timeout = 5000
+	const timeout = 20000
 
 	// todo: refine, timeout configurable
-	for i := 0; i < timeout; i++ {
+	for i := 0; true; i++ {
 
 		newBindings = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
 		if !newBindings.IsEmpty() {
 			break
 		}
+
 		if !sent {
 			sent = true
 			messenger.SendMessage(child.BindSingle(binding))
+		}
+
+		if i == timeout {
+			// make sure that the process finishes
+			break
 		}
 
 		time.Sleep(time.Millisecond)

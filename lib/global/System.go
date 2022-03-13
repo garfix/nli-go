@@ -62,7 +62,7 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 	done := make(chan struct{})
 
 	println("")
-	println("in: " + clientMessage.String())
+	println("client: " + clientMessage.String())
 
 	callback := func(serverMessage mentalese.RelationSet) {
 

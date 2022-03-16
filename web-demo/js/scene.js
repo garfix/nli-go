@@ -51,7 +51,7 @@ let createScene = function() {
                 (datum.Y - startY) * (datum.Y - startY) +
                 (datum.Z - startZ) * (datum.Z - startZ)
             )) / 600) * 1000;
-            if (duration === 0) { duration = 0.001; }
+            if (duration === 0) { duration = 1; }
 
             let animation = function(time) {
                 if (time > duration) { time = duration; }

@@ -16,9 +16,7 @@ type InMemoryFactBase struct {
 	entities      mentalese.Entities
 	sharedIds     SharedIds
 	matcher       *central.RelationMatcher
-	storage       *common.FileStorage
 	log           *common.SystemLog
-	changed       bool
 	mutex         sync.Mutex
 }
 
@@ -31,13 +29,7 @@ func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *cent
 		writeMap:          writeMap,
 		sharedIds:         SharedIds{},
 		matcher:           matcher,
-		storage:           storage,
 		log:               log,
-		changed:           false,
-	}
-
-	if storage != nil {
-		storage.Read(&factBase.facts)
 	}
 
 	return &factBase
@@ -118,7 +110,6 @@ func (factBase *InMemoryFactBase) Assert(relation mentalese.Relation) {
 	}
 
 	factBase.facts = append(factBase.facts, relation)
-	factBase.changed = true
 
 end:
 
@@ -140,7 +131,6 @@ func (factBase *InMemoryFactBase) Retract(relation mentalese.Relation) {
 	}
 
 	factBase.facts = newFacts
-	factBase.changed = true
 
 	factBase.mutex.Unlock()
 }
@@ -150,20 +140,6 @@ func (factBase *InMemoryFactBase) ResetSession() {
 	factBase.mutex.Lock()
 
 	factBase.facts = factBase.originalFacts.Copy()
-	factBase.changed = true
-
-	factBase.mutex.Unlock()
-}
-
-func (factBase *InMemoryFactBase) Persist() {
-
-	factBase.mutex.Lock()
-
-	if factBase.storage != nil {
-		if factBase.changed {
-			factBase.storage.Write(factBase.facts)
-		}
-	}
 
 	factBase.mutex.Unlock()
 }

@@ -9,7 +9,6 @@ const MaxSizeAnaphoraQueue = 10
 
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
-	storage           *common.FileStorage
 	DeicticCenter     *DeicticCenter
 	ProcessList       *ProcessList
 	VariableGenerator *mentalese.VariableGenerator
@@ -25,7 +24,6 @@ func NewDialogContext(
 	discourseEntities *mentalese.Binding,
 ) *DialogContext {
 	dialogContext := &DialogContext{
-		storage:           storage,
 		DeicticCenter:     deicticCenter,
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
@@ -33,10 +31,6 @@ func NewDialogContext(
 		ClauseList:        mentalese.NewClauseList(),
 	}
 	dialogContext.Initialize()
-
-	if storage != nil {
-		storage.Read(dialogContext)
-	}
 
 	return dialogContext
 }
@@ -76,10 +70,4 @@ func (dc *DialogContext) Initialize() {
 
 	dc.DiscourseEntities.Clear()
 	dc.ClauseList.Clear()
-}
-
-func (dc *DialogContext) Store() {
-	if dc.storage != nil {
-		dc.storage.Write(dc)
-	}
 }

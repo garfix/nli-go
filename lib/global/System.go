@@ -42,8 +42,6 @@ func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
 	result := system.processRunner.RunRelationSet(set)
 
-	system.persistSession()
-
 	return result
 }
 
@@ -61,7 +59,6 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 
 	done := make(chan struct{})
 
-	println("")
 	println("client: " + clientMessage.String())
 
 	callback := func(serverMessage mentalese.RelationSet) {
@@ -90,6 +87,7 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 	<-done
 
 	fmt.Println("done!")
+	println("")
 
 	return responseMessage
 }
@@ -152,13 +150,6 @@ func (system *System) Answer(input string) (string, *common.Options) {
 func (system *System) ResetSession() {
 	system.dialogContext.Initialize()
 	system.solverAsync.ResetSession()
-
-	system.persistSession()
-}
-
-func (system *System) persistSession() {
-	system.dialogContext.Store()
-	system.solverAsync.PersistSessionBases()
 }
 
 func (system *System) assert(relation mentalese.Relation) {
@@ -186,7 +177,6 @@ func (system *System) createOrUpdateProcess(input string) {
 		}
 	}
 
-	//system.createAnswerGoal(input)
 	system.processRunner.StartProcess([]mentalese.Relation{
 		mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
 			mentalese.NewTermString(input),

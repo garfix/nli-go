@@ -1,6 +1,5 @@
 # Todo
 
-- only the first clause is executed in the web blocks demo!
 - create a full specification of anaphora resolution and describe all problems 
 
 ## The programming language "mentalese"
@@ -8,13 +7,11 @@
 Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 
 - I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
-- functions calls for arguments
 - typed arguments
 - operators > = [H|T]
 - n-dimensional arrays as local variables
 - extend a module with another module
 * quant_foreach: add as second parameter the variable to which the ids must be bound
-* use relations as functions (with special role for the last parameter as the return value)
 
 ## Solutions
 
@@ -44,10 +41,6 @@ The technique of ellipsis can possibly play a role in gapping / long distance re
 - use parse tree as slot
 
 ## Performance
-
-- if the system is instantiated just to process messages, dont't install all language components; lazy load; specially for all grammars
-- on the other hand: maybe the rules take longer to parse, and they are always necessary
-- create a service? (a stay resident application that processes messages)
 
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched
 - would be nice to have `is_first()` and `is_last()`: a check if the current binding is the first / last of the active bindings; such a function takes both a single binding and all bindings as input

@@ -9,26 +9,18 @@ import (
 type InMemoryRuleBase struct {
 	KnowledgeBaseCore
 	originalRules mentalese.Rules
-	rules mentalese.Rules
-	writeList []string
-	storage *common.FileStorage
-	log   *common.SystemLog
-	changed bool
+	rules         mentalese.Rules
+	writeList     []string
+	log           *common.SystemLog
 }
 
 func NewInMemoryRuleBase(name string, rules mentalese.Rules, writeList []string, storage *common.FileStorage, log *common.SystemLog) *InMemoryRuleBase {
 	ruleBase := InMemoryRuleBase{
-		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
-		originalRules: rules,
-		rules: rules.Copy(),
-		writeList: writeList,
-		storage: storage,
-		log: log,
-		changed: false,
-	}
-
-	if storage != nil {
-		storage.Read(&ruleBase.rules)
+		KnowledgeBaseCore: KnowledgeBaseCore{Name: name},
+		originalRules:     rules,
+		rules:             rules.Copy(),
+		writeList:         writeList,
+		log:               log,
 	}
 
 	return &ruleBase
@@ -69,18 +61,8 @@ func (ruleBase *InMemoryRuleBase) GetRulesForRelation(goal mentalese.Relation, b
 
 func (ruleBase *InMemoryRuleBase) Assert(rule mentalese.Rule) {
 	ruleBase.rules = append(ruleBase.rules, rule)
-	ruleBase.changed = true
 }
 
 func (ruleBase *InMemoryRuleBase) ResetSession() {
 	ruleBase.rules = ruleBase.originalRules.Copy()
-	ruleBase.changed = true
-}
-
-func (ruleBase *InMemoryRuleBase) Persist() {
-	if ruleBase.storage != nil {
-		if ruleBase.changed {
-			ruleBase.storage.Write(ruleBase.rules)
-		}
-	}
 }

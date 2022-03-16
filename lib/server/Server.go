@@ -52,6 +52,8 @@ func (server *Server) Run() {
 			return
 		}
 
+		println(request.SessionId + ": " + request.Command)
+
 		switch request.Command {
 		case "send":
 			system := server.getSystem(request)
@@ -59,12 +61,11 @@ func (server *Server) Run() {
 			go client.handleMessage(system, request.Message)
 
 		case "reset":
-			system, found := server.systems[request.SessionId]
+			_, found := server.systems[request.SessionId]
 			if found {
-				system.ResetSession()
-				system.GetLog().Clear()
 				delete(server.systems, request.SessionId)
 			}
+			conn.Write([]byte("{\"result\": \"OK\"}"))
 			conn.Close()
 
 		case "query":

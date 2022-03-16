@@ -1,14 +1,14 @@
 <?php
 
-session_start();
-$sessionId = session_id();
-
 $action = $_REQUEST['action'];
 
 $app = 'blocks';
 $command = __DIR__ . '/../bin/nli';
 $configPath = __DIR__ . '/../resources/' . $app;
 $varDir = __DIR__ . '/../var';
+
+session_start();
+$sessionId = $app . "_" . session_id();
 
 if ($action == "state") {
     $query = "dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)";

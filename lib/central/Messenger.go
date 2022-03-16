@@ -109,3 +109,10 @@ func (i *Messenger) SetProcessSlot(slot string, value mentalese.Term) {
 func (i *Messenger) GetOutBindings() mentalese.BindingSet {
 	return i.outBindings
 }
+
+func (p *Messenger) SetMutableVariable(variable string, value mentalese.Term) {
+	scope := p.process.GetCurrentScope()
+	if scope != nil {
+		scope.Cursor.MutableVariableValues.Set(variable, value)
+	}
+}

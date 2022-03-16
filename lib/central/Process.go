@@ -151,7 +151,7 @@ func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) *Sta
 	if messenger.cursor.GetType() == mentalese.FrameTypePlain {
 		mutableBindings := outBindings.FilterMutableVariables()
 		for k, v := range mutableBindings.FilterVariablesByName(relationVariables).GetAll() {
-			p.SetMutableVariable(k, v)
+			messenger.SetMutableVariable(k, v)
 		}
 	}
 
@@ -202,13 +202,6 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, outBindings m
 	}
 
 	return outBindings
-}
-
-func (p *Process) SetMutableVariable(variable string, value mentalese.Term) {
-	scope := p.GetCurrentScope()
-	if scope != nil {
-		scope.Cursor.MutableVariableValues.Set(variable, value)
-	}
 }
 
 func (p *Process) GetCurrentScope() *StackFrame {

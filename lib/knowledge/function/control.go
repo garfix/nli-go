@@ -25,7 +25,7 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 	}
 
 	if relation.Arguments[0].IsMutableVariable() {
-		messenger.GetProcess().SetMutableVariable(variable, value)
+		messenger.SetMutableVariable(variable, value)
 	} else {
 		existingValue, found := binding.Get(variable)
 		if found {

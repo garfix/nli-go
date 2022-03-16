@@ -5,10 +5,9 @@ import (
 )
 
 type Process struct {
-	GoalId     string
-	Stack      []*StackFrame
-	Slots      map[string]mentalese.Term
-	WaitingFor mentalese.RelationSet
+	GoalId string
+	Stack  []*StackFrame
+	Slots  map[string]mentalese.Term
 }
 
 func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
@@ -17,17 +16,8 @@ func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},
-		Slots:      map[string]mentalese.Term{},
-		WaitingFor: nil,
+		Slots: map[string]mentalese.Term{},
 	}
-}
-
-func (p *Process) SetWaitingFor(set mentalese.RelationSet) {
-	p.WaitingFor = set
-}
-
-func (p *Process) GetWaitingFor() mentalese.RelationSet {
-	return p.WaitingFor
 }
 
 func (p *Process) PushFrame(frame *StackFrame) {

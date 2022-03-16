@@ -21,12 +21,14 @@ type System struct {
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
-	solverAsync           *central.ProblemSolver
+	solver                *central.ProblemSolver
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
 	processList           *central.ProcessList
 	processRunner         *central.ProcessRunner
+
+	waitingFor *mentalese.Relation
 }
 
 func (system *System) GetLog() *common.SystemLog {
@@ -160,14 +162,12 @@ func (system *System) createOrUpdateProcess(input string) {
 
 	// if there are open system-questions, the user input will be regarded as the response
 	// and its goal will be made the active goal
-	for _, process := range system.processList.GetProcesses() {
-		waitingFor := process.GetWaitingFor()
-		if waitingFor != nil {
-			waitingIsOver := waitingFor[0].Copy()
-			waitingIsOver.Arguments[2] = mentalese.NewTermString(input)
-			system.assert(waitingIsOver)
-			return
-		}
+	waitingFor := system.waitingFor
+	if waitingFor != nil {
+		waitingIsOver := waitingFor.Copy()
+		waitingIsOver.Arguments[2] = mentalese.NewTermString(input)
+		system.assert(waitingIsOver)
+		return
 	}
 
 	system.processRunner.StartProcess([]mentalese.Relation{
@@ -186,7 +186,10 @@ func (system *System) readAnswer(message mentalese.RelationSet) (string, *common
 	if firstRelation.Predicate == mentalese.PredicatePrint {
 		answer = firstRelation.Arguments[1].TermValue
 	}
+
+	system.waitingFor = nil
 	if firstRelation.Predicate == mentalese.PredicateUserSelect {
+		system.waitingFor = &firstRelation
 		for i, value := range firstRelation.Arguments[1].TermValueList.GetValues() {
 			options.AddOption(strconv.Itoa(i), value)
 		}

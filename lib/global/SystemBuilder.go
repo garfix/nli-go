@@ -100,9 +100,9 @@ func (builder *systemBuilder) build(system *System) {
 		system.answerer,
 		system.generator,
 		builder.log)
-	system.solverAsync.AddSolverFunctionBase(languageBase)
+	system.solver.AddSolverFunctionBase(languageBase)
 
-	system.solverAsync.Reindex()
+	system.solver.Reindex()
 }
 
 func (builder *systemBuilder) buildBasic(system *System) {
@@ -136,7 +136,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
-	system.solverAsync = solverAsync
+	system.solver = solverAsync
 	system.processRunner = central.NewProcessRunner(system.processList, solverAsync, builder.log)
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
@@ -611,7 +611,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solverAsync.AddFactBase(database)
+	system.solver.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
@@ -629,7 +629,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solverAsync.AddFactBase(database)
+	system.solver.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, baseDir string, applicationAlias string) {
@@ -658,7 +658,7 @@ func (builder *systemBuilder) buildMySqlDatabase(index index, system *System, ba
 		database.SetSharedIds(sharedIds)
 	}
 
-	system.solverAsync.AddFactBase(database)
+	system.solver.AddFactBase(database)
 }
 
 func (builder *systemBuilder) buildReadMap(index index, baseDir string) []mentalese.Rule {
@@ -806,7 +806,7 @@ func (builder systemBuilder) importRuleBaseFromPath(index index, system *System,
 		return
 	}
 
-	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
+	system.solver.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
 }
 
 func (builder systemBuilder) readWritelist(index index, baseDir string, applicationAlias string) ([]string, bool) {

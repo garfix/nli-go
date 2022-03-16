@@ -1,10 +1,10 @@
 package global
 
 type index struct {
-	Type     string
+	Type            string
 	Version         string
 	Uses            map[string]string
-	Locale			string
+	Locale          string
 	Read            []string
 	Write           []string
 	Text            string
@@ -14,7 +14,6 @@ type index struct {
 	Shared          []string
 	BaseUrl         string
 	DefaultGraphUri string
-	StorageType     string
 	Names           string
 	Cache           bool
 	Database        string
@@ -25,11 +24,11 @@ type index struct {
 	Predicates      string
 	Subsorts        string
 	TokenExpression string
-	Morphology		map[string]string
+	Morphology      map[string]string
 }
 
 type table struct {
-	Name string
+	Name    string
 	Columns []column
 }
 
@@ -40,7 +39,7 @@ type column struct {
 type Entities map[string]EntityInfo
 
 type EntityInfo struct {
-	Name string
+	Name    string
 	Knownby map[string]string
-	Entity string
+	Entity  string
 }

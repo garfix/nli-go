@@ -1,7 +1,6 @@
 package central
 
 import (
-	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
 
@@ -17,17 +16,16 @@ type DialogContext struct {
 }
 
 func NewDialogContext(
-	storage *common.FileStorage,
 	deicticCenter *DeicticCenter,
 	processList *ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
-	discourseEntities *mentalese.Binding,
 ) *DialogContext {
+	discourseEntities := mentalese.NewBinding()
 	dialogContext := &DialogContext{
 		DeicticCenter:     deicticCenter,
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
-		DiscourseEntities: discourseEntities,
+		DiscourseEntities: &discourseEntities,
 		ClauseList:        mentalese.NewClauseList(),
 	}
 	dialogContext.Initialize()

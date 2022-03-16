@@ -9,12 +9,12 @@ import (
 )
 
 type ProcessRunner struct {
-	solver *ProblemSolverAsync
+	solver *ProblemSolver
 	log    *common.SystemLog
 	list   *ProcessList
 }
 
-func NewProcessRunner(list *ProcessList, solver *ProblemSolverAsync, log *common.SystemLog) *ProcessRunner {
+func NewProcessRunner(list *ProcessList, solver *ProblemSolver, log *common.SystemLog) *ProcessRunner {
 	return &ProcessRunner{
 		solver: solver,
 		log:    log,

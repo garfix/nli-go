@@ -14,7 +14,7 @@ type InMemoryRuleBase struct {
 	log           *common.SystemLog
 }
 
-func NewInMemoryRuleBase(name string, rules mentalese.Rules, writeList []string, storage *common.FileStorage, log *common.SystemLog) *InMemoryRuleBase {
+func NewInMemoryRuleBase(name string, rules mentalese.Rules, writeList []string, log *common.SystemLog) *InMemoryRuleBase {
 	ruleBase := InMemoryRuleBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{Name: name},
 		originalRules:     rules,

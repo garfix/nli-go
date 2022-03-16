@@ -63,16 +63,15 @@ func TestDBPedia(t *testing.T) {
 	log := common.NewSystemLog()
 	//log.SetDebug(true)
 	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir()+"/../../resources/dbpedia", "dbpedia-demo", common.Dir()+"/../../var", log)
-
-	if !log.IsOk() {
-		t.Errorf(log.String())
-		return
-	}
 
 	for _, session := range tests {
 
-		system.ResetSession()
+		system := global.NewSystem(common.Dir()+"/../../resources/dbpedia", "dbpedia-demo", common.Dir()+"/../../var", log)
+
+		if !log.IsOk() {
+			t.Errorf(log.String())
+			return
+		}
 
 		for _, test := range session {
 

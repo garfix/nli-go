@@ -91,18 +91,16 @@ func TestBlocksWorld(t *testing.T) {
 
 	log := common.NewSystemLog()
 
-	//log.SetDebug(true)
-	//log.SetPrint(true)
-	system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
-
-	if !log.IsOk() {
-		t.Errorf(log.String())
-		return
-	}
-
-	system.ResetSession()
-
 	for _, session := range tests {
+
+		//log.SetDebug(true)
+		//log.SetPrint(true)
+		system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
+
+		if !log.IsOk() {
+			t.Errorf(log.String())
+			return
+		}
 
 		for _, test := range session {
 
@@ -134,7 +132,7 @@ func TestBlocksWorld(t *testing.T) {
 
 	//createGrid(system)
 
-	createImage(system)
+	//createImage(system)
 }
 
 func createGrid(system *global.System) {

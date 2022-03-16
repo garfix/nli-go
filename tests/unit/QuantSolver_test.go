@@ -103,20 +103,19 @@ func TestQuantSolver(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 
-	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, nil, log)
+	factBase1 := knowledge.NewInMemoryFactBase("memory", dbFacts, matcher, readMap, writeMap, log)
 	meta := mentalese.NewMeta()
 	variableGenerator := mentalese.NewVariableGenerator()
-	solver := central.NewProblemSolverAsync(central.NewRelationMatcher(log), variableGenerator, log)
+	solver := central.NewProblemSolver(central.NewRelationMatcher(log), variableGenerator, log)
 	solver.AddFactBase(factBase1)
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)
 
 	deicticCenter := central.NewDeicticCenter()
-	discourseEntities := mentalese.NewBinding()
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
-	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
+	dialogContext := central.NewDialogContext(deicticCenter, processList, variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 

@@ -17,7 +17,7 @@ func TestLocalVariables(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
 	variableGenerator := mentalese.NewVariableGenerator()
-	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
+	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)
@@ -31,15 +31,14 @@ func TestLocalVariables(t *testing.T) {
 		sibling(A, B) :- sibling(A, B);
 	`)
 	writeMap := []mentalese.Rule{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
-	discourseEntities := mentalese.NewBinding()
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
-	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
+	dialogContext := central.NewDialogContext(deicticCenter, processList, variableGenerator)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
@@ -82,7 +81,7 @@ func TestLocalVariables(t *testing.T) {
 		;
 	
 	`)
-	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
+	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
 	solver.Reindex()
 	runner := central.NewProcessRunner(processList, solver, log)

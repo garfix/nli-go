@@ -11,7 +11,7 @@ import (
 // nested query structures (quant, or)
 type SystemSolverFunctionBase struct {
 	knowledge.KnowledgeBaseCore
-	solverAsync   *central.ProblemSolverAsync
+	solverAsync   *central.ProblemSolver
 	dialogContext *central.DialogContext
 	meta          *mentalese.Meta
 	log           *common.SystemLog

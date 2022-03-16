@@ -114,14 +114,8 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	matcher.AddFunctionBase(systemFunctionBase)
 	system.matcher = matcher
 
-	path := builder.varDir + "/" + builder.getSystemName() + "/session"
-	storage := common.NewFileStorage(path, builder.sessionId, common.StorageSession, "session", system.log)
-
 	variableGenerator := mentalese.NewVariableGenerator()
 	system.variableGenerator = variableGenerator
-
-	discourseEntities := mentalese.NewBinding()
-	system.discourseEntities = &discourseEntities
 
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
@@ -130,7 +124,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	modifier := central.NewFactBaseModifier(builder.log, variableGenerator)
 
-	solverAsync := central.NewProblemSolverAsync(matcher, variableGenerator, builder.log)
+	solverAsync := central.NewProblemSolver(matcher, variableGenerator, builder.log)
 	solverAsync.AddFunctionBase(systemFunctionBase)
 	solverAsync.SetModifier(modifier)
 
@@ -138,7 +132,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(storage, deicticCenter, system.processList, variableGenerator, &discourseEntities)
+	system.dialogContext = central.NewDialogContext(deicticCenter, system.processList, variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 
@@ -610,15 +604,7 @@ func (builder *systemBuilder) buildInternalDatabase(index index, system *System,
 	readMap := builder.buildReadMap(index, baseDir)
 	writeMap := builder.buildWriteMap(index, baseDir)
 
-	storageType := index.StorageType
-
-	if storageType == "" {
-		storageType = common.StorageNone
-	}
-
-	path := builder.varDir + "/" + builder.getSystemName() + "/database"
-	storage := common.NewFileStorage(path, builder.sessionId, storageType, applicationAlias, system.log)
-	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, storage, builder.log)
+	database := knowledge.NewInMemoryFactBase(applicationAlias, facts, system.matcher, readMap, writeMap, builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {
@@ -820,16 +806,7 @@ func (builder systemBuilder) importRuleBaseFromPath(index index, system *System,
 		return
 	}
 
-	storageType := index.StorageType
-
-	if storageType == "" {
-		storageType = common.StorageNone
-	}
-
-	path := builder.varDir + "/" + builder.getSystemName() + "/rules"
-	storage := common.NewFileStorage(path, builder.sessionId, storageType, applicationAlias, system.log)
-
-	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, storage, builder.log))
+	system.solverAsync.AddRuleBase(knowledge.NewInMemoryRuleBase("rules", rules, writeList, builder.log))
 }
 
 func (builder systemBuilder) readWritelist(index index, baseDir string, applicationAlias string) ([]string, bool) {

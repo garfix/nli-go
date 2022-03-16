@@ -9,12 +9,12 @@ import (
 
 // uses SharedId() relations to create new sense() relations, that hold the SharedId's of the entities of different knowledge bases
 type NameResolver struct {
-	solverAsync *ProblemSolverAsync
+	solverAsync *ProblemSolver
 	meta        *mentalese.Meta
 	log         *common.SystemLog
 }
 
-func NewNameResolver(solverAsync *ProblemSolverAsync, meta *mentalese.Meta, log *common.SystemLog) *NameResolver {
+func NewNameResolver(solverAsync *ProblemSolver, meta *mentalese.Meta, log *common.SystemLog) *NameResolver {
 	return &NameResolver{
 		solverAsync: solverAsync,
 		meta:        meta,

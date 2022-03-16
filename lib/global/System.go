@@ -1,8 +1,5 @@
 package global
 
-// waiting on another thread
-// https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018
-
 import (
 	"fmt"
 	"nli-go/lib/central"
@@ -24,8 +21,7 @@ type System struct {
 	relationizer          *parse.Relationizer
 	matcher               *central.RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
-	discourseEntities     *mentalese.Binding
-	solverAsync           *central.ProblemSolverAsync
+	solverAsync           *central.ProblemSolver
 	answerer              *central.Answerer
 	generator             *generate.Generator
 	surfacer              *generate.SurfaceRepresentation
@@ -57,6 +53,8 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 
 	responseMessage := mentalese.RelationSet{}
 
+	// waiting on another thread
+	// https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018
 	done := make(chan struct{})
 
 	println("client: " + clientMessage.String())
@@ -145,11 +143,6 @@ func (system *System) Answer(input string) (string, *common.Options) {
 	}
 
 	return answer, options
-}
-
-func (system *System) ResetSession() {
-	system.dialogContext.Initialize()
-	system.solverAsync.ResetSession()
 }
 
 func (system *System) assert(relation mentalese.Relation) {

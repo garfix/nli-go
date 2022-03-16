@@ -9,7 +9,7 @@ import (
 
 const handleLinkChar = "-"
 
-type ProblemSolverAsync struct {
+type ProblemSolver struct {
 	factBases             []api.FactBase
 	ruleBases             []api.RuleBase
 	functionBases         []api.FunctionBase
@@ -24,8 +24,8 @@ type ProblemSolverAsync struct {
 	log                   *common.SystemLog
 }
 
-func NewProblemSolverAsync(matcher *RelationMatcher, variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *ProblemSolverAsync {
-	async := ProblemSolverAsync{
+func NewProblemSolver(matcher *RelationMatcher, variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *ProblemSolver {
+	solver := ProblemSolver{
 		factBases:             []api.FactBase{},
 		ruleBases:             []api.RuleBase{},
 		functionBases:         []api.FunctionBase{},
@@ -39,18 +39,18 @@ func NewProblemSolverAsync(matcher *RelationMatcher, variableGenerator *mentales
 		log:                   log,
 	}
 
-	return &async
+	return &solver
 }
 
-func (solver *ProblemSolverAsync) SetModifier(modifier *FactBaseModifier) {
+func (solver *ProblemSolver) SetModifier(modifier *FactBaseModifier) {
 	solver.modifier = modifier
 }
 
-func (solver *ProblemSolverAsync) AddFactBase(base api.FactBase) {
+func (solver *ProblemSolver) AddFactBase(base api.FactBase) {
 	solver.factBases = append(solver.factBases, base)
 }
 
-func (solver *ProblemSolverAsync) AddFunctionBase(base api.FunctionBase) {
+func (solver *ProblemSolver) AddFunctionBase(base api.FunctionBase) {
 	solver.functionBases = append(solver.functionBases, base)
 	functions := base.GetFunctions()
 	for predicate, function := range functions {
@@ -62,11 +62,11 @@ func (solver *ProblemSolverAsync) AddFunctionBase(base api.FunctionBase) {
 	}
 }
 
-func (solver *ProblemSolverAsync) AddRuleBase(base api.RuleBase) {
+func (solver *ProblemSolver) AddRuleBase(base api.RuleBase) {
 	solver.ruleBases = append(solver.ruleBases, base)
 }
 
-func (solver *ProblemSolverAsync) AddMultipleBindingBase(base api.MultiBindingBase) {
+func (solver *ProblemSolver) AddMultipleBindingBase(base api.MultiBindingBase) {
 	solver.multiBindingBases = append(solver.multiBindingBases, base)
 	functions := base.GetFunctions()
 	for predicate, function := range functions {
@@ -78,85 +78,68 @@ func (solver *ProblemSolverAsync) AddMultipleBindingBase(base api.MultiBindingBa
 	}
 }
 
-func (solver *ProblemSolverAsync) AddSolverFunctionBase(base api.SolverFunctionBase) {
+func (solver *ProblemSolver) AddSolverFunctionBase(base api.SolverFunctionBase) {
 	solver.solverFunctionBases = append(solver.solverFunctionBases, base)
 }
 
-func (solver *ProblemSolverAsync) ResetSession() {
-	for _, factBase := range solver.factBases {
-		switch v := factBase.(type) {
-		case api.SessionBasedFactBase:
-			v.ResetSession()
-		}
-	}
-	for _, ruleBase := range solver.ruleBases {
-		switch v := ruleBase.(type) {
-		case api.SessionBasedFactBase:
-			v.ResetSession()
-		}
-	}
-	// relations are indexed by instance; so we need to reindex at least these
-	solver.Reindex()
+func (solver *ProblemSolver) Reindex() {
+
+	solver.relationHandlers = map[string][]api.RelationHandler{}
+
+	solver.createFactBaseHandlers()
+	solver.createRuleHandlers()
+	solver.createSimpleFunctionBaseHandlers()
+	solver.createSolverFunctionBaseHandlers()
+	solver.createFactBaseModificationHandlers()
+	solver.createRuleBaseModificationHandlers()
 }
 
-func (s *ProblemSolverAsync) Reindex() {
-
-	s.relationHandlers = map[string][]api.RelationHandler{}
-
-	s.createFactBaseHandlers()
-	s.createRuleHandlers()
-	s.createSimpleFunctionBaseHandlers()
-	s.createSolverFunctionBaseHandlers()
-	s.createFactBaseModificationHandlers()
-	s.createRuleBaseModificationHandlers()
-}
-
-func (s *ProblemSolverAsync) addRelationHandler(predicate string, handler api.RelationHandler) {
-	_, found := s.relationHandlers[predicate]
+func (solver *ProblemSolver) addRelationHandler(predicate string, handler api.RelationHandler) {
+	_, found := solver.relationHandlers[predicate]
 	if !found {
-		s.relationHandlers[predicate] = []api.RelationHandler{}
+		solver.relationHandlers[predicate] = []api.RelationHandler{}
 	}
-	s.relationHandlers[predicate] = append(s.relationHandlers[predicate], handler)
+	solver.relationHandlers[predicate] = append(solver.relationHandlers[predicate], handler)
 }
 
-func (s *ProblemSolverAsync) createFactBaseHandlers() {
-	for _, base := range s.factBases {
+func (solver *ProblemSolver) createFactBaseHandlers() {
+	for _, base := range solver.factBases {
 		mappings := base.GetReadMappings()
 		for _, mapping := range mappings {
-			s.addRelationHandler(mapping.Goal.Predicate, s.createFactBaseClosure(base, mapping))
+			solver.addRelationHandler(mapping.Goal.Predicate, solver.createFactBaseClosure(base, mapping))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createFactBaseClosure(base api.FactBase, mapping mentalese.Rule) api.RelationHandler {
+func (solver *ProblemSolver) createFactBaseClosure(base api.FactBase, mapping mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-		return s.findFactsSingleMapping(base, mapping, relation, binding)
+		return solver.findFactsSingleMapping(base, mapping, relation, binding)
 	}
 }
 
-func (s *ProblemSolverAsync) createRuleHandlers() {
-	for _, base := range s.ruleBases {
+func (solver *ProblemSolver) createRuleHandlers() {
+	for _, base := range solver.ruleBases {
 		for _, rule := range base.GetRules() {
-			s.addRelationHandler(rule.Goal.Predicate, s.createRuleClosure(rule))
+			solver.addRelationHandler(rule.Goal.Predicate, solver.createRuleClosure(rule))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.RelationHandler {
+func (solver *ProblemSolver) createRuleClosure(rule mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-		_, match := s.matcher.MatchTwoRelations(relation, rule.Goal, binding)
+		_, match := solver.matcher.MatchTwoRelations(relation, rule.Goal, binding)
 		if !match {
 			return mentalese.NewBindingSet()
 		}
 
-		mapping, mappingOk := s.matcher.MatchTwoRelations(rule.Goal, relation, mentalese.NewBinding())
+		mapping, mappingOk := solver.matcher.MatchTwoRelations(rule.Goal, relation, mentalese.NewBinding())
 		// todo: necessary?
 		if !mappingOk {
 			return mentalese.NewBindingSet()
 		}
 
-		mappedPattern := rule.Pattern.ConvertVariables(mapping, s.variableGenerator)
+		mappedPattern := rule.Pattern.ConvertVariables(mapping, solver.variableGenerator)
 
 		cursor := messenger.GetCursor()
 		cursor.SetType(mentalese.FrameTypeScope)
@@ -167,15 +150,15 @@ func (s *ProblemSolverAsync) createRuleClosure(rule mentalese.Rule) api.Relation
 	}
 }
 
-func (s *ProblemSolverAsync) createSimpleFunctionBaseHandlers() {
-	for _, base := range s.functionBases {
+func (solver *ProblemSolver) createSimpleFunctionBaseHandlers() {
+	for _, base := range solver.functionBases {
 		for predicate, function := range base.GetFunctions() {
-			s.addRelationHandler(predicate, s.createSimpleFunctionClosure(function))
+			solver.addRelationHandler(predicate, solver.createSimpleFunctionClosure(function))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createSimpleFunctionClosure(function api.SimpleFunction) api.RelationHandler {
+func (solver *ProblemSolver) createSimpleFunctionClosure(function api.SimpleFunction) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		result, success := function(messenger, relation, binding)
 		if success {
@@ -186,49 +169,49 @@ func (s *ProblemSolverAsync) createSimpleFunctionClosure(function api.SimpleFunc
 	}
 }
 
-func (s *ProblemSolverAsync) createSolverFunctionBaseHandlers() {
-	for _, base := range s.solverFunctionBases {
+func (solver *ProblemSolver) createSolverFunctionBaseHandlers() {
+	for _, base := range solver.solverFunctionBases {
 		for predicate, function := range base.GetFunctions() {
-			s.addRelationHandler(predicate, s.createSolverFunctionClosure(function))
+			solver.addRelationHandler(predicate, solver.createSolverFunctionClosure(function))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createSolverFunctionClosure(function api.SolverFunction) api.RelationHandler {
+func (solver *ProblemSolver) createSolverFunctionClosure(function api.SolverFunction) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		return function(messenger, relation, binding)
 	}
 }
 
-func (s *ProblemSolverAsync) createFactBaseModificationHandlers() {
-	for _, base := range s.factBases {
+func (solver *ProblemSolver) createFactBaseModificationHandlers() {
+	for _, base := range solver.factBases {
 
 		for _, mapping := range base.GetWriteMappings() {
-			s.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+mapping.Goal.Predicate, s.createAssertFactClosure(base))
-			s.addRelationHandler(mentalese.PredicateRetract+handleLinkChar+mapping.Goal.Predicate, s.createRetractFactClosure(base))
+			solver.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+mapping.Goal.Predicate, solver.createAssertFactClosure(base))
+			solver.addRelationHandler(mentalese.PredicateRetract+handleLinkChar+mapping.Goal.Predicate, solver.createRetractFactClosure(base))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.RelationHandler {
+func (solver *ProblemSolver) createAssertFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-		if s.modifier == nil {
+		if solver.modifier == nil {
 			return mentalese.NewBindingSet()
 		}
 		if relation.Arguments[0].IsRelationSet() {
-			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
+			localIdBinding := solver.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
 			singleRelation := boundRelation.Arguments[0].TermValueRelationSet[0]
 			if singleRelation.IsBound() {
-				found := s.modifier.Assert(singleRelation, base)
+				found := solver.modifier.Assert(singleRelation, base)
 				if !found {
 					return mentalese.NewBindingSet()
 				}
 			} else {
-				s.log.AddError("Cannot assert unbound relation " + singleRelation.String())
+				solver.log.AddError("Cannot assert unbound relation " + singleRelation.String())
 				return mentalese.NewBindingSet()
 			}
-			newBinding := s.replaceLocalIdBySharedId(binding, base)
+			newBinding := solver.replaceLocalIdBySharedId(binding, base)
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			return mentalese.NewBindingSet()
@@ -236,19 +219,19 @@ func (s *ProblemSolverAsync) createAssertFactClosure(base api.FactBase) api.Rela
 	}
 }
 
-func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.RelationHandler {
+func (solver *ProblemSolver) createRetractFactClosure(base api.FactBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-		if s.modifier == nil {
+		if solver.modifier == nil {
 			return mentalese.NewBindingSet()
 		}
 		if relation.Arguments[0].IsRelationSet() {
-			localIdBinding := s.replaceSharedIdsByLocalIds(binding, base)
+			localIdBinding := solver.replaceSharedIdsByLocalIds(binding, base)
 			boundRelation := relation.BindSingle(localIdBinding)
-			found := s.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], base)
+			found := solver.modifier.Retract(boundRelation.Arguments[0].TermValueRelationSet[0], base)
 			if !found {
 				return mentalese.NewBindingSet()
 			}
-			newBinding := s.replaceLocalIdBySharedId(binding, base)
+			newBinding := solver.replaceLocalIdBySharedId(binding, base)
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			return mentalese.NewBindingSet()
@@ -256,21 +239,21 @@ func (s *ProblemSolverAsync) createRetractFactClosure(base api.FactBase) api.Rel
 	}
 }
 
-func (s *ProblemSolverAsync) createRuleBaseModificationHandlers() {
+func (solver *ProblemSolver) createRuleBaseModificationHandlers() {
 
-	for _, base := range s.ruleBases {
+	for _, base := range solver.ruleBases {
 		for _, predicate := range base.GetWritablePredicates() {
-			s.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+predicate, s.createAssertRuleClosure(base))
+			solver.addRelationHandler(mentalese.PredicateAssert+handleLinkChar+predicate, solver.createAssertRuleClosure(base))
 		}
 	}
 }
 
-func (s *ProblemSolverAsync) createAssertRuleClosure(base api.RuleBase) api.RelationHandler {
+func (solver *ProblemSolver) createAssertRuleClosure(base api.RuleBase) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 		if relation.Arguments[0].IsRule() {
 			rule := relation.Arguments[0].TermValueRule.BindSingle(binding)
 			base.Assert(rule)
-			s.Reindex()
+			solver.Reindex()
 			return mentalese.InitBindingSet(binding)
 		} else {
 			return mentalese.NewBindingSet()
@@ -278,7 +261,7 @@ func (s *ProblemSolverAsync) createAssertRuleClosure(base api.RuleBase) api.Rela
 	}
 }
 
-func (s *ProblemSolverAsync) GetHandlers(relation mentalese.Relation) []api.RelationHandler {
+func (solver *ProblemSolver) GetHandlers(relation mentalese.Relation) []api.RelationHandler {
 
 	handle := relation.Predicate
 
@@ -291,7 +274,7 @@ func (s *ProblemSolverAsync) GetHandlers(relation mentalese.Relation) []api.Rela
 		}
 	}
 
-	handlers, found := s.relationHandlers[handle]
+	handlers, found := solver.relationHandlers[handle]
 
 	if found {
 		return handlers
@@ -300,12 +283,12 @@ func (s *ProblemSolverAsync) GetHandlers(relation mentalese.Relation) []api.Rela
 	}
 }
 
-func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *Messenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
+func (solver *ProblemSolver) SolveMultipleBindings(messenger *Messenger, relation mentalese.Relation, bindings mentalese.BindingSet) (mentalese.BindingSet, bool) {
 
 	newBindings := mentalese.NewBindingSet()
 	multiFound := false
 
-	functions, found := s.multiBindingFunctions[relation.Predicate]
+	functions, found := solver.multiBindingFunctions[relation.Predicate]
 	if found {
 		for _, function := range functions {
 			newBindings = function(messenger, relation, bindings)
@@ -318,7 +301,7 @@ func (s *ProblemSolverAsync) SolveMultipleBindings(messenger *Messenger, relatio
 }
 
 // Creates bindings for the free variables in 'relations', by resolving them in factBase
-func (solver *ProblemSolverAsync) FindFacts(factBase api.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (solver *ProblemSolver) FindFacts(factBase api.FactBase, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	dbBindings := mentalese.NewBindingSet()
 
@@ -330,7 +313,7 @@ func (solver *ProblemSolverAsync) FindFacts(factBase api.FactBase, relation ment
 	return dbBindings
 }
 
-func (solver *ProblemSolverAsync) findFactsSingleMapping(factBase api.FactBase, ds2db mentalese.Rule, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (solver *ProblemSolver) findFactsSingleMapping(factBase api.FactBase, ds2db mentalese.Rule, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	dbBindings := mentalese.NewBindingSet()
 
@@ -363,7 +346,7 @@ func (solver *ProblemSolverAsync) findFactsSingleMapping(factBase api.FactBase, 
 	return dbBindings
 }
 
-func (solver *ProblemSolverAsync) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase api.FactBase) mentalese.BindingSet {
+func (solver *ProblemSolver) solveMultipleRelationSingleFactBase(relations []mentalese.Relation, binding mentalese.Binding, factBase api.FactBase) mentalese.BindingSet {
 
 	sequenceBindings := mentalese.InitBindingSet(binding)
 
@@ -374,7 +357,7 @@ func (solver *ProblemSolverAsync) solveMultipleRelationSingleFactBase(relations 
 	return sequenceBindings
 }
 
-func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
+func (solver *ProblemSolver) solveSingleRelationSingleFactBase(relation mentalese.Relation, bindings mentalese.BindingSet, factBase api.FactBase) mentalese.BindingSet {
 
 	// todo: notice cannot handle second order predicates, since no handler
 
@@ -407,7 +390,7 @@ func (solver *ProblemSolverAsync) solveSingleRelationSingleFactBase(relation men
 	return relationBindings
 }
 
-func (solver *ProblemSolverAsync) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
+func (solver *ProblemSolver) replaceSharedIdsByLocalIds(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.NewBinding()
 
@@ -433,7 +416,7 @@ func (solver *ProblemSolverAsync) replaceSharedIdsByLocalIds(binding mentalese.B
 	return newBinding
 }
 
-func (solver *ProblemSolverAsync) replaceLocalIdBySharedId(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
+func (solver *ProblemSolver) replaceLocalIdBySharedId(binding mentalese.Binding, factBase api.FactBase) mentalese.Binding {
 
 	newBinding := mentalese.NewBinding()
 

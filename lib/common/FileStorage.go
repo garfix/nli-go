@@ -1,5 +1,7 @@
 package common
 
+// Not in use
+
 import (
 	"encoding/json"
 	"os"
@@ -14,7 +16,6 @@ type FileStorage struct {
 }
 
 type StorableObject interface {
-
 }
 
 const StorageNone = "none"

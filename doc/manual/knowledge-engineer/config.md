@@ -196,11 +196,8 @@ I will continue with the different types of database modules.
 
     type: db/internal 
     facts: [ relationships.relation ]
-    storagetype: session
 
 `facts` holds the filenames of the files that hold relations that form the internal database.
-
-`storagetype` (default: none) can be set to "session" or "global" to persist the data to a file, each time the data changes. "session" stores the data in the session, and it is available next time the system starts within this session. "global" data will be shared by all sessions. By default, the internal data is not stored to file.
 
 #### mysql
  

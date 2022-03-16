@@ -41,8 +41,8 @@ func TestFactBase(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 	variableGenerator := mentalese.NewVariableGenerator()
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
-	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
+	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 
 	tests := []struct {
 		input         string

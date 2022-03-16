@@ -102,8 +102,8 @@ func main() {
 			if *resetApp == "" || *resetSes == "" {
 				showUsage()
 			}
-			system := buildSystem(log, workingDir, *resetApp, *resetSes, *resetOut)
-			resetSession(system)
+			buildSystem(log, workingDir, *resetApp, *resetSes, *resetOut)
+			//resetSession(system)
 		default:
 			println("Unknown command: " + os.Args[1])
 		}
@@ -253,6 +253,3 @@ func createResponseString(log *common.SystemLog, answer string, options *common.
 	return response
 }
 
-func resetSession(system *global.System) {
-	system.ResetSession()
-}

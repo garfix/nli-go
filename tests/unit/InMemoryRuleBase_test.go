@@ -17,7 +17,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
 	variableGenerator := mentalese.NewVariableGenerator()
-	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
+	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 	facts := parser.CreateRelationSet(`
 		parent(john, jack)
 		parent(james, jack)
@@ -34,15 +34,14 @@ func TestInMemoryRuleBase(t *testing.T) {
 		age(X, Y) :- age(X, Y);
 	`)
 	writeMap := []mentalese.Rule{}
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
 	deicticCenter := central.NewDeicticCenter()
-	discourseEntities := mentalese.NewBinding()
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
-	dialogContext := central.NewDialogContext(nil, deicticCenter, processList, variableGenerator, &discourseEntities)
+	dialogContext := central.NewDialogContext(deicticCenter, processList, variableGenerator)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	runner := central.NewProcessRunner(processList, solver, log)
@@ -51,7 +50,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		-sibling(A, B) :- [A == B];
 		older(A, B) :- [age(A, rv) > age(B, rv)];
 	`)
-	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, nil, log)
+	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
 	solver.Reindex()
 

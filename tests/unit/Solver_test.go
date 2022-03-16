@@ -41,10 +41,10 @@ func TestSolver(t *testing.T) {
 
 	matcher := central.NewRelationMatcher(log)
 
-	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, nil, log)
+	factBase := knowledge.NewInMemoryFactBase("memory", facts, matcher, readMap, writeMap, log)
 
 	variableGenerator := mentalese.NewVariableGenerator()
-	solver := central.NewProblemSolverAsync(matcher, variableGenerator, log)
+	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 	solver.AddFactBase(factBase)
 	solver.Reindex()
 	messageManager := central.NewMessageManager()
@@ -131,10 +131,10 @@ func TestSolver(t *testing.T) {
 		link(A, B) :- link(A, B);
 	`)
 
-	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, nil, log)
-	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, []string{}, nil, log)
+	factBase2 := knowledge.NewInMemoryFactBase("memory-1", facts2, matcher, readMap2, writeMap, log)
+	ruleBase2 := knowledge.NewInMemoryRuleBase("memory-2", rules2, []string{}, log)
 
-	solver2 := central.NewProblemSolverAsync(matcher, variableGenerator, log)
+	solver2 := central.NewProblemSolver(matcher, variableGenerator, log)
 	solver2.AddFactBase(factBase2)
 	solver2.AddRuleBase(ruleBase2)
 	solver2.Reindex()

@@ -20,7 +20,7 @@ type InMemoryFactBase struct {
 	mutex         sync.Mutex
 }
 
-func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, storage *common.FileStorage, log *common.SystemLog) *InMemoryFactBase {
+func NewInMemoryFactBase(name string, facts mentalese.RelationSet, matcher *central.RelationMatcher, readMap []mentalese.Rule, writeMap []mentalese.Rule, log *common.SystemLog) *InMemoryFactBase {
 	factBase := InMemoryFactBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{Name: name},
 		originalFacts:     facts,

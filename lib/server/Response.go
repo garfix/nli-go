@@ -7,5 +7,11 @@ type Response struct {
 	ErrorLines  []string
 	Productions []string
 	Message     mentalese.RelationSet
-	Bindings    mentalese.BindingSet
+}
+
+type ResponseAnswer struct {
+	Success     bool
+	ErrorLines  []string
+	Productions []string
+	Answer      string
 }

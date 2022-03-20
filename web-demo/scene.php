@@ -3,9 +3,9 @@
 $action = $_REQUEST['action'];
 
 $app = 'blocks';
-$command = __DIR__ . '/../bin/nli';
-$configPath = __DIR__ . '/../resources/' . $app;
-$varDir = __DIR__ . '/../var';
+$command = realpath(__DIR__ . '/../bin/nli');
+$configPath = realpath(__DIR__ . '/../resources/' . $app);
+$varDir = realpath(__DIR__ . '/../var');
 
 session_start();
 $sessionId = $app . "_" . session_id();
@@ -32,6 +32,5 @@ if ($action == "state") {
 }
 
 exec($fullCommand, $output);
-
 header('content-type: application/json');
 echo implode("\n", $output);

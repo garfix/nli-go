@@ -11,6 +11,8 @@ import (
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"path/filepath"
+	"runtime/debug"
+	"strings"
 )
 
 type Server struct {
@@ -38,45 +40,94 @@ func (server *Server) Run() {
 			log.Fatal(err)
 		}
 
-		reader := bufio.NewReader(conn)
-		requestJson, err := reader.ReadBytes('\n')
-		if err != nil {
-			conn.Close()
-			return
+		server.handleRequest(conn)
+	}
+}
+
+func (server *Server) handleRequest(conn net.Conn) {
+
+	if r := recover(); r != nil {
+		errorString := fmt.Sprintf("%s\n%s", r, debug.Stack())
+		response := Response{
+			Success:    false,
+			ErrorLines: strings.Split(errorString, "\n"),
 		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
+		return
+	}
 
-		request := Request{}
-		err = json.Unmarshal(requestJson, &request)
-		if err != nil {
-			conn.Close()
-			return
+	reader := bufio.NewReader(conn)
+	requestJson, err := reader.ReadBytes('\n')
+	if err != nil {
+		response := Response{
+			Success:    false,
+			ErrorLines: []string{err.Error()},
 		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
+		return
+	}
 
-		println(request.SessionId + ": " + request.Command)
-
-		switch request.Command {
-		case "send":
-			system := server.getSystem(request)
-			client := &RequestHandler{conn: conn}
-			go client.handleMessage(system, request.Message)
-
-		case "reset":
-			_, found := server.systems[request.SessionId]
-			if found {
-				delete(server.systems, request.SessionId)
-			}
-			conn.Write([]byte("{\"result\": \"OK\"}"))
-			conn.Close()
-
-		case "query":
-			system := server.getSystem(request)
-			client := &RequestHandler{conn: conn}
-			go client.handleQuery(system, request.Query)
-
-		default:
-			conn.Write([]byte("Unknown command: " + request.Command))
-			conn.Close()
+	request := Request{}
+	err = json.Unmarshal(requestJson, &request)
+	if err != nil {
+		response := Response{
+			Success:    false,
+			ErrorLines: []string{"Request could not be parsed"},
 		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
+		return
+	}
+
+	fmt.Printf("%s\n", request)
+
+	system := server.getSystem(request)
+	if !system.GetLog().IsOk() {
+		response := Response{
+			Success:    false,
+			ErrorLines: system.GetLog().GetErrors(),
+		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
+		return
+	}
+
+	switch request.Command {
+	case "send":
+		client := &RequestHandler{conn: conn}
+		go client.handleSend(system, request.Message)
+
+	case "reset":
+		delete(server.systems, request.SessionId)
+		response := Response{
+			Success: true,
+		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
+
+	case "query":
+		client := &RequestHandler{conn: conn}
+		go client.handleQuery(system, request.Query)
+
+	case "answer":
+		client := &RequestHandler{conn: conn}
+		go client.handleAnswer(system, request.Query)
+
+	default:
+		response := Response{
+			Success:    false,
+			ErrorLines: []string{"Unknown command: " + request.Command},
+		}
+		responseJSON, _ := json.Marshal(response)
+		conn.Write(responseJSON)
+		conn.Close()
 	}
 }
 

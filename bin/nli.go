@@ -5,42 +5,25 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"net"
 	"nli-go/lib/common"
-	"nli-go/lib/global"
-	"nli-go/lib/mentalese"
+	"nli-go/lib/server"
 	"os"
-	"path/filepath"
-	"strconv"
 	"strings"
 )
-
-type Result struct {
-	Success      bool
-	ErrorLines   []string
-	Productions  []string
-	Answer       string
-	OptionKeys   []string
-	OptionValues []string
-}
-
-type Result2 struct {
-	Success     bool
-	ErrorLines  []string
-	Productions []string
-	Message     mentalese.RelationSet
-}
 
 func main() {
 
 	const optApplication = "a"
 	const optSession = "s"
-	const optReturnType = "r"
 	const optOutput = "o"
+	const optPort = "p"
 
 	const txtApplication = "Directory of the application (example: resources/blocks)"
 	const txtSession = "A session identifier of your choice"
-	const txtReturnType = "Return type (text|json)"
 	const txtOutput = "Directory to store variable working data"
+	const txtPort = "Server port"
 
 	workingDir, _ := os.Getwd()
 	defaultOutputDir := workingDir + "/var"
@@ -48,23 +31,26 @@ func main() {
 	answerCmd := flag.NewFlagSet("answer", flag.ExitOnError)
 	answerApp := answerCmd.String(optApplication, "", txtApplication)
 	answerSes := answerCmd.String(optSession, "", txtSession)
-	answerRet := answerCmd.String(optReturnType, "text", txtReturnType)
 	answerOut := answerCmd.String(optOutput, defaultOutputDir, txtOutput)
+	answerPort := answerCmd.String(optPort, "3333", txtPort)
 
 	interCmd := flag.NewFlagSet("inter", flag.ExitOnError)
 	interApp := interCmd.String(optApplication, "", txtApplication)
 	interSes := interCmd.String(optSession, "", txtSession)
 	interOut := interCmd.String(optOutput, defaultOutputDir, txtOutput)
+	interPort := interCmd.String(optPort, "3333", txtPort)
 
 	resetCmd := flag.NewFlagSet("reset", flag.ExitOnError)
 	resetApp := resetCmd.String(optApplication, "", txtApplication)
 	resetSes := resetCmd.String(optSession, "", txtSession)
 	resetOut := resetCmd.String(optOutput, defaultOutputDir, txtOutput)
+	resetPort := resetCmd.String(optPort, "3333", txtPort)
 
 	queryCmd := flag.NewFlagSet("query", flag.ExitOnError)
 	queryApp := queryCmd.String(optApplication, "", txtApplication)
 	querySes := queryCmd.String(optSession, "", txtSession)
 	queryOut := queryCmd.String(optOutput, defaultOutputDir, txtOutput)
+	queryPort := queryCmd.String(optPort, "3333", txtPort)
 
 	flag.Parse()
 
@@ -72,119 +58,129 @@ func main() {
 		showUsage()
 	}
 
-	log := common.NewSystemLog()
-
-	if log.IsOk() {
-		switch os.Args[1] {
-		case "answer":
-			answerCmd.Parse(os.Args[2:])
-			if *answerApp == "" || answerCmd.Arg(0) == "" {
-				showUsage()
-			}
-			system := buildSystem(log, workingDir, *answerApp, *answerSes, *answerOut)
-			answer(system, log, answerCmd.Arg(0), *answerRet)
-		case "inter":
-			interCmd.Parse(os.Args[2:])
-			if *interApp == "" {
-				showUsage()
-			}
-			system := buildSystem(log, workingDir, *interApp, *interSes, *interOut)
-			goInteractive(system, log, *interApp)
-		case "query":
-			queryCmd.Parse(os.Args[2:])
-			if *queryApp == "" || queryCmd.Arg(0) == "" {
-				showUsage()
-			}
-			system := buildSystem(log, workingDir, *queryApp, *querySes, *queryOut)
-			performQuery(system, queryCmd.Arg(0))
-		case "reset":
-			resetCmd.Parse(os.Args[2:])
-			if *resetApp == "" || *resetSes == "" {
-				showUsage()
-			}
-			buildSystem(log, workingDir, *resetApp, *resetSes, *resetOut)
-			//resetSession(system)
-		default:
-			println("Unknown command: " + os.Args[1])
+	switch os.Args[1] {
+	case "answer":
+		answerCmd.Parse(os.Args[2:])
+		if *answerApp == "" || answerCmd.Arg(0) == "" {
+			showUsage()
 		}
-	} else {
-		for _, error := range log.GetErrors() {
-			fmt.Println(error)
+		answer(*answerApp, *answerSes, *answerOut, *answerPort, answerCmd.Arg(0))
+	case "inter":
+		interCmd.Parse(os.Args[2:])
+		if *interApp == "" {
+			showUsage()
 		}
-	}
-
-	if !log.IsOk() {
-		os.Exit(1)
+		goInteractive(*interApp, *interSes, *interOut, *interPort)
+	case "query":
+		queryCmd.Parse(os.Args[2:])
+		if *queryApp == "" || queryCmd.Arg(0) == "" {
+			showUsage()
+		}
+		performQuery(*queryApp, *querySes, *queryOut, *queryPort, queryCmd.Arg(0))
+	case "reset":
+		resetCmd.Parse(os.Args[2:])
+		if *resetApp == "" || *resetSes == "" {
+			showUsage()
+		}
+		resetSession(*resetApp, *resetSes, *resetOut, *resetPort)
+	default:
+		println("Unknown command: " + os.Args[1])
 	}
 }
 
 func showUsage() {
-	fmt.Println("NLI-GO")
+	fmt.Println("NLI-GO client")
 	fmt.Println("")
 	fmt.Println("Answer a single question/command:")
-	fmt.Println("    bin/nli answer <options -a,-s,-r,-o> \"Does the green block support a pyramid?\"")
-	fmt.Println("")
-	fmt.Println("Reset dialog context:")
-	fmt.Println("    bin/nli reset <options -a,-s,-o>")
+	fmt.Println("    bin/nli answer <options -a,-s,-o,-p> \"Does the green block support a pyramid?\"")
 	fmt.Println("")
 	fmt.Println("Start an interactive session:")
-	fmt.Println("    bin/nli inter <options -a,-s,-o>")
+	fmt.Println("    bin/nli inter <options -a,-s,-o,-p>")
 	fmt.Println("")
 	fmt.Println("Low level query:")
-	fmt.Println("    bin/nli query <options -a,-s,-o> \"dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)\"")
+	fmt.Println("    bin/nli query <options -a,-s,-o,-p> \"dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)\"")
 	fmt.Println("")
-	fmt.Println("Send a relation set message, and receive a response:")
-	fmt.Println("    bin/nli send <options -a,-s,-o> \"go:assert(dom:at('block:red', 100, 100, 0))\"")
+	fmt.Println("Reset dialog context:")
+	fmt.Println("    bin/nli reset <options -a,-s,-o,-p>")
 	fmt.Println("")
 	fmt.Println("Options:")
 	fmt.Println("  -a </path/to/application>")
 	fmt.Println("  -s <session_id>")
-	fmt.Println("  -r <JSON|text>")
 	fmt.Println("  -o </path/to/generated/output>")
+	fmt.Println("  -p <server_port>")
 	fmt.Println("")
 	os.Exit(1)
 }
 
-func buildSystem(log *common.SystemLog, workingDir string, applicationPath string, sessionId string, outputDir string) *global.System {
-	absApplicationPath := common.AbsolutePath(workingDir, applicationPath)
+func answer(appDir string, sessionId string, workDir string, port string, sentence string) {
 
-	outputDir, _ = filepath.Abs(outputDir)
-	outputDir = filepath.Clean(outputDir)
+	cwd, _ := os.Getwd()
+	request := server.Request{
+		SessionId:      sessionId,
+		ApplicationDir: common.AbsolutePath(cwd, appDir),
+		WorkDir:        common.AbsolutePath(cwd, workDir),
+		Command:        "answer",
+		Query:          sentence,
+	}
 
-	system := global.NewSystem(absApplicationPath, sessionId, outputDir, log)
+	requestString, _ := json.Marshal(request)
 
-	return system
+	connection, err := net.Dial("tcp", "127.0.0.1:"+port)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Fprintf(connection, string(requestString)+"\n")
+
+	resultString, _ := ioutil.ReadAll(connection)
+
+	result := server.ResponseAnswer{}
+	json.Unmarshal(resultString, &result)
+
+	if result.Success {
+		println(result.Answer)
+	} else {
+		println(strings.Join(result.ErrorLines, "\n"))
+	}
 }
 
-func performQuery(system *global.System, query string) {
+func performQuery(appDir string, sessionId string, workDir string, port string, query string) {
 
-	// the actual system call
-	bindings := system.Query(query)
+	cwd, _ := os.Getwd()
+	request := server.Request{
+		SessionId:      sessionId,
+		ApplicationDir: common.AbsolutePath(cwd, appDir),
+		WorkDir:        common.AbsolutePath(cwd, workDir),
+		Command:        "query",
+		Query:          query,
+	}
 
-	response := bindings.ToJson() + "\n"
+	requestString, _ := json.Marshal(request)
 
-	fmt.Printf(response)
+	connection, err := net.Dial("tcp", "127.0.0.1:"+port)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Fprintf(connection, string(requestString)+"\n")
+
+	resultString, err2 := ioutil.ReadAll(connection)
+	if err2 != nil {
+		println(err2.Error())
+		os.Exit(1)
+	}
+
+	println(string(resultString))
 }
 
-func answer(system *global.System, log *common.SystemLog, sentence string, returnType string) (string, *common.Options) {
-
-	// the actual system call
-	answer, options := system.Answer(sentence)
-
-	response := createResponseString(log, answer, options, returnType)
-
-	fmt.Printf(response)
-
-	return answer, options
-}
-
-func goInteractive(system *global.System, log *common.SystemLog, configPath string) {
+func goInteractive(appDir string, sessionId string, workDir string, port string) {
 
 	sentence := ""
-	options := &common.Options{}
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("NLI-GO session with " + configPath + ". Type 'exit' to stop.")
+	fmt.Println("NLI-GO session with " + appDir + ". Type 'exit' to stop, 'reset' to start fresh.")
 
 	for true {
 
@@ -195,61 +191,41 @@ func goInteractive(system *global.System, log *common.SystemLog, configPath stri
 		if sentence == "exit" {
 			break
 		}
-
-		if options.HasOptions() {
-			index, err := strconv.Atoi(sentence)
-			if err == nil {
-				sentence = optionIndexToOptionKey(index, options)
-			}
+		if sentence == "reset" {
+			resetSession(appDir, sessionId, workDir, port)
+			println("OK")
+			continue
 		}
 
-		_, options = answer(system, log, sentence, "text")
-
+		answer(appDir, sessionId, workDir, port, sentence)
 	}
 }
 
-func optionIndexToOptionKey(index int, options *common.Options) string {
+func resetSession(appDir string, sessionId string, workDir string, port string) {
 
-	for i, key := range options.GetKeys() {
-		if i == index-1 {
-			return key
-		}
+	cwd, _ := os.Getwd()
+	request := server.Request{
+		SessionId:      sessionId,
+		ApplicationDir: common.AbsolutePath(cwd, appDir),
+		WorkDir:        common.AbsolutePath(cwd, workDir),
+		Command:        "reset",
 	}
 
-	return ""
-}
+	requestString, _ := json.Marshal(request)
 
-func createResponseString(log *common.SystemLog, answer string, options *common.Options, returnType string) string {
-
-	response := ""
-
-	if returnType == "json" || returnType == "JSON" {
-		result := Result{
-			Success:      log.IsOk(),
-			ErrorLines:   log.GetErrors(),
-			Productions:  log.GetProductions(),
-			Answer:       answer,
-			OptionKeys:   options.GetKeys(),
-			OptionValues: options.GetValues(),
-		}
-
-		responseRaw, _ := json.MarshalIndent(result, "", "    ")
-		response = string(responseRaw) + "\n"
-	} else {
-		if log.IsOk() {
-			response = answer + "\n"
-			values := options.GetValues()
-			for i := range options.GetKeys() {
-				response += strconv.Itoa(i+1) + ") " + values[i] + "\n"
-			}
-
-		} else {
-			for _, err := range log.GetErrors() {
-				response += err + "\n"
-			}
-		}
+	connection, err := net.Dial("tcp", "127.0.0.1:"+port)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	return response
-}
+	fmt.Fprintf(connection, string(requestString)+"\n")
 
+	_, err2 := ioutil.ReadAll(connection)
+	if err2 != nil {
+		println(err2.Error())
+		os.Exit(1)
+	}
+
+	println("OK")
+}

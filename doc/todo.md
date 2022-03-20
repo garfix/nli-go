@@ -92,6 +92,11 @@ An example of the syntax I will use for feature structures and unification:
     { rule: noun(E1) -> 'blocks',                                                   tag: number(E1,  plural) }
 
 
+## Planning
+
+- replanning: once a plan is being executed, it may need to be discarded and replanned, due to new circumstances
+- stop / continue commands
+
 ## Quantifier Scoping
 
 - Make "more than" "less than" work

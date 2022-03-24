@@ -10,7 +10,7 @@ Anaphora has the following aspects
 
 - references to discourse entities (anaphoric) vs references without discourse entities; these refer to the world (nonanaphoric)
 - references to determinate entities ("the", names) (definite references) vs indeterminate entities ("a") (indefinite references)
-- definite vs indefinte references ("the car", "a car") ("If Pedro owns some donkey, he beats it.")
+- definite vs indefinite references ("the car", "a car") ("If Pedro owns some donkey, he beats it.")
 - references to concepts ("whats the action radius of an electric car?") 
 - plural vs singular references ("they", "she")
 - pronouns ("it") vs descriptions ("the blue car")
@@ -33,7 +33,7 @@ What are the linguistically relevant features of the entities (anaphors) refered
 - animatedness: animate, inanimate
 - number: singular, plural (entities that are known as a group)
 - a type: car, person, thing, activity
-- selectional restrictions: (the things they can do, "birds fly", "cars brake down")
+- selectional restrictions: (the things they can do, "birds fly", "cars break down")
 - a domain: in the discourse, in a conceptual structure, in the world
 
 ## References
@@ -68,6 +68,16 @@ Hard constraints
 Soft constraints
 
 - paralellism: a reference in subject position is more likely to refer to entity that is also in subject position; idem for object position
+
+## Implementation
+
+- gender: male, female, genderless: "he" P`male(E1)` ; "she" P`female(E1)` ; "it" P`neuter(E1)` 
+- number: singular, plural: "it" S`count(E1, 1)` ; "they" S`greater_than(count(E1), 1)` OF `plural(E1)`
+- animatedness: person, thing: <proper name>, "boy" P`person(E1)`, "object" P`thing(E1)`
+- selectional restrictions: "pick up" -> S`pick_up(E1, E2)`, P`person(E1)`, P`object(E1)`
+- reflexivity: "himself" P`reflexive(E1)` 
+
+De grammar moet een onderscheid maken tussen constraints(sense, S) en productions (P). Productions zijn implicaties die aan de context worden toegevoegd op het moment dat de geparste zin geaccepteerd wordt.
 
 ## References
 

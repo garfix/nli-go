@@ -2,6 +2,13 @@
 
 Since this is a research project, its important result is knowledge. What have I learned from it?
 
+## Don't try to create the big query, have a minimalistic interface
+
+Many natural language interfaces to database are designed to turn a natural language expression into a single database query.
+This is feasible for simple questions, but problematic or even impossible for more complex questions.
+
+NLI-GO's database queries all involve just a single relation.
+
 ## Representing a group of entities
 
 A sentence entity variable regularly refers not just to a single entity, but to multiple entities. 

@@ -1,3 +1,7 @@
+## 2022-03-21
+
+I'll try to build a general approach to anaphora resolution.
+
 ## 2022-03-11
 
 The server is complete.

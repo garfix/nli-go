@@ -1,5 +1,16 @@
 # Todo
 
+- add features to the grammar
+- add active productions to the dialog context database, when the sentence is definitively chosen
+- introduce discourse entities as distinct objects
+    - attributes derived from productions (gender, number, etc)
+    - has 0..n ids (reference to zero, one, or multiple shared entities)
+- dialog context / discourse entities should hold discourse entities bevatten, not ids
+- link sentence variables to discourse entities (dialog context member); when? how?
+    - anaphora resolution
+    - nonanaphoric entities?
+
+
 - create a full specification of anaphora resolution and describe all problems 
 
 ## The programming language "mentalese"

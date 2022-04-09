@@ -24,8 +24,9 @@ Anaphora has the following aspects
 - one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
 - bound variables. "Every student has received his grade"
 - pleonastic/expletive use "It is raining". Is not a reference.
+- sense and reference: "the morning star is the evening star"
 
-## Entities
+## Referents
 
 What are the linguistically relevant features of the entities (anaphors) refered to? They have
 
@@ -69,15 +70,20 @@ Soft constraints
 
 - paralellism: a reference in subject position is more likely to refer to entity that is also in subject position; idem for object position
 
-## Implementation
+## Identity
 
-- gender: male, female, genderless: "he" P`male(E1)` ; "she" P`female(E1)` ; "it" P`neuter(E1)` 
-- number: singular, plural: "it" S`count(E1, 1)` ; "they" S`greater_than(count(E1), 1)` OF `plural(E1)`
-- animatedness: person, thing: <proper name>, "boy" P`person(E1)`, "object" P`thing(E1)`
-- selectional restrictions: "pick up" -> S`pick_up(E1, E2)`, P`person(E1)`, P`object(E1)`
-- reflexivity: "himself" P`reflexive(E1)` 
+If E2 references E1, then they are the same entity in some respect. If some information becomes available about E1, then the same should happen to E2.
 
-De grammar moet een onderscheid maken tussen constraints(sense, S) en productions (P). Productions zijn implicaties die aan de context worden toegevoegd op het moment dat de geparste zin geaccepteerd wordt.
+Information about entities then exists on these layers:
+
+- sense S
+  - sentence: variables SS ("he", "himself")
+  - dialog: dialog entities DG; multiple SS can reference the same DG ("a boy")
+- reference R
+  - database: tuples in DB; single DG can reference multiple DB
+  - reality objects and concepts RR: multiple DB can reference the same RR
+
+multiple S can reference the same R
 
 ## References
 

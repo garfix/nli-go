@@ -1,3 +1,98 @@
+## 2022-04-04
+
+Assigning discourse elements to sentence variables may not be such a good idea. All variables will be bound from the start and can't be bound later.
+
+Another idea would be to replace some sentence variables by ones from previous sentences, in an anaphora resolution step.
+
+## 2022-04-03
+
+Also:
+
+    The evening star is planet Venus
+    The evening star appears in the west
+    The morning star is the evening star
+    Is the morning star planet Venus?
+    yes
+    Does the moning star appear in the west?
+    no (!)
+
+and
+
+    Ice is hard
+    Steam is volatile
+    *Ice is steam
+
+===
+
+I'm going to introduce the discourse entities level between sentence variables and shared ids:
+
+![entities](diagram/entities.png)
+
+Whereas the list of discourse entities now hold ids, they should hold actual shared entity objects. This discourse entity has attributes:
+
+- attributes derived from productions (gender, number, etc)
+- has 0..n ids (reference to zero, one, or multiple shared entities)
+
+Every sentence variable should refer to a discourse entity (DE). The discourse entity can say "plural", while the database ids are not (yet) known.
+
+When are sentence variables linked to discourse entities? As soon as the sentence is parsed. Each variable then links to a different DE.
+At anaphora resolution time, the sentence entity may unlink from the original DE and link to the final DE.
+
+In DRT "From discourse to logic" sentence variables are equated `x = y`. Simple to implement, but a hassle to compute. You need to check these assignments every time you do a lookup. 
+
+DRT
+
+    Jones ownes Ulysses. It fascinates him.
+    x y u v
+    Jones(x)
+    Ulysses(y)
+    x owns y
+    u fascinates v
+    u = y
+    v = x
+
+NLI-GO
+
+    Jones ownes Ulysses. It fascinates him.
+    x: DE1 y: DE2 u: DE3 v: DE4
+    Jones(x)
+    Ulysses(y)
+    x owns y
+    u fascinates v
+    process "it" (reference)    u: DE2
+    process "him" (reference)   v: DE1
+    x: DE1 y: DE2 u: DE2 v: DE1
+
+All entities in the sentence need to be resolved to discourse entities, not just anaphora. "The blue block" may well refer to an entity named before.
+
+Is it possible to have a separate anaphora resolution phase?
+
+## 2022-04-02
+
+For the last days I tried to incorporate Frege's sentence into the system
+
+    "the morning star is the evening star"
+
+But I give up. With reason. For one, this type of sentence is very very rare. It only occurs when you find out that two things that you thought were different are actually the same. This is absolutely irrelevant to an nli system. To create a special layer of representation just for this case makes it unnecessarily complex. Second: there are three ways of dealing with it (that I could think of):
+
+- whenever you bind a variable to morning-star, bind it to evening-star as well (and the other way around)
+- collapse the different database representations of the two entities into one
+- assert identity and extend all inferences with an extra check for identity `planet(E) :- identical(E, F) planet(F)`
+
+Very very complicated, and for what?
+
+## 2022-03-24
+
+I am thinking about creating a replacement for tags: productions; relations that are added to the dialog context once a parse is complete.
+A production like `sort(E1, person)` can then be used to restrict the name-lookup process. And a production like `gender(E1, male)` can restrict the anaphora resolution process.
+
+I may need meta information about these productions:
+
+- `type`: default: `entity`
+- `number`: agreement (should not conflict) 
+- `sort`: derivable agreement (man -> person)
+- `determinate`: changable (false -> true, but not: true -> false) 
+
 ## 2022-03-21
 
 I'll try to build a general approach to anaphora resolution.

@@ -1,17 +1,27 @@
 # Todo
 
 - add features to the grammar
-- add active productions to the dialog context database, when the sentence is definitively chosen
-- introduce discourse entities as distinct objects
-    - attributes derived from productions (gender, number, etc)
-    - has 0..n ids (reference to zero, one, or multiple shared entities)
-- dialog context / discourse entities should hold discourse entities bevatten, not ids
-- link sentence variables to discourse entities (dialog context member); when? how?
-    - anaphora resolution
-    - nonanaphoric entities?
+- remove 'tag' from grammar
+- a dialog constant is a dialog variable `E5`turned into a constant `e5`
+- add a factbase `discourse entity relations` (DER) to dialog context 
+- add active features to the DER, when the sentence is definitively chosen
+- add anaphora resolution phase
+- remove anaphora resolution from quant
+- add anaphora resolution tests to 'relationships'
+- `sort(E1, area) :- sort(E1, state)`
+- `sort(E1, entity) :- sort(E1, person)`
+- proper noun resolution needs to look at `sort()` features
+- remove predicates.sort
 
+## Scripts and Frames
 
-- create a full specification of anaphora resolution and describe all problems 
+The restaurant script. Certain phrases invoke a script. (How?)
+
+    "We went into a restaurant"
+
+This phrase causes a number of discourse entities and relationships to be created at once, in the dialog context.
+
+If the next sentence is "The waiter showed us our seat.", "the waiter" refers to an discourse entity in from the script. 
 
 ## The programming language "mentalese"
 

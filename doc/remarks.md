@@ -1,3 +1,27 @@
+## 2022-04-17
+
+This new diagram shows how I'm going to handle things:
+
+![entities](diagram/entities2.png)
+
+I am only going to add a meta-level of Features. This level of information (or "second order") is not about the value of the entity; it is about the possible values of the entity, or the type of the value.
+
+An important aspect of features is that they mustn't conflict. 
+
+This way you can say `plural(e5)` (`e5` is an atom that represents the object hold by the variable `E5`) while variable `E5` is not bound yet, and may not be bound at all. "I saw a dog. It chased a cat." - which dog exactly is not known at this time. Still, we know the sort and the number of the entity. Important for references.
+
+The anaphora resolution phase merges variables if one refers to the other. Their meta data is merged. If `E11` refers to `E5`, the occurrences of `E11` will be replaced by `E5`.
+
+You can reason about meta data as like normal data, but remember that the entities are different. So if the system needs to check `animal(E1)`, it may deduce this from `dog(E1)`.
+
+## 2022-04-16
+
+It's still possible to do it (assign atoms to sentence variables). When a database is consulted, the associated db id will be used, and if there is none, a variable can be used to consult the db.
+
+Using atoms for entities will make probably some things easier. But the full extent of it is hard to predict.
+
+But one of the things that can be done is to place the features inside an actual dialog database. Which means these facts can be used from anywhere in the code.
+
 ## 2022-04-04
 
 Assigning discourse elements to sentence variables may not be such a good idea. All variables will be bound from the start and can't be bound later.

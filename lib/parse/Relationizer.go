@@ -22,11 +22,22 @@ func NewRelationizer(variableGenerator *mentalese.VariableGenerator, log *common
 
 func (relationizer Relationizer) Relationize(rootNode mentalese.ParseTreeNode, rootVariables []string) (mentalese.RelationSet, mentalese.Binding) {
 	if rootVariables == nil {
-		rootVariables = []string{ relationizer.senseBuilder.variableGenerator.GenerateVariable("Sentence").TermValue }
+		rootVariables = []string{relationizer.senseBuilder.variableGenerator.GenerateVariable("Sentence").TermValue}
 	}
-	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, rootVariables )
+	sense, nameBinding, constantBinding := relationizer.extractSenseFromNode(rootNode, rootVariables)
 	sense = sense.BindSingle(constantBinding)
 	return sense, nameBinding
+}
+
+func (relationizer Relationizer) ExtractTags(node mentalese.ParseTreeNode) mentalese.RelationSet {
+
+	tags := node.Rule.Tag
+
+	for _, childNode := range node.Constituents {
+		tags = append(tags, relationizer.ExtractTags(*childNode)...)
+	}
+
+	return tags
 }
 
 // Returns the sense of a node and its children
@@ -155,7 +166,7 @@ func (relationizer Relationizer) includeChildSenses(parentRelation mentalese.Rel
 			}
 		}
 
-		newParentRelationSet = mentalese.RelationSet{ newParentRelation}
+		newParentRelationSet = mentalese.RelationSet{newParentRelation}
 	}
 
 	return newParentRelationSet, childIndexes

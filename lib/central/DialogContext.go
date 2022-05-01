@@ -13,6 +13,7 @@ type DialogContext struct {
 	VariableGenerator *mentalese.VariableGenerator
 	DiscourseEntities *mentalese.Binding
 	ClauseList        *mentalese.ClauseList
+	TagList           *TagList
 }
 
 func NewDialogContext(
@@ -27,6 +28,7 @@ func NewDialogContext(
 		VariableGenerator: variableGenerator,
 		DiscourseEntities: &discourseEntities,
 		ClauseList:        mentalese.NewClauseList(),
+		TagList:           NewTagList(),
 	}
 	dialogContext.Initialize()
 

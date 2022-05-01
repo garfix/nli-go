@@ -1,3 +1,30 @@
+## 2022-04-23
+
+The SHRDLU dialog does not have any definite anaphoric references (!) (where "the green block" refers to the block that was mentioned in the previous sentence)
+
+References will be replaced by tags:
+
+- `go:back_reference(E1, none)` "it" "them" - 
+  - `tag: reference(E1) agree(E1, sort, object) agree(E1, number, singular)`  
+  - `tag: reference(E1) agree(E1, sort, person) agree(E1, number, plural)`
+- `go:definite_reference(E1, $nbar)` "the" 
+  - no tag, but all quants are tried to be resolved 
+- `go:sortal_back_reference(E1)` "one" 
+  - `tag: sortal_reference(E1)`
+  - searches for a sort, then tries to resolve 
+
+## 2022-04-20
+
+I'm going to use the `tag` property of a syntax rule for the features. And since I don't use "feature structures" it's better that I use a different name.
+
+What about "agree"?
+
+    tag: agree(E1, number, plural)
+    tag: agree(E1, gender, male)
+    tag: agree(E1, sort, person)
+
+A tag that "agrees" should be checked for conflicts.
+
 ## 2022-04-17
 
 This new diagram shows how I'm going to handle things:

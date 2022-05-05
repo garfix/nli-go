@@ -19,112 +19,108 @@ func NewAnaphoraResolver(dialogContext *DialogContext, meta *mentalese.Meta, mes
 	}
 }
 
-func (resolver *AnaphoraResolver) Resolve(request mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.Binding, string) {
+func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.Binding, string) {
 
-	newRelations := mentalese.RelationSet{}
-	newBinding := binding.Copy()
-	output := ""
+	collection := NewAnaphoraResolverCollection()
 
-	for _, relation := range request {
-		newRelation := relation
+	resolver.resolveSet(set, binding, collection)
+
+	for fromVariable, toVariable := range collection.replacements {
+		set = set.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
+		value, found := resolver.dialogContext.DiscourseEntities.Get(toVariable)
+		if found {
+			binding.Set(toVariable, value)
+		}
+	}
+
+	return set, binding, collection.output
+}
+
+func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+
+	for _, relation := range set {
 		if relation.Predicate == mentalese.PredicateQuant {
-			newRelation, newBinding, output = resolver.resolveQuant(relation, newBinding, request)
-			if output != "" {
-				break
-			}
+			resolver.resolveQuant(relation, binding, collection)
 		} else {
-			newRelation, newBinding, output = resolver.resolveArguments(relation, newBinding)
-			if output != "" {
-				break
-			}
+			resolver.resolveArguments(relation, binding, collection)
 		}
-		newRelations = append(newRelations, newRelation)
 	}
-
-	return newRelations, newBinding, output
 }
 
-func (resolver *AnaphoraResolver) resolveArguments(relation mentalese.Relation, binding mentalese.Binding) (mentalese.Relation, mentalese.Binding, string) {
+func (resolver *AnaphoraResolver) resolveArguments(relation mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
 
-	newRelation := relation.Copy()
-	newBinding := binding.Copy()
-	output := ""
-
-	for i, argument := range relation.Arguments {
+	for _, argument := range relation.Arguments {
 		if argument.IsRelationSet() {
-			newArgument := mentalese.RelationSet{}
-			newArgument, newBinding, output = resolver.Resolve(argument.TermValueRelationSet, newBinding)
-			newRelation.Arguments[i] = mentalese.NewTermRelationSet(newArgument)
-			if output != "" {
-				break
-			}
+			resolver.resolveSet(argument.TermValueRelationSet, binding, collection)
 		}
 	}
-
-	return newRelation, newBinding, output
 }
 
-func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, request mentalese.RelationSet) (mentalese.Relation, mentalese.Binding, string) {
+func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) (mentalese.Relation, mentalese.Binding, string) {
 
 	output := ""
+	newBinding := binding
 	rangeVar := quant.Arguments[1].TermValue
-	rangeRelations := quant.Arguments[2].TermValueRelationSet
+	newQuant := quant
 
 	tags := resolver.dialogContext.TagList.GetTags(rangeVar)
 
 	for _, tag := range tags {
 		switch tag.Predicate {
 		case mentalese.TagReference:
-			output = resolver.reference(rangeVar, rangeRelations, request, binding)
+			resolver.reference(quant, binding, collection)
 		}
 	}
 
-	return quant, binding, output
+	return newQuant, newBinding, output
 }
 
-func (resolver *AnaphoraResolver) reference(variable string, set mentalese.RelationSet, request mentalese.RelationSet, binding mentalese.Binding) string {
+func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
 
-	output := ""
+	variable := quant.Arguments[1].TermValue
+	set := quant.Arguments[2].TermValueRelationSet
 
-	if !resolver.doBackReference(variable, set, request, binding).IsEmpty() {
-
+	referentVariable := resolver.findReferent(variable, set, binding)
+	if referentVariable != "" {
+		println("reference!")
+		println(variable + " " + referentVariable)
+		// replace
+		collection.AddReplacement(variable, referentVariable)
 	} else {
 
-		if set[0].Predicate == "x" { //mentalese.PredicateDefiniteBackReference {
-			newBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
-			if newBindings.GetLength() > 1 {
-				// ask the user which of the specified entities he/she means
-				output = "I don't understand which one you mean1"
-			}
+		newBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
+		if newBindings.GetLength() > 1 {
+			// ask the user which of the specified entities he/she means
+			collection.output = "I don't understand which one you mean"
 		}
 	}
-
-	return output
 }
 
-func (resolver *AnaphoraResolver) doBackReference(variable string, set mentalese.RelationSet, request mentalese.RelationSet, binding mentalese.Binding) mentalese.BindingSet {
+func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) string {
 
-	newBindings := mentalese.NewBindingSet()
+	//newBindings := mentalese.NewBindingSet()
 
-	unscopedSense := request.UnScope()
+	//unscopedSense := request.UnScope()
 
-	if resolver.dialogContext.DiscourseEntities.ContainsVariable(variable) {
-		value := resolver.dialogContext.DiscourseEntities.MustGet(variable)
-		newBindings := mentalese.NewBindingSet()
-		if value.IsList() {
-			for _, item := range value.TermValueList {
-				newBinding := mentalese.NewBinding()
-				newBinding.Set(variable, item)
-				newBindings.Add(newBinding)
-			}
-		} else {
-			newBinding := mentalese.NewBinding()
-			newBinding.Set(variable, value)
-			newBindings.Add(newBinding)
-		}
+	//if resolver.dialogContext.DiscourseEntities.ContainsVariable(variable) {
+	//	value := resolver.dialogContext.DiscourseEntities.MustGet(variable)
+	//	newBindings := mentalese.NewBindingSet()
+	//	if value.IsList() {
+	//		for _, item := range value.TermValueList {
+	//			newBinding := mentalese.NewBinding()
+	//			newBinding.Set(variable, item)
+	//			newBindings.Add(newBinding)
+	//		}
+	//	} else {
+	//		newBinding := mentalese.NewBinding()
+	//		newBinding.Set(variable, value)
+	//		newBindings.Add(newBinding)
+	//	}
+	//
+	//	return newBindings
+	//}
 
-		return newBindings
-	}
+	referentVariable := ""
 
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
 
@@ -139,38 +135,39 @@ func (resolver *AnaphoraResolver) doBackReference(variable string, set mentalese
 			newBindings1.Add(refBinding)
 		}
 
-		if resolver.isReflexive(unscopedSense, variable, ref) {
-			continue
-		}
+		//if resolver.isReflexive(unscopedSense, variable, ref) {
+		//	continue
+		//}
 
 		// empty set ("it")
 		if len(set) == 0 {
-			newBindings = newBindings1
+			//newBindings = newBindings1
+			referentVariable = ref.Variable
 			break
 		}
 
-		if !resolver.quickAcceptabilityCheck(variable, ref.Sort, set) {
-			continue
-		}
+		//if !resolver.quickAcceptabilityCheck(variable, ref.Sort, set) {
+		//	continue
+		//}
 
-		testRangeBindings := mentalese.BindingSet{}
+		//testRangeBindings := mentalese.BindingSet{}
 
-		if set[0].Predicate == mentalese.PredicateDefiniteBackReference {
+		//if set[0].Predicate == mentalese.PredicateDefiniteBackReference {
+		//
+		//} else {
 
-		} else {
+		//testRangeBindings = resolver.messenger.ExecuteChildStackFrame(set, newBindings1)
+		//
+		//if testRangeBindings.GetLength() == 1 {
+		//	newBindings = testRangeBindings
+		//	break
+		//}
 
-			testRangeBindings = resolver.messenger.ExecuteChildStackFrame(set, newBindings1)
-
-			if testRangeBindings.GetLength() == 1 {
-				newBindings = testRangeBindings
-				break
-			}
-
-		}
+		//}
 
 	}
 
-	return newBindings
+	return referentVariable
 }
 
 // checks if a (irreflexive) pronoun does not refer to another element in a same relation

@@ -128,6 +128,9 @@ func TestBlocksWorld(t *testing.T) {
 				break
 			}
 		}
+
+		createImage(system)
+		break
 	}
 
 	//createGrid(system)

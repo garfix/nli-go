@@ -142,6 +142,7 @@ const CategoryProperNounGroup = "proper_noun_group"
 const TagRootClause = "go_root_clause"
 const TagFunction = "go_function"
 const TagReference = "go_reference"
+const TagSortalReference = "go_sortal_reference"
 
 const AtomFunctionSubject = "subject"
 const AtomFunctionObject = "object"

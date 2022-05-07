@@ -49,15 +49,37 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 	}
 
 	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
-	for fromVariable, value := range collection.references {
+	for fromVariable, value := range collection.values {
 		resolver.dialogContext.DiscourseEntities.Set(fromVariable, value)
 		binding.Set(fromVariable, value)
+	}
+
+	// one-anaphora: add the sortal relations
+	set = set.Copy()
+	for fromVariable, sortalRelations := range collection.sorts {
+		set = resolver.addSortalRelations(set, fromVariable, sortalRelations)
 	}
 
 	//println(set.String())
 	//println(newBindings.String())
 
 	return set, newBindings, collection.output
+}
+
+func (resolver *AnaphoraResolver) addSortalRelations(set mentalese.RelationSet, variable string, sortalRelations mentalese.RelationSet) mentalese.RelationSet {
+	for _, relation := range set {
+		if relation.Predicate == mentalese.PredicateQuant && relation.Arguments[1].TermValue == variable {
+			relation.Arguments[2].TermValueRelationSet = append(sortalRelations, relation.Arguments[2].TermValueRelationSet...)
+		} else {
+			for _, argument := range relation.Arguments {
+				if argument.IsRelationSet() {
+					resolver.addSortalRelations(argument.TermValueRelationSet, variable, sortalRelations)
+				}
+			}
+		}
+	}
+
+	return set
 }
 
 func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
@@ -93,6 +115,8 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 		switch tag.Predicate {
 		case mentalese.TagReference:
 			resolver.reference(quant, binding, collection)
+		case mentalese.TagSortalReference:
+			resolver.sortalReference(quant, binding, collection)
 		}
 	}
 
@@ -120,6 +144,44 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 			// ask the user which of the specified entities he/she means
 			collection.output = "I don't understand which one you mean"
 		}
+	}
+}
+
+func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+
+	variable := quant.Arguments[1].TermValue
+
+	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
+
+		sort := ""
+
+		// if their are multiple values, their sorts should match
+		for _, ref := range group {
+			if sort == "" {
+				sort = ref.Sort
+			} else if sort != ref.Sort {
+				sort = ""
+				break
+			}
+		}
+
+		if sort == "" {
+			continue
+		}
+
+		sortInfo, found := resolver.meta.GetSortInfo(sort)
+		if !found {
+			continue
+		}
+
+		if sortInfo.Entity.Equals(mentalese.RelationSet{}) {
+			continue
+		}
+
+		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
+
+		collection.AddSort(variable, sortRelationSet)
+		break
 	}
 }
 

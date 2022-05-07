@@ -1,3 +1,12 @@
+## 2022-05-06
+
+Should the anaphora queue contain only bound entities?
+
+You need to be able to refer to an unbound entity. However, how would you check that it an entity from the queue is the same as the one examined?
+
+If the entity from the queue has an id, use this to check if they match.
+If the entity from the queue does not have an id, use agreement to check if they match.
+
 ## 2022-04-23
 
 The SHRDLU dialog does not have any definite anaphoric references (!) (where "the green block" refers to the block that was mentioned in the previous sentence)

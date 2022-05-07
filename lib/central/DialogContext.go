@@ -56,6 +56,10 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 					group := EntityReferenceGroup{reference}
 					ids = append(ids, group)
 				}
+			} else {
+				reference := EntityReference{"", "", entity.DiscourseVariable}
+				group := EntityReferenceGroup{reference}
+				ids = append(ids, group)
 			}
 		}
 	}

@@ -80,10 +80,12 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	variable := quant.Arguments[1].TermValue
 	set := quant.Arguments[2].TermValueRelationSet
 
+	//println("reference? " + set.String())
+
 	referentVariable := resolver.findReferent(variable, set, binding)
 	if referentVariable != "" {
-		println("reference!")
-		println(variable + " " + referentVariable)
+		//println("reference!")
+		//println(variable + " " + referentVariable)
 		// replace
 		collection.AddReplacement(variable, referentVariable)
 	} else {
@@ -120,54 +122,56 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	//	return newBindings
 	//}
 
-	referentVariable := ""
+	foundVariable := ""
 
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
 
-		ref := group[0]
+		// there may be 1..n groups (bindings)
+		referentVariable := group[0].Variable
 
-		newBindings1 := mentalese.NewBindingSet()
-		for _, r1 := range group {
-			b := mentalese.NewBinding()
-			b.Set(variable, mentalese.NewTermId(r1.Id, r1.Sort))
-
-			refBinding := binding.Merge(b)
-			newBindings1.Add(refBinding)
-		}
+		// if there's 1 group and its id = "", it is unbound
+		isBound := group[0].Id != ""
 
 		//if resolver.isReflexive(unscopedSense, variable, ref) {
 		//	continue
 		//}
 
-		// empty set ("it")
-		if len(set) == 0 {
-			//newBindings = newBindings1
-			referentVariable = ref.Variable
-			break
+		if isBound {
+			// empty set ("it")
+			if len(set) == 0 {
+				foundVariable = referentVariable
+				break
+			}
 		}
 
 		//if !resolver.quickAcceptabilityCheck(variable, ref.Sort, set) {
 		//	continue
 		//}
 
-		//testRangeBindings := mentalese.BindingSet{}
+		for _, referent := range group {
 
-		//if set[0].Predicate == mentalese.PredicateDefiniteBackReference {
-		//
-		//} else {
+			if referent.Id == "" {
+				continue
+			}
 
-		//testRangeBindings = resolver.messenger.ExecuteChildStackFrame(set, newBindings1)
-		//
-		//if testRangeBindings.GetLength() == 1 {
-		//	newBindings = testRangeBindings
-		//	break
-		//}
+			b := mentalese.NewBinding()
+			b.Set(variable, mentalese.NewTermId(referent.Id, referent.Sort))
 
-		//}
+			refBinding := binding.Merge(b)
+			testRangeBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(refBinding))
+
+			if testRangeBindings.GetLength() > 0 {
+				println(" => " + referent.String() + " " + set.String())
+				foundVariable = referentVariable
+				goto end
+			}
+		}
 
 	}
 
-	return referentVariable
+end:
+
+	return foundVariable
 }
 
 // checks if a (irreflexive) pronoun does not refer to another element in a same relation

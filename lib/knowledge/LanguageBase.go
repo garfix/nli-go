@@ -390,15 +390,15 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	dialogBinding.FromRaw(dialogBindingsRaw)
 
 	resolvedRequestVar := input.Arguments[2].TermValue
-	resolvedBindingVar := input.Arguments[3].TermValue
+	resolvedBindingsVar := input.Arguments[3].TermValue
 	outputVar := input.Arguments[4].TermValue
 
 	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
-	resolvedRequest, resolvedBinding, output := resolver.Resolve(request, dialogBinding)
+	resolvedRequest, resolvedBindings, output := resolver.Resolve(request, dialogBinding)
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(resolvedRequestVar, mentalese.NewTermRelationSet(resolvedRequest))
-	newBinding.Set(resolvedBindingVar, mentalese.NewTermJson(resolvedBinding.ToRaw()))
+	newBinding.Set(resolvedBindingsVar, mentalese.NewTermJson(resolvedBindings.ToRaw()))
 	newBinding.Set(outputVar, mentalese.NewTermString(output))
 
 	return mentalese.InitBindingSet(newBinding)
@@ -493,10 +493,10 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	outputVar := input.Arguments[5].TermValue
 	essentialVar := input.Arguments[6].TermValue
 
-	requestBinding := mentalese.NewBinding()
-	requestBindingRaw := map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&requestBindingRaw)
-	requestBinding.FromRaw(requestBindingRaw)
+	requestBindings := mentalese.NewBindingSet()
+	requestBindingsRaw := []map[string]mentalese.Term{}
+	bound.Arguments[1].GetJsonValue(&requestBindingsRaw)
+	requestBindings.FromRaw(requestBindingsRaw)
 
 	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
 
@@ -505,7 +505,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	// apply transformation, if available
 	transformedRequest := transformer.Replace(solution.Transformations, request)
 
-	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, mentalese.InitBindingSet(requestBinding))
+	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, requestBindings)
 	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
 
 	newBinding := mentalese.NewBinding()

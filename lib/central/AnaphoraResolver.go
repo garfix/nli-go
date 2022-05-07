@@ -19,28 +19,45 @@ func NewAnaphoraResolver(dialogContext *DialogContext, meta *mentalese.Meta, mes
 	}
 }
 
-func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.Binding, string) {
+func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.BindingSet, string) {
 
 	collection := NewAnaphoraResolverCollection()
 
 	resolver.resolveSet(set, binding, collection)
 
+	newBindings := mentalese.InitBindingSet(binding)
+
+	// replace the reference variable by the variable of its referent
 	for fromVariable, toVariable := range collection.replacements {
 		set = set.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
 		value, found := resolver.dialogContext.DiscourseEntities.Get(toVariable)
 		if found {
-			binding.Set(toVariable, value)
+			if value.IsList() {
+				tempBindings := mentalese.NewBindingSet()
+				for _, item := range value.TermValueList {
+					for _, b := range newBindings.GetAll() {
+						newBinding := b.Copy()
+						newBinding.Set(toVariable, item)
+						tempBindings.Add(newBinding)
+					}
+				}
+				newBindings = tempBindings
+			} else {
+				newBindings.SetAll(toVariable, value)
+			}
 		}
 	}
 
+	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
 	for fromVariable, value := range collection.references {
+		resolver.dialogContext.DiscourseEntities.Set(fromVariable, value)
 		binding.Set(fromVariable, value)
 	}
 
 	//println(set.String())
-	//println(binding.String())
+	//println(newBindings.String())
 
-	return set, binding, collection.output
+	return set, newBindings, collection.output
 }
 
 func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
@@ -149,6 +166,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		if isBound {
 			// empty set ("it")
 			if len(set) == 0 {
+				println(" NO SET " + referentVariable)
 				found = true
 				foundVariable = referentVariable
 				break

@@ -46,7 +46,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         return
     end
 
-    go:resolve_anaphora(Request, RequestBinding, ResolvedRequest, ResolvedBinding, ResolvedOutput)
+    go:resolve_anaphora(Request, RequestBinding, ResolvedRequest, ResolvedBindings, ResolvedOutput)
     if [ResolvedOutput != ''] then
         [Output := ResolvedOutput]
         [ContinueLooking := false]
@@ -57,7 +57,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     go:cut(1,
         go:find_solution(ResolvedRequest, Solution)
         go:make_list(Solutions, Solution)
-        go:exec_solutions(ResolvedRequest, ResolvedBinding, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
+        go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
         if [AnOutput != ''] then
              [Output := AnOutput]
              [ContinueLooking := false]
@@ -76,7 +76,7 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
     [ContinueLooking := false]
 ;
 
-go:exec_solutions(ResolvedRequest, ResolvedBinding, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
+go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
     go:list_length(Solutions, SolSize)
     [LastSol := [SolSize - 1]]
     [:Output := '']
@@ -86,7 +86,7 @@ go:exec_solutions(ResolvedRequest, ResolvedBinding, Solutions, Output, Accepted,
 
     go:list_foreach(Solutions, Index, Sol,
 
-        go:solve(ResolvedRequest, ResolvedBinding, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
+        go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
 
         /* If there was a problem, or a request for clarification, stop */
         if [SolveOutput != ''] then

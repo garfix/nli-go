@@ -103,7 +103,7 @@
 { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:quant_check($np, $tv)  }
 
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
-{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(some, E1, go:definite_reference(E1, $nbar)) }
+{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
@@ -114,13 +114,13 @@
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }
 { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'them',                                            sense: go:back_reference(E1, none) }
+{ rule: nbar(E1) -> 'them',                                            tag: go:reference(E1) }
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
 { rule: superlative(E1) -> super(E1),                                  sense: $super go:count(E1, N) [N > 1] go:first() }
 
-{ rule: noun(E1) -> 'one',                                             sense: go:sortal_back_reference(E1) }
+{ rule: noun(E1) -> 'one',                                             tag: go:sortal_reference(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }
 { rule: noun(E1) -> 'thing',                                           sense: dom:object(E1) }
 { rule: noun(E1) -> 'things',                                          sense: dom:object(E1) }
@@ -137,7 +137,7 @@
 
 { rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
 { rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
-{ rule: pronoun(E1) -> 'it',                                           sense: go:back_reference(E1, none) }
+{ rule: pronoun(E1) -> 'it',                                           tag: go:reference(E1) }
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 

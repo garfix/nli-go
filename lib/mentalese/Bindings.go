@@ -336,3 +336,9 @@ func (s BindingSet) FilterMutableVariables() Binding {
 
 	return newBinding
 }
+
+func (s BindingSet) SetAll(variable string, value Term) {
+	for _, binding := range *s.Bindings {
+		binding.Set(variable, value)
+	}
+}

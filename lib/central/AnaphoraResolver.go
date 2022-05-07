@@ -33,6 +33,13 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 		}
 	}
 
+	for fromVariable, value := range collection.references {
+		binding.Set(fromVariable, value)
+	}
+
+	//println(set.String())
+	//println(binding.String())
+
 	return set, binding, collection.output
 }
 
@@ -82,12 +89,13 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 
 	//println("reference? " + set.String())
 
-	referentVariable := resolver.findReferent(variable, set, binding)
-	if referentVariable != "" {
-		//println("reference!")
-		//println(variable + " " + referentVariable)
-		// replace
-		collection.AddReplacement(variable, referentVariable)
+	found, referentVariable, referentValue := resolver.findReferent(variable, set, binding)
+	if found {
+		if referentVariable != "" {
+			collection.AddReplacement(variable, referentVariable)
+		} else {
+			collection.AddReference(variable, referentValue)
+		}
 	} else {
 
 		newBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(binding))
@@ -98,7 +106,7 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	}
 }
 
-func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) string {
+func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {
 
 	//newBindings := mentalese.NewBindingSet()
 
@@ -122,7 +130,9 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	//	return newBindings
 	//}
 
+	found := false
 	foundVariable := ""
+	foundTerm := mentalese.Term{}
 
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
 
@@ -139,6 +149,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		if isBound {
 			// empty set ("it")
 			if len(set) == 0 {
+				found = true
 				foundVariable = referentVariable
 				break
 			}
@@ -155,14 +166,22 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 			}
 
 			b := mentalese.NewBinding()
-			b.Set(variable, mentalese.NewTermId(referent.Id, referent.Sort))
+			value := mentalese.NewTermId(referent.Id, referent.Sort)
+			b.Set(variable, value)
 
 			refBinding := binding.Merge(b)
 			testRangeBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(refBinding))
 
 			if testRangeBindings.GetLength() > 0 {
+
 				println(" => " + referent.String() + " " + set.String())
-				foundVariable = referentVariable
+
+				found = true
+				if len(group) == 1 {
+					foundVariable = referentVariable
+				} else {
+					foundTerm = value
+				}
 				goto end
 			}
 		}
@@ -171,7 +190,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 
 end:
 
-	return foundVariable
+	return found, foundVariable, foundTerm
 }
 
 // checks if a (irreflexive) pronoun does not refer to another element in a same relation

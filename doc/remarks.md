@@ -1,3 +1,26 @@
+## 2022-05-07
+
+In this interaction:
+
+    What does the box contain?
+    The blue pyramid and the blue block
+
+the two objects are bound to the same variable.
+
+But when only one of them is referenced
+
+    What is the pyramid supported by?
+
+the variable in the new sentence should not be replaced by the one holding the 2 objects.
+
+This is an interesting issue. The two objects should be referencable together ("move them out of the box"). But in our case it seems as if a new referent is created out of the existing referent set:
+
+    E18: [blue-block1, blue-pyramid]
+    =>
+    E23: blue-pyramid
+
+Solution: if a reference refers to a single entity from a referent group, keep the reference variable unchanged, but bind it single referent's value.  
+
 ## 2022-05-06
 
 Should the anaphora queue contain only bound entities?

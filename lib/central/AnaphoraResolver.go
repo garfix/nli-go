@@ -23,6 +23,8 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	collection := NewAnaphoraResolverCollection()
 
+	resolver.dialogContext.AnaphoraQueue.StartClause()
+
 	resolver.resolveSet(set, binding, collection)
 
 	newBindings := mentalese.InitBindingSet(binding)
@@ -30,6 +32,7 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 	// replace the reference variable by the variable of its referent
 	for fromVariable, toVariable := range collection.replacements {
 		set = set.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
+		// update the anaphora queue
 		value, found := resolver.dialogContext.DiscourseEntities.Get(toVariable)
 		if found {
 			if value.IsList() {
@@ -109,24 +112,29 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 	rangeVar := quant.Arguments[1].TermValue
 	newQuant := quant
 
+	resolvedVariable := rangeVar
+
 	tags := resolver.dialogContext.TagList.GetTags(rangeVar)
 
 	for _, tag := range tags {
 		switch tag.Predicate {
 		case mentalese.TagReference:
-			resolver.reference(quant, binding, collection)
+			resolvedVariable = resolver.reference(quant, binding, collection)
 		case mentalese.TagSortalReference:
 			resolver.sortalReference(quant, binding, collection)
 		}
 	}
 
+	resolver.dialogContext.AnaphoraQueue.GetActiveClause().AddDialogVariable(resolvedVariable)
+
 	return newQuant, newBinding, output
 }
 
-func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	variable := quant.Arguments[1].TermValue
 	set := quant.Arguments[2].TermValueRelationSet
+	resolvedVariable := variable
 
 	//println("reference? " + set.String())
 
@@ -134,6 +142,7 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	if found {
 		if referentVariable != "" {
 			collection.AddReplacement(variable, referentVariable)
+			resolvedVariable = referentVariable
 		} else {
 			collection.AddReference(variable, referentValue)
 		}
@@ -145,6 +154,8 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 			collection.output = "I don't understand which one you mean"
 		}
 	}
+
+	return resolvedVariable
 }
 
 func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
@@ -213,7 +224,11 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 
+	//println("find referent")
+
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
+
+		//println(group.String())
 
 		// there may be 1..n groups (bindings)
 		referentVariable := group[0].Variable
@@ -228,7 +243,8 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		if isBound {
 			// empty set ("it")
 			if len(set) == 0 {
-				println(" NO SET " + referentVariable)
+				v, _ := resolver.dialogContext.DiscourseEntities.Get(referentVariable)
+				println(" NO SET " + referentVariable + " " + v.String())
 				found = true
 				foundVariable = referentVariable
 				break

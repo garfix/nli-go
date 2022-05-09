@@ -13,6 +13,7 @@ type DialogContext struct {
 	VariableGenerator *mentalese.VariableGenerator
 	DiscourseEntities *mentalese.Binding
 	ClauseList        *mentalese.ClauseList
+	AnaphoraQueue     *mentalese.AnaphoraQueue
 	TagList           *TagList
 }
 
@@ -28,6 +29,7 @@ func NewDialogContext(
 		VariableGenerator: variableGenerator,
 		DiscourseEntities: &discourseEntities,
 		ClauseList:        mentalese.NewClauseList(),
+		AnaphoraQueue:     mentalese.NewAnaphoraQueue(),
 		TagList:           NewTagList(),
 	}
 	dialogContext.Initialize()
@@ -36,6 +38,38 @@ func NewDialogContext(
 }
 
 func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
+	ids := []EntityReferenceGroup{}
+	clauses := e.AnaphoraQueue.GetClauses()
+
+	for i := len(clauses) - 1; i >= 0; i-- {
+		clause := clauses[i]
+		for _, discourseVariable := range clause.GetDiscourseVariables() {
+			value, found := e.DiscourseEntities.Get(discourseVariable)
+			if found {
+				if value.IsList() {
+					group := EntityReferenceGroup{}
+					for _, item := range value.TermValueList {
+						reference := EntityReference{item.TermSort, item.TermValue, discourseVariable}
+						group = append(group, reference)
+					}
+					ids = append(ids, group)
+				} else {
+					reference := EntityReference{value.TermSort, value.TermValue, discourseVariable}
+					group := EntityReferenceGroup{reference}
+					ids = append(ids, group)
+				}
+			} else {
+				reference := EntityReference{"", "", discourseVariable}
+				group := EntityReferenceGroup{reference}
+				ids = append(ids, group)
+			}
+		}
+	}
+
+	return ids
+}
+
+func (e *DialogContext) GetAnaphoraQueue1() []EntityReferenceGroup {
 	ids := []EntityReferenceGroup{}
 	clauses := e.ClauseList.Clauses
 

@@ -1,3 +1,26 @@
+## 2022-05-08
+
+Since A is the simplest solution, I only need to specify which part of the sentence is the subject.
+I can do this by annotating it with a tag.
+But even without tags there's a way to make the earlier parts of the sentence more likely referents than latter ones: 
+add the entities of the sentence from right to left to the anaphora queue, so that the first entity is at the end (and hence treated first).
+
+... it turns out that is was already the way it is implemented. There was another problem. "the small red block" had no binding in the dialog, for some reason.
+
+The reason: "Does the small red block support the green pyramid?" restult in no bindings (the answer is "no"), and it is these result bindings that are stored.
+
+That was not the only problem: the system stores the entities in the anaphora queue before the variables have been replaced. So the queue may contain variables that are not actually used.
+
+The next sentence to consider also has a problem with the anaphora queue as it currently stands:
+
+    Had you touched any pyramid before you put the green one on the little cube?
+
+"one" refers to an earlier entity in the same sentence (any pyramid).
+
+It's probably best to extend the anaphora queue while it is being used to resolve references. If it is extended before this resolve process, it contains items that should not be there yet. If it is extended afer this resolve process, it doesn't contain the items that are needed.
+
+The reason that I'm now building an explicit A Q again, is that I need to be able to add entities to it, one by one.
+
 ## 2022-05-07
 
 In this interaction:
@@ -19,7 +42,26 @@ This is an interesting issue. The two objects should be referencable together ("
     =>
     E23: blue-pyramid
 
-Solution: if a reference refers to a single entity from a referent group, keep the reference variable unchanged, but bind it single referent's value.  
+Solution: if a reference refers to a single entity from a referent group, keep the reference variable unchanged, but bind it single referent's value.
+
+===
+
+I now have the following problem:
+
+    Does the small red block support the green pyramid?
+    Yes
+    Put the littlest pyramid on top of it
+    OK
+
+... puts the littlest pyramid on top of the green pyramid (itself!)
+
+Why does "it" not refer to "the green pyramid"?
+
+- A the preferred referent is the subject
+- B the object of "put_on" is a steady surface (which pyramids are not)
+- C "put_on" should have a constraint that one cannot put something on top of itself
+
+B is sufficient in this case but not in other cases
 
 ## 2022-05-06
 

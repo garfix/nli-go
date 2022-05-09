@@ -106,7 +106,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			if test.question == "Find a block which is taller than the one you are holding and put it into the box." {
+			if test.question == "Put the littlest pyramid on top of it" {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)

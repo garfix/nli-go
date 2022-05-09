@@ -97,6 +97,16 @@ func StringArrayDeduplicate(array []string) []string {
 	return newArray
 }
 
+func StringArrayReverse(array []string) []string {
+	newStringArray := []string{}
+
+	for i := range array {
+		newStringArray = append(newStringArray, array[len(array)-1-i])
+	}
+
+	return newStringArray
+}
+
 // Returns the directory of the file calling this function
 // https://coderwall.com/p/_fmbug/go-get-path-to-current-file
 func Dir() string {

@@ -53,6 +53,8 @@ go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, C
         return
     end
 
+    go:dialog_write_bindings(ResolvedBindings)
+
     /* Stop at the first successfully processed solution */
     go:cut(1,
         go:find_solution(ResolvedRequest, Solution)

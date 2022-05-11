@@ -18,7 +18,6 @@ type Term struct {
 }
 
 const TermTypeVariable = "variable"
-const TermTypeMutableVariable = "mutable-variable"
 const TermTypePredicateAtom = "atom"
 const TermTypeStringConstant = "string"
 const TermTypeAnonymousVariable = "anonymous"

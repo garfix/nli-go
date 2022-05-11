@@ -4,3 +4,5 @@ pyramid:
   entity: pyramid(Id)
 box:
   entity: box(Id)
+table:
+  entity: table(Id)

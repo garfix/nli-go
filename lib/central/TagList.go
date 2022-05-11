@@ -32,3 +32,16 @@ func (p *TagList) GetTags(variable string) mentalese.RelationSet {
 		return mentalese.RelationSet{}
 	}
 }
+
+func (p *TagList) GetTagPredicates(variable string) []string {
+	tags, found := p.tags[variable]
+	if found {
+		predicates := []string{}
+		for _, tag := range tags {
+			predicates = append(predicates, tag.Predicate)
+		}
+		return predicates
+	} else {
+		return []string{}
+	}
+}

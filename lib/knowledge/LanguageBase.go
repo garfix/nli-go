@@ -366,6 +366,8 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	tags := base.relationizer.ExtractTags(parseTree)
 	base.dialogContext.TagList.AddTags(tags)
 
+	base.extractSorts(requestRelations)
+
 	newBinding := binding.Copy()
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
@@ -373,6 +375,23 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) extractSorts(relations mentalese.RelationSet) {
+	for _, relation := range relations {
+
+		withoutNamespace := relation.GetPredicateWithoutNamespace()
+		_, found := base.meta.GetSortInfo(withoutNamespace)
+		if found {
+			variable := relation.Arguments[0].TermValue
+			base.dialogContext.Sorts.AddSort(variable, withoutNamespace)
+		}
+		for _, argument := range relation.Arguments {
+			if argument.IsRelationSet() {
+				base.extractSorts(argument.TermValueRelationSet)
+			}
+		}
+	}
 }
 
 func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

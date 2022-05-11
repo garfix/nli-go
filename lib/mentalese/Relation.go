@@ -2,6 +2,7 @@ package mentalese
 
 import (
 	"nli-go/lib/common"
+	"strings"
 )
 
 type Relation struct {
@@ -174,6 +175,15 @@ func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 		Negate:    negate,
 		Predicate: predicate,
 		Arguments: arguments,
+	}
+}
+
+func (relation Relation) GetPredicateWithoutNamespace() string {
+	parts := strings.Split(relation.Predicate, "_")
+	if len(parts) == 1 {
+		return parts[0]
+	} else {
+		return relation.Predicate[len(parts[0])+1:]
 	}
 }
 

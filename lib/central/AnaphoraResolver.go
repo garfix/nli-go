@@ -2,6 +2,7 @@ package central
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
 
@@ -105,29 +106,20 @@ func (resolver *AnaphoraResolver) resolveArguments(relation mentalese.Relation, 
 	}
 }
 
-func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) (mentalese.Relation, mentalese.Binding, string) {
-
-	output := ""
-	newBinding := binding
+func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
 	rangeVar := quant.Arguments[1].TermValue
-	newQuant := quant
 
 	resolvedVariable := rangeVar
 
-	tags := resolver.dialogContext.TagList.GetTags(rangeVar)
-
-	for _, tag := range tags {
-		switch tag.Predicate {
-		case mentalese.TagReference:
-			resolvedVariable = resolver.reference(quant, binding, collection)
-		case mentalese.TagSortalReference:
-			resolver.sortalReference(quant, binding, collection)
-		}
+	tags := resolver.dialogContext.TagList.GetTagPredicates(rangeVar)
+	if common.StringArrayContains(tags, mentalese.TagSortalReference) {
+		resolver.sortalReference(quant, binding, collection)
+	}
+	if common.StringArrayContains(tags, mentalese.TagReference) {
+		resolvedVariable = resolver.reference(quant, binding, collection)
 	}
 
 	resolver.dialogContext.AnaphoraQueue.GetActiveClause().AddDialogVariable(resolvedVariable)
-
-	return newQuant, newBinding, output
 }
 
 func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
@@ -190,6 +182,8 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, bind
 		}
 
 		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
+
+		println("sort " + variable + " " + sortRelationSet.String())
 
 		collection.AddSort(variable, sortRelationSet)
 		break

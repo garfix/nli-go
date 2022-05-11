@@ -15,6 +15,7 @@ type DialogContext struct {
 	ClauseList        *mentalese.ClauseList
 	AnaphoraQueue     *mentalese.AnaphoraQueue
 	TagList           *TagList
+	Sorts             *mentalese.EntitySorts
 }
 
 func NewDialogContext(
@@ -31,6 +32,7 @@ func NewDialogContext(
 		ClauseList:        mentalese.NewClauseList(),
 		AnaphoraQueue:     mentalese.NewAnaphoraQueue(),
 		TagList:           NewTagList(),
+		Sorts:             mentalese.NewEntitySorts(),
 	}
 	dialogContext.Initialize()
 
@@ -49,12 +51,20 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 				if value.IsList() {
 					group := EntityReferenceGroup{}
 					for _, item := range value.TermValueList {
-						reference := EntityReference{item.TermSort, item.TermValue, discourseVariable}
+						_, sort := e.Sorts.GetSort(discourseVariable)
+						if sort != item.TermSort {
+							item.TermSort = ""
+						}
+						reference := EntityReference{sort, item.TermValue, discourseVariable}
 						group = append(group, reference)
 					}
 					ids = append(ids, group)
 				} else {
-					reference := EntityReference{value.TermSort, value.TermValue, discourseVariable}
+					_, sort := e.Sorts.GetSort(discourseVariable)
+					if sort != value.TermSort {
+						value.TermSort = ""
+					}
+					reference := EntityReference{sort, value.TermValue, discourseVariable}
 					group := EntityReferenceGroup{reference}
 					ids = append(ids, group)
 				}

@@ -1,3 +1,32 @@
+## 2022-05-14
+
+All discourse entities must have a sort. Even if it is only `entity`.
+
+Discourse entities are created when a user sentence is read, or when an answer is created by the system. In both cases the entities and their sorts are added.
+
+## 2022-05-13
+
+I'm now storing discourse entity sorts in a separate store.
+
+Problem is, entities from responses are stored as well. And these may be an array of entities. Therefore the sorts may be arrays as well.
+
+## 2022-05-09
+
+About sorts: I dont want a double declaration of sort relation `dom:person(E1)` and tag `go:agree(E1, sort, person)`.
+In stead, I just want the relation. And when the relation is a sort, this can be specified in `predicates.sort`. The sort and the relation are equal. No need to separate them.
+
+## 2022-05-09
+
+"the green one" is both a reference and one-anaphora. The one-anaphora should be resolved first.
+
+It also means that the resolvings should be processed immediately, because they are used right after. And not collected to be processed later.
+
+"Had you touched any pyramid before you put the green one on the little cube?"
+
+"one" does not refer to "any pyramid" because the system does not know it's a pyramid (sort pyramid). It can only deduce that from the id at the moment.
+
+Time to introduce sort tags.
+
 ## 2022-05-08
 
 Since A is the simplest solution, I only need to specify which part of the sentence is the subject.

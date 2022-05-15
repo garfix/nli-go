@@ -24,16 +24,24 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	collection := NewAnaphoraResolverCollection()
 
+	println(set.String())
+
 	resolver.dialogContext.AnaphoraQueue.StartClause()
 
-	resolver.resolveSet(set, binding, collection)
+	// extend the set with one one-anaphora resolutions, replace variables, and collect the other matches
+	newSet := resolver.resolveSet(set, binding, collection)
+
+	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
+	for fromVariable, value := range collection.values {
+		binding.Set(fromVariable, value)
+	}
 
 	newBindings := mentalese.InitBindingSet(binding)
 
-	// replace the reference variable by the variable of its referent
+	// update the binding
 	for fromVariable, toVariable := range collection.replacements {
-		set = set.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
-		// update the anaphora queue
+		// replace the other variables in the set
+		newSet = newSet.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
 		value, found := resolver.dialogContext.DiscourseEntities.Get(toVariable)
 		if found {
 			if value.IsList() {
@@ -52,22 +60,16 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 		}
 	}
 
-	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
-	for fromVariable, value := range collection.values {
-		resolver.dialogContext.DiscourseEntities.Set(fromVariable, value)
-		binding.Set(fromVariable, value)
-	}
-
 	// one-anaphora: add the sortal relations
-	set = set.Copy()
-	for fromVariable, sortalRelations := range collection.sorts {
-		set = resolver.addSortalRelations(set, fromVariable, sortalRelations)
-	}
+	//set = set.Copy()
+	//for fromVariable, sortalRelations := range collection.sorts {
+	//	set = resolver.addSortalRelations(set, fromVariable, sortalRelations)
+	//}
 
-	//println(set.String())
+	//println(newSet.String())
 	//println(newBindings.String())
 
-	return set, newBindings, collection.output
+	return newSet, newBindings, collection.output
 }
 
 func (resolver *AnaphoraResolver) addSortalRelations(set mentalese.RelationSet, variable string, sortalRelations mentalese.RelationSet) mentalese.RelationSet {
@@ -86,40 +88,67 @@ func (resolver *AnaphoraResolver) addSortalRelations(set mentalese.RelationSet, 
 	return set
 }
 
-func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.RelationSet {
+
+	newSet := mentalese.RelationSet{}
 
 	for _, relation := range set {
+
+		newRelation := relation
+
 		if relation.Predicate == mentalese.PredicateQuant {
-			resolver.resolveQuant(relation, binding, collection)
+			newRelation = resolver.resolveQuant(relation, binding, collection)
 		} else {
-			resolver.resolveArguments(relation, binding, collection)
+			newRelation = resolver.resolveArguments(relation, binding, collection)
 		}
+
+		newSet = append(newSet, newRelation)
 	}
+
+	return newSet
 }
 
-func (resolver *AnaphoraResolver) resolveArguments(relation mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+func (resolver *AnaphoraResolver) resolveArguments(relation mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.Relation {
 
-	for _, argument := range relation.Arguments {
+	newRelation := relation.Copy()
+
+	for i, argument := range relation.Arguments {
 		if argument.IsRelationSet() {
-			resolver.resolveSet(argument.TermValueRelationSet, binding, collection)
+			newRelation.Arguments[i].TermValueRelationSet = resolver.resolveSet(argument.TermValueRelationSet, binding, collection)
 		}
 	}
+
+	return newRelation
 }
 
-func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.Relation {
 	rangeVar := quant.Arguments[1].TermValue
 
 	resolvedVariable := rangeVar
 
 	tags := resolver.dialogContext.TagList.GetTagPredicates(rangeVar)
 	if common.StringArrayContains(tags, mentalese.TagSortalReference) {
-		resolver.sortalReference(quant, binding, collection)
+		sortRelationSet := resolver.sortalReference(quant, binding, collection)
+		quant = quant.Copy()
+		quant.Arguments[2] = mentalese.NewTermRelationSet(append(sortRelationSet, quant.Arguments[2].TermValueRelationSet...))
 	}
 	if common.StringArrayContains(tags, mentalese.TagReference) {
 		resolvedVariable = resolver.reference(quant, binding, collection)
+
+		if rangeVar != resolvedVariable {
+			quant = quant.Copy()
+			quant.Arguments[1].TermValue = resolvedVariable
+			quant.Arguments[2].TermValueRelationSet = quant.Arguments[2].TermValueRelationSet.ReplaceTerm(mentalese.NewTermVariable(rangeVar), mentalese.NewTermVariable(resolvedVariable))
+
+			//quant.Arguments[2].TermValueRelationSet = resolver.resolveSet(quant.Arguments[2].TermValueRelationSet, binding, collection)
+
+			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
+		}
 	}
 
 	resolver.dialogContext.AnaphoraQueue.GetActiveClause().AddDialogVariable(resolvedVariable)
+
+	return quant
 }
 
 func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
@@ -136,6 +165,8 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 			collection.AddReplacement(variable, referentVariable)
 			resolvedVariable = referentVariable
 		} else {
+			resolver.dialogContext.DiscourseEntities.Set(variable, referentValue)
+			resolver.dialogContext.Sorts.SetSorts(variable, resolver.dialogContext.Sorts.GetSorts(referentVariable))
 			collection.AddReference(variable, referentValue)
 		}
 	} else {
@@ -150,7 +181,9 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	return resolvedVariable
 }
 
-func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.RelationSet {
+
+	sortRelationSet := mentalese.RelationSet{}
 
 	variable := quant.Arguments[1].TermValue
 
@@ -181,13 +214,15 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, bind
 			continue
 		}
 
-		sortRelationSet := sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
+		sortRelationSet = sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
 		println("sort " + variable + " " + sortRelationSet.String())
 
-		collection.AddSort(variable, sortRelationSet)
+		//collection.AddSort(variable, sortRelationSet)
 		break
 	}
+
+	return sortRelationSet
 }
 
 func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {

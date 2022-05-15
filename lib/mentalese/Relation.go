@@ -24,6 +24,8 @@ const FrameTypeComplex = "complex"
 
 const SlotSense = "sense"
 
+const SortEntity = "entity"
+
 const PredicateCanned = "go_canned"
 const PredicateQuantCheck = "go_quant_check"
 const PredicateQuantForeach = "go_quant_foreach"

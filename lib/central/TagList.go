@@ -33,6 +33,14 @@ func (p *TagList) GetTags(variable string) mentalese.RelationSet {
 	}
 }
 
+func (p *TagList) ReplaceVariable(fromVariable string, toVariable string) {
+	tags, found := p.tags[fromVariable]
+	if found {
+		delete(p.tags, fromVariable)
+		p.tags[toVariable] = tags
+	}
+}
+
 func (p *TagList) GetTagPredicates(variable string) []string {
 	tags, found := p.tags[variable]
 	if found {

@@ -381,11 +381,16 @@ func (base *LanguageBase) extractSorts(relations mentalese.RelationSet) {
 	for _, relation := range relations {
 
 		withoutNamespace := relation.GetPredicateWithoutNamespace()
+		if len(relation.Arguments) == 0 {
+			continue
+		}
+		variable := relation.Arguments[0].TermValue
+		sorts := []string{mentalese.SortEntity}
 		_, found := base.meta.GetSortInfo(withoutNamespace)
 		if found {
-			variable := relation.Arguments[0].TermValue
-			base.dialogContext.Sorts.AddSort(variable, withoutNamespace)
+			sorts = []string{withoutNamespace}
 		}
+		base.dialogContext.Sorts.SetSorts(variable, sorts)
 		for _, argument := range relation.Arguments {
 			if argument.IsRelationSet() {
 				base.extractSorts(argument.TermValueRelationSet)

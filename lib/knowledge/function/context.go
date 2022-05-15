@@ -104,27 +104,62 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
 	someBindings.FromRaw(someBindingsRaw)
 
+	groupedValues := map[string][]mentalese.Term{}
+	groupedSorts := map[string][]string{}
+
 	for _, someBinding := range someBindings.GetAll() {
 		for key, value := range someBinding.GetAll() {
 			if value.IsId() {
-				existingValue, found := base.dialogContext.DiscourseEntities.Get(key)
-				if found {
-					if existingValue.IsList() {
-						if !existingValue.ListContains(value) {
-							list := existingValue.TermValueList
-							list = append(list, value)
-							base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
-						}
-					} else if !existingValue.Equals(value) {
-						list := []mentalese.Term{existingValue, value}
-						base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
-					}
-				} else {
-					base.dialogContext.DiscourseEntities.Set(key, value)
+
+				_, found := groupedValues[key]
+				if !found {
+					groupedValues[key] = []mentalese.Term{}
+					groupedSorts[key] = []string{}
 				}
+
+				alreadyAdded := false
+				for _, v := range groupedValues[key] {
+					if v.Equals(value) {
+						alreadyAdded = true
+					}
+				}
+
+				if !alreadyAdded {
+					groupedValues[key] = append(groupedValues[key], value)
+					groupedSorts[key] = append(groupedSorts[key], value.TermSort)
+				}
+
+				//existingValue, found := base.dialogContext.DiscourseEntities.Get(key)
+				//if found {
+				//	if existingValue.IsList() {
+				//		if !existingValue.ListContains(value) {
+				//			list := existingValue.TermValueList
+				//			list = append(list, value)
+				//			base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
+				//			sorts := base.dialogContext.Sorts.GetSorts(key)
+				//			base.dialogContext.Sorts.SetSorts(key, append(sorts, value.TermSort))
+				//		}
+				//	} else if !existingValue.Equals(value) {
+				//		list := []mentalese.Term{existingValue, value}
+				//		base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(list))
+				//		sorts := base.dialogContext.Sorts.GetSorts(key)
+				//		base.dialogContext.Sorts.SetSorts(key, append(sorts, value.TermSort))
+				//	}
+				//} else {
+				//	base.dialogContext.DiscourseEntities.Set(key, value)
+				//	base.dialogContext.Sorts.SetSorts(key, []string{value.TermSort})
+				//}
 			}
 		}
 	}
+
+	for key, values := range groupedValues {
+		base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(values))
+		base.dialogContext.Sorts.SetSorts(key, groupedSorts[key])
+	}
+
+	//println(base.dialogContext.DiscourseEntities.String())
+	//println(base.dialogContext.Sorts.String())
 
 	return mentalese.InitBindingSet(binding)
 }

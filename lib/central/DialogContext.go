@@ -39,6 +39,11 @@ func NewDialogContext(
 	return dialogContext
 }
 
+func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
+	//e.Sorts.ReplaceVariable(fromVariable, toVariable)
+	//e.TagList.ReplaceVariable(fromVariable, toVariable)
+}
+
 func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 	ids := []EntityReferenceGroup{}
 	clauses := e.AnaphoraQueue.GetClauses()
@@ -50,26 +55,33 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 			if found {
 				if value.IsList() {
 					group := EntityReferenceGroup{}
-					for _, item := range value.TermValueList {
-						_, sort := e.Sorts.GetSort(discourseVariable)
-						if sort != item.TermSort {
-							item.TermSort = ""
-						}
+					sorts := e.Sorts.GetSorts(discourseVariable)
+					for i, item := range value.TermValueList {
+						sort := sorts[i]
+						//if sort != item.TermSort {
+						//	item.TermSort = ""
+						//}
 						reference := EntityReference{sort, item.TermValue, discourseVariable}
 						group = append(group, reference)
 					}
 					ids = append(ids, group)
 				} else {
-					_, sort := e.Sorts.GetSort(discourseVariable)
-					if sort != value.TermSort {
-						value.TermSort = ""
-					}
+					sorts := e.Sorts.GetSorts(discourseVariable)
+					sort := sorts[0]
+					//if sort != value.TermSort {
+					//	value.TermSort = ""
+					//}
 					reference := EntityReference{sort, value.TermValue, discourseVariable}
 					group := EntityReferenceGroup{reference}
 					ids = append(ids, group)
 				}
 			} else {
-				reference := EntityReference{"", "", discourseVariable}
+				sorts := e.Sorts.GetSorts(discourseVariable)
+				sort := mentalese.SortEntity
+				if len(sorts) > 0 {
+					sort = sorts[0]
+				}
+				reference := EntityReference{sort, "", discourseVariable}
 				group := EntityReferenceGroup{reference}
 				ids = append(ids, group)
 			}

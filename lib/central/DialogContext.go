@@ -42,6 +42,11 @@ func NewDialogContext(
 func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
 	//e.Sorts.ReplaceVariable(fromVariable, toVariable)
 	//e.TagList.ReplaceVariable(fromVariable, toVariable)
+	//println("-replace-" + fromVariable + "-" + toVariable)
+	//println(e.ClauseList.GetLastClause().ParseTree.String())
+	newTree := e.ClauseList.GetLastClause().ParseTree.ReplaceVariable(fromVariable, toVariable)
+	e.ClauseList.GetLastClause().ParseTree = &newTree
+	//println(e.ClauseList.GetLastClause().ParseTree.String())
 }
 
 func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {

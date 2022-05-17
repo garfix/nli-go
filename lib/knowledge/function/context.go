@@ -154,7 +154,11 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 	}
 
 	for key, values := range groupedValues {
-		base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(values))
+		if len(values) == 1 {
+			base.dialogContext.DiscourseEntities.Set(key, values[0])
+		} else {
+			base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(values))
+		}
 		base.dialogContext.Sorts.SetSorts(key, groupedSorts[key])
 	}
 

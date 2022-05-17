@@ -1,5 +1,7 @@
 # Todo
 
+- when listed values are used in the next sentence, they should be converted to multiple bindings
+
 - OK store the tags in the dialog context
 - add features to the grammar
 - remove 'tag' from grammar

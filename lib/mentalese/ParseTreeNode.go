@@ -24,7 +24,7 @@ func (node ParseTreeNode) PartialCopy() ParseTreeNode {
 	}
 }
 
-func (node ParseTreeNode) ReplaceVariable(fromVar string, toVar string)  ParseTreeNode {
+func (node ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTreeNode {
 	constituents := []*ParseTreeNode{}
 	for _, constituent := range node.Constituents {
 		newConstituent := constituent.ReplaceVariable(fromVar, toVar)
@@ -73,7 +73,7 @@ func (node ParseTreeNode) IndentedString(indent string) string {
 
 		body += indent + "+- " + child.Category + "\n"
 		newIndent := indent
-		if i < len(node.Constituents) - 1 {
+		if i < len(node.Constituents)-1 {
 			newIndent += "|  "
 		} else {
 			newIndent += "   "

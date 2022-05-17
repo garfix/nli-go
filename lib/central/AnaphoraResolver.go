@@ -24,7 +24,7 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	collection := NewAnaphoraResolverCollection()
 
-	println(set.String())
+	//println(set.String())
 
 	resolver.dialogContext.AnaphoraQueue.StartClause()
 
@@ -156,6 +156,11 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	variable := quant.Arguments[1].TermValue
 	set := quant.Arguments[2].TermValueRelationSet
 	resolvedVariable := variable
+
+	_, found := resolver.dialogContext.DiscourseEntities.Get(variable)
+	if found {
+		return variable
+	}
 
 	//println("reference? " + set.String())
 

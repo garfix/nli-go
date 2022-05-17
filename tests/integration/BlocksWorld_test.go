@@ -106,7 +106,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			if test.question == "Put the littlest pyramid on top of it" {
+			if test.question == "Why?" {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)
@@ -119,6 +119,8 @@ func TestBlocksWorld(t *testing.T) {
 			if options.HasOptions() {
 				answer += options.String()
 			}
+
+			//createImage(system)
 
 			if answer != test.answer {
 				fmt.Printf(test.question)

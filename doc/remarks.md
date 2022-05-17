@@ -1,3 +1,7 @@
+## 2022-05-15
+
+Fixing the tests again. "Why?" now fails because ellipsis resolution copies part of the previous sentence that hadn't been subjected to anaphora resolution. 
+
 ## 2022-05-14
 
 All discourse entities must have a sort. Even if it is only `entity`.

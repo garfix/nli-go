@@ -119,10 +119,14 @@ func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
 	}
 
 	for _, entity := range c.Entities {
-		if previousCenter != nil && getValue(entity.DiscourseVariable, binding) == getValue(previousCenter.DiscourseVariable, binding) {
-			priority = priorities["previousCenter"]
-			center = entity
-			continue
+		if previousCenter != nil {
+			a := getValue(entity.DiscourseVariable, binding)
+			b := getValue(previousCenter.DiscourseVariable, binding)
+			if a == b {
+				priority = priorities["previousCenter"]
+				center = entity
+				continue
+			}
 		}
 		prio, found := priorities[entity.SyntacticFunction]
 		if found {

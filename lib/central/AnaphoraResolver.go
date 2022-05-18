@@ -221,7 +221,7 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, bind
 
 		sortRelationSet = sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
-		println("sort " + variable + " " + sortRelationSet.String())
+		//println("sort " + variable + " " + sortRelationSet.String())
 
 		//collection.AddSort(variable, sortRelationSet)
 		break
@@ -277,8 +277,8 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		if isBound {
 			// empty set ("it")
 			if len(set) == 0 {
-				v, _ := resolver.dialogContext.DiscourseEntities.Get(referentVariable)
-				println(" NO SET " + referentVariable + " " + v.String())
+				//v, _ := resolver.dialogContext.DiscourseEntities.Get(referentVariable)
+				//println(" NO SET " + referentVariable + " " + v.String())
 				found = true
 				foundVariable = referentVariable
 				break
@@ -304,7 +304,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 
 			if testRangeBindings.GetLength() > 0 {
 
-				println(" => " + referent.String() + " " + set.String())
+				//println(" => " + referent.String() + " " + set.String())
 
 				found = true
 				if len(group) == 1 {

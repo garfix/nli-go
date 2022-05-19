@@ -9,10 +9,14 @@
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, [Result == Range]), E1, none) }
 { rule: np(E1) -> 'she',                                              sense: go:quant(
                                                                         go:quantifier(Result, Range, [Result == 1]),
-                                                                        E1, go:back_reference(E1, dom:gender(E1, female))) }
+                                                                        E1,
+                                                                        dom:gender(E1, female)),
+                                                                      tag: go:reference(E1) }
 { rule: np(E1) -> 'he',                                               sense: go:quant(
                                                                         go:quantifier(Result, Range, [Result == 1]),
-                                                                        E1, go:back_reference(E1, dom:gender(E1, male))) }
+                                                                        E1,
+                                                                        dom:gender(E1, male)),
+                                                                      tag: go:reference(E1) }
 
 { rule: nbar(E1) -> noun(E1) }
 /* child of b */

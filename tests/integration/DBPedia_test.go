@@ -76,7 +76,7 @@ func TestDBPedia(t *testing.T) {
 		for _, test := range session {
 
 			log.Clear()
-
+			println(test.question)
 			answer, options := system.Answer(test.question)
 
 			if options.HasOptions() {

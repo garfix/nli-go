@@ -10,6 +10,7 @@ go:respond(Input) :-
     go:ignore(
 
         go:find_locale(Locale)
+        go:slot(locale, Locale)
         go:dialog_read_bindings(DialogBinding)
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)

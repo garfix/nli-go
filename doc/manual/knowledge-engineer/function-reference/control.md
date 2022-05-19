@@ -93,6 +93,8 @@ Example:
 
 ## Slot
 
+(deprecated, do not use!)
+
 Gets or sets a process slot value.
 
 Slots are like global variables, in the space of a process. They should be used only for a very limited set of slots.  

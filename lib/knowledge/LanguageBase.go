@@ -361,8 +361,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	base.log.AddProduction("Named entities", entityIds.String())
 
-	messenger.SetProcessSlot(mentalese.SlotSense, mentalese.NewTermRelationSet(requestRelations))
-
 	tags := base.relationizer.ExtractTags(parseTree)
 	base.dialogContext.TagList.AddTags(tags)
 
@@ -504,7 +502,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	transformer := central.NewRelationTransformer(base.matcher, base.log)
 
 	//Request, RequestBinding, Solution, ResultBindings
-	if !Validate(bound, "rjjvvvv", base.log) {
+	if !Validate(bound, "rjjvvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -514,8 +512,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	bound.Arguments[2].GetJsonValue(&solution)
 	resultBindingsVar := input.Arguments[3].TermValue
 	resultCountVar := input.Arguments[4].TermValue
-	outputVar := input.Arguments[5].TermValue
-	essentialVar := input.Arguments[6].TermValue
+	essentialVar := input.Arguments[5].TermValue
 
 	requestBindings := mentalese.NewBindingSet()
 	requestBindingsRaw := []map[string]mentalese.Term{}
@@ -524,18 +521,14 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
 
-	messenger.SetProcessSlot(mentalese.SlotSolutionOutput, mentalese.NewTermString(""))
-
 	// apply transformation, if available
 	transformedRequest := transformer.Replace(solution.Transformations, request)
 
 	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, requestBindings)
-	output, _ := messenger.GetProcessSlot(mentalese.SlotSolutionOutput)
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
 	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
-	newBinding.Set(outputVar, mentalese.NewTermString(output.TermValue))
 
 	// queue ids
 	variable := solution.Result.TermValue

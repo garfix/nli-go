@@ -10,7 +10,6 @@ go:respond(Input) :-
     go:ignore(
 
         go:find_locale(Locale)
-        go:slot(locale, Locale)
         go:dialog_read_bindings(DialogBinding)
         go:tokenize(Locale, Input, InTokens)
         go:parse(Locale, InTokens, ParseTree)
@@ -88,13 +87,8 @@ go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted
 
     go:list_foreach(Solutions, Index, Sol,
 
-        go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount, SolveOutput, EssentialBindings1)
+        go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount, EssentialBindings1)
 
-        /* If there was a problem, or a request for clarification, stop */
-        if [SolveOutput != ''] then
-            [:Output := SolveOutput]
-            break
-        end
         /* If there were solutions, good! */
         if [ResultCount > 0] then
             [:Accepted := Sol]

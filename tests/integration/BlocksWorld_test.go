@@ -106,7 +106,8 @@ func TestBlocksWorld(t *testing.T) {
 
 			log.Clear()
 
-			if test.question == "Why?" {
+			//if test.question == "Why?" {
+			if test.question == "When did you pick it up?" {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)

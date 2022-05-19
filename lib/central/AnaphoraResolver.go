@@ -24,8 +24,6 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	collection := NewAnaphoraResolverCollection()
 
-	//println(set.String())
-
 	resolver.dialogContext.AnaphoraQueue.StartClause()
 
 	// extend the set with one one-anaphora resolutions, replace variables, and collect the other matches
@@ -60,32 +58,7 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 		}
 	}
 
-	// one-anaphora: add the sortal relations
-	//set = set.Copy()
-	//for fromVariable, sortalRelations := range collection.sorts {
-	//	set = resolver.addSortalRelations(set, fromVariable, sortalRelations)
-	//}
-
-	//println(newSet.String())
-	//println(newBindings.String())
-
 	return newSet, newBindings, collection.output
-}
-
-func (resolver *AnaphoraResolver) addSortalRelations(set mentalese.RelationSet, variable string, sortalRelations mentalese.RelationSet) mentalese.RelationSet {
-	for _, relation := range set {
-		if relation.Predicate == mentalese.PredicateQuant && relation.Arguments[1].TermValue == variable {
-			relation.Arguments[2].TermValueRelationSet = append(sortalRelations, relation.Arguments[2].TermValueRelationSet...)
-		} else {
-			for _, argument := range relation.Arguments {
-				if argument.IsRelationSet() {
-					resolver.addSortalRelations(argument.TermValueRelationSet, variable, sortalRelations)
-				}
-			}
-		}
-	}
-
-	return set
 }
 
 func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.RelationSet {
@@ -128,7 +101,7 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 
 	tags := resolver.dialogContext.TagList.GetTagPredicates(rangeVar)
 	if common.StringArrayContains(tags, mentalese.TagSortalReference) {
-		sortRelationSet := resolver.sortalReference(quant, binding, collection)
+		sortRelationSet := resolver.sortalReference(quant)
 		quant = quant.Copy()
 		quant.Arguments[2] = mentalese.NewTermRelationSet(append(sortRelationSet, quant.Arguments[2].TermValueRelationSet...))
 	}
@@ -157,12 +130,11 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	set := quant.Arguments[2].TermValueRelationSet
 	resolvedVariable := variable
 
+	// if the variable has been bound already, don't try to look for a reference
 	_, found := resolver.dialogContext.DiscourseEntities.Get(variable)
 	if found {
 		return variable
 	}
-
-	//println("reference? " + set.String())
 
 	found, referentVariable, referentValue := resolver.findReferent(variable, set, binding)
 	if found {
@@ -186,7 +158,7 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	return resolvedVariable
 }
 
-func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) mentalese.RelationSet {
+func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation) mentalese.RelationSet {
 
 	sortRelationSet := mentalese.RelationSet{}
 
@@ -220,10 +192,6 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, bind
 		}
 
 		sortRelationSet = sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
-
-		//println("sort " + variable + " " + sortRelationSet.String())
-
-		//collection.AddSort(variable, sortRelationSet)
 		break
 	}
 
@@ -232,37 +200,11 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation, bind
 
 func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {
 
-	//newBindings := mentalese.NewBindingSet()
-
-	//unscopedSense := request.UnScope()
-
-	//if resolver.dialogContext.DiscourseEntities.ContainsVariable(variable) {
-	//	value := resolver.dialogContext.DiscourseEntities.MustGet(variable)
-	//	newBindings := mentalese.NewBindingSet()
-	//	if value.IsList() {
-	//		for _, item := range value.TermValueList {
-	//			newBinding := mentalese.NewBinding()
-	//			newBinding.Set(variable, item)
-	//			newBindings.Add(newBinding)
-	//		}
-	//	} else {
-	//		newBinding := mentalese.NewBinding()
-	//		newBinding.Set(variable, value)
-	//		newBindings.Add(newBinding)
-	//	}
-	//
-	//	return newBindings
-	//}
-
 	found := false
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 
-	//println("find referent")
-
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
-
-		//println(group.String())
 
 		// there may be 1..n groups (bindings)
 		referentVariable := group[0].Variable
@@ -270,24 +212,14 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		// if there's 1 group and its id = "", it is unbound
 		isBound := group[0].Id != ""
 
-		//if resolver.isReflexive(unscopedSense, variable, ref) {
-		//	continue
-		//}
-
 		if isBound {
 			// empty set ("it")
 			if len(set) == 0 {
-				//v, _ := resolver.dialogContext.DiscourseEntities.Get(referentVariable)
-				//println(" NO SET " + referentVariable + " " + v.String())
 				found = true
 				foundVariable = referentVariable
 				break
 			}
 		}
-
-		//if !resolver.quickAcceptabilityCheck(variable, ref.Sort, set) {
-		//	continue
-		//}
 
 		for _, referent := range group {
 
@@ -303,9 +235,6 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 			testRangeBindings := resolver.messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(refBinding))
 
 			if testRangeBindings.GetLength() > 0 {
-
-				//println(" => " + referent.String() + " " + set.String())
-
 				found = true
 				if len(group) == 1 {
 					foundVariable = referentVariable
@@ -352,24 +281,4 @@ func (base *AnaphoraResolver) isReflexive(unscopedSense mentalese.RelationSet, r
 	}
 
 	return reflexive
-}
-
-func (resolver *AnaphoraResolver) quickAcceptabilityCheck(variable string, sort string, relations mentalese.RelationSet) bool {
-
-	accepted := false
-
-	for _, relation := range relations {
-		for i, argument := range relation.Arguments {
-			if argument.IsVariable() && argument.TermValue == variable {
-				argumentEntityType := resolver.meta.GetSort(relation.Predicate, i)
-
-				if argumentEntityType == "" || resolver.meta.MatchesSort(argumentEntityType, sort) {
-					accepted = true
-					break
-				}
-			}
-		}
-	}
-
-	return accepted
 }

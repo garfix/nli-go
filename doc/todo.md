@@ -2,21 +2,15 @@
 
 - when listed values are used in the next sentence, they should be converted to multiple bindings
 
-- OK store the tags in the dialog context
-- add features to the grammar
-- remove 'tag' from grammar
-- replace `back_reference()` e.o. with features
+- document new anaphora use
 - a dialog constant is a dialog variable `E5`turned into a constant `e5`
 - add a factbase `discourse entity relations` (DER) to dialog context 
 - add active features to the DER, when the sentence is definitively chosen
-- add anaphora resolution phase
-- remove anaphora resolution from quant
 - add anaphora resolution tests to 'relationships'
 - `sort(E1, area) :- sort(E1, state)`
 - `sort(E1, entity) :- sort(E1, person)`
 - proper noun resolution needs to look at `sort()` features
 - remove predicates.sort
-- update dialog entity values (change this?) dialogContext.DiscourseEntities.Set()
 - check for agreement in separate step
 - The SHRDLU dialog does not have any definite anaphoric references (!) (where "the green block" refers to the block that was mentioned in the previous sentence)
   - so I will need an extra test in "relationships" that does just that
@@ -146,8 +140,8 @@ An example of the syntax I will use for feature structures and unification:
 ## Stuff I'm not happy with
 
 * the RelationTransformer; is only used in solutions, but should be removed from there as well, if possible
-* the async routines are too complex
 * `intent` moet een tag worden
+* the entire function DialogContext::ReplaceVariable is bad; I should not change structs that are in the history list already  
 
 ## Interesting stuff
 

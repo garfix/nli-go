@@ -13,9 +13,7 @@ func (base *SystemSolverFunctionBase) quantCheck(messenger api.ProcessMessenger,
 		panic("quant_check(quants, scope) needs two arguments")
 	}
 
-	result := base.solveQuantifiedRelations(messenger, find, binding, true)
-	base.addToQueue(find, result)
-	return result
+	return base.solveQuantifiedRelations(messenger, find, binding, true)
 }
 
 // quant_foreach(quant() quant(), relationset)
@@ -27,23 +25,7 @@ func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenge
 	cursor := messenger.GetCursor()
 	cursor.SetType(mentalese.FrameTypeLoop)
 
-	result := base.solveQuantifiedRelations(messenger, find, binding, false)
-	base.addToQueue(find, result)
-	return result
-}
-
-func (base *SystemSolverFunctionBase) addToQueue(relation mentalese.Relation, bindings mentalese.BindingSet) {
-	quant := relation.Arguments[0].TermValueRelationSet[0]
-	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
-
-	for _, rangeBinding := range bindings.GetAll() {
-
-		value, found := rangeBinding.Get(rangeVariable)
-		if found && value.IsId() {
-			base.dialogContext.DiscourseEntities.Set(rangeVariable, value)
-		}
-	}
-
+	return base.solveQuantifiedRelations(messenger, find, binding, false)
 }
 
 func (base *SystemSolverFunctionBase) quantOrderedList(messenger api.ProcessMessenger, quantList mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -369,11 +351,6 @@ func (base *SystemSolverFunctionBase) solveScope(messenger api.ProcessMessenger,
 	groupedScopeBindings := []mentalese.BindingSet{}
 
 	for _, rangeBinding := range rangeBindings.GetAll() {
-
-		value, found := rangeBinding.Get(rangeVariable)
-		if found && value.IsId() {
-			base.dialogContext.DiscourseEntities.Set(rangeVariable, value)
-		}
 
 		singleScopeBindings := messenger.ExecuteChildStackFrame(scopeSet, mentalese.InitBindingSet(rangeBinding))
 

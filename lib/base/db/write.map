@@ -1,4 +1,2 @@
-go:goal(G, Id) :- goal(G, Id);
 go:user_select(Question, Options, Selection) :- go:user_select(Question, Options, Selection);
 go:print(Id, Text) :- go:print(Id, Text);
-go:locale(Locale) :- go:locale(Locale);

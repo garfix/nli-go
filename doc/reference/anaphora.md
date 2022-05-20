@@ -11,7 +11,7 @@ Anaphora has the following aspects
 - references to discourse entities (anaphoric) vs references without discourse entities; these refer to the world (nonanaphoric)
 - references to determinate entities ("the", names) (definite references) vs indeterminate entities ("a") (indefinite references)
 - definite vs indefinite references ("the car", "a car") ("If Pedro owns some donkey, he beats it.")
-- references to concepts ("whats the action radius of an electric car?") 
+- references to concepts ("what's the action radius of an electric car?") 
 - plural vs singular references ("they", "she")
 - pronouns ("it") vs descriptions ("the blue car")
 - the type of entity is often specified ("the car")

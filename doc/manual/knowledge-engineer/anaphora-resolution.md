@@ -1,25 +1,25 @@
 # Anaphora resolution
 
-NLI-GO keeps track of the entities that it last processed in a structure called "anaphora queue". This queue consists of
-the id's of these entities.
+Language has a number of ways in which one noun phrase refers to another, in the same dialog. Typically this can take the form of pronouns (he, she, it), but the range of expressions is actually quite extensive. Here's how to deal with them. 
 
-Whenever a quant is processed, the system will first try to resolve the range of the quant with each of
-these ids filled in. When one of these ids gives a match, this id will be used as the range of the quantification.
+## Pronouns
 
-In order to allow pronouns like "he", "she" and "it" in the input, you need to model pronouns in a way that reflects
-their function as a quantification:
+To handle pronouns like "he", "she" and "it" in the input, you need to tag them as a reference:
 
-    { rule: pronoun(E1) -> 'it',                                           sense: go:back_reference(E1, none) }
+    { rule: pronoun(E1) -> 'it',                                           sense: object(E1), tag: go:reference(E1) }
+    { rule: pronoun(E1) -> 'she',                                          sense: person(E1) female(E1), tag: go:reference(E1) }
     
-## Resolving abstract nouns    
+## Definite references
 
-To resolve an abstract noun like "one" (as in "Put a small one onto the green cube") to the concrete noun "block", specify "one" as a `sortal_back_reference()`
+The determiners "the" can mean that an NP is a reference. "I found a block and a pyramid. Give me the block." "the" refers to a single entity that may be in the dialog, but it doesn't have to be. If the reference can be resolved, it will be. If it cannot, the system will ask: "I don't understand which one you mean".
 
-    { rule: noun(E1) -> 'one',                                           sense: go:sortal_back_reference(E1, none) }
+    { rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
+
+## One anaphora    
+
+To resolve words like "one" (as in "Put a small one onto the green cube") to the concrete noun "block", specify "one" as a `sortal_reference()`
+
+    { rule: noun(E1) -> 'one',                                           tag: go:sortal_reference(E1) }
     
-When the `sortal_back_reference` is processed, it looks into the anaphora queue for the sort of the latest referent. When this sort is, say, `block`, the function will look for the `entity` relation set that belongs to the sort. Located in `sorts.yml` you will write   
+When the `sortal_reference` is processed, the system looks into the anaphora queue for the sort of the latest referent. When this sort is, say, `block`, the system will add the relation for the sort `block` (`block(E1)`) to the sense of the sentence.
 
-    block:
-      entity: block(Id)  
-
-This tells us that the sort `block` is represented by the relation (set) `block()` in the domain. The variable `Id` will be used to identify the block.

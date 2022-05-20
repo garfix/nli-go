@@ -12,6 +12,10 @@ func NewTagList() *TagList {
 	}
 }
 
+func (p *TagList) Clear() {
+	p.tags = map[string]mentalese.RelationSet{}
+}
+
 func (p *TagList) AddTags(tags mentalese.RelationSet) {
 	for _, tag := range tags {
 		variable := tag.Arguments[0].TermValue
@@ -30,14 +34,6 @@ func (p *TagList) GetTags(variable string) mentalese.RelationSet {
 		return tags
 	} else {
 		return mentalese.RelationSet{}
-	}
-}
-
-func (p *TagList) ReplaceVariable(fromVariable string, toVariable string) {
-	tags, found := p.tags[fromVariable]
-	if found {
-		delete(p.tags, fromVariable)
-		p.tags[toVariable] = tags
 	}
 }
 

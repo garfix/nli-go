@@ -11,11 +11,11 @@ type DialogContext struct {
 	DeicticCenter     *DeicticCenter
 	ProcessList       *ProcessList
 	VariableGenerator *mentalese.VariableGenerator
-	DiscourseEntities *mentalese.Binding
+	EntityBindings    *mentalese.Binding
 	ClauseList        *mentalese.ClauseList
 	AnaphoraQueue     *mentalese.AnaphoraQueue
-	TagList           *TagList
-	Sorts             *mentalese.EntitySorts
+	EntityTags        *TagList
+	EntitySorts       *mentalese.EntitySorts
 }
 
 func NewDialogContext(
@@ -28,11 +28,11 @@ func NewDialogContext(
 		DeicticCenter:     deicticCenter,
 		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
-		DiscourseEntities: &discourseEntities,
+		EntityBindings:    &discourseEntities,
 		ClauseList:        mentalese.NewClauseList(),
 		AnaphoraQueue:     mentalese.NewAnaphoraQueue(),
-		TagList:           NewTagList(),
-		Sorts:             mentalese.NewEntitySorts(),
+		EntityTags:        NewTagList(),
+		EntitySorts:       mentalese.NewEntitySorts(),
 	}
 	dialogContext.Initialize()
 
@@ -59,32 +59,26 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 	for i := len(clauses) - 1; i >= 0; i-- {
 		clause := clauses[i]
 		for _, discourseVariable := range clause.GetDiscourseVariables() {
-			value, found := e.DiscourseEntities.Get(discourseVariable)
+			value, found := e.EntityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
 					group := EntityReferenceGroup{}
-					sorts := e.Sorts.GetSorts(discourseVariable)
+					sorts := e.EntitySorts.GetSorts(discourseVariable)
 					for i, item := range value.TermValueList {
 						sort := sorts[i]
-						//if sort != item.TermSort {
-						//	item.TermSort = ""
-						//}
 						reference := EntityReference{sort, item.TermValue, discourseVariable}
 						group = append(group, reference)
 					}
 					ids = append(ids, group)
 				} else {
-					sorts := e.Sorts.GetSorts(discourseVariable)
+					sorts := e.EntitySorts.GetSorts(discourseVariable)
 					sort := sorts[0]
-					//if sort != value.TermSort {
-					//	value.TermSort = ""
-					//}
 					reference := EntityReference{sort, value.TermValue, discourseVariable}
 					group := EntityReferenceGroup{reference}
 					ids = append(ids, group)
 				}
 			} else {
-				sorts := e.Sorts.GetSorts(discourseVariable)
+				sorts := e.EntitySorts.GetSorts(discourseVariable)
 				sort := mentalese.SortEntity
 				if len(sorts) > 0 {
 					sort = sorts[0]
@@ -106,7 +100,7 @@ func (e *DialogContext) GetAnaphoraQueue1() []EntityReferenceGroup {
 	for i := len(clauses) - 1; i >= 0; i-- {
 		clause := clauses[i]
 		for _, entity := range clause.Entities {
-			value, found := e.DiscourseEntities.Get(entity.DiscourseVariable)
+			value, found := e.EntityBindings.Get(entity.DiscourseVariable)
 			if found {
 				if value.IsList() {
 					group := EntityReferenceGroup{}
@@ -136,6 +130,8 @@ func (dc *DialogContext) Initialize() {
 	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()
 
-	dc.DiscourseEntities.Clear()
+	dc.EntityBindings.Clear()
+	dc.EntityTags.Clear()
+	dc.EntitySorts.Clear()
 	dc.ClauseList.Clear()
 }

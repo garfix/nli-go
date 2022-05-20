@@ -56,20 +56,6 @@ func (f *StackFrame) GetCurrentInBinding() mentalese.Binding {
 	return f.InBindings.Get(f.InBindingIndex)
 }
 
-func (f *StackFrame) AddOutBinding(inBinding mentalese.Binding, outBinding mentalese.Binding) {
-
-	//relationVariables := f.GetCurrentRelation().GetVariableNames()
-	//
-	//// filter out temporary variables
-	//cleanBinding := outBinding.FilterVariablesByName(relationVariables)
-	//// make sure the original values are present
-	//cleanBinding = cleanBinding.Merge(inBinding)
-
-	f.OutBindings.Add(outBinding) //cleanBinding)
-}
-
-func (f *StackFrame) AddOutBindings(inBinding mentalese.Binding, outBindings mentalese.BindingSet) {
-	for _, outBinding := range outBindings.GetAll() {
-		f.AddOutBinding(inBinding, outBinding)
-	}
+func (f *StackFrame) AddOutBinding(outBinding mentalese.Binding) {
+	f.OutBindings.Add(outBinding)
 }

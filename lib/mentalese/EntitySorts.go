@@ -8,6 +8,10 @@ func NewEntitySorts() *EntitySorts {
 	return &EntitySorts{}
 }
 
+func (s *EntitySorts) Clear() {
+	*s = map[string][]string{}
+}
+
 func (s *EntitySorts) SetSorts(variable string, sorts []string) {
 	(*s)[variable] = sorts
 }

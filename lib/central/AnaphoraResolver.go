@@ -40,7 +40,7 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 	for fromVariable, toVariable := range collection.replacements {
 		// replace the other variables in the set
 		newSet = newSet.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
-		value, found := resolver.dialogContext.DiscourseEntities.Get(toVariable)
+		value, found := resolver.dialogContext.EntityBindings.Get(toVariable)
 		if found {
 			if value.IsList() {
 				tempBindings := mentalese.NewBindingSet()
@@ -99,7 +99,7 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 
 	resolvedVariable := rangeVar
 
-	tags := resolver.dialogContext.TagList.GetTagPredicates(rangeVar)
+	tags := resolver.dialogContext.EntityTags.GetTagPredicates(rangeVar)
 	if common.StringArrayContains(tags, mentalese.TagSortalReference) {
 		sortRelationSet := resolver.sortalReference(quant)
 		quant = quant.Copy()
@@ -131,7 +131,7 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 	resolvedVariable := variable
 
 	// if the variable has been bound already, don't try to look for a reference
-	_, found := resolver.dialogContext.DiscourseEntities.Get(variable)
+	_, found := resolver.dialogContext.EntityBindings.Get(variable)
 	if found {
 		return variable
 	}
@@ -142,8 +142,8 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 			collection.AddReplacement(variable, referentVariable)
 			resolvedVariable = referentVariable
 		} else {
-			resolver.dialogContext.DiscourseEntities.Set(variable, referentValue)
-			resolver.dialogContext.Sorts.SetSorts(variable, resolver.dialogContext.Sorts.GetSorts(referentVariable))
+			resolver.dialogContext.EntityBindings.Set(variable, referentValue)
+			resolver.dialogContext.EntitySorts.SetSorts(variable, resolver.dialogContext.EntitySorts.GetSorts(referentVariable))
 			collection.AddReference(variable, referentValue)
 		}
 	} else {
@@ -250,35 +250,4 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 end:
 
 	return found, foundVariable, foundTerm
-}
-
-// checks if a (irreflexive) pronoun does not refer to another element in a same relation
-func (base *AnaphoraResolver) isReflexive(unscopedSense mentalese.RelationSet, referenceVariable string, antecedent EntityReference) bool {
-
-	antecedentvariable := antecedent.Variable
-
-	if antecedentvariable == "" {
-		return false
-	}
-
-	reflexive := false
-	for _, relation := range unscopedSense {
-		ref := false
-		ante := false
-		for _, argument := range relation.Arguments {
-			if argument.IsVariable() {
-				if argument.TermValue == antecedentvariable {
-					ante = true
-				}
-				if argument.TermValue == referenceVariable {
-					ref = true
-				}
-			}
-		}
-		if ref && ante {
-			reflexive = true
-		}
-	}
-
-	return reflexive
 }

@@ -89,7 +89,7 @@ func (base *SystemSolverFunctionBase) dialogReadBindings(messenger api.ProcessMe
 
 	someBindingVar := input.Arguments[0].TermValue
 
-	responseBinding := (*base.dialogContext.DiscourseEntities).Copy()
+	responseBinding := (*base.dialogContext.EntityBindings).Copy()
 
 	newBinding := binding.Copy()
 	newBinding.Set(someBindingVar, mentalese.NewTermJson(responseBinding.ToRaw()))
@@ -155,11 +155,11 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 
 	for key, values := range groupedValues {
 		if len(values) == 1 {
-			base.dialogContext.DiscourseEntities.Set(key, values[0])
+			base.dialogContext.EntityBindings.Set(key, values[0])
 		} else {
-			base.dialogContext.DiscourseEntities.Set(key, mentalese.NewTermList(values))
+			base.dialogContext.EntityBindings.Set(key, mentalese.NewTermList(values))
 		}
-		base.dialogContext.Sorts.SetSorts(key, groupedSorts[key])
+		base.dialogContext.EntitySorts.SetSorts(key, groupedSorts[key])
 	}
 
 	//println(base.dialogContext.DiscourseEntities.String())

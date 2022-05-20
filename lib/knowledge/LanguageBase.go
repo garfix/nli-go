@@ -283,7 +283,7 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	clauseList := base.dialogContext.ClauseList
 	clause := clauseList.GetLastClause()
-	clause.UpdateCenter(clauseList, base.dialogContext.DiscourseEntities)
+	clause.UpdateCenter(clauseList, base.dialogContext.EntityBindings)
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -300,7 +300,7 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 	clause := base.dialogContext.ClauseList.GetLastClause()
 	if clause != nil && clause.Center != nil {
 		variable := clause.Center.DiscourseVariable
-		value, found := base.dialogContext.DiscourseEntities.Get(variable)
+		value, found := base.dialogContext.EntityBindings.Get(variable)
 		if found {
 			center = value
 		}
@@ -362,7 +362,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	base.log.AddProduction("Named entities", entityIds.String())
 
 	tags := base.relationizer.ExtractTags(parseTree)
-	base.dialogContext.TagList.AddTags(tags)
+	base.dialogContext.EntityTags.AddTags(tags)
 
 	base.extractSorts(requestRelations)
 
@@ -388,7 +388,7 @@ func (base *LanguageBase) extractSorts(relations mentalese.RelationSet) {
 		if found {
 			sorts = []string{withoutNamespace}
 		}
-		base.dialogContext.Sorts.SetSorts(variable, sorts)
+		base.dialogContext.EntitySorts.SetSorts(variable, sorts)
 		for _, argument := range relation.Arguments {
 			if argument.IsRelationSet() {
 				base.extractSorts(argument.TermValueRelationSet)
@@ -701,7 +701,7 @@ func (base *LanguageBase) surface(messenger api.ProcessMessenger, input mentales
 	newBinding := binding.Copy()
 	newBinding.Set(surfaceVar, mentalese.NewTermString(surface))
 
-	base.log.AddProduction("Dialog-entities", base.dialogContext.DiscourseEntities.String())
+	base.log.AddProduction("Dialog-entities", base.dialogContext.EntityBindings.String())
 
 	return mentalese.InitBindingSet(newBinding)
 }

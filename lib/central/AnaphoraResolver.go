@@ -24,8 +24,6 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	collection := NewAnaphoraResolverCollection()
 
-	resolver.dialogContext.AnaphoraQueue.StartClause()
-
 	// extend the set with one one-anaphora resolutions, replace variables, and collect the other matches
 	newSet := resolver.resolveSet(set, binding, collection)
 
@@ -119,7 +117,7 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 		}
 	}
 
-	resolver.dialogContext.AnaphoraQueue.GetActiveClause().AddDialogVariable(resolvedVariable)
+	resolver.dialogContext.ClauseList.GetLastClause().AddEntity(resolvedVariable)
 
 	return quant
 }

@@ -208,10 +208,9 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 
 	base.dialogContext.ClauseList.AddClause(clause)
 
-	base.dialogContext.AnaphoraQueue.StartClause()
 	for _, binding := range essentialResponseBindings.GetAll() {
 		for _, variable := range binding.GetKeys() {
-			base.dialogContext.AnaphoraQueue.GetActiveClause().AddDialogVariable(variable)
+			clause.AddEntity(variable)
 		}
 	}
 

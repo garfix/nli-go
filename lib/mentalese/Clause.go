@@ -3,18 +3,20 @@ package mentalese
 import "nli-go/lib/common"
 
 type Clause struct {
-	AuthorIsSystem bool
-	ParseTree      *ParseTreeNode
-	Entities       []*ClauseEntity
-	Center         *ClauseEntity
+	AuthorIsSystem   bool
+	ParseTree        *ParseTreeNode
+	Entities         []*ClauseEntity
+	Center           *ClauseEntity
+	ResolvedEntities []string
 }
 
 func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*ClauseEntity) *Clause {
 
 	return &Clause{
-		AuthorIsSystem: authorIsSystem,
-		ParseTree:      parseTree,
-		Entities:       entities,
+		AuthorIsSystem:   authorIsSystem,
+		ParseTree:        parseTree,
+		Entities:         entities,
+		ResolvedEntities: []string{},
 	}
 }
 
@@ -95,6 +97,10 @@ func createOrderedEntities(variables []string, functions map[string]string) []*C
 	}
 
 	return entities
+}
+
+func (c *Clause) AddEntity(entity string) {
+	c.ResolvedEntities = append(c.ResolvedEntities, entity)
 }
 
 func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {

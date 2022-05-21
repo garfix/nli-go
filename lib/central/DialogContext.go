@@ -8,11 +8,10 @@ const MaxSizeAnaphoraQueue = 10
 
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
-	DeicticCenter     *DeicticCenter
 	VariableGenerator *mentalese.VariableGenerator
-	EntityBindings    *mentalese.Binding
+	DeicticCenter     *DeicticCenter
 	ClauseList        *mentalese.ClauseList
-	AnaphoraQueue     *mentalese.AnaphoraQueue
+	EntityBindings    *mentalese.Binding
 	EntityTags        *TagList
 	EntitySorts       *mentalese.EntitySorts
 }
@@ -23,11 +22,10 @@ func NewDialogContext(
 ) *DialogContext {
 	discourseEntities := mentalese.NewBinding()
 	dialogContext := &DialogContext{
-		DeicticCenter:     deicticCenter,
 		VariableGenerator: variableGenerator,
-		EntityBindings:    &discourseEntities,
+		DeicticCenter:     deicticCenter,
 		ClauseList:        mentalese.NewClauseList(),
-		AnaphoraQueue:     mentalese.NewAnaphoraQueue(),
+		EntityBindings:    &discourseEntities,
 		EntityTags:        NewTagList(),
 		EntitySorts:       mentalese.NewEntitySorts(),
 	}
@@ -51,11 +49,11 @@ func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) 
 
 func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 	ids := []EntityReferenceGroup{}
-	clauses := e.AnaphoraQueue.GetClauses()
+	clauses := e.ClauseList.Clauses
 
 	for i := len(clauses) - 1; i >= 0; i-- {
 		clause := clauses[i]
-		for _, discourseVariable := range clause.GetDiscourseVariables() {
+		for _, discourseVariable := range clause.ResolvedEntities {
 			value, found := e.EntityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {

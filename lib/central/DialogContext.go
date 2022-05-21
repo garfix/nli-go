@@ -47,29 +47,30 @@ func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) 
 	}
 }
 
-func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
-	ids := []EntityReferenceGroup{}
+func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
+	ids := []AnaphoraQueueElement{}
 	clauses := e.ClauseList.Clauses
 
-	for i := len(clauses) - 1; i >= 0; i-- {
+	first := len(clauses) - 1 - MaxSizeAnaphoraQueue
+	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
 		clause := clauses[i]
 		for _, discourseVariable := range clause.ResolvedEntities {
 			value, found := e.EntityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
-					group := EntityReferenceGroup{}
+					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
 					sorts := e.EntitySorts.GetSorts(discourseVariable)
 					for i, item := range value.TermValueList {
 						sort := sorts[i]
-						reference := EntityReference{sort, item.TermValue, discourseVariable}
-						group = append(group, reference)
+						reference := AnaphoraQueueElementValue{sort, item.TermValue}
+						group.values = append(group.values, reference)
 					}
 					ids = append(ids, group)
 				} else {
 					sorts := e.EntitySorts.GetSorts(discourseVariable)
 					sort := sorts[0]
-					reference := EntityReference{sort, value.TermValue, discourseVariable}
-					group := EntityReferenceGroup{reference}
+					reference := AnaphoraQueueElementValue{sort, value.TermValue}
+					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 					ids = append(ids, group)
 				}
 			} else {
@@ -78,8 +79,8 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 				if len(sorts) > 0 {
 					sort = sorts[0]
 				}
-				reference := EntityReference{sort, "", discourseVariable}
-				group := EntityReferenceGroup{reference}
+				reference := AnaphoraQueueElementValue{sort, ""}
+				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 				ids = append(ids, group)
 			}
 		}

@@ -167,7 +167,7 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation) ment
 		sort := ""
 
 		// if their are multiple values, their sorts should match
-		for _, ref := range group {
+		for _, ref := range group.values {
 			if sort == "" {
 				sort = ref.Sort
 			} else if sort != ref.Sort {
@@ -205,10 +205,10 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
 
 		// there may be 1..n groups (bindings)
-		referentVariable := group[0].Variable
+		referentVariable := group.Variable
 
 		// if there's 1 group and its id = "", it is unbound
-		isBound := group[0].Id != ""
+		isBound := group.values[0].Id != ""
 
 		if isBound {
 			// empty set ("it")
@@ -219,7 +219,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 			}
 		}
 
-		for _, referent := range group {
+		for _, referent := range group.values {
 
 			if referent.Id == "" {
 				continue
@@ -234,7 +234,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 
 			if testRangeBindings.GetLength() > 0 {
 				found = true
-				if len(group) == 1 {
+				if len(group.values) == 1 {
 					foundVariable = referentVariable
 				} else {
 					foundTerm = value

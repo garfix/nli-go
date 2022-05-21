@@ -35,16 +35,7 @@ func NewDialogContext(
 }
 
 func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
-	clause := e.ClauseList.GetLastClause()
-	newTree := clause.ParseTree.ReplaceVariable(fromVariable, toVariable)
-	clause.ParseTree = &newTree
-
-	if clause.Center != nil {
-		clause.Center.Replacevariable(fromVariable, toVariable)
-	}
-	for _, e := range clause.Entities {
-		e.Replacevariable(fromVariable, toVariable)
-	}
+	e.ClauseList.GetLastClause().ReplaceVariable(fromVariable, toVariable)
 }
 
 func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {

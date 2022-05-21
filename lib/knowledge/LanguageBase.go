@@ -298,8 +298,8 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 
 	center := mentalese.NewTermAtom("none")
 	clause := base.dialogContext.ClauseList.GetLastClause()
-	if clause != nil && clause.Center != nil {
-		variable := clause.Center.DiscourseVariable
+	if clause != nil && clause.Center != "" {
+		variable := clause.Center
 		value, found := base.dialogContext.EntityBindings.Get(variable)
 		if found {
 			center = value

@@ -198,7 +198,7 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 	clause := mentalese.NewClause(nil, true, entities)
 
 	if len(entities) > 0 {
-		clause.Center = entities[0]
+		clause.Center = entities[0].DiscourseVariable
 	} else {
 		previousClause := base.dialogContext.ClauseList.GetLastClause()
 		if previousClause != nil {

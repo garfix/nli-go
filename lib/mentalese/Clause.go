@@ -5,8 +5,8 @@ import "nli-go/lib/common"
 type Clause struct {
 	AuthorIsSystem   bool
 	ParseTree        *ParseTreeNode
-	Entities         []*ClauseEntity
-	Center           *ClauseEntity
+	Functions        []*ClauseEntity
+	Center           string
 	ResolvedEntities []string
 }
 
@@ -15,8 +15,20 @@ func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*Clause
 	return &Clause{
 		AuthorIsSystem:   authorIsSystem,
 		ParseTree:        parseTree,
-		Entities:         entities,
+		Functions:        entities,
 		ResolvedEntities: []string{},
+	}
+}
+
+func (clause *Clause) ReplaceVariable(fromVariable string, toVariable string) {
+	newTree := clause.ParseTree.ReplaceVariable(fromVariable, toVariable)
+	clause.ParseTree = &newTree
+
+	if clause.Center == fromVariable {
+		clause.Center = toVariable
+	}
+	for _, e := range clause.Functions {
+		e.Replacevariable(fromVariable, toVariable)
 	}
 }
 
@@ -104,8 +116,8 @@ func (c *Clause) AddEntity(entity string) {
 }
 
 func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
-	var previousCenter *ClauseEntity = nil
-	var center *ClauseEntity = nil
+	var previousCenter = ""
+	var center = ""
 	var priority = 0
 
 	previousClause := list.GetPreviousClause()
@@ -120,17 +132,17 @@ func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
 	}
 
 	// new clause has no entities? keep existing center
-	if len(c.Entities) == 0 {
+	if len(c.Functions) == 0 {
 		center = previousCenter
 	}
 
-	for _, entity := range c.Entities {
-		if previousCenter != nil {
+	for _, entity := range c.Functions {
+		if previousCenter != "" {
 			a := getValue(entity.DiscourseVariable, binding)
-			b := getValue(previousCenter.DiscourseVariable, binding)
+			b := getValue(previousCenter, binding)
 			if a == b {
 				priority = priorities["previousCenter"]
-				center = entity
+				center = entity.DiscourseVariable
 				continue
 			}
 		}
@@ -138,7 +150,7 @@ func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
 		if found {
 			if prio > priority {
 				priority = prio
-				center = entity
+				center = entity.DiscourseVariable
 			}
 		}
 	}

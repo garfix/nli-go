@@ -9,7 +9,6 @@ const MaxSizeAnaphoraQueue = 10
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
 	DeicticCenter     *DeicticCenter
-	ProcessList       *ProcessList
 	VariableGenerator *mentalese.VariableGenerator
 	EntityBindings    *mentalese.Binding
 	ClauseList        *mentalese.ClauseList
@@ -20,13 +19,11 @@ type DialogContext struct {
 
 func NewDialogContext(
 	deicticCenter *DeicticCenter,
-	processList *ProcessList,
 	variableGenerator *mentalese.VariableGenerator,
 ) *DialogContext {
 	discourseEntities := mentalese.NewBinding()
 	dialogContext := &DialogContext{
 		DeicticCenter:     deicticCenter,
-		ProcessList:       processList,
 		VariableGenerator: variableGenerator,
 		EntityBindings:    &discourseEntities,
 		ClauseList:        mentalese.NewClauseList(),
@@ -95,7 +92,6 @@ func (e *DialogContext) GetAnaphoraQueue() []EntityReferenceGroup {
 
 func (dc *DialogContext) Initialize() {
 	dc.DeicticCenter.Initialize()
-	dc.ProcessList.Initialize()
 	dc.VariableGenerator.Initialize()
 
 	dc.EntityBindings.Clear()

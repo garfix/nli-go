@@ -132,7 +132,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(deicticCenter, system.processList, variableGenerator)
+	system.dialogContext = central.NewDialogContext(deicticCenter, variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 

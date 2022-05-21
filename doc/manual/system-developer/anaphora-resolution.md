@@ -7,10 +7,9 @@ It also handles references to entities mentioned earlier within the same sentenc
 ## The anaphora queue
 
 NLI-GO uses a structure called the anaphora queue to store the most recent references. The queue is located in the
-dialog context and is stored on file.
+dialog context.
 
-The queue is simply a queue (first in first out) of entity references (id + sort). New entities are stored on
-front. When the queue becomes larger than 10 items, the ones at the end fall off.
+The queue is simply a queue (first in first out) of entity variables. The variables are grouped by the clause they belong to.
 
 More precise, it is a queue of entity reference groups. Multiple entities can be added as a single group. The result of
 a query for example, that exists of 3 persons. So that you can later refer to these as "they".

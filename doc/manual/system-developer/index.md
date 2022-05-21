@@ -3,3 +3,7 @@
 The system developer extends NLI-GO with new features and fixes its bugs.
 
 He needs to have detailed knowledge of the inner workings of NLI-GO.
+
+## Diagram
+
+![diagram](../../diagram/system1.drawio.png)

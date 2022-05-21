@@ -38,8 +38,8 @@ go:respond(Input) :-
 go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, ContinueLooking) :-
 
     go:dialog_add_root_clause(RootClauseTree, false)
-    go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
 
+    go:relationize(RootClauseTree, Request, DialogBinding, RequestBinding, UnresolvedName)
     if [UnresolvedName != ''] then
         go:create_canned(Output, name_not_found, UnresolvedName)
         [ContinueLooking := true]

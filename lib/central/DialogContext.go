@@ -42,10 +42,21 @@ func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
 	ids := []AnaphoraQueueElement{}
 	clauses := e.ClauseList.Clauses
 
+	variableUsed := map[string]bool{}
+
 	first := len(clauses) - 1 - MaxSizeAnaphoraQueue
 	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
 		clause := clauses[i]
 		for _, discourseVariable := range clause.ResolvedEntities {
+
+			// add each variable only once
+			_, found := variableUsed[discourseVariable]
+			if found {
+				continue
+			} else {
+				variableUsed[discourseVariable] = true
+			}
+
 			value, found := e.EntityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {

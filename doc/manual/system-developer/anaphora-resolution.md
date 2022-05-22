@@ -2,36 +2,26 @@
 
 NLI-GO handles pronouns like "he", "she", "it", "they", but also expressions like "the block" and "the red one". These
 expressions are called commonly called anaphora. Some refer to recent user input and some to a recent system response.
-It also handles references to entities mentioned earlier within the same sentence (intra-sentential).
+
+Patrick: if you're asking why we need all this: The reason we do all of this is to allow referring to unbound referents. This was not possible before.
 
 ## The anaphora queue
 
-NLI-GO uses a structure called the anaphora queue to store the most recent references. The queue is located in the
-dialog context.
+To resolve an unbound variable of a sentence, it is matched to all variables in the anaphora queue, until a match is found.
 
-The queue is simply a queue (first in first out) of entity variables. The variables are grouped by the clause they belong to.
+The anaphora queue is built on demand, whenever it is needed. It is built from the entities stored in the clauses of the dialog context.
 
-More precise, it is a queue of entity reference groups. Multiple entities can be added as a single group. The result of
-a query for example, that exists of 3 persons. So that you can later refer to these as "they".
+Each clause has a list of entities ordered as they appear in the sentence.
 
-## Solution
+The anaphora queue is built from the last clause encountered to the first, and the entities within a clause in order. In general an entity that appears earlier in a sentence is more likely to be the referent. 
 
-The variable where the query results are stored must be specified in the field "result" of a solution:
+It is also possible to tag entities as subject and object, and there functions will be used to determine the order of appearance. The subject is more important than the object, and this in turn is more important than other entities.
 
-    result: E1
+The anaphora queue is extended at the same of anaphora resolution itself. This is necessary because of intrasentential anaphora: a reference to an entity within the same sentence.
 
-This is how the system knows which entities to refer to later.
+The anaphora queue is also extended when the system creates an answer sentence. At that time it creates a new clause, and its entities.
 
-## Adding entities
-
-Any entity that is named in the input is added to the queue. This allows a user to type the name just once and
-henceforth refer to him/her with a pronoun.
-
-Any entity that is part of the result set of a question is added to the queue. This allows a user to refer to a previous
-response. Only the entities designated by the variable named in the "result" field from the solution are added.
-
-If the entity had been part of the queue before, it would be removed from the queue before being added again at the
-front. Each entity can be in the queue only once.
+Each entity is added to the anaphora queue only once.
 
 ## Features
 
@@ -54,14 +44,14 @@ The implementation of anaphora resolution we take here involves replacing the va
 
 This implementation effectively adds the constraint that the reference variable equals the referent variable [B = A] in Discourse Representation Theory. Only working with equalities is very hard, and reducing the number of variables is logically equivalent.
 
-Patrick: if you're asking why we need all this: The reason we do all of this is to allow referring to unbound referents. This was not possible before.
-
-## Anahpora resolution step
+## Anaphora resolution step
 
 There needs to be a separate AR step. The algorithm is like this:
 
 - go through the relational structure of the sentence, quant by quant, from bottom to top
-- handle `back_reference`-like relations as special cases
+- handle `reference`-tagged relations as special cases
+- handle `sort_reference`-tagged relations as special cases
+- note: an entity may be both `reference` and `sort_reference` ("the blue one"): the sort needs to be resolved before the reference
 - handle all quants E1 (like "the box")
     - go through all entities E2 in the queue
     - check if the features of E1 match those of E2
@@ -71,15 +61,9 @@ There needs to be a separate AR step. The algorithm is like this:
     - when in doubt, use parallellism (a reference in subject position is more likely to refer to entity that is also in subject position; idem for object position)
     - a local reference (same clause) is more likely than a remote reference
 
-- anaphoric / nonanaphoric: the distinction is not made: all entities are treated as anaphoric
-- concepts "whats the action radius of an electric car?" can be treated like objects: they must be represented in the database
-- forward references: "He picked up a block. Jack."
-- "My car broke down. The engine failed." - use frames (this will be a future extension)
-- "the morning star is the evening star" - will not support (see remark at 2022-04-02)
-
 ![entities](../../diagram/entities2.png)
 
-## Splitting up a referent group
+## Splitting up an entity list
 
 In this interaction:
 

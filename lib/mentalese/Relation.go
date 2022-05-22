@@ -282,6 +282,15 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 	return NewRelation(relation.Negate, relation.Predicate, newArguments)
 }
 
+func (relation Relation) ReplaceTerm(from Term, to Term) Relation {
+	newRelation := NewRelation(relation.Negate, relation.Predicate, []Term{})
+	for _, argument := range relation.Arguments {
+		newArgument := argument.ReplaceTerm(from, to)
+		newRelation.Arguments = append(newRelation.Arguments, newArgument)
+	}
+	return newRelation
+}
+
 func (relation Relation) String() string {
 
 	args, sep := "", ""

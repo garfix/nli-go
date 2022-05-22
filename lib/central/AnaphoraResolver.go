@@ -34,7 +34,7 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 
 	newBindings := mentalese.InitBindingSet(binding)
 
-	// update the binding
+	// update the binding by replacing the variables
 	for fromVariable, toVariable := range collection.replacements {
 		// replace the other variables in the set
 		newSet = newSet.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
@@ -107,12 +107,7 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 		resolvedVariable = resolver.reference(quant, binding, collection)
 
 		if rangeVar != resolvedVariable {
-			quant = quant.Copy()
-			quant.Arguments[1].TermValue = resolvedVariable
-			quant.Arguments[2].TermValueRelationSet = quant.Arguments[2].TermValueRelationSet.ReplaceTerm(mentalese.NewTermVariable(rangeVar), mentalese.NewTermVariable(resolvedVariable))
-
-			//quant.Arguments[2].TermValueRelationSet = resolver.resolveSet(quant.Arguments[2].TermValueRelationSet, binding, collection)
-
+			quant = quant.ReplaceTerm(mentalese.NewTermVariable(rangeVar), mentalese.NewTermVariable(resolvedVariable))
 			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
 		}
 	}

@@ -20,7 +20,7 @@ go:respond(Input) :-
             go:dialogize(ParseTree, DialogParseTree)
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
-            go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
+            go:process_root_clause(RootClauseTree, DialogBinding, Locale, RootClauseOutput, ContinueLooking)
             [:Output := RootClauseOutput]
 
             /* `ContinueLooking` tells us that there was a problem that should only be reported if no other parse tree succeeds */
@@ -35,7 +35,7 @@ go:respond(Input) :-
     )
 ;
 
-go:process_root_clause(RootClauseTree, Request, DialogBinding, Locale, Output, ContinueLooking) :-
+go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLooking) :-
 
     go:dialog_add_root_clause(RootClauseTree, false)
 

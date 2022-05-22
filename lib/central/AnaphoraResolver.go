@@ -140,8 +140,6 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 			collection.AddReplacement(variable, referentVariable)
 			resolvedVariable = referentVariable
 		} else {
-			resolver.dialogContext.EntityBindings.Set(variable, referentValue)
-			resolver.dialogContext.EntitySorts.SetSorts(variable, resolver.dialogContext.EntitySorts.GetSorts(referentVariable))
 			collection.AddReference(variable, referentValue)
 		}
 	} else {

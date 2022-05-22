@@ -115,7 +115,7 @@ func (c *Clause) AddEntity(entity string) {
 	c.ResolvedEntities = append(c.ResolvedEntities, entity)
 }
 
-func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
+func (c *Clause) UpdateCenter(list *ClauseList, binding Binding) {
 	var previousCenter = ""
 	var center = ""
 	var priority = 0
@@ -158,7 +158,7 @@ func (c *Clause) UpdateCenter(list *ClauseList, binding *Binding) {
 	c.Center = center
 }
 
-func getValue(variable string, binding *Binding) string {
+func getValue(variable string, binding Binding) string {
 	v, found := binding.Get(variable)
 	if found {
 		return v.TermValue

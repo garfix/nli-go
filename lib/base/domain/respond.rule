@@ -53,8 +53,6 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
         return
     end
 
-    go:dialog_write_bindings(ResolvedBindings)
-
     /* Stop at the first successfully processed solution */
     go:cut(1,
         go:find_solution(ResolvedRequest, Solution)
@@ -67,7 +65,6 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
         end
     )
 
-    go:dialog_write_bindings(AcceptedBindings)
     go:dialog_update_center()
     go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
     go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)

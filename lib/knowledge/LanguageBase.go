@@ -283,7 +283,7 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	clauseList := base.dialogContext.ClauseList
 	clause := clauseList.GetLastClause()
-	clause.UpdateCenter(clauseList, base.dialogContext.EntityBindings)
+	clause.UpdateCenter(clauseList, binding)
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -564,33 +564,6 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 
 	responseBindingsVar := input.Arguments[2].TermValue
 	responseIndexVar := input.Arguments[3].TermValue
-
-	//index := messenger.GetCursor().GetState("index", 0)
-
-	// process child results
-	//if index > 0 {
-	//	responseBindings := messenger.GetCursor().GetChildFrameResultBindings()
-	//	if !responseBindings.IsEmpty() {
-	//		newBinding := mentalese.NewBinding()
-	//		newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
-	//		newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index-1)))
-	//		return mentalese.InitBindingSet(newBinding)
-	//	}
-	//}
-	//
-	//if index < len(solution.Responses) {
-	//	response := solution.Responses[index]
-	//	if response.Condition.IsEmpty() {
-	//		newBinding := mentalese.NewBinding()
-	//		newBinding.Set(responseBindingsVar, mentalese.NewTermJson(resultBindings))
-	//		newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
-	//		return mentalese.InitBindingSet(newBinding)
-	//	} else {
-	//		messenger.CreateChildStackFrame(response.Condition, resultBindings)
-	//	}
-	//}
-	//
-	//messenger.GetCursor().SetState("index", index+1)
 
 	for index := 0; index < len(solution.Responses); index++ {
 		response := solution.Responses[index]

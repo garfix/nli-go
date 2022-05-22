@@ -1,3 +1,9 @@
+## 2022-05-22
+
+Is anaphora resolution a syntactic or a semantic process? It is about rewriting a parse tree or rewriting a set of relations?
+
+I decided it's more of a semantic process. And even though treating it as syntactic is a little bit cleaner (needs no rewrites of the clauses), this is not enough to make this a syntactic process. But it's not a strong decision yet.
+
 ## 2022-05-15
 
 Fixing the tests again. "Why?" now fails because ellipsis resolution copies part of the previous sentence that hadn't been subjected to anaphora resolution. 

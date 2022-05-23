@@ -1,4 +1,5 @@
 dom:marry(_, A, B) :- marriages(A, B, _);
+dom:marry(_, A, B) :- marriages(B, A, _);
 dom:name(A, N) :- person(A, N, _, _);
 dom:parent(P, C) :- parent(P, C);
 dom:have_child(P, C) :- parent(P, C);

@@ -35,8 +35,8 @@ func TestRelationships(t *testing.T) {
 		{"Suzanne van Dongen is married to Henk Smit", "Ok"},
 		{"Did Suzanne van Dongen marry Henk Smit?", "Yes"},
 
-		//{"Is Jacqueline de Boer married to a man?", "Yes"},
-		//{"Who is he?", "Gerard van As"}, neee
+		{"Is Jacqueline de Boer married to a man?", "Yes"},
+		//{"Who is he?", "Gerard van As"},
 		//{"", ""},
 		//{"", ""},
 		//{"", ""},
@@ -46,6 +46,8 @@ func TestRelationships(t *testing.T) {
 	for _, test := range tests {
 
 		log.Clear()
+
+		println(test.question)
 
 		answer, _ := system.Answer(test.question)
 

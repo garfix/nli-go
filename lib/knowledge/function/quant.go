@@ -389,6 +389,18 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 		}
 	}
 
+	// special case: the existential quantifier `one`
+	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.AtomOne {
+		if scopeCount != 1 {
+			if base.log.Active() {
+				base.log.AddDebug("Do/Find", "Quantifier One mismatch: results not equal to 1")
+			}
+			return false
+		} else {
+			return true
+		}
+	}
+
 	// special case: the existential quantifier `none`
 	if firstArgument.IsRelationSet() && len(firstArgument.TermValueRelationSet) == 0 {
 		if final {

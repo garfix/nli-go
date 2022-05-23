@@ -22,8 +22,6 @@ const FrameTypeScope = "scope"
 const FrameTypeLoop = "loop"
 const FrameTypeComplex = "complex"
 
-const SlotSense = "sense"
-
 const SortEntity = "entity"
 
 const PredicateCanned = "go_canned"
@@ -150,6 +148,7 @@ const AtomFunctionNone = "none"
 
 const AtomNone = "none"
 const AtomSome = "some"
+const AtomOne = "one"
 const AtomAsc = "asc"
 const AtomDesc = "desc"
 const AtomReturnValue = "rv"

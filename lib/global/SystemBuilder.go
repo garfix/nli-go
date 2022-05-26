@@ -862,6 +862,10 @@ func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool)
 			if entityInfo.Entity != "" {
 				EntityRelationSet = builder.parser.CreateRelationSet(entityInfo.Entity)
 			}
+			GenderRelation := mentalese.Relation{}
+			if entityInfo.Gender != "" {
+				GenderRelation = builder.parser.CreateRelation(entityInfo.Gender)
+			}
 
 			parseResult := builder.parser.GetLastParseResult()
 			if !parseResult.Ok {
@@ -882,6 +886,7 @@ func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool)
 
 			entities[key] = mentalese.SortInfo{
 				Name:    nameRelation,
+				Gender:  GenderRelation,
 				Knownby: knownBy,
 				Entity:  EntityRelationSet,
 			}

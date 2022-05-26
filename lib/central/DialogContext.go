@@ -91,6 +91,27 @@ func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
 	return ids
 }
 
+func (c *DialogContext) CheckAgreement(variable1 string, variable2 string) bool {
+
+	agreements1 := c.EntityTags.GetTagsByPredicate(variable1, mentalese.TagAgree)
+	agreements2 := c.EntityTags.GetTagsByPredicate(variable2, mentalese.TagAgree)
+
+	for _, tag1 := range agreements1 {
+		name1 := tag1.Arguments[1]
+		value1 := tag1.Arguments[2]
+		for _, tag2 := range agreements2 {
+			name2 := tag2.Arguments[1]
+			value2 := tag2.Arguments[2]
+			if name1.TermValue == name2.TermValue {
+				if !value1.Equals(value2) {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
 func (dc *DialogContext) Initialize() {
 	dc.DeicticCenter.Initialize()
 	dc.VariableGenerator.Initialize()

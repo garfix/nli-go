@@ -140,11 +140,14 @@ const CategoryProperNounGroup = "proper_noun_group"
 const TagRootClause = "go_root_clause"
 const TagFunction = "go_function"
 const TagReference = "go_reference"
+const TagAgree = "go_agree"
 const TagSortalReference = "go_sortal_reference"
 
 const AtomFunctionSubject = "subject"
 const AtomFunctionObject = "object"
 const AtomFunctionNone = "none"
+
+const AtomGender = "gender"
 
 const AtomNone = "none"
 const AtomSome = "some"

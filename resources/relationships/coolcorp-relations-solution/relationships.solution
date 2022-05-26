@@ -20,6 +20,20 @@
             answer: dom:dont_know()
         }
 }
+/* Who is X? */
+{
+    condition: go:intent(who, B),
+    result: B,
+    responses:
+        {
+            condition: go:exists(),
+            preparation: dom:name(B, D),
+            answer: go:canned(D)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
 {
     condition: go:intent(yes_no) dom:marry(P1, A, B),
     result: _,

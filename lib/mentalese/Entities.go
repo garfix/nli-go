@@ -3,9 +3,10 @@ package mentalese
 type Entities map[string]SortInfo
 
 type SortInfo struct {
-	Name Relation
+	Name    Relation
+	Gender  Relation
 	Knownby map[string]Relation
-	Entity RelationSet
+	Entity  RelationSet
 }
 
 const NameVar = "Name"

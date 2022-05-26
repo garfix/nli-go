@@ -36,7 +36,7 @@ func TestRelationships(t *testing.T) {
 		{"Did Suzanne van Dongen marry Henk Smit?", "Yes"},
 
 		{"Is Jacqueline de Boer married to a man?", "Yes"},
-		//{"Who is he?", "Gerard van As"},
+		{"Who is he?", "Mark van Dongen"},
 		//{"", ""},
 		//{"", ""},
 		//{"", ""},
@@ -53,7 +53,7 @@ func TestRelationships(t *testing.T) {
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-			t.Error(log.String())
+			//t.Error(log.String())
 		}
 	}
 }

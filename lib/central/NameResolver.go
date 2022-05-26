@@ -89,6 +89,19 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 
 			id, _ := binding.Get(mentalese.IdVar)
 
+			// gender
+			gender := ""
+			genderInBinding := mentalese.NewBinding()
+			genderInBinding.Set(mentalese.IdVar, id)
+
+			if entityInfo.Gender.Predicate != "" {
+				genderOutBindings := resolver.solverAsync.FindFacts(factBase, entityInfo.Gender, genderInBinding)
+				for _, genderOutBinding := range genderOutBindings.GetAll() {
+					value, _ := genderOutBinding.Get(mentalese.ValueVar)
+					gender = value.TermValue
+				}
+			}
+
 			// sort because the resulting strings must not be in random order
 			sortedInfoTypes := []string{}
 			for infoType := range entityInfo.Knownby {
@@ -119,6 +132,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 
 			nameInformations = append(nameInformations, NameInformation{
 				Name:         name,
+				Gender:       gender,
 				DatabaseName: factBase.GetName(),
 				EntityType:   id.TermSort,
 				SharedId:     id.TermValue,

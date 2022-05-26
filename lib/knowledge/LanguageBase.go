@@ -355,7 +355,8 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	entityIds, nameNotFound, _ := base.findNames(messenger, names, sorts)
+	entityIds, nameNotFound, genderTags := base.findNames(messenger, names, sorts)
+	base.dialogContext.EntityTags.AddTags(genderTags)
 
 	requestBinding := dialogBinding.Merge(entityIds)
 
@@ -426,10 +427,11 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.Sorts) (mentalese.Binding, string, bool) {
+func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.Sorts) (mentalese.Binding, string, mentalese.RelationSet) {
 
 	entityIds := mentalese.NewBinding()
 	nameNotFound := ""
+	genderTags := mentalese.RelationSet{}
 
 	// look up entity ids by name
 	entityIds = mentalese.NewBinding()
@@ -463,12 +465,19 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		// link variable to ID
 		for _, nameInformation := range nameInformations {
 			entityIds.Set(variable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
+			if nameInformation.Gender != "" {
+				genderTags = append(genderTags, mentalese.NewRelation(false, mentalese.TagAgree, []mentalese.Term{
+					mentalese.NewTermVariable(variable),
+					mentalese.NewTermAtom(mentalese.AtomGender),
+					mentalese.NewTermAtom(nameInformation.Gender),
+				}))
+			}
 		}
 	}
 
 next:
 
-	return entityIds, nameNotFound, false
+	return entityIds, nameNotFound, genderTags
 }
 
 func (base *LanguageBase) findSolution(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

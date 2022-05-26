@@ -40,6 +40,7 @@ type Entities map[string]EntityInfo
 
 type EntityInfo struct {
 	Name    string
+	Gender  string
 	Knownby map[string]string
 	Entity  string
 }

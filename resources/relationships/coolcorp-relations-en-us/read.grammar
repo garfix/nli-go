@@ -16,10 +16,11 @@
 { rule: nbar(E1) -> noun(E1) }
 
 { rule: noun(E1) -> parent(E1),                                 sense: dom:parent(E1, _) }
-{ rule: noun(E1) -> 'man',                                      sense: dom:gender(E1, male) }
+{ rule: noun(E1) -> 'man',                                      sense: dom:gender(E1, male),
+                                                                    tag:  go:agree(E1, gender, male) }
 
-{ rule: np(E1) -> 'he',                                         sense: go:quant(one, E1, dom:gender(E1, male)),
-                                                                    tag: go:reference(E1) }
+{ rule: np(E1) -> 'he',                                         sense: go:quant(one, E1, none),
+                                                                    tag: go:reference(E1) go:agree(E1, gender, male) }
 { rule: np(R1) -> qp(_) nbar(R1),                               sense: go:quant($qp, R1, $nbar) }
 { rule: np(E1) -> proper_noun_group(E1),                        sense: go:quant(some, E1, none) }
 

@@ -200,6 +200,10 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		// there may be 1..n groups (bindings)
 		referentVariable := group.Variable
 
+		if !resolver.dialogContext.CheckAgreement(variable, referentVariable) {
+			continue
+		}
+
 		// if there's 1 group and its id = "", it is unbound
 		isBound := group.values[0].Id != ""
 

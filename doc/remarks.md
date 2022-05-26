@@ -1,3 +1,25 @@
+## 2022-05-26
+
+I am going to use `gender` for agreement, not `sort`. `gender` may include the animate/inanimate distinction.
+
+https://en.wikipedia.org/wiki/Grammatical_gender#Related_linguistic_concepts
+
+This is a nice case:
+
+  		Is Jacqueline de Boer married to a man?
+        Yes
+
+		Who is he?
+        Mark van Dongen
+
+The answer, without gender matching, is "Jacqueline de Boer", because it is the subject of the previous sentence / it is the first noun in the previous sentence.
+
+To check for gender, I need not only establish that "he" has `go:agree(E1, gender, male)`, but also that "Jacqueline de Boer" has gender female. If so they don't match.
+
+But how do you establish grammatical gender for a proper noun? 
+
+Ask the database. Since the name is resolved in the `relationize` phase; this function should also resolve the gender.
+
 ## 2022-05-22
 
 Is anaphora resolution a syntactic or a semantic process? It is about rewriting a parse tree or rewriting a set of relations?

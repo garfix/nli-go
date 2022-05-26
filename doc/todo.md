@@ -2,6 +2,16 @@
 
 - when listed values are used in the next sentence, they should be converted to multiple bindings
 
+- `go:back_reference(E1, none)` "it" "them" -
+    - `tag: reference(E1) agree(E1, sort, object) agree(E1, number, singular)`
+    - `tag: reference(E1) agree(E1, sort, person) agree(E1, number, plural)`
+
+- create proper function diagrams for all processes
+  - input
+  - output
+  - dependencies
+  - side effects (which data stores are involved?)
+
 - a dialog constant is a dialog variable `E5`turned into a constant `e5`
 - add a factbase `discourse entity relations` (DER) to dialog context 
 - add active features to the DER, when the sentence is definitively chosen

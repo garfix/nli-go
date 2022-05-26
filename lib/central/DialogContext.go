@@ -36,6 +36,10 @@ func NewDialogContext(
 
 func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
 	e.ClauseList.GetLastClause().ReplaceVariable(fromVariable, toVariable)
+
+	if e.DeicticCenter.GetCenter() == fromVariable {
+		e.DeicticCenter.SetCenter(toVariable)
+	}
 }
 
 func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {

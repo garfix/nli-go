@@ -6,7 +6,6 @@ type Clause struct {
 	AuthorIsSystem   bool
 	ParseTree        *ParseTreeNode
 	Functions        []*ClauseEntity
-	Center           string
 	ResolvedEntities []string
 }
 
@@ -24,9 +23,6 @@ func (clause *Clause) ReplaceVariable(fromVariable string, toVariable string) {
 	newTree := clause.ParseTree.ReplaceVariable(fromVariable, toVariable)
 	clause.ParseTree = &newTree
 
-	if clause.Center == fromVariable {
-		clause.Center = toVariable
-	}
 	for _, e := range clause.Functions {
 		e.Replacevariable(fromVariable, toVariable)
 	}
@@ -113,56 +109,4 @@ func createOrderedEntities(variables []string, functions map[string]string) []*C
 
 func (c *Clause) AddEntity(entity string) {
 	c.ResolvedEntities = append(c.ResolvedEntities, entity)
-}
-
-func (c *Clause) UpdateCenter(list *ClauseList, binding Binding) {
-	var previousCenter = ""
-	var center = ""
-	var priority = 0
-
-	previousClause := list.GetPreviousClause()
-	if previousClause != nil {
-		previousCenter = previousClause.Center
-	}
-
-	priorities := map[string]int{
-		"previousCenter":    100,
-		AtomFunctionSubject: 10,
-		AtomFunctionObject:  5,
-	}
-
-	// new clause has no entities? keep existing center
-	if len(c.Functions) == 0 {
-		center = previousCenter
-	}
-
-	for _, entity := range c.Functions {
-		if previousCenter != "" {
-			a := getValue(entity.DiscourseVariable, binding)
-			b := getValue(previousCenter, binding)
-			if a == b {
-				priority = priorities["previousCenter"]
-				center = entity.DiscourseVariable
-				continue
-			}
-		}
-		prio, found := priorities[entity.SyntacticFunction]
-		if found {
-			if prio > priority {
-				priority = prio
-				center = entity.DiscourseVariable
-			}
-		}
-	}
-
-	c.Center = center
-}
-
-func getValue(variable string, binding Binding) string {
-	v, found := binding.Get(variable)
-	if found {
-		return v.TermValue
-	} else {
-		return ""
-	}
 }

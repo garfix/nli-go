@@ -444,23 +444,3 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 
 	return success
 }
-
-func (base *SystemSolverFunctionBase) quickAcceptabilityCheck(variable string, sort string, relations mentalese.RelationSet) bool {
-
-	accepted := false
-
-	for _, relation := range relations {
-		for i, argument := range relation.Arguments {
-			if argument.IsVariable() && argument.TermValue == variable {
-				argumentEntityType := base.meta.GetSort(relation.Predicate, i)
-
-				if argumentEntityType == "" || base.meta.MatchesSort(argumentEntityType, sort) {
-					accepted = true
-					break
-				}
-			}
-		}
-	}
-
-	return accepted
-}

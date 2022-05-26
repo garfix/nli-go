@@ -281,11 +281,55 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 }
 
 func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-	clauseList := base.dialogContext.ClauseList
-	clause := clauseList.GetLastClause()
-	clause.UpdateCenter(clauseList, binding)
+
+	var previousCenter = base.dialogContext.DeicticCenter.GetCenter()
+	var center = ""
+	var priority = 0
+
+	priorities := map[string]int{
+		"previousCenter":              100,
+		mentalese.AtomFunctionSubject: 10,
+		mentalese.AtomFunctionObject:  5,
+	}
+
+	c := base.dialogContext.ClauseList.GetLastClause()
+
+	// new clause has no entities? keep existing center
+	if len(c.Functions) == 0 {
+		center = previousCenter
+	}
+
+	for _, entity := range c.Functions {
+		if previousCenter != "" {
+			a := getValue(entity.DiscourseVariable, binding)
+			b := getValue(previousCenter, binding)
+			if a == b {
+				priority = priorities["previousCenter"]
+				center = entity.DiscourseVariable
+				continue
+			}
+		}
+		prio, found := priorities[entity.SyntacticFunction]
+		if found {
+			if prio > priority {
+				priority = prio
+				center = entity.DiscourseVariable
+			}
+		}
+	}
+
+	base.dialogContext.DeicticCenter.SetCenter(center)
 
 	return mentalese.InitBindingSet(binding)
+}
+
+func getValue(variable string, binding mentalese.Binding) string {
+	v, found := binding.Get(variable)
+	if found {
+		return v.TermValue
+	} else {
+		return ""
+	}
 }
 
 func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -297,10 +341,10 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 	centerVar := input.Arguments[0].TermValue
 
 	center := mentalese.NewTermAtom("none")
-	clause := base.dialogContext.ClauseList.GetLastClause()
-	if clause != nil && clause.Center != "" {
-		variable := clause.Center
-		value, found := base.dialogContext.EntityBindings.Get(variable)
+	//clause := base.dialogContext.ClauseList.GetLastClause()
+	centerVariable := base.dialogContext.DeicticCenter.GetCenter()
+	if centerVariable != "" {
+		value, found := base.dialogContext.EntityBindings.Get(centerVariable)
 		if found {
 			center = value
 		}

@@ -7,6 +7,7 @@ type DeicticCenter struct {
 }
 
 const DeixisTime = "time"
+const DeixisCenter = "center"
 
 func NewDeicticCenter() *DeicticCenter {
 	return &DeicticCenter{
@@ -28,5 +29,18 @@ func (center *DeicticCenter) GetTime() mentalese.RelationSet {
 		return time.TermValueRelationSet
 	} else {
 		return mentalese.RelationSet{}
+	}
+}
+
+func (center *DeicticCenter) SetCenter(variable string) {
+	center.Binding.Set(DeixisCenter, mentalese.NewTermVariable(variable))
+}
+
+func (center *DeicticCenter) GetCenter() string {
+	c, found := center.Binding.Get(DeixisCenter)
+	if found {
+		return c.TermValue
+	} else {
+		return ""
 	}
 }

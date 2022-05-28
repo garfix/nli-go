@@ -41,6 +41,8 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
 
     go:relationize(RootClauseTree, Request)
 
+    go:sortal_filtering(Request, DialogBinding)
+
     go:resolve_names(RootClauseTree, DialogBinding, RequestBinding, UnresolvedName)
     if [UnresolvedName != ''] then
         go:create_canned(Output, name_not_found, UnresolvedName)

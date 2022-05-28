@@ -56,6 +56,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateDialogize:           base.dialogize,
 		mentalese.PredicateEllipsize:           base.ellipsize,
 		mentalese.PredicateRelationize:         base.relationize,
+		mentalese.PredicateSortalFiltering:     base.sortalFiltering,
 		mentalese.PredicateResolveNames:        base.resolveNames,
 		mentalese.PredicateResolveAnaphora:     base.resolveAnaphora,
 		mentalese.PredicateExtractRootClauses:  base.extractRootClauses,
@@ -384,6 +385,30 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
+	tags := base.relationizer.ExtractTags(parseTree)
+	base.dialogContext.EntityTags.AddTags(tags)
+
+	newBinding := binding.Copy()
+
+	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "rj", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	requestRelations := bound.Arguments[0].TermValueRelationSet
+
+	dialogBinding := mentalese.NewBinding()
+	dialogBindingsRaw := map[string]mentalese.Term{}
+	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
+	dialogBinding.FromRaw(dialogBindingsRaw)
+
 	base.extractSorts(requestRelations)
 
 	// extract sorts: variable => sort
@@ -399,14 +424,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		base.dialogContext.EntitySorts.SetSorts(variable, []string{sort})
 	}
 
-	tags := base.relationizer.ExtractTags(parseTree)
-	base.dialogContext.EntityTags.AddTags(tags)
-
-	newBinding := binding.Copy()
-
-	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
-
-	return mentalese.InitBindingSet(newBinding)
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

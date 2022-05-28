@@ -2,6 +2,6 @@ type: domain
 version: 1.0.0
 predicates: argument-sort.relation
 sorts: sort-properties.yml
-subsorts: predicates.sort
+subsorts: sort-hierarchy.txt
 rules:
   - relations.rule

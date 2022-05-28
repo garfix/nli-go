@@ -59,7 +59,7 @@ A sample index.yml:
     rules: [dbpedia.rule]
     predicates: argument-sort.relation
     write: [ write.yml ]
-    subsorts: predicates.sort
+    subsorts: sort-hierarchy.txt
     sorts: sort-properties.yml
     
 All of these are optional.     

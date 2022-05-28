@@ -45,7 +45,7 @@ Problem is, entities from responses are stored as well. And these may be an arra
 ## 2022-05-09
 
 About sorts: I dont want a double declaration of sort relation `dom:person(E1)` and tag `go:agree(E1, sort, person)`.
-In stead, I just want the relation. And when the relation is a sort, this can be specified in `predicates.sort`. The sort and the relation are equal. No need to separate them.
+In stead, I just want the relation. And when the relation is a sort, this can be specified in `sort-hierarchy.txt`. The sort and the relation are equal. No need to separate them.
 
 ## 2022-05-09
 

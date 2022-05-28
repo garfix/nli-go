@@ -56,6 +56,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateDialogize:           base.dialogize,
 		mentalese.PredicateEllipsize:           base.ellipsize,
 		mentalese.PredicateRelationize:         base.relationize,
+		mentalese.PredicateResolveNames:        base.resolveNames,
 		mentalese.PredicateResolveAnaphora:     base.resolveAnaphora,
 		mentalese.PredicateExtractRootClauses:  base.extractRootClauses,
 		mentalese.PredicateDialogAddRootClause: base.dialogAddRootClause,
@@ -370,28 +371,23 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "jvjvv", base.log) {
+	if !Validate(bound, "jv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	senseVar := input.Arguments[1].TermValue
-	requestBindingVar := input.Arguments[3].TermValue
-	unboundNameVar := input.Arguments[4].TermValue
 	var parseTree mentalese.ParseTreeNode
-
 	bound.Arguments[0].GetJsonValue(&parseTree)
-	sortFinder := central.NewSortFinder(base.meta)
 
-	dialogBinding := mentalese.NewBinding()
-	dialogBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[2].GetJsonValue(&dialogBindingsRaw)
-	dialogBinding.FromRaw(dialogBindingsRaw)
+	senseVar := input.Arguments[1].TermValue
 
-	requestRelations, names := base.relationizer.Relationize(parseTree, []string{"S"})
+	requestRelations, _ := base.relationizer.Relationize(parseTree, []string{"S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
+	base.extractSorts(requestRelations)
+
 	// extract sorts: variable => sort
+	sortFinder := central.NewSortFinder(base.meta)
 	sorts, sortFound := sortFinder.FindSorts(requestRelations)
 	if !sortFound {
 		// conflicting sorts
@@ -399,21 +395,58 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	entityIds, nameNotFound, genderTags := base.findNames(messenger, names, sorts)
+	for variable, sort := range sorts {
+		base.dialogContext.EntitySorts.SetSorts(variable, []string{sort})
+	}
+
+	//entityIds, nameNotFound, genderTags := base.findNames(messenger, names, sorts)
+	//base.dialogContext.EntityTags.AddTags(genderTags)
+
+	//requestBinding := dialogBinding.Merge(entityIds)
+
+	//base.log.AddProduction("Named entities", entityIds.String())
+
+	tags := base.relationizer.ExtractTags(parseTree)
+	base.dialogContext.EntityTags.AddTags(tags)
+
+	newBinding := binding.Copy()
+
+	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "jjvv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	requestBindingVar := input.Arguments[2].TermValue
+	unboundNameVar := input.Arguments[3].TermValue
+	var parseTree mentalese.ParseTreeNode
+
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	dialogBinding := mentalese.NewBinding()
+	dialogBindingsRaw := map[string]mentalese.Term{}
+	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
+	dialogBinding.FromRaw(dialogBindingsRaw)
+
+	_, names := base.relationizer.Relationize(parseTree, []string{"S"})
+
+	sorts := base.dialogContext.EntitySorts
+
+	entityIds, nameNotFound, genderTags := base.findNames(messenger, names, *sorts)
 	base.dialogContext.EntityTags.AddTags(genderTags)
 
 	requestBinding := dialogBinding.Merge(entityIds)
 
 	base.log.AddProduction("Named entities", entityIds.String())
 
-	tags := base.relationizer.ExtractTags(parseTree)
-	base.dialogContext.EntityTags.AddTags(tags)
-
-	base.extractSorts(requestRelations)
-
 	newBinding := binding.Copy()
 
-	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
 	newBinding.Set(requestBindingVar, mentalese.NewTermJson(requestBinding.ToRaw()))
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
@@ -471,7 +504,7 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.Sorts) (mentalese.Binding, string, mentalese.RelationSet) {
+func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.EntitySorts) (mentalese.Binding, string, mentalese.RelationSet) {
 
 	entityIds := mentalese.NewBinding()
 	nameNotFound := ""
@@ -493,10 +526,10 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		}
 
 		// find name information
-		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort)
+		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort[0])
 		if len(nameInformations) == 0 {
 			base.log.AddProduction("Info",
-				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort+"' did not give any results")
+				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort[0]+"' did not give any results")
 			nameNotFound = name.TermValue
 			goto next
 		}

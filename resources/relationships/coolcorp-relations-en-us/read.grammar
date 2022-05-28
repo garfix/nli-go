@@ -19,6 +19,8 @@
 { rule: noun(E1) -> 'man',                                      sense: dom:gender(E1, male),
                                                                     tag:  go:agree(E1, gender, male) }
 
+{ rule: noun(E1) -> 'river',                                    sense: dom:river(E1) }
+
 { rule: np(E1) -> 'he',                                         sense: go:quant(one, E1, none),
                                                                     tag: go:reference(E1) go:agree(E1, gender, male) }
 { rule: np(R1) -> qp(_) nbar(R1),                               sense: go:quant($qp, R1, $nbar) }
@@ -33,6 +35,7 @@
 
 { rule: aux_do(P1) -> 'did' }
 { rule: aux_be(P1) -> 'is' }
+{ rule: aux_be(P1) -> 'was' }
 { rule: aux_do(P1) -> 'does' }
 { rule: have(P1) -> 'have' }
 { rule: have(P1) -> 'has' }
@@ -49,16 +52,19 @@
 
 { rule: which_clause(E1) -> child(E1) have(P1) np(E2),                    sense: go:quant_check($np1, dom:have_child(E2, E1)) }
 { rule: how_many_clause(E1) -> child(E1) have(P1) np(E2),                 sense: go:quant_check($np1, dom:have_child(E2, E1)) }
-{ rule: subject_complement_clause(E1) -> marry(P1) np(E2),                sense: go:quant_check($np1, dom:marry(P1, E1, E2)) }
-{ rule: subject_complement_clause2(P1) -> np(E1) marry(P1) np(E2),        sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2))) }
+{ rule: subject_complement_clause(E1) -> marry(P1) np(E2),                sense: go:quant_check($np1, dom:marry(P1, E1, E2, _, _)) }
+{ rule: subject_complement_clause2(P1) -> np(E1) marry(P1) np(E2),        sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2, _, _))) }
 { rule: copula_clause(P1) -> np(E1) 'and' np(E2) sibling(_),              sense: go:quant_check($np1, go:quant_check($np2, dom:siblings(E1, E2))) }
 
 { rule: subject_complement_clause2(P1) -> np(E1) have(_) qp(_) child(E2), sense: go:quant_check($np1, go:quant_check(go:quant($qp, E2, $child), dom:have_child(E1, E2))) }
 { rule: subject_complement_clause(E1) -> copula(_) np(E1),                sense: go:quant_check($np1, none) }
 
-{ rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                     sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2))) }
+{ rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                     sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2, _, _))) }
+{ rule: np_comp4(P1) -> np(E1) marry(P1) 'by' np(E2),                     sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, _, E2, _))) }
+{ rule: np_comp4(P1) -> np_comp4_place(P1) }
+{ rule: np_comp4_place(P1) -> np(E1) marry(P1) 'by' np(E2),                     sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, _, _, E2))) }
 
-{ rule: declarative(P1) -> np(E1) 'is' 'married' 'to' np(E2),             sense: go:quant_check($np1, go:quant_check($np2, go:assert( dom:marry(1, E1, E2) ))) }
+{ rule: declarative(P1) -> np(E1) 'is' 'married' 'to' np(E2),             sense: go:quant_check($np1, go:quant_check($np2, go:assert( dom:marry(1, E1, E2, 200, 300) ))) }
 
 { rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: go:intent(who, E1) }
 { rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: go:intent(which, E1) }

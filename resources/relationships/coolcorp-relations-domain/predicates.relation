@@ -1,4 +1,5 @@
 parent(person, person)
 have_child(person, person)
 siblings(person, person)
-marry(event, person, person)
+marry(event, person, person, person, place)
+river(place)

@@ -37,6 +37,10 @@ func TestRelationships(t *testing.T) {
 
 		{"Is Jacqueline de Boer married to a man?", "Yes"},
 		{"Who is he?", "Mark van Dongen"},
+
+		// syntactic ambiguity; resolved by sortal restrictions
+		{"Was Jacqueline de Boer married by a river?", "Yes"},
+		{"Was Jacqueline de Boer married by Father Brown?", "Yes"},
 		//{"", ""},
 		//{"", ""},
 		//{"", ""},
@@ -53,7 +57,7 @@ func TestRelationships(t *testing.T) {
 
 		if answer != test.answer {
 			t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-			//t.Error(log.String())
+			t.Error(log.String())
 		}
 	}
 }

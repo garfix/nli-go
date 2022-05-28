@@ -8,7 +8,7 @@
         }
 }
 {
-    condition: go:intent(who, A) dom:marry(P1, A, B),
+    condition: go:intent(who, A) dom:marry(P1, A, B, _, _),
     result: A,
     responses: 
         {
@@ -35,7 +35,7 @@
         }
 }
 {
-    condition: go:intent(yes_no) dom:marry(P1, A, B),
+    condition: go:intent(yes_no) dom:marry(P1, A, B, _, _),
     result: _,
     responses: 
         {

@@ -1,4 +1,4 @@
-marriages(`:2`, `:1`, '1992')
+marriages(`:2`, `:1`, '1992', `:10`, `:100`)
 parent(`:4`, `:2`)
 parent(`:4`, `:3`)
 parent(`:4`, `:5`)
@@ -16,3 +16,6 @@ person(`:6`, 'Durkje van Dongen', 'M', '1982')
 person(`:7`, 'Johanneke de Boer', 'M', '1998')
 person(`:8`, 'Baukje de Boer', 'F', '1999')
 person(`:9`, 'Henk Smit', 'M', '1963')
+person(`:10`, 'Father Brown', 'M', '1953')
+
+river(`:100`)

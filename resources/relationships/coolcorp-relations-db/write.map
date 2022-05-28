@@ -1,1 +1,1 @@
-dom:marry(_, A, B) :- marriages(A, B, '');
+dom:marry(_, A, B, _, _) :- marriages(A, B, '', '', '');

@@ -57,7 +57,7 @@ A domain module contains the knowledge about a single domain, like blocks, books
 A sample index.yml:
 
     rules: [dbpedia.rule]
-    predicates: predicates.relation
+    predicates: argument-sort.relation
     write: [ write.yml ]
     subsorts: predicates.sort
     sorts: sort-properties.yml
@@ -84,7 +84,7 @@ Here `entity` is the root "sort". `country`, `city` and `animal` are subsorts of
 
 Currently sorts are only needed to locate proper names in databases. It helps to know that "Madonna" is a person, to avoid confusion with other entities with the same name. The sort is used in combination with the `entities` file of the database domain.
 
-`predicates` contains the name of a predicates.relation file, which looks like this:
+`predicates` contains the name of a argument-sort.relation file, which looks like this:
 
     has_capital(country, city)
 

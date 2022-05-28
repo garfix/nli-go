@@ -27,7 +27,7 @@ Although there are also relations in the databases you use, try to design the re
 The relations should model the way users think about the domain.
 
 Each relation has a predicate and some arguments. The arguments are slots for entities and you need to specify their
-types. This is done in predicates.relation:
+types. This is done in argument-sort.relation:
 
     write(person, work)
 

@@ -158,7 +158,7 @@ Let's have an example:
 
     { rule: nbar(E1) -> 'daughter' 'of' np(E2),                                sense: quant_check($np, has_daughter(E2, E1)) }
     
-Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "predicates.relation":
+Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "argument-sort.relation":
 
     has_daughter(person, person)
     

@@ -16,7 +16,7 @@ It starts with a sense from a rule; here: marry(P1, E1, E2)
 
     { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
 
-It introduces two noun phrases (E1 and E2). You define their types in predicates.relation:
+It introduces two noun phrases (E1 and E2). You define their types in argument-sort.relation:
 
     marry(event, person, person)
 

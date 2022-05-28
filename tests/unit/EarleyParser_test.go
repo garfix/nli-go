@@ -60,7 +60,7 @@ func TestEarleyParser(test *testing.T) {
 		}
 
 		tree := dialogizer.Dialogize(&trees[0])
-		relations, _ := relationizer.Relationize(*tree, []string{ "S"})
+		relations := relationizer.Relationize(*tree, []string{"S"})
 
 		if relations.String() != "isa(D$1, the) isa(E$1, girl) determiner(E$1, D$1) predication(Sentence$1, speak_up) subject(Sentence$1, E$1)" {
 			test.Error(fmt.Sprintf("Relations: %v", relations))
@@ -93,4 +93,3 @@ func TestEarleyParser(test *testing.T) {
 		}
 	}
 }
-

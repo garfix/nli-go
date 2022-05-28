@@ -22,6 +22,50 @@ func NewNameResolver(solverAsync *ProblemSolver, meta *mentalese.Meta, log *comm
 	}
 }
 
+func (resolver *NameResolver) ExtractNames(rootNode mentalese.ParseTreeNode, rootVariables []string) mentalese.Binding {
+	return resolver.extractSenseFromNode(rootNode, rootVariables)
+}
+
+// Returns the sense of a node and its children
+// node contains a rule with NP -> Det NBar
+// antecedentVariable the actual variable used for the antecedent (for example: E5)
+func (resolver *NameResolver) extractSenseFromNode(node mentalese.ParseTreeNode, antecedentVariables []string) mentalese.Binding {
+
+	nameBinding := resolver.extractName(node, antecedentVariables)
+
+	// create relations for each of the children
+	for i, childNode := range node.Constituents {
+
+		consequentVariables := node.Rule.GetConsequentVariables(i)
+
+		childNameBinding := resolver.extractSenseFromNode(*childNode, consequentVariables)
+		nameBinding = nameBinding.Merge(childNameBinding)
+	}
+
+	return nameBinding
+}
+
+func (resolver *NameResolver) extractName(node mentalese.ParseTreeNode, antecedentVariables []string) mentalese.Binding {
+
+	names := mentalese.NewBinding()
+
+	if node.Category != mentalese.CategoryProperNounGroup {
+		return names
+	}
+
+	variable := antecedentVariables[0]
+
+	name := ""
+	sep := ""
+	for _, properNounNode := range node.Constituents {
+		name += sep + properNounNode.Form
+		sep = " "
+	}
+	names.Set(variable, mentalese.NewTermString(name))
+
+	return names
+}
+
 func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInformations []NameInformation) ([]NameInformation, bool) {
 
 	resolvedInformations := []NameInformation{}

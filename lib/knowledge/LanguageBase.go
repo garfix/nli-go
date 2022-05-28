@@ -380,7 +380,7 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	senseVar := input.Arguments[1].TermValue
 
-	requestRelations, _ := base.relationizer.Relationize(parseTree, []string{"S"})
+	requestRelations := base.relationizer.Relationize(parseTree, []string{"S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
@@ -398,13 +398,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 	for variable, sort := range sorts {
 		base.dialogContext.EntitySorts.SetSorts(variable, []string{sort})
 	}
-
-	//entityIds, nameNotFound, genderTags := base.findNames(messenger, names, sorts)
-	//base.dialogContext.EntityTags.AddTags(genderTags)
-
-	//requestBinding := dialogBinding.Merge(entityIds)
-
-	//base.log.AddProduction("Named entities", entityIds.String())
 
 	tags := base.relationizer.ExtractTags(parseTree)
 	base.dialogContext.EntityTags.AddTags(tags)
@@ -434,7 +427,7 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
 	dialogBinding.FromRaw(dialogBindingsRaw)
 
-	_, names := base.relationizer.Relationize(parseTree, []string{"S"})
+	names := base.nameResolver.ExtractNames(parseTree, []string{"S"})
 
 	sorts := base.dialogContext.EntitySorts
 

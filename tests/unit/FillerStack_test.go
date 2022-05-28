@@ -43,7 +43,7 @@ func TestFillerStack(t *testing.T) {
 	}
 
 	tree := dialogizer.Dialogize(&parseTrees[0])
-	result, _ := relationizer.Relationize(*tree, []string{ "S"})
+	result := relationizer.Relationize(*tree, []string{"S"})
 
 	want := "which(E$1) quant_check(quant(_, some(_), E$1, baby(E$1)), quant_check(quant(Q$1, the(Q$1), E$2, toy(E$2)), easiest(Sentence$1) take_from(Sentence$1, E$2, E$1)))"
 	if result.String() != want {

@@ -7,20 +7,20 @@ import (
 )
 
 type MorphologicalAnalyzer struct {
-	segmenter *morphology.Segmenter
+	segmenter    *morphology.Segmenter
 	parsingRules *mentalese.GrammarRules
-	parser *EarleyParser
+	parser       *EarleyParser
 	relationizer *Relationizer
-	log *common.SystemLog
+	log          *common.SystemLog
 }
 
 func NewMorphologicalAnalyzer(parsingRules *mentalese.GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
 	return &MorphologicalAnalyzer{
-		segmenter: segmenter,
+		segmenter:    segmenter,
 		parsingRules: parsingRules,
-		parser: parser,
+		parser:       parser,
 		relationizer: relationizer,
-		log: log,
+		log:          log,
 	}
 }
 
@@ -39,7 +39,7 @@ func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string,
 	}
 
 	// keep just the first tree, for now
-	sense, _ = morph.relationizer.Relationize(trees[0], variables)
+	sense = morph.relationizer.Relationize(trees[0], variables)
 
 	return sense, len(sense) > 0
 }

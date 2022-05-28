@@ -108,7 +108,7 @@ Checks an inheritance relation. The sort of the variable is deduced from the rel
     go:isa(Var, Sort)
 
 * `Var`: a variable
-* `Sort`: a sort atom (see sorts.yml) 
+* `Sort`: a sort atom 
 
 Example
 

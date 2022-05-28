@@ -33,7 +33,7 @@ types. This is done in predicates.relation:
 
 Currently you only need to do this for entities that have names that need to be looked up in the database.
 
-You also need to specify sorts.yml
+You also need to specify sort-properties.yml
 
     person:
       name: person_name(Id, Name)

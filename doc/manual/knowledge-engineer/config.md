@@ -60,7 +60,7 @@ A sample index.yml:
     predicates: predicates.relation
     write: [ write.yml ]
     subsorts: predicates.sort
-    sorts: sorts.yml
+    sorts: sort-properties.yml
     
 All of these are optional.     
 
@@ -92,7 +92,7 @@ This file contains domain specific predicates, the ones that are used in transfo
 
 `write` has yml files that name the predicates of the goals of rules that can be written to this rule base. 
 
-Here you can specify the sorts of the arguments. These sorts are used for name resolution. If a name is used in the sentence, the system uses sorts.yml to look up the names. At the same time it will look at the relations and the predicates file.
+Here you can specify the sorts of the arguments. These sorts are used for name resolution. If a name is used in the sentence, the system uses sort-properties.yml to look up the names. At the same time it will look at the relations and the predicates file.
 From this it will find out what sort belongs to the name. It will then only look for names that belong to this sort.
 
 It is optional to specify the predicates in this file. If there is no need to specify the sorts, they may be omitted.

@@ -1,7 +1,7 @@
 type: domain
 version: 1.0.0
 predicates: predicates.relation
-sorts: sorts.yml
+sorts: sort-properties.yml
 subsorts: predicates.sort
 rules:
   - relations.rule

@@ -162,7 +162,7 @@ Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also s
 
     has_daughter(person, person)
     
-With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (sorts.yml) to understand how to query the name in the knowledge base:
+With this information, the parser knows that "Charles Babbage" is not the name of a book, but of a person. And it uses another file (sort-properties.yml) to understand how to query the name in the knowledge base:
 
      person:
         name: person_name(Id, Name)

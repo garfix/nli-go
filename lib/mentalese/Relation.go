@@ -141,9 +141,10 @@ const CategoryProperNounGroup = "proper_noun_group"
 
 const TagRootClause = "go_root_clause"
 const TagFunction = "go_function"
-const TagReference = "go_reference"
 const TagAgree = "go_agree"
+const TagReference = "go_reference"
 const TagSortalReference = "go_sortal_reference"
+const TagReflectiveReference = "go_reflective_reference"
 
 const AtomFunctionSubject = "subject"
 const AtomFunctionObject = "object"
@@ -170,8 +171,6 @@ const SeqFirstOperandIndex = 0
 const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
-
-const SlotSolutionOutput = "solution-output"
 
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{

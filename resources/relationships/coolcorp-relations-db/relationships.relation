@@ -1,4 +1,6 @@
 marriages(`:2`, `:1`, '1992', `:10`, `:100`)
+in_love_with(`:1`, `:4`)
+in_love_with(`:9`, `:9`)
 parent(`:4`, `:2`)
 parent(`:4`, `:3`)
 parent(`:4`, `:5`)

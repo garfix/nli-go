@@ -111,6 +111,14 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
 		}
 	}
+	if common.StringArrayContains(tags, mentalese.TagReflectiveReference) {
+		resolvedVariable = resolver.reflectiveReference(quant, binding, collection)
+
+		if rangeVar != resolvedVariable {
+			quant = quant.ReplaceTerm(mentalese.NewTermVariable(rangeVar), mentalese.NewTermVariable(resolvedVariable))
+			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
+		}
+	}
 
 	resolver.dialogContext.ClauseList.GetLastClause().AddEntity(resolvedVariable)
 
@@ -143,6 +151,31 @@ func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding me
 		if newBindings.GetLength() > 1 {
 			// ask the user which of the specified entities he/she means
 			collection.output = "I don't understand which one you mean"
+		}
+	}
+
+	return resolvedVariable
+}
+
+func (resolver *AnaphoraResolver) reflectiveReference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+
+	variable := quant.Arguments[1].TermValue
+	resolvedVariable := variable
+
+	// if the variable has been bound already, don't try to look for a reference
+	_, found := resolver.dialogContext.EntityBindings.Get(variable)
+	if found {
+		return variable
+	}
+
+	// presuming the target of the reflection is the previously handled entity
+	// (because it lives in the parent quant)
+	clause := resolver.dialogContext.ClauseList.GetLastClause()
+	if len(clause.ResolvedEntities) > 0 {
+		lastVariable := clause.ResolvedEntities[len(clause.ResolvedEntities)-1]
+		if resolver.dialogContext.CheckAgreement(variable, lastVariable) {
+			collection.AddReplacement(variable, lastVariable)
+			resolvedVariable = lastVariable
 		}
 	}
 

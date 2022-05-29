@@ -35,13 +35,18 @@ func TestRelationships(t *testing.T) {
 		{"Suzanne van Dongen is married to Henk Smit", "Ok"},
 		{"Did Suzanne van Dongen marry Henk Smit?", "Yes"},
 
+		// "he" refers to "a man", not to the subject of the previous sentence
+		// thanks to gender agreement
 		{"Is Jacqueline de Boer married to a man?", "Yes"},
 		{"Who is he?", "Mark van Dongen"},
 
 		// syntactic ambiguity; resolved by sortal restrictions
 		{"Was Jacqueline de Boer married by a river?", "Yes"},
 		{"Was Jacqueline de Boer married by Father Brown?", "Yes"},
-		//{"", ""},
+
+		// reflective pronouns
+		{"Is Jacqueline de Boer in love with herself?", "No"},
+		{"Is Henk Smit in love with himself?", "Yes"},
 		//{"", ""},
 		//{"", ""},
 		//{"", ""},

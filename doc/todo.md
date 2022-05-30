@@ -2,23 +2,14 @@
 
 - when listed values are used in the next sentence, they should be converted to multiple bindings
 
-- `go:back_reference(E1, none)` "it" "them" -
-    - `tag: reference(E1) agree(E1, sort, object) agree(E1, number, singular)`
-    - `tag: reference(E1) agree(E1, sort, person) agree(E1, number, plural)`
-
 - create proper function diagrams for all processes
   - input
   - output
   - dependencies
   - side effects (which data stores are involved?)
 
-- a dialog constant is a dialog variable `E5`turned into a constant `e5`
-- add a factbase `discourse entity relations` (DER) to dialog context 
-- add active features to the DER, when the sentence is definitively chosen
-- add anaphora resolution tests to 'relationships'
-- `sort(E1, area) :- sort(E1, state)`
-- `sort(E1, entity) :- sort(E1, person)`
-- proper noun resolution needs to look at `sort()` features
+- check agreement & create test
+
 - check for agreement in separate step
 - The SHRDLU dialog does not have any definite anaphoric references (!) (where "the green block" refers to the block that was mentioned in the previous sentence) - so I will need an extra test in "relationships" that does just that
 - document new anaphora use

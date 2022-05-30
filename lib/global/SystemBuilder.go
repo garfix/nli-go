@@ -835,9 +835,9 @@ func (builder systemBuilder) readWritelist(index index, baseDir string, applicat
 	return writelist, true
 }
 
-func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool) {
+func (builder systemBuilder) CreateSorts(path string) (mentalese.SortProperties, bool) {
 
-	entities := mentalese.Entities{}
+	entities := mentalese.SortProperties{}
 
 	if path != "" {
 
@@ -884,7 +884,7 @@ func (builder systemBuilder) CreateSorts(path string) (mentalese.Entities, bool)
 				}
 			}
 
-			entities[key] = mentalese.SortInfo{
+			entities[key] = mentalese.SortProperty{
 				Name:    nameRelation,
 				Gender:  GenderRelation,
 				Knownby: knownBy,

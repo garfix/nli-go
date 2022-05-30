@@ -13,7 +13,7 @@ type InMemoryFactBase struct {
 	facts         mentalese.RelationSet
 	readMap       []mentalese.Rule
 	writeMap      []mentalese.Rule
-	entities      mentalese.Entities
+	entities      mentalese.SortProperties
 	sharedIds     SharedIds
 	matcher       *central.RelationMatcher
 	log           *common.SystemLog

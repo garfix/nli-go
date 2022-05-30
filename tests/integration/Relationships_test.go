@@ -32,6 +32,8 @@ func TestRelationships(t *testing.T) {
 
 		{"Does every parent have 4 children?", "Yes"},
 		{"Does every parent have 3 children?", "No"},
+
+		// assert
 		{"Suzanne van Dongen is married to Henk Smit", "Ok"},
 		{"Did Suzanne van Dongen marry Henk Smit?", "Yes"},
 
@@ -47,9 +49,6 @@ func TestRelationships(t *testing.T) {
 		// reflective pronouns
 		{"Is Jacqueline de Boer in love with herself?", "No"},
 		{"Is Henk Smit in love with himself?", "Yes"},
-		//{"", ""},
-		//{"", ""},
-		//{"", ""},
 	}
 
 	for _, test := range tests {

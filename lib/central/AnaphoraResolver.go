@@ -206,7 +206,7 @@ func (resolver *AnaphoraResolver) sortalReference(quant mentalese.Relation) ment
 			continue
 		}
 
-		sortInfo, found := resolver.meta.GetSortInfo(sort)
+		sortInfo, found := resolver.meta.GetSortProperty(sort)
 		if !found {
 			continue
 		}

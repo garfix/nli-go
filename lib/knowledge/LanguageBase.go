@@ -473,7 +473,7 @@ func (base *LanguageBase) extractSorts(relations mentalese.RelationSet) {
 		}
 		variable := relation.Arguments[0].TermValue
 		sorts := []string{mentalese.SortEntity}
-		_, found := base.meta.GetSortInfo(withoutNamespace)
+		_, found := base.meta.GetSortProperty(withoutNamespace)
 		if found {
 			sorts = []string{withoutNamespace}
 		}

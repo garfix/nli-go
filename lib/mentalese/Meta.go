@@ -2,60 +2,60 @@ package mentalese
 
 // maps a predicate to information about a relation
 type Meta struct {
-	predicates map[string]PredicateInfo
-	sorts      Entities
-	subSorts   map[string][]string
+	argumentSorts  map[string]ArgumentSorts
+	sortProperties SortProperties
+	sortHierachy   map[string][]string
 }
 
 // for each argument a sort
-type PredicateInfo struct {
+type ArgumentSorts struct {
 	Sorts []string
 }
 
 func NewMeta() *Meta {
 	return &Meta{
-		predicates: map[string]PredicateInfo{},
-		sorts:      Entities{},
-		subSorts:   map[string][]string{},
+		argumentSorts:  map[string]ArgumentSorts{},
+		sortProperties: SortProperties{},
+		sortHierachy:   map[string][]string{},
 	}
 }
 
 func (meta Meta) AddPredicate(name string, sorts []string) {
-	meta.predicates[name] = PredicateInfo{
+	meta.argumentSorts[name] = ArgumentSorts{
 		Sorts: sorts,
 	}
 }
 
-func (meta Meta) AddSortInfo(name string, info SortInfo) {
-	meta.sorts[name] = info
+func (meta Meta) AddSortInfo(name string, info SortProperty) {
+	meta.sortProperties[name] = info
 }
 
 func (meta Meta) GetSort(predicate string, argumentIndex int) string {
 
-	pred, found := meta.predicates[predicate]
+	pred, found := meta.argumentSorts[predicate]
 	if found {
 		return pred.Sorts[argumentIndex]
 	}
 	return ""
 }
 
-func (meta Meta) GetSorts() Entities {
-	return meta.sorts
+func (meta Meta) GetSorts() SortProperties {
+	return meta.sortProperties
 }
 
-func (meta Meta) GetSortInfo(sort string) (SortInfo, bool) {
-	info, found := meta.sorts[sort]
+func (meta Meta) GetSortProperty(sort string) (SortProperty, bool) {
+	info, found := meta.sortProperties[sort]
 	return info, found
 }
 
 func (meta Meta) AddSubSort(superSort string, subSort string) {
 
-	_, found := meta.subSorts[subSort]
+	_, found := meta.sortHierachy[subSort]
 	if !found {
-		meta.subSorts[subSort] = []string{}
+		meta.sortHierachy[subSort] = []string{}
 	}
 
-	meta.subSorts[subSort] = append(meta.subSorts[subSort], superSort)
+	meta.sortHierachy[subSort] = append(meta.sortHierachy[subSort], superSort)
 }
 
 func (meta Meta) MatchesSort(subSort string, superSort string) bool {
@@ -83,17 +83,23 @@ func (meta Meta) matchesSortRecursive(subSort string, superSort string, subSorts
 
 	found := false
 
-	_, found = meta.subSorts[subSort]
-	if !found { return false }
+	_, found = meta.sortHierachy[subSort]
+	if !found {
+		return false
+	}
 
-	if subSort == superSort { return true }
+	if subSort == superSort {
+		return true
+	}
 
-	for _, super := range meta.subSorts[subSort] {
+	for _, super := range meta.sortHierachy[subSort] {
 		if super == superSort {
 			return true
 		} else {
 			found = (*subSortsTried)[super]
-			if found { return false }
+			if found {
+				return false
+			}
 
 			(*subSortsTried)[super] = true
 			return meta.matchesSortRecursive(super, superSort, subSortsTried)

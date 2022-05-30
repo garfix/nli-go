@@ -1,8 +1,8 @@
 package mentalese
 
-type Entities map[string]SortInfo
+type SortProperties map[string]SortProperty
 
-type SortInfo struct {
+type SortProperty struct {
 	Name    Relation
 	Gender  Relation
 	Knownby map[string]Relation

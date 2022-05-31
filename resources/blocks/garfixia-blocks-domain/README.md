@@ -1,6 +1,6 @@
 # Blocks domain rules
 
-The rules are separted into layers. Each layer has a specific responsibility. Each layer should only communicate with the layer directly below.
+The rules are separated into layers. Each layer has a specific responsibility. Each layer should only communicate with the layer directly below.
 
 The layers are
 
@@ -28,4 +28,4 @@ Commands have "physical" effects. Since this is just a simulation of a blocks wo
 
 ## Database layer
 
-The database is only responsible for updating the database. It takes care of retracting and asserting knowledge.
+The database layer is only responsible for updating the database. It takes care of retracting and asserting knowledge.

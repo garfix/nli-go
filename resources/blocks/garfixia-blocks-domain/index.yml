@@ -1,6 +1,7 @@
 type: domain
 version: 1.0.0
 sorts: sort-properties.yml
+predicates: argument-sort.relation
 rules:
   - sentence.rule
   - actions.rule

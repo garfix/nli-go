@@ -409,8 +409,6 @@ func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input 
 	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
 	dialogBinding.FromRaw(dialogBindingsRaw)
 
-	base.extractSorts(requestRelations)
-
 	// extract sorts: variable => sort
 	sortFinder := central.NewSortFinder(base.meta)
 	sorts, sortFound := sortFinder.FindSorts(requestRelations)
@@ -462,28 +460,6 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)
-}
-
-func (base *LanguageBase) extractSorts(relations mentalese.RelationSet) {
-	for _, relation := range relations {
-
-		withoutNamespace := relation.GetPredicateWithoutNamespace()
-		if len(relation.Arguments) == 0 {
-			continue
-		}
-		variable := relation.Arguments[0].TermValue
-		sorts := []string{mentalese.SortEntity}
-		_, found := base.meta.GetSortProperty(withoutNamespace)
-		if found {
-			sorts = []string{withoutNamespace}
-		}
-		base.dialogContext.EntitySorts.SetSorts(variable, sorts)
-		for _, argument := range relation.Arguments {
-			if argument.IsRelationSet() {
-				base.extractSorts(argument.TermValueRelationSet)
-			}
-		}
-	}
 }
 
 func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

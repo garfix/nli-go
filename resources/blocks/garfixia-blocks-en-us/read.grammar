@@ -107,8 +107,8 @@
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
-{ rule: np(E1) -> np(E1) 'and' np(E1),                                 sense: go:and($np1, $np2) }
-{ rule: np(E1) -> 'either' np(E1) 'or' np(E1),                         sense: go:or($np1, $np2) }
+{ rule: np(E1) -> np(E1) 'and' np(E2),                                 sense: go:and($np1, $np2) }
+{ rule: np(E1) -> 'either' np(E1) 'or' np(E2),                         sense: go:or($np1, $np2) }
 
 { rule: nbar(E1) -> nbar(E1) pp(E1) }
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }

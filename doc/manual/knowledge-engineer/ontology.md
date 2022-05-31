@@ -6,15 +6,15 @@ and you can extend it easily.
 
 The semantic modelling of the world in an NLI system is called an ontology. It has several parts.
 
-## Entity types
+## Sorts
 
-Any entity you are using has a type: the sort. Each entity type needs a simple identifier, like
+Any entity you are using has a type: the sort. Each sort needs a simple identifier, like
 
     person
     work
     country
 
-The types themselves are not defined anywhere, but you will need them in several places.
+The sorts themselves are not defined anywhere, but you will need them in several places.
 
 ## Relations
 

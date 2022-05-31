@@ -10,9 +10,7 @@
 
 - check agreement & create test
 
-- check for agreement in separate step
 - The SHRDLU dialog does not have any definite anaphoric references (!) (where "the green block" refers to the block that was mentioned in the previous sentence) - so I will need an extra test in "relationships" that does just that
-- document new anaphora use
 
 ## Documentation
 

@@ -398,16 +398,11 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "rj", base.log) {
+	if !Validate(bound, "r", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	requestRelations := bound.Arguments[0].TermValueRelationSet
-
-	dialogBinding := mentalese.NewBinding()
-	dialogBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
-	dialogBinding.FromRaw(dialogBindingsRaw)
 
 	// extract sorts: variable => sort
 	sortFinder := central.NewSortFinder(base.meta)

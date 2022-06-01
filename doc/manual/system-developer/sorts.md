@@ -9,6 +9,8 @@ Sorts are declared in several files:
     contains(container, object)
     loves(person, entity)
 
+This declaration of argument sort is part of the domain definition. They are not defined with each word in the grammar, because the grammar may contain the relation more than once. Also, the sort is language-independent. It does not need to be declared for each separate language.
+
 This is the basic tool that NLI-GO has to determine the sort of an entity. From the relations in the sentence, the system looks up the sorts in this file.
 
 These are needed for name resolution and sortal filtering. 

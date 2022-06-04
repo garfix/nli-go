@@ -1,3 +1,58 @@
+## 2022-06-04
+
+I need to tell the system that P1 is an event. But it is not represented with a sense in the syntax rule.
+
+Options:
+
+Make an explicit event-based reference tag
+
+    { rule: action(P1) -> 'do' demonstrative(P1),   tag: go:event_reference(P1) }
+
+or
+
+Introduce a dummy go:do(event) sense
+
+    { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:do(P1),   tag: go:reference(P1) }
+    in argument-sort.relation:
+      go_do(event)
+
+The latter is just ugly; the former cannot refer to an event in the same sentence.
+
+"That" _could_ be  represented as ellipsis, but that doesn't seem natural, and it's a lot more work for the developer.
+
+or
+
+Turn the event into a quant
+
+    { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:quant_check(go:quant(some, P1, none), none),    tag: go:reference(P1) }
+  
+It will be treated like the other references, but P1 is still not an event. So, introduce explicit sorts?
+
+    { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:quant_check(go:quant(some, P1, none), none),    tag: go:reference(P1) go:sort(P1, event) }
+
+===
+
+By the way, events, since they are not part of a quant, are not added to the event queue. Except for the events that are part of an answer; these will be added.
+
+## 2022-06-01
+
+Time for the next interaction: #26!
+
+    H: Why did you do that?
+    C: To clean off the red cube.
+
+This is another "why" question. New is that it contains a reference to an event ("that").
+
+Expaning "that", the sentence can be rewritten as 
+
+    Why did you get rid of it?
+
+So "do that" can be replaced by "get rid of it".
+
+The important thing in this series of "why" questions is that Winograd forces us to treat responses as information, not just as text. By referring to parts of the response, we are forced to create structure in the response.
+
+First problem: an event variable is not an argument of a quant. I only check quants for references.
+
 ## 2022-05-26
 
 I am going to use `gender` for agreement, not `sort`. `gender` may include the animate/inanimate distinction.

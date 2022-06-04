@@ -54,6 +54,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateTokenize:            base.tokenize,
 		mentalese.PredicateParse:               base.parse,
 		mentalese.PredicateDialogize:           base.dialogize,
+		mentalese.PredicateCheckAgreement:      base.checkAgreement,
 		mentalese.PredicateEllipsize:           base.ellipsize,
 		mentalese.PredicateRelationize:         base.relationize,
 		mentalese.PredicateSortalFiltering:     base.sortalFiltering,
@@ -204,6 +205,27 @@ func (base *LanguageBase) dialogize(messenger api.ProcessMessenger, input mental
 	base.log.AddProduction("Dialogized parse tree", newParseTree.IndentedString(""))
 
 	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) checkAgreement(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "j", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	var parseTree mentalese.ParseTreeNode
+
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	agreementChecker := parse.NewAgreementChecker()
+	agreed := agreementChecker.CheckAgreement(&parseTree)
+	if agreed {
+		return mentalese.InitBindingSet(binding)
+	} else {
+		return mentalese.NewBindingSet()
+	}
 }
 
 func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

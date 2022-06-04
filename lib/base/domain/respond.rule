@@ -17,6 +17,7 @@ go:respond(Input) :-
 
         /* Stop at the first successfully processed parse tree */
         go:cut(1,
+            go:check_agreement(ParseTree)
             go:dialogize(ParseTree, DialogParseTree)
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)

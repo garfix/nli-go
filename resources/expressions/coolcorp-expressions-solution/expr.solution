@@ -1,6 +1,5 @@
 {
     condition: go:intent(calc, E1),
-    result: _,
     responses:
         {
             condition: go:exists(),

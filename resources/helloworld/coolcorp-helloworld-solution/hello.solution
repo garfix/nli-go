@@ -1,6 +1,5 @@
 {
     condition: go:intent(start_conversation) dom:hello(),
-    result: _,
     responses:
         {
             condition: go:exists(),

@@ -1,10 +1,9 @@
 package mentalese
 
 type Solution struct {
-	Condition   RelationSet
+	Condition       RelationSet
 	Transformations []Rule
-	Result Term
-	Responses   []ResultHandler
+	Responses       []ResultHandler
 }
 
 func (solution Solution) BindSingle(binding Binding) Solution {
@@ -20,9 +19,8 @@ func (solution Solution) BindSingle(binding Binding) Solution {
 	}
 
 	return Solution{
-		Condition: solution.Condition.BindSingle(binding),
+		Condition:       solution.Condition.BindSingle(binding),
 		Transformations: boundTransformations,
-		Result: solution.Result.Bind(binding),
-		Responses: newResponses,
+		Responses:       newResponses,
 	}
 }

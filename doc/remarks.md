@@ -1,3 +1,15 @@
+## 2022-06-12
+
+Interaction #26 passed! 
+
+I had to allow the result of a solution to be specified per handler. This makes it a bit more flexible.
+
+## 2022-06-07
+
+I just found out that "When did you pick it up?" had been answered correctly by accident.
+
+"it" (the green pyramid) had been picked up already, twice. But this sentence still presumes the time frame "before you put the green one on the little cube" that was initialized in the previous sentence.
+
 ## 2022-06-04
 
 I need to tell the system that P1 is an event. But it is not represented with a sense in the syntax rule.
@@ -33,6 +45,40 @@ It will be treated like the other references, but P1 is still not an event. So, 
 ===
 
 By the way, events, since they are not part of a quant, are not added to the event queue. Except for the events that are part of an answer; these will be added.
+
+===
+
+I'm now going for
+
+    { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:event_reference(P1) }
+
+problem: "To get rid of it" is not marked as an event.
+Possible solution:
+
+    go:set_sort(EventId, event)
+
+or
+
+If a relation is asserted:
+
+    go:assert(get_rid_of(EventId, `:shrdlu`, E1))
+
+then perform a sort analysis on the relation.
+
+    in argument-sort.relation:
+        get_rid_of(event, person, object)
+
+No there's no use storing the sort of a temporary variable.
+
+===
+
+There's still a big problem of how to resolve sorts. 
+
+At present I assing sorts to variables in the input sentence. This makes sense, because we need to know the sorts for various reasons, and there's no other way to find them out. We can't link the sorts to ids, because there are not always ids (unbound variables).
+
+But I need something more. And I still have the option to link a sort to an id. If every id had a sort, I could use that.
+
+The first technique wordt then be top-down, the second bottom-up.
 
 ## 2022-06-01
 

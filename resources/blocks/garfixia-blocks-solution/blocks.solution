@@ -1,8 +1,7 @@
 /* Any command */
 {
     condition: go:intent(command),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: go:canned('OK')
@@ -15,12 +14,12 @@
 /* What? */
 {
     condition: go:intent(what, B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:describe(B, '', N) go:make_list(List, B),
-            answer: dom:list(List) {{ N }}
+            answer: dom:list(List) {{ N }},
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -30,12 +29,12 @@
 /* Which? */
 {
     condition: go:intent(which, A),
-    result: A,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: go:get_sort(A, Sort) dom:describe(A, Sort, Desc),
-            answer: dom:root(A) {{ Desc }}
+            answer: dom:root(A) {{ Desc }},
+            result: A
         }
         {
             answer: dom:dont_know()
@@ -45,12 +44,12 @@
 /* How many? */
 {
     condition: go:intent(how_many, E1),
-    result: E1,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: go:count(E1, N),
-            answer: dom:a_number(N)
+            answer: dom:a_number(N),
+            result: E1
         }
         {
             answer: dom:none()
@@ -60,12 +59,12 @@
 /* Is one? */
 {
     condition: go:intent(select, B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: go:get_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
-            answer: dom:select(List, Count) {{ N }}
+            answer: dom:select(List, Count) {{ N }},
+            result: B
         }
         {
             answer: dom:none()
@@ -75,12 +74,12 @@
 /* Is there? */
 {
     condition: go:intent(select_categoric, B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: go:get_sort(B, Sort) dom:describe_categoric(B, Sort, N) go:count(B, Count) go:make_list(List, B),
-            answer: dom:select(List, Count) {{ N }}
+            answer: dom:select(List, Count) {{ N }},
+            result: B
         }
         {
             answer: dom:none()
@@ -90,12 +89,12 @@
 /* Is supported? Yes, by ... */
 {
     condition: go:intent(select_subject, B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:describe(B, '', N) go:make_list(List, B),
-            answer: dom:select_subject(List) {{ N }}
+            answer: dom:select_subject(List) {{ N }},
+            result: B
         }
         {
             answer: dom:none()
@@ -105,12 +104,12 @@
 /* Do I own? Yes: these things */
 {
     condition: go:intent(yes_no) learn:own(_, B) dom:object(B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:describe(B, '', N) go:count(B, Count) go:make_list(List, B),
-            answer: dom:select(List, Count) {{ N }}
+            answer: dom:select(List, Count) {{ N }},
+            result: B
         }
         {
             answer: dom:result(false)
@@ -119,8 +118,7 @@
 
 {
     condition: go:intent(yes_no),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: dom:result(true)
@@ -133,8 +131,7 @@
 /* Declaration */
 {
     condition: go:intent(declaration),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: dom:understand()
@@ -147,12 +144,12 @@
 /* When? */
 {
     condition: go:intent(when, P1),
-    result: P1,
     responses:
         {
             condition: go:exists(),
             preparation: dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
-            answer: dom:time_description(TopId) {{ Desc }}
+            answer: dom:time_description(TopId) {{ Desc }},
+            result: P1
         }
         {
             answer: dom:dont_know()
@@ -162,12 +159,12 @@
 /* Why? */
 {
     condition: go:intent(why, P1),
-    result: ParentEventId,
     responses:
         {
             condition: go:exists(),
             preparation: dom:parent_event(P1, ParentEventId) dom:describe_event(ParentEventId, Desc),
-            answer: dom:cause_description(ParentEventId) {{ Desc }}
+            answer: dom:cause_description(ParentEventId) {{ Desc }},
+            result: ParentEventId
         }
         {
             answer: dom:dont_know()

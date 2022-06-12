@@ -1,12 +1,12 @@
 /* Who married X? */
 {
     condition: go:intent(who, A) dom:marry(_, A, B),
-    result: A,
     responses:
         {
             condition: go:exists(),
             preparation: dom:gender(B, G) dom:name(A, N, canonical_name) go:unify(A, C) go:make_list(List, C),
-            answer: dom:gender(B, G) dom:name(A, N) dom:married_to(List, B)
+            answer: dom:gender(B, G) dom:name(A, N) dom:married_to(List, B),
+            result: A
         }
         {
             answer: dom:dont_know()
@@ -16,7 +16,6 @@
 /* Was X married to Y? */
 {
     condition: go:intent(yes_no) dom:marry(_, A, B),
-    result: _,
     responses:
         {
             condition: go:exists(),
@@ -30,12 +29,12 @@
 /* How many children had X? (counting the children) */
 {
     condition: go:intent(how_many, B) dom:have_child(A, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:gender(A, Gender) go:count(B, Number),
-            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
+            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -45,12 +44,12 @@
 /* How many? */
 {
     condition: go:intent(how_many, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: go:count(B, Number),
-            answer: go:canned(Number)
+            answer: go:canned(Number),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -63,12 +62,12 @@
     transformations:
         dom:have_child(A, B) :- dom:have_n_children(A, Number);
     ,
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:gender(A, Gender),
-            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number)
+            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -78,12 +77,12 @@
 /* Who was X's father? */
 {
     condition: go:intent(who, B) dom:has_father(A, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
-            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_father(A, B)
+            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_father(A, B),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -93,12 +92,12 @@
 /* Who was X's mother? */
 {
     condition: go:intent(who, B) dom:has_mother(A, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:gender(A, Gender) dom:name(B, N, canonical_name),
-            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_mother(A, B)
+            answer: dom:gender(A, Gender) dom:name(B, N) dom:has_mother(A, B),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -111,7 +110,6 @@
     transformations:
         dom:bear(P1, A, B) :- dom:birth_date(B, Ymd);
     ,
-    result: _,
     responses:
         {
             condition: go:exists(),
@@ -129,7 +127,6 @@
     transformations:
         dom:die(P1, A) :- dom:death_date(A, Ymd);
     ,
-    result: _,
     responses:
         {
             condition: go:exists(),
@@ -144,7 +141,6 @@
 /* When? */
 {
     condition: go:intent(when, Ymd),
-    result: _,
     responses:
         {
             condition: go:exists(),
@@ -160,12 +156,12 @@
 /* Who is the wife of X? */
 {
     condition: go:intent(who, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:name(B, N, canonical_name) go:unify(B, C) go:make_list(List, C),
-            answer: dom:name(B, N) dom:list(List)
+            answer: dom:name(B, N) dom:list(List),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -175,12 +171,12 @@
 /* Who is X? */
 {
     condition: go:intent(describe, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:long_description(B, D),
-            answer: go:canned(D)
+            answer: go:canned(D),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -190,19 +186,20 @@
 /* What is X? */
 {
     condition: go:intent(what, B),
-    result: B,
     responses:
         /* What is the capital of X? */
         /* What is the largest state? */
         {
             condition: go:exists() dom:label(B, L),
             preparation: go:unify(B, C) go:make_list(List, C),
-            answer: dom:name(B, L)  dom:list(List)
+            answer: dom:name(B, L)  dom:list(List),
+            result: B
         }
         /* What is the population of X? */
         {
             condition: go:exists(),
-            answer: go:canned(B)
+            answer: go:canned(B),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -216,7 +213,6 @@
         /*  How many years have passed since the birth of E1? */
         go:intent(how_old, E1) :- dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth);
     ,
-    result: _,
     responses:
         /* The person has died already */
         {

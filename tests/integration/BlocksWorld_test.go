@@ -127,7 +127,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				//t.Errorf("\n%s", log.String())
+				t.Errorf("\n%s", log.String())
 				//t.Errorf("\n%s", log.GetErrors())
 				break
 			}

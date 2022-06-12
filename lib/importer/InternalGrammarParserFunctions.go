@@ -116,7 +116,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 
 	solution := mentalese.Solution{}
 	solution.Transformations = []mentalese.Rule{}
-	conditionFound, responsesFound, resultFound := false, false, false
+	conditionFound, responsesFound := false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -129,11 +129,6 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			conditionFound = true
 		case field_transformations:
 			solution.Transformations, startIndex, ok = parser.parseRules(tokens, startIndex)
-		case field_result:
-			solution.Result, startIndex, ok = parser.parseTerm(tokens, startIndex)
-			ok = ok && solution.Result.IsVariable() || solution.Result.IsAnonymousVariable()
-			ok = ok && !resultFound
-			resultFound = true
 		case field_responses:
 			solution.Responses, startIndex, ok = parser.parseResponses(tokens, startIndex)
 			ok = ok && !responsesFound
@@ -142,7 +137,7 @@ func (parser *InternalGrammarParser) parseSolution(tokens []Token, startIndex in
 			ok = false
 		}
 
-		return startIndex, ok, conditionFound && responsesFound && resultFound
+		return startIndex, ok, conditionFound && responsesFound
 	}
 
 	startIndex, ok := parser.parseMap(tokens, startIndex, callback)
@@ -171,7 +166,7 @@ func (parser *InternalGrammarParser) parseResponses(tokens []Token, startIndex i
 func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startIndex int) (mentalese.ResultHandler, int, bool) {
 
 	resultHandler := mentalese.ResultHandler{}
-	preparationFound, answerFound := false, false
+	preparationFound, answerFound, resultFound := false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -188,6 +183,11 @@ func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startInd
 			resultHandler.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
 			ok = ok && !answerFound
 			answerFound = true
+		case field_result:
+			resultHandler.Result, startIndex, ok = parser.parseTerm(tokens, startIndex)
+			ok = ok && resultHandler.Result.IsVariable() || resultHandler.Result.IsAnonymousVariable()
+			ok = ok && !resultFound
+			resultFound = true
 		default:
 			ok = false
 		}

@@ -697,12 +697,14 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answer))
 
-	variable := solution.Result.TermValue
+	variable := resultHandler.Result.TermValue
 
 	dialogizedVariable := variable
-	if !mentalese.IsGeneratedVariable(solution.Result.TermValue) {
-		term := base.dialogContext.VariableGenerator.GenerateVariable(variable)
-		dialogizedVariable = term.TermValue
+	if resultHandler.Result.TermValue != "" {
+		if !mentalese.IsGeneratedVariable(resultHandler.Result.TermValue) {
+			term := base.dialogContext.VariableGenerator.GenerateVariable(variable)
+			dialogizedVariable = term.TermValue
+		}
 	}
 
 	essential := mentalese.NewBindingSet()

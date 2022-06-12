@@ -1,20 +1,19 @@
 /* Declaration */
 {
     condition: go:intent(declaration),
-    result: _,
-    responses: 
+    responses:
         {
             answer: go:canned('Ok')
         }
 }
 {
     condition: go:intent(who, A) dom:marry(P1, A, B, _, _),
-    result: A,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:gender(B, G) dom:name(A, N),
-            answer: dom:focus(A) dom:married_to(A, B) dom:gender(B, G) dom:name(A, N)
+            answer: dom:focus(A) dom:married_to(A, B) dom:gender(B, G) dom:name(A, N),
+            result: A
         }
         {
             answer: dom:dont_know()
@@ -23,12 +22,12 @@
 /* Who is X? */
 {
     condition: go:intent(who, B),
-    result: B,
     responses:
         {
             condition: go:exists(),
             preparation: dom:name(B, D),
-            answer: go:canned(D)
+            answer: go:canned(D),
+            result: B
         }
         {
             answer: dom:dont_know()
@@ -36,8 +35,7 @@
 }
 {
     condition: go:intent(yes_no),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: dom:result(true)
@@ -48,8 +46,7 @@
 }
 {
     condition: go:intent(yes_no) dom:siblings(A, B),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: dom:result(true)
@@ -60,12 +57,12 @@
 }
 {
     condition: go:intent(how_many, A) dom:have_child(B, A),
-    result: A,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:gender(B, G) go:count(A, N),
-            answer: dom:gender(B, G) go:count(C, N) dom:have_child(C, B)
+            answer: dom:gender(B, G) go:count(C, N) dom:have_child(C, B),
+            result: A
         }
         {
             answer: dom:none()
@@ -73,12 +70,12 @@
 }
 {
     condition: go:intent(which, A) dom:have_child(B, A),
-    result: A,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             preparation: dom:name(A, N) go:unify(A, C) go:make_list(List, C),
-            answer: dom:list(List) dom:name(A, N)
+            answer: dom:list(List) dom:name(A, N),
+            result: A
         }
         {
             answer: dom:none()
@@ -86,11 +83,11 @@
 }
 {
     condition: go:intent(yes_no) dom:have_child(B, A) dom:every(B),
-    result: B,
-    responses: 
+    responses:
         {
             condition: go:exists(),
-            answer: dom:result(true)
+            answer: dom:result(true),
+            result: B
         }
         {
             answer: dom:none()
@@ -98,8 +95,7 @@
 }
 {
     condition: go:intent(yes_no) dom:have_child(B, A),
-    result: _,
-    responses: 
+    responses:
         {
             condition: go:exists(),
             answer: dom:result(true)

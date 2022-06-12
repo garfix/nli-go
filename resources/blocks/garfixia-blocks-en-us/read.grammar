@@ -141,6 +141,8 @@
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
+{ rule: demonstrative(P1) -> 'that' }
+
 /* Conjunction */
 
 { rule: and(C1) -> 'and' }
@@ -163,24 +165,30 @@
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
+{ rule: action(P1) -> 'do' demonstrative(P1),                           sense: go:event_reference(P1) }
+
 
 /* history based */
-{ rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1, P2),
-                                                                                   sense: go:intent(select, E2)
-                                                                                           go:quant_check($np1,
-                                                                                                go:quant_check($np2, $past_participle $time_modifier)) }
+{ rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: go:context_set(time, P1, $mem_vp dom:before(P1, P2)) }
 
-{ rule: time_modifier(P1, P2) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
+{ rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1),
+                                                                                   sense: go:intent(select, E2)
+                                                                                            go:context_extend(time, P1, $time_modifier)
+                                                                                            go:quant_check($np1,
+                                                                                                go:quant_check($np2, $past_participle)
+                                                                                                ) }
+
 
 /* interrogative */
 
 { rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                             sense: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' vp(P1, E1),                            sense: go:intent(which, E1) $vp }
 { rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1),                       sense: go:intent(how_many, E1) }
-{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             sense: go:intent(when, P1) $mem_vp }
+{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             sense: go:intent(when, P1) $mem_vp go:context_call(time, P1) }
 { rule: interrogative_clause(P1) -> 'why',
   ellipsis: [prev_sentence]//mem_vp(P1),
   sense: go:intent(why, P1) $mem_vp }
+{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1),             sense: go:intent(why, P1) go:quant_check($np, $action) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }

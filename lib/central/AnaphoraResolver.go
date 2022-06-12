@@ -56,6 +56,9 @@ func (resolver *AnaphoraResolver) Resolve(set mentalese.RelationSet, binding men
 		}
 	}
 
+	//fmt.Println(newSet)
+	//fmt.Println(newBindings)
+
 	return newSet, newBindings, collection.output
 }
 
@@ -69,6 +72,8 @@ func (resolver *AnaphoraResolver) resolveSet(set mentalese.RelationSet, binding 
 
 		if relation.Predicate == mentalese.PredicateQuant {
 			newRelation = resolver.resolveQuant(relation, binding, collection)
+		} else if relation.Predicate == mentalese.PredicateEventReference {
+			resolver.resolveEvent(relation, binding, collection)
 		} else {
 			newRelation = resolver.resolveArguments(relation, binding, collection)
 		}
@@ -278,4 +283,30 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 end:
 
 	return found, foundVariable, foundTerm
+}
+
+func (resolver *AnaphoraResolver) resolveEvent(event mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
+
+	variable := event.Arguments[0].TermValue
+
+	_, found := binding.Get(variable)
+	if found {
+		return
+	}
+
+	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
+
+		// there may be 1..n groups (bindings)
+		referentVariable := group.Variable
+
+		if len(group.values) > 1 {
+			continue
+		}
+
+		sort := group.values[0].Sort
+		if sort == mentalese.SortEvent {
+			collection.AddReplacement(variable, referentVariable)
+			break
+		}
+	}
 }

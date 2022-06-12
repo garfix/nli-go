@@ -162,7 +162,7 @@
 /* Why? */
 {
     condition: go:intent(why, P1),
-    result: P1,
+    result: ParentEventId,
     responses:
         {
             condition: go:exists(),

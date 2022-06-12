@@ -14,8 +14,8 @@ func (base *SystemSolverFunctionBase) contextSet(messenger api.ProcessMessenger,
 	bound := input.BindSingle(binding)
 
 	slotName := bound.Arguments[0].TermValue
-	mainEntityVar := bound.Arguments[1]
-	relations := bound.Arguments[2].TermValueRelationSet
+	mainEntityVar := input.Arguments[1]
+	relations := input.Arguments[2].TermValueRelationSet
 
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
@@ -70,7 +70,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 	bound := input.BindSingle(binding)
 
 	slotName := bound.Arguments[0].TermValue
-	mainEntityVar := bound.Arguments[1]
+	mainEntityVar := input.Arguments[1]
 
 	slotRelations := mentalese.RelationSet{}
 

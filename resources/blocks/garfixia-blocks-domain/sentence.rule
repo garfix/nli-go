@@ -12,7 +12,7 @@
 do_pick_up_smart(E1) :-
     go:create_goal(
         time(Start)
-        go:uuid(EventId)
+        go:uuid(EventId, event)
         go:assert(pick_up(EventId, `:shrdlu`, E1))
         go:assert(start_time(EventId, Start))
 
@@ -28,7 +28,7 @@ do_pick_up_smart(E1) :-
 do_put_in_smart(E1, E2) :-
     go:create_goal(
         time(Start)
-        go:uuid(EventId)
+        go:uuid(EventId, event)
         go:assert(put_in(EventId, `:shrdlu`, E1, E2))
         go:assert(start_time(EventId, Start))
 
@@ -44,7 +44,7 @@ do_put_in_smart(E1, E2) :-
 do_put_on_smart(E1, E2) :-
     go:create_goal(
         time(Start)
-        go:uuid(EventId)
+        go:uuid(EventId, event)
         go:assert(put_on(EventId, `:shrdlu`, E1, E2))
         go:assert(start_time(EventId, Start))
 
@@ -62,7 +62,7 @@ do_stack_up_smart(QBlocks) :-
     go:list_get(SortedList, 0, BaseBlock)
     go:create_goal(
         time(Start)
-        go:uuid(EventId)
+        go:uuid(EventId, event)
         go:assert(stack_up(EventId, `:shrdlu`, SortedList))
         go:assert(start_time(EventId, Start))
 

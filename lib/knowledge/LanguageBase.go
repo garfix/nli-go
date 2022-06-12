@@ -592,7 +592,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	transformer := central.NewRelationTransformer(base.matcher, base.log)
 
 	//Request, RequestBinding, Solution, ResultBindings
-	if !Validate(bound, "rjjvvv", base.log) {
+	if !Validate(bound, "rjjvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -602,7 +602,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	bound.Arguments[2].GetJsonValue(&solution)
 	resultBindingsVar := input.Arguments[3].TermValue
 	resultCountVar := input.Arguments[4].TermValue
-	essentialVar := input.Arguments[5].TermValue
 
 	requestBindings := mentalese.NewBindingSet()
 	requestBindingsRaw := []map[string]mentalese.Term{}
@@ -619,18 +618,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
 	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
-
-	// queue ids
-	variable := solution.Result.TermValue
-
-	essential := mentalese.NewBindingSet()
-	for _, id := range resultBindings.GetIds(variable) {
-		b := mentalese.NewBinding()
-		b.Set(variable, id)
-		essential.Add(b)
-	}
-
-	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
 
 	return mentalese.InitBindingSet(newBinding)
 }
@@ -680,7 +667,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "jjiv", base.log) {
+	if !Validate(bound, "jjivv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -695,6 +682,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 
 	responseIndex, _ := bound.Arguments[2].GetIntValue()
 	answerVar := input.Arguments[3].TermValue
+	essentialVar := input.Arguments[4].TermValue
 
 	solutionBindings := resultBindings
 	resultHandler := solution.Responses[responseIndex]
@@ -708,6 +696,28 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answer))
+
+	variable := solution.Result.TermValue
+
+	dialogizedVariable := variable
+	if !mentalese.IsGeneratedVariable(solution.Result.TermValue) {
+		term := base.dialogContext.VariableGenerator.GenerateVariable(variable)
+		dialogizedVariable = term.TermValue
+	}
+
+	essential := mentalese.NewBindingSet()
+	for _, id := range resultBindings.GetIds(variable) {
+		b := mentalese.NewBinding()
+		b.Set(dialogizedVariable, id)
+		essential.Add(b)
+	}
+	for _, id := range solutionBindings.GetIds(variable) {
+		b := mentalese.NewBinding()
+		b.Set(dialogizedVariable, id)
+		essential.Add(b)
+	}
+
+	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
 
 	return mentalese.InitBindingSet(newBinding)
 }

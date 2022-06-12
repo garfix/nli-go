@@ -78,6 +78,7 @@ func TestBlocksWorld(t *testing.T) {
 			// original: While I was stacking up the red cube, a large red block and a large green cube
 			{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube"},
 			{"Why?", "To get rid of it"},
+			{"Why did you do that?", "To clean off the red cube"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -107,7 +108,7 @@ func TestBlocksWorld(t *testing.T) {
 			log.Clear()
 
 			//if test.question == "Why?" {
-			if test.question == "When did you pick it up?" {
+			if test.question == "Why did you do that?" {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)
@@ -126,7 +127,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				t.Errorf("\n%s", log.String())
+				//t.Errorf("\n%s", log.String())
 				//t.Errorf("\n%s", log.GetErrors())
 				break
 			}

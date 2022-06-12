@@ -88,3 +88,9 @@ describe_event(P1, DescSet) :-
     describe_categoric(A, '', ItemDesc)
     [DescSet := get_rid_of(P1, Subject, A) {{ ItemDesc }}]
 ;
+
+describe_event(P1, DescSet) :-
+    clear_off(P1, Subject, A)
+    describe_categoric(A, '', ItemDesc)
+    [DescSet := clear_off(P1, Subject, A) {{ ItemDesc }}]
+;

@@ -116,6 +116,8 @@ Prints `Str` for debugging purposes.
 
 Generates a random 16 digit hexadecimal number.
 
-    go:uuid(V)
+    go:uuid(V, Sort)
 
 * `V`: a variable
+* `Sort`: an atom (i.e. `event`, `entity`)
+

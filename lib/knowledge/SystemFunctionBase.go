@@ -432,15 +432,15 @@ func (base *SystemFunctionBase) uuid(messenger api.SimpleMessenger, input mental
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "v", base.log) {
+	if !Validate(bound, "va", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
 	u := bound.Arguments[0].TermValue
+	sort := bound.Arguments[1].TermValue
 
 	newBinding := binding.Copy()
-
-	newBinding.Set(u, mentalese.NewTermString(common.CreateUuid()))
+	newBinding.Set(u, mentalese.NewTermId(common.CreateUuid(), sort))
 
 	return newBinding, true
 }

@@ -30,7 +30,7 @@ go:respond(Input) :-
             end
         )
     )
-    go:uuid(Uuid)
+    go:uuid(Uuid, entity)
     go:wait_for(
         go:print(Uuid, :Output)
     )
@@ -41,6 +41,8 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
     go:dialog_add_root_clause(RootClauseTree, false)
 
     go:relationize(RootClauseTree, Request)
+
+    /*go:log(Request)*/
 
     go:sortal_filtering(Request)
 
@@ -62,7 +64,7 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
     go:cut(1,
         go:find_solution(ResolvedRequest, Solution)
         go:make_list(Solutions, Solution)
-        go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, AnOutput, Accepted, AcceptedBindings, EssentialBindings)
+        go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, AnOutput, Accepted, AcceptedBindings)
         if [AnOutput != ''] then
              [Output := AnOutput]
              [ContinueLooking := false]
@@ -72,31 +74,30 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
 
     go:dialog_update_center()
     go:find_response(Accepted, AcceptedBindings, ResponseBindings, ResponseIndex)
-    go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer)
+    go:create_answer(Accepted, ResponseBindings, ResponseIndex, Answer, EssentialBindings)
     go:dialog_write_bindings(ResponseBindings)
+    go:dialog_write_bindings(EssentialBindings)
     go:dialog_add_response_clause(EssentialBindings)
     go:generate(Locale, Answer, OutTokens)
     go:surface(OutTokens, Output)
     [ContinueLooking := false]
 ;
 
-go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted, AcceptedBindings, EssentialBindings) :-
+go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted, AcceptedBindings) :-
     go:list_length(Solutions, SolSize)
     [LastSol := [SolSize - 1]]
     [:Output := '']
     [:Accepted := none]
     [:AcceptedBindings := none]
-    [:EssentialBindings := none]
 
     go:list_foreach(Solutions, Index, Sol,
 
-        go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount, EssentialBindings1)
+        go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount)
 
         /* If there were solutions, good! */
         if [ResultCount > 0] then
             [:Accepted := Sol]
             [:AcceptedBindings := ResultBindings]
-            [:EssentialBindings := EssentialBindings1]
             [:Output := '']
             break
         end
@@ -104,7 +105,6 @@ go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted
         if [LastSol == Index] then
             [:Accepted := Sol]
             [:AcceptedBindings := ResultBindings]
-            [:EssentialBindings := EssentialBindings1]
             [:Output := '']
             break
         end
@@ -112,5 +112,4 @@ go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted
     [Output := :Output]
     [Accepted := :Accepted]
     [AcceptedBindings := :AcceptedBindings]
-    [EssentialBindings := :EssentialBindings]
 ;

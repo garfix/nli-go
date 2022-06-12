@@ -15,7 +15,7 @@ phys_move_hand(X, Y, Z) :-
 ;
 
 phys_move_hand_partial(X, Y, Z) :-
-    go:uuid(Uuid)
+    go:uuid(Uuid, event)
     go:wait_for(
         action_move_to(Uuid, `hand:hand`, X, Y, Z)
     )
@@ -32,7 +32,7 @@ phys_move_hand(X, Y, Z) :-
 
 phys_move_hand_with_object(E1, X, Y, Z) :-
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
-    go:uuid(Uuid)
+    go:uuid(Uuid, event)
     go:wait_for(
         action_move_to(Uuid, `hand:hand`, X, Y, Z)
         action_move_to(Uuid, E1, X1, Y1, Z1)
@@ -52,7 +52,8 @@ phys_move_object(E1, X, Y, Z) :-
     increase_time()
 
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('touch', EventId)
     go:assert(touch(EventId, `:shrdlu`, E1))
     go:assert(start_time(EventId, T1))
     go:assert(end_time(EventId, T1))

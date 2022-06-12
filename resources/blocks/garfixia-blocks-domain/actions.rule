@@ -16,7 +16,8 @@ do_pick_up(ParentEventId, E1) :-
     phys_raise_hand(_)
 
     time(T2)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('pick up', EventId, E1)
     go:assert(pick_up(EventId, `:shrdlu`, E1))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -26,7 +27,8 @@ do_pick_up(ParentEventId, E1) :-
 /* (X, Y, Z) is the target lower left position */
 do_put_down(ParentEventId, E1, X, Y, Z) :-
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('put down', EventId)
     go:assert(put_down(EventId, `:shrdlu`, E1))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -41,7 +43,8 @@ do_put_down(ParentEventId, E1, X, Y, Z) :-
 
 do_put_on(ParentEventId, E1, E2) :-
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('put on', EventId)
     go:assert(put_on(EventId, `:shrdlu`, E1, E2))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -56,7 +59,8 @@ do_put_on(ParentEventId, E1, E2) :-
 
 do_put_in(ParentEventId, E1, E2) :-
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('put in', EventId)
     go:assert(put_in(EventId, `:shrdlu`, E1, E2))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -75,7 +79,8 @@ do_cleartop(ParentEventId, E1) :-
     support(E1, E2)
 
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('clear top', EventId)
     go:assert(clear_off(EventId, `:shrdlu`, E1))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -90,7 +95,8 @@ do_cleartop(ParentEventId, E1) :-
 /* move the block in the hand to a free space */
 do_get_rid_of(ParentEventId, E1) :-
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('get rid of', EventId)
     go:assert(get_rid_of(EventId, `:shrdlu`, E1))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))
@@ -104,7 +110,8 @@ do_get_rid_of(ParentEventId, E1) :-
 
 do_let_go(ParentEventId) :-
     time(T1)
-    go:uuid(EventId)
+    go:uuid(EventId, event)
+    go:log('let go', EventId)
     go:assert(let_go(EventId, `:shrdlu`))
     go:assert(parent_event(EventId, ParentEventId))
     go:assert(start_time(EventId, T1))

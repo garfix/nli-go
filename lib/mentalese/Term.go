@@ -80,6 +80,10 @@ func IsMutableVariable(variable string) bool {
 	return variable[0:1] == ":"
 }
 
+func IsGeneratedVariable(variable string) bool {
+	return strings.Contains(variable, "$")
+}
+
 func (term Term) IsInteger() bool {
 	if term.TermType != TermTypeStringConstant {
 		return false

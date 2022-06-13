@@ -42,8 +42,6 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
 
     go:relationize(RootClauseTree, Request)
 
-    /*go:log(Request)*/
-
     go:sortal_filtering(Request)
 
     go:resolve_names(RootClauseTree, DialogBinding, RequestBinding, UnresolvedName)

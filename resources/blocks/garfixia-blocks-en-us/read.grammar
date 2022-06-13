@@ -169,14 +169,12 @@
 
 
 /* history based */
-{ rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: go:context_set(time, P1, $mem_vp dom:before(P1, P2)) }
+{ rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
 
 { rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1),
                                                                                    sense: go:intent(select, E2)
-                                                                                            go:context_extend(time, P1, $time_modifier)
-                                                                                            go:quant_check($np1,
-                                                                                                go:quant_check($np2, $past_participle)
-                                                                                                ) }
+                                                                                            go:quant_check($np1, go:quant_check($np2, $past_participle))
+                                                                                            go:context_set(time, P1, $time_modifier) }
 
 
 /* interrogative */

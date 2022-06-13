@@ -1,5 +1,5 @@
-type: solution
+type: intent
 version: 1.0.0
-solution: [ relationships.solution ]
+intent: [ relationships.intent ]
 uses:
   dom: coolcorp-relations-domain:1.0.0

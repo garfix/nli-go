@@ -1,5 +1,5 @@
-type: solution
+type: intent
 version: 1.0.0
 uses:
   dom: coolcorp-helloworld-domain:1.0.0
-solution: [ hello.solution ]
+intent: [ hello.intent ]

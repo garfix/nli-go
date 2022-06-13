@@ -1,6 +1,6 @@
 uses:
   dom: coolcorp-dualworld-domain:1.0.0
-  sol: coolcorp-dualworld-solution:1.0.0
+  sol: coolcorp-dualworld-intent:1.0.0
   en: coolcorp-dualworld-en-us:1.0.0
   db1: coolcorp-dualworld-db1:1.0.0
   db2: coolcorp-dualworld-db2:1.0.0

@@ -381,8 +381,8 @@ func (builder *systemBuilder) processIndex(index index, system *System, applicat
 		builder.buildDomain(index, system, moduleBaseDir, applicationAlias)
 	case "grammar":
 		builder.buildGrammar(index, system, moduleBaseDir)
-	case "solution":
-		builder.buildSolution(index, system, moduleBaseDir)
+	case "intent":
+		builder.buildIntent(index, system, moduleBaseDir)
 	case "db/internal":
 		builder.buildInternalDatabase(index, system, moduleBaseDir, applicationAlias)
 	case "db/sparql":
@@ -574,10 +574,10 @@ func (builder *systemBuilder) importGenerationGrammarFromPath(grammar *parse.Gra
 	grammar.GetWriteRules().ImportFrom(rules)
 }
 
-func (builder *systemBuilder) buildSolution(index index, system *System, moduleBaseDir string) {
+func (builder *systemBuilder) buildIntent(index index, system *System, moduleBaseDir string) {
 
-	for _, solution := range index.Solution {
-		builder.importSolutionBaseFromPath(system, moduleBaseDir+"/"+solution)
+	for _, intent := range index.Intent {
+		builder.importIntentBaseFromPath(system, moduleBaseDir+"/"+intent)
 	}
 }
 
@@ -763,22 +763,22 @@ func (builder systemBuilder) buildNames(index index, baseDir string, application
 	return names, true
 }
 
-func (builder *systemBuilder) importSolutionBaseFromPath(system *System, path string) {
+func (builder *systemBuilder) importIntentBaseFromPath(system *System, path string) {
 
-	solutionString, err := common.ReadFile(path)
+	intentString, err := common.ReadFile(path)
 	if err != nil {
-		builder.log.AddError("Error reading solutions file " + path + " (" + err.Error() + ")")
+		builder.log.AddError("Error reading intents file " + path + " (" + err.Error() + ")")
 		return
 	}
 
-	solutions := builder.parser.CreateIntent(solutionString)
+	intents := builder.parser.CreateIntent(intentString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
-		builder.log.AddError("Error parsing solutions file " + path + " (" + lastResult.String() + ")")
+		builder.log.AddError("Error parsing intents file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
-	system.answerer.AddIntents(solutions)
+	system.answerer.AddIntents(intents)
 }
 
 func (builder systemBuilder) importRuleBaseFromPath(index index, system *System, baseDir string, applicationAlias string) {

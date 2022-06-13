@@ -1,5 +1,5 @@
-type: solution
+type: intent
 version: 1.0.0
-solution: [ dual.solution ]
+intent: [ dual.intent ]
 uses:
   dom: coolcorp-dualworld-domain:1.0.0

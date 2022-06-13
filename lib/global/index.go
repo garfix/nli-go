@@ -8,7 +8,7 @@ type index struct {
 	Read            []string
 	Write           []string
 	Text            string
-	Solution        []string
+	Intent          []string
 	Rules           []string
 	Facts           []string
 	Shared          []string

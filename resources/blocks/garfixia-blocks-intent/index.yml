@@ -1,6 +1,6 @@
-type: solution
+type: intent
 version: 1.0.0
 uses:
   dom: garfixia-blocks-domain:1.0.0
   learn: garfixia-blocks-learn:1.0.0
-solution: [ blocks.solution ]
+intent: [ blocks.intent ]

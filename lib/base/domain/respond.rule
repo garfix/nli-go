@@ -58,11 +58,11 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
         return
     end
 
-    /* Stop at the first successfully processed solution */
+    /* Stop at the first successfully processed intent */
     go:cut(1,
-        go:find_solution(ResolvedRequest, Solution)
-        go:make_list(Solutions, Solution)
-        go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, AnOutput, Accepted, AcceptedBindings)
+        go:detect_intent(ResolvedRequest, Intent)
+        go:make_list(Intents, Intent)
+        go:execute_intent(ResolvedRequest, ResolvedBindings, Intents, AnOutput, Accepted, AcceptedBindings)
         if [AnOutput != ''] then
              [Output := AnOutput]
              [ContinueLooking := false]
@@ -81,25 +81,25 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
     [ContinueLooking := false]
 ;
 
-go:exec_solutions(ResolvedRequest, ResolvedBindings, Solutions, Output, Accepted, AcceptedBindings) :-
-    go:list_length(Solutions, SolSize)
+go:execute_intent(ResolvedRequest, ResolvedBindings, Intents, Output, Accepted, AcceptedBindings) :-
+    go:list_length(Intents, SolSize)
     [LastSol := [SolSize - 1]]
     [:Output := '']
     [:Accepted := none]
     [:AcceptedBindings := none]
 
-    go:list_foreach(Solutions, Index, Sol,
+    go:list_foreach(Intents, Index, Sol,
 
         go:solve(ResolvedRequest, ResolvedBindings, Sol, ResultBindings, ResultCount)
 
-        /* If there were solutions, good! */
+        /* If there were Intents, good! */
         if [ResultCount > 0] then
             [:Accepted := Sol]
             [:AcceptedBindings := ResultBindings]
             [:Output := '']
             break
         end
-        /* If this is the last available solution, take it anyway */
+        /* If this is the last available intent, take it anyway */
         if [LastSol == Index] then
             [:Accepted := Sol]
             [:AcceptedBindings := ResultBindings]

@@ -771,14 +771,14 @@ func (builder *systemBuilder) importSolutionBaseFromPath(system *System, path st
 		return
 	}
 
-	solutions := builder.parser.CreateSolutions(solutionString)
+	solutions := builder.parser.CreateIntent(solutionString)
 	lastResult := builder.parser.GetLastParseResult()
 	if !lastResult.Ok {
 		builder.log.AddError("Error parsing solutions file " + path + " (" + lastResult.String() + ")")
 		return
 	}
 
-	system.answerer.AddSolutions(solutions)
+	system.answerer.AddIntents(solutions)
 }
 
 func (builder systemBuilder) importRuleBaseFromPath(index index, system *System, baseDir string, applicationAlias string) {

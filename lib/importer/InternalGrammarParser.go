@@ -165,24 +165,24 @@ func (parser *InternalGrammarParser) CreateRelationSet(source string) mentalese.
 	return relationSet
 }
 
-func (parser *InternalGrammarParser) CreateSolutions(source string) []mentalese.Solution {
+func (parser *InternalGrammarParser) CreateIntent(source string) []mentalese.Intent {
 
-	solutions := []mentalese.Solution{}
+	intents := []mentalese.Intent{}
 
 	// tokenize
 	parser.lastParsedResult.LineNumber = 0
 	tokens, lineNumber, tokensOk := parser.tokenizer.Tokenize(source)
 	parser.processResult(service_tokenizer, tokensOk, source, lineNumber)
 	if !tokensOk {
-		return solutions
+		return intents
 	}
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	solutions, _, parseOk := parser.parseSolutions(tokens, 0)
+	intents, _, parseOk := parser.parseIntents(tokens, 0)
 	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
-	return solutions
+	return intents
 }
 
 func (parser *InternalGrammarParser) CreateSortRelations(source string) []mentalese.SortRelation {

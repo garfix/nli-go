@@ -1,25 +1,25 @@
 package mentalese
 
-type Solution struct {
+type Intent struct {
 	Condition       RelationSet
 	Transformations []Rule
 	Responses       []ResultHandler
 }
 
-func (solution Solution) BindSingle(binding Binding) Solution {
+func (intent Intent) BindSingle(binding Binding) Intent {
 
 	boundTransformations := []Rule{}
-	for _, transformation := range solution.Transformations {
+	for _, transformation := range intent.Transformations {
 		boundTransformations = append(boundTransformations, transformation.BindSingle(binding))
 	}
 
 	newResponses := []ResultHandler{}
-	for _, response := range solution.Responses {
+	for _, response := range intent.Responses {
 		newResponses = append(newResponses, response.Bind(binding))
 	}
 
-	return Solution{
-		Condition:       solution.Condition.BindSingle(binding),
+	return Intent{
+		Condition:       intent.Condition.BindSingle(binding),
 		Transformations: boundTransformations,
 		Responses:       newResponses,
 	}

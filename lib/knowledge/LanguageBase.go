@@ -66,7 +66,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateDialogGetCenter:     base.dialogGetCenter,
 		mentalese.PredicateGenerate:            base.generate,
 		mentalese.PredicateSurface:             base.surface,
-		mentalese.PredicateFindSolution:        base.findSolution,
+		mentalese.PredicateDetectIntent:        base.detectIntent,
 		mentalese.PredicateSolve:               base.solve,
 		mentalese.PredicateFindResponse:        base.findResponse,
 		mentalese.PredicateCreateAnswer:        base.createAnswer,
@@ -561,7 +561,7 @@ next:
 	return entityIds, nameNotFound, genderTags
 }
 
-func (base *LanguageBase) findSolution(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) detectIntent(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
 
@@ -570,15 +570,15 @@ func (base *LanguageBase) findSolution(messenger api.ProcessMessenger, input men
 	}
 
 	request := bound.Arguments[0].TermValueRelationSet
-	solutionVar := input.Arguments[1].TermValue
+	intentVar := input.Arguments[1].TermValue
 
-	solutions := base.answerer.FindSolutions(request)
+	intents := base.answerer.FindIntents(request)
 
 	newBindings := mentalese.NewBindingSet()
 
-	for _, solution := range solutions {
+	for _, intent := range intents {
 		newBinding := mentalese.NewBinding()
-		newBinding.Set(solutionVar, mentalese.NewTermJson(solution))
+		newBinding.Set(intentVar, mentalese.NewTermJson(intent))
 		newBindings.Add(newBinding)
 	}
 
@@ -591,15 +591,15 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 	transformer := central.NewRelationTransformer(base.matcher, base.log)
 
-	//Request, RequestBinding, Solution, ResultBindings
+	//Request, RequestBinding, Intent, ResultBindings
 	if !Validate(bound, "rjjvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	solution := mentalese.Solution{}
+	intent := mentalese.Intent{}
 
 	request := bound.Arguments[0].TermValueRelationSet
-	bound.Arguments[2].GetJsonValue(&solution)
+	bound.Arguments[2].GetJsonValue(&intent)
 	resultBindingsVar := input.Arguments[3].TermValue
 	resultCountVar := input.Arguments[4].TermValue
 
@@ -608,10 +608,10 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	bound.Arguments[1].GetJsonValue(&requestBindingsRaw)
 	requestBindings.FromRaw(requestBindingsRaw)
 
-	base.log.AddProduction("Solution", solution.Condition.IndentedString(""))
+	base.log.AddProduction("Intent", intent.Condition.IndentedString(""))
 
 	// apply transformation, if available
-	transformedRequest := transformer.Replace(solution.Transformations, request)
+	transformedRequest := transformer.Replace(intent.Transformations, request)
 
 	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, requestBindings)
 
@@ -630,10 +630,10 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 		return mentalese.NewBindingSet()
 	}
 
-	solution := mentalese.Solution{}
+	intent := mentalese.Intent{}
 	resultBindings := mentalese.NewBindingSet()
 
-	bound.Arguments[0].GetJsonValue(&solution)
+	bound.Arguments[0].GetJsonValue(&intent)
 
 	resultBindingsRaw := []map[string]mentalese.Term{}
 	bound.Arguments[1].GetJsonValue(&resultBindingsRaw)
@@ -642,8 +642,8 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 	responseBindingsVar := input.Arguments[2].TermValue
 	responseIndexVar := input.Arguments[3].TermValue
 
-	for index := 0; index < len(solution.Responses); index++ {
-		response := solution.Responses[index]
+	for index := 0; index < len(intent.Responses); index++ {
+		response := intent.Responses[index]
 		if response.Condition.IsEmpty() {
 			newBinding := mentalese.NewBinding()
 			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(resultBindings))
@@ -671,10 +671,10 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 		return mentalese.NewBindingSet()
 	}
 
-	solution := mentalese.Solution{}
+	intent := mentalese.Intent{}
 	resultBindings := mentalese.NewBindingSet()
 
-	bound.Arguments[0].GetJsonValue(&solution)
+	bound.Arguments[0].GetJsonValue(&intent)
 
 	responseBindingsRaw := []map[string]mentalese.Term{}
 	bound.Arguments[1].GetJsonValue(&responseBindingsRaw)
@@ -684,13 +684,13 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	answerVar := input.Arguments[3].TermValue
 	essentialVar := input.Arguments[4].TermValue
 
-	solutionBindings := resultBindings
-	resultHandler := solution.Responses[responseIndex]
+	intentBindings := resultBindings
+	resultHandler := intent.Responses[responseIndex]
 
-	solutionBindings = messenger.ExecuteChildStackFrame(resultHandler.Preparation, resultBindings)
+	intentBindings = messenger.ExecuteChildStackFrame(resultHandler.Preparation, resultBindings)
 
 	// create answer relation sets by binding 'answer' to solutionBindings
-	answer := base.answerer.Build(resultHandler.Answer, solutionBindings)
+	answer := base.answerer.Build(resultHandler.Answer, intentBindings)
 
 	base.log.AddProduction("Answer", answer.String())
 
@@ -713,7 +713,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 		b.Set(dialogizedVariable, id)
 		essential.Add(b)
 	}
-	for _, id := range solutionBindings.GetIds(variable) {
+	for _, id := range intentBindings.GetIds(variable) {
 		b := mentalese.NewBinding()
 		b.Set(dialogizedVariable, id)
 		essential.Add(b)

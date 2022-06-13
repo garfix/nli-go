@@ -101,7 +101,7 @@ const PredicateGenerate = "go_generate"
 const PredicateSurface = "go_surface"
 const PredicateTranslate = "go_translate"
 
-const PredicateFindSolution = "go_find_solution"
+const PredicateDetectIntent = "go_detect_intent"
 const PredicateSolve = "go_solve"
 const PredicateFindResponse = "go_find_response"
 const PredicateCreateAnswer = "go_create_answer"

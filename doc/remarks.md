@@ -1,3 +1,7 @@
+## 2022-06-13
+
+Renamed solution to intent.
+
 ## 2022-06-12
 
 Interaction #26 passed! 

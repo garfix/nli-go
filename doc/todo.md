@@ -46,10 +46,6 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 - extend a module with another module
 * quant_foreach: add as second parameter the variable to which the ids must be bound
 
-## Solutions
-
-Call solutions "intents", just like everybody else.
-
 ## Code
 
 * binding set -> results / binding list

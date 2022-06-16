@@ -16,7 +16,6 @@ create_plan_for_stack(QBlocks, SortedList) :-
 stack_up_proper(ParentEventId, List1, X, Y) :-
     [:Base := `table:table`]
     go:list_foreach(List1, E1,
-        do_cleartop(ParentEventId, E1)
         if [:Base == `table:table`] then
             block(E1) do_put_on_table(ParentEventId, E1, X, Y)
         else

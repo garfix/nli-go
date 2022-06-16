@@ -1,3 +1,24 @@
+## 2022-06-15
+
+"that cube" should be resolved before "clear of that (red) cube" is resolved.
+
+## 2022-06-14
+
+Starting #27:
+
+    H: Why did you clear off that cube?
+    C: To put it on a large green cube
+
+Winograd: "'That' refers to the action mentioned in the answer".
+
+"Clearing off" is not in the grammar yet; it has just been used internally. So we need to add it.
+
+"that cube" refers to "the red cube" in the previous answer. So we should not only be able to refer to the answer entity, and an answer event, but also to the entities that occur in that event, the entities used to describe the event.
+
+"clear off" does not refer to any event of clearing off (there have been multiple already), but more specific to the one in the previous answer. So where we used "that" to refer to an event before, we now use an expression to refer to it. 
+
+Btw: is "clean off" in #26 a typo, meant to say "clear off"? Or are both the same thing?
+
 ## 2022-06-13
 
 Renamed solution to intent.

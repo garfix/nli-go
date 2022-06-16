@@ -22,6 +22,7 @@
 { rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
 { rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(E2, E1) }
 { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
@@ -45,6 +46,7 @@
 { rule: mem_vp(P1) -> aux_do(_) np(E1) 'pick' np(E2) 'up',             sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
 
 { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                         sense: go:quant_foreach($np, $tv) }
+{ rule: vp(P1, E1) -> tv(P1, E1, E2) np(E2),                                    sense: go:quant_foreach($np, $tv) }
 { rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
 { rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
 { rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) }
@@ -104,6 +106,7 @@
 
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
 { rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
+{ rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
@@ -165,7 +168,8 @@
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
-{ rule: action(P1) -> 'do' demonstrative(P1),                           sense: go:event_reference(P1) }
+{ rule: action(P1, E1) -> 'do' demonstrative(P1),                           sense: go:event_reference(P1) }
+{ rule: action(P1, E1) -> vp(P1, E1),                                       sense: go:event_reference(P1) }
 
 
 /* history based */
@@ -186,7 +190,7 @@
 { rule: interrogative_clause(P1) -> 'why',
   ellipsis: [prev_sentence]//mem_vp(P1),
   sense: go:intent(why, P1) $mem_vp }
-{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1),             sense: go:intent(why, P1) go:quant_check($np, $action) }
+{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1, E1),         sense: go:intent(why, P1) go:quant_check($np, $action) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }

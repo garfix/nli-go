@@ -1,3 +1,18 @@
+## 2022-06-17
+
+Until now, I only stored ids in the response clause that were assigned to the explicitly mentioned `result` field of the response.
+
+This #27 made me realize that a new question may refer to any entity in the previous answer.
+
+This made me add all entities of the previous answer to the response clause. And this works just fine!
+The `result` field is therefore not necessary any more. Except maybe when you are interested in the raw answer per se, and not its description. I will leave it in for now.
+
+## 2022-06-16
+
+The test for #27 passes, but "that" resolves to the red cube by accident.
+
+todo ...
+
 ## 2022-06-15
 
 "that cube" should be resolved before "clear of that (red) cube" is resolved.

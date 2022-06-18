@@ -1,3 +1,12 @@
+## 2022-06-18
+
+Interaction #28
+
+    H: Why did you do that?
+    C: To stack up the red cube, a large red block and a large green cube
+
+That was easy, as expected. It took me 10 minutes. I had to create a distinction between a time description and a cause description for the same event.
+
 ## 2022-06-17
 
 Until now, I only stored ids in the response clause that were assigned to the explicitly mentioned `result` field of the response.

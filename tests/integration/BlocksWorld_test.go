@@ -80,6 +80,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"Why?", "To get rid of it"},
 			{"Why did you do that?", "To clean off the red cube"},
 			{"Why did you clear off that cube?", "To put it on a large green cube"},
+			// original: To stack up the red cube, a large red block and a large green cube
+			{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

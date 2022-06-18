@@ -7,6 +7,15 @@ Interaction #28
 
 That was easy, as expected. It took me 10 minutes. I had to create a distinction between a time description and a cause description for the same event.
 
+===
+
+Interaction #29
+
+    H: Why did you do that?
+    C: Because you asked me to
+
+That took me another half hour. I had to introduce an `event:root` event that is the parent of all events. And when this event is used as the root cause, SHRDLU answers: "Because you asked me to". This is just a canned response.
+
 ## 2022-06-17
 
 Until now, I only stored ids in the response clause that were assigned to the explicitly mentioned `result` field of the response.

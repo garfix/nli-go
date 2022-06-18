@@ -1,5 +1,6 @@
 { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
 
+{ rule: s(P1) -> 'because' 'you' 'asked' 'me' 'to',                                condition: dom:you_asked_me_to(P1) }
 { rule: s(P1) -> 'while' time_desc(P1),                                            condition: dom:time_description(P1) }
 { rule: s(P1) -> 'to' cause_desc(P1),                                              condition: dom:cause_description(P1) }
 

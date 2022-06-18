@@ -14,6 +14,7 @@ do_pick_up_smart(E1) :-
         time(Start)
         go:uuid(EventId, event)
         go:assert(pick_up(EventId, `:shrdlu`, E1))
+        go:assert(parent_event(EventId, `event:root`))
         go:assert(start_time(EventId, Start))
 
         do_clear_hand(EventId)
@@ -30,6 +31,7 @@ do_put_in_smart(E1, E2) :-
         time(Start)
         go:uuid(EventId, event)
         go:assert(put_in(EventId, `:shrdlu`, E1, E2))
+        go:assert(parent_event(EventId, `event:root`))
         go:assert(start_time(EventId, Start))
 
         do_clear_hand(EventId)
@@ -46,6 +48,7 @@ do_put_on_smart(E1, E2) :-
         time(Start)
         go:uuid(EventId, event)
         go:assert(put_on(EventId, `:shrdlu`, E1, E2))
+        go:assert(parent_event(EventId, `event:root`))
         go:assert(start_time(EventId, Start))
 
         do_clear_hand(EventId)
@@ -64,6 +67,7 @@ do_stack_up_smart(QBlocks) :-
         time(Start)
         go:uuid(EventId, event)
         go:assert(stack_up(EventId, `:shrdlu`, SortedList))
+        go:assert(parent_event(EventId, `event:root`))
         go:assert(start_time(EventId, Start))
 
         do_clear_hand(EventId)

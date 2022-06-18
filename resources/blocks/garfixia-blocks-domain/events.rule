@@ -16,9 +16,10 @@ before(Event1, Event2) :-
 ;
 
 get_top_level_event(EventId, TopLevelEventId) :-
-    if parent_event(EventId, ParentEventId) then
-        get_top_level_event(ParentEventId, TopLevelEventId)
-    else
+    parent_event(EventId, ParentEventId)
+    if [ParentEventId == `event:root`]  then
         [TopLevelEventId := EventId]
+    else
+        get_top_level_event(ParentEventId, TopLevelEventId)
     end
 ;

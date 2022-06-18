@@ -23,3 +23,14 @@ get_top_level_event(EventId, TopLevelEventId) :-
         get_top_level_event(ParentEventId, TopLevelEventId)
     end
 ;
+
+persist_action(EventId, ParentEventId, Action) :-
+    time(T1)
+    go:assert(parent_event(EventId, ParentEventId))
+    go:assert(start_time(EventId, T1))
+
+    go:call(Action)
+
+    time(T2)
+    go:assert(end_time(EventId, T2))
+;

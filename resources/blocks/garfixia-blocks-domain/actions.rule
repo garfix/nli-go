@@ -80,7 +80,7 @@ do_get_rid_of(ParentEventId, E1) :-
         go:assert(get_rid_of(EventId, `:shrdlu`, E1))
 
         do_find_space_on_table(E1, X, Y)
-        do_put_on_table(EventId, E1, X, Y)
+        do_move_to_table(EventId, E1, X, Y)
     )
 ;
 

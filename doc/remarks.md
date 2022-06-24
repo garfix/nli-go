@@ -1,3 +1,31 @@
+## 2022-06-22
+
+The problem in this sentence is in the _generated_ intrasentential anaphoric references
+
+    it
+    that cube
+
+NLI-GO has no means to do that yet. Why is the first reference "it" and the second "that cube"?
+
+Anaphora generation is done in the preparation phase. NLI-GO already 
+
+## 2022-06-19
+
+Starting with interaction #30:
+
+    H: How did you do it?
+    C: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
+
+Winograd: "'It' refers to the action mentioned in the last question; rather than the answer"
+
+So that's the first problem: currently "it" would refer to the "root event" (you asked me to).
+
+Winograd: "This is a description of the top-level subgoals used to achieve the goal"
+
+To me, it's odd that "letting go" is defined as a separate goal. A human would not do that, since it is implied. It looks like an accidental consequence of the way Winograd built the goals. I happened to do it differently. So I may leave it out.
+
+The top-level subgoals (S) can be found by querying `parent_event(S, P)`, where P is the stacking event.
+
 ## 2022-06-18
 
 Interaction #28

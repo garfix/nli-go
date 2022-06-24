@@ -10,16 +10,16 @@ import (
 
 type Generator struct {
 	matcher *central.RelationMatcher
-	parser *importer.InternalGrammarParser
+	parser  *importer.InternalGrammarParser
 	log     *common.SystemLog
 }
 
 func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Generator {
-	
+
 	return &Generator{
 		matcher: matcher,
-		parser: importer.NewInternalGrammarParser(),
-		log: log,
+		parser:  importer.NewInternalGrammarParser(),
+		log:     log,
 	}
 }
 
@@ -30,7 +30,7 @@ func (generator *Generator) Generate(grammarRules *mentalese.GrammarRules, sente
 
 	// canned response
 	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == mentalese.PredicateCanned {
-		return []string{ sentenceSense[0].Arguments[0].TermValue }
+		return []string{sentenceSense[0].Arguments[0].TermValue}
 	}
 
 	// convert variables to constants
@@ -42,15 +42,20 @@ func (generator *Generator) Generate(grammarRules *mentalese.GrammarRules, sente
 
 	generator.log.AddDebug("Unscoped 2", fmt.Sprintf("%v", boundSense))
 
-	return generator.GenerateNode(grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense)
+	return generator.GenerateNode(grammarRules, usedRules, "s", mentalese.NewTermString(""), boundSense, 0)
 }
 
 // Creates an array of words for a syntax tree node
 // antecedent: i.e. np(E1)
 // antecedentBinding i.e. { E1: 1 }
-func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, antecedentCategory string, antecedentValue mentalese.Term, sentenceSense mentalese.RelationSet, depth int) []string {
 
 	words := []string{}
+
+	if depth == 20 {
+		generator.log.AddError("Max recursion reached " + fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
+		return words
+	}
 
 	// condition matches: grammatical_subject(E), subject(P, E)
 	// rule: s(P) :- np(E), vp(P)
@@ -58,18 +63,20 @@ func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, u
 
 	if ok {
 
-		if generator.log.Active() { generator.log.AddDebug("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String())) }
+		if generator.log.Active() {
+			generator.log.AddDebug("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String()))
+		}
 
 		for i, consequentCategory := range rule.GetConsequents() {
 			consequentValue := generator.getConsequentValue(rule, i, binding)
 			consequent := generator.generateSingleConsequent(
-				grammarRules, usedRules, consequentCategory, consequentValue, rule.GetConsequentPositionType(i), sentenceSense)
+				grammarRules, usedRules, consequentCategory, consequentValue, rule.GetConsequentPositionType(i), sentenceSense, depth)
 			words = append(words, consequent...)
 		}
 	} else {
 
-// place breakpoint here for debugging ;)
-//generator.findMatchingRule(messenger, grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
+		// place breakpoint here for debugging ;)
+		//generator.findMatchingRule(messenger, grammarRules, usedRules, antecedentCategory, antecedentValue, sentenceSense)
 
 		generator.log.AddError("No rule found for " + fmt.Sprintf("%v(%v)", antecedentCategory, antecedentValue))
 
@@ -140,6 +147,7 @@ func (generator *Generator) findMatchingRule(grammarRules *mentalese.GrammarRule
 
 		if found {
 
+			// make sure the same rule is not executed again and again
 			hash := generator.createRuleHash(resultRule, binding)
 			_, used := (*usedRules)[hash]
 			if !used {
@@ -163,7 +171,7 @@ func (generator *Generator) createRuleHash(rule mentalese.GrammarRule, binding m
 
 // From one of the bound consequents of a syntactic rewrite rule, generate an array of words
 // vp(P1) => married Marry
-func (generator *Generator) generateSingleConsequent(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet) []string {
+func (generator *Generator) generateSingleConsequent(grammarRules *mentalese.GrammarRules, usedRules *map[string]bool, category string, value mentalese.Term, positionType string, sentenceSense mentalese.RelationSet, depth int) []string {
 
 	words := []string{}
 
@@ -173,7 +181,7 @@ func (generator *Generator) generateSingleConsequent(grammarRules *mentalese.Gra
 		text := value
 		words = append(words, text.TermValue)
 	} else {
-		words = generator.GenerateNode(grammarRules, usedRules, category, value, sentenceSense)
+		words = generator.GenerateNode(grammarRules, usedRules, category, value, sentenceSense, depth+1)
 	}
 
 	return words

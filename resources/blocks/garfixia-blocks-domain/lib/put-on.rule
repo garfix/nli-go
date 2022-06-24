@@ -31,3 +31,13 @@ do_put_on_center(ParentEventId, E1, E2) :-
         do_move(EventId, E1, X3, Y3, Z3)
     )
 ;
+
+do_put_on_table(ParentEventId, E1, X, Y) :-
+    go:uuid(EventId, event)
+    persist_action(EventId, ParentEventId,
+        go:log('put on table', EventId)
+        go:assert(put_on(EventId, `:shrdlu`, E1, `table:table`))
+
+        do_move(EventId, E1, X, Y, 0)
+    )
+;

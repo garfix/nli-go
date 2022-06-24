@@ -7,6 +7,10 @@ do_move(ParentEventId, E1, X, Y, Z) :-
     do_pick_up(ParentEventId, E1)
     do_put_down(ParentEventId, E1, X, Y, Z);
 
+/* move an object to the table */
+do_move_to_table(ParentEventId, E1, X, Y) :-
+    do_move(ParentEventId, E1, X, Y, 0);
+
 /* if there is a block in the hand, it is put down */
 do_clear_hand(ParentEventId) :- go:or(
     go:not(grasping(`:shrdlu`, _)),
@@ -16,5 +20,3 @@ do_clear_hand(ParentEventId) :- go:or(
 do_find_space_on_table(E1, X1, Y1) :-
     do_find_free_space(`table:table`, E1, X1, Y1);
 
-do_put_on_table(ParentEventId, E1, X, Y) :-
-    do_move(ParentEventId, E1, X, Y, 0);

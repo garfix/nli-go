@@ -145,6 +145,7 @@
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
 { rule: demonstrative(P1) -> 'that' }
+{ rule: demonstrative(P1) -> 'it' }
 
 /* Conjunction */
 
@@ -191,6 +192,7 @@
   ellipsis: [prev_sentence]//mem_vp(P1),
   sense: go:intent(why, P1) $mem_vp }
 { rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1, E1),         sense: go:intent(why, P1) go:quant_check($np, $action) }
+{ rule: interrogative_clause(P1) -> 'how' aux_do(_) np(E1) action(P1, E1),         sense: go:intent(how, P1) go:quant_check($np, $action) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }

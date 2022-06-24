@@ -94,8 +94,3 @@ describe_event(P1, DescSet) :-
     describe_categoric(A, '', ItemDesc)
     [DescSet := clear_off(P1, Subject, A) {{ ItemDesc }}]
 ;
-
-describe_event(P1, DescSet) :-
-    [P1 == `event:root`]
-    [DescSet := you_asked_me_to(P1)]
-;

@@ -162,9 +162,35 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:parent_event(P1, ParentEventId) dom:describe_event(ParentEventId, Desc),
-            answer: dom:cause_description(ParentEventId) {{ Desc }},
+            preparation:
+                dom:parent_event(P1, ParentEventId)
+                if [ParentEventId == `event:root`] then
+                    [CenterId := P1]
+                    [Desc := dom:you_asked_me_to(CenterId)]
+                else
+                    [CenterId := ParentEventId]
+                    dom:describe_event(CenterId, Desc)
+                end,
+            answer:  dom:cause_description(CenterId) {{ Desc }},
             result: ParentEventId
+        }
+        {
+            answer: dom:dont_know()
+        }
+}
+
+/* How? */
+{
+    condition: go:intent(how, P1),
+    responses:
+        {
+            condition: go:exists(),
+            preparation:
+                dom:parent_event(SubGoalId, P1)
+                dom:describe_event(SubGoalId, Desc)
+                go:make_list(List, SubGoalId)
+            ,
+            answer: dom:how_description(List) {{ Desc }}
         }
         {
             answer: dom:dont_know()

@@ -4,12 +4,20 @@
 { rule: s(P1) -> 'while' time_desc(P1),                                            condition: dom:time_description(P1) }
 { rule: s(P1) -> 'to' cause_desc(P1),                                              condition: dom:cause_description(P1) }
 
-{ rule: time_desc(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),            condition: dom:stack_up(P1, Subject, List) }
+{ rule: time_desc(P1) -> np(Subject) 'was' 'stacking' 'up' list(List),             condition: dom:stack_up(P1, Subject, List) }
 
 { rule: cause_desc(P1) -> 'get' 'rid' 'of' np(A),                                   condition: dom:get_rid_of(P1, Subject, A) }
 { rule: cause_desc(P1) -> 'clean' 'off' np(A),                                      condition: dom:clear_off(P1, Subject, A) }
 { rule: cause_desc(P1) -> 'put' np(A) 'on' np(B),                                   condition: dom:put_on(P1, Subject, A, B) }
 { rule: cause_desc(P1) -> 'stack' 'up' list(List),                                  condition: dom:stack_up(P1, Subject, List) }
+
+{ rule: s(List) -> 'by' how_desc_list(List),                                        condition: dom:how_description(List) }
+
+{ rule: how_desc_list(L1) -> how_desc(Head) ';' 'then' how_desc_list(Tail),         condition: go:list_length(L1, Len) [Len > 1]
+                                                                                        go:list_head(L1, Head, Tail) }
+{ rule: how_desc_list(L1) -> how_desc(First),                                       condition: go:list_get(L1, 0, First) }
+
+{ rule: how_desc(P1) -> 'putting' np(A) 'on' np(B),                                 condition: dom:put_on(P1, Subject, A, B) }
 
 { rule: np(E1) -> 'it',                                                     condition: dom:center(E1) }
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(E1, E2) }

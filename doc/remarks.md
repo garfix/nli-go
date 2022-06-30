@@ -1,3 +1,7 @@
+## 2022-06-30
+
+I made the check that the generator didn't apply the same rule twice more specific; it now only applies within the same generation path.
+
 ## 2022-06-28
 
 The heuristics are complicated and error prone. I want something simpler and easier to implement.

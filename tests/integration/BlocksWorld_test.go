@@ -84,7 +84,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube"},
 			{"Why did you do that?", "Because you asked me to"},
 			// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
-			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on top of that large green cube"},
+			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

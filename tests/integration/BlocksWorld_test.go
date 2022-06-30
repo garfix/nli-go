@@ -83,7 +83,8 @@ func TestBlocksWorld(t *testing.T) {
 			// original: To stack up the red cube, a large red block and a large green cube
 			{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube"},
 			{"Why did you do that?", "Because you asked me to"},
-			{"How did you do it?", "By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube"},
+			// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
+			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on top of that large green cube"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -133,7 +134,7 @@ func TestBlocksWorld(t *testing.T) {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				//t.Errorf("\n%s", log.String())
-				//t.Errorf("\n%s", log.GetErrors())
+				t.Errorf("\n%s", log.GetErrors())
 				break
 			}
 		}

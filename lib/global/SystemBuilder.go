@@ -141,7 +141,14 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)
-	system.generator = generate.NewGenerator(builder.log, matcher)
+
+	generationState := mentalese.NewGenerationState()
+	generationMatcher := central.NewRelationMatcher(builder.log)
+	generationFunctionBase := knowledge.NewGenerationFunctionBase("generation", generationState, builder.log)
+	generationMatcher.AddFunctionBase(systemFunctionBase)
+	generationMatcher.AddFunctionBase(generationFunctionBase)
+
+	system.generator = generate.NewGenerator(builder.log, generationMatcher, generationState)
 	system.surfacer = generate.NewSurfaceRepresentation(builder.log)
 
 	domainIndex, ok := builder.buildIndex(common.Dir() + "/../base/domain")

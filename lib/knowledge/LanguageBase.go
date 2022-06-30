@@ -64,6 +64,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateDialogAddRootClause: base.dialogAddRootClause,
 		mentalese.PredicateDialogUpdateCenter:  base.dialogUpdateCenter,
 		mentalese.PredicateDialogGetCenter:     base.dialogGetCenter,
+		mentalese.PredicateDialogSetCenter:     base.dialogSetCenter,
 		mentalese.PredicateGenerate:            base.generate,
 		mentalese.PredicateSurface:             base.surface,
 		mentalese.PredicateDetectIntent:        base.detectIntent,
@@ -365,7 +366,6 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 	centerVar := input.Arguments[0].TermValue
 
 	center := mentalese.NewTermAtom("none")
-	//clause := base.dialogContext.ClauseList.GetLastClause()
 	centerVariable := base.dialogContext.DeicticCenter.GetCenter()
 	if centerVariable != "" {
 		value, found := base.dialogContext.EntityBindings.Get(centerVariable)
@@ -388,6 +388,22 @@ func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input 
 	}
 
 	return newBindings
+}
+
+func (base *LanguageBase) dialogSetCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	if !Validate(input, "v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	bound := input.BindSingle(binding)
+	value := bound.Arguments[0]
+
+	centerVar := input.Arguments[0].TermValue
+
+	base.dialogContext.EntityBindings.Set(centerVar, value)
+	base.dialogContext.DeicticCenter.SetCenter(centerVar)
+
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

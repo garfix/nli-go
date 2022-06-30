@@ -11,13 +11,15 @@ import (
 type Generator struct {
 	matcher *central.RelationMatcher
 	parser  *importer.InternalGrammarParser
+	state   *mentalese.GenerationState
 	log     *common.SystemLog
 }
 
-func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Generator {
+func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher, state *mentalese.GenerationState) *Generator {
 
 	return &Generator{
 		matcher: matcher,
+		state:   state,
 		parser:  importer.NewInternalGrammarParser(),
 		log:     log,
 	}
@@ -27,6 +29,8 @@ func NewGenerator(log *common.SystemLog, matcher *central.RelationMatcher) *Gene
 func (generator *Generator) Generate(grammarRules *mentalese.GrammarRules, sentenceSense mentalese.RelationSet) []string {
 
 	usedRules := &map[string]bool{}
+
+	generator.state.Clear()
 
 	// canned response
 	if !sentenceSense.IsEmpty() && sentenceSense[0].Predicate == mentalese.PredicateCanned {
@@ -72,6 +76,11 @@ func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, u
 			consequent := generator.generateSingleConsequent(
 				grammarRules, usedRules, consequentCategory, consequentValue, rule.GetConsequentPositionType(i), sentenceSense, depth)
 			words = append(words, consequent...)
+
+			if consequentValue.IsId() && !consequentValue.Equals(antecedentValue) {
+				generator.state.MarkGenerated(consequentValue)
+			}
+
 		}
 	} else {
 

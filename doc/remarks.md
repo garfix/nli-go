@@ -1,3 +1,50 @@
+## 2022-06-28
+
+The heuristics are complicated and error prone. I want something simpler and easier to implement.
+
+What about this: whenever the text for an entity is generated, it is marked as `already_generated` by the generator. The rules can query this flag by using the relation `go:already_generated()`. When this happens a rule may choose to change the determiner to "that".
+
+    { rule: qp(E1) -> 'that',                                                   condition: go:already_generated(E1) }
+
+The answer would then become
+
+    By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on top of that large green cube
+
+sounds reasonable, doesn't it?
+
+## 2022-06-26
+
+Where can I place the anaphora resolution phase?
+
+Can it be between the answering phase and the generation phase? A problem is that at this point an entity, say E1, occurs twice, but it can't be annotated with relations (such as `that(E1)`) because such an annotation would be applied to both instances. Actually: it can, if the variable would be duplicated into E1a and E1b and those variables would get separate anotations.
+
+What about this:
+
+- find event relations (first argument is an event)
+- if an entity occurs in the _previous_ event relation, and it is in subject position in the first relation
+  - create a new variable for it
+  - mark it as `reference()`
+
+But marking it as `reference()` is not enough. It can't use "it" all the time, because "it" may already have been used for another entity.
+
+Winograd comments on this in the final paragraphs of his book:
+
+"The system has heuristics which leads it to use "it" to refer to an object in an event it is describing whenever
+(1) the same object was called "it" in the question
+(2) the object was called "it" in the question preceding the current one, and "it" was not used in the current one
+(3) the object has already been named in the current answer, and was the first object in the answer, or
+(4) no objects have yet been named in the current answer, and the object was the only one named in the previous answer
+
+To refer to an object already named in the current answer, other than the first, the program applies the determiner "that" to the appropriate noun, to get a phrase like "by putting a green block on a red cube then putting that cube in the box"
+"
+
+From the "it" options, (3) applies.
+
+So the rules I can implement are:
+
+- mark a reference to the first event's subject with `first_reference()`; this will be generated as "it"
+- mark a reference to a further event's subjects with `second_reference()`; this will be generated as "that" <common noun>. 
+
 ## 2022-06-22
 
 The problem in this sentence is in the _generated_ intrasentential anaphoric references

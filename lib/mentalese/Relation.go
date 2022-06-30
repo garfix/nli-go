@@ -97,6 +97,7 @@ const PredicateExtractRootClauses = "go_extract_root_clauses"
 const PredicateDialogAddRootClause = "go_dialog_add_root_clause"
 const PredicateDialogUpdateCenter = "go_dialog_update_center"
 const PredicateDialogGetCenter = "go_dialog_get_center"
+const PredicateDialogSetCenter = "go_dialog_set_center"
 const PredicateGenerate = "go_generate"
 const PredicateSurface = "go_surface"
 const PredicateTranslate = "go_translate"
@@ -108,6 +109,8 @@ const PredicateCreateAnswer = "go_create_answer"
 const PredicateCreateCanned = "go_create_canned"
 
 const PredicateUserSelect = "go_user_select"
+
+const PredicateAlreadyGenerated = "go_already_generated"
 
 const PredicateContextSet = "go_context_set"
 const PredicateContextExtend = "go_context_extend"

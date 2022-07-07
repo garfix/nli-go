@@ -211,3 +211,8 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 
 	return mentalese.InitBindingSet(binding)
 }
+
+func (base *SystemSolverFunctionBase) dialogDecreaseActivation(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	base.dialogContext.EntityLabels.DecreaseActivation()
+	return mentalese.InitBindingSet(binding)
+}

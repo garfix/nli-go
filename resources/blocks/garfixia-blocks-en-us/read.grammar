@@ -28,6 +28,7 @@
 { rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
 { rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2) }
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
@@ -44,6 +45,7 @@
 { rule: mem_vp(P1) -> np(E1) mem_vp(P1),                               sense: go:quant_check($np, $mem_vp) }
 
 { rule: mem_vp(P1) -> aux_do(_) np(E1) 'pick' np(E2) 'up',             sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
+{ rule: mem_vp(P1) -> np(E1) aux_be(_) action(P1, E1),                  sense: go:quant_check($np, $action) }
 
 { rule: vp(P1) -> tv(P1, _, E1) np(E1),                                         sense: go:quant_foreach($np, $tv) }
 { rule: vp(P1, E1) -> tv(P1, E1, E2) np(E2),                                    sense: go:quant_foreach($np, $tv) }
@@ -55,6 +57,7 @@
 { rule: vp(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            sense: go:quant_check($np1, go:quant_check($np2, $tv_gerund)) }
 { rule: vp(P1, E1) -> np(E1) copula(C1) pp(E1),                                 sense: go:quant_check($np, $pp) }
 { rule: vp(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:quant_check($np, $tv_infinitive) }
+{ rule: vp(P1, E2) -> np(E2) aux_do(_) np(E1) tv_infinitive(P1, E1, E2),        sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive)) }
 { rule: vp(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:quant_check($np, $past_participle) }
 
 /* long-distance dependencies */
@@ -67,6 +70,7 @@
 
 { rule: aux_be(A1) -> 'is'}
 { rule: aux_be(A1) -> 'are' }
+{ rule: aux_be(A1) -> 'were' }
 
 { rule: aux_do(A1) -> 'does' }
 { rule: aux_do(A1) -> 'do' }
@@ -117,7 +121,7 @@
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }
 { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'them',                                            tag: go:reference(E1) }
+{ rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them') }
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
@@ -140,7 +144,7 @@
 
 { rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
 { rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
-{ rule: pronoun(E1) -> 'it',                                           tag: go:reference(E1) }
+{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it') }
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
@@ -170,17 +174,23 @@
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
 { rule: action(P1, E1) -> 'do' demonstrative(P1),                           sense: go:event_reference(P1) }
+{ rule: action(P1, E1) -> 'doing' demonstrative(P1),                           sense: go:event_reference(P1) }
 { rule: action(P1, E1) -> vp(P1, E1),                                       sense: go:event_reference(P1) }
 
 
 /* history based */
 { rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
+{ rule: time_modifier(P1) -> 'while' mem_vp(P2),                               sense: $mem_vp dom:while(P1, P2) }
 
 { rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1),
                                                                                    sense: go:intent(select, E2)
                                                                                             go:quant_check($np1, go:quant_check($np2, $past_participle))
                                                                                             go:context_set(time, P1, $time_modifier) }
 
+{ rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1) time_modifier(P1),
+                                                                                   sense: go:intent(how_many, E1)
+                                                                                            $vp
+                                                                                            go:context_set(time, P1, $time_modifier) }
 
 /* interrogative */
 

@@ -116,6 +116,15 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
 		}
 	}
+	if common.StringArrayContains(tags, mentalese.TagLabeledReference) {
+		labels := resolver.dialogContext.EntityTags.GetTagsByPredicate(rangeVar, mentalese.TagLabeledReference)
+		resolvedVariable = resolver.labeledReference(labels[0], quant, binding, collection)
+
+		if rangeVar != resolvedVariable {
+			quant = quant.ReplaceTerm(mentalese.NewTermVariable(rangeVar), mentalese.NewTermVariable(resolvedVariable))
+			resolver.dialogContext.ReplaceVariable(rangeVar, resolvedVariable)
+		}
+	}
 	if common.StringArrayContains(tags, mentalese.TagReflectiveReference) {
 		resolvedVariable = resolver.reflectiveReference(quant, binding, collection)
 
@@ -128,6 +137,27 @@ func (resolver *AnaphoraResolver) resolveQuant(quant mentalese.Relation, binding
 	resolver.dialogContext.ClauseList.GetLastClause().AddEntity(resolvedVariable)
 
 	return quant
+}
+
+func (resolver *AnaphoraResolver) labeledReference(labelRelation mentalese.Relation, quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+
+	variable := quant.Arguments[1].TermValue
+	label := labelRelation.Arguments[1].TermValue
+
+	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
+	if found {
+		// use the reference of the existing label
+		referencedVariable := aLabel.label
+		collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
+		return referencedVariable
+	} else {
+		referencedVariable := resolver.reference(quant, binding, collection)
+		if referencedVariable != variable {
+			// create a new label
+			resolver.dialogContext.EntityLabels.SetLabel(label, variable)
+		}
+		return referencedVariable
+	}
 }
 
 func (resolver *AnaphoraResolver) reference(quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
@@ -305,6 +335,7 @@ func (resolver *AnaphoraResolver) resolveEvent(event mentalese.Relation, binding
 
 		sort := group.values[0].Sort
 		if sort == mentalese.SortEvent {
+			println(variable, " => ", referentVariable)
 			collection.AddReplacement(variable, referentVariable)
 			break
 		}

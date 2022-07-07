@@ -120,6 +120,7 @@ const PredicateContextClear = "go_context_clear"
 const PredicateDialogReadBindings = "go_dialog_read_bindings"
 const PredicateDialogWriteBindings = "go_dialog_write_bindings"
 const PredicateDialogAddResponseClause = "go_dialog_add_response_clause"
+const PredicateDialogDecreaseActivation = "go_dialog_decrease_activation"
 
 // internal relational representations of syntactic structures
 const PredicateIncludeRelations = "$go$_include_relations"
@@ -151,6 +152,7 @@ const TagAgree = "go_agree"
 const TagReference = "go_reference"
 const TagSortalReference = "go_sortal_reference"
 const TagReflectiveReference = "go_reflective_reference"
+const TagLabeledReference = "go_labeled_reference"
 
 const AtomFunctionSubject = "subject"
 const AtomFunctionObject = "object"

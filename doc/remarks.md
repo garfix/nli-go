@@ -1,6 +1,42 @@
+# 2022-07-02
+
+Words like "it", "him" and "her", once introduced, form a temporary variable/placeholder for an entity, in a discourse. While this variable is still in scope, it keeps referring to the same entity.
+
+The word "it" should not be reevaluated each time it is used. As long as it is still in scope, it automatically refers to the the same entity.
+
+Words like "that" are different. They refer to different things each time.
+
+This idea of pronouns as variables turn Winograds heuristics into a rule:
+
+"The system has heuristics which leads it to use "it" to refer to an object in an event it is describing whenever
+(1) the same object was called "it" in the question
+(2) the object was called "it" in the question preceding the current one, and "it" was not used in the current one
+..."
+
+The rule would be: as long as a variable V (that hold entity E) is in scope (whatever that means), use that variable to name the entity.
+
+Maybe "label" is a better word. "it", "she" and "he" label entities.
+
+The first use of "it" refers to a previous entity. Following "it"s refer to the previous it.
+The first use creates the label; following uses use the label. 
+When a label is not used for a few sentences, it is removed.
+
+See also "referential chain" (2021-09-19)
+
 ## 2022-06-30
 
 I made the check that the generator didn't apply the same rule twice more specific; it now only applies within the same generation path.
+
+===
+
+Interaction #31
+
+    H: How many objects did you touch while you were doing it?
+    C: Four of them
+
+Winograd: "Time references can refer to a time span, using words like "while"."
+
+The previous time reference was "before", which involved only an upper limit. "while" provides both a lower and an upper limit.
 
 ## 2022-06-28
 

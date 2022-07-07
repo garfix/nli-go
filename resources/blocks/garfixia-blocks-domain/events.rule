@@ -15,6 +15,18 @@ before(Event1, Event2) :-
     [End < Start]
 ;
 
+while(Event1, Event2) :-
+    go:log('while')
+    start_time(Event1, Start1)
+    end_time(Event1, End1)
+    start_time(Event2, Start2)
+    end_time(Event2, End2)
+    go:log(Start1, End1)
+    go:log(Start2, End2)
+    [Start1 >= Start2]
+    [End1 <= End2]
+;
+
 get_top_level_event(EventId, TopLevelEventId) :-
     parent_event(EventId, ParentEventId)
     if [ParentEventId == `event:root`]  then

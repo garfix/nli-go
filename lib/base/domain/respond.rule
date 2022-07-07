@@ -9,6 +9,7 @@ go:respond(Input) :-
 
     go:ignore(
 
+        go:dialog_decrease_activation()
         go:find_locale(Locale)
         go:slot(locale, Locale)
         go:dialog_read_bindings(DialogBinding)
@@ -57,9 +58,6 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
         [ContinueLooking := false]
         return
     end
-
-    /*go:log(ResolvedRequest)
-    go:log(ResolvedBindings)*/
 
     /* Stop at the first successfully processed intent */
     go:cut(1,

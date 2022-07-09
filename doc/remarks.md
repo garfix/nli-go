@@ -1,4 +1,31 @@
-# 2022-07-02
+## 2022-07-09
+
+Notes:
+
+- EntityLabels have been disabled (activation is set to 0)
+
+To do:
+
+- extract tags - just after dialogize
+- name resolution is actually a syntactic process and should be done before anaphora resolution (because it provides gender information, and this may be needed to check agreement in the anaphora resolution)
+- create a syntactic AR step, use it, and disable the semantic AR step
+
+## 2022-07-08
+
+Is it better to do _syntactic_ anaphora resolution? I was undecided until now, but the labeled and unlabeled event references take me to the syntactic side. Syntactically, there's no difference between an event and an entity. Both are just nodes. While semantically, an entity has a scope, and that's where the resolution takes place. Also, the event may no longer have a representation, semantically, so it needs to be artificially created.
+
+Syntactically, can I do these tags:
+
+event
+    go_reference (when did you do _that_)
+    go_labeled_reference (why did you do _it_)
+entity
+    go_reference (put _the_ pyramid on the table)
+    go_sortal_reference (pick _one_ up)
+    go_reflective_reference (_himself_)
+    go_labeled_reference (and pick _it_ up)
+
+## 2022-07-02
 
 Words like "it", "him" and "her", once introduced, form a temporary variable/placeholder for an entity, in a discourse. While this variable is still in scope, it keeps referring to the same entity.
 

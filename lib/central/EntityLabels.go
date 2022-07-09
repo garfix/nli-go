@@ -34,8 +34,16 @@ func (e *EntityLabels) SetLabel(label string, variable string) {
 		aLabel = EntityLabel{
 			label:      label,
 			variable:   variable,
-			activation: 3,
+			activation: 0,
 		}
+		e.labels = append(e.labels, aLabel)
+	}
+}
+
+func (e *EntityLabels) IncreaseActivation(label string) {
+	aLabel, found := e.GetLabel(label)
+	if found {
+		aLabel.activation++
 	}
 }
 

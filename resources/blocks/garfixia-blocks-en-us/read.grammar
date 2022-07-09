@@ -149,7 +149,7 @@
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
 { rule: demonstrative(P1) -> 'that' }
-{ rule: demonstrative(P1) -> 'it' }
+{ rule: demonstrative(P1) -> 'it',                                     tag: go:labeled_reference(P1, 'it')  }
 
 /* Conjunction */
 
@@ -222,5 +222,5 @@
 { rule: imperative(P1) -> imperative_clause(P1) }
 
 { rule: s(S1) -> declarative(S1),                                       sense: go:intent(declaration) }
-{ rule: s(S1) -> imperative(S1), tag: abc(S1) }
+{ rule: s(S1) -> imperative(S1) }
 { rule: s(S1) -> interrogative(S1),                                     sense: go:intent(question) }

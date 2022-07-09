@@ -146,6 +146,7 @@ func (resolver *AnaphoraResolver) labeledReference(labelRelation mentalese.Relat
 
 	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
 	if found {
+		resolver.dialogContext.EntityLabels.IncreaseActivation(label)
 		// use the reference of the existing label
 		referencedVariable := aLabel.label
 		collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
@@ -324,6 +325,19 @@ func (resolver *AnaphoraResolver) resolveEvent(event mentalese.Relation, binding
 		return
 	}
 
+	tags := resolver.dialogContext.EntityTags.GetTagPredicates(variable)
+	resolvedVariable := variable
+	if common.StringArrayContains(tags, mentalese.TagLabeledReference) {
+		labels := resolver.dialogContext.EntityTags.GetTagsByPredicate(variable, mentalese.TagLabeledReference)
+		resolvedVariable = resolver.labeledEventReference(labels[0], event, binding, collection)
+
+		if variable != resolvedVariable {
+			event = event.ReplaceTerm(mentalese.NewTermVariable(variable), mentalese.NewTermVariable(resolvedVariable))
+			resolver.dialogContext.ReplaceVariable(variable, resolvedVariable)
+			return
+		}
+	}
+
 	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
 
 		// there may be 1..n groups (bindings)
@@ -339,5 +353,29 @@ func (resolver *AnaphoraResolver) resolveEvent(event mentalese.Relation, binding
 			collection.AddReplacement(variable, referentVariable)
 			break
 		}
+	}
+}
+
+func (resolver *AnaphoraResolver) labeledEventReference(labelRelation mentalese.Relation, event mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+
+	variable := event.Arguments[0].TermValue
+	label := labelRelation.Arguments[1].TermValue
+
+	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
+	if found {
+		resolver.dialogContext.EntityLabels.IncreaseActivation(label)
+		// use the reference of the existing label
+		referencedVariable := aLabel.label
+		collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
+		return referencedVariable
+	} else {
+		//referencedVariable := resolver.reference(event, binding, collection)
+		//if referencedVariable != variable {
+		//	// create a new label
+		//	resolver.dialogContext.EntityLabels.SetLabel(label, variable)
+		//}
+		//return referencedVariable
+		resolver.dialogContext.EntityLabels.SetLabel(label, variable)
+		return variable
 	}
 }

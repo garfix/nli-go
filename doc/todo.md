@@ -1,5 +1,7 @@
 # Todo
 
+- can sortal filtering also be done before relationizing? 
+
 - turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional? 
 
 - when listed values are used in the next sentence, they should be converted to multiple bindings

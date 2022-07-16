@@ -69,6 +69,23 @@ The technique of ellipsis can possibly play a role in gapping / long distance re
 
 - use parse tree as slot
 
+## Quantifier scoping
+
+Should be reintroduced. Syntactic or semantic? Find a good test-case.
+
+## Anaphora
+
+I have not given any attention yet to "bound variable anaphora" https://en.wikipedia.org/wiki/Bound_variable_pronoun
+
+## Collect solution types
+
+For each linguistics feature, there is a problem: how to put it into the process? Experience learns that there are procedures for this. And I'd like to collect them for later use:
+
+- insert a new step (preferably operate on parse tree, if needed on semantic structure)
+- insert several steps, for different aspects of the same feature (syntactic, semantic)
+- create a tag
+- create a relation
+
 ## Performance
 
 - the internal factbase is inefficient; for every new and removed fact, all facts are matched

@@ -21,11 +21,12 @@ Anaphora has the following aspects
 - direct references ("the car") vs indirect references (referring to an entity that can be deduced) ("My car broke down. The engine failed.")
 - may require complex interpretation via world knowledge / selectional restrictions ("The city councilmen refused the demonstrators a permit because they [feared/advocated] violence.")
 - it may refer to NP's but also to VP's and S's.
-- pick one from a group. "We found seven coins on the next dive. The oldes was dated 1823" (Natural Language Understanding, p348)
-- one-anaphora. "How many blocks are in the box? Pick one out." ("one" refers to any block)
-- bound variables. "Every student has received his grade"
+- pick one from a group. "We found seven coins on the next dive. The oldest was dated 1823" (Natural Language Understanding, p348)
+- one-anaphora: "How many blocks are in the box? Pick one out." ("one" refers to any block)
+- bound variable anaphora: "Every student has received his grade" https://en.wikipedia.org/wiki/Bound_variable_pronoun
 - pleonastic/expletive use "It is raining". Is not a reference.
 - sense and reference: "the morning star is the evening star"
+- referential chains / labels: once "it" refers to A, it should not be resolved in the following sentences, it automatically resolves to A
 
 ## Referents
 

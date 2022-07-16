@@ -1,14 +1,46 @@
+## 2022-07-16
+
+I just noticed another form of discourse-based labeling:
+
+    Boris Johnson served as Prime Minister of the United Kingdom and Leader of the Conservative Party since 2019.
+    Johnson gained a King's Scholarship to study at Eton College, a boarding school near Windsor in Berkshire.
+
+Note "Johnson" in line 2. The name of the person is shortened, but we still know whom it refers to. "Johnson" can't be used as the first occurrance in the discourse, because there are many Johnson's and we would not know which one was meant.
+
+"Johnson" is what I would call a label. I haven't found the proper term for this yet. The label's scope is just the discourse in which the full name was used before.
+
+In the same piece on Boris Johnson, other Johnson's are mentioned as well: https://en.wikipedia.org/wiki/Boris_Johnson
+
+    Alexander Boris de Pfeffel Johnson was born on 19 June 1964 on the Upper East Side of Manhattan, New York City, 23-year-old Stanley Johnson, then studying economics at Columbia University, and 22-year-old Charlotte Fawcett, an artist from a family of liberal intellectuals. 
+    Johnson's parents had married in 1963 before moving to the US
+
+Introducing other people that are also named Johnson doesn't revoke the original label.  
+
+
+
 ## 2022-07-09
 
 Notes:
 
 - EntityLabels have been disabled (activation is set to 0)
+- The principle should be that the relations produced by relationize are not modified any more (the relation created for one-anaphora should be added to the syntax tree) / so preferably `relationize` is the last step before finding a solution.  
 
 To do:
 
 - extract tags - just after dialogize
 - name resolution is actually a syntactic process and should be done before anaphora resolution (because it provides gender information, and this may be needed to check agreement in the anaphora resolution)
 - create a syntactic AR step, use it, and disable the semantic AR step
+
+=======
+
+Notes
+
+Like CLE, I was of the opinion that the syntax tree should be turned into a semantic form (Quasi Logical Form) as soon as possible. More and more, I am coming back from this: postpone the relationization process as long as possible. Why? Because the annotated syntax tree holds more information.
+
+The book on CLE also notes that sortal restrictions, for example, has a syntactic and a pragmatic part. This can be a reason to split it into two processes, performed at different times in the process.
+
+I have not given any attention yet to "bound variable anaphora" https://en.wikipedia.org/wiki/Bound_variable_pronoun
+It's possible that the system is already able to handle this, because it treats anaphora on the variable level, not on the values that bind it.
 
 ## 2022-07-08
 

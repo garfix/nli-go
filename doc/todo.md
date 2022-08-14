@@ -1,5 +1,14 @@
 # Todo
 
+Create a syntactic version of anaphora resolution that is executed before relationzie
+
+- OK extract tags - just after dialogize (used to be created by relationize)
+- OK name resolution is actually a syntactic process and should be done before anaphora resolution (because it provides gender information, and this may be needed to check agreement in the anaphora resolution)
+- OK make sortal filtering a syntactic process
+- create a syntactic AR step, use it, and disable the semantic AR step
+
+
+
 - can sortal filtering also be done before relationizing? 
 
 - turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional? 
@@ -137,6 +146,9 @@ An example of the syntax I will use for feature structures and unification:
     { rule: vp(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            agree: number(P1, E1) }
     { rule: noun(E1) -> 'blocks',                                                   tag: number(E1,  plural) }
 
+- Control https://en.wikipedia.org/wiki/Control_(linguistics)
+
+I should have this explicitly.
 
 ## Planning
 

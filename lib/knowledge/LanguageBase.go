@@ -54,6 +54,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateTokenize:            base.tokenize,
 		mentalese.PredicateParse:               base.parse,
 		mentalese.PredicateDialogize:           base.dialogize,
+		mentalese.PredicateExtractTags:         base.extractTags,
 		mentalese.PredicateCheckAgreement:      base.checkAgreement,
 		mentalese.PredicateEllipsize:           base.ellipsize,
 		mentalese.PredicateRelationize:         base.relationize,
@@ -406,6 +407,24 @@ func (base *LanguageBase) dialogSetCenter(messenger api.ProcessMessenger, input 
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *LanguageBase) extractTags(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "j", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	var parseTree mentalese.ParseTreeNode
+	bound.Arguments[0].GetJsonValue(&parseTree)
+
+	tags := base.relationizer.ExtractTags(parseTree)
+	base.dialogContext.EntityTags.AddTags(tags)
+
+	newBinding := binding.Copy()
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)
@@ -423,9 +442,6 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
-	tags := base.relationizer.ExtractTags(parseTree)
-	base.dialogContext.EntityTags.AddTags(tags)
-
 	newBinding := binding.Copy()
 
 	newBinding.Set(senseVar, mentalese.NewTermRelationSet(requestRelations))
@@ -436,15 +452,16 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "r", base.log) {
+	if !Validate(bound, "j", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	requestRelations := bound.Arguments[0].TermValueRelationSet
+	var parseTree mentalese.ParseTreeNode
+	bound.Arguments[0].GetJsonValue(&parseTree)
 
 	// extract sorts: variable => sort
 	sortFinder := central.NewSortFinder(base.meta)
-	sorts, sortFound := sortFinder.FindSorts(requestRelations)
+	sorts, sortFound := sortFinder.FindSorts(&parseTree)
 	if !sortFound {
 		// conflicting sorts
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())

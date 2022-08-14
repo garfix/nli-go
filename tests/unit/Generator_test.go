@@ -33,7 +33,8 @@ func TestGenerator(t *testing.T) {
 	matcher := central.NewRelationMatcher(log)
 	meta := mentalese.NewMeta()
 	matcher.AddFunctionBase(knowledge.NewSystemFunctionBase("system-function", meta, log))
-	generator := generate.NewGenerator(log, matcher)
+	state := mentalese.NewGenerationState()
+	generator := generate.NewGenerator(log, matcher, state)
 
 	tests := []struct {
 		input string

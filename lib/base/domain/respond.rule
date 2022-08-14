@@ -40,10 +40,8 @@ go:respond(Input) :-
 go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLooking) :-
 
     go:dialog_add_root_clause(RootClauseTree, false)
-
-    go:relationize(RootClauseTree, Request)
-
-    go:sortal_filtering(Request)
+    go:extract_tags(RootClauseTree)
+    go:sortal_filtering(RootClauseTree)
 
     go:resolve_names(RootClauseTree, DialogBinding, RequestBinding, UnresolvedName)
     if [UnresolvedName != ''] then
@@ -51,6 +49,8 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
         [ContinueLooking := true]
         return
     end
+
+    go:relationize(RootClauseTree, Request)
 
     go:resolve_anaphora(Request, RequestBinding, ResolvedRequest, ResolvedBindings, ResolvedOutput)
     if [ResolvedOutput != ''] then

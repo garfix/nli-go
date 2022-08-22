@@ -1,3 +1,102 @@
+## 2022-08-22
+
+"One-Anaphora is not Ellipsis" (which has remained a draft?) is an interesting article, but I'm not convinced by the author's arguments. And then there's this example
+
+    *Who did Mary take a picture of, and who did John take one?
+
+It is not grammatical, but not because of "one", it's because of the missing "of", compare:
+
+    Who did Mary take a picture of, and who did John take one of?
+
+Thus far I excluded one-anaphora as ellipsis because it's resolution requires an anaphora queue. But this only means that ellipsis and anaphora should be combined in a single step.
+
+However, even if this is possible, it hard to use ellipsis for one-anaphora; mainly because the elided material may come from a _response_, and I don't have a syntactic tree for it available yet, let alone its semantic attachments.
+
+## 2022-08-21
+
+There's a single semantic node that represents an entity. Should there be a similar node to represent an event?
+Do we need such a thing to fill in the slot represented by the word "one"?
+It seems to be the case, if it is possible to refer to events that are not bound.
+
+    He likes to look at birds.
+    I like that as well.
+
+Here "look at birds" is a predication/event that is not bound to a specific instance.
+In this case "that" could not be understood without replacing "that" by the complete meaning of "look at birds".
+
+The meaning node of an entity is its `quant`. The quant has a quantifier and a scope.
+The meaning of a predication/event is a `quant_foreach` or a `quant_check`.
+
+It's possible to keep track of the event definitions as well as entity definitions, as they are found in a sentence.
+With these, it is possible to replace "that" with either an entity or an event definition.
+But we should distinguish between them, because an event reference and an entity reference have different positions when nested into bigger relation structures.
+
+---
+
+Until now, the semantics of "Why did you do it?" basically looked like this: `why(event831)`. Note that "it" itself was not replaced by a relational structure. This only worked because the variable was bound. If this could be extended with the relational structure of the event, it would also work if the variable is not bound (i.e. `look_at(P1, X, birds) why(P1)`; "why does he do that?" => "why does he like to look at birds").
+
+---
+
+If I _were_ to treat "that" as ellipsis, it would look like this:
+
+    { rule: event_ref(P1) -> 'that',                                       ellipsis: vp(P1),    sense: $vp,      tag: go:reference(P1) }
+    { rule: event_ref(P1) -> 'it',                                         ellipsis: vp(P1),    sense: $vp,      tag: go:labeled_reference(P1, 'it') }
+
+
+## 2022-08-20
+
+One-anaphora can't be simply treated as ellipsis. It uses the anaphora queue to resolve the referent, and this queue is built into the anaphora process.
+
+---
+
+Later: 
+
+Hahaha: I just came across this link: https://nlacara.github.io/papers/one_xe.pdf : "One-Anaphora is not Ellipsis" - Nicholas LaCara
+
+---
+
+One anaphora changes the raw attachments.
+Regular anaphora uses the expanded attachments to find a referent.
+
+So I need both the raw attachments and the expanded attachments. The expanded attachments should not be used to create the final relations (even though that is tempting!). Having both is an acceptable solution. But not ideal.
+
+I could also work with semantic placeholders.
+
+---
+
+Currently I am not even treating one-anaphora well. I replace "one" by the main relation. So in this example 
+
+    If you happen to own a book by Dan Brown, bring one for me.
+
+I would replace "one" by "book", which is clearly insufficient.
+Now:
+
+    { rule: noun(E1) -> 'one',                                             tag: go:sortal_reference(E1) }
+
+Maybe:
+
+    { rule: noun(E1) -> 'one',                                             sense: go:quant(one, E1, none), tag: go:reference(E1, none) }
+
+This would mean: resolve "one" by replacing the variable with the one referred to, but set the quantification to 1. "one" means then "one of the set of entities mentioned just previously".
+
+Unfortunately, this syntax just works if the variable is already bound. If it is not, the variable will have no restictions whatsoever in the new relation set.
+
+This could be resolved by keeping track of the quant-definition of the entity, as used in the previous text.
+
+    { rule: noun(E1) -> 'one',                                             sense: go:quant(one, E1, $missing_nbar) }
+
+Here `$missing_nbar` needs to be replaced by the relations of the referenced entity.
+
+## 2022-08-18
+
+I want to treat anaphora resolution as a syntactic process. But I need at least the semantic attachments of some nodes to do the resolution. And that's ok, really. The relationization can be done before AR, while keeping the relations with the nodes in the syntax tree, But I have a problem with one-anaphora: it changes these relations again.
+
+A solution could be to treat one-anaphora as ellipsis in stead, for example:
+
+    Pick one and put it on the red block.
+    After ellipsis resolution:
+    Pick a pyramid and put it on the red block.
+
 ## 2022-07-16
 
 I just noticed another form of discourse-based labeling:

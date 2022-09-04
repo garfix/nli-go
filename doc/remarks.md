@@ -1,3 +1,34 @@
+## 2022-09-03
+
+I was going to add the fully expanded semantic attachments at parse time. But I knew the shallow (unexpanded) attachements would be changed (when resolving one-anaphora). So I would need to rebuild the semantic structure again later. I didn't like this idea.
+
+What I can also do is create the expanded attachment structure, while keeping it attached to the tree. And then allow this structure to be changed, by modifying it, in stead of making a copy.
+
+Mutating a structure is not in agreement with functional programming, but what I can do is create a complete copy of the parse tree in each step that requires the tree to be changed. This way I can change the tree, and still adhere to functional requirements: copy-on-change.
+
+---
+
+This changes the way I've used the parse tree up to now. At the moment the semantic attachments remain "shallow" (unexpanded) until the relationize phase. I want to change that: I want to expand the relations right away, so that I can make changes to the semantics as well as the syntax tree, in the understanding process.
+
+It's easier to modify a tree than to rebuild it in a slightly changed way. So I copy it first, and then make changes to the copy.
+
+I can't oversee the consequences of this action, but I already know that this gives me more flexibility. It is interesting to keep the link of syntax node to semantic node. 
+
+## 2022-08-23
+
+There is yet another problem with replacing an event referent with its semantics.
+
+If I replace "it" with its (event) meaning ("stack up both of the red blocks and either a green cube or a pyramid"), we get:
+
+    How many objects did you touch while you were doing [stack up both of the red blocks and either a green cube or a pyramid]?    
+
+Two things are wrong with this:
+
+1) this new command is not the event we're referring to, it's a new instance of the same command
+2) this command will actually be executed while performing the question
+
+An action like this can be executed or described. Unlike with noun phrases, these are completely different things.
+
 ## 2022-08-22
 
 "One-Anaphora is not Ellipsis" (which has remained a draft?) is an interesting article, but I'm not convinced by the author's arguments. And then there's this example

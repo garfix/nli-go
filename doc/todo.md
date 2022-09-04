@@ -1,18 +1,20 @@
 # Todo
 
-Create a syntactic version of anaphora resolution that is executed before relationzie
+- after parsing, fully expand the semantic structure, and keep it attached to the tree
+- when a quant is parsed, store it in the dialog context with its variable
+- convert the syntax tree to another tree with exploded relations
+- create a syntactic version of anaphora resolution that is executed before relationize
+  - handle `go:reference(E, $sem)` and `labeled_reference` using the exploded relations 
+  - one-anaphora: encounter $reference_slot: find out the referent, replace the variable, and replace $reference_slot with the scope part of the quant
+- disable the semantic AR step
 
-- OK extract tags - just after dialogize (used to be created by relationize)
-- OK name resolution is actually a syntactic process and should be done before anaphora resolution (because it provides gender information, and this may be needed to check agreement in the anaphora resolution)
-- OK make sortal filtering a syntactic process
-- create a syntactic AR step, use it, and disable the semantic AR step
+go:reference(P1, dom:event(P1))
+go:labeled_reference(P1, 'it', dom:event(P1)) }
+sense: go:quant(one, E1, $reference_slot)
 
-
-
-- can sortal filtering also be done before relationizing? 
+## new 
 
 - turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional? 
-
 - when listed values are used in the next sentence, they should be converted to multiple bindings
 
 - create proper function diagrams for all processes
@@ -149,6 +151,10 @@ An example of the syntax I will use for feature structures and unification:
 - Control https://en.wikipedia.org/wiki/Control_(linguistics)
 
 I should have this explicitly.
+
+## Syntax
+
+replace np, nbar by dp, np
 
 ## Planning
 

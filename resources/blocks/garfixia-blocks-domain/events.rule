@@ -46,3 +46,7 @@ persist_action(EventId, ParentEventId, Action) :-
     time(T2)
     go:assert(end_time(EventId, T2))
 ;
+
+event(EventId) :-
+    parent_event(EventId, _)
+;

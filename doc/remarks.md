@@ -1,3 +1,24 @@
+## 2022-09-11
+
+As lovely as this diagram is, I'm not going to use it. Changing the a relation structure is too problematic. For a part this has to do with the code I've written in Go, which should change quite a bit. But there's also the problem that changing a semantic structure might replace a part that's been pointed at by another syntactic node. This could lead to hard-to-detect bugs. In short, it doesn't feel very robust. I have been replacing structures the whole time, and it's not good to let that go.
+
+---
+
+Ellipsis changes the syntax tree. Anaphora changes the semantics tree.
+
+But while before, I used the semantics tree to check anaphora, I will now use the syntax tree to check it. Each time a change is made to the semantics tree, the entire tree is replaced. 
+
+
+## 2022-09-04 
+
+I made a diagram of the syntax-to-semantics node mapping that I will make. Difference with old situation: the semantic tree will now contain pointers to semantic nodes (relation sets), where before this was not the case.
+
+![syn-to-sem](diagram/syn-sem.png)
+
+"What does the box contain?"
+
+Before, the syntactic nodes also pointed at the semantic attachments, but these attachments had not been expanded. Now they will be.
+
 ## 2022-09-03
 
 I was going to add the fully expanded semantic attachments at parse time. But I knew the shallow (unexpanded) attachements would be changed (when resolving one-anaphora). So I would need to rebuild the semantic structure again later. I didn't like this idea.

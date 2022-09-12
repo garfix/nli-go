@@ -1,11 +1,10 @@
 # Todo
 
-- after parsing, fully expand the semantic structure, and keep it attached to the tree
+- just before anaphora resolution, create the semantic structure (it contains placeholders)
 - when a quant is parsed, store it in the dialog context with its variable
-- convert the syntax tree to another tree with exploded relations
-- create a syntactic version of anaphora resolution that is executed before relationize
-  - handle `go:reference(E, $sem)` and `labeled_reference` using the exploded relations 
-  - one-anaphora: encounter $reference_slot: find out the referent, replace the variable, and replace $reference_slot with the scope part of the quant
+- create a syntactic-based version of anaphora resolution
+  - handle `go:reference(E, $sem)` and `labeled_reference` using the syntactic structure: replace variable in sem. structure
+  - one-anaphora: encounter `$reference_slot`: find out the referent, replace the variable, and replace $reference_slot with the scope part of the quant: replace the semantic structure
 - disable the semantic AR step
 
 go:reference(P1, dom:event(P1))

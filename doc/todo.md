@@ -4,6 +4,7 @@
 - when a quant is parsed, store it in the dialog context with its variable
 - create a syntactic-based version of anaphora resolution
   - handle `go:reference(E, $sem)` and `labeled_reference` using the syntactic structure: replace variable in sem. structure
+    - also: use the entity definition as extra restriction 
   - one-anaphora: encounter `$reference_slot`: find out the referent, replace the variable, and replace $reference_slot with the scope part of the quant: replace the semantic structure
 - disable the semantic AR step
 

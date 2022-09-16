@@ -15,6 +15,7 @@ type DialogContext struct {
 	EntityTags        *TagList
 	EntitySorts       *mentalese.EntitySorts
 	EntityLabels      *EntityLabels
+	EntityDefinitions *EntityDefinitions
 }
 
 func NewDialogContext(
@@ -30,6 +31,7 @@ func NewDialogContext(
 		EntityTags:        NewTagList(),
 		EntitySorts:       mentalese.NewEntitySorts(),
 		EntityLabels:      NewEntityLabels(),
+		EntityDefinitions: NewEntityDefinitions(),
 	}
 	dialogContext.Initialize()
 

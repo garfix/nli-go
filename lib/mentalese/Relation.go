@@ -169,6 +169,8 @@ const AtomAsc = "asc"
 const AtomDesc = "desc"
 const AtomReturnValue = "rv"
 
+const PredicateReferenceSlot = "go_reference_slot"
+
 const QuantifierResultCountVariableIndex = 0
 const QuantifierRangeCountVariableIndex = 1
 const QuantifierSetIndex = 2

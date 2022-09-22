@@ -182,6 +182,10 @@ func (system *System) readAnswer(message mentalese.RelationSet) (string, *common
 	answer := ""
 	options := common.NewOptions()
 
+	if len(message) == 0 {
+		return answer, options, true
+	}
+
 	firstRelation := message[0]
 	if firstRelation.Predicate == mentalese.PredicatePrint {
 		answer = firstRelation.Arguments[1].TermValue

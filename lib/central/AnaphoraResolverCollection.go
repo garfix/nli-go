@@ -6,6 +6,7 @@ type AnaphoraResolverCollection struct {
 	output       string
 	replacements map[string]string
 	values       map[string]mentalese.Term
+	oneAnaphors  map[string]mentalese.RelationSet
 }
 
 func NewAnaphoraResolverCollection() *AnaphoraResolverCollection {
@@ -13,6 +14,7 @@ func NewAnaphoraResolverCollection() *AnaphoraResolverCollection {
 		output:       "",
 		replacements: map[string]string{},
 		values:       map[string]mentalese.Term{},
+		oneAnaphors:  map[string]mentalese.RelationSet{},
 	}
 }
 
@@ -22,4 +24,8 @@ func (c *AnaphoraResolverCollection) AddReplacement(fromVariable string, toVaria
 
 func (c *AnaphoraResolverCollection) AddReference(fromVariable string, value mentalese.Term) {
 	c.values[fromVariable] = value
+}
+
+func (c *AnaphoraResolverCollection) AddOneAnaphor(fromVariable string, value mentalese.RelationSet) {
+	c.oneAnaphors[fromVariable] = value
 }

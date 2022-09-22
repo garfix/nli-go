@@ -197,6 +197,32 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 	return newRelations
 }
 
+// Replaces all occurrences from from to to
+func (relations RelationSet) ReplaceRelation(from Relation, to RelationSet) RelationSet {
+
+	newRelations := RelationSet{}
+
+	for _, relation := range relations {
+		if relation.Predicate == PredicateReferenceSlot {
+			newRelations = append(newRelations, to...)
+		} else {
+			newArguments := []Term{}
+			for _, argument := range relation.Arguments {
+				newArgument := argument
+				if argument.IsRelationSet() {
+					newArgument = NewTermRelationSet(argument.TermValueRelationSet.ReplaceRelation(from, to))
+				}
+				newArguments = append(newArguments, newArgument)
+			}
+
+			newRelation := NewRelation(relation.Negate, relation.Predicate, newArguments)
+			newRelations = append(newRelations, newRelation)
+		}
+	}
+
+	return newRelations
+}
+
 // Returns a new relation set, that has all variables bound to bindings
 func (relations RelationSet) BindSingle(binding Binding) RelationSet {
 

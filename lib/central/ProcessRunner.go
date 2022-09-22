@@ -58,13 +58,14 @@ func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.B
 	for len(process.Stack) > level {
 		hasStopped := p.step(process)
 		if hasStopped {
-			break
+			return mentalese.NewBindingSet()
 		}
 	}
 
 	if level == 0 {
 		return mentalese.NewBindingSet()
 	} else {
+
 		resultBindings := process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings
 		process.Stack[len(process.Stack)-1].Cursor.ChildFrameResultBindings = mentalese.NewBindingSet()
 		return resultBindings
@@ -173,7 +174,6 @@ func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *Stack
 		// there may just be no handlers, or handlers could have been removed from the knowledge bases
 		if frame.HandlerIndex == 0 {
 			p.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
-			process.Clear()
 		}
 		return nil
 	}

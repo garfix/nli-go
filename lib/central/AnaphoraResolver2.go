@@ -60,7 +60,7 @@ func (resolver *AnaphoraResolver2) Resolve(root *mentalese.ParseTreeNode, reques
 	}
 
 	println(resolvedRequest.String())
-	println(resolvedRoot.String())
+	//println(resolvedRoot.String())
 
 	return resolvedRoot, resolvedRequest, newBindings, collection.output
 }
@@ -76,28 +76,11 @@ func (resolver *AnaphoraResolver2) replaceOneAnaphora(set mentalese.RelationSet,
 
 func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) *mentalese.ParseTreeNode {
 
-	for _, relation := range node.Rule.Sense {
-		if relation.Predicate == mentalese.PredicateReferenceSlot {
-			variable := relation.Arguments[0].TermValue
-			found, referentVariable := resolver.sortalReference(variable)
-			if found {
-				oneAnaphor := resolver.dialogContext.EntityDefinitions.Get(referentVariable).
-					ReplaceTerm(mentalese.NewTermVariable(referentVariable), mentalese.NewTermVariable(variable))
-				collection.AddOneAnaphor(variable, oneAnaphor)
-			}
-		} else if relation.Predicate == mentalese.PredicateQuant {
-			variable := relation.Arguments[1].TermValue
-			resolver.dialogContext.ClauseList.GetLastClause().AddEntity(variable)
-		}
-	}
-
 	variables := node.Rule.GetAntecedentVariables()
 	for _, variable := range variables {
 		tags := node.Rule.Tag
 		for _, tag := range tags {
 			resolvedVariable := variable
-			if tag.Predicate == mentalese.TagSortalReference {
-			}
 			if tag.Predicate == mentalese.TagReference {
 				resolvedVariable = resolver.reference(variable, binding, collection)
 				if resolvedVariable != variable {
@@ -110,7 +93,22 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 			}
 			if tag.Predicate == mentalese.TagReflectiveReference {
 			}
-			resolvedVariable = resolvedVariable
+		}
+	}
+
+	for _, relation := range node.Rule.Sense {
+		if relation.Predicate == mentalese.PredicateReferenceSlot {
+			variable := relation.Arguments[0].TermValue
+			found, referentVariable := resolver.sortalReference(variable)
+			if found {
+				oneAnaphor := resolver.dialogContext.EntityDefinitions.Get(referentVariable).
+					ReplaceTerm(mentalese.NewTermVariable(referentVariable), mentalese.NewTermVariable(variable))
+				collection.AddOneAnaphor(variable, oneAnaphor)
+
+			}
+		} else if relation.Predicate == mentalese.PredicateQuant {
+			variable := relation.Arguments[1].TermValue
+			resolver.dialogContext.ClauseList.GetLastClause().AddEntity(variable)
 		}
 	}
 
@@ -205,7 +203,19 @@ func (resolver *AnaphoraResolver2) sortalReference(variable string) (bool, strin
 		//}
 		//
 		//sortRelationSet = sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
+
 		foundVariable = group.Variable
+
+		// go:reference_slot() is inside a quant with the same variable
+		if foundVariable == variable {
+			continue
+		}
+
+		definition := resolver.dialogContext.EntityDefinitions.Get(foundVariable)
+		if definition.IsEmpty() {
+			continue
+		}
+
 		found = true
 		break
 	}

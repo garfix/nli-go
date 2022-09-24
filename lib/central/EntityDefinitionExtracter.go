@@ -23,6 +23,8 @@ func (e *EntityDefinitionsExtracter) Extract(set mentalese.RelationSet) {
 		for _, argument := range relation.Arguments {
 			if argument.IsRelationSet() {
 				e.Extract(argument.TermValueRelationSet)
+			} else if argument.IsRule() {
+				e.Extract(argument.TermValueRule.Pattern)
 			}
 		}
 	}

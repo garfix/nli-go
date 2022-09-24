@@ -1,3 +1,43 @@
+## 2022-09-17
+
+- ellipsis: adds syntax nodes their semantic attachments
+- reference: replaces a variable with another variable (depends on anaphora queue)
+- one-anaphora: adds semantic node to semantic structure (depends on anaphora queue)
+
+---
+
+As "one" no longer refers to some instance of a previously mentioned entity type, but rather to some instance of a complete entity definition, we now ran into the following problem:
+
+    Find a block which is taller than the one you are holding and put it into the box
+
+Here "the one" (which used to be "the block") will be replaced with "the block which is taller than the one you are holding". Thus yielding:
+
+    Find a block which is taller than (the block which is taller than the one you are holding) you are holding and put it into the box
+
+Does that mean that the definition of an entity should not hold relative clauses, or is the consequence even more dramatic, that the definition can only consist of the part of the sentence that has been parsed thus far? That it may only consist of words that appear before "one"?
+
+Maybe this is a difference between "the one" and "one"?
+
+---
+Identifying and resolving one-anaphora - Mary Gardiner (2003)
+https://files.puzzling.org/academic/gardiner03honours%20%28Identifying%20and%20resolving%20one-anaphora%29.pdf
+
+---
+
+Is it possible that "one" refers to a definition with a relative clause? Yes, and that's not a problem of course.
+
+    How many blocks that support a pyramid are on the table? Pick one up.  
+
+A definition may not contain a reference to itself. The following construction is allowed, of course, but the definition of the `block` should not contain one-anaphora.
+
+    block which is taller than the one you are holding
+
+So the one-anaphora should be removed from it
+
+    block
+
+This is a very edge-case restriction, but that's only because this sentence is an edge case. I wonder if Winograd picked it because of this. Anyway, the paper mentioned above, by Mary Gardiner, doesn't even mention relative clauses in one-anaphors. So it must be pretty special. 
+
 ## 2022-09-11
 
 As lovely as this diagram is, I'm not going to use it. Changing the a relation structure is too problematic. For a part this has to do with the code I've written in Go, which should change quite a bit. But there's also the problem that changing a semantic structure might replace a part that's been pointed at by another syntactic node. This could lead to hard-to-detect bugs. In short, it doesn't feel very robust. I have been replacing structures the whole time, and it's not good to let that go.

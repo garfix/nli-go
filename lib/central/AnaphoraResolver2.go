@@ -93,20 +93,20 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 
 	variables := node.Rule.GetAntecedentVariables()
 	for _, variable := range variables {
-		//tags := resolver.dialogContext.EntityTags.GetTagPredicates(variable)
 		tags := node.Rule.Tag
 		for _, tag := range tags {
 			resolvedVariable := variable
 			if tag.Predicate == mentalese.TagSortalReference {
 			}
 			if tag.Predicate == mentalese.TagReference {
-				resolvedVariable = resolver.reference(variable, node, binding, collection)
+				resolvedVariable = resolver.reference(variable, binding, collection)
 				if resolvedVariable != variable {
 					collection.AddReference(variable, mentalese.NewTermVariable(resolvedVariable))
 				}
 			}
 			if tag.Predicate == mentalese.TagLabeledReference {
-				resolvedVariable = resolver.labeledReference(variable, node, binding, collection)
+				label := tag.Arguments[1].TermValue
+				resolvedVariable = resolver.labeledReference(variable, label, binding, collection)
 			}
 			if tag.Predicate == mentalese.TagReflectiveReference {
 			}
@@ -121,7 +121,7 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 	return node
 }
 
-func (resolver *AnaphoraResolver2) reference(variable string, node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+func (resolver *AnaphoraResolver2) reference(variable string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	set := resolver.dialogContext.EntityDefinitions.Get(variable) //node.Rule.Sense
 	resolvedVariable := variable
@@ -152,10 +152,7 @@ func (resolver *AnaphoraResolver2) reference(variable string, node *mentalese.Pa
 	return resolvedVariable
 }
 
-func (resolver *AnaphoraResolver2) labeledReference(labelRelation mentalese.Relation, quant mentalese.Relation, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
-
-	variable := quant.Arguments[1].TermValue
-	label := labelRelation.Arguments[1].TermValue
+func (resolver *AnaphoraResolver2) labeledReference(variable string, label string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
 	if found {
@@ -165,7 +162,7 @@ func (resolver *AnaphoraResolver2) labeledReference(labelRelation mentalese.Rela
 		collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
 		return referencedVariable
 	} else {
-		referencedVariable := resolver.reference(quant, binding, collection)
+		referencedVariable := resolver.reference(variable, binding, collection)
 		if referencedVariable != variable {
 			// create a new label
 			resolver.dialogContext.EntityLabels.SetLabel(label, variable)

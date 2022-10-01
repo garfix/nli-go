@@ -1,3 +1,55 @@
+## 2022-09-26
+
+Compare 
+
+    H: I own red blocks.
+    C: OK
+    H: Pick up a small one
+    C: OK (picks up a small red block)
+    *C: OK (picks up a small blue block)
+
+with
+
+    H: I own red blocks.
+    C: OK
+    H: Pick up a blue one
+    C: OK (picks up a blue block)
+    *C: I can't (pick up a blue red block)
+
+I think the only way to solve this problem is to give the system knowledge of mutually exclusiveness: all colors are mutually exclusive, as are large and small.
+
+How can we tell the system that large and small are mutually exclusive (mutex)? `dom:large(X)` and `dom:small(X)` are predicates. Saying something about predicates is called second order predication. Is this possible in NLI-GO?
+
+Yes it's possible. But we need the application to tell us which properties are mutex. And this not need to be done directly (`mutex(large, small)`), because this would require a lot of relations for the mutexes between all colors. We can use the `is` relation. 
+
+These relations have been in the database all along, but have not been used:
+
+    is(red, color)
+    is(blue, color)
+    is(green, color)
+    is(white, color)
+    is(black, color)
+
+They may become useful now. We can define mutual exclusiveness as follows:
+
+`p1(X)` and `p2(X)` are mutex, if `is(p1, Z)` and `is(p2, Z)` and `p1` != `p2`.
+
+This promotes `is` to a system predicate (`go:isa(X)`), and that's ok.
+
+## 2022-09-25
+
+Problem:
+
+    H: Is there a large block behind a pyramid?
+    C: Yes, three of them: a large red one, a large green cube and the blue one
+
+    H: Put a small one onto the green cube which supports a pyramid
+    C: I can't
+
+Why "I can't"? Because NLI-GO now replaces "one" with "large block", in stead of "block". And this creates the impossible
+
+    Put a small large block onto the green cube which supports a pyramid
+
 ## 2022-09-17
 
 - ellipsis: adds syntax nodes their semantic attachments

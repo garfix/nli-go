@@ -2,6 +2,7 @@ package central
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 )
 
@@ -69,9 +70,94 @@ func (resolver *AnaphoraResolver2) replaceOneAnaphora(set mentalese.RelationSet,
 	newSet := set
 	for variable, definition := range replacements {
 		relation := mentalese.NewRelation(false, mentalese.PredicateReferenceSlot, []mentalese.Term{mentalese.NewTermVariable(variable)})
-		newSet = newSet.ReplaceRelation(relation, definition)
+		newSet = resolver.ReplaceRelation(newSet, relation, definition)
 	}
 	return newSet
+}
+
+// Replaces all occurrences from from to to
+func (resolver *AnaphoraResolver2) ReplaceRelation(source mentalese.RelationSet, placeholder mentalese.Relation, replacement mentalese.RelationSet) mentalese.RelationSet {
+
+	target := mentalese.RelationSet{}
+	placeholderFound := false
+
+	for _, relation := range source {
+		if relation.Equals(placeholder) {
+			placeholderFound = true
+			break
+		}
+	}
+
+	peacefulReplacement := replacement
+	if placeholderFound {
+		sourceSorts := resolver.findSorts(source)
+		peacefulReplacement = mentalese.RelationSet{}
+		for _, relation := range replacement {
+			if !resolver.conflicts(relation, sourceSorts) {
+				peacefulReplacement = append(peacefulReplacement, relation)
+			}
+		}
+	}
+
+	for _, relation := range source {
+		if relation.Equals(placeholder) {
+			target = append(target, peacefulReplacement...)
+		} else {
+			newArguments := []mentalese.Term{}
+			for _, argument := range relation.Arguments {
+				newArgument := argument
+				if argument.IsRelationSet() {
+					newArgument = mentalese.NewTermRelationSet(resolver.ReplaceRelation(argument.TermValueRelationSet, placeholder, replacement))
+				}
+				newArguments = append(newArguments, newArgument)
+			}
+
+			newRelation := mentalese.NewRelation(relation.Negate, relation.Predicate, newArguments)
+			target = append(target, newRelation)
+		}
+	}
+
+	return target
+}
+
+func (resolver *AnaphoraResolver2) findSorts(set mentalese.RelationSet) []string {
+
+	sorts := []string{}
+
+	for _, relation := range set {
+		sorts = append(sorts, resolver.findSortsSingle(relation)...)
+	}
+
+	return sorts
+}
+
+func (resolver *AnaphoraResolver2) findSortsSingle(relation mentalese.Relation) []string {
+
+	sorts := []string{}
+
+	isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
+		mentalese.NewTermAtom(relation.GetPredicateWithoutNamespace()),
+		mentalese.NewTermVariable("Type"),
+	})
+	bindings := resolver.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
+	for _, binding := range bindings.GetAll() {
+		sort := binding.MustGet("Type").TermValue
+		sorts = append(sorts, sort)
+	}
+
+	return sorts
+}
+
+func (resolver *AnaphoraResolver2) conflicts(relation mentalese.Relation, sorts []string) bool {
+	relationSorts := resolver.findSortsSingle(relation)
+	conflicts := false
+	for _, relationSort := range relationSorts {
+		if common.StringArrayContains(sorts, relationSort) {
+			conflicts = true
+			break
+		}
+	}
+	return conflicts
 }
 
 func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) *mentalese.ParseTreeNode {

@@ -49,11 +49,10 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
 		mentalese.PredicateLog:               base.debug,
 		mentalese.PredicateUuid:              base.uuid,
-		mentalese.PredicateIsa:               base.isa,
-		mentalese.PredicateGetSort:           base.getSort,
-		mentalese.PredicateListLength:        base.listLength,
-		mentalese.PredicateListGet:           base.listGet,
-		mentalese.PredicateListHead:          base.listHead,
+		mentalese.PredicateGetSort:    base.getSort,
+		mentalese.PredicateListLength: base.listLength,
+		mentalese.PredicateListGet:    base.listGet,
+		mentalese.PredicateListHead:   base.listHead,
 	}
 }
 
@@ -443,24 +442,6 @@ func (base *SystemFunctionBase) uuid(messenger api.SimpleMessenger, input mental
 	newBinding.Set(u, mentalese.NewTermId(common.CreateUuid(), sort))
 
 	return newBinding, true
-}
-
-func (base *SystemFunctionBase) isa(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
-
-	bound := input.BindSingle(binding)
-
-	if !Validate(bound, "va", base.log) {
-		return mentalese.NewBinding(), false
-	}
-
-	subSort := bound.Arguments[0].TermSort
-	superSort := bound.Arguments[1].TermValue
-
-	if base.meta.MatchesSort(subSort, superSort) {
-		return mentalese.NewBinding(), true
-	} else {
-		return mentalese.NewBinding(), false
-	}
 }
 
 func (base *SystemFunctionBase) getSort(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {

@@ -12,6 +12,10 @@ is(`hand:hand`, hand)
 is(`:shrdlu`, robot)
 is(`:friend`, person)
 
+is(large, size)
+is(big, size)
+is(small, size)
+
 is(red, color)
 is(blue, color)
 is(green, color)

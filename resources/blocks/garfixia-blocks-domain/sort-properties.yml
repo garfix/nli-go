@@ -1,8 +1,9 @@
 block:
-  entity: block(Id)
+  entity: basic_type(Id, block)
 pyramid:
-  entity: pyramid(Id)
+  entity: basic_type(Id, pyramid)
 box:
-  entity: box(Id)
+  entity: basic_type(Id, box)
 table:
-  entity: table(Id)
+  entity: basic_type(Id, table)
+  

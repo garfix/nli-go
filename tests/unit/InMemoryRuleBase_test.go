@@ -49,6 +49,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 		sibling(A, B) :- parent(A, C) parent(B, C) go:not( -sibling(A, B) );
 		-sibling(A, B) :- [A == B];
 		older(A, B) :- [age(A, rv) > age(B, rv)];
+		isa(man, animal);
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
@@ -73,6 +74,8 @@ func TestInMemoryRuleBase(t *testing.T) {
 		// facts as functions
 		{"older(A, B)", "{A:pat, B:sue}", "[{A:pat, B:sue}]"},
 		{"older(A, B)", "{B:pat, A: sue}", "[]"},
+		// bind by match
+		{"isa(man, Type)", "{}", "[{Type:animal}]"},
 	}
 
 	for _, test := range tests {

@@ -34,7 +34,7 @@ func (e *EntityLabels) SetLabel(label string, variable string) {
 		aLabel = EntityLabel{
 			label:      label,
 			variable:   variable,
-			activation: 0,
+			activation: 3,
 		}
 		e.labels = append(e.labels, aLabel)
 	}

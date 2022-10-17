@@ -791,7 +791,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	//	essential.Add(b)
 	//}
 	for _, id := range answer.GetIds() {
-		newVariable := base.dialogContext.VariableGenerator.GenerateVariable("Answer")
+		newVariable := base.dialogContext.VariableGenerator.GenerateVariable("ResponseEntity")
 		b := mentalese.NewBinding()
 		b.Set(newVariable.TermValue, id)
 		essential.Add(b)

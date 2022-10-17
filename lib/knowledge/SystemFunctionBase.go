@@ -49,10 +49,10 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
 		mentalese.PredicateLog:               base.debug,
 		mentalese.PredicateUuid:              base.uuid,
-		mentalese.PredicateGetSort:    base.getSort,
-		mentalese.PredicateListLength: base.listLength,
-		mentalese.PredicateListGet:    base.listGet,
-		mentalese.PredicateListHead:   base.listHead,
+		mentalese.PredicateGetSort:           base.getSort,
+		mentalese.PredicateListLength:        base.listLength,
+		mentalese.PredicateListGet:           base.listGet,
+		mentalese.PredicateListHead:          base.listHead,
 	}
 }
 

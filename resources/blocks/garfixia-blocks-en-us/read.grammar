@@ -109,47 +109,56 @@
 { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:quant_check($np, $tv)  }
 
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
-{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
-{ rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1) }
+{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1, none) }
+{ rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1, none) }
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
 { rule: np(E1) -> np(E1) 'and' np(E2),                                 sense: go:and($np1, $np2) }
 { rule: np(E1) -> 'either' np(E1) 'or' np(E2),                         sense: go:or($np1, $np2) }
+{ rule: np(E1) -> 'one',                                               sense: go:quant(one, E1, go:reference_slot(E1)) }
 
 { rule: nbar(E1) -> nbar(E1) pp(E1) }
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }
 { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them') }
+{ rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them', none) }
 
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
 { rule: superlative(E1) -> super(E1),                                  sense: $super go:count(E1, N) [N > 1] go:first() }
 
-{ rule: noun(E1) -> 'one',                                             tag: go:sortal_reference(E1) }
-{ rule: noun(E1) -> 'anything',                                        sense: dom:object(E1) }
-{ rule: noun(E1) -> 'thing',                                           sense: dom:object(E1) }
-{ rule: noun(E1) -> 'things',                                          sense: dom:object(E1) }
-{ rule: noun(E1) -> 'object',                                          sense: dom:object(E1) }
-{ rule: noun(E1) -> 'objects',                                         sense: dom:object(E1) }
-{ rule: noun(E1) -> 'block',                                           sense: dom:block(E1) }
-{ rule: noun(E1) -> 'blocks',                                          sense: dom:block(E1) }
-{ rule: noun(E1) -> 'cube',                                            sense: dom:cube(E1) }
-{ rule: noun(E1) -> 'cubes',                                           sense: dom:cube(E1) }
-{ rule: noun(E1) -> 'pyramid',                                         sense: dom:pyramid(E1) }
-{ rule: noun(E1) -> 'pyramids',                                        sense: dom:pyramid(E1) }
-{ rule: noun(E1) -> 'table',                                           sense: dom:table(E1) }
-{ rule: noun(E1) -> 'box',                                             sense: dom:box(E1) }
+
+{ rule: event_ref(P1) -> 'that',                                       tag: go:reference(P1, dom:event(P1)) }
+{ rule: event_ref(P1) -> 'it',                                         tag: go:labeled_reference(P1, 'it', dom:event(P1)) }
+
+{ rule: action(P1, E1) -> 'do' event_ref(P1) }
+{ rule: action(P1, E1) -> 'doing' event_ref(P1) }
+{ rule: action(P1, E1) -> vp(P1, E1) }
+
+{ rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
+{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'objects',                                         sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'block',                                           sense: go:type(E1, block) }
+{ rule: noun(E1) -> 'blocks',                                          sense: go:type(E1, block) }
+{ rule: noun(E1) -> 'cube',                                            sense: go:type(E1, cube) }
+{ rule: noun(E1) -> 'cubes',                                           sense: go:type(E1, cube) }
+{ rule: noun(E1) -> 'pyramid',                                         sense: go:type(E1, pyramid) }
+{ rule: noun(E1) -> 'pyramids',                                        sense: go:type(E1, pyramid) }
+{ rule: noun(E1) -> 'table',                                           sense: go:type(E1, table) }
+{ rule: noun(E1) -> 'box',                                             sense: go:type(E1, box) }
 
 { rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
 { rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
-{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it') }
+{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', go:isa(E1, object)) }
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
-{ rule: demonstrative(P1) -> 'that' }
-{ rule: demonstrative(P1) -> 'it',                                     tag: go:labeled_reference(P1, 'it')  }
+/*{ rule: demonstrative(P1) -> 'that' }
+{ rule: demonstrative(P1) -> 'it',                                     tag: go:labeled_reference(P1, 'it', none)  }*/
 
 /* Conjunction */
 
@@ -172,11 +181,6 @@
 
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
-
-{ rule: action(P1, E1) -> 'do' demonstrative(P1),                           sense: go:event_reference(P1) }
-{ rule: action(P1, E1) -> 'doing' demonstrative(P1),                           sense: go:event_reference(P1) }
-{ rule: action(P1, E1) -> vp(P1, E1),                                       sense: go:event_reference(P1) }
-
 
 /* history based */
 { rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }

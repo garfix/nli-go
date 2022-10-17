@@ -90,7 +90,7 @@ phys_remove_contain_relations(E1) :-
 
 phys_create_contain_relations(E1) :-
     at(E1, Left1, Front1, Bottom1)
-    box(E2)
+    basic_type(E2, box)
     at(E2, Left2, Front2, Bottom2)
     [Bottom2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)

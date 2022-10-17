@@ -135,7 +135,7 @@ func (resolver *AnaphoraResolver2) findSortsSingle(relation mentalese.Relation) 
 
 	sorts := []string{}
 
-	isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
+	isa := mentalese.NewRelation(false, mentalese.PredicateType, []mentalese.Term{
 		mentalese.NewTermAtom(relation.GetPredicateWithoutNamespace()),
 		mentalese.NewTermVariable("Type"),
 	})
@@ -175,7 +175,11 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 			}
 			if tag.Predicate == mentalese.TagLabeledReference {
 				label := tag.Arguments[1].TermValue
-				resolvedVariable = resolver.labeledReference(variable, label, binding, collection)
+				condition := tag.Arguments[2].TermValueRelationSet
+				resolvedVariable = resolver.labeledReference(variable, label, condition, binding, collection)
+				if resolvedVariable != variable {
+					collection.AddReference(variable, mentalese.NewTermVariable(resolvedVariable))
+				}
 			}
 			if tag.Predicate == mentalese.TagReflectiveReference {
 			}
@@ -236,20 +240,27 @@ func (resolver *AnaphoraResolver2) reference(variable string, binding mentalese.
 	return resolvedVariable
 }
 
-func (resolver *AnaphoraResolver2) labeledReference(variable string, label string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+func (resolver *AnaphoraResolver2) labeledReference(variable string, label string, condition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
 	if found {
 		resolver.dialogContext.EntityLabels.IncreaseActivation(label)
 		// use the reference of the existing label
-		referencedVariable := aLabel.label
-		collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
+		referencedVariable := aLabel.variable
+		//collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
 		return referencedVariable
 	} else {
 		referencedVariable := resolver.reference(variable, binding, collection)
 		if referencedVariable != variable {
-			// create a new label
-			resolver.dialogContext.EntityLabels.SetLabel(label, variable)
+
+			conditionBindings := resolver.messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
+			if conditionBindings.GetLength() > 0 {
+				// create a new label
+				resolver.dialogContext.EntityLabels.SetLabel(label, referencedVariable)
+			} else {
+				return variable
+			}
+
 		}
 		return referencedVariable
 	}
@@ -261,7 +272,8 @@ func (resolver *AnaphoraResolver2) sortalReference(variable string) (bool, strin
 	found := false
 	foundVariable := ""
 
-	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
+	queue := resolver.dialogContext.GetAnaphoraQueue()
+	for _, group := range queue {
 
 		//sort := ""
 		//
@@ -299,6 +311,16 @@ func (resolver *AnaphoraResolver2) sortalReference(variable string) (bool, strin
 
 		definition := resolver.dialogContext.EntityDefinitions.Get(foundVariable)
 		if definition.IsEmpty() {
+			continue
+		}
+
+		typeFound := false
+		for _, relation := range definition {
+			if relation.Predicate == mentalese.PredicateType {
+				typeFound = true
+			}
+		}
+		if !typeFound {
 			continue
 		}
 

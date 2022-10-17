@@ -1,8 +1,5 @@
-dom:block(E) :- is(E, block);
-dom:pyramid(E) :- is(E, pyramid);
-dom:table(E) :- is(E, table);
-dom:box(E) :- is(E, box);
-dom:type(E, T) :- is(E, T);
+go:type(E, T) :- is(E, T);
+dom:basic_type(E, T) :- is(E, T);
 dom:named(E, Name) :- call(E, Name);
 dom:red(E) :- color(E, red);
 dom:blue(E) :- color(E, blue);
@@ -36,4 +33,3 @@ dom:get_rid_of(EventId, S, A) :- get_rid_of(EventId, S, A);
 dom:let_go(EventId, S) :- let_go(EventId, S);
 dom:stack_up(EventId, S, List) :- stack_up(EventId, S, List);
 
-go:isa(A, B) :- is(A, B);

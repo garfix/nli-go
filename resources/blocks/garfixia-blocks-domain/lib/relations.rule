@@ -2,9 +2,9 @@
  * These rules restrict possible entities by specifying the relations that hold between them.
  */
 
-object(E1) :- block(E1);
-object(E1) :- pyramid(E1);
-object(E1) :- box(E1);
+go:type(block, object);
+go:type(pyramid, object);
+go:type(box, object);
 hold(P1, E1, E2) :- grasping(E1, E2);
 you(E1) :- named(E1, 'SHRDLU');
 i(E1) :- named(E1, 'YOU');
@@ -17,12 +17,12 @@ big(E) :- size(E, Width, Length, Height) [Width > 128] [Length > 128] [Height > 
 large(E) :- size(E, Width, Length, Height) [Height > 128];
 small(E) :- size(E, Width, Length, Height) [Width < 128] [Length < 128] [Height < 128];
 volume(E, V) :- if big(E) then go:unify(V, big) else go:unify(V, small) end;
-cube(E) :- block(E) size(E, Width, Length, Height) [Width == Length] [Length == Height];
+go:type(E, cube) :- basic_type(E, block) size(E, Width, Length, Height) [Width == Length] [Length == Height];
 taller(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
 
 characteristic_shape(E, S) :-
-    type(E, T)
+    basic_type(E, T)
     if [T == block] size(E, X, X, X) then
         [S := cube]
     else
@@ -30,8 +30,8 @@ characteristic_shape(E, S) :-
     end
 ;
 
-shape(E, S) :- type(E, S);
-shape(E, S) :- type(E, block) size(E, X, X, X) go:unify(S, cube);
+shape(E, S) :- basic_type(E, S);
+shape(E, S) :- basic_type(E, block) size(E, X, X, X) go:unify(S, cube);
 
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [Y1 > Y2];
 

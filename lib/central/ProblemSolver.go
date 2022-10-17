@@ -128,7 +128,7 @@ func (solver *ProblemSolver) createRuleHandlers() {
 func (solver *ProblemSolver) createRuleClosure(rule mentalese.Rule) api.RelationHandler {
 	return func(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
-		_, match := solver.matcher.MatchTwoRelations(relation, rule.Goal, binding)
+		b1, match := solver.matcher.MatchTwoRelations(relation, rule.Goal, binding)
 		if !match {
 			return mentalese.NewBindingSet()
 		}
@@ -138,6 +138,8 @@ func (solver *ProblemSolver) createRuleClosure(rule mentalese.Rule) api.Relation
 		if !mappingOk {
 			return mentalese.NewBindingSet()
 		}
+
+		binding = binding.Merge(b1.RemoveVariables())
 
 		mappedPattern := rule.Pattern.ConvertVariables(mapping, solver.variableGenerator)
 

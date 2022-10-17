@@ -80,7 +80,7 @@ const PredicateUuid = "go_uuid"
 const PredicatePrint = "go_print"
 const PredicateFindLocale = "go_find_locale"
 const PredicateSlot = "go_slot"
-const PredicateIsa = "go_isa"
+const PredicateType = "go_type"
 const PredicateGetSort = "go_get_sort"
 
 const PredicateRespond = "go_respond"

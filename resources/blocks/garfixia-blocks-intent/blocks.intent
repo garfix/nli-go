@@ -103,7 +103,7 @@
 
 /* Do I own? Yes: these things */
 {
-    condition: go:intent(yes_no) learn:own(_, B) dom:object(B),
+    condition: go:intent(yes_no) learn:own(_, B) go:isa(B, object),
     responses:
         {
             condition: go:exists(),

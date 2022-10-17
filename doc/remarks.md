@@ -1,3 +1,116 @@
+## 2022-10-12
+
+It's very natural in logic for an entity to have multiple types. An object can be both a block and a cube. So you may want to specify both. `cube` can be a calculated type, based on the equalness of the sides. But the one is not more essential than the other. Both are just labels, really, and it depends on the context which ones to use.
+
+So if you want an entity to have just one type, you need to be clear what type exactly you mean. And it's better to use a special predicate, that has the special characteristic of being unique for an entity.
+
+I want to use `go:type()` because it allows me to reason over sub-types.
+
+## 2022-10-11
+
+An entity should have one and only one type.
+
+Rules that say: if E has type A, then E has type B, are illegal.
+
+If you want to check if E belongs to a supertype, use `go:isa(E, T)`. `isa` applies both to types and instances.
+
+    go:isa(E, block)
+    go:isa(block, object)
+
+which is implemented as
+
+    go:isa(E, T) :- go:type(E, T)
+    go:isa(E, T) :- go:type(E, U) go:isa(U, T)
+
+for example:
+
+    roo isa kangaroo
+    kangaroo isa mammal
+    mammal isa animal
+
+    ? go:isa(roo, animal)
+    go:isa(roo, animal) :- go:type(roo, U1) go:isa(U1, animal)
+    go:isa(kangaroo, animal) :- go:type(kangaroo, mammal) go:isa(mammal, animal)
+    go:isa(mammal, animal) :- go:type(mammal, animal)
+
+===
+
+The problem of multiple types still exists. And I'm not sure what to do with it.
+
+I want an object to have a single type, so that if you ask for its type, you get one type. See the rendering of the scene, for example.
+
+On the other hand, there's always the issue of multiple types:
+
+    Tweety is a bird
+    Tweety is a cartoon character
+
+Is one type more essential? Maybe, maybe not. But in the context of a certain problem, the essential type may be clear. In the context of cartoons, all things are cartoon characters, so this doesn't add information. Only the fact that Tweety is a bird adds value.
+
+So, for now I hold on to the assumption that an entity can only have a single type.
+
+## 2022-10-09
+
+    Had you touched any pyramid before you put the green one on the little cube?
+
+While the syntactic class check is helpful, it's a fuzz. I like the check for type better. The referent must have a go:type(). "a red one" basically means "a red block", where "one" is replaced by the type. So you must be able to distinguish the type from other relations.
+
+It's an interesting idea. But it fails as soon as someone adds `go:type(E1, person)` to "you".
+
+No, "put" is the key. `dom:put()` requires the semantic object to the a `dom:object()`.
+
+## 2022-10-04
+
+In "the green one", "one" is an nbar; it can't be replaced by an np ("you").
+
+    nbar(E1) -> noun(E1) -> 'one'
+    
+    np(E1) -> pronoun(E1) -> 'you'
+
+    nbar(E1) -> noun(E1) -> 'pyramid'
+
+Only parents with a single child can be taken into account.
+
+So, "you" can't be the antecedent of "one" because the syntactic category of "you" (pronoun) can't replace it.
+
+This would be an example of where keeping the syntax information present is useful.
+
+## 2022-10-03
+
+Only now it occurs to me that my one-anaphora resolver _just_ looks for the previous NP. This will not do. I need an anaphora-resolution algorithm.
+Let's see what Gardiner says.
+
+types of one-anaphora
+
+- contrastive: I prefer a small dog to a large one
+- member: fourteen trees ... the one at the bottom
+- sense sharing: ... so Joe wore one too
+- subtitude: a large hammer and a small one (syntactic replacement?)
+
+tools
+
+- _near_ noun phrases make more likely antecedents
+- the antecedent needs a head, an actual noun, like "block" (so that excludes "you")
+- in the contrastive case, it might actually be good to find a conflict
+- the focus may be an indication
+
+I haven't actually done anything with the concept of _head_. What is it?
+
+https://en.wikipedia.org/wiki/Head_(linguistics)
+In linguistics, the head or nucleus of a phrase is the word that determines the syntactic category of that phrase.
+
+If an object is "big" and "block", NLI-GO treats these as the same, and this is not sufficient. 
+Maybe I should model the heads explicitly like this
+
+    "block",        sense: go:type(E1, block)
+
+The article says there aren't any good heuristics for one-anaphora antecedent finding.
+
+## 2022-10-02
+
+    Had you touched any pyramid before you put the green one on the little cube?
+
+Bug: 'one' is replaced by 'you' -> 'the green you'
+
 ## 2022-09-26
 
 Compare 

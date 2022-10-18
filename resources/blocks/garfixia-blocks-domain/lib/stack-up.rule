@@ -17,7 +17,7 @@ stack_up_proper(ParentEventId, List1, X, Y) :-
     [:Base := `table:table`]
     go:list_foreach(List1, E1,
         if [:Base == `table:table`] then
-            basic_type(E, block) do_put_on_table(ParentEventId, E1, X, Y)
+            basic_type(E1, block) do_put_on_table(ParentEventId, E1, X, Y)
         else
             basic_type(:Base, block)
             [B1 := :Base]

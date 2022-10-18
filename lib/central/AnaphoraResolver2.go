@@ -40,6 +40,9 @@ func (resolver *AnaphoraResolver2) Resolve(root *mentalese.ParseTreeNode, reques
 
 	// update the binding by replacing the variables
 	for fromVariable, toVariable := range collection.replacements {
+
+		resolver.dialogContext.ReplaceVariable(fromVariable, toVariable)
+
 		// replace the other variables in the set
 		resolvedRequest = resolvedRequest.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
 		value, found := resolver.dialogContext.EntityBindings.Get(toVariable)
@@ -170,7 +173,7 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 			if tag.Predicate == mentalese.TagReference {
 				resolvedVariable = resolver.reference(variable, binding, collection)
 				if resolvedVariable != variable {
-					collection.AddReference(variable, mentalese.NewTermVariable(resolvedVariable))
+					collection.AddReplacement(variable, resolvedVariable)
 				}
 			}
 			if tag.Predicate == mentalese.TagLabeledReference {
@@ -178,7 +181,7 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 				condition := tag.Arguments[2].TermValueRelationSet
 				resolvedVariable = resolver.labeledReference(variable, label, condition, binding, collection)
 				if resolvedVariable != variable {
-					collection.AddReference(variable, mentalese.NewTermVariable(resolvedVariable))
+					collection.AddReplacement(variable, resolvedVariable)
 				}
 			}
 			if tag.Predicate == mentalese.TagReflectiveReference {
@@ -247,7 +250,6 @@ func (resolver *AnaphoraResolver2) labeledReference(variable string, label strin
 		resolver.dialogContext.EntityLabels.IncreaseActivation(label)
 		// use the reference of the existing label
 		referencedVariable := aLabel.variable
-		//collection.AddReference(variable, mentalese.NewTermVariable(referencedVariable))
 		return referencedVariable
 	} else {
 		referencedVariable := resolver.reference(variable, binding, collection)

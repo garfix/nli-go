@@ -1,5 +1,7 @@
 # Todo
 
+- reduce type() isa() basic_type() shape() characteristic_shape()
+
 - just before anaphora resolution, create the semantic structure (it contains placeholders)
 - when a quant is parsed, store it in the dialog context with its variable
 - create a syntactic-based version of anaphora resolution

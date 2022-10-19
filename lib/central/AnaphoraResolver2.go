@@ -6,24 +6,24 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-type AnaphoraResolver2 struct {
+type AnaphoraResolver struct {
 	dialogContext *DialogContext
 	meta          *mentalese.Meta
 	messenger     api.ProcessMessenger
 }
 
-func NewAnaphoraResolver2(dialogContext *DialogContext, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver2 {
-	return &AnaphoraResolver2{
+func NewAnaphoraResolver(dialogContext *DialogContext, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+	return &AnaphoraResolver{
 		dialogContext: dialogContext,
 		meta:          meta,
 		messenger:     messenger,
 	}
 }
 
-func (resolver *AnaphoraResolver2) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
+func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
 
-	println("---")
-	println(request.String())
+	//println("---")
+	//println(request.String())
 
 	newBindings := mentalese.InitBindingSet(binding)
 	collection := NewAnaphoraResolverCollection()
@@ -63,13 +63,13 @@ func (resolver *AnaphoraResolver2) Resolve(root *mentalese.ParseTreeNode, reques
 		}
 	}
 
-	println(resolvedRequest.String())
+	//println(resolvedRequest.String())
 	//println(resolvedRoot.String())
 
 	return resolvedRoot, resolvedRequest, newBindings, collection.output
 }
 
-func (resolver *AnaphoraResolver2) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {
+func (resolver *AnaphoraResolver) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {
 	newSet := set
 	for variable, definition := range replacements {
 		relation := mentalese.NewRelation(false, mentalese.PredicateReferenceSlot, []mentalese.Term{mentalese.NewTermVariable(variable)})
@@ -79,7 +79,7 @@ func (resolver *AnaphoraResolver2) replaceOneAnaphora(set mentalese.RelationSet,
 }
 
 // Replaces all occurrences from from to to
-func (resolver *AnaphoraResolver2) ReplaceRelation(source mentalese.RelationSet, placeholder mentalese.Relation, replacement mentalese.RelationSet) mentalese.RelationSet {
+func (resolver *AnaphoraResolver) ReplaceRelation(source mentalese.RelationSet, placeholder mentalese.Relation, replacement mentalese.RelationSet) mentalese.RelationSet {
 
 	target := mentalese.RelationSet{}
 	placeholderFound := false
@@ -123,7 +123,7 @@ func (resolver *AnaphoraResolver2) ReplaceRelation(source mentalese.RelationSet,
 	return target
 }
 
-func (resolver *AnaphoraResolver2) findSorts(set mentalese.RelationSet) []string {
+func (resolver *AnaphoraResolver) findSorts(set mentalese.RelationSet) []string {
 
 	sorts := []string{}
 
@@ -134,7 +134,7 @@ func (resolver *AnaphoraResolver2) findSorts(set mentalese.RelationSet) []string
 	return sorts
 }
 
-func (resolver *AnaphoraResolver2) findSortsSingle(relation mentalese.Relation) []string {
+func (resolver *AnaphoraResolver) findSortsSingle(relation mentalese.Relation) []string {
 
 	sorts := []string{}
 
@@ -151,7 +151,7 @@ func (resolver *AnaphoraResolver2) findSortsSingle(relation mentalese.Relation) 
 	return sorts
 }
 
-func (resolver *AnaphoraResolver2) conflicts(relation mentalese.Relation, sorts []string) bool {
+func (resolver *AnaphoraResolver) conflicts(relation mentalese.Relation, sorts []string) bool {
 	relationSorts := resolver.findSortsSingle(relation)
 	conflicts := false
 	for _, relationSort := range relationSorts {
@@ -163,7 +163,7 @@ func (resolver *AnaphoraResolver2) conflicts(relation mentalese.Relation, sorts 
 	return conflicts
 }
 
-func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) *mentalese.ParseTreeNode {
+func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) *mentalese.ParseTreeNode {
 
 	variables := node.Rule.GetAntecedentVariables()
 	for _, variable := range variables {
@@ -212,7 +212,7 @@ func (resolver *AnaphoraResolver2) resolveNode(node *mentalese.ParseTreeNode, bi
 	return node
 }
 
-func (resolver *AnaphoraResolver2) reference(variable string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	set := resolver.dialogContext.EntityDefinitions.Get(variable) //node.Rule.Sense
 	resolvedVariable := variable
@@ -243,7 +243,7 @@ func (resolver *AnaphoraResolver2) reference(variable string, binding mentalese.
 	return resolvedVariable
 }
 
-func (resolver *AnaphoraResolver2) labeledReference(variable string, label string, condition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
+func (resolver *AnaphoraResolver) labeledReference(variable string, label string, condition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
 	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
 	if found {
@@ -268,41 +268,13 @@ func (resolver *AnaphoraResolver2) labeledReference(variable string, label strin
 	}
 }
 
-func (resolver *AnaphoraResolver2) sortalReference(variable string) (bool, string) {
+func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string) {
 
-	//sortRelationSet := mentalese.RelationSet{}
 	found := false
 	foundVariable := ""
 
 	queue := resolver.dialogContext.GetAnaphoraQueue()
 	for _, group := range queue {
-
-		//sort := ""
-		//
-		//// if their are multiple values, their sorts should match
-		//for _, ref := range group.values {
-		//	if sort == "" {
-		//		sort = ref.Sort
-		//	} else if sort != ref.Sort {
-		//		sort = ""
-		//		break
-		//	}
-		//}
-		//
-		//if sort == "" {
-		//	continue
-		//}
-		//
-		//sortInfo, found := resolver.meta.GetSortProperty(sort)
-		//if !found {
-		//	continue
-		//}
-		//
-		//if sortInfo.Entity.Equals(mentalese.RelationSet{}) {
-		//	continue
-		//}
-		//
-		//sortRelationSet = sortInfo.Entity.ReplaceTerm(mentalese.NewTermVariable(mentalese.IdVar), mentalese.NewTermVariable(variable))
 
 		foundVariable = group.Variable
 
@@ -333,7 +305,7 @@ func (resolver *AnaphoraResolver2) sortalReference(variable string) (bool, strin
 	return found, foundVariable
 }
 
-func (resolver *AnaphoraResolver2) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {
+func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {
 
 	found := false
 	foundVariable := ""

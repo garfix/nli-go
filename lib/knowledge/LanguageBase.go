@@ -61,7 +61,6 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateSortalFiltering:     base.sortalFiltering,
 		mentalese.PredicateResolveNames:        base.resolveNames,
 		mentalese.PredicateResolveAnaphora:     base.resolveAnaphora,
-		mentalese.PredicateResolveAnaphora2:    base.resolveAnaphora2,
 		mentalese.PredicateExtractRootClauses:  base.extractRootClauses,
 		mentalese.PredicateDialogAddRootClause: base.dialogAddRootClause,
 		mentalese.PredicateDialogUpdateCenter:  base.dialogUpdateCenter,
@@ -516,7 +515,7 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) resolveAnaphora2(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "jrjvvvv", base.log) {
@@ -538,7 +537,7 @@ func (base *LanguageBase) resolveAnaphora2(messenger api.ProcessMessenger, input
 	outputBindingVar := input.Arguments[5].TermValue
 	outputVar := input.Arguments[6].TermValue
 
-	resolver := central.NewAnaphoraResolver2(base.dialogContext, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
 	resolvedTree, resolvedRequest, resolvedBindings, output := resolver.Resolve(&parseTree, request, inBinding)
 
 	newBinding := mentalese.NewBinding()
@@ -546,35 +545,6 @@ func (base *LanguageBase) resolveAnaphora2(messenger api.ProcessMessenger, input
 	newBinding.Set(resolvedRequestVar, mentalese.NewTermRelationSet(resolvedRequest))
 	newBinding.Set(resolvedTreeVar, mentalese.NewTermJson(resolvedTree))
 	newBinding.Set(outputBindingVar, mentalese.NewTermJson(resolvedBindings.ToRaw()))
-	newBinding.Set(outputVar, mentalese.NewTermString(output))
-
-	return mentalese.InitBindingSet(newBinding)
-}
-
-func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-	bound := input.BindSingle(binding)
-
-	if !Validate(bound, "rjvvv", base.log) {
-		return mentalese.NewBindingSet()
-	}
-
-	request := bound.Arguments[0].TermValueRelationSet
-
-	dialogBinding := mentalese.NewBinding()
-	dialogBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
-	dialogBinding.FromRaw(dialogBindingsRaw)
-
-	resolvedRequestVar := input.Arguments[2].TermValue
-	resolvedBindingsVar := input.Arguments[3].TermValue
-	outputVar := input.Arguments[4].TermValue
-
-	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
-	resolvedRequest, resolvedBindings, output := resolver.Resolve(request, dialogBinding)
-
-	newBinding := mentalese.NewBinding()
-	newBinding.Set(resolvedRequestVar, mentalese.NewTermRelationSet(resolvedRequest))
-	newBinding.Set(resolvedBindingsVar, mentalese.NewTermJson(resolvedBindings.ToRaw()))
 	newBinding.Set(outputVar, mentalese.NewTermString(output))
 
 	return mentalese.InitBindingSet(newBinding)

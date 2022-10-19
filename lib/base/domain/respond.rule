@@ -52,25 +52,12 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
 
     go:relationize(RootClauseTree, Request)
 
-    go:resolve_anaphora2(RootClauseTree, Request, RequestBinding, UnusedTree, ResolvedRequest, ResolvedBindings, ResolvedOutput)
+    go:resolve_anaphora(RootClauseTree, Request, RequestBinding, UnusedTree, ResolvedRequest, ResolvedBindings, ResolvedOutput)
     if [ResolvedOutput != ''] then
         [Output := ResolvedOutput]
         [ContinueLooking := false]
         return
     end
-
-
-
-/*
-    go:relationize(RootClauseTree, Request)
-
-    go:resolve_anaphora(Request, RequestBinding, ResolvedRequest, ResolvedBindings, ResolvedOutput)
-    if [ResolvedOutput != ''] then
-        [Output := ResolvedOutput]
-        [ContinueLooking := false]
-        return
-    end
-*/
 
     /* Stop at the first successfully processed intent */
     go:cut(1,

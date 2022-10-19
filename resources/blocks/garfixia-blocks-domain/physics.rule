@@ -49,11 +49,8 @@ phys_raise_hand(_) :-
     phys_move_hand(X, Y, 600);
 
 phys_move_object(E1, X, Y, Z) :-
-    increase_time()
-
     time(T1)
     go:uuid(EventId, event)
-    go:log('touch', EventId)
     go:assert(touch(EventId, `:shrdlu`, E1))
     go:assert(start_time(EventId, T1))
     go:assert(end_time(EventId, T1))

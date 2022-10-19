@@ -157,9 +157,6 @@
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
 
-/*{ rule: demonstrative(P1) -> 'that' }
-{ rule: demonstrative(P1) -> 'it',                                     tag: go:labeled_reference(P1, 'it', none)  }*/
-
 /* Conjunction */
 
 { rule: and(C1) -> 'and' }
@@ -193,8 +190,8 @@
 
 { rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1) time_modifier(P1),
                                                                                    sense: go:intent(how_many, E1)
-                                                                                            $vp
-                                                                                            go:context_set(time, P1, $time_modifier) }
+                                                                                            go:context_set(time, P1, $time_modifier)
+                                                                                            $vp $time_modifier}
 
 /* interrogative */
 

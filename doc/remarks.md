@@ -1,3 +1,7 @@
+## 2022-10-19
+
+I had a problem with start and end times of events. Time used to only increase with each physical movement. But this caused time to stand still even when larger level events took place. I now increase time with each new event. 
+
 ## 2022-10-12
 
 It's very natural in logic for an entity to have multiple types. An object can be both a block and a cube. So you may want to specify both. `cube` can be a calculated type, based on the equalness of the sides. But the one is not more essential than the other. Both are just labels, really, and it depends on the context which ones to use.

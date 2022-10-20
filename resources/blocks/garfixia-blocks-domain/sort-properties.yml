@@ -1,9 +1,0 @@
-block:
-  entity: basic_type(Id, block)
-pyramid:
-  entity: basic_type(Id, pyramid)
-box:
-  entity: basic_type(Id, box)
-table:
-  entity: basic_type(Id, table)
-  

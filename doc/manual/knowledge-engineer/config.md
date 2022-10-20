@@ -59,7 +59,6 @@ A sample index.yml:
     rules: [dbpedia.rule]
     predicates: argument-sort.relation
     write: [ write.yml ]
-    subsorts: sort-hierarchy.txt
     sorts: sort-properties.yml
     
 All of these are optional.     
@@ -71,16 +70,6 @@ All of these are optional.
 but facts are also allowed:
 
     taller(`jack`, `john`);    
-
-`sorts` contains the sort hierarchy of the domain. It may look like this:
-
-    entity > country
-    entity > city
-    entity > animal
-
-    animal > person
-
-Here `entity` is the root "sort". `country`, `city` and `animal` are subsorts of `entity`, and `person` is a subsort of `animal`. It is possible to build a complex hierarchy of sorts like this, but do this only if you need it. 
 
 Currently sorts are only needed to locate proper names in databases. It helps to know that "Madonna" is a person, to avoid confusion with other entities with the same name. The sort is used in combination with the `entities` file of the database domain.
 

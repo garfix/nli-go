@@ -101,27 +101,36 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 	return resolvedInformations, false
 }
 
-func (resolver *NameResolver) ResolveName(name string, sort string) []NameInformation {
+func (resolver *NameResolver) ResolveName(name string, sort string, messenger api.ProcessMessenger) []NameInformation {
 
 	factBaseNameInformations := []NameInformation{}
 
 	for _, factBase := range resolver.solverAsync.factBases {
-		nameInformations := resolver.resolveNameInFactBase(name, sort, factBase)
+		nameInformations := resolver.resolveNameInFactBase(name, sort, factBase, messenger)
 		factBaseNameInformations = append(factBaseNameInformations, nameInformations...)
 	}
 
 	return factBaseNameInformations
 }
 
-func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort string, factBase api.FactBase) []NameInformation {
+func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort string, factBase api.FactBase, messenger api.ProcessMessenger) []NameInformation {
 
 	var nameInformations []NameInformation
 
 	// go through all sorts
 	for aSort, entityInfo := range resolver.meta.GetSorts() {
 
-		if inducedSort != "entity" && inducedSort != "" && !resolver.meta.MatchesSort(aSort, inducedSort) {
-			continue
+		if inducedSort != "entity" && inducedSort != "" && inducedSort != aSort {
+
+			isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
+				mentalese.NewTermAtom(aSort),
+				mentalese.NewTermAtom(inducedSort),
+			})
+
+			bindings := messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
+			if bindings.IsEmpty() {
+				continue
+			}
 		}
 
 		b := mentalese.NewBinding()

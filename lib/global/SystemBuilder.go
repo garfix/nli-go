@@ -187,26 +187,6 @@ func (builder *systemBuilder) AddPredicates(path string, system *System) bool {
 	return true
 }
 
-func (builder *systemBuilder) AddSubSorts(path string, system *System) bool {
-
-	if path != "" {
-
-		content, err := common.ReadFile(path)
-		if err != nil {
-			builder.log.AddError("Error reading relation types file " + path + " (" + err.Error() + ")")
-			return false
-		}
-
-		sortRelations := builder.parser.CreateSortRelations(content)
-
-		for _, sortRelation := range sortRelations {
-			system.meta.AddSubSort(sortRelation.GetSuperSort(), sortRelation.GetSubSort())
-		}
-	}
-
-	return true
-}
-
 func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]index, system *System) {
 
 	parts := strings.Split(moduleSpec, ":")
@@ -419,12 +399,6 @@ func (builder *systemBuilder) buildDomain(index index, system *System, moduleBas
 
 	path = common.AbsolutePath(moduleBaseDir, index.Predicates)
 	ok = builder.AddPredicates(path, system)
-	if !ok {
-		return
-	}
-
-	path = common.AbsolutePath(moduleBaseDir, index.Subsorts)
-	ok = builder.AddSubSorts(path, system)
 	if !ok {
 		return
 	}

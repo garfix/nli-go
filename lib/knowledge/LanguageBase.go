@@ -463,7 +463,7 @@ func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input 
 	bound.Arguments[0].GetJsonValue(&parseTree)
 
 	// extract sorts: variable => sort
-	sortFinder := central.NewSortFinder(base.meta)
+	sortFinder := central.NewSortFinder(base.meta, messenger)
 	sorts, sortFound := sortFinder.FindSorts(&parseTree)
 	if !sortFound {
 		// conflicting sorts
@@ -572,7 +572,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		}
 
 		// find name information
-		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort[0])
+		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort[0], messenger)
 		if len(nameInformations) == 0 {
 			base.log.AddProduction("Info",
 				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort[0]+"' did not give any results")

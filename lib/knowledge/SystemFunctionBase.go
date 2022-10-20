@@ -29,6 +29,7 @@ func NewSystemFunctionBase(name string, meta *mentalese.Meta, log *common.System
 
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
+		mentalese.PredicateType:              base.typeFunction,
 		mentalese.PredicateSplit:             base.split,
 		mentalese.PredicateJoin:              base.join,
 		mentalese.PredicateConcat:            base.concat,
@@ -54,6 +55,11 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateListGet:           base.listGet,
 		mentalese.PredicateListHead:          base.listHead,
 	}
+}
+
+func (base *SystemFunctionBase) typeFunction(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+	// dummy function that ensures that a call to go:type() does not result in "predicate not supported"
+	return binding, false
 }
 
 func (base *SystemFunctionBase) split(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {

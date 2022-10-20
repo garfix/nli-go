@@ -1,14 +1,19 @@
 package central
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/api"
+	"nli-go/lib/mentalese"
+)
 
 type SortFinder struct {
-	meta *mentalese.Meta
+	meta      *mentalese.Meta
+	messenger api.ProcessMessenger
 }
 
-func NewSortFinder(meta *mentalese.Meta) SortFinder {
+func NewSortFinder(meta *mentalese.Meta, messenger api.ProcessMessenger) SortFinder {
 	return SortFinder{
-		meta: meta,
+		meta:      meta,
+		messenger: messenger,
 	}
 }
 
@@ -37,7 +42,7 @@ func (finder SortFinder) findSortsInRelations(set mentalese.RelationSet, sorts *
 					variable := argument.TermValue
 					existing, found := (*sorts)[variable]
 					if found {
-						specific, ok := finder.meta.GetMostSpecific(existing, sort)
+						specific, ok := finder.getMostSpecific(existing, sort)
 						if ok {
 							sort = specific
 						} else {
@@ -60,4 +65,33 @@ func (finder SortFinder) findSortsInRelations(set mentalese.RelationSet, sorts *
 		}
 	}
 	return true
+}
+
+func (finder SortFinder) getMostSpecific(sort1 string, sort2 string) (string, bool) {
+
+	if sort1 == sort2 {
+		return sort1, true
+	}
+
+	isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
+		mentalese.NewTermAtom(sort1),
+		mentalese.NewTermAtom(sort2),
+	})
+
+	bindings := finder.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
+	if !bindings.IsEmpty() {
+		return sort1, true
+	}
+
+	isa2 := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
+		mentalese.NewTermAtom(sort2),
+		mentalese.NewTermAtom(sort1),
+	})
+
+	bindings2 := finder.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa2}, mentalese.InitBindingSet(mentalese.NewBinding()))
+	if !bindings2.IsEmpty() {
+		return sort2, true
+	}
+
+	return "", false
 }

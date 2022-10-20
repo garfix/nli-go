@@ -1,5 +1,0 @@
-entity > area
-area > country
-area > state
-entity > city
-entity > person

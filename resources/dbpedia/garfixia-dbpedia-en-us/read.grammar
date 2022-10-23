@@ -101,15 +101,15 @@
 
 { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:quant_check($np1, go:quant_check($np2, dom:marry(P1, E1, E2))) }
 
-{ rule: interrogative(P1) -> 'who' np_comp(E1),                         sense: go:intent(who, E1) }
-{ rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     sense: go:intent(describe, E1) dom:person(E1) }
-{ rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np(E1), sense: go:quant_check($np, go:intent(who, E1)) }
-{ rule: interrogative(P1) -> 'who' copula(_) np(E1),                    sense: go:quant_check($np, go:intent(who, E1) dom:person(E1)) }
-{ rule: interrogative(P1) -> 'what' copula(_) np(E1),                   sense: go:quant_check($np, go:intent(what, E1)) }
-{ rule: interrogative(P1) -> 'when' np_comp3(P1),                       sense: go:intent(when, P1) }
-{ rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: go:intent(how_many, E1) }
-{ rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              sense: go:quant_check($np, go:intent(how_old, E1)) dom:person(E1) }
-{ rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   sense: go:intent(yes_no) }
+{ rule: interrogative(P1) -> 'who' np_comp(E1),                         intent: go:intent(who, E1) }
+{ rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     intent: go:intent(describe, E1),  sense: dom:person(E1) }
+{ rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np(E1), intent: go:intent(who, E1),       sense: go:quant_check($np, none) }
+{ rule: interrogative(P1) -> 'who' copula(_) np(E1),                    intent: go:intent(who, E1),       sense: go:quant_check($np, dom:person(E1)) }
+{ rule: interrogative(P1) -> 'what' copula(_) np(E1),                   intent: go:intent(what, E1),      sense: go:quant_check($np, none) }
+{ rule: interrogative(P1) -> 'when' np_comp3(P1),                       intent: go:intent(when, P1) }
+{ rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 intent: go:intent(how_many, E1) }
+{ rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              intent: go:intent(how_old, E1),   sense: go:quant_check($np, dom:person(E1))  }
+{ rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   intent: go:intent(yes_no) }
 
 { rule: interrogative(S1) -> interrogative(S1) '?' }
-{ rule: s(S1) -> interrogative(S1),                                     sense: go:intent(question) }
+{ rule: s(S1) -> interrogative(S1),                                     intent: go:intent(question) }

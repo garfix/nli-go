@@ -21,4 +21,4 @@
 { rule: sum(E1) -> product(E1) }
 { rule: expr(E1) -> sum(E1) }
 
-{ rule: s(P) -> 'what' 'is' expr(E1),                       sense: go:intent(calc, E1) }
+{ rule: s(P) -> 'what' 'is' expr(E1),                       intent: go:intent(calc, E1) }

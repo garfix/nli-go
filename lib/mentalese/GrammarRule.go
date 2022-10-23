@@ -14,6 +14,7 @@ type GrammarRule struct {
 	Sense           RelationSet
 	Ellipsis        CategoryPathList
 	Tag             RelationSet
+	Intent          RelationSet
 }
 
 const PosTypeRelation = "relation"
@@ -28,6 +29,7 @@ func NewGrammarRule(positionTypes []string, syntacticCategories []string, entity
 		Sense:               sense,
 		Ellipsis:            CategoryPathList{},
 		Tag:                 RelationSet{},
+		Intent:              RelationSet{},
 	}
 }
 
@@ -78,6 +80,7 @@ func (rule GrammarRule) BindSimple(binding Binding) GrammarRule {
 	bound.Sense = bound.Sense.BindSingle(binding)
 	bound.Ellipsis = bound.Ellipsis.BindSingle(binding)
 	bound.Tag = bound.Tag.BindSingle(binding)
+	bound.Intent = bound.Intent.BindSingle(binding)
 
 	return bound
 }
@@ -134,6 +137,7 @@ func (rule GrammarRule) Copy() GrammarRule {
 		Sense:               rule.Sense.Copy(),
 		Ellipsis:            rule.Ellipsis.Copy(),
 		Tag:                 rule.Tag.Copy(),
+		Intent:              rule.Intent.Copy(),
 	}
 }
 
@@ -148,6 +152,7 @@ func (rule GrammarRule) ReplaceVariable(fromVar string, toVar string) GrammarRul
 	}
 	newRule.Sense = newRule.Sense.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
 	newRule.Tag = newRule.Tag.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
+	newRule.Intent = newRule.Intent.ReplaceTerm(NewTermVariable(fromVar), NewTermVariable(toVar))
 	return newRule
 }
 

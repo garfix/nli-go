@@ -244,7 +244,7 @@ func (parser *InternalGrammarParser) parseGenerationGrammar(tokens []Token, star
 func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex int) (mentalese.GrammarRule, int, bool) {
 
 	rule := mentalese.GrammarRule{}
-	ruleFound, senseFound, ellipsisFound, tagFound := false, false, false, false
+	ruleFound, senseFound, ellipsisFound, tagFound, intentFound := false, false, false, false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
 
@@ -267,6 +267,10 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 			rule.Tag, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
 			ok = ok && !tagFound
 			tagFound = true
+		case field_intent:
+			rule.Intent, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			ok = ok && !intentFound
+			intentFound = true
 		default:
 			ok = false
 		}

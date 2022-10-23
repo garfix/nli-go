@@ -40,6 +40,17 @@ func (relationizer Relationizer) ExtractTags(node mentalese.ParseTreeNode) menta
 	return tags
 }
 
+func (relationizer Relationizer) ExtractIntents(node mentalese.ParseTreeNode) mentalese.RelationSet {
+
+	intents := node.Rule.Intent
+
+	for _, childNode := range node.Constituents {
+		intents = append(intents, relationizer.ExtractIntents(*childNode)...)
+	}
+
+	return intents
+}
+
 // Returns the sense of a node and its children
 // node contains a rule with NP -> Det NBar
 // antecedentVariable the actual variable used for the antecedent (for example: E5)

@@ -1,3 +1,7 @@
+## 2022-10-23
+
+I am extracting the intent of a sentence into a special structure. It used to be part of the sense, but that was wrong because it was clearly a meta tag. It wan't a tag, as I first thought. Tags are about entities, not sentences. I found out the hard way when I tried the `why` sentence that followed the `when` sentence. Due to anaphora resolution of the sentence' main event, both sentences has the same main event. At the second sentence, this entity had both the `when` and the `why` tag. It's now a separate field: `intent`, and its not bound to an entity.
+
 ## 2022-10-19
 
 I had a problem with start and end times of events. Time used to only increase with each physical movement. But this caused time to stand still even when larger level events took place. I now increase time with each new event.

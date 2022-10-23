@@ -6,17 +6,6 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-func (base *SystemSolverFunctionBase) intent(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	bound := input.BindSingle(binding)
-
-	if !knowledge.Validate(bound, "a*", base.log) {
-		return mentalese.NewBindingSet()
-	}
-
-	return mentalese.InitBindingSet(binding)
-}
-
 func (base *SystemSolverFunctionBase) eventReference(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := input.BindSingle(binding)

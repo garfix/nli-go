@@ -1,0 +1,4 @@
+{
+    "go.gopath": "/data/go",
+	"go.goroot": "/snap/go/current"
+}

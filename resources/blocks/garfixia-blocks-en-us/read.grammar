@@ -184,37 +184,37 @@
 { rule: time_modifier(P1) -> 'while' mem_vp(P2),                               sense: $mem_vp dom:while(P1, P2) }
 
 { rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1),
-                                                                                   sense: go:intent(select, E2)
-                                                                                            go:quant_check($np1, go:quant_check($np2, $past_participle))
+                                                                                   intent: go:intent(select, E2), 
+                                                                                   sense: go:quant_check($np1, go:quant_check($np2, $past_participle))
                                                                                             go:context_set(time, P1, $time_modifier) }
 
 { rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1) time_modifier(P1),
-                                                                                   sense: go:intent(how_many, E1)
-                                                                                            go:context_set(time, P1, $time_modifier)
-                                                                                            $vp $time_modifier}
+                                                                                   intent: go:intent(how_many, E1),
+                                                                                   sense: go:context_set(time, P1, $time_modifier) $vp $time_modifier}
 
 /* interrogative */
 
-{ rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                             sense: go:intent(what, E1) }
-{ rule: interrogative_clause(P1) -> 'which' vp(P1, E1),                            sense: go:intent(which, E1) $vp }
-{ rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1),                       sense: go:intent(how_many, E1) }
-{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             sense: go:intent(when, P1) $mem_vp go:context_call(time, P1) }
+{ rule: interrogative_clause(P1) -> 'what' vp(P1, E1),                             intent: go:intent(what, E1) }
+{ rule: interrogative_clause(P1) -> 'which' vp(P1, E1),                            intent: go:intent(which, E1) }
+{ rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1),                       intent: go:intent(how_many, E1) }
+{ rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             intent: go:intent(when, P1),     sense: $mem_vp go:context_call(time, P1) }
 { rule: interrogative_clause(P1) -> 'why',
   ellipsis: [prev_sentence]//mem_vp(P1),
-  sense: go:intent(why, P1) $mem_vp }
-{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1, E1),         sense: go:intent(why, P1) go:quant_check($np, $action) }
-{ rule: interrogative_clause(P1) -> 'how' aux_do(_) np(E1) action(P1, E1),         sense: go:intent(how, P1) go:quant_check($np, $action) }
-{ rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     sense: go:intent(select, E1) go:quant_check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             sense: go:intent(select_categoric, E1) go:quant_check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       sense: go:intent(yes_no) go:quant_check($np, $pp) }
-{ rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),  sense: go:intent(select_subject, E2) go:quant_check($np, $past_participle) }
-{ rule: interrogative_clause(P1) -> aux_be(_) vp(_),                               sense: go:intent(yes_no) }
-{ rule: interrogative_clause(P1) -> aux_do(_) vp(_),                               sense: go:intent(yes_no) }
-{ rule: interrogative_clause(P1) -> can(_) vp(_),                                  sense: go:intent(yes_no) }
+  intent: go:intent(why, P1),
+  sense: $mem_vp }
+{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1, E1),         intent: go:intent(why, P1),      sense: go:quant_check($np, $action) }
+{ rule: interrogative_clause(P1) -> 'how' aux_do(_) np(E1) action(P1, E1),         intent: go:intent(how, P1),      sense: go:quant_check($np, $action) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     intent: go:intent(select, E1),   sense: go:quant_check($np, $adjp) }
+{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             intent: go:intent(select_categoric, E1), sense: go:quant_check($np, $adjp) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       intent: go:intent(yes_no),       sense: go:quant_check($np, $pp) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),  intent: go:intent(select_subject, E2), sense: go:quant_check($np, $past_participle) }
+{ rule: interrogative_clause(P1) -> aux_be(_) vp(_),                               intent: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> aux_do(_) vp(_),                               intent: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> can(_) vp(_),                                  intent: go:intent(yes_no) }
 
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
-{ rule: imperative_clause(P1) -> vp(P1),                                            sense: go:intent(command) }
+{ rule: imperative_clause(P1) -> vp(P1),                                            intent: go:intent(command) }
 { rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), sense: $imperative_clause1 $imperative_clause2,
                                                                                     tag: go:root_clause(P1) go:root_clause(P2) }
 
@@ -222,6 +222,6 @@
 { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }
 { rule: imperative(P1) -> imperative_clause(P1) }
 
-{ rule: s(S1) -> declarative(S1),                                       sense: go:intent(declaration) }
+{ rule: s(S1) -> declarative(S1),                                       intent: go:intent(declaration) }
 { rule: s(S1) -> imperative(S1) }
-{ rule: s(S1) -> interrogative(S1),                                     sense: go:intent(question) }
+{ rule: s(S1) -> interrogative(S1) }

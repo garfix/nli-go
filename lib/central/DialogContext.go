@@ -44,6 +44,8 @@ func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) 
 	if e.DeicticCenter.GetCenter() == fromVariable {
 		e.DeicticCenter.SetCenter(toVariable)
 	}
+
+	e.EntityTags.ReplaceVariable(fromVariable, toVariable)
 }
 
 func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {

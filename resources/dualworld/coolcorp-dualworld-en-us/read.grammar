@@ -14,6 +14,6 @@
 
 { rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: go:quant_check($np1, go:quant_check($np2, dom:write(E2, E1))) }
 
-{ rule: interrogative(P1) -> 'which' np_comp(E1),                       sense: go:intent(which, E1) }
+{ rule: interrogative(P1) -> 'which' np_comp(E1),                       intent: go:intent(which, E1) }
 
 { rule: s(S1) -> interrogative(S1) '?' }

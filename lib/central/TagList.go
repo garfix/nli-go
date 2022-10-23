@@ -16,6 +16,18 @@ func (p *TagList) Clear() {
 	p.tags = map[string]mentalese.RelationSet{}
 }
 
+func (p *TagList) ReplaceVariable(from string, to string) {
+	newTags := map[string]mentalese.RelationSet{}
+	for variable, tagSet := range p.tags {
+		if variable == from {
+			newTags[to] = tagSet.ReplaceTerm(mentalese.NewTermVariable(from), mentalese.NewTermVariable(to))
+		} else {
+			newTags[variable] = tagSet.ReplaceTerm(mentalese.NewTermVariable(from), mentalese.NewTermVariable(to))
+		}
+	}
+	p.tags = newTags
+}
+
 func (p *TagList) AddTags(tags mentalese.RelationSet) {
 	for _, tag := range tags {
 		variable := tag.Arguments[0].TermValue

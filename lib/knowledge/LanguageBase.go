@@ -289,11 +289,12 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ja", base.log) {
+	if !Validate(bound, "jav", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	authorIsSystem := input.Arguments[1].TermValue
+	rootVariable := input.Arguments[2].TermValue
 
 	var parseTree mentalese.ParseTreeNode
 	bound.Arguments[0].GetJsonValue(&parseTree)
@@ -303,7 +304,10 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entities)
 	clauseList.AddClause(clause)
 
-	return mentalese.InitBindingSet(binding)
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(rootVariable, mentalese.NewTermVariable(parseTree.Rule.EntityVariables[0][0]))
+
+	return mentalese.InitBindingSet(newBinding)
 }
 
 func (base *LanguageBase) dialogUpdateCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -419,6 +423,9 @@ func (base *LanguageBase) extractTags(messenger api.ProcessMessenger, input ment
 
 	tags := base.relationizer.ExtractTags(parseTree)
 	base.dialogContext.EntityTags.AddTags(tags)
+
+	intents := base.relationizer.ExtractIntents(parseTree)
+	base.dialogContext.ClauseList.GetLastClause().SetIntents(intents)
 
 	newBinding := binding.Copy()
 
@@ -607,14 +614,16 @@ func (base *LanguageBase) detectIntent(messenger api.ProcessMessenger, input men
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "rv", base.log) {
+	if !Validate(bound, "rvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	request := bound.Arguments[0].TermValueRelationSet
 	intentVar := input.Arguments[1].TermValue
+	intentRelations := base.dialogContext.ClauseList.GetLastClause().GetIntents()
 
-	intents := base.answerer.FindIntents(request)
+	conditionSubject := append(request, intentRelations...)
+	intents := base.answerer.FindIntents(conditionSubject)
 
 	newBindings := mentalese.NewBindingSet()
 

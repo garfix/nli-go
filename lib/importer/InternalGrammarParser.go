@@ -11,6 +11,7 @@ const (
 	field_sense           = "sense"
 	field_ellipsis        = "ellipsis"
 	field_tag             = "tag"
+	field_intent          = "intent"
 	field_condition       = "condition"
 	field_result          = "result"
 	field_transformations = "transformations"

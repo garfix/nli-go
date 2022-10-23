@@ -74,13 +74,13 @@
 
 { rule: declarative(P1) -> np(E1) 'is' 'married' 'to' np(E2),             sense: go:quant_check($np1, go:quant_check($np2, go:assert( dom:marry(1, E1, E2, 200, 300) ))) }
 
-{ rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         sense: go:intent(who, E1) }
-{ rule: interrogative(P1) -> 'which' which_clause(E1),                    sense: go:intent(which, E1) }
-{ rule: interrogative(P1) -> 'how' 'many' how_many_clause(E1),            sense: go:intent(how_many, E1) }
-{ rule: interrogative(P1) -> aux_do(_) subject_complement_clause2(P1),    sense: go:intent(yes_no) }
-{ rule: interrogative(P1) -> copula(_) copula_clause(P1),                 sense: go:intent(yes_no) }
-{ rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                     sense: go:intent(yes_no) }
+{ rule: interrogative(P1) -> 'who' subject_complement_clause(E1),         intent: go:intent(who, E1) }
+{ rule: interrogative(P1) -> 'which' which_clause(E1),                    intent: go:intent(which, E1) }
+{ rule: interrogative(P1) -> 'how' 'many' how_many_clause(E1),            intent: go:intent(how_many, E1) }
+{ rule: interrogative(P1) -> aux_do(_) subject_complement_clause2(P1),    intent: go:intent(yes_no) }
+{ rule: interrogative(P1) -> copula(_) copula_clause(P1),                 intent: go:intent(yes_no) }
+{ rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                     intent: go:intent(yes_no) }
 
 { rule: interrogative(S1) -> interrogative(S1) '?' }
-{ rule: s(S1) -> interrogative(S1),                                       sense: go:intent(question) }
-{ rule: s(S1) -> declarative(S1),                                         sense: go:intent(declaration) }
+{ rule: s(S1) -> interrogative(S1) }
+{ rule: s(S1) -> declarative(S1),                                         intent: go:intent(declaration) }

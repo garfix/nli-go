@@ -39,8 +39,8 @@ go:respond(Input) :-
 
 go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLooking) :-
 
-    go:dialog_add_root_clause(RootClauseTree, false)
-    go:extract_tags(RootClauseTree)
+    go:dialog_add_root_clause(RootClauseTree, false, ClauseVariable)
+    go:extract_tags_and_intents(RootClauseTree)
     go:sortal_filtering(RootClauseTree)
 
     go:resolve_names(RootClauseTree, DialogBinding, RequestBinding, UnresolvedName)
@@ -61,7 +61,7 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
 
     /* Stop at the first successfully processed intent */
     go:cut(1,
-        go:detect_intent(ResolvedRequest, Intent)
+        go:detect_intent(ResolvedRequest, Intent, ClauseVariable)
         go:make_list(Intents, Intent)
         go:execute_intent(ResolvedRequest, ResolvedBindings, Intents, AnOutput, Accepted, AcceptedBindings)
         if [AnOutput != ''] then

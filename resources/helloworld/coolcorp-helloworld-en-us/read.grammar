@@ -1,1 +1,1 @@
-{ rule: s(P) -> 'hello' 'world',       sense: go:intent(start_conversation) dom:hello() }
+{ rule: s(P) -> 'hello' 'world',       intent: go:intent(start_conversation),   sense: dom:hello() }

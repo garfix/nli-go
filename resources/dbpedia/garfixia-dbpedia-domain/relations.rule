@@ -1,4 +1,6 @@
-age(E1, A1) :- birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, A1);
+age(E1, Age) :- birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, Age);
+
+deceased(E1) :- death_date(E1, _);
 
 go:type(area, entity);
 go:type(country, area);

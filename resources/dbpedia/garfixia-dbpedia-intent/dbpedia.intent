@@ -209,26 +209,34 @@
 /* How old is X? */
 {
     condition: go:intent(how_old, E1),
-/*    transformations:*/
-        /*  How many years have passed since the birth of E1? */
-/*        go:intent(how_old, E1) :- dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth);
-    ,*/
     responses:
         /* The person has died already */
         {
-            condition: 
-                dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth)
-                dom:death_date(E1, DeathDate) go:date_subtract_years(DeathDate, Today, YearsSinceDeath) [YearsSinceDeath < 0],
-            preparation: dom:gender(E1, Gender) go:date_subtract_years(DeathDate, BirthDate, Age) go:split(BirthDate, '-', Year1, Month1, Day1) go:split(DeathDate, '-', Year2, Month2, Day2),
-            answer: dom:report_age_deceased(E1, Age, BirthDate, DeathDate) dom:gender(E1, Gender) dom:date(BirthDate, Day1, Month1, Year1) dom:date(DeathDate, Day2, Month2, Year2)
+            condition: dom:deceased(E1),
+            preparation: 
+                dom:gender(E1, Gender) 
+                dom:birth_date(E1, BirthDate) go:split(BirthDate, '-', Year1, Month1, Day1)
+                dom:death_date(E1, DeathDate) go:split(DeathDate, '-', Year2, Month2, Day2)
+                go:date_subtract_years(DeathDate, BirthDate, Age)
+            ,
+            answer: 
+                dom:gender(E1, Gender) 
+                dom:report_age_deceased(E1, Age, BirthDate, DeathDate) 
+                dom:date(BirthDate, Day1, Month1, Year1) 
+                dom:date(DeathDate, Day2, Month2, Year2)
         }
         {
             /* The person is still alive */
             condition: go:exists(),
             preparation: 
-                dom:birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, YearsSinceBirth)
-                dom:gender(E1, Gender) go:split(BirthDate, '-', Year, Month, Day),
-            answer: dom:report_age_alive(E1, YearsSinceBirth, BirthDate) dom:gender(E1, Gender) dom:date(BirthDate, Day, Month, Year)
+                dom:gender(E1, Gender) 
+                dom:age(E1, Age)
+                dom:birth_date(E1, BirthDate) go:split(BirthDate, '-', Year, Month, Day)
+            ,
+            answer: 
+                dom:gender(E1, Gender) 
+                dom:report_age_alive(E1, Age, BirthDate) 
+                dom:date(BirthDate, Day, Month, Year)
         }
         {
             answer: dom:dont_know()

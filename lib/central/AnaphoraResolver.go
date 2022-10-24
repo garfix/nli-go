@@ -23,7 +23,7 @@ func NewAnaphoraResolver(dialogContext *DialogContext, meta *mentalese.Meta, mes
 func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
 
 	//println("---")
-	println(request.String())
+	// println(request.String())
 
 	newBindings := mentalese.InitBindingSet(binding)
 	collection := NewAnaphoraResolverCollection()
@@ -63,7 +63,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 		}
 	}
 
-	println(resolvedRequest.String())
+	// println(resolvedRequest.String())
 	//println(resolvedRoot.String())
 
 	return resolvedRoot, resolvedRequest, newBindings, collection.output

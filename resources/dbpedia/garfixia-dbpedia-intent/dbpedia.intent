@@ -88,14 +88,11 @@
 
 /* When was X born? */
 {
-    condition: go:intent(when, P1) dom:bear(P1, A, B),
-    transformations:
-        dom:bear(P1, A, B) :- dom:birth_date(B, Ymd);
-    ,
+    condition: go:intent(when, P1) dom:born(P1, B),
     responses:
         {
             condition: go:exists(),
-            preparation: dom:gender(B, Gender) go:split(Ymd, '-', Year, Month, Day),
+            preparation: dom:gender(B, Gender) dom:birth_date(B, Ymd) go:split(Ymd, '-', Year, Month, Day),
             answer: dom:gender(B, Gender) dom:birth_date(B, D) dom:date(D, Day, Month, Year)
         }
         {
@@ -106,13 +103,10 @@
 /* When did X die? */
 {
     condition: go:intent(when, P1) dom:die(P1, A),
-    transformations:
-        dom:die(P1, A) :- dom:death_date(A, Ymd);
-    ,
     responses:
         {
             condition: go:exists(),
-            preparation: dom:gender(A, Gender) go:split(Ymd, '-', Year, Month, Day),
+            preparation: dom:gender(A, Gender) dom:death_date(A, Ymd) go:split(Ymd, '-', Year, Month, Day),
             answer: dom:gender(A, Gender) dom:death_date(A, D) dom:date(D, Day, Month, Year)
         }
         {

@@ -1,5 +1,6 @@
 age(E1, Age) :- birth_date(E1, BirthDate) go:date_today(Today) go:date_subtract_years(Today, BirthDate, Age);
-
+born(P1, A) :- birth_date(A, _); 
+die(P1, A) :- death_date(A, _); 
 deceased(E1) :- death_date(E1, _);
 
 go:type(area, entity);

@@ -60,7 +60,7 @@
 
 { rule: die(P1) -> 'die' }
 { rule: marry(P1) -> 'married' }
-{ rule: bear(P1) -> 'born' }
+{ rule: born(P1) -> 'born' }
 
 { rule: have(P1) -> 'have' }
 { rule: have(P1) -> 'had' }
@@ -95,7 +95,7 @@
 { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: go:quant_check($np, dom:have_child(E2, E1)) }
 { rule: np_comp2(E1) -> country(E1) have(_) 'population' pp(E2),         sense: dom:has_population(E1, E2) $pp }
 
-{ rule: np_comp3(P1) -> aux_be(_) np(E1) bear(P1),                       sense: go:quant_check($np, dom:bear(P1, _, E1)) }
+{ rule: np_comp3(P1) -> aux_be(_) np(E1) born(P1),                       sense: go:quant_check($np, dom:born(P1, E1)) }
 { rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: go:quant_check($np, dom:birth_date(E1, Ymd)) }
 { rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: go:quant_check($np, dom:die(P1, E1)) }
 

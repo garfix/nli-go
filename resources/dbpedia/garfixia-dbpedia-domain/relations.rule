@@ -7,3 +7,15 @@ go:type(country, area);
 go:type(state, area);
 go:type(city, entity);
 go:type(person, entity);
+
+have_child(A, B) :-     
+    go:xor(
+        have_1_child(A, B),
+
+        have_n_children(A, N) 
+        go:range_foreach(1, N, ChildIndex,
+            go:uuid(ChildId, person)
+            go:unify(B, ChildId)
+        )
+    )
+;

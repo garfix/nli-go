@@ -18,7 +18,6 @@ func TestDBPedia(t *testing.T) {
 			//{"When is her birthday?", "August 16, 1958", "", ""},
 		},
 		{
-			{"How many children has Madonna?", "She has 4 children"},
 			{"When is Madonna's birthday?", "August 16, 1958"},
 			{"Who is Madonna's husband?", "Sean Penn and Guy Ritchie"},
 			{"Who is Sean Penn's wife?", "Robin Wright and Madonna"},

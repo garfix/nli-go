@@ -1,3 +1,30 @@
+## 2022-10-24
+
+I just solved a very long standing problem.
+
+Sometimes DBPedia lists all children of a person individually. At other times, however, it just lists the number of children.
+
+I used to have two different *intents* for these. One of them needed to *rewrite* the sentence in order to fit the database content (!)
+Clearly wrong, but how to fix?
+
+I now fixed this by *inventing* children. Given the number of children, I'm creating random identifiers for them. 
+
+    have_child(A, B) :-     
+        go:xor(
+            have_1_child(A, B),
+
+            have_n_children(A, N) 
+            go:range_foreach(1, N, ChildIndex,
+                go:uuid(ChildId, person)
+                go:unify(B, ChildId)
+            )
+        )
+    ;
+
+The `range_foreach` generates uuids for each of the N children.
+
+If dbpedia has both predicates, only the one naming them will be used.
+
 ## 2022-10-23
 
 I am extracting the intent of a sentence into a special structure. It used to be part of the sense, but that was wrong because it was clearly a meta tag. It wan't a tag, as I first thought. Tags are about entities, not sentences. I found out the hard way when I tried the `why` sentence that followed the `when` sentence. Due to anaphora resolution of the sentence' main event, both sentences has the same main event. At the second sentence, this entity had both the `when` and the `why` tag. It's now a separate field: `intent`, and its not bound to an entity.

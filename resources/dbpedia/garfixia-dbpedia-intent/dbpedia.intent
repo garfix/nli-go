@@ -26,7 +26,7 @@
         }
 }
 
-/* How many children had X? (counting the children) */
+/* How many children had X? */
 {
     condition: go:intent(how_many, B) dom:have_child(A, B),
     responses:
@@ -49,24 +49,6 @@
             condition: go:exists(),
             preparation: go:count(B, Number),
             answer: go:canned(Number),
-            result: B
-        }
-        {
-            answer: dom:dont_know()
-        }
-}
-
-/* How many children had X? (using a number-of-children attribute) */
-{
-    condition: go:intent(how_many, B) dom:have_child(A, B),
-    transformations:
-        dom:have_child(A, B) :- dom:have_n_children(A, Number);
-    ,
-    responses:
-        {
-            condition: go:exists(),
-            preparation: dom:gender(A, Gender),
-            answer: dom:gender(A, Gender) dom:have_child(A, C) go:count(C, Number),
             result: B
         }
         {
@@ -225,8 +207,8 @@
                 dom:date(BirthDate, Day1, Month1, Year1) 
                 dom:date(DeathDate, Day2, Month2, Year2)
         }
+        /* The person is still alive */
         {
-            /* The person is still alive */
             condition: go:exists(),
             preparation: 
                 dom:gender(E1, Gender) 

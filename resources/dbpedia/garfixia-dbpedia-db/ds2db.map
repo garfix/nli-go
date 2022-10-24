@@ -23,7 +23,7 @@ dom:label(A, D) :- label(A, D);
 dom:gender(A, male) :- gender(A, 'male');
 dom:gender(A, female) :- gender(A, 'female');
 
-dom:have_child(A, B) :- child(A, B);
+dom:have_1_child(A, B) :- child(A, B);
 dom:have_n_children(A, N) :- children(A, N);
 
 dom:has_father(A, B) :- parent(A, B) gender(B, 'male');

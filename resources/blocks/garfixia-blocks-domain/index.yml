@@ -1,6 +1,5 @@
 type: domain
 version: 1.0.0
-predicates: argument-sort.relation
 rules:
   - sentence.rule
   - actions.rule

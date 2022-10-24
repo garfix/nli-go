@@ -115,7 +115,6 @@ func (parser *InternalGrammarParser) parseMap(tokens []Token, startIndex int, pa
 func (parser *InternalGrammarParser) parseIntent(tokens []Token, startIndex int) (mentalese.Intent, int, bool) {
 
 	intent := mentalese.Intent{}
-	intent.Transformations = []mentalese.Rule{}
 	conditionFound, responsesFound := false, false
 
 	callback := func(tokens []Token, startIndex int, key string) (int, bool, bool) {
@@ -127,8 +126,6 @@ func (parser *InternalGrammarParser) parseIntent(tokens []Token, startIndex int)
 			intent.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
 			ok = ok && !conditionFound
 			conditionFound = true
-		case field_transformations:
-			intent.Transformations, startIndex, ok = parser.parseRules(tokens, startIndex)
 		case field_responses:
 			intent.Responses, startIndex, ok = parser.parseResponses(tokens, startIndex)
 			ok = ok && !responsesFound

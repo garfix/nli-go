@@ -640,8 +640,6 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 	bound := input.BindSingle(binding)
 
-	transformer := central.NewRelationTransformer(base.matcher, base.log)
-
 	//Request, RequestBinding, Intent, ResultBindings
 	if !Validate(bound, "rjjvv", base.log) {
 		return mentalese.NewBindingSet()
@@ -661,10 +659,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 
 	base.log.AddProduction("Intent", intent.Condition.IndentedString(""))
 
-	// apply transformation, if available
-	transformedRequest := transformer.Replace(intent.Transformations, request)
-
-	resultBindings := messenger.ExecuteChildStackFrame(transformedRequest, requestBindings)
+	resultBindings := messenger.ExecuteChildStackFrame(request, requestBindings)
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))

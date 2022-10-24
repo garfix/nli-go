@@ -8,17 +8,16 @@ import (
 )
 
 const (
-	field_sense           = "sense"
-	field_ellipsis        = "ellipsis"
-	field_tag             = "tag"
-	field_intent          = "intent"
-	field_condition       = "condition"
-	field_result          = "result"
-	field_transformations = "transformations"
-	field_rule            = "rule"
-	field_preparation     = "preparation"
-	field_answer          = "answer"
-	field_responses       = "responses"
+	field_sense       = "sense"
+	field_ellipsis    = "ellipsis"
+	field_tag         = "tag"
+	field_intent      = "intent"
+	field_condition   = "condition"
+	field_result      = "result"
+	field_rule        = "rule"
+	field_preparation = "preparation"
+	field_answer      = "answer"
+	field_responses   = "responses"
 )
 
 type InternalGrammarParser struct {

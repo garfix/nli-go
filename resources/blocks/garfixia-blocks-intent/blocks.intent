@@ -62,7 +62,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: go:log(B) go:get_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
+            preparation: go:get_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }},
             result: B
         }

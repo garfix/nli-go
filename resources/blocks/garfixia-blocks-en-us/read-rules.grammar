@@ -1,36 +1,7 @@
-/* quantifiers */
+/* quantifier phrase */
 
 { rule: qp(_) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
-{ rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
-{ rule: quantifier(Result, Range) -> an(_),                            sense: [Result > 0] }
-{ rule: quantifier(Result, Range) -> 'any',                            sense: [Result > 0] }
-{ rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: [Result > 0] }
-{ rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: [Result == 2] }
-{ rule: quantifier(Result, Range) -> number(N1),                       sense: [Result == N1] }
-{ rule: quantifier(Result, Range) -> 'two',                            sense: [Result == 2] }
 
-{ rule: number(N1) -> ~^[0-9]+~ }
-
-{ rule: an(E1) -> 'a' }
-{ rule: an(E1) -> 'an' }
-
-/* verbs */
-
-{ rule: tv(P1, E1, E2) -> 'pick' 'up',                                 sense: dom:do_pick_up_smart(E2) }
-{ rule: tv(P1, E1, E2) -> 'grasp',                                     sense: dom:do_pick_up_smart(E2) }
-{ rule: tv(P1, E1, E2) -> 'find' }
-{ rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2) }
-{ rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
-{ rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(E2, E1) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2) }
-{ rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
-{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
 /* imperatives */
 { rule: vp(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(E1, E2))) }
@@ -63,27 +34,8 @@
 /* long-distance dependencies */
 { rule: vp_dep(P1, L1) -> np(E1) tell(P1) vp(P2, L1),                  sense: go:quant_check($np, dom:tell(P1, $vp)) }
 
-{ rule: dont(P1) -> 'don' '\'' 't' }
 
-{ rule: copula(C1) -> 'is' }
-{ rule: copula(C1) -> 'are' }
-
-{ rule: aux_be(A1) -> 'is'}
-{ rule: aux_be(A1) -> 'are' }
-{ rule: aux_be(A1) -> 'were' }
-
-{ rule: aux_do(A1) -> 'does' }
-{ rule: aux_do(A1) -> 'do' }
-{ rule: aux_do(A1) -> 'did' }
-
-{ rule: aux_have(A1) -> 'had' }
-{ rule: aux_have(A1) -> 'have' }
-
-{ rule: tell(P1) -> 'told' }
-{ rule: contain(P1) -> 'contain' }
-{ rule: can(P1) -> 'can' }
-
-/* nouns */
+/* relations */
 
 { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: go:quant_check($np, dom:taller(E1, E2)) }
 { rule: adjp(E1) -> 'behind' np(E2),                                   sense: go:quant_check($np, dom:behind(E1, E2)) }
@@ -91,13 +43,6 @@
 { rule: adjp(E1) -> adjective(E1) }
 { rule: adjp(E1) -> 'not' adjective(E1),                               sense: go:not($adjective) }
 
-{ rule: adjective(E1) -> 'red',                                        sense: dom:red(E1) }
-{ rule: adjective(E1) -> 'blue',                                       sense: dom:blue(E1) }
-{ rule: adjective(E1) -> 'green',                                      sense: dom:green(E1) }
-{ rule: adjective(E1) -> 'big',                                        sense: dom:big(E1) }
-{ rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
-{ rule: adjective(E1) -> 'little',                                     sense: dom:small(E1) }
-{ rule: adjective(E1) -> 'large',                                      sense: dom:large(E1) }
 
 { rule: pp(E1) -> 'not' pp(E1),                                        sense: go:not($pp) }
 { rule: pp(E1) -> 'in' np(E2),                                         sense: go:quant_check($np, dom:contain(_, E2, E1)) }
@@ -136,30 +81,6 @@
 { rule: action(P1, E1) -> 'doing' event_ref(P1) }
 { rule: action(P1, E1) -> vp(P1, E1) }
 
-{ rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
-{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'objects',                                         sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'block',                                           sense: go:type(E1, block) }
-{ rule: noun(E1) -> 'blocks',                                          sense: go:type(E1, block) }
-{ rule: noun(E1) -> 'cube',                                            sense: go:type(E1, cube) }
-{ rule: noun(E1) -> 'cubes',                                           sense: go:type(E1, cube) }
-{ rule: noun(E1) -> 'pyramid',                                         sense: go:type(E1, pyramid) }
-{ rule: noun(E1) -> 'pyramids',                                        sense: go:type(E1, pyramid) }
-{ rule: noun(E1) -> 'table',                                           sense: go:type(E1, table) }
-{ rule: noun(E1) -> 'box',                                             sense: go:type(E1, box) }
-
-{ rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
-{ rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
-{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', go:isa(E1, object)) }
-
-{ rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
-
-/* Conjunction */
-
-{ rule: and(C1) -> 'and' }
 
 /* declaration */
 
@@ -187,15 +108,12 @@
 { rule: time_modifier(P1) -> 'before' mem_vp(P2),                              sense: $mem_vp dom:before(P1, P2) }
 { rule: time_modifier(P1) -> 'while' mem_vp(P2),                               sense: $mem_vp dom:while(P1, P2) }
 
+/* time modifier */
 { 
-    rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2) time_modifier(P1),
-    intent: go:intent(select, E2), 
-    sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) go:context_set(time, P1, $time_modifier) 
-}
-{ 
-    rule: interrogative_clause(P1) -> 'how' 'many' vp(P1, E1) time_modifier(P1),
-    intent: go:intent(how_many, E1),
-    sense: go:context_set(time, P1, $time_modifier) $vp $time_modifier
+    rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1),
+    sense: 
+        go:context_set(time, P1, $time_modifier) 
+        $interrogative_clause $time_modifier
 }
 
 /* interrogative */
@@ -219,6 +137,12 @@
 { rule: interrogative_clause(P1) -> aux_be(_) vp(_),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> aux_do(_) vp(_),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> can(_) vp(_),                                  intent: go:intent(yes_no) }
+{ 
+    rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2),
+    intent: go:intent(select, E2), 
+    sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) 
+}
+
 
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 

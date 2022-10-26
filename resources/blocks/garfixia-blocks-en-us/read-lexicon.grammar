@@ -1,0 +1,94 @@
+/* numbers */
+
+{ rule: number(N1) -> ~^[0-9]+~ }
+
+/* determiners */
+
+{ rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
+{ rule: quantifier(Result, Range) -> an(_),                            sense: [Result > 0] }
+{ rule: quantifier(Result, Range) -> 'any',                            sense: [Result > 0] }
+{ rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: [Result > 0] }
+{ rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: [Result == 2] }
+{ rule: quantifier(Result, Range) -> number(N1),                       sense: [Result == N1] }
+{ rule: quantifier(Result, Range) -> 'two',                            sense: [Result == 2] }
+
+{ rule: an(E1) -> 'a' }
+{ rule: an(E1) -> 'an' }
+
+/* verbs */
+
+{ rule: tv(P1, E1, E2) -> 'pick' 'up',                                 sense: dom:do_pick_up_smart(E2) }
+{ rule: tv(P1, E1, E2) -> 'grasp',                                     sense: dom:do_pick_up_smart(E2) }
+{ rule: tv(P1, E1, E2) -> 'find' }
+{ rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }
+{ rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2) }
+{ rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
+{ rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(E2, E1) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2) }
+{ rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
+{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
+
+
+{ rule: dont(P1) -> 'don' '\'' 't' }
+
+{ rule: copula(C1) -> 'is' }
+{ rule: copula(C1) -> 'are' }
+
+{ rule: aux_be(A1) -> 'is'}
+{ rule: aux_be(A1) -> 'are' }
+{ rule: aux_be(A1) -> 'were' }
+
+{ rule: aux_do(A1) -> 'does' }
+{ rule: aux_do(A1) -> 'do' }
+{ rule: aux_do(A1) -> 'did' }
+
+{ rule: aux_have(A1) -> 'had' }
+{ rule: aux_have(A1) -> 'have' }
+
+{ rule: tell(P1) -> 'told' }
+{ rule: contain(P1) -> 'contain' }
+{ rule: can(P1) -> 'can' }
+
+/* adjectives */
+
+{ rule: adjective(E1) -> 'red',                                        sense: dom:red(E1) }
+{ rule: adjective(E1) -> 'blue',                                       sense: dom:blue(E1) }
+{ rule: adjective(E1) -> 'green',                                      sense: dom:green(E1) }
+{ rule: adjective(E1) -> 'big',                                        sense: dom:big(E1) }
+{ rule: adjective(E1) -> 'small',                                      sense: dom:small(E1) }
+{ rule: adjective(E1) -> 'little',                                     sense: dom:small(E1) }
+{ rule: adjective(E1) -> 'large',                                      sense: dom:large(E1) }
+
+/* nouns */
+
+{ rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
+{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'objects',                                         sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'block',                                           sense: go:type(E1, block) }
+{ rule: noun(E1) -> 'blocks',                                          sense: go:type(E1, block) }
+{ rule: noun(E1) -> 'cube',                                            sense: go:type(E1, cube) }
+{ rule: noun(E1) -> 'cubes',                                           sense: go:type(E1, cube) }
+{ rule: noun(E1) -> 'pyramid',                                         sense: go:type(E1, pyramid) }
+{ rule: noun(E1) -> 'pyramids',                                        sense: go:type(E1, pyramid) }
+{ rule: noun(E1) -> 'table',                                           sense: go:type(E1, table) }
+{ rule: noun(E1) -> 'box',                                             sense: go:type(E1, box) }
+
+/* pronouns */
+
+{ rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
+{ rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
+{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', go:isa(E1, object)) }
+
+{ rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
+
+/* conjunctions */
+
+{ rule: and(C1) -> 'and' }

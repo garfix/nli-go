@@ -33,8 +33,8 @@
 { rule: interrogative_clause(P1) -> 'which' vp_missing_np(P1, E1),                            intent: go:intent(which, E1) }
 { rule: interrogative_clause(P1) -> 'how' 'many' vp_missing_np(P1, E1),                       intent: go:intent(how_many, E1) }
 { rule: interrogative_clause(P1) -> 'when' mem_vp(P1),                             intent: go:intent(when, P1),     sense: $mem_vp go:context_call(time, P1) }
-{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) action(P1, E1),         intent: go:intent(why, P1),      sense: go:quant_check($np, $action) }
-{ rule: interrogative_clause(P1) -> 'how' aux_do(_) np(E1) action(P1, E1),         intent: go:intent(how, P1),      sense: go:quant_check($np, $action) }
+{ rule: interrogative_clause(P1) -> 'why' aux_do(_) np(E1) vp_missing_np(P1, E1),         intent: go:intent(why, P1),      sense: go:quant_check($np, $vp_missing_np) }
+{ rule: interrogative_clause(P1) -> 'how' aux_do(_) np(E1) vp_missing_np(P1, E1),         intent: go:intent(how, P1),      sense: go:quant_check($np, $vp_missing_np) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     intent: go:intent(select, E1),   sense: go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             intent: go:intent(select_categoric, E1), sense: go:quant_check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       intent: go:intent(yes_no),       sense: go:quant_check($np, $pp) }

@@ -15,6 +15,9 @@
 { rule: an(E1) -> 'a' }
 { rule: an(E1) -> 'an' }
 
+{ rule: event_ref(P1) -> 'that',                                       tag: go:reference(P1, dom:event(P1)) }
+{ rule: event_ref(P1) -> 'it',                                         tag: go:labeled_reference(P1, 'it', dom:event(P1)) }
+
 /* verbs */
 
 { rule: tv(P1, E1, E2) -> 'pick' 'up',                                 sense: dom:do_pick_up_smart(E2) }

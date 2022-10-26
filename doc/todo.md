@@ -2,19 +2,10 @@
 
 - reduce type() isa() basic_type() shape() characteristic_shape()
 
-- just before anaphora resolution, create the semantic structure (it contains placeholders)
-- when a quant is parsed, store it in the dialog context with its variable
-- create a syntactic-based version of anaphora resolution
-  - handle `go:reference(E, $sem)` and `labeled_reference` using the syntactic structure: replace variable in sem. structure
-    - also: use the entity definition as extra restriction 
-  - one-anaphora: encounter `$reference_slot`: find out the referent, replace the variable, and replace $reference_slot with the scope part of the quant: replace the semantic structure
-- disable the semantic AR step
-
-go:reference(P1, dom:event(P1))
-go:labeled_reference(P1, 'it', dom:event(P1)) }
-sense: go:quant(one, E1, $reference_slot)
 
 ## new 
+
+- produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.
 
 - turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional? 
 - when listed values are used in the next sentence, they should be converted to multiple bindings

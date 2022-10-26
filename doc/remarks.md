@@ -1,3 +1,54 @@
+## 2022-10-26
+
+Reading in "Generalized Phrase Structure Grammar" (Gazdar, Klein, Pullum, Sag).
+Chapter 7 on unbounded dependencies.
+
+"A constituent assigned to a category C[SLASH]C' (often written C/C' is an C-type constituent from which a C'-type constituent is missing"
+
+I like this very much, because I now have a large number of vp clauses that do very different things.
+
+Introducing: vp_missing_np
+
+## 2022-10-25
+
+Blocks world has a number of similar predicates:
+
+    go:type()
+    go:isa()
+    go:get_sort()
+    dom:basic_type()
+    dom:shape()
+    dom:characteristic_shape()
+
+I need to reduce them. The predicates are mainly added for two reasons:
+
+The application introduces the "cube", a special type of block, with equal sides. A cubed block thus has two types: the block itself, and the cube type. Sometimes only a single type is needed for an object, and hence the predicate "basic_type" is introduced. It refers to the type of the object in the database. Is there good ground for making this predicate "basic"? Perhaps it should be called "db_type"?
+
+The shapes follow the same pattern. An exception is made for block.
+
+SHRDLU also has a predicate "shape", but it is not even used.
+Generation uses a predicate "default_shape".
+
+They don't give the same amount of results:
+
+    go:type() : all
+    go:isa() : all
+    go:get_sort(): 1
+    dom:basic_type() : 1
+    dom:shape(): all
+    dom:characteristic_shape() : 1
+
+and even if they give 1 result, this result is not the same for `basic_type` (block) and `characteristic_shape` (cube).
+
+And I think it may be useful to introduce
+
+    go:subtype_of() - applied to types
+    go:instance_of() - applied to instances
+
+`go:isa()` would then be a combination of these.
+Is it useful to distinguish between types and instances? The sentences look the same. "A red cube is a block" "A block is an object"
+
+
 ## 2022-10-24
 
 I just solved a very long standing problem.

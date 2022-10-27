@@ -9,6 +9,10 @@ I like this very much, because I now have a large number of vp clauses that do v
 
 Introducing: vp_missing_np
 
+===
+
+Does an imperative sentence need an `vp_imperative`, that contains commands? It is that useful? Are these the only vp's with commands?
+
 ## 2022-10-25
 
 Blocks world has a number of similar predicates:

@@ -18,10 +18,12 @@
 
 /* verb phrases: subject, verb, object ... */
 
-{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                        sense: go:quant_check($np1, go:quant_foreach($np2, go:quant_foreach($np3, dom:put_on(P1, E3, E1, E2)))) }
-{ rule: vp(P1) -> aux_do(_) np(E1) 'pick' np(E2) 'up',             sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
+{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                              sense: go:quant_check($np1, go:quant_foreach($np2, go:quant_foreach($np3, dom:put_on(P1, E3, E1, E2)))) }
+{ rule: vp(P1) -> np(E1) 'pick' np(E2) 'up',                                    sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
 
-{ rule: vp(P1) -> np(E1) aux_be(_) vp_missing_np(P1, E1),                  sense: go:quant_check($np, $vp_missing_np) }
+{ rule: vp(P1) -> aux_do(_) vp(P1) }
+{ rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:quant_check($np, $event_ref) }
+{ rule: vp(P1) -> np(E1) aux_be(_) vp_missing_np(P1, E1),                       sense: go:quant_check($np, $vp_missing_np) }
 { rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
 { rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
 { rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) }
@@ -34,10 +36,10 @@
 { rule: vp_missing_np(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp_missing_np(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            sense: go:quant_check($np1, go:quant_check($np2, $tv_gerund)) }
 { rule: vp_missing_np(P1, E1) -> np(E1) copula(C1) pp(E1),                                 sense: go:quant_check($np, $pp) }
-{ rule: vp_missing_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp_missing_np(P1, E2) -> np(E2) aux_do(_) np(E1) tv_infinitive(P1, E1, E2),        sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive)) }
+{ rule: vp_missing_np(P1, L1) -> np(E1) tell(P1) vp_missing_np(P2, L1),                    sense: go:quant_check($np, dom:tell(P1, $vp)) }
+{ rule: vp_missing_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:quant_check($np, $tv_infinitive) }
 { rule: vp_missing_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:quant_check($np, $past_participle) }
-{ rule: vp_missing_np(P1, L1) -> np(E1) tell(P1) vp_missing_np(P2, L1),                  sense: go:quant_check($np, dom:tell(P1, $vp)) }
 { rule: vp_missing_np(P1, E1) -> 'do' event_ref(P1) }
 { rule: vp_missing_np(P1, E1) -> 'doing' event_ref(P1) }
 

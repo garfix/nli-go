@@ -20,7 +20,6 @@
 
 /* verbs */
 
-{ rule: tv(P1, E1, E2) -> 'find' }
 { rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(E1, E2) }

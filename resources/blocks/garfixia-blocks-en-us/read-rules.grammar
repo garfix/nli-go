@@ -5,6 +5,7 @@
 
 /* imperative vps, which are linked to action predicates */
 
+{ rule: vp_imperative(P1) -> 'find' np(E1),                                       sense: go:quant_foreach($np, none) }
 { rule: vp_imperative(P1) -> 'pick' 'up' np(E1),                                  sense: go:quant_foreach($np1, dom:do_pick_up_smart(E1)) }
 { rule: vp_imperative(P1) -> 'grasp' np(E1),                                      sense: go:quant_foreach($np1, dom:do_pick_up_smart(E1)) }
 { rule: vp_imperative(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(E1, E2))) }
@@ -13,7 +14,6 @@
 { rule: vp_imperative(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'put' np(E1) 'on' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart($np) }
-{ rule: vp_imperative(P1) -> tv(P1, _, E1) np(E1),                                         sense: go:quant_foreach($np, $tv) }
 
 
 /* verb phrases: subject, verb, object ... */

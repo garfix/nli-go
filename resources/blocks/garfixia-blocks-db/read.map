@@ -1,5 +1,4 @@
-go:type(E, T) :- is(E, T);
-dom:basic_type(E, T) :- is(E, T);
+go:has_sort(E, T) :- is(E, T);
 dom:named(E, Name) :- call(E, Name);
 dom:red(E) :- color(E, red);
 dom:blue(E) :- color(E, blue);

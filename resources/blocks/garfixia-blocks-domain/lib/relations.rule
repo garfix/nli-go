@@ -2,36 +2,42 @@
  * These rules restrict possible entities by specifying the relations that hold between them.
  */
 
-go:type(block, object);
-go:type(pyramid, object);
-go:type(box, object);
+go:has_sort(block, object);
+go:has_sort(pyramid, object);
+go:has_sort(box, object);
+
 hold(P1, E1, E2) :- grasping(E1, E2);
 you(E1) :- named(E1, 'SHRDLU');
 i(E1) :- named(E1, 'YOU');
 tell(P1, P2) :- go:call(P2);
 height(E, H) :- size(E, _, _, H);
 width(E, W) :- size(E, W, _, _);
-top_center(E, X, Y, Z) :- at(E, X1, Y1, Z1) size(E, Width, Length, Height) [Wh := [Width / 2]] [Lh := [Length / 2]]
-    [X := [X1 + Wh]] [Y := [Y1 + Lh]] [Z := [Z1 + Height]];
+top_center(E, X, Y, Z) :-
+    at(E, X1, Y1, Z1)
+    size(E, Width, Length, Height)
+    [Wh := [Width / 2]]
+    [Lh := [Length / 2]]
+    [X := [X1 + Wh]]
+    [Y := [Y1 + Lh]]
+    [Z := [Z1 + Height]]
+;
 big(E) :- size(E, Width, Length, Height) [Width > 128] [Length > 128] [Height > 128];
 large(E) :- size(E, Width, Length, Height) [Height > 128];
 small(E) :- size(E, Width, Length, Height) [Width < 128] [Length < 128] [Height < 128];
 volume(E, V) :- if big(E) then go:unify(V, big) else go:unify(V, small) end;
-go:type(E, cube) :- basic_type(E, block) size(E, Width, Length, Height) [Width == Length] [Length == Height];
+cubed(E) :- size(E, Width, Width, Width);
 taller(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
 
-characteristic_shape(E, S) :-
-    basic_type(E, T)
-    if [T == block] size(E, X, X, X) then
-        [S := cube]
-    else
-        [S := T]
-    end
+form(E, Form) :- 
+    go:has_sort(E, Sort)
+    go:xor(
+        [Sort == block] size(E, X, X, X)
+        [Form := cube]
+        ,
+        [Form := Sort]
+    )
 ;
-
-shape(E, S) :- basic_type(E, S);
-shape(E, S) :- basic_type(E, block) size(E, X, X, X) go:unify(S, cube);
 
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [Y1 > Y2];
 

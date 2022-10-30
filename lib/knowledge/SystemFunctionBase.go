@@ -29,7 +29,6 @@ func NewSystemFunctionBase(name string, meta *mentalese.Meta, log *common.System
 
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
-		mentalese.PredicateType:              base.typeFunction,
 		mentalese.PredicateSplit:             base.split,
 		mentalese.PredicateJoin:              base.join,
 		mentalese.PredicateConcat:            base.concat,
@@ -50,7 +49,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateDateSubtractYears: base.dateSubtractYears,
 		mentalese.PredicateLog:               base.debug,
 		mentalese.PredicateUuid:              base.uuid,
-		mentalese.PredicateGetSort:           base.getSort,
+		mentalese.PredicateHasSort:           base.hasSort,
 		mentalese.PredicateListLength:        base.listLength,
 		mentalese.PredicateListGet:           base.listGet,
 		mentalese.PredicateListHead:          base.listHead,
@@ -450,20 +449,9 @@ func (base *SystemFunctionBase) uuid(messenger api.SimpleMessenger, input mental
 	return newBinding, true
 }
 
-func (base *SystemFunctionBase) getSort(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+func (base *SystemFunctionBase) hasSort(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 
-	bound := input.BindSingle(binding)
-
-	if !Validate(bound, "vv", base.log) {
-		return mentalese.NewBinding(), false
-	}
-
-	sort := bound.Arguments[0].TermSort
-	sortVariable := input.Arguments[1].TermValue
-
-	newBinding := mentalese.NewBinding()
-	newBinding.Set(sortVariable, mentalese.NewTermAtom(sort))
-	return newBinding, true
+	return binding, false
 }
 
 func (base *SystemFunctionBase) listLength(messenger api.SimpleMessenger, relation mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {

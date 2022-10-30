@@ -1,3 +1,2 @@
-go:isa(E, Type) :- go:type(E, Type);
-go:isa(E, Type) :- go:type(E, S) go:isa(S, Type);
-
+go:isa(E, Type) :- go:has_sort(E, Type);
+go:isa(E, Type) :- go:has_sort(E, S) go:isa(S, Type);

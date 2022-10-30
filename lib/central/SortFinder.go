@@ -35,6 +35,13 @@ func (finder SortFinder) findSortsRecursive(node *mentalese.ParseTreeNode, sorts
 
 func (finder SortFinder) findSortsInRelations(set mentalese.RelationSet, sorts *mentalese.Sorts) bool {
 	for _, relation := range set {
+
+		if relation.Predicate == mentalese.PredicateHasSort {
+			variable := relation.Arguments[0].TermValue
+			sort := relation.Arguments[1].TermValue
+			(*sorts)[variable] = sort
+		}
+
 		for i, argument := range relation.Arguments {
 			if argument.IsVariable() {
 				sort := finder.meta.GetSort(relation.Predicate, i)

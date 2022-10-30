@@ -63,7 +63,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 		}
 	}
 
-	// println(resolvedRequest.String())
+	//println(resolvedRequest.String())
 	//println(resolvedRoot.String())
 
 	return resolvedRoot, resolvedRequest, newBindings, collection.output
@@ -138,7 +138,7 @@ func (resolver *AnaphoraResolver) findSortsSingle(relation mentalese.Relation) [
 
 	sorts := []string{}
 
-	isa := mentalese.NewRelation(false, mentalese.PredicateType, []mentalese.Term{
+	isa := mentalese.NewRelation(false, mentalese.PredicateHasSort, []mentalese.Term{
 		mentalese.NewTermAtom(relation.GetPredicateWithoutNamespace()),
 		mentalese.NewTermVariable("Type"),
 	})
@@ -290,7 +290,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 
 		typeFound := false
 		for _, relation := range definition {
-			if relation.Predicate == mentalese.PredicateType {
+			if relation.Predicate == mentalese.PredicateHasSort {
 				typeFound = true
 			}
 		}

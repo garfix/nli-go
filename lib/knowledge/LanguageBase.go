@@ -743,27 +743,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(answerVar, mentalese.NewTermRelationSet(answer))
 
-	//variable := resultHandler.Result.TermValue
-
-	//dialogizedVariable := variable
-	//if resultHandler.Result.TermValue != "" {
-	//	if !mentalese.IsGeneratedVariable(resultHandler.Result.TermValue) {
-	//		term := base.dialogContext.VariableGenerator.GenerateVariable(variable)
-	//		dialogizedVariable = term.TermValue
-	//	}
-	//}
-
 	essential := mentalese.NewBindingSet()
-	//for _, id := range resultBindings.GetIds(variable) {
-	//	b := mentalese.NewBinding()
-	//	b.Set(dialogizedVariable, id)
-	//	essential.Add(b)
-	//}
-	//for _, id := range intentBindings.GetIds(variable) {
-	//	b := mentalese.NewBinding()
-	//	b.Set(dialogizedVariable, id)
-	//	essential.Add(b)
-	//}
 	for _, id := range answer.GetIds() {
 		newVariable := base.dialogContext.VariableGenerator.GenerateVariable("ResponseEntity")
 		b := mentalese.NewBinding()

@@ -3,11 +3,11 @@ born(P1, A) :- birth_date(A, _);
 die(P1, A) :- death_date(A, _); 
 deceased(E1) :- death_date(E1, _);
 
-go:type(area, entity);
-go:type(country, area);
-go:type(state, area);
-go:type(city, entity);
-go:type(person, entity);
+go:has_sort(area, entity);
+go:has_sort(country, area);
+go:has_sort(state, area);
+go:has_sort(city, entity);
+go:has_sort(person, entity);
 
 have_child(A, B) :-     
     go:xor(

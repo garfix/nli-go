@@ -174,7 +174,7 @@ func createImage(system *global.System) {
 
 	p := pinhole.New()
 
-	data := system.Query("dom:at(E, X, Z, Y) dom:basic_type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)")
+	data := system.Query("dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)")
 
 	p.DrawCube(-.99, -.99, -.99, .99, .99, .99)
 

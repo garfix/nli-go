@@ -115,12 +115,32 @@ Example
     go:isa(E1, block)
 
 
-## Get Sort
+## Has Sort
 
-Looks up the sort of a variable
+To declare the sort of an entity:
 
-    go:get_sort(Var, Sort)
+    go:has_sort(Id, Sort)
 
-* `Var`: a variable
-* `Sort`: a variable, to contain a sort atom
+* `Id`: an id
+* `Sort`: an atom
+
+To declare the supersort of a sort
+
+  go:has_sort(Sort, SuperSort)
+
+* `Sort`: an id
+* `SuperSort`: an atom
+
+To query the sort of an entity:
+
+  go:has_sort(Id, Sort)
+
+* `Id`: an id / a variable bound to an id
+* `Sort`: a variable
+
+Example
+
+    go:has_sort(E, Sort)
+    go:has_sort(E, block)
+    go:has_sort(block, object)
 

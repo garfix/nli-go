@@ -72,14 +72,14 @@
 { rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'objects',                                         sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'block',                                           sense: go:type(E1, block) }
-{ rule: noun(E1) -> 'blocks',                                          sense: go:type(E1, block) }
-{ rule: noun(E1) -> 'cube',                                            sense: go:type(E1, cube) }
-{ rule: noun(E1) -> 'cubes',                                           sense: go:type(E1, cube) }
-{ rule: noun(E1) -> 'pyramid',                                         sense: go:type(E1, pyramid) }
-{ rule: noun(E1) -> 'pyramids',                                        sense: go:type(E1, pyramid) }
-{ rule: noun(E1) -> 'table',                                           sense: go:type(E1, table) }
-{ rule: noun(E1) -> 'box',                                             sense: go:type(E1, box) }
+{ rule: noun(E1) -> 'block',                                           sense: go:has_sort(E1, block) }
+{ rule: noun(E1) -> 'blocks',                                          sense: go:has_sort(E1, block) }
+{ rule: noun(E1) -> 'cube',                                            sense: go:has_sort(E1, block) dom:cubed(E1) }
+{ rule: noun(E1) -> 'cubes',                                           sense: go:has_sort(E1, block) dom:cubed(E1) }
+{ rule: noun(E1) -> 'pyramid',                                         sense: go:has_sort(E1, pyramid) }
+{ rule: noun(E1) -> 'pyramids',                                        sense: go:has_sort(E1, pyramid) }
+{ rule: noun(E1) -> 'table',                                           sense: go:has_sort(E1, table) }
+{ rule: noun(E1) -> 'box',                                             sense: go:has_sort(E1, box) }
 
 /* pronouns */
 

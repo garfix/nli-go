@@ -1,3 +1,25 @@
+## 2022-10-30
+
+Currently deactivating the `go:has_sort()` built-in predicate, because it just complicated things.
+
+- to establish supertype relations: explicit `go:has_sort()`
+- to look up the entity's type in the database: explicit `go:has_sort()`
+
+---
+
+requirements:
+
+- the syntax rule must somehow specify that a node is a type. this sense will then be stored as the type definition (sense: has_sort() / tag: go:type(E1)?)
+- go:isa() is used to resolve names and find the most specific sort
+- go:has_sort() is used for conflict resolution, to ensure that an entity has an explicit type, and to extract the sorts of a sentence
+- a big advantage of declaring `go:has_sort()` in a knowledge base, is that one can be added by a sentence in the input
+
+## 2022-10-29
+
+The sort of an entity is now (also) deduced from the `go:has_sort()` sense relation. 
+
+A sort is both stored with the variable (in the dialog context) and in the id. 
+
 ## 2022-10-26
 
 Reading in "Generalized Phrase Structure Grammar" (Gazdar, Klein, Pullum, Sag).

@@ -92,7 +92,7 @@ func (base *SystemSolverFunctionBase) dialogReadBindings(messenger api.ProcessMe
 	responseBinding := (*base.dialogContext.EntityBindings).Copy()
 
 	newBinding := binding.Copy()
-	newBinding.Set(someBindingVar, mentalese.NewTermJson(responseBinding.ToRaw()))
+	newBinding.Set(someBindingVar, mentalese.NewTermBinary(responseBinding.ToRaw()))
 	return mentalese.InitBindingSet(newBinding)
 }
 
@@ -101,7 +101,7 @@ func (base *SystemSolverFunctionBase) dialogWriteBindings(messenger api.ProcessM
 
 	someBindings := mentalese.NewBindingSet()
 	someBindingsRaw := []map[string]mentalese.Term{}
-	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
+	someBindingsRaw = bound.Arguments[0].GetBinaryValue().([]map[string]mentalese.Term)
 	someBindings.FromRaw(someBindingsRaw)
 
 	groupedValues := map[string][]mentalese.Term{}
@@ -185,7 +185,7 @@ func (base *SystemSolverFunctionBase) dialogAddResponseClause(messenger api.Proc
 
 	essentialResponseBindings := mentalese.NewBindingSet()
 	someBindingsRaw := []map[string]mentalese.Term{}
-	bound.Arguments[0].GetJsonValue(&someBindingsRaw)
+	someBindingsRaw = bound.Arguments[0].GetBinaryValue().([]map[string]mentalese.Term)
 	essentialResponseBindings.FromRaw(someBindingsRaw)
 
 	entities := []*mentalese.ClauseEntity{}

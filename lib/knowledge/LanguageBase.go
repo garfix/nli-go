@@ -174,7 +174,7 @@ func (base *LanguageBase) parse(messenger api.ProcessMessenger, input mentalese.
 	newBindings := mentalese.NewBindingSet()
 	for _, parseTree := range parseTrees {
 		newBinding := binding.Copy()
-		newBinding.Set(sentenceVar, mentalese.NewTermJson(parseTree))
+		newBinding.Set(sentenceVar, mentalese.NewTermBinary(parseTree))
 		newBindings.Add(newBinding)
 	}
 
@@ -196,13 +196,13 @@ func (base *LanguageBase) dialogize(messenger api.ProcessMessenger, input mental
 	resultVar := input.Arguments[1].TermValue
 	var parseTree mentalese.ParseTreeNode
 
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	parseTree = bound.Arguments[0].GetBinaryValue().(mentalese.ParseTreeNode)
 
 	dialogizer := parse.NewDialogizer(base.dialogContext.VariableGenerator)
 	newParseTree := dialogizer.Dialogize(&parseTree)
 
 	newBinding := mentalese.NewBinding()
-	newBinding.Set(resultVar, mentalese.NewTermJson(newParseTree))
+	newBinding.Set(resultVar, mentalese.NewTermBinary(newParseTree))
 
 	base.log.AddProduction("Dialogized parse tree", newParseTree.IndentedString(""))
 
@@ -219,7 +219,7 @@ func (base *LanguageBase) checkAgreement(messenger api.ProcessMessenger, input m
 
 	var parseTree mentalese.ParseTreeNode
 
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	parseTree = bound.Arguments[0].GetBinaryValue().(mentalese.ParseTreeNode)
 
 	agreementChecker := parse.NewAgreementChecker()
 	agreed := agreementChecker.CheckAgreement(&parseTree)
@@ -239,19 +239,19 @@ func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mental
 	}
 
 	ellipsisVar := input.Arguments[1].TermValue
-	var parseTree mentalese.ParseTreeNode
+	var parseTree *mentalese.ParseTreeNode
 
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	clauses := base.dialogContext.ClauseList.GetRootNodes()
 	ellipsizer := parse.NewEllipsizer(clauses, base.log)
-	newParseTree, ok := ellipsizer.Ellipsize(parseTree)
+	newParseTree, ok := ellipsizer.Ellipsize(*parseTree)
 	if !ok {
 		return mentalese.NewBindingSet()
 	}
 
 	newBinding := mentalese.NewBinding()
-	newBinding.Set(ellipsisVar, mentalese.NewTermJson(newParseTree))
+	newBinding.Set(ellipsisVar, mentalese.NewTermBinary(newParseTree))
 
 	base.log.AddProduction("Ellipsized parse tree", newParseTree.IndentedString(""))
 
@@ -269,7 +269,7 @@ func (base *LanguageBase) extractRootClauses(messenger api.ProcessMessenger, inp
 	rootClauseVar := input.Arguments[1].TermValue
 
 	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	parseTree = bound.Arguments[0].GetBinaryValue().(mentalese.ParseTreeNode)
 
 	rootClauseExtracter := parse.NewRootClauseExtracter()
 	rootClauses := rootClauseExtracter.Extract(&parseTree)
@@ -278,7 +278,7 @@ func (base *LanguageBase) extractRootClauses(messenger api.ProcessMessenger, inp
 
 	for _, rootClause := range rootClauses {
 		newBinding := mentalese.NewBinding()
-		newBinding.Set(rootClauseVar, mentalese.NewTermJson(rootClause))
+		newBinding.Set(rootClauseVar, mentalese.NewTermBinary(rootClause))
 		newBindings.Add(newBinding)
 	}
 
@@ -296,12 +296,12 @@ func (base *LanguageBase) dialogAddRootClause(messenger api.ProcessMessenger, in
 	authorIsSystem := input.Arguments[1].TermValue
 	rootVariable := input.Arguments[2].TermValue
 
-	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	var parseTree *mentalese.ParseTreeNode
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	clauseList := base.dialogContext.ClauseList
-	entities := mentalese.ExtractEntities(&parseTree)
-	clause := mentalese.NewClause(&parseTree, authorIsSystem == "true", entities)
+	entities := mentalese.ExtractEntities(parseTree)
+	clause := mentalese.NewClause(parseTree, authorIsSystem == "true", entities)
 	clauseList.AddClause(clause)
 
 	newBinding := mentalese.NewBinding()
@@ -418,13 +418,13 @@ func (base *LanguageBase) extractTags(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	var parseTree *mentalese.ParseTreeNode
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
-	tags := base.relationizer.ExtractTags(parseTree)
+	tags := base.relationizer.ExtractTags(*parseTree)
 	base.dialogContext.EntityTags.AddTags(tags)
 
-	intents := base.relationizer.ExtractIntents(parseTree)
+	intents := base.relationizer.ExtractIntents(*parseTree)
 	base.dialogContext.ClauseList.GetLastClause().SetIntents(intents)
 
 	newBinding := binding.Copy()
@@ -440,12 +440,12 @@ func (base *LanguageBase) relationize(messenger api.ProcessMessenger, input ment
 		return mentalese.NewBindingSet()
 	}
 
-	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	var parseTree *mentalese.ParseTreeNode
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	senseVar := input.Arguments[1].TermValue
 
-	requestRelations := base.relationizer.Relationize(parseTree, []string{"S"})
+	requestRelations := base.relationizer.Relationize(*parseTree, []string{"S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
@@ -466,12 +466,12 @@ func (base *LanguageBase) sortalFiltering(messenger api.ProcessMessenger, input 
 		return mentalese.NewBindingSet()
 	}
 
-	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	var parseTree *mentalese.ParseTreeNode
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	// extract sorts: variable => sort
 	sortFinder := central.NewSortFinder(base.meta, messenger)
-	sorts, sortFound := sortFinder.FindSorts(&parseTree)
+	sorts, sortFound := sortFinder.FindSorts(parseTree)
 	if !sortFound {
 		// conflicting sorts
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
@@ -494,16 +494,16 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 
 	requestBindingVar := input.Arguments[2].TermValue
 	unboundNameVar := input.Arguments[3].TermValue
-	var parseTree mentalese.ParseTreeNode
+	var parseTree *mentalese.ParseTreeNode
 
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	dialogBinding := mentalese.NewBinding()
 	dialogBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&dialogBindingsRaw)
+	dialogBindingsRaw = bound.Arguments[1].GetBinaryValue().(map[string]mentalese.Term)
 	dialogBinding.FromRaw(dialogBindingsRaw)
 
-	names := base.nameResolver.ExtractNames(parseTree, []string{"S"})
+	names := base.nameResolver.ExtractNames(*parseTree, []string{"S"})
 
 	sorts := base.dialogContext.EntitySorts
 
@@ -516,7 +516,7 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 
 	newBinding := binding.Copy()
 
-	newBinding.Set(requestBindingVar, mentalese.NewTermJson(requestBinding.ToRaw()))
+	newBinding.Set(requestBindingVar, mentalese.NewTermBinary(requestBinding.ToRaw()))
 	newBinding.Set(unboundNameVar, mentalese.NewTermString(nameNotFound))
 
 	return mentalese.InitBindingSet(newBinding)
@@ -529,14 +529,14 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 		return mentalese.NewBindingSet()
 	}
 
-	var parseTree mentalese.ParseTreeNode
-	bound.Arguments[0].GetJsonValue(&parseTree)
+	var parseTree *mentalese.ParseTreeNode
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
 
 	request := bound.Arguments[1].TermValueRelationSet
 
 	inBinding := mentalese.NewBinding()
 	inBindingsRaw := map[string]mentalese.Term{}
-	bound.Arguments[2].GetJsonValue(&inBindingsRaw)
+	inBindingsRaw = bound.Arguments[2].GetBinaryValue().(map[string]mentalese.Term)
 	inBinding.FromRaw(inBindingsRaw)
 
 	resolvedRequestVar := bound.Arguments[3].TermValue
@@ -544,12 +544,12 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	outputVar := input.Arguments[5].TermValue
 
 	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
-	resolvedRequest, resolvedBindings, output := resolver.Resolve(&parseTree, request, inBinding)
+	resolvedRequest, resolvedBindings, output := resolver.Resolve(parseTree, request, inBinding)
 
 	newBinding := mentalese.NewBinding()
 
 	newBinding.Set(resolvedRequestVar, mentalese.NewTermRelationSet(resolvedRequest))
-	newBinding.Set(outputBindingVar, mentalese.NewTermJson(resolvedBindings.ToRaw()))
+	newBinding.Set(outputBindingVar, mentalese.NewTermBinary(resolvedBindings.ToRaw()))
 	newBinding.Set(outputVar, mentalese.NewTermString(output))
 
 	return mentalese.InitBindingSet(newBinding)
@@ -627,7 +627,7 @@ func (base *LanguageBase) detectIntent(messenger api.ProcessMessenger, input men
 
 	for _, intent := range intents {
 		newBinding := mentalese.NewBinding()
-		newBinding.Set(intentVar, mentalese.NewTermJson(intent))
+		newBinding.Set(intentVar, mentalese.NewTermBinary(intent))
 		newBindings.Add(newBinding)
 	}
 
@@ -646,13 +646,13 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	intent := mentalese.Intent{}
 
 	request := bound.Arguments[0].TermValueRelationSet
-	bound.Arguments[2].GetJsonValue(&intent)
+	intent = bound.Arguments[2].GetBinaryValue().(mentalese.Intent)
 	resultBindingsVar := input.Arguments[3].TermValue
 	resultCountVar := input.Arguments[4].TermValue
 
 	requestBindings := mentalese.NewBindingSet()
 	requestBindingsRaw := []map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&requestBindingsRaw)
+	requestBindingsRaw = bound.Arguments[1].GetBinaryValue().([]map[string]mentalese.Term)
 	requestBindings.FromRaw(requestBindingsRaw)
 
 	base.log.AddProduction("Intent", intent.Condition.IndentedString(""))
@@ -660,7 +660,7 @@ func (base *LanguageBase) solve(messenger api.ProcessMessenger, input mentalese.
 	resultBindings := messenger.ExecuteChildStackFrame(request, requestBindings)
 
 	newBinding := mentalese.NewBinding()
-	newBinding.Set(resultBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+	newBinding.Set(resultBindingsVar, mentalese.NewTermBinary(resultBindings.ToRaw()))
 	newBinding.Set(resultCountVar, mentalese.NewTermString(strconv.Itoa(resultBindings.GetLength())))
 
 	return mentalese.InitBindingSet(newBinding)
@@ -677,10 +677,10 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 	intent := mentalese.Intent{}
 	resultBindings := mentalese.NewBindingSet()
 
-	bound.Arguments[0].GetJsonValue(&intent)
+	intent = bound.Arguments[0].GetBinaryValue().(mentalese.Intent)
 
 	resultBindingsRaw := []map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&resultBindingsRaw)
+	resultBindingsRaw = bound.Arguments[1].GetBinaryValue().([]map[string]mentalese.Term)
 	resultBindings.FromRaw(resultBindingsRaw)
 
 	responseBindingsVar := input.Arguments[2].TermValue
@@ -690,14 +690,14 @@ func (base *LanguageBase) findResponse(messenger api.ProcessMessenger, input men
 		response := intent.Responses[index]
 		if response.Condition.IsEmpty() {
 			newBinding := mentalese.NewBinding()
-			newBinding.Set(responseBindingsVar, mentalese.NewTermJson(resultBindings.ToRaw()))
+			newBinding.Set(responseBindingsVar, mentalese.NewTermBinary(resultBindings.ToRaw()))
 			newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 			return mentalese.InitBindingSet(newBinding)
 		} else {
 			responseBindings := messenger.ExecuteChildStackFrame(response.Condition, resultBindings)
 			if !responseBindings.IsEmpty() {
 				newBinding := mentalese.NewBinding()
-				newBinding.Set(responseBindingsVar, mentalese.NewTermJson(responseBindings.ToRaw()))
+				newBinding.Set(responseBindingsVar, mentalese.NewTermBinary(responseBindings.ToRaw()))
 				newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 				return mentalese.InitBindingSet(newBinding)
 			}
@@ -718,10 +718,10 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 	intent := mentalese.Intent{}
 	resultBindings := mentalese.NewBindingSet()
 
-	bound.Arguments[0].GetJsonValue(&intent)
+	intent = bound.Arguments[0].GetBinaryValue().(mentalese.Intent)
 
 	responseBindingsRaw := []map[string]mentalese.Term{}
-	bound.Arguments[1].GetJsonValue(&responseBindingsRaw)
+	responseBindingsRaw = bound.Arguments[1].GetBinaryValue().([]map[string]mentalese.Term)
 	resultBindings.FromRaw(responseBindingsRaw)
 
 	responseIndex, _ := bound.Arguments[2].GetIntValue()
@@ -749,7 +749,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, input men
 		essential.Add(b)
 	}
 
-	newBinding.Set(essentialVar, mentalese.NewTermJson(essential.ToRaw()))
+	newBinding.Set(essentialVar, mentalese.NewTermBinary(essential.ToRaw()))
 
 	return mentalese.InitBindingSet(newBinding)
 }

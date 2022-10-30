@@ -1,7 +1,6 @@
 package mentalese
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,6 +13,7 @@ type Term struct {
 	TermValueRelationSet RelationSet `json:"set,omitempty"`
 	TermValueRule        *Rule       `json:"rule,omitempty"`
 	TermValueList        TermList    `json:"list,omitempty"`
+	TermBinary           interface{}
 	sharedTerm           *Term
 }
 
@@ -26,7 +26,7 @@ const TermTypeRelationSet = "relation-set"
 const TermTypeRule = "rule"
 const TermTypeId = "id"
 const TermTypeList = "list"
-const TermTypeJson = "json"
+const TermTypeBinary = "binary"
 
 func NewTermVariable(name string) Term {
 	return Term{TermType: TermTypeVariable, TermValue: name, TermValueRelationSet: nil}
@@ -60,12 +60,8 @@ func NewTermList(list TermList) Term {
 	return Term{TermType: TermTypeList, TermValueList: list}
 }
 
-func NewTermJson(value interface{}) Term {
-
-	bytes, _ := json.Marshal(value)
-	jsonString := string(bytes)
-
-	return Term{TermType: TermTypeJson, TermValue: jsonString}
+func NewTermBinary(value interface{}) Term {
+	return Term{TermType: TermTypeBinary, TermBinary: value}
 }
 
 func (term Term) IsVariable() bool {
@@ -116,10 +112,8 @@ func (term Term) GetNumber() (float64, bool) {
 	return value, err == nil
 }
 
-func (term Term) GetJsonValue(value interface{}) bool {
-	bytes := []byte(term.TermValue)
-	err := json.Unmarshal(bytes, value)
-	return err == nil
+func (term Term) GetBinaryValue() interface{} {
+	return term.TermBinary
 }
 
 func (term Term) IsString() bool {
@@ -165,8 +159,8 @@ func (term Term) ListContains(t Term) bool {
 	return contains
 }
 
-func (term Term) IsJson() bool {
-	return term.TermType == TermTypeJson
+func (term Term) IsBinary() bool {
+	return term.TermType == TermTypeBinary
 }
 
 func (term Term) Equals(otherTerm Term) bool {
@@ -174,6 +168,9 @@ func (term Term) Equals(otherTerm Term) bool {
 		return false
 	}
 	if term.TermSort != otherTerm.TermSort {
+		return false
+	}
+	if term.TermBinary != otherTerm.TermBinary {
 		return false
 	}
 	switch term.TermType {
@@ -245,6 +242,7 @@ func (term Term) Copy() Term {
 	newTerm.TermType = term.TermType
 	newTerm.TermValue = term.TermValue
 	newTerm.TermSort = term.TermSort
+	newTerm.TermBinary = term.TermBinary
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	} else if term.IsRule() {
@@ -349,8 +347,12 @@ func (term Term) String() string {
 		s = "`" + term.TermSort + ":" + term.TermValue + "`"
 	case TermTypeList:
 		s = term.TermValueList.String()
-	case TermTypeJson:
-		s = term.TermValue
+	case TermTypeBinary:
+		if term.TermBinary != nil {
+			s = "<" + fmt.Sprintf("%v", &term.TermBinary) + ">"
+		} else {
+			s = "nil"
+		}
 	default:
 		s = "<unknown>"
 	}

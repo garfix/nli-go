@@ -36,11 +36,11 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 		//	return false
 		//}
 		if c == 's' && !arg.IsString() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a string")
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a string")
 			return false
 		}
 		if c == 'l' && !arg.IsList() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a list")
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a list")
 			return false
 		}
 		if c == 'i' && !arg.IsInteger() {
@@ -48,11 +48,11 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			return false
 		}
 		if c == 'r' && !arg.IsRelationSet() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a relation set")
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a relation set")
 			return false
 		}
-		if c == 'j' && !arg.IsJson() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a json string")
+		if c == 'j' && !arg.IsBinary() {
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a json string")
 			return false
 		}
 		if c == 'S' {
@@ -60,7 +60,7 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			for j := i; j < len(input.Arguments); j++ {
 				arg = input.Arguments[j]
 				if !arg.IsString() {
-					log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be a string")
+					log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j+1) + " to be a string")
 					return false
 				}
 			}
@@ -71,7 +71,7 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			for j := i; j < len(input.Arguments); j++ {
 				arg = input.Arguments[j]
 				if !arg.IsVariable() {
-					log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j + 1) + " to be an unbound variable")
+					log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(j+1) + " to be an unbound variable")
 					return false
 				}
 			}

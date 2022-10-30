@@ -20,7 +20,7 @@ func NewAnaphoraResolver(dialogContext *DialogContext, meta *mentalese.Meta, mes
 	}
 }
 
-func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
+func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.BindingSet, string) {
 
 	//println("---")
 	// println(request.String())
@@ -28,7 +28,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	newBindings := mentalese.InitBindingSet(binding)
 	collection := NewAnaphoraResolverCollection()
 
-	resolvedRoot := resolver.resolveNode(root, binding, collection)
+	resolver.resolveNode(root, binding, collection)
 
 	resolvedRequest := request
 	resolvedRequest = resolver.replaceOneAnaphora(resolvedRequest, collection.oneAnaphors)
@@ -66,7 +66,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	//println(resolvedRequest.String())
 	//println(resolvedRoot.String())
 
-	return resolvedRoot, resolvedRequest, newBindings, collection.output
+	return resolvedRequest, newBindings, collection.output
 }
 
 func (resolver *AnaphoraResolver) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {
@@ -163,7 +163,7 @@ func (resolver *AnaphoraResolver) conflicts(relation mentalese.Relation, sorts [
 	return conflicts
 }
 
-func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) *mentalese.ParseTreeNode {
+func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, binding mentalese.Binding, collection *AnaphoraResolverCollection) {
 
 	variables := node.Rule.GetAntecedentVariables()
 	for _, variable := range variables {
@@ -208,8 +208,6 @@ func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, bin
 	for _, childNode := range node.GetConstituents() {
 		resolver.resolveNode(childNode, binding, collection)
 	}
-
-	return node
 }
 
 func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {

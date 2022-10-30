@@ -525,7 +525,7 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "jrjvvvv", base.log) {
+	if !Validate(bound, "jrjvvv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
@@ -539,18 +539,16 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	bound.Arguments[2].GetJsonValue(&inBindingsRaw)
 	inBinding.FromRaw(inBindingsRaw)
 
-	resolvedTreeVar := bound.Arguments[3].TermValue
-	resolvedRequestVar := bound.Arguments[4].TermValue
-	outputBindingVar := input.Arguments[5].TermValue
-	outputVar := input.Arguments[6].TermValue
+	resolvedRequestVar := bound.Arguments[3].TermValue
+	outputBindingVar := input.Arguments[4].TermValue
+	outputVar := input.Arguments[5].TermValue
 
 	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
-	resolvedTree, resolvedRequest, resolvedBindings, output := resolver.Resolve(&parseTree, request, inBinding)
+	resolvedRequest, resolvedBindings, output := resolver.Resolve(&parseTree, request, inBinding)
 
 	newBinding := mentalese.NewBinding()
 
 	newBinding.Set(resolvedRequestVar, mentalese.NewTermRelationSet(resolvedRequest))
-	newBinding.Set(resolvedTreeVar, mentalese.NewTermJson(resolvedTree))
 	newBinding.Set(outputBindingVar, mentalese.NewTermJson(resolvedBindings.ToRaw()))
 	newBinding.Set(outputVar, mentalese.NewTermString(output))
 

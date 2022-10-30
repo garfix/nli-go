@@ -1,8 +1,5 @@
 # Todo
 
-- reduce type() isa() basic_type() shape() characteristic_shape()
-
-
 ## new 
 
 - produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.

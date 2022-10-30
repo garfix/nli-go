@@ -70,3 +70,12 @@ To look up the id of an entity whose sort is `country`, this file is used. The r
 
 The `entity` is used for one-anaphora. Once the sort is known, the system needs to know which relation belongs to it. This relation is added to the relational representation of the sentence.
 
+## go:isa()
+
+The predicate `go:isa()` can be used to determine if entity E has sort S, either directly, or indirectly.
+
+## Each id has a sort
+
+Each id, commonly an integer, is a unique identifier, but only within its own sort. Therefore the sort is added to the id, on creation.
+
+Hence it is also possible to determine the sort from a given id. 

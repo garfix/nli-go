@@ -32,8 +32,8 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateEventReference: base.eventReference,
 
 		// quant
-		mentalese.PredicateQuantCheck:       base.quantCheck,
-		mentalese.PredicateQuantForeach:     base.quantForeach,
+		mentalese.PredicateCheck:            base.quantCheck,
+		mentalese.PredicateDo:               base.quantForeach,
 		mentalese.PredicateQuantOrderedList: base.quantOrderedList,
 
 		// control

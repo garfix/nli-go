@@ -5,50 +5,50 @@
 
 /* imperative vps, which are linked to action predicates */
 
-{ rule: vp_imperative(P1) -> 'find' np(E1),                                       sense: go:quant_foreach($np, none) }
-{ rule: vp_imperative(P1) -> 'pick' 'up' np(E1),                                  sense: go:quant_foreach($np1, dom:do_pick_up_smart(E1)) }
-{ rule: vp_imperative(P1) -> 'grasp' np(E1),                                      sense: go:quant_foreach($np1, dom:do_pick_up_smart(E1)) }
-{ rule: vp_imperative(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(E1, E2))) }
-{ rule: vp_imperative(P1) -> 'put' np(E1) 'in' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_in_smart(E1, E2))) }
-{ rule: vp_imperative(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(E1, E2))) }
-{ rule: vp_imperative(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(E1, E2))) }
-{ rule: vp_imperative(P1) -> 'put' np(E1) 'on' np(E2),                            sense: go:quant_foreach($np1, go:quant_foreach($np2, dom:do_put_on_smart(E1, E2))) }
+{ rule: vp_imperative(P1) -> 'find' np(E1),                                       sense: go:do($np, none) }
+{ rule: vp_imperative(P1) -> 'pick' 'up' np(E1),                                  sense: go:do($np1, dom:do_pick_up_smart(E1)) }
+{ rule: vp_imperative(P1) -> 'grasp' np(E1),                                      sense: go:do($np1, dom:do_pick_up_smart(E1)) }
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:do($np1, go:do($np2, dom:do_put_in_smart(E1, E2))) }
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'in' np(E2),                            sense: go:do($np1, go:do($np2, dom:do_put_in_smart(E1, E2))) }
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'on' np(E2),                            sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart($np) }
 
 
 /* verb phrases: subject, verb, object ... */
 
-{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                              sense: go:quant_check($np1, go:quant_foreach($np2, go:quant_foreach($np3, dom:put_on(P1, E3, E1, E2)))) }
-{ rule: vp(P1) -> np(E1) 'pick' np(E2) 'up',                                    sense: go:quant_check($np1, go:quant_check($np2, dom:pick_up(P1, E1, E2))) }
+{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                              sense: go:check($np1, go:do($np2, go:do($np3, dom:put_on(P1, E3, E1, E2)))) }
+{ rule: vp(P1) -> np(E1) 'pick' np(E2) 'up',                                    sense: go:check($np1, go:check($np2, dom:pick_up(P1, E1, E2))) }
 
 { rule: vp(P1) -> aux_do(_) vp(P1) }
-{ rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:quant_check($np, $event_ref) }
-{ rule: vp(P1) -> np(E1) aux_be(_) vp_missing_np(P1, E1),                       sense: go:quant_check($np, $vp_missing_np) }
-{ rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:quant_check($np2, go:quant_check($np1, $past_participle)) }
-{ rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive))  }
-{ rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:quant_check($np1, go:quant_check($np2, $past_participle)) }
-{ rule: vp(P1) -> np(E1) tv(P1, E1, E2) np(E2),                                 sense: go:quant_check($np1, go:quant_check($np2, $tv)) }
+{ rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:check($np, $event_ref) }
+{ rule: vp(P1) -> np(E1) aux_be(_) vp_missing_np(P1, E1),                       sense: go:check($np, $vp_missing_np) }
+{ rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:check($np2, go:check($np1, $past_participle)) }
+{ rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:check($np1, go:check($np2, $tv_infinitive))  }
+{ rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:check($np1, go:check($np2, $past_participle)) }
+{ rule: vp(P1) -> np(E1) tv(P1, E1, E2) np(E2),                                 sense: go:check($np1, go:check($np2, $tv)) }
 
 
 /* long-distance dependencies; category vp/np */
 
-{ rule: vp_missing_np(P1, E1) -> tv(P1, E1, E2) np(E2),                                    sense: go:quant_foreach($np, $tv) }
-{ rule: vp_missing_np(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:quant_check($np, $tv_infinitive) }
-{ rule: vp_missing_np(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            sense: go:quant_check($np1, go:quant_check($np2, $tv_gerund)) }
-{ rule: vp_missing_np(P1, E1) -> np(E1) copula(C1) pp(E1),                                 sense: go:quant_check($np, $pp) }
-{ rule: vp_missing_np(P1, E2) -> np(E2) aux_do(_) np(E1) tv_infinitive(P1, E1, E2),        sense: go:quant_check($np1, go:quant_check($np2, $tv_infinitive)) }
-{ rule: vp_missing_np(P1, L1) -> np(E1) tell(P1) vp_missing_np(P2, L1),                    sense: go:quant_check($np, dom:tell(P1, $vp)) }
-{ rule: vp_missing_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:quant_check($np, $tv_infinitive) }
-{ rule: vp_missing_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:quant_check($np, $past_participle) }
+{ rule: vp_missing_np(P1, E1) -> tv(P1, E1, E2) np(E2),                                    sense: go:do($np, $tv) }
+{ rule: vp_missing_np(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:check($np, $tv_infinitive) }
+{ rule: vp_missing_np(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            sense: go:check($np1, go:check($np2, $tv_gerund)) }
+{ rule: vp_missing_np(P1, E1) -> np(E1) copula(C1) pp(E1),                                 sense: go:check($np, $pp) }
+{ rule: vp_missing_np(P1, E2) -> np(E2) aux_do(_) np(E1) tv_infinitive(P1, E1, E2),        sense: go:check($np1, go:check($np2, $tv_infinitive)) }
+{ rule: vp_missing_np(P1, L1) -> np(E1) tell(P1) vp_missing_np(P2, L1),                    sense: go:check($np, dom:tell(P1, $vp)) }
+{ rule: vp_missing_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:check($np, $tv_infinitive) }
+{ rule: vp_missing_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:check($np, $past_participle) }
 { rule: vp_missing_np(P1, E1) -> 'do' event_ref(P1) }
 { rule: vp_missing_np(P1, E1) -> 'doing' event_ref(P1) }
 
 
 /* relations */
 
-{ rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: go:quant_check($np, dom:taller(E1, E2)) }
-{ rule: adjp(E1) -> 'behind' np(E2),                                   sense: go:quant_check($np, dom:behind(E1, E2)) }
-{ rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: go:quant_check($np, dom:narrower(E1, E2)) }
+{ rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: go:check($np, dom:taller(E1, E2)) }
+{ rule: adjp(E1) -> 'behind' np(E2),                                   sense: go:check($np, dom:behind(E1, E2)) }
+{ rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: go:check($np, dom:narrower(E1, E2)) }
 { rule: adjp(E1) -> adjective(E1) }
 { rule: adjp(E1) -> 'not' adjective(E1),                               sense: go:not($adjective) }
 
@@ -56,16 +56,16 @@
 /* prepositional phrases */
 
 { rule: pp(E1) -> 'not' pp(E1),                                        sense: go:not($pp) }
-{ rule: pp(E1) -> 'in' np(E2),                                         sense: go:quant_check($np, dom:contain(_, E2, E1)) }
-{ rule: pp(E1) -> 'on' 'top' 'of' np(E2),                              sense: go:quant_check($np, dom:on(E1, E2)) }
+{ rule: pp(E1) -> 'in' np(E2),                                         sense: go:check($np, dom:contain(_, E2, E1)) }
+{ rule: pp(E1) -> 'on' 'top' 'of' np(E2),                              sense: go:check($np, dom:on(E1, E2)) }
 
 
 /* relative clauses */
 
 { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
-{ rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: go:quant_check($np, $tv_gerund) }
+{ rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: go:check($np, $tv_gerund) }
 { rule: relative_clause(E1) -> 'which' vp_missing_np(P1, E1) }
-{ rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:quant_check($np, $tv)  }
+{ rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:check($np, $tv)  }
 
 
 /* noun phrases */

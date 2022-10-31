@@ -14,10 +14,10 @@ func TestFillerStack(t *testing.T) {
 
 	grammarRules := internalGrammarParser.CreateGrammarRules(`
 
-		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),						sense: which(E1) quant_check($np, $dep_vp) }
+		{ rule: s(P1) -> 'which' np(E1) dep_vp(P1, E1),						sense: which(E1) check($np, $dep_vp) }
 		{ rule: np(E1) -> nbar(E1), 										sense: quant(_, some(_), E1, $nbar) }
 		{ rule: nbar(E) -> noun(E) }
-		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2), 	sense: quant_check($np, $advp $vp) }
+		{ rule: dep_vp(P1, E1) -> be(_) np(E2) advp(P1) vp(P1, E1, E2), 	sense: check($np, $advp $vp) }
 		{ rule: np(E1) -> qp(Q1) nbar(E1), 									sense: quant(Q1, $qp, E1, $nbar) }
 		{ rule: advp(P1) -> adverb(P1) }
 		{ rule: vp(P1, E1, E2) -> 'to' 'take' 'from', 						sense: take_from(P1, E2, E1)  }
@@ -45,7 +45,7 @@ func TestFillerStack(t *testing.T) {
 	tree := dialogizer.Dialogize(&parseTrees[0])
 	result := relationizer.Relationize(*tree, []string{"S"})
 
-	want := "which(E$1) quant_check(quant(_, some(_), E$1, baby(E$1)), quant_check(quant(Q$1, the(Q$1), E$2, toy(E$2)), easiest(Sentence$1) take_from(Sentence$1, E$2, E$1)))"
+	want := "which(E$1) check(quant(_, some(_), E$1, baby(E$1)), check(quant(Q$1, the(Q$1), E$2, toy(E$2)), easiest(Sentence$1) take_from(Sentence$1, E$2, E$1)))"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}

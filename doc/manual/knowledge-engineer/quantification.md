@@ -62,22 +62,22 @@ Here is the typical case for the `qp`. Note that the `quantifier` relation is fo
 
 The quant is only useful when combined with a parent relation (typically a verb). You need to specify explicity that the quant is used. If there is more than one quant, the order of the quants can be given. An example:
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: quant_check($np1, quant_check($np2, marry(P1, E1, E2))) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: check($np1, check($np2, marry(P1, E1, E2))) }
     
 Imagine the sentence: "Did all these men marry two women?". Resolving this question means going through all the men, one-by-one, and for each of them counting the women that were married to them. If one of them married only one woman, the answer is no.     
     
-`quant_check` says: apply the quants from the right-hand positions 1 (`$np1`), which is the sense of the `np(E1)` and 4 (`$np2`) and use them in that order. When the sense is built, the result looks like this:
+`check` says: apply the quants from the right-hand positions 1 (`$np1`), which is the sense of the `np(E1)` and 4 (`$np2`) and use them in that order. When the sense is built, the result looks like this:
 
-    quant_check(
+    check(
         quant(Q1, E1, ...), 
         marry(P1, E1, E2)
     )     
 
-`quant_check` has a set of quantifiers, and a _scope_ that consists of zero or more relations (`marry(P1, E1, E2)`).
+`check` has a set of quantifiers, and a _scope_ that consists of zero or more relations (`marry(P1, E1, E2)`).
 
 In this example the quant for E1 precedes that of E2, but the order does not need to match the order of the variables in the scope.
 
-It is important to understand the way `quant_check` is evaluated. I will sketch the process here briefly. Note that the quants are nested, and that the inner loop uses a single value from the range of the outer quant, and goes through all range values of the inner loop.
+It is important to understand the way `check` is evaluated. I will sketch the process here briefly. Note that the quants are nested, and that the inner loop uses a single value from the range of the outer quant, and goes through all range values of the inner loop.
 
     b1 = []binding
     foreach E1-range-set as E1 in outer range {
@@ -95,7 +95,7 @@ This is the process for 2 quants. The number of quants is often 1, and possibly 
 
 ## Quant foreach
 
-The function `quant_foreach` is exactly like find, with one important distinction: `do` checks the quantifier _during_ the loop as well.
+The function `do` is exactly like find, with one important distinction: `do` checks the quantifier _during_ the loop as well.
 
     foreach E2-range-set as E2 in inner range {
         execute scope, bound with single E1 and E2, and add binding to b2
@@ -106,9 +106,9 @@ This relation is needed for different kinds of relations: imperative ones, like 
 
 Imagine now this sentence: "pick up two blocks". 
 
-Handling this question with `quant_check` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `quant_foreach` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
+Handling this question with `check` amounts to picking up all blocks and then checking if there were two that were picked up. This is clearly nonsense. `do` goes through all blocks, and attempts to pick them up. As soon as the quantifier `2` matches, it stops.
 
-The difference between `quant_check` and `quant_foreach` is that `quant_foreach` stops when it has enough, while `quant_check` continues. Use `quant_check` with interrogative relations and `quant_foreach` with imperative relations. 
+The difference between `check` and `do` is that `do` stops when it has enough, while `check` continues. Use `check` with interrogative relations and `do` with imperative relations. 
 
 ## Unquantified nouns
 

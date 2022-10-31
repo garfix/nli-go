@@ -51,7 +51,7 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// does every parent have 2 children?
 			`
-				go:quant_check(
+				go:check(
 					go:quant(go:quantifier(ResultCount, RangeCount, [ResultCount == RangeCount]), S1, isa(S1, parent)), 
 					have_child(S1, O1) go:count(O1, 2))`,
 			"{}",
@@ -60,9 +60,9 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// does every parent have 3 children?
 			`
-				go:quant_check(
+				go:check(
 					go:quant(go:quantifier(ResultCount1, RangeCount1, [ResultCount1 == RangeCount1]), S1, isa(S1, parent)),
-					go:quant_check(
+					go:check(
 						go:quant(go:quantifier(ResultCount2, RangeCount2, [ResultCount1 == 3]), O1, isa(O1, child))
 				, 
 				have_child(S1, O1)))`,
@@ -72,7 +72,7 @@ func TestQuantSolver(t *testing.T) {
 		{
 			// keep extra bindings?
 			`
-				go:quant_check(
+				go:check(
 					go:quant(go:quantifier(ResultCount, RangeCount, [ResultCount == RangeCount]), S1, isa(S1, parent)), 
 					have_child(S1, O1) go:count(O1, 2)
 				)`,
@@ -83,7 +83,7 @@ func TestQuantSolver(t *testing.T) {
 			// xor
 			// the first quant in the xor has a range, but only the second quant has a range and scope bindings
 			`
-				go:quant_check(
+				go:check(
 					go:or(	
 						go:and(
 							go:quant(some, S1, is_person(S1) [S1 == 8]),

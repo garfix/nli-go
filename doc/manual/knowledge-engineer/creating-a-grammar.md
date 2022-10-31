@@ -42,7 +42,7 @@ I don't think I found the ultimate way to represent questions, but what I'd like
     
 and then refine the changing part in a separate rule:
 
-    { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: quant_check($np1, quant_check( $np2, $tv)) }
+    { rule: do_clause(P1) -> np(E1) tv(P1, E1, E2) np(E2),                              sense: check($np1, check( $np2, $tv)) }
     
 The first rule states that these type of questions start with "do" and that they are yes/no questions, which means that their answer is a simple yes or no. The `intent(yes_no)` in the sense of the rule is a kind of tag that is used by the solution to recognize the type of sentence.
 
@@ -62,7 +62,7 @@ A declarative sentence states something to be the case. The aim of the sentence 
 
 Let's start with simple declarative sentences. This one handles sentences like: "all red blocks are mine"
 
-    { rule: declarative(P1) -> np(E1) copula(_) np(E2),         sense: assert( own(A, B) :- quant_check($np1, quant_check($np2, equals(A, E2) equals(B, E1)))) }        
+    { rule: declarative(P1) -> np(E1) copula(_) np(E2),         sense: assert( own(A, B) :- check($np1, check($np2, equals(A, E2) equals(B, E1)))) }        
 
 A `copula` is a verb like "is" and "are" when it has no meaning of its own in the sentence. In the sense you can see the `assert` relation whose single argument is a rule. When this declarative is executed, the `assert` adds a rule to a rule base (the first rule base known to the system). 
 
@@ -83,11 +83,11 @@ This is how to implement "all red blocks are mine, but the blocks in the box are
 
     { rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                           sense: assert(
                                                                                         $tv :-
-                                                                                        quant_check($np, quant_check($np2, equals(A, E1) equals(B, E2) not( -$tv )))) }
+                                                                                        check($np, check($np2, equals(A, E1) equals(B, E2) not( -$tv )))) }
 
     { rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),                      sense: assert(
                                                                                         -$tv :-
-                                                                                        quant_check($np1, quant_check($np2, equals(A, E1) equals(B, E2))) }
+                                                                                        check($np1, check($np2, equals(A, E1) equals(B, E2))) }
 
 These last rules form the default rule and the exception. They are posed in a general way that allows for multiple application. The first says "NP verb NP", which handles clauses like "I like ice" and "you own the table". Note the sense: the head is `$tv`, which is the meaning of the second child in the rule (`tv(P1, A, B)`), and this head reoccurs later on in rule, in the form of  `not( -$tv )`. The meaning here is "I own all red blocks except for the ones that I don't own".
 
@@ -156,7 +156,7 @@ At the moment the `proper_noun_group` is processed, the parser has received top-
 
 Let's have an example:
 
-    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                                sense: quant_check($np, has_daughter(E2, E1)) }
+    { rule: nbar(E1) -> 'daughter' 'of' np(E2),                                sense: check($np, has_daughter(E2, E1)) }
     
 Here `np(E2)` will be rewritten to the name "Charles Babbage". The parser also sees that E2 is the first argument of the relation `has_daughter(E2, E1)`. And you can tell the system that the first argument of this relation is a person, by adding this line to the file "argument-sort.relation":
 
@@ -183,7 +183,7 @@ There are transitive verbs (`tv`) and intransitive verbs (`iv`). Transitive verb
 
 Here's a simple rewrite for a transitive verb phrase:
 
-    { rule: vp(P1, E1) -> marry(P1) np(E2),                                sense: quant_check($np, marry(P1, E1, E2)) }
+    { rule: vp(P1, E1) -> marry(P1) np(E2),                                sense: check($np, marry(P1, E1, E2)) }
     
 The `find` combines the `quant` or `quant`s with the sense of the verb. `find` iterates over all combinations of values for the quants.
 
@@ -221,13 +221,13 @@ An attributive adjective preceeds a noun phrase. There can be multiple adjective
 Phrases like "is taller than" are also adjective, but in a predicative way.
 
     { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
-    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: quant_check($np, taller(E1, E2)) }
+    { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: check($np, taller(E1, E2)) }
     
 ## Prepositional phrases
 
 These phrases denote a relation between two noun phrases. Here's the rule for the preposition "in".
 
-    { rule: pp(E1) -> 'in' np(E2),                                         sense: quant_check($np, contain(_, E2, E1)) }
+    { rule: pp(E1) -> 'in' np(E2),                                         sense: check($np, contain(_, E2, E1)) }
     
 ## Numbers
 

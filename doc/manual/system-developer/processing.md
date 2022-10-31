@@ -68,7 +68,7 @@ To use the parser, you need to define a grammar.
 
 Each grammar entry contains a rule and, optionally, a sense. The rule is the syntactic part, but extended with entity variables. The sense consists of the relations that are created when parsing the sentence. The entity variables of the syntax reappear in the relations. Let me give you an example of how this works. When the following rewrite rule has been completed (example clause: John could marry Elsa)
 
-    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                       sense: go:quant_check($np, dom:have_child(E2, E1)) }
+    { rule: np_comp2(E1) -> child(E1) have(_) np(E2),                       sense: go:check($np, dom:have_child(E2, E1)) }
 
     { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 sense: go:intent(how_many, E1) }
 
@@ -97,7 +97,7 @@ The example sentence (from Tokenizer paragraph) yields the following parse tree:
 When the whole tree is parsed all relations will be connected in a relational model. I just call this a relation set.
  Here's the relation set for our sample sentence:
 
-    go_quant_check(go_quant(go_quantifier(R9, R10, go_equals(R9, R10)), E8, none), dom_have_child(E8, E7)) go_intent(how_many, E7) go_intent(question)
+    go_check(go_quant(go_quantifier(R9, R10, go_equals(R9, R10)), E8, none), dom_have_child(E8, E7)) go_intent(how_many, E7) go_intent(question)
 
 ### Answerer
 

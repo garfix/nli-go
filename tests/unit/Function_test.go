@@ -298,7 +298,7 @@ func TestQuantFunctions(t *testing.T) {
 		wantBindings string
 	}{
 		{`
-			go:quant_foreach(
+			go:do(
 				go:quant(
 					go:quantifier(Result, Range, [Result == 3]),
 					E,

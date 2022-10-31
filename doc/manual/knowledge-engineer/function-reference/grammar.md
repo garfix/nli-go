@@ -13,26 +13,29 @@ This relation is used by solutions to recognize types of problems.
     
 An intent function has no effect; it always succeeds.    
 
-## Quant foreach
+## Do
 
-Find all entities specified by a `quant` (minimally), assign each of them in turn to a variable and execute `Scope`.
+Finds the entities specified by a `quant`, assign each of them in turn to a variable and execute `Scope`.
 
-Fails as soon as a scope returns no results. 
+Does not continue to find entities after the quantifier has succeeded.
+Fails if the number of entities that pass `Scope` is **less than** the same as specified by the quantifier of `Quant`.
 
-    go:quant_foreach(Quant ..., Scope)
+    go:do(Quant ..., Scope)
     
 * `Quant`: a quant
 * `Scope`: a relation set    
 
 Check [quantification](quantification.md) for more information.
 
-## Quant check
+## Check
 
-Find all entities specified by `Quants`, check if the number of entities that pass `Scope` is the same as specified by the quantifier of `Quant`. 
+Find all entities specified by `Quant`.
 
-    go:quant_check(Quants, Scope)
+Fails if the number of entities that pass `Scope` is not the same as specified by the quantifier of `Quant`. 
+
+    go:check(Quant, Scope)
     
-* `Quants`: one or more quants
+* `Quant`: a quant
 * `Scope`: a relation set      
 
 Check [quantification](quantification.md) for more information.

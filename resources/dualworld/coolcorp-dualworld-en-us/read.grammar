@@ -12,7 +12,7 @@
 { rule: nbar(E1) -> noun(E1),                                           sense: go:quant(go:quantifier(Result, Range, [Result > 0]), E1, $noun) }
 { rule: nbar(E1) -> 'grandfather' 'of' np(E2),                          sense: dom:has_grandfather(E2, E1) }
 
-{ rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: go:quant_check($np1, go:quant_check($np2, dom:write(E2, E1))) }
+{ rule: np_comp(E1) -> np(E1) 'wrote' np(E2),                           sense: go:check($np1, go:check($np2, dom:write(E2, E1))) }
 
 { rule: interrogative(P1) -> 'which' np_comp(E1),                       intent: go:intent(which, E1) }
 

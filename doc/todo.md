@@ -38,7 +38,6 @@ If the next sentence is "The waiter showed us our seat.", "the waiter" refers to
 
 Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 
-- turn the "JSON" datatype into a "binary" datatype
 - maybe remove `result` from `responses` in the intent; it is not used now
 - I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
 - typed arguments

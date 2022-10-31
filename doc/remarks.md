@@ -1,3 +1,10 @@
+## 2022-10-31
+
+Replaced `go:quant_foreach()` by `go:do()`.
+Replaced `go:quant_check()` by `go:check()`.
+
+These are high frequent constructs and should have short and clear names.
+
 ## 2022-10-30
 
 Currently deactivating the `go:has_sort()` built-in predicate, because it just complicated things.

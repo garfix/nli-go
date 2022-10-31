@@ -56,6 +56,6 @@ These aliases are called `module aliases`. They are used by NLI-GO to locate rel
 
 Built-in predicates are always prefixed by the system-alias `go`. For example:
 
-    go:quant_check($np, dom:has_father(E2, E1))
+    go:check($np, dom:has_father(E2, E1))
     
     

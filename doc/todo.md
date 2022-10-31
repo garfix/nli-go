@@ -53,10 +53,6 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 * better validation for built-in functions; especially multi-binding ones
 * use functional programming: make all data immutable; use copy-on-write everywhere; stop making deep copies
 
-## Long distance dependencies
-
-The technique of ellipsis can possibly play a role in gapping / long distance relations too.
-
 ## Parsing source files
 
 - check the correctness of all relations after parsing
@@ -103,8 +99,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 - When the demo is done. Do it in German as well, as proof of multilinguality.
 - Add an autoplay function for demo mode; show characters in response one-by-one  
 - If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
-
-- the `type` relation can be replaced with the `go:isa()` relation
 
 ## Documentation
 

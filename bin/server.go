@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func main2() {
+func main() {
 
 	if len(os.Args) != 2 {
 		println("Use: ./server <port>")

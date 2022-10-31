@@ -11,7 +11,7 @@ session_start();
 $sessionId = $app . "_" . session_id();
 
 if ($action == "state") {
-    $query = "dom:at(E, X, Z, Y) dom:type(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)";
+    $query = "dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)";
     $json = json_encode([
         "SessionId" => $sessionId,
         "ApplicationDir" => $configPath,

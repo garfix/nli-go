@@ -29,9 +29,9 @@
 { rule: s(S1) -> interrogative(S1) }
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
 
-{ rule: interrogative_clause(P1) -> 'what' vp_without_object(P1, E1),                  intent: go:intent(what, E1) }
-{ rule: interrogative_clause(P1) -> 'which' vp_without_object(P1, E1),                 intent: go:intent(which, E1) }
-{ rule: interrogative_clause(P1) -> 'how' 'many' vp_without_object(P1, E1),            intent: go:intent(how_many, E1) }
+{ rule: interrogative_clause(P1) -> 'what' vp_without_np(P1, E1),                  intent: go:intent(what, E1) }
+{ rule: interrogative_clause(P1) -> 'which' np(E1) vp_without_np(P1, E1),          intent: go:intent(which, E1),        sense: go:check($np, $vp_without_np) }
+{ rule: interrogative_clause(P1) -> 'how' 'many' np(E1) vp_without_np(P1, E1),     intent: go:intent(how_many, E1),     sense: go:check($np, $vp_without_np) }
 { rule: interrogative_clause(P1) -> 'why' aux_do(_) vp(P1),                        intent: go:intent(why, P1) }
 { rule: interrogative_clause(P1) -> 'how' aux_do(_) vp(P1),                        intent: go:intent(how, P1) }
 { rule: interrogative_clause(P1) -> 'when' vp(P1),                                 intent: go:intent(when, P1),             sense: $vp go:context_call(time, P1) }

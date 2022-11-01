@@ -23,7 +23,7 @@
 
 { rule: vp(P1) -> aux_do(_) vp(P1) }
 { rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:check($np, $event_ref) }
-{ rule: vp(P1) -> np(E1) aux_be(_) vp_without_object(P1, E1),                       sense: go:check($np, $vp_missing_np) }
+{ rule: vp(P1) -> np(E1) aux_be(_) vp_without_np(P1, E1),                       sense: go:check($np, $vp_missing_np) }
 { rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:check($np2, go:check($np1, $past_participle)) }
 { rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:check($np1, go:check($np2, $tv_infinitive))  }
 { rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:check($np1, go:check($np2, $past_participle)) }
@@ -32,16 +32,13 @@
 
 /* long-distance dependencies; category vp/np */
 
-{ rule: vp_without_object(P1, E1) -> tv(P1, E1, E2) np(E2),                                    sense: go:do($np, $tv) }
-{ rule: vp_without_object(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:check($np, $tv_infinitive) }
-{ rule: vp_without_object(P1, E1) -> np(E1) aux_be(_) tv_gerund(P1, E1, E2) np(E2),            sense: go:check($np1, go:check($np2, $tv_gerund)) }
-{ rule: vp_without_object(P1, E1) -> np(E1) copula(C1) pp(E1),                                 sense: go:check($np, $pp) }
-{ rule: vp_without_object(P1, E2) -> np(E2) aux_do(_) np(E1) tv_infinitive(P1, E1, E2),        sense: go:check($np1, go:check($np2, $tv_infinitive)) }
-{ rule: vp_without_object(P1, L1) -> np(E1) tell(P1) vp_without_object(P2, L1),                    sense: go:check($np, dom:tell(P1, $vp)) }
-{ rule: vp_without_object(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:check($np, $tv_infinitive) }
-{ rule: vp_without_object(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:check($np, $past_participle) }
-{ rule: vp_without_object(P1, E1) -> 'do' event_ref(P1) }
-{ rule: vp_without_object(P1, E1) -> 'doing' event_ref(P1) }
+{ rule: vp_without_np(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:check($np, $tv_infinitive) }
+{ rule: vp_without_np(P1, E1) -> aux_be(_) tv_gerund(P1, E1, E2) np(E2),                   sense: go:check($np, $tv_gerund) }
+{ rule: vp_without_np(P1, E1) -> copula(C1) pp(E1),                                        sense: $pp }
+    { rule: vp_without_np(P1, L1) -> np(E1) tell(P1) vp_without_np(P2, L1),                sense: go:check($np, dom:tell(P1, $vp)) }
+{ rule: vp_without_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:check($np, $tv_infinitive) }
+{ rule: vp_without_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:check($np, $past_participle) }
+{ rule: vp_without_np(P1, E1) -> 'doing' event_ref(P1) }
 
 
 /* relations */
@@ -64,7 +61,7 @@
 
 { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
 { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: go:check($np, $tv_gerund) }
-{ rule: relative_clause(E1) -> 'which' vp_without_object(P1, E1) }
+{ rule: relative_clause(E1) -> 'which' vp_without_np(P1, E1) }
 { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:check($np, $tv)  }
 
 

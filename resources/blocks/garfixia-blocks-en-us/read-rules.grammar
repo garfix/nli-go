@@ -32,13 +32,17 @@
 
 /* long-distance dependencies; category vp/np */
 
-{ rule: vp_without_np(P1, E1) -> np(E2) 'to' tv_infinitive(P1, E2, E1),                    sense: go:check($np, $tv_infinitive) }
 { rule: vp_without_np(P1, E1) -> aux_be(_) tv_gerund(P1, E1, E2) np(E2),                   sense: go:check($np, $tv_gerund) }
 { rule: vp_without_np(P1, E1) -> copula(C1) pp(E1),                                        sense: $pp }
-    { rule: vp_without_np(P1, L1) -> np(E1) tell(P1) vp_without_np(P2, L1),                sense: go:check($np, dom:tell(P1, $vp)) }
 { rule: vp_without_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:check($np, $tv_infinitive) }
 { rule: vp_without_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:check($np, $past_participle) }
 
+{ rule: vp_without_nps(P1, E1, E2) -> 'to' tv_infinitive(P1, E1, E2) }
+
+/* "I (told)" */
+{ rule: vp_without_np(P1, L1) -> np(E1) meta_verb_without_np(P1, L1),                       sense: go:check($np, $meta_verb_without_np) }
+/* "told you to pick up" */
+{ rule: meta_verb_without_np(P1, L1) -> meta_verb(P1, E1, P2) np(E1) vp_without_nps(P2, E1, L1),    sense: go:check($np, $vp_without_nps $meta_verb) }
 
 /* relations */
 

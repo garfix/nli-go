@@ -33,6 +33,7 @@
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
+{ rule: meta_verb(P1, E1, P2) -> 'told' }
 
 { rule: dont(P1) -> 'don' '\'' 't' }
 
@@ -50,7 +51,6 @@
 { rule: aux_have(A1) -> 'had' }
 { rule: aux_have(A1) -> 'have' }
 
-{ rule: tell(P1) -> 'told' }
 { rule: contain(P1) -> 'contain' }
 { rule: can(P1) -> 'can' }
 

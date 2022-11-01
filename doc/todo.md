@@ -104,10 +104,6 @@ The animation also reveals another problem: when the system builds a stack, it f
 
 * write a good tutorial
 
-## relations that I no longer use
-
-- go:isa(E, Sort)
-
 ## Rules
 
 Test if this works or make it work. Create a stack of current relations to be solved, and check if the stack already contains the bound relation.
@@ -123,8 +119,6 @@ Find a way to ensure completeness of information about all relations used in a s
 * convert number words into numbers
 
 ## Language features
-
-- Parse multiple sentences in a single line of input. 
 
 Agreement (see 2021-12-28)
 
@@ -153,8 +147,6 @@ replace np, nbar by dp, np
 
 ## Stuff I'm not happy with
 
-* the RelationTransformer; is only used in solutions, but should be removed from there as well, if possible
-* `intent` moet een tag worden
 * the entire function DialogContext::ReplaceVariable is bad; I should not change structs that are in the history list already  
 
 ## Interesting stuff

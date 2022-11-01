@@ -23,7 +23,7 @@
 
 { rule: vp(P1) -> aux_do(_) vp(P1) }
 { rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:check($np, $event_ref) }
-{ rule: vp(P1) -> np(E1) aux_be(_) vp_without_np(P1, E1),                       sense: go:check($np, $vp_missing_np) }
+{ rule: vp(P1) -> np(E1) aux_be(_) 'doing' event_ref(P1),                       sense: go:check($np, $event_ref) }
 { rule: vp(P1) -> np(E1) past_participle(P1, E2, E1) 'by' np(E2),               sense: go:check($np2, go:check($np1, $past_participle)) }
 { rule: vp(P1) -> np(E1) tv_infinitive(P1, E1, E2) np(E2),                      sense: go:check($np1, go:check($np2, $tv_infinitive))  }
 { rule: vp(P1) -> np(E2) 'be' past_participle(P1, E1, E2) 'by' np(E1),          sense: go:check($np1, go:check($np2, $past_participle)) }
@@ -38,7 +38,6 @@
     { rule: vp_without_np(P1, L1) -> np(E1) tell(P1) vp_without_np(P2, L1),                sense: go:check($np, dom:tell(P1, $vp)) }
 { rule: vp_without_np(P1, E2) -> aux_do(_) np(E1) tv_infinitive(P1, E1, E2),               sense: go:check($np, $tv_infinitive) }
 { rule: vp_without_np(P1, E2) -> aux_be(_) np(E1) past_participle(P1, E2, E1) 'by',        sense: go:check($np, $past_participle) }
-{ rule: vp_without_np(P1, E1) -> 'doing' event_ref(P1) }
 
 
 /* relations */

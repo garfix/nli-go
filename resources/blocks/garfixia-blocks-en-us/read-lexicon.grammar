@@ -33,9 +33,9 @@
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(E2, E1) }
 
-{ rule: meta_verb(P1) -> 'told',                                       sense: go:function(P1, E1, E2, Message, go:call(Message)) }
+{ rule: meta_verb(P1, E1, E2, P2) -> 'told',                           sense: go:function(Message, go:call(Message)) }
 /* example, not used by blocks */
-{ rule: meta_verb(P1, E1, E2, Message) -> 'promised',                  sense: go:function(P1, E1, E2, Message, dom:promise(E1, Message)) }
+{ rule: meta_verb(P1, E1, E2, P2) -> 'promised',                       sense: go:function(Message, dom:promise(E1, Message)) }
 
 { rule: dont(P1) -> 'don' '\'' 't' }
 

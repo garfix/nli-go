@@ -450,7 +450,7 @@ func (base *SystemFunctionBase) uuid(messenger api.SimpleMessenger, input mental
 }
 
 func (base *SystemFunctionBase) hasSort(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
-
+	// this function is used internally, so it needs to exist
 	return binding, false
 }
 

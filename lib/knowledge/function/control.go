@@ -105,6 +105,28 @@ func (base *SystemSolverFunctionBase) call(messenger api.ProcessMessenger, relat
 	return newBindings
 }
 
+// apply(function, arg1, arg2, ...)
+func (base *SystemSolverFunctionBase) apply(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	function := bound.Arguments[0].TermValueRelationSet[0]
+	arguments := bound.Arguments[1:]
+
+	functionBody := function.Arguments[len(function.Arguments)-1].TermValueRelationSet
+	functionVariables := function.Arguments[0 : len(function.Arguments)-1]
+
+	functionBinding := binding
+	for i, variable := range functionVariables {
+		functionBinding.Set(variable.TermValue, arguments[i])
+	}
+
+	boundFunctionBody := functionBody.BindSingle(functionBinding)
+
+	result := messenger.ExecuteChildStackFrame(boundFunctionBody, mentalese.InitBindingSet(binding))
+	return result
+}
+
 func (base *SystemSolverFunctionBase) ignore(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	child := relation.Arguments[0].TermValueRelationSet

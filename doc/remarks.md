@@ -1,3 +1,10 @@
+## 2022-11-01
+
+Island constraint https://www.ling.upenn.edu/courses/ling150/ch11.html
+
+ok:     np1 ... verb that [np1]
+not ok: np1 ... noun that [np1]
+
 ## 2022-10-31
 
 Replaced `go:quant_foreach()` by `go:do()`.

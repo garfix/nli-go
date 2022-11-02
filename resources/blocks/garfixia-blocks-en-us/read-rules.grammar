@@ -42,7 +42,7 @@
 /* "I (told)" */
 { rule: vp_without_np(P1, L1) -> np(E1) meta_verb_without_np(P1, L1),                       sense: go:check($np, $meta_verb_without_np) }
 /* "told you to pick up" */
-{ rule: meta_verb_without_np(P1, L1) -> meta_verb(P1, E1, P2) np(E1) vp_without_nps(P2, E1, L1),    sense: go:check($np, $vp_without_nps $meta_verb) }
+{ rule: meta_verb_without_np(P1, L1) -> meta_verb(_) np(E1) vp_without_nps(P2, E1, L1),    sense: go:check($np, go:apply($meta_verb, $vp_without_nps)) }
 
 /* relations */
 

@@ -81,6 +81,7 @@ const PredicateFindLocale = "go_find_locale"
 const PredicateSlot = "go_slot"
 const PredicateIsa = "go_isa"
 const PredicateHasSort = "go_has_sort"
+const PredicateApply = "go_apply"
 
 const PredicateRespond = "go_respond"
 const PredicateTokenize = "go_tokenize"

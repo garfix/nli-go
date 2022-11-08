@@ -11,6 +11,14 @@ The grammar framework allows you to create both semantic grammars (whose categor
 structure grammars (whose categories are syntactic categories). A combination of these types is not only possible but
 encouraged.
 
+## Difference with Montague grammar
+
+The reason I created a new grammar was that I was not happy with the complexity of Montague grammar. It requires a good understanding of lambda calculus to use it, and I think this is a hurdle to its adoption to the mainstream of programmers. Also, I found that the calculus is not necessary. What's essential about handling semantics is not lambda calculus, but the principle of compositionality. Entity grammar provides a different way of implementing this principle. One in which the lambda calculus is largely implicit. 
+
+A major difference between entity grammar and Montague grammar is that the latter involves the moving of senses, whereas the former just moves variables.
+
+I created entity grammar because I wanted the application of techniques like lambda calculus, gap threading, and feature unification to be a problem for the framework, not for the developer.
+
 ## General form
 
 The rules in this grammar have this form:

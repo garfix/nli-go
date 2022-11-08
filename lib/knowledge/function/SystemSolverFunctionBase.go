@@ -28,8 +28,6 @@ func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *men
 
 func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		// grammar
-		mentalese.PredicateEventReference: base.eventReference,
 
 		// quant
 		mentalese.PredicateCheck:            base.quantCheck,

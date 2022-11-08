@@ -1,5 +1,8 @@
 # Todo
 
+- implement reflective_reference()
+- debug: fold structures in/out
+
 ## new 
 
 - produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.

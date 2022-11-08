@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.16 agreement / more anaphora - 07-11-2022
+
+- add agreement checks to grammar, for example `go:agree(E1, gender, male)`
+- explicit representation of sorts `go:has_sort(E1, block)`
+- better anaophora resolution, also for events `go_reference()` `go_reflective_reference()` `go_labeled_reference()` `go_reference_slot()`
+- separated intent from sense
+
 ## 1.15 client / server - 12-03-2022
 
 * a permanent server keeps processes active

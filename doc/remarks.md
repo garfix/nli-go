@@ -1,3 +1,14 @@
+## 2022-11-11
+
+I started the "topics" section of documentation. Each topic contains:
+
+- linguistics: the natural language phenomenon we're trying to capture
+- considerations: any thoughts concerning the subject
+- implementation: how was the phenomenon implemented
+- code: how to code the system to use this
+
+First up: agreement, and it immediately caused several changes to be made. I introduced the difference between `go:agree` and `go:category`. And I had to move the agreement checker much further up the chain, because it depends on tags. Added auto `number` tagging.
+
 ## 2022-11-01
 
 Island constraint https://www.ling.upenn.edu/courses/ling150/ch11.html

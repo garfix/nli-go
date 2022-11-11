@@ -155,6 +155,19 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 				}
 			}
 
+			// number
+			number := ""
+			numberInBinding := mentalese.NewBinding()
+			numberInBinding.Set(mentalese.IdVar, id)
+
+			if entityInfo.Number.Predicate != "" {
+				numberOutBindings := resolver.solverAsync.FindFacts(factBase, entityInfo.Number, numberInBinding)
+				for _, numberOutBinding := range numberOutBindings.GetAll() {
+					value, _ := numberOutBinding.Get(mentalese.ValueVar)
+					number = value.TermValue
+				}
+			}
+
 			// sort because the resulting strings must not be in random order
 			sortedInfoTypes := []string{}
 			for infoType := range entityInfo.Knownby {
@@ -186,6 +199,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 			nameInformations = append(nameInformations, NameInformation{
 				Name:         name,
 				Gender:       gender,
+				Number:       number,
 				DatabaseName: factBase.GetName(),
 				EntityType:   id.TermSort,
 				SharedId:     id.TermValue,

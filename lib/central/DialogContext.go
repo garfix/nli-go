@@ -103,8 +103,8 @@ func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
 
 func (c *DialogContext) CheckAgreement(variable1 string, variable2 string) bool {
 
-	agreements1 := c.EntityTags.GetTagsByPredicate(variable1, mentalese.TagAgree)
-	agreements2 := c.EntityTags.GetTagsByPredicate(variable2, mentalese.TagAgree)
+	agreements1 := c.EntityTags.GetTagsByPredicate(variable1, mentalese.TagCategory)
+	agreements2 := c.EntityTags.GetTagsByPredicate(variable2, mentalese.TagCategory)
 
 	for _, tag1 := range agreements1 {
 		name1 := tag1.Arguments[1]

@@ -5,5 +5,6 @@ dom:parent(P, C) :- parent(P, C);
 dom:have_child(P, C) :- parent(P, C);
 dom:gender(A, male) :- person(A, _, 'M', _);
 dom:gender(A, female) :- person(A, _, 'F', _);
+dom:number(A, singular) :- none;
 dom:river(E1) :- river(E1);
 dom:loves(A, B) :- in_love_with(A, B);

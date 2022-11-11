@@ -4,6 +4,7 @@ package central
 type NameInformation struct {
 	Name         string
 	Gender       string
+	Number       string
 	DatabaseName string
 	EntityType   string
 	SharedId     string

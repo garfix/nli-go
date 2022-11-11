@@ -18,7 +18,6 @@ go:respond(Input) :-
 
         /* Stop at the first successfully processed parse tree */
         go:cut(1,
-            go:check_agreement(ParseTree)
             go:dialogize(ParseTree, DialogParseTree)
             go:ellipsize(DialogParseTree, CompletedParseTree)
             go:extract_root_clauses(CompletedParseTree, RootClauseTree)
@@ -56,6 +55,13 @@ go:process_root_clause(RootClauseTree, DialogBinding, Locale, Output, ContinueLo
     if [ResolvedOutput != ''] then
         [Output := ResolvedOutput]
         [ContinueLooking := false]
+        return
+    end
+
+    go:check_agreement(RootClauseTree, AgreementOutput)
+    if [AgreementOutput != ''] then
+        [Output := AgreementOutput]
+        [ContinueLooking := true]
         return
     end
 

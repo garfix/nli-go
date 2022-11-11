@@ -40,6 +40,14 @@ func (node ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTre
 	}
 }
 
+func (node ParseTreeNode) GetVariablesRecursive() []string {
+	variables := node.Rule.EntityVariables[0]
+	for _, child := range node.Constituents {
+		variables = append(variables, child.GetVariablesRecursive()...)
+	}
+	return variables
+}
+
 func (node ParseTreeNode) String() string {
 
 	body := ""

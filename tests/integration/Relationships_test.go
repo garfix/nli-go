@@ -49,6 +49,9 @@ func TestRelationships(t *testing.T) {
 		// reflective pronouns
 		{"Is Jacqueline de Boer in love with herself?", "No"},
 		{"Is Henk Smit in love with himself?", "Yes"},
+
+		// number agreement mismatch
+		{"Are Jacqueline de Boer married to a man?", "Agreement mismatch: plural / singular"},
 	}
 
 	for _, test := range tests {

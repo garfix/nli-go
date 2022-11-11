@@ -213,21 +213,23 @@ func (base *LanguageBase) checkAgreement(messenger api.ProcessMessenger, input m
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "j", base.log) {
+	if !Validate(bound, "jv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	var parseTree mentalese.ParseTreeNode
+	var parseTree *mentalese.ParseTreeNode
 
-	parseTree = bound.Arguments[0].GetBinaryValue().(mentalese.ParseTreeNode)
+	parseTree = bound.Arguments[0].GetBinaryValue().(*mentalese.ParseTreeNode)
+	outputVar := input.Arguments[1].TermValue
 
-	agreementChecker := parse.NewAgreementChecker()
-	agreed := agreementChecker.CheckAgreement(&parseTree)
-	if agreed {
-		return mentalese.InitBindingSet(binding)
-	} else {
-		return mentalese.NewBindingSet()
-	}
+	agreementChecker := central.NewAgreementChecker()
+	_, output := agreementChecker.CheckAgreement(
+		parseTree,
+		base.dialogContext.EntityTags,
+	)
+
+	binding.Set(outputVar, mentalese.NewTermString(output))
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *LanguageBase) ellipsize(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -507,8 +509,9 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, input men
 
 	sorts := base.dialogContext.EntitySorts
 
-	entityIds, nameNotFound, genderTags := base.findNames(messenger, names, *sorts)
+	entityIds, nameNotFound, genderTags, numberTags := base.findNames(messenger, names, *sorts)
 	base.dialogContext.EntityTags.AddTags(genderTags)
+	base.dialogContext.EntityTags.AddTags(numberTags)
 
 	requestBinding := dialogBinding.Merge(entityIds)
 
@@ -555,11 +558,12 @@ func (base *LanguageBase) resolveAnaphora(messenger api.ProcessMessenger, input 
 	return mentalese.InitBindingSet(newBinding)
 }
 
-func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.EntitySorts) (mentalese.Binding, string, mentalese.RelationSet) {
+func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.EntitySorts) (mentalese.Binding, string, mentalese.RelationSet, mentalese.RelationSet) {
 
 	entityIds := mentalese.NewBinding()
 	nameNotFound := ""
 	genderTags := mentalese.RelationSet{}
+	numberTags := mentalese.RelationSet{}
 
 	// look up entity ids by name
 	entityIds = mentalese.NewBinding()
@@ -594,10 +598,17 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		for _, nameInformation := range nameInformations {
 			entityIds.Set(variable, mentalese.NewTermId(nameInformation.SharedId, nameInformation.EntityType))
 			if nameInformation.Gender != "" {
-				genderTags = append(genderTags, mentalese.NewRelation(false, mentalese.TagAgree, []mentalese.Term{
+				genderTags = append(genderTags, mentalese.NewRelation(false, mentalese.TagCategory, []mentalese.Term{
 					mentalese.NewTermVariable(variable),
 					mentalese.NewTermAtom(mentalese.AtomGender),
 					mentalese.NewTermAtom(nameInformation.Gender),
+				}))
+			}
+			if nameInformation.Number != "" {
+				numberTags = append(numberTags, mentalese.NewRelation(false, mentalese.TagCategory, []mentalese.Term{
+					mentalese.NewTermVariable(variable),
+					mentalese.NewTermAtom(mentalese.AtomNumber),
+					mentalese.NewTermAtom(nameInformation.Number),
 				}))
 			}
 		}
@@ -605,7 +616,7 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 
 next:
 
-	return entityIds, nameNotFound, genderTags
+	return entityIds, nameNotFound, genderTags, numberTags
 }
 
 func (base *LanguageBase) detectIntent(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

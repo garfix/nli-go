@@ -11,7 +11,7 @@ So this won't work
 
 In stead, we use this
 
-    { rule: pronoun(E1) -> 'he',    tag: go:category(E1, gender, masculin) }
+    { rule: pronoun(E1) -> 'he',    tag: go:category(E1, gender, masculine) }
     { rule: pronoun(E1) -> 'it',    tag: go:category(E1, gender, neuter) }
 
 In practise you would use both, the tag for agreement, the sense to restrict the query.

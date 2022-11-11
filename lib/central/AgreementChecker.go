@@ -38,7 +38,7 @@ func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList
 	entityVariables := root.GetVariablesRecursive()
 
 	// collect categories for all entities,and make sure they don't conflict
-	agree := c.checkWithinEntityAgreement1(&categories, entityVariables, tagList)
+	agree := c.checkWithinEntityAgreement(&categories, entityVariables, tagList)
 	if !agree {
 		return false, ""
 	}
@@ -49,7 +49,7 @@ func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList
 	return agree, output
 }
 
-func (c *AgreementChecker) checkWithinEntityAgreement1(categories *Categories, entityVariables []string, tagList *TagList) bool {
+func (c *AgreementChecker) checkWithinEntityAgreement(categories *Categories, entityVariables []string, tagList *TagList) bool {
 	for _, variable := range entityVariables {
 		for _, tag := range tagList.GetTagsByPredicate(variable, mentalese.TagCategory) {
 			agreementType := tag.Arguments[1].TermValue
@@ -58,31 +58,6 @@ func (c *AgreementChecker) checkWithinEntityAgreement1(categories *Categories, e
 			if !agreed {
 				return false
 			}
-		}
-	}
-
-	return true
-}
-
-func (c *AgreementChecker) checkWithinEntityAgreement(node *mentalese.ParseTreeNode, categories *Categories) bool {
-
-	for _, tag := range node.Rule.Tag {
-		if tag.Predicate == mentalese.TagCategory {
-			variable := tag.Arguments[0].TermValue
-			agreementType := tag.Arguments[1].TermValue
-			agreementValue := tag.Arguments[2]
-
-			agreed := c.matchCategories(categories, variable, agreementType, agreementValue)
-			if !agreed {
-				return false
-			}
-		}
-	}
-
-	for _, child := range node.Constituents {
-		agreed := c.checkWithinEntityAgreement(child, categories)
-		if !agreed {
-			return false
 		}
 	}
 

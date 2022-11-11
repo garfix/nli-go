@@ -189,8 +189,6 @@ The `find` combines the `quant` or `quant`s with the sense of the verb. `find` i
 
 Verb phrases can have different persons (first, second, third), pluralization, tenses (past, present, future), modals (can, should) and passivization. The word forms for the verb are different in these cases. Auxiliaries are used to specify past perfect. 
 
-NLI-Go does not have a way to constrain agreement between NP and VP.
-
 ## Adverb phrases
 
 Phrases that modify a verb are rarely used in an NLI. But it is possible.

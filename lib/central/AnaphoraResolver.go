@@ -314,7 +314,10 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		// there may be 1..n groups (bindings)
 		referentVariable := group.Variable
 
-		if !resolver.dialogContext.CheckAgreement(variable, referentVariable) {
+		agreementChecker := NewAgreementChecker()
+
+		agree, _, _ := agreementChecker.CheckForCategoryConflictBetween(variable, referentVariable, resolver.dialogContext.EntityTags)
+		if !agree {
 			continue
 		}
 

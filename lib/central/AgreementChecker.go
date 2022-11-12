@@ -5,103 +5,99 @@ import "nli-go/lib/mentalese"
 type AgreementChecker struct {
 }
 
-type Categories map[string]map[string]mentalese.Term
-
-func (c *Categories) Get(entityVariable string) map[string]mentalese.Term {
-	categories, found := (*c)[entityVariable]
-	if !found {
-		categories = map[string]mentalese.Term{}
-		(*c)[entityVariable] = categories
-	}
-	return categories
-}
-
-func (c *Categories) Set(entityVariable string, agreementType string, agreementValue mentalese.Term) {
-	_, found := (*c)[entityVariable]
-	if !found {
-		categories := map[string]mentalese.Term{}
-		(*c)[entityVariable] = categories
-	}
-	(*c)[entityVariable][agreementType] = agreementValue
-}
-
-// --------------------------------
-
 func NewAgreementChecker() *AgreementChecker {
 	return &AgreementChecker{}
 }
 
 func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList *TagList) (bool, string) {
-	categories := Categories{}
-	output := ""
-
-	entityVariables := root.GetVariablesRecursive()
-
-	// collect categories for all entities,and make sure they don't conflict
-	agree := c.checkWithinEntityAgreement(&categories, entityVariables, tagList)
-	if !agree {
-		return false, ""
+	for _, variable := range root.GetVariablesRecursive() {
+		// check for categories with multiple, conflicting values
+		conflict, _, _ := c.CheckForCategoryConflictWithin(variable, tagList)
+		if !conflict {
+			return true, ""
+		}
 	}
 
 	// check between-entity agreements
-	agree, output = c.checkBetweenEntityAgreement(root, &categories)
-
-	return agree, output
-}
-
-func (c *AgreementChecker) checkWithinEntityAgreement(categories *Categories, entityVariables []string, tagList *TagList) bool {
-	for _, variable := range entityVariables {
-		for _, tag := range tagList.GetTagsByPredicate(variable, mentalese.TagCategory) {
-			agreementType := tag.Arguments[1].TermValue
-			agreementValue := tag.Arguments[2]
-			agreed := c.matchCategories(categories, variable, agreementType, agreementValue)
-			if !agreed {
-				return false
-			}
-		}
+	agree, _, values := c.checkAgreementInTree(root, tagList)
+	if !agree {
+		return false, "Agreement mismatch: " + values[0].TermValue + " / " + values[1].TermValue
 	}
 
-	return true
+	return true, ""
 }
 
-func (c *AgreementChecker) matchCategories(categories *Categories, variable string, agreementType string, agreementValue mentalese.Term) bool {
-	entityCategories := categories.Get(variable)
-	existingValue, found := entityCategories[agreementType]
-	if found {
-		if !existingValue.Equals(agreementValue) {
-			return false
-		}
-	} else {
-		categories.Set(variable, agreementType, agreementValue)
-	}
-
-	return true
-}
-
-func (c *AgreementChecker) checkBetweenEntityAgreement(node *mentalese.ParseTreeNode, categories *Categories) (bool, string) {
+func (c *AgreementChecker) checkAgreementInTree(node *mentalese.ParseTreeNode, tagList *TagList) (bool, string, []mentalese.Term) {
 
 	for _, tag := range node.Rule.Tag {
 		if tag.Predicate == mentalese.TagAgree {
 			variable1 := tag.Arguments[0].TermValue
 			variable2 := tag.Arguments[1].TermValue
-			v1Categories := categories.Get(variable1)
-			v2Categories := categories.Get(variable2)
+			v1Tags := tagList.GetTagsByPredicate(variable1, mentalese.TagCategory)
+			v2Tags := tagList.GetTagsByPredicate(variable2, mentalese.TagCategory)
 
-			for cat1, val1 := range v1Categories {
-				val2, found := v2Categories[cat1]
-				if found && !val2.Equals(val1) {
-					return false, "Agreement mismatch: " + val1.TermValue + " / " + val2.TermValue
+			for _, tag1 := range v1Tags {
+				cat1 := tag1.Arguments[1]
+				value1 := tag1.Arguments[2]
+				for _, tag2 := range v2Tags {
+					cat2 := tag2.Arguments[1]
+					value2 := tag2.Arguments[2]
+
+					if cat1.Equals(cat2) {
+						if !value1.Equals(value2) {
+							return false, cat1.TermValue, []mentalese.Term{value1, value2}
+						}
+					}
 				}
 			}
 		}
 	}
 
 	for _, child := range node.Constituents {
-		agreed, childOutput := c.checkBetweenEntityAgreement(child, categories)
+		agreed, childCat, childValues := c.checkAgreementInTree(child, tagList)
 		if !agreed {
-			return false, childOutput
+			return false, childCat, childValues
 		}
 	}
 
-	return true, ""
+	return true, "", []mentalese.Term{}
+}
+
+func (c *AgreementChecker) CheckForCategoryConflictWithin(variable string, tagList *TagList) (bool, string, []mentalese.Term) {
+
+	categoryTags := tagList.GetTagsByPredicate(variable, mentalese.TagCategory)
+	categories := map[string]mentalese.Term{}
+
+	for _, tag := range categoryTags {
+		cat := tag.Arguments[1].TermValue
+		value := tag.Arguments[2]
+		existingValue, found := categories[cat]
+		if found && !existingValue.Equals(value) {
+			return false, cat, []mentalese.Term{existingValue, value}
+		}
+	}
+
+	return true, "", []mentalese.Term{}
+}
+
+func (c *AgreementChecker) CheckForCategoryConflictBetween(variable1 string, variable2 string, tagList *TagList) (bool, string, []mentalese.Term) {
+
+	categoryTags1 := tagList.GetTagsByPredicate(variable1, mentalese.TagCategory)
+	categoryTags2 := tagList.GetTagsByPredicate(variable2, mentalese.TagCategory)
+
+	for _, tag1 := range categoryTags1 {
+		cat1 := tag1.Arguments[1]
+		value1 := tag1.Arguments[2]
+		for _, tag2 := range categoryTags2 {
+			cat2 := tag2.Arguments[1]
+			value2 := tag2.Arguments[2]
+			if cat1.Equals(cat2) {
+				if !value1.Equals(value2) {
+					return false, cat1.TermValue, []mentalese.Term{value1, value2}
+				}
+			}
+		}
+	}
+
+	return true, "", []mentalese.Term{}
 }

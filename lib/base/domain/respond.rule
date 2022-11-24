@@ -1,9 +1,9 @@
 go:tell(Input) :-
     go:create_goal(
-        go:respond(Input)
+        go:reply(Input)
     );
 
-go:respond(Input) :-
+go:respond111(Input) :-
 
     [:Output := '']
 

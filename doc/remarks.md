@@ -1,3 +1,9 @@
+## 2022-11-13
+
+I will rewrite `respond.rule` to normal Go code. The reason: at the moment some dependencies are passed explicitly, but others remain hidden, and *dependencies should be visible!* Very important, because you want to know whether you can move a processing step to a different position. If you don't have the dependencies clear, you get unexpected effects.
+
+Once it's rewritten to Go, DialogContext should not be changed during the processing of the sentence. Only when the sentence is done, can the context be updated.
+
 ## 2022-11-11
 
 I started the "topics" section of documentation. Each topic contains:

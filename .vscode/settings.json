@@ -1,4 +1,7 @@
 {
     "go.gopath": "/data/go",
-	"go.goroot": "/snap/go/current"
+	"go.goroot": "/snap/go/current",
+    "go.testFlags": [
+        "-count=1"
+    ]
 }

@@ -2,17 +2,6 @@
 
 Predicates that are primarily used as part of the sense of grammar rules.
 
-## Intent
-
-This relation is used by solutions to recognize types of problems.
-
-    go:intent(Atom, V...)
-    
-* `A`: an atom
-* `V`: zero or more variables    
-    
-An intent function has no effect; it always succeeds.    
-
 ## Do
 
 Finds the entities specified by a `quant`, assign each of them in turn to a variable and execute `Scope`.

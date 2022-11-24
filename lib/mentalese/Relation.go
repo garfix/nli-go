@@ -85,7 +85,6 @@ const PredicateApply = "go_apply"
 const PredicateRespond = "go_respond"
 const PredicateDialogGetCenter = "go_dialog_get_center"
 const PredicateTranslate = "go_translate"
-
 const PredicateUserSelect = "go_user_select"
 
 const PredicateAlreadyGenerated = "go_already_generated"
@@ -94,11 +93,6 @@ const PredicateContextSet = "go_context_set"
 const PredicateContextExtend = "go_context_extend"
 const PredicateContextCall = "go_context_call"
 const PredicateContextClear = "go_context_clear"
-
-const PredicateDialogReadBindings = "go_dialog_read_bindings"
-const PredicateDialogWriteBindings = "go_dialog_write_bindings"
-const PredicateDialogAddResponseClause = "go_dialog_add_response_clause"
-const PredicateDialogDecreaseActivation = "go_dialog_decrease_activation"
 
 // internal relational representations of syntactic structures
 const PredicateIncludeRelations = "$go$_include_relations"

@@ -37,14 +37,3 @@ Executes a deictic center (a relation set) from the dialog context.
 * DeicticCenter a deictic center (the atom `time` or `place`)
 * Event: a variable that represent an event that the modifier attaches to
 
-## Dialog read bindings
-
-Reads the entity ids of the discourse into the current request.
-
-    go:dialog_write_bindings
-
-## Dialog write bindings
-
-Writes the entity ids of the current request back into the discourse.
-
-    go:dialog_write_bindings

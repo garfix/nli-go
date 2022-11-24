@@ -58,15 +58,11 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateSlot: base.slot,
 
 		// dialog context
-		mentalese.PredicateContextSet:               base.contextSet,
-		mentalese.PredicateContextExtend:            base.contextExtend,
-		mentalese.PredicateContextClear:             base.contextClear,
-		mentalese.PredicateContextCall:              base.contextCall,
-		mentalese.PredicateDialogReadBindings:       base.dialogReadBindings,
-		mentalese.PredicateDialogWriteBindings:      base.dialogWriteBindings,
-		mentalese.PredicateDialogAddResponseClause:  base.dialogAddResponseClause,
-		mentalese.PredicateDialogDecreaseActivation: base.dialogDecreaseActivation,
-		mentalese.PredicateCreateGoal:               base.createGoal,
+		mentalese.PredicateContextSet:    base.contextSet,
+		mentalese.PredicateContextExtend: base.contextExtend,
+		mentalese.PredicateContextClear:  base.contextClear,
+		mentalese.PredicateContextCall:   base.contextCall,
+		mentalese.PredicateCreateGoal:    base.createGoal,
 
 		// list
 		mentalese.PredicateListOrder:       base.listOrder,

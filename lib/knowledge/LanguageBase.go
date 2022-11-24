@@ -73,7 +73,9 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 		messenger.SetProcessSlot("locale", mentalese.NewTermString(locale))
 		dialogBinding := base.dialogContext.EntityBindings.Copy()
-		tokens := base.tokenize(locale, rawInput)
+
+		tokens := grammar.GetTokenizer().Process(rawInput)
+		base.log.AddProduction("Tokens", strings.Join(tokens, " "))
 
 		parser := parse.NewParser(grammar.GetReadRules(), base.log)
 		parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
@@ -114,29 +116,14 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 				break
 			}
 		}
-
 	}
 
-	uuid := common.CreateUuid()
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
-			mentalese.NewTermRelationSet(
-				mentalese.RelationSet{
-					mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
-						mentalese.NewTermId(uuid, "entity"),
-						mentalese.NewTermString(output),
-					}),
-				}),
-		}),
-	}
-
-	bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-	return bindings
+	return base.waitForPrint(messenger, output)
 }
 
 func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, dialogBinding mentalese.Binding, locale string, rawInput string) (string, bool) {
-	rootClauseOutput := ""
 
+	rootClauseOutput := ""
 	clauseList := base.dialogContext.ClauseList
 	entities := mentalese.ExtractEntities(rootClauseTree)
 	clause := mentalese.NewClause(rootClauseTree, false, entities)
@@ -238,6 +225,23 @@ func (base *LanguageBase) executeIntent(messenger api.ProcessMessenger, resolved
 	}
 
 	return output, accepted, acceptedBindings
+}
+
+func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) mentalese.BindingSet {
+	uuid := common.CreateUuid()
+	set := mentalese.RelationSet{
+		mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
+			mentalese.NewTermRelationSet(
+				mentalese.RelationSet{
+					mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
+						mentalese.NewTermId(uuid, "entity"),
+						mentalese.NewTermString(output),
+					}),
+				}),
+		}),
+	}
+	bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	return bindings
 }
 
 func (base *LanguageBase) dialogAddResponseClause(essentialResponseBindings mentalese.BindingSet) {
@@ -397,20 +401,6 @@ func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClaus
 	return requestBinding, nameNotFound
 }
 
-func (base *LanguageBase) tokenize(locale string, rawInput string) []string {
-
-	grammar, found := base.getGrammar(locale)
-	if !found {
-		return []string{}
-	}
-
-	tokens := grammar.GetTokenizer().Process(rawInput)
-
-	base.log.AddProduction("Tokens", strings.Join(tokens, " "))
-
-	return tokens
-}
-
 func (base *LanguageBase) getGrammar(locale string) (parse.Grammar, bool) {
 
 	grammar := parse.Grammar{}
@@ -424,39 +414,6 @@ func (base *LanguageBase) getGrammar(locale string) (parse.Grammar, bool) {
 	}
 
 	return grammar, found
-}
-
-func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	if !Validate(input, "v", base.log) {
-		return mentalese.NewBindingSet()
-	}
-
-	centerVar := input.Arguments[0].TermValue
-
-	center := mentalese.NewTermAtom("none")
-	centerVariable := base.dialogContext.DeicticCenter.GetCenter()
-	if centerVariable != "" {
-		value, found := base.dialogContext.EntityBindings.Get(centerVariable)
-		if found {
-			center = value
-		}
-	}
-
-	newBindings := mentalese.NewBindingSet()
-	if center.IsList() {
-		for _, item := range center.TermValueList {
-			newBinding := mentalese.NewBinding()
-			newBinding.Set(centerVar, item)
-			newBindings.Add(newBinding)
-		}
-	} else {
-		newBinding := mentalese.NewBinding()
-		newBinding.Set(centerVar, center)
-		newBindings.Add(newBinding)
-	}
-
-	return newBindings
 }
 
 func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mentalese.Binding, sorts mentalese.EntitySorts) (mentalese.Binding, string, mentalese.RelationSet, mentalese.RelationSet) {
@@ -517,6 +474,43 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 next:
 
 	return entityIds, nameNotFound, genderTags, numberTags
+}
+
+//
+// user functions
+//
+
+func (base *LanguageBase) dialogGetCenter(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	if !Validate(input, "v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	centerVar := input.Arguments[0].TermValue
+
+	center := mentalese.NewTermAtom("none")
+	centerVariable := base.dialogContext.DeicticCenter.GetCenter()
+	if centerVariable != "" {
+		value, found := base.dialogContext.EntityBindings.Get(centerVariable)
+		if found {
+			center = value
+		}
+	}
+
+	newBindings := mentalese.NewBindingSet()
+	if center.IsList() {
+		for _, item := range center.TermValueList {
+			newBinding := mentalese.NewBinding()
+			newBinding.Set(centerVar, item)
+			newBindings.Add(newBinding)
+		}
+	} else {
+		newBinding := mentalese.NewBinding()
+		newBinding.Set(centerVar, center)
+		newBindings.Add(newBinding)
+	}
+
+	return newBindings
 }
 
 func (base *LanguageBase) translate(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {

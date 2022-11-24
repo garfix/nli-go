@@ -309,7 +309,8 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 
-	for _, group := range resolver.dialogContext.GetAnaphoraQueue() {
+	groups := resolver.dialogContext.GetAnaphoraQueue()
+	for _, group := range groups {
 
 		// there may be 1..n groups (bindings)
 		referentVariable := group.Variable

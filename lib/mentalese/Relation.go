@@ -82,7 +82,6 @@ const PredicateIsa = "go_isa"
 const PredicateHasSort = "go_has_sort"
 const PredicateApply = "go_apply"
 
-const PredicateReply = "go_reply"
 const PredicateRespond = "go_respond"
 const PredicateTokenize = "go_tokenize"
 const PredicateParse = "go_parse"

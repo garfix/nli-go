@@ -50,7 +50,7 @@ func NewLanguageBase(
 
 func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 	return map[string]api.SolverFunction{
-		mentalese.PredicateReply:               base.reply,
+		mentalese.PredicateRespond:             base.respond,
 		mentalese.PredicateFindLocale:          base.findLocale,
 		mentalese.PredicateTokenize:            base.tokenize,
 		mentalese.PredicateParse:               base.parse,

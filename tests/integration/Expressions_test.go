@@ -10,7 +10,7 @@ import (
 func TestExpressions(t *testing.T) {
 
 	log := common.NewSystemLog()
-	system := global.NewSystem(common.Dir() + "/../../resources/expressions", "", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir()+"/../../resources/expressions", "", common.Dir()+"/../../var", log)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())
@@ -18,8 +18,8 @@ func TestExpressions(t *testing.T) {
 	}
 
 	var tests = []struct {
-		question      string
-		answer        string
+		question string
+		answer   string
 	}{
 		{"What is three plus four minus five", "2"},
 		{"What is 3 plus 4 minus 5", "2"},

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (base *LanguageBase) reply(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := input.BindSingle(binding)
 
 	if !Validate(bound, "s", base.log) {
@@ -32,6 +32,7 @@ func (base *LanguageBase) reply(messenger api.ProcessMessenger, input mentalese.
 		locale = grammar.GetLocale()
 
 		//     go:slot(locale, Locale)
+		messenger.SetProcessSlot("locale", mentalese.NewTermString(locale))
 		//     go:dialog_read_bindings(DialogBinding)
 		dialogBinding := base.dialogContext.EntityBindings.Copy()
 		//     go:tokenize(Locale, Input, InTokens)
@@ -65,7 +66,7 @@ func (base *LanguageBase) reply(messenger api.ProcessMessenger, input mentalese.
 
 			//         go:extract_root_clauses(CompletedParseTree, RootClauseTree)
 			rootClauseExtracter := parse.NewRootClauseExtracter()
-			rootClauses := rootClauseExtracter.Extract(&parseTree)
+			rootClauses := rootClauseExtracter.Extract(&ellipsizedParseTree)
 
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
@@ -105,8 +106,8 @@ func (base *LanguageBase) reply(messenger api.ProcessMessenger, input mentalese.
 			mentalese.NewTermRelationSet(
 				mentalese.RelationSet{
 					mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
-						mentalese.NewTermVariable(uuid),
-						mentalese.NewTermVariable(output),
+						mentalese.NewTermId(uuid, "entity"),
+						mentalese.NewTermString(output),
 					}),
 				}),
 		}),
@@ -118,7 +119,6 @@ func (base *LanguageBase) reply(messenger api.ProcessMessenger, input mentalese.
 
 func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, dialogBinding mentalese.Binding, locale string, rawInput string) (string, bool) {
 	rootClauseOutput := ""
-	continueLooking := false
 
 	// go:dialog_add_root_clause(RootClauseTree, false, ClauseVariable)
 	clauseList := base.dialogContext.ClauseList
@@ -208,10 +208,10 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 	// todo same variable as above?
 	intentRelations2 := base.dialogContext.ClauseList.GetLastClause().GetIntents()
 
-	conditionSubject := append(requestRelations, intentRelations2...)
+	conditionSubject := append(resolvedRequest, intentRelations2...)
 	intents := base.answerer.FindIntents(conditionSubject)
 
-	anOutput, acceptedIntent, acceptedBindings := base.executeIntent(resolvedRequest, resolvedBindings, intents)
+	anOutput, acceptedIntent, acceptedBindings := base.executeIntent(messenger, resolvedRequest, resolvedBindings, intents)
 	if anOutput != "" {
 		return anOutput, false
 	}
@@ -229,7 +229,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 	answerRelations, essentialBindings := base.createAnswer1(messenger, acceptedIntent, responseBindings, responseIndex)
 
 	// go:dialog_write_bindings(ResponseBindings)
-	base.dialogWriteBindings1(resolvedBindings)
+	base.dialogWriteBindings1(responseBindings)
 
 	// go:dialog_write_bindings(EssentialBindings)
 	base.dialogWriteBindings1(essentialBindings)
@@ -366,7 +366,7 @@ func (base *LanguageBase) findResponse1(messenger api.ProcessMessenger, intent m
 				// newBinding.Set(responseBindingsVar, mentalese.NewTermBinary(responseBindings.ToRaw()))
 				// newBinding.Set(responseIndexVar, mentalese.NewTermString(strconv.Itoa(index)))
 				// return mentalese.InitBindingSet(newBinding)
-				return resultBindings, index, true
+				return responseBindings, index, true
 			}
 		}
 	}
@@ -496,14 +496,14 @@ func (base *LanguageBase) updateCenter() {
 	for _, entity := range c.Functions {
 		if previousCenter != "" {
 
-			panic("this shouldn't work ?!")
+			// print("this shouldn't work ?!")
 
 			// a := getValue(entity.DiscourseVariable, binding)
 			// b := getValue(previousCenter, binding)
 			// if a == b {
-			// 	priority = priorities["previousCenter"]
-			// 	center = entity.DiscourseVariable
-			// 	continue
+			priority = priorities["previousCenter"]
+			center = entity.DiscourseVariable
+			continue
 			// }
 		}
 		prio, found := priorities[entity.SyntacticFunction]

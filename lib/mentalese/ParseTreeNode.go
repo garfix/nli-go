@@ -7,15 +7,15 @@ type ParseTreeNode struct {
 	Rule         GrammarRule
 }
 
-func (node ParseTreeNode) IsLeafNode() bool {
+func (node *ParseTreeNode) IsLeafNode() bool {
 	return len(node.Constituents) == 0
 }
 
-func (node ParseTreeNode) GetConstituents() []*ParseTreeNode {
+func (node *ParseTreeNode) GetConstituents() []*ParseTreeNode {
 	return node.Constituents
 }
 
-func (node ParseTreeNode) PartialCopy() ParseTreeNode {
+func (node *ParseTreeNode) PartialCopy() ParseTreeNode {
 	return ParseTreeNode{
 		Category:     node.Category,
 		Constituents: []*ParseTreeNode{},
@@ -24,7 +24,7 @@ func (node ParseTreeNode) PartialCopy() ParseTreeNode {
 	}
 }
 
-func (node ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTreeNode {
+func (node *ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTreeNode {
 	constituents := []*ParseTreeNode{}
 	for _, constituent := range node.Constituents {
 		newConstituent := constituent.ReplaceVariable(fromVar, toVar)
@@ -40,7 +40,7 @@ func (node ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTre
 	}
 }
 
-func (node ParseTreeNode) GetVariablesRecursive() []string {
+func (node *ParseTreeNode) GetVariablesRecursive() []string {
 	variables := node.Rule.EntityVariables[0]
 	for _, child := range node.Constituents {
 		variables = append(variables, child.GetVariablesRecursive()...)
@@ -48,7 +48,7 @@ func (node ParseTreeNode) GetVariablesRecursive() []string {
 	return variables
 }
 
-func (node ParseTreeNode) String() string {
+func (node *ParseTreeNode) String() string {
 
 	body := ""
 
@@ -65,7 +65,7 @@ func (node ParseTreeNode) String() string {
 	return "[" + node.Category + " " + body + "]"
 }
 
-func (node ParseTreeNode) IndentedString(indent string) string {
+func (node *ParseTreeNode) IndentedString(indent string) string {
 
 	body := ""
 

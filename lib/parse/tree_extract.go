@@ -9,7 +9,7 @@ type treeExtracter struct {
 	chart *chart
 }
 
-func ExtractTreeRoots(chart *chart) []mentalese.ParseTreeNode {
+func ExtractTreeRoots(chart *chart) []*mentalese.ParseTreeNode {
 
 	extracter := &treeExtracter{
 		trees: []*mentalese.ParseTreeNode{},
@@ -19,10 +19,10 @@ func ExtractTreeRoots(chart *chart) []mentalese.ParseTreeNode {
 	extracter.extract()
 
 	// the sentence node is the first child
-	roots := []mentalese.ParseTreeNode{}
+	roots := []*mentalese.ParseTreeNode{}
 	for _, root := range extracter.trees {
 		if len(root.Constituents) > 0 {
-			roots = append(roots, *root.Constituents[0])
+			roots = append(roots, root.Constituents[0])
 		}
 	}
 
@@ -45,12 +45,12 @@ func (ex *treeExtracter) extract() {
 	tree := treeInProgress{
 		root: rootNode,
 		path: []workingStep{
-		{
-			states:      []chartState{completedGammaState},
-			nodes:       []*mentalese.ParseTreeNode{rootNode },
-			stateIndex: 0,
-		},
-	}}
+			{
+				states:     []chartState{completedGammaState},
+				nodes:      []*mentalese.ParseTreeNode{rootNode},
+				stateIndex: 0,
+			},
+		}}
 
 	ex.next(tree)
 }
@@ -167,4 +167,3 @@ done:
 
 	return lastIndex, nextWord
 }
-

@@ -47,15 +47,15 @@ func TestRelationizer(t *testing.T) {
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
 	parseTrees := parser.Parse([]string{"the", "book", "falls", "."}, "s", []string{"S"})
-	parseTree := dialogizer.Dialogize(&parseTrees[0])
-	result := relationizer.Relationize(*parseTree, []string{"S"})
+	parseTree := dialogizer.Dialogize(parseTrees[0])
+	result := relationizer.Relationize(parseTree, []string{"S"})
 
 	want := "isa(Sentence$1, fall) subject(Sentence$1, E$1) isa(D$1, the) isa(E$1, book) determiner(E$1, D$1) declaration(Sentence$1)"
 	if result.String() != want {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	result = relationizer.Relationize(*parseTree, []string{"S"})
+	result = relationizer.Relationize(parseTree, []string{"S"})
 
 	want = "isa(Sentence$1, fall) subject(Sentence$1, E$1) isa(D$1, the) isa(E$1, book) determiner(E$1, D$1) declaration(Sentence$1)"
 	if result.String() != want {
@@ -63,8 +63,8 @@ func TestRelationizer(t *testing.T) {
 	}
 
 	parseTrees2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."}, "s", []string{"S"})
-	parseTree2 := dialogizer.Dialogize(&parseTrees2[0])
-	result2 := relationizer.Relationize(*parseTree2, []string{"S"})
+	parseTree2 := dialogizer.Dialogize(parseTrees2[0])
+	result2 := relationizer.Relationize(parseTree2, []string{"S"})
 
 	want2 := "isa(Sentence$2, fall) isa(P$2, on) isa(D$3, the) isa(P$1, ground) determiner(P$1, D$3) case(P$1, P$2) mod(Sentence$2, P$1) subject(Sentence$2, E$2) isa(D$2, the) isa(E$2, book) determiner(E$2, D$2) declaration(Sentence$2)"
 

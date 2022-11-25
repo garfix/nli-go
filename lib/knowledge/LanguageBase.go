@@ -85,7 +85,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			base.log.AddProduction("Parse tree", parseTree.IndentedString(""))
 
-			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(&parseTree)
+			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
@@ -148,7 +148,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 		return rootClauseOutput, true
 	}
 
-	requestRelations := base.relationizer.Relationize(*rootClauseTree, []string{"S"})
+	requestRelations := base.relationizer.Relationize(rootClauseTree, []string{"S"})
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 

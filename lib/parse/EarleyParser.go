@@ -31,7 +31,7 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []mentalese.ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []*mentalese.ParseTreeNode {
 
 	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 

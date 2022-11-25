@@ -69,10 +69,9 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 	locale := ""
 	for _, grammar := range base.grammars {
-		locale = grammar.GetLocale()
 
+		locale = grammar.GetLocale()
 		messenger.SetProcessSlot("locale", mentalese.NewTermString(locale))
-		dialogBinding := base.dialogContext.EntityBindings.Copy()
 
 		tokens := grammar.GetTokenizer().Process(rawInput)
 		base.log.AddProduction("Tokens", strings.Join(tokens, " "))
@@ -86,7 +85,6 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			base.log.AddProduction("Parse tree", parseTree.IndentedString(""))
 
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
-
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
 			clauses := base.dialogContext.ClauseList.GetRootNodes()
@@ -94,13 +92,12 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			if !ok {
 				break
 			}
-
 			base.log.AddProduction("Ellipsized parse tree", ellipsizedParseTree.IndentedString(""))
 
 			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, grammar, rootClauseTree, dialogBinding, locale, rawInput)
+				output, continueLooking = base.processRootClause(messenger, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -117,10 +114,11 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 	return base.waitForPrint(messenger, output)
 }
 
-func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, dialogBinding mentalese.Binding, locale string, rawInput string) (string, bool) {
+func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, locale string, rawInput string) (string, bool) {
 
 	rootClauseOutput := ""
 	clauseList := base.dialogContext.ClauseList
+	dialogBinding := base.dialogContext.EntityBindings.Copy()
 	entities := mentalese.ExtractEntities(rootClauseTree)
 	clause := mentalese.NewClause(rootClauseTree, false, entities)
 	clauseList.AddClause(clause)
@@ -167,9 +165,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 		return agreementOutput, true
 	}
 
-	// todo same variable as above?
 	intentRelations2 := base.dialogContext.ClauseList.GetLastClause().GetIntents()
-
 	conditionSubject := append(resolvedRequest, intentRelations2...)
 	intents := base.answerer.FindIntents(conditionSubject)
 

@@ -21,7 +21,9 @@ func NewEllipsizer(Sentences []*mentalese.ParseTreeNode, log *common.SystemLog) 
 func (e *Ellipsizer) Ellipsize(tree mentalese.ParseTreeNode) (mentalese.ParseTreeNode, bool) {
 
 	// quick check if this is necessary
-	if !e.hasEllipsis(tree) { return tree, true }
+	if !e.hasEllipsis(tree) {
+		return tree, true
+	}
 
 	biDirTree := CreateBidirectionalParseTree(tree)
 
@@ -76,7 +78,7 @@ func (e *Ellipsizer) ellipsizeNode(node *BidirectionalParseTreeNode, variableMap
 	newSource.Constituents = newConstituents
 	for i, ellipsisConstituent := range ellipsisConstituents {
 		categoryPath := node.source.Rule.Ellipsis[i]
-		lastNode := categoryPath[len(categoryPath) - 1]
+		lastNode := categoryPath[len(categoryPath)-1]
 		newSource.Constituents = append(newSource.Constituents, ellipsisConstituent)
 		newSource.Rule.PositionTypes = append(newSource.Rule.PositionTypes, mentalese.PosTypeRelation)
 		newSource.Rule.SyntacticCategories = append(newSource.Rule.SyntacticCategories, lastNode.Category)
@@ -95,7 +97,7 @@ func (e *Ellipsizer) createEllipsisConstituents(node *BidirectionalParseTreeNode
 		newConstituent := e.processCategoryPath(node, categoryPath)
 		if newConstituent != nil {
 			ellipsisConstituents = append(ellipsisConstituents, newConstituent)
-			e.mapVariables(categoryPath[len(categoryPath) - 1].Variables, newConstituent.Rule.GetAntecedentVariables(), variableMapping)
+			e.mapVariables(categoryPath[len(categoryPath)-1].Variables, newConstituent.Rule.GetAntecedentVariables(), variableMapping)
 		}
 	}
 
@@ -183,19 +185,19 @@ func (e *Ellipsizer) navigateParent(currentNode *BidirectionalParseTreeNode, cat
 		}
 	}
 
-	return []*BidirectionalParseTreeNode{ currentNode }
+	return []*BidirectionalParseTreeNode{currentNode}
 }
 
 func (e *Ellipsizer) navigatePrevSentence(currentNode *BidirectionalParseTreeNode) []*BidirectionalParseTreeNode {
 	var newNode *BidirectionalParseTreeNode = nil
 	if len(e.sentences) > 1 {
-		sentence := e.sentences[len(e.sentences) - 2]
+		sentence := e.sentences[len(e.sentences)-2]
 		// todo: this `prev` always goes to the last sentence
 		newNode = CreateBidirectionalParseTree(*sentence)
 	} else {
 		return []*BidirectionalParseTreeNode{}
 	}
-	return []*BidirectionalParseTreeNode{ newNode }
+	return []*BidirectionalParseTreeNode{newNode}
 }
 
 func (e *Ellipsizer) navigatePrevSibling(currentNode *BidirectionalParseTreeNode, category string) []*BidirectionalParseTreeNode {

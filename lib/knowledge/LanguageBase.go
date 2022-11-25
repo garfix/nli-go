@@ -85,23 +85,19 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			base.log.AddProduction("Parse tree", parseTree.IndentedString(""))
 
-			dialogizer := parse.NewDialogizer(base.dialogContext.VariableGenerator)
-			dialogizedParseTree := dialogizer.Dialogize(&parseTree)
+			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(&parseTree)
 
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
 			clauses := base.dialogContext.ClauseList.GetRootNodes()
-			ellipsizer := parse.NewEllipsizer(clauses, base.log)
-			ellipsizedParseTree, ok := ellipsizer.Ellipsize(*dialogizedParseTree)
+			ellipsizedParseTree, ok := parse.NewEllipsizer(clauses, base.log).Ellipsize(*dialogizedParseTree)
 			if !ok {
 				break
 			}
 
 			base.log.AddProduction("Ellipsized parse tree", ellipsizedParseTree.IndentedString(""))
 
-			rootClauseExtracter := parse.NewRootClauseExtracter()
-			rootClauses := rootClauseExtracter.Extract(&ellipsizedParseTree)
-
+			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
 				output, continueLooking = base.processRootClause(messenger, grammar, rootClauseTree, dialogBinding, locale, rawInput)

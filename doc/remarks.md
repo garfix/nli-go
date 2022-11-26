@@ -1,3 +1,9 @@
+## 2022-11-26
+
+I removed `respond.rule`. The main loop is no longer implemented in Mentalese, but in plain Go instead.
+
+Now I want to make the dataflow in the main loop more explicit. Make all dependencies clear.
+
 ## 2022-11-13
 
 I will rewrite `respond.rule` to normal Go code. The reason: at the moment some dependencies are passed explicitly, but others remain hidden, and *dependencies should be visible!* Very important, because you want to know whether you can move a processing step to a different position. If you don't have the dependencies clear, you get unexpected effects.

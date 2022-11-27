@@ -24,6 +24,16 @@ func (e *ClauseList) Clear() {
 	e.Clauses = []*Clause{}
 }
 
+func (e *ClauseList) Copy() *ClauseList {
+
+	newClauses := []*Clause{}
+	newClauses = append(newClauses, e.Clauses...)
+
+	return &ClauseList{
+		Clauses: newClauses,
+	}
+}
+
 func (e *ClauseList) AddClause(clause *Clause) {
 	e.Clauses = append(e.Clauses, clause)
 }

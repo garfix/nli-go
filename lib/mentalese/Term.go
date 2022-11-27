@@ -234,7 +234,7 @@ func (term Term) ConvertVariablesToConstants() Term {
 }
 
 func (term Term) AsKey() string {
-	return fmt.Sprintf("%d/%s/%s", term.TermType, term.TermValue, term.TermSort)
+	return fmt.Sprintf("%s/%s/%s", term.TermType, term.TermValue, term.TermSort)
 }
 
 func (term Term) Copy() Term {

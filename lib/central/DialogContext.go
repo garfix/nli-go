@@ -39,7 +39,6 @@ func NewDialogContext(
 }
 
 func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
-	e.ClauseList.GetLastClause().ReplaceVariable(fromVariable, toVariable)
 
 	if e.DeicticCenter.GetCenter() == fromVariable {
 		e.DeicticCenter.SetCenter(toVariable)
@@ -48,9 +47,9 @@ func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) 
 	e.EntityTags.ReplaceVariable(fromVariable, toVariable)
 }
 
-func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
+func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentalese.Binding, entitySorts *mentalese.EntitySorts) []AnaphoraQueueElement {
 	ids := []AnaphoraQueueElement{}
-	clauses := e.ClauseList.Clauses
+	clauses := clauseList.Clauses
 
 	variableUsed := map[string]bool{}
 
@@ -67,11 +66,11 @@ func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
 				variableUsed[discourseVariable] = true
 			}
 
-			value, found := e.EntityBindings.Get(discourseVariable)
+			value, found := entityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
-					sorts := e.EntitySorts.GetSorts(discourseVariable)
+					sorts := entitySorts.GetSorts(discourseVariable)
 					for i, item := range value.TermValueList {
 						sort := sorts[i]
 						reference := AnaphoraQueueElementValue{sort, item.TermValue}
@@ -79,14 +78,14 @@ func (e *DialogContext) GetAnaphoraQueue() []AnaphoraQueueElement {
 					}
 					ids = append(ids, group)
 				} else {
-					sorts := e.EntitySorts.GetSorts(discourseVariable)
+					sorts := entitySorts.GetSorts(discourseVariable)
 					sort := sorts[0]
 					reference := AnaphoraQueueElementValue{sort, value.TermValue}
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 					ids = append(ids, group)
 				}
 			} else {
-				sorts := e.EntitySorts.GetSorts(discourseVariable)
+				sorts := entitySorts.GetSorts(discourseVariable)
 				sort := mentalese.SortEntity
 				if len(sorts) > 0 {
 					sort = sorts[0]

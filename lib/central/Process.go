@@ -187,7 +187,7 @@ func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *
 
 func (p *Process) executeProcessInstructions(messenger *Messenger, outBindings mentalese.BindingSet) mentalese.BindingSet {
 
-	for instruction, _ := range messenger.GetProcessInstructions() {
+	for instruction := range messenger.GetProcessInstructions() {
 		switch instruction {
 		case mentalese.ProcessInstructionBreak:
 			p.executeBreak(outBindings)

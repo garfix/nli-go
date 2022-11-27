@@ -1,8 +1,24 @@
+## 2022-11-27
+
+I did clauseList. Each alternative execution branch now has it's own clause list.
+Only when an alternative is chosen and processed, is the clause list updated in the dialog context.
+
 ## 2022-11-26
 
 I removed `respond.rule`. The main loop is no longer implemented in Mentalese, but in plain Go instead.
 
 Now I want to make the dataflow in the main loop more explicit. Make all dependencies clear.
+
+These factors are involved:
+
+- the main function splits into multiple possible alternatives several times (parse trees, intents)
+- each of these alternatives should get their own data structures
+- data structures that are used by multiple functions, should be passed explicitly
+- the (single) dialog context should not be modified by all alternatives
+- it should only be modified when an alternative is chosen
+- in stead of passing all data structures to each alternative, it may be good to pass a "possible world" context to an alternative
+
+The main changes come down to factoring out passing around the pointer to the dialogContext. Only its individual components should be passed around.
 
 ## 2022-11-13
 

@@ -84,10 +84,13 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			base.log.AddProduction("Parse tree", parseTree.IndentedString(""))
 
+			// * start of alternative * //
+			clauseList := base.dialogContext.ClauseList.Copy()
+
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
-			clauses := base.dialogContext.ClauseList.GetRootNodes()
+			clauses := clauseList.GetRootNodes()
 			ellipsizedParseTree, ok := parse.NewEllipsizer(clauses, base.log).Ellipsize(*dialogizedParseTree)
 			if !ok {
 				break
@@ -97,7 +100,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, grammar, rootClauseTree, locale, rawInput)
+				output, continueLooking = base.processRootClause(messenger, clauseList, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -106,6 +109,8 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			if !continueLooking {
 				// accept this tree
+				// fix the clause list
+				base.dialogContext.ClauseList = clauseList
 				break
 			}
 		}
@@ -114,10 +119,9 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 	return base.waitForPrint(messenger, output)
 }
 
-func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, locale string, rawInput string) (string, bool) {
+func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, clauseList *mentalese.ClauseList, grammar parse.Grammar, rootClauseTree *mentalese.ParseTreeNode, locale string, rawInput string) (string, bool) {
 
 	rootClauseOutput := ""
-	clauseList := base.dialogContext.ClauseList
 	dialogBinding := base.dialogContext.EntityBindings.Copy()
 	entities := mentalese.ExtractEntities(rootClauseTree)
 	clause := mentalese.NewClause(rootClauseTree, false, entities)
@@ -127,7 +131,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 	base.dialogContext.EntityTags.AddTags(tags)
 
 	intentRelations := base.relationizer.ExtractIntents(*rootClauseTree)
-	base.dialogContext.ClauseList.GetLastClause().SetIntents(intentRelations)
+	clauseList.GetLastClause().SetIntents(intentRelations)
 
 	sortFinder := central.NewSortFinder(base.meta, messenger)
 	sorts, sortFound := sortFinder.FindSorts(rootClauseTree)
@@ -153,7 +157,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 	extracter := central.NewEntityDefinitionsExtracter(base.dialogContext)
 	extracter.Extract(requestRelations)
 
-	resolver := central.NewAnaphoraResolver(base.dialogContext, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, base.meta, messenger)
 	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false
@@ -165,7 +169,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 		return agreementOutput, true
 	}
 
-	intentRelations2 := base.dialogContext.ClauseList.GetLastClause().GetIntents()
+	intentRelations2 := clauseList.GetLastClause().GetIntents()
 	conditionSubject := append(resolvedRequest, intentRelations2...)
 	intents := base.answerer.FindIntents(conditionSubject)
 
@@ -174,7 +178,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 		return anOutput, false
 	}
 
-	base.updateCenter()
+	base.updateCenter(clauseList)
 
 	responseBindings, responseIndex, responseFound := base.findResponse(messenger, acceptedIntent, acceptedBindings)
 	if !responseFound {
@@ -186,7 +190,7 @@ func (base *LanguageBase) processRootClause(messenger api.ProcessMessenger, gram
 	base.dialogWriteBindings(responseBindings)
 	base.dialogWriteBindings(essentialBindings)
 
-	base.dialogAddResponseClause(essentialBindings)
+	base.dialogAddResponseClause(clauseList, essentialBindings)
 
 	tokens := base.generator.Generate(grammar.GetWriteRules(), answerRelations)
 
@@ -236,7 +240,7 @@ func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output st
 	return bindings
 }
 
-func (base *LanguageBase) dialogAddResponseClause(essentialResponseBindings mentalese.BindingSet) {
+func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseList, essentialResponseBindings mentalese.BindingSet) {
 
 	entities := []*mentalese.ClauseEntity{}
 	for _, binding := range essentialResponseBindings.GetAll() {
@@ -251,7 +255,7 @@ func (base *LanguageBase) dialogAddResponseClause(essentialResponseBindings ment
 		base.dialogContext.DeicticCenter.SetCenter(entities[0].DiscourseVariable)
 	}
 
-	base.dialogContext.ClauseList.AddClause(clause)
+	clauseList.AddClause(clause)
 
 	for _, binding := range essentialResponseBindings.GetAll() {
 		for _, variable := range binding.GetKeys() {
@@ -340,7 +344,7 @@ func (base *LanguageBase) createAnswer(messenger api.ProcessMessenger, intent me
 	return answer, essential
 }
 
-func (base *LanguageBase) updateCenter() {
+func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList) {
 	var previousCenter = base.dialogContext.DeicticCenter.GetCenter()
 	var center = ""
 	var priority = 0
@@ -351,7 +355,7 @@ func (base *LanguageBase) updateCenter() {
 		mentalese.AtomFunctionObject:  5,
 	}
 
-	c := base.dialogContext.ClauseList.GetLastClause()
+	c := clauseList.GetLastClause()
 
 	// new clause has no entities? keep existing center
 	if len(c.Functions) == 0 {

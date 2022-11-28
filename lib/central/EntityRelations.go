@@ -12,6 +12,18 @@ func NewEntityDefinitions() *EntityDefinitions {
 	}
 }
 
+func (p *EntityDefinitions) Copy() *EntityDefinitions {
+
+	newDefinitions := map[string]mentalese.RelationSet{}
+	for k, v := range p.definitions {
+		newDefinitions[k] = v
+	}
+
+	return &EntityDefinitions{
+		definitions: newDefinitions,
+	}
+}
+
 func (d *EntityDefinitions) Add(variable string, definition mentalese.RelationSet) {
 	d.definitions[variable] = definition
 }

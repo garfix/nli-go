@@ -16,6 +16,14 @@ func NewEntityLabels() *EntityLabels {
 	}
 }
 
+func (e *EntityLabels) Copy() *EntityLabels {
+	newLabels := []EntityLabel{}
+	newLabels = append(newLabels, e.labels...)
+	return &EntityLabels{
+		labels: newLabels,
+	}
+}
+
 func (e *EntityLabels) GetLabel(label string) (EntityLabel, bool) {
 	for _, aLabel := range e.labels {
 		if aLabel.label == label {

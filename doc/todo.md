@@ -2,6 +2,7 @@
 
 - implement reflective_reference()
 - debug: fold structures in/out
+- only 1 intent may be tried; not acceptable to "try" an intent and continue if it fails, right?
 
 ## new 
 

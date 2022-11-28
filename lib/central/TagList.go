@@ -16,6 +16,18 @@ func (p *TagList) Clear() {
 	p.tags = map[string]mentalese.RelationSet{}
 }
 
+func (p *TagList) Copy() *TagList {
+
+	newTags := map[string]mentalese.RelationSet{}
+	for k, v := range p.tags {
+		newTags[k] = v
+	}
+
+	return &TagList{
+		tags: newTags,
+	}
+}
+
 func (p *TagList) ReplaceVariable(from string, to string) {
 	newTags := map[string]mentalese.RelationSet{}
 	for variable, tagSet := range p.tags {

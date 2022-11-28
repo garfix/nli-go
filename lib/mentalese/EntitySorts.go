@@ -12,6 +12,16 @@ func (s *EntitySorts) Clear() {
 	*s = map[string][]string{}
 }
 
+func (p *EntitySorts) Copy() *EntitySorts {
+
+	newSorts := EntitySorts{}
+	for k, v := range *p {
+		newSorts[k] = v
+	}
+
+	return &newSorts
+}
+
 func (s *EntitySorts) SetSorts(variable string, sorts []string) {
 	(*s)[variable] = sorts
 }

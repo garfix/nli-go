@@ -1,7 +1,22 @@
+## 2022-11-28
+
+As some predicates need access to the deictic center. I can use slots to pass values from system to application and back. I can also use the active dialog context to do this. Or somehow the predicate should get access to the active deictic center.
+
+I think I will keep the possibility to access the dialogContext directly, from a predicate; but I will replace the dialog context each time an alternative parse is handled.
+
+- predicates (the application) can access the dialogContext directly
+- the system must use the individual components, because only this way we can keep the dependencies clear
+
 ## 2022-11-27
 
 I did clauseList. Each alternative execution branch now has it's own clause list.
 Only when an alternative is chosen and processed, is the clause list updated in the dialog context.
+
+===
+
+Next up: deictic center. Some functions use it. And some predicates as well. I can't pass the deictic center to these predicates. I can get around it by passing the deictic center to a slot, but the main point is: how do I make clear that a script that uses this predicate changes this dependency?
+
+In fact, only the `solve` phase can change all dependencies. It's should also be noted that the `solve` phase should be executed only once, and not "tried": is can have all kinds of side effects that have no explanation, because the trial does not end up in the response to the user.
 
 ## 2022-11-26
 

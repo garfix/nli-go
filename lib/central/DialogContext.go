@@ -38,6 +38,22 @@ func NewDialogContext(
 	return dialogContext
 }
 
+func (e *DialogContext) Fork() *DialogContext {
+
+	newEntityBindings := e.EntityBindings.Copy()
+
+	return &DialogContext{
+		VariableGenerator: e.VariableGenerator, // no copy!
+		DeicticCenter:     e.DeicticCenter.Copy(),
+		ClauseList:        e.ClauseList.Copy(),
+		EntityBindings:    &newEntityBindings,
+		EntityTags:        e.EntityTags.Copy(),
+		EntitySorts:       e.EntitySorts.Copy(),
+		EntityLabels:      e.EntityLabels.Copy(),
+		EntityDefinitions: e.EntityDefinitions.Copy(),
+	}
+}
+
 func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
 
 	if e.DeicticCenter.GetCenter() == fromVariable {

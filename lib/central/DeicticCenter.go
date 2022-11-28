@@ -19,6 +19,12 @@ func (center *DeicticCenter) Initialize() {
 	center.Binding = mentalese.NewBinding()
 }
 
+func (center *DeicticCenter) Copy() *DeicticCenter {
+	return &DeicticCenter{
+		Binding: center.Binding.Copy(),
+	}
+}
+
 func (center *DeicticCenter) SetTime(time mentalese.RelationSet) {
 	center.Binding.Set(DeixisTime, mentalese.NewTermRelationSet(time))
 }

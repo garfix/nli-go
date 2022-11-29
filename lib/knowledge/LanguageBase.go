@@ -95,6 +95,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			deicticCenter := base.dialogContext.DeicticCenter
 			entityBindings := base.dialogContext.EntityBindings
 			entityTags := base.dialogContext.EntityTags
+			entitySorts := base.dialogContext.EntitySorts
 
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
@@ -109,7 +110,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, grammar, rootClauseTree, locale, rawInput)
+				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -132,6 +133,7 @@ func (base *LanguageBase) processRootClause(
 	deicticCenter *central.DeicticCenter,
 	entityBindings *mentalese.EntityBindings,
 	entityTags *central.TagList,
+	entitySorts *mentalese.EntitySorts,
 	grammar parse.Grammar,
 	rootClauseTree *mentalese.ParseTreeNode,
 	locale string,
@@ -157,10 +159,10 @@ func (base *LanguageBase) processRootClause(
 	}
 
 	for variable, sort := range sorts {
-		base.dialogContext.EntitySorts.SetSorts(variable, []string{sort})
+		entitySorts.SetSorts(variable, []string{sort})
 	}
 
-	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags)
+	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags, entitySorts)
 	if unresolvedName != "" {
 		rootClauseOutput = common.GetString("name_not_found", unresolvedName)
 		return rootClauseOutput, true
@@ -173,7 +175,7 @@ func (base *LanguageBase) processRootClause(
 	extracter := central.NewEntityDefinitionsExtracter(base.dialogContext)
 	extracter.Extract(requestRelations)
 
-	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, entityBindings, entityTags, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, entityBindings, entityTags, entitySorts, base.meta, messenger)
 	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false
@@ -203,8 +205,8 @@ func (base *LanguageBase) processRootClause(
 
 	answerRelations, essentialBindings := base.createAnswer(messenger, acceptedIntent, responseBindings, responseIndex)
 
-	base.dialogWriteBindings(responseBindings, entityBindings)
-	base.dialogWriteBindings(essentialBindings, entityBindings)
+	base.dialogWriteBindings(responseBindings, entityBindings, entitySorts)
+	base.dialogWriteBindings(essentialBindings, entityBindings, entitySorts)
 
 	base.dialogAddResponseClause(clauseList, deicticCenter, essentialBindings)
 
@@ -280,7 +282,7 @@ func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseLi
 	}
 }
 
-func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet, entityBindings *mentalese.EntityBindings) {
+func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet, entityBindings *mentalese.EntityBindings, entitySorts *mentalese.EntitySorts) {
 
 	groupedValues := map[string][]mentalese.Term{}
 	groupedSorts := map[string][]string{}
@@ -317,7 +319,7 @@ func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet,
 		} else {
 			entityBindings.Set(key, mentalese.NewTermList(values))
 		}
-		base.dialogContext.EntitySorts.SetSorts(key, groupedSorts[key])
+		entitySorts.SetSorts(key, groupedSorts[key])
 	}
 }
 
@@ -401,13 +403,11 @@ func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deictic
 	deicticCenter.SetCenter(center)
 }
 
-func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings, entityTags *central.TagList) (mentalese.Binding, string) {
+func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings, entityTags *central.TagList, entitySorts *mentalese.EntitySorts) (mentalese.Binding, string) {
 
 	names := base.nameResolver.ExtractNames(*rootClauseTree, []string{"S"})
 
-	sorts := base.dialogContext.EntitySorts
-
-	entityIds, nameNotFound, genderTags, numberTags := base.findNames(messenger, names, *sorts)
+	entityIds, nameNotFound, genderTags, numberTags := base.findNames(messenger, names, *entitySorts)
 	entityTags.AddTags(genderTags)
 	entityTags.AddTags(numberTags)
 

@@ -11,16 +11,18 @@ type AnaphoraResolver struct {
 	clauseList     *mentalese.ClauseList
 	entityBindings *mentalese.EntityBindings
 	entityTags     *TagList
+	entitySorts    *mentalese.EntitySorts
 	meta           *mentalese.Meta
 	messenger      api.ProcessMessenger
 }
 
-func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, entitySorts *mentalese.EntitySorts, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
 	return &AnaphoraResolver{
 		dialogContext:  dialogContext,
 		clauseList:     clauseList,
 		entityBindings: entityBindings,
 		entityTags:     entityTags,
+		entitySorts:    entitySorts,
 		meta:           meta,
 		messenger:      messenger,
 	}
@@ -277,7 +279,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 	found := false
 	foundVariable := ""
 
-	queue := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.dialogContext.EntitySorts)
+	queue := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.entitySorts)
 	for _, group := range queue {
 
 		foundVariable = group.Variable
@@ -315,7 +317,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 
-	groups := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.dialogContext.EntitySorts)
+	groups := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.entitySorts)
 	for _, group := range groups {
 
 		// there may be 1..n groups (bindings)

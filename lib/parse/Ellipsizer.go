@@ -18,7 +18,7 @@ func NewEllipsizer(Sentences []*mentalese.ParseTreeNode, log *common.SystemLog) 
 }
 
 // Returns a copy of `tree` where the `ellipsis` directions are included
-func (e *Ellipsizer) Ellipsize(tree mentalese.ParseTreeNode) (mentalese.ParseTreeNode, bool) {
+func (e *Ellipsizer) Ellipsize(tree *mentalese.ParseTreeNode) (*mentalese.ParseTreeNode, bool) {
 
 	// quick check if this is necessary
 	if !e.hasEllipsis(tree) {
@@ -31,7 +31,7 @@ func (e *Ellipsizer) Ellipsize(tree mentalese.ParseTreeNode) (mentalese.ParseTre
 	newTree, ok := e.ellipsizeNode(biDirTree, variableMapping)
 	updatedTree := e.replaceVariables(newTree, variableMapping)
 
-	return *updatedTree, ok
+	return updatedTree, ok
 }
 
 func (e *Ellipsizer) replaceVariables(node *mentalese.ParseTreeNode, variableMapping *map[string]string) *mentalese.ParseTreeNode {
@@ -46,10 +46,10 @@ func (e *Ellipsizer) replaceVariables(node *mentalese.ParseTreeNode, variableMap
 }
 
 // quick check
-func (e *Ellipsizer) hasEllipsis(node mentalese.ParseTreeNode) bool {
+func (e *Ellipsizer) hasEllipsis(node *mentalese.ParseTreeNode) bool {
 	present := len(node.Rule.Ellipsis) > 0
 	for _, constituent := range node.Constituents {
-		present = present || e.hasEllipsis(*constituent)
+		present = present || e.hasEllipsis(constituent)
 	}
 	return present
 }
@@ -126,7 +126,7 @@ func (e *Ellipsizer) processCategoryPath(currentNode *BidirectionalParseTreeNode
 // Move a single step on the ellipsis category path
 func (e *Ellipsizer) step(currentNode *BidirectionalParseTreeNode, path mentalese.CategoryPath) *mentalese.ParseTreeNode {
 	if len(path) == 0 {
-		return &currentNode.source
+		return currentNode.source
 	}
 
 	pathNode := path[0]
@@ -193,7 +193,7 @@ func (e *Ellipsizer) navigatePrevSentence(currentNode *BidirectionalParseTreeNod
 	if len(e.sentences) > 1 {
 		sentence := e.sentences[len(e.sentences)-2]
 		// todo: this `prev` always goes to the last sentence
-		newNode = CreateBidirectionalParseTree(*sentence)
+		newNode = CreateBidirectionalParseTree(sentence)
 	} else {
 		return []*BidirectionalParseTreeNode{}
 	}

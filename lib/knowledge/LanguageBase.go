@@ -229,12 +229,7 @@ func (base *LanguageBase) executeIntent(messenger api.ProcessMessenger, resolved
 
 	for index, sol := range intents {
 		resultBindings := messenger.ExecuteChildStackFrame(resolvedRequest, resolvedBindings)
-		if resultBindings.GetLength() > 0 {
-			accepted = sol
-			acceptedBindings = resultBindings
-			break
-		}
-		if index == len(intents)-1 {
+		if resultBindings.GetLength() > 0 || index == len(intents)-1 {
 			accepted = sol
 			acceptedBindings = resultBindings
 			break

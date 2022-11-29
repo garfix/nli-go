@@ -94,6 +94,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			clauseList := base.dialogContext.ClauseList
 			deicticCenter := base.dialogContext.DeicticCenter
 			entityBindings := base.dialogContext.EntityBindings
+			entityTags := base.dialogContext.EntityTags
 
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
@@ -108,7 +109,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, grammar, rootClauseTree, locale, rawInput)
+				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -130,6 +131,7 @@ func (base *LanguageBase) processRootClause(
 	clauseList *mentalese.ClauseList,
 	deicticCenter *central.DeicticCenter,
 	entityBindings *mentalese.EntityBindings,
+	entityTags *central.TagList,
 	grammar parse.Grammar,
 	rootClauseTree *mentalese.ParseTreeNode,
 	locale string,
@@ -142,7 +144,7 @@ func (base *LanguageBase) processRootClause(
 	clauseList.AddClause(clause)
 
 	tags := base.relationizer.ExtractTags(*rootClauseTree)
-	base.dialogContext.EntityTags.AddTags(tags)
+	entityTags.AddTags(tags)
 
 	intentRelations := base.relationizer.ExtractIntents(*rootClauseTree)
 	clauseList.GetLastClause().SetIntents(intentRelations)
@@ -158,7 +160,7 @@ func (base *LanguageBase) processRootClause(
 		base.dialogContext.EntitySorts.SetSorts(variable, []string{sort})
 	}
 
-	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings)
+	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags)
 	if unresolvedName != "" {
 		rootClauseOutput = common.GetString("name_not_found", unresolvedName)
 		return rootClauseOutput, true
@@ -171,14 +173,14 @@ func (base *LanguageBase) processRootClause(
 	extracter := central.NewEntityDefinitionsExtracter(base.dialogContext)
 	extracter.Extract(requestRelations)
 
-	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, entityBindings, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, entityBindings, entityTags, base.meta, messenger)
 	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false
 	}
 
 	agreementChecker := central.NewAgreementChecker()
-	_, agreementOutput := agreementChecker.CheckAgreement(rootClauseTree, base.dialogContext.EntityTags)
+	_, agreementOutput := agreementChecker.CheckAgreement(rootClauseTree, entityTags)
 	if agreementOutput != "" {
 		return agreementOutput, true
 	}
@@ -399,15 +401,15 @@ func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deictic
 	deicticCenter.SetCenter(center)
 }
 
-func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings) (mentalese.Binding, string) {
+func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings, entityTags *central.TagList) (mentalese.Binding, string) {
 
 	names := base.nameResolver.ExtractNames(*rootClauseTree, []string{"S"})
 
 	sorts := base.dialogContext.EntitySorts
 
 	entityIds, nameNotFound, genderTags, numberTags := base.findNames(messenger, names, *sorts)
-	base.dialogContext.EntityTags.AddTags(genderTags)
-	base.dialogContext.EntityTags.AddTags(numberTags)
+	entityTags.AddTags(genderTags)
+	entityTags.AddTags(numberTags)
 
 	requestBinding := entityBindings.Merge(entityIds)
 

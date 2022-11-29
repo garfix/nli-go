@@ -10,15 +10,17 @@ type AnaphoraResolver struct {
 	dialogContext  *DialogContext
 	clauseList     *mentalese.ClauseList
 	entityBindings *mentalese.EntityBindings
+	entityTags     *TagList
 	meta           *mentalese.Meta
 	messenger      api.ProcessMessenger
 }
 
-func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
 	return &AnaphoraResolver{
 		dialogContext:  dialogContext,
 		clauseList:     clauseList,
 		entityBindings: entityBindings,
+		entityTags:     entityTags,
 		meta:           meta,
 		messenger:      messenger,
 	}
@@ -321,7 +323,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 
 		agreementChecker := NewAgreementChecker()
 
-		agree, _, _ := agreementChecker.CheckForCategoryConflictBetween(variable, referentVariable, resolver.dialogContext.EntityTags)
+		agree, _, _ := agreementChecker.CheckForCategoryConflictBetween(variable, referentVariable, resolver.entityTags)
 		if !agree {
 			continue
 		}

@@ -19,13 +19,12 @@ type DialogContext struct {
 }
 
 func NewDialogContext(
-	deicticCenter *DeicticCenter,
 	variableGenerator *mentalese.VariableGenerator,
 ) *DialogContext {
 	discourseEntities := mentalese.NewBinding()
 	dialogContext := &DialogContext{
 		VariableGenerator: variableGenerator,
-		DeicticCenter:     deicticCenter,
+		DeicticCenter:     NewDeicticCenter(),
 		ClauseList:        mentalese.NewClauseList(),
 		EntityBindings:    &discourseEntities,
 		EntityTags:        NewTagList(),

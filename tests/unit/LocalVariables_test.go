@@ -35,10 +35,9 @@ func TestLocalVariables(t *testing.T) {
 	solver.AddFactBase(factBase)
 	functionBase := knowledge.NewSystemFunctionBase("function", meta, log)
 	solver.AddFunctionBase(functionBase)
-	deicticCenter := central.NewDeicticCenter()
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
-	dialogContext := central.NewDialogContext(deicticCenter, variableGenerator)
+	dialogContext := central.NewDialogContext(variableGenerator)
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`

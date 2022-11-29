@@ -131,8 +131,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	systemMultiBindingBase := knowledge.NewSystemMultiBindingBase("System-aggregate", builder.log)
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
-	deicticCenter := central.NewDeicticCenter()
-	system.dialogContext = central.NewDialogContext(deicticCenter, variableGenerator)
+	system.dialogContext = central.NewDialogContext(variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
 

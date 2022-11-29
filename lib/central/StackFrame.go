@@ -46,9 +46,9 @@ func (f *StackFrame) IsDone() bool {
 }
 
 func (f *StackFrame) GetCurrentRelation() mentalese.Relation {
-	if f.RelationIndex >= len(f.Relations) {
-		f.RelationIndex = f.RelationIndex
-	}
+	// if f.RelationIndex >= len(f.Relations) {
+	// f.RelationIndex = f.RelationIndex
+	// }
 	return f.Relations[f.RelationIndex]
 }
 

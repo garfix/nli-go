@@ -11,7 +11,7 @@ type DialogContext struct {
 	VariableGenerator *mentalese.VariableGenerator
 	DeicticCenter     *DeicticCenter
 	ClauseList        *mentalese.ClauseList
-	EntityBindings    *mentalese.Binding
+	EntityBindings    *mentalese.EntityBindings
 	EntityTags        *TagList
 	EntitySorts       *mentalese.EntitySorts
 	EntityLabels      *EntityLabels
@@ -21,12 +21,11 @@ type DialogContext struct {
 func NewDialogContext(
 	variableGenerator *mentalese.VariableGenerator,
 ) *DialogContext {
-	discourseEntities := mentalese.NewBinding()
 	dialogContext := &DialogContext{
 		VariableGenerator: variableGenerator,
 		DeicticCenter:     NewDeicticCenter(),
 		ClauseList:        mentalese.NewClauseList(),
-		EntityBindings:    &discourseEntities,
+		EntityBindings:    mentalese.NewEntityBindings(),
 		EntityTags:        NewTagList(),
 		EntitySorts:       mentalese.NewEntitySorts(),
 		EntityLabels:      NewEntityLabels(),
@@ -39,13 +38,11 @@ func NewDialogContext(
 
 func (e *DialogContext) Fork() *DialogContext {
 
-	newEntityBindings := e.EntityBindings.Copy()
-
 	return &DialogContext{
 		VariableGenerator: e.VariableGenerator, // no copy!
 		DeicticCenter:     e.DeicticCenter.Copy(),
 		ClauseList:        e.ClauseList.Copy(),
-		EntityBindings:    &newEntityBindings,
+		EntityBindings:    e.EntityBindings.Copy(),
 		EntityTags:        e.EntityTags.Copy(),
 		EntitySorts:       e.EntitySorts.Copy(),
 		EntityLabels:      e.EntityLabels.Copy(),
@@ -53,16 +50,7 @@ func (e *DialogContext) Fork() *DialogContext {
 	}
 }
 
-func (e *DialogContext) ReplaceVariable(fromVariable string, toVariable string) {
-
-	if e.DeicticCenter.GetCenter() == fromVariable {
-		e.DeicticCenter.SetCenter(toVariable)
-	}
-
-	e.EntityTags.ReplaceVariable(fromVariable, toVariable)
-}
-
-func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentalese.Binding, entitySorts *mentalese.EntitySorts) []AnaphoraQueueElement {
+func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entitySorts *mentalese.EntitySorts) []AnaphoraQueueElement {
 	ids := []AnaphoraQueueElement{}
 	clauses := clauseList.Clauses
 

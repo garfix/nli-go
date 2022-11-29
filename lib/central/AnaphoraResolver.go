@@ -7,18 +7,20 @@ import (
 )
 
 type AnaphoraResolver struct {
-	dialogContext *DialogContext
-	clauseList    *mentalese.ClauseList
-	meta          *mentalese.Meta
-	messenger     api.ProcessMessenger
+	dialogContext  *DialogContext
+	clauseList     *mentalese.ClauseList
+	entityBindings *mentalese.EntityBindings
+	meta           *mentalese.Meta
+	messenger      api.ProcessMessenger
 }
 
-func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
 	return &AnaphoraResolver{
-		dialogContext: dialogContext,
-		clauseList:    clauseList,
-		meta:          meta,
-		messenger:     messenger,
+		dialogContext:  dialogContext,
+		clauseList:     clauseList,
+		entityBindings: entityBindings,
+		meta:           meta,
+		messenger:      messenger,
 	}
 }
 
@@ -47,7 +49,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 
 		// replace the other variables in the set
 		resolvedRequest = resolvedRequest.ReplaceTerm(mentalese.NewTermVariable(fromVariable), mentalese.NewTermVariable(toVariable))
-		value, found := resolver.dialogContext.EntityBindings.Get(toVariable)
+		value, found := resolver.entityBindings.Get(toVariable)
 		if found {
 			if value.IsList() {
 				tempBindings := mentalese.NewBindingSet()
@@ -218,7 +220,7 @@ func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.B
 	resolvedVariable := variable
 
 	// if the variable has been bound already, don't try to look for a reference
-	_, found := resolver.dialogContext.EntityBindings.Get(variable)
+	_, found := resolver.entityBindings.Get(variable)
 	if found {
 		return variable
 	}
@@ -273,7 +275,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 	found := false
 	foundVariable := ""
 
-	queue := GetAnaphoraQueue(resolver.clauseList, resolver.dialogContext.EntityBindings, resolver.dialogContext.EntitySorts)
+	queue := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.dialogContext.EntitySorts)
 	for _, group := range queue {
 
 		foundVariable = group.Variable
@@ -311,7 +313,7 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 
-	groups := GetAnaphoraQueue(resolver.clauseList, resolver.dialogContext.EntityBindings, resolver.dialogContext.EntitySorts)
+	groups := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.dialogContext.EntitySorts)
 	for _, group := range groups {
 
 		// there may be 1..n groups (bindings)

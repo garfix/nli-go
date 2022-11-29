@@ -9,7 +9,7 @@ func NewAgreementChecker() *AgreementChecker {
 	return &AgreementChecker{}
 }
 
-func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList *TagList) (bool, string) {
+func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList *mentalese.TagList) (bool, string) {
 	for _, variable := range root.GetVariablesRecursive() {
 		// check for categories with multiple, conflicting values
 		conflict, _, _ := c.CheckForCategoryConflictWithin(variable, tagList)
@@ -27,7 +27,7 @@ func (c *AgreementChecker) CheckAgreement(root *mentalese.ParseTreeNode, tagList
 	return true, ""
 }
 
-func (c *AgreementChecker) checkAgreementInTree(node *mentalese.ParseTreeNode, tagList *TagList) (bool, string, []mentalese.Term) {
+func (c *AgreementChecker) checkAgreementInTree(node *mentalese.ParseTreeNode, tagList *mentalese.TagList) (bool, string, []mentalese.Term) {
 
 	for _, tag := range node.Rule.Tag {
 		if tag.Predicate == mentalese.TagAgree {
@@ -63,7 +63,7 @@ func (c *AgreementChecker) checkAgreementInTree(node *mentalese.ParseTreeNode, t
 	return true, "", []mentalese.Term{}
 }
 
-func (c *AgreementChecker) CheckForCategoryConflictWithin(variable string, tagList *TagList) (bool, string, []mentalese.Term) {
+func (c *AgreementChecker) CheckForCategoryConflictWithin(variable string, tagList *mentalese.TagList) (bool, string, []mentalese.Term) {
 
 	categoryTags := tagList.GetTagsByPredicate(variable, mentalese.TagCategory)
 	categories := map[string]mentalese.Term{}
@@ -80,7 +80,7 @@ func (c *AgreementChecker) CheckForCategoryConflictWithin(variable string, tagLi
 	return true, "", []mentalese.Term{}
 }
 
-func (c *AgreementChecker) CheckForCategoryConflictBetween(variable1 string, variable2 string, tagList *TagList) (bool, string, []mentalese.Term) {
+func (c *AgreementChecker) CheckForCategoryConflictBetween(variable1 string, variable2 string, tagList *mentalese.TagList) (bool, string, []mentalese.Term) {
 
 	categoryTags1 := tagList.GetTagsByPredicate(variable1, mentalese.TagCategory)
 	categoryTags2 := tagList.GetTagsByPredicate(variable2, mentalese.TagCategory)

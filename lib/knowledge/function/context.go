@@ -2,7 +2,6 @@ package function
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/central"
 	"nli-go/lib/mentalese"
 )
 
@@ -19,7 +18,7 @@ func (base *SystemSolverFunctionBase) contextSet(messenger api.ProcessMessenger,
 
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
-	if slotName == central.DeixisTime {
+	if slotName == mentalese.DeixisTime {
 		base.dialogContext.DeicticCenter.SetTime(boundRelations)
 	}
 
@@ -37,13 +36,13 @@ func (base *SystemSolverFunctionBase) contextExtend(messenger api.ProcessMesseng
 
 	slotRelations := mentalese.RelationSet{}
 
-	if slotName == central.DeixisTime {
+	if slotName == mentalese.DeixisTime {
 		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
-	if slotName == central.DeixisTime {
+	if slotName == mentalese.DeixisTime {
 		base.dialogContext.DeicticCenter.SetTime(slotRelations.Merge(boundRelations))
 	}
 
@@ -57,7 +56,7 @@ func (base *SystemSolverFunctionBase) contextClear(messenger api.ProcessMessenge
 
 	slotName := bound.Arguments[0].TermValue
 
-	if slotName == central.DeixisTime {
+	if slotName == mentalese.DeixisTime {
 		base.dialogContext.DeicticCenter.SetTime(mentalese.RelationSet{})
 	}
 
@@ -74,7 +73,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 
 	slotRelations := mentalese.RelationSet{}
 
-	if slotName == central.DeixisTime {
+	if slotName == mentalese.DeixisTime {
 		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 

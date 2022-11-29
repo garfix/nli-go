@@ -5,10 +5,10 @@ import (
 )
 
 type EntityDefinitionsExtracter struct {
-	entityDefinitions *EntityDefinitions
+	entityDefinitions *mentalese.EntityDefinitions
 }
 
-func NewEntityDefinitionsExtracter(entityDefinitions *EntityDefinitions) *EntityDefinitionsExtracter {
+func NewEntityDefinitionsExtracter(entityDefinitions *mentalese.EntityDefinitions) *EntityDefinitionsExtracter {
 	return &EntityDefinitionsExtracter{
 		entityDefinitions: entityDefinitions,
 	}

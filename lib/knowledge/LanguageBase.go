@@ -132,12 +132,12 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 func (base *LanguageBase) processRootClause(
 	messenger api.ProcessMessenger,
 	clauseList *mentalese.ClauseList,
-	deicticCenter *central.DeicticCenter,
+	deicticCenter *mentalese.DeicticCenter,
 	entityBindings *mentalese.EntityBindings,
-	entityTags *central.TagList,
+	entityTags *mentalese.TagList,
 	entitySorts *mentalese.EntitySorts,
-	entityLabels *central.EntityLabels,
-	entityDefinitions *central.EntityDefinitions,
+	entityLabels *mentalese.EntityLabels,
+	entityDefinitions *mentalese.EntityDefinitions,
 	grammar parse.Grammar,
 	rootClauseTree *mentalese.ParseTreeNode,
 	locale string,
@@ -262,7 +262,7 @@ func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output st
 	return bindings
 }
 
-func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseList, deicticCenter *central.DeicticCenter, essentialResponseBindings mentalese.BindingSet) {
+func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseList, deicticCenter *mentalese.DeicticCenter, essentialResponseBindings mentalese.BindingSet) {
 
 	entities := []*mentalese.ClauseEntity{}
 	for _, binding := range essentialResponseBindings.GetAll() {
@@ -371,7 +371,7 @@ func (base *LanguageBase) createAnswer(
 	return answer, essential
 }
 
-func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deicticCenter *central.DeicticCenter) {
+func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deicticCenter *mentalese.DeicticCenter) {
 	var previousCenter = deicticCenter.GetCenter()
 	var center = ""
 	var priority = 0
@@ -407,7 +407,7 @@ func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deictic
 	deicticCenter.SetCenter(center)
 }
 
-func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings, entityTags *central.TagList, entitySorts *mentalese.EntitySorts) (mentalese.Binding, string) {
+func (base *LanguageBase) resolveNames(messenger api.ProcessMessenger, rootClauseTree *mentalese.ParseTreeNode, entityBindings *mentalese.EntityBindings, entityTags *mentalese.TagList, entitySorts *mentalese.EntitySorts) (mentalese.Binding, string) {
 
 	names := base.nameResolver.ExtractNames(*rootClauseTree, []string{"S"})
 

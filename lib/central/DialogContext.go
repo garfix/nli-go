@@ -9,13 +9,13 @@ const MaxSizeAnaphoraQueue = 10
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {
 	VariableGenerator *mentalese.VariableGenerator
-	DeicticCenter     *DeicticCenter
+	DeicticCenter     *mentalese.DeicticCenter
 	ClauseList        *mentalese.ClauseList
 	EntityBindings    *mentalese.EntityBindings
-	EntityTags        *TagList
+	EntityTags        *mentalese.TagList
 	EntitySorts       *mentalese.EntitySorts
-	EntityLabels      *EntityLabels
-	EntityDefinitions *EntityDefinitions
+	EntityLabels      *mentalese.EntityLabels
+	EntityDefinitions *mentalese.EntityDefinitions
 }
 
 func NewDialogContext(
@@ -23,13 +23,13 @@ func NewDialogContext(
 ) *DialogContext {
 	dialogContext := &DialogContext{
 		VariableGenerator: variableGenerator,
-		DeicticCenter:     NewDeicticCenter(),
+		DeicticCenter:     mentalese.NewDeicticCenter(),
 		ClauseList:        mentalese.NewClauseList(),
 		EntityBindings:    mentalese.NewEntityBindings(),
-		EntityTags:        NewTagList(),
+		EntityTags:        mentalese.NewTagList(),
 		EntitySorts:       mentalese.NewEntitySorts(),
-		EntityLabels:      NewEntityLabels(),
-		EntityDefinitions: NewEntityDefinitions(),
+		EntityLabels:      mentalese.NewEntityLabels(),
+		EntityDefinitions: mentalese.NewEntityDefinitions(),
 	}
 	dialogContext.Initialize()
 

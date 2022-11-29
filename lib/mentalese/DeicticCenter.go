@@ -1,9 +1,7 @@
-package central
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 type DeicticCenter struct {
-	Binding mentalese.Binding
+	Binding Binding
 }
 
 const DeixisTime = "time"
@@ -11,12 +9,12 @@ const DeixisCenter = "center"
 
 func NewDeicticCenter() *DeicticCenter {
 	return &DeicticCenter{
-		Binding: mentalese.NewBinding(),
+		Binding: NewBinding(),
 	}
 }
 
 func (center *DeicticCenter) Initialize() {
-	center.Binding = mentalese.NewBinding()
+	center.Binding = NewBinding()
 }
 
 func (center *DeicticCenter) Copy() *DeicticCenter {
@@ -25,21 +23,21 @@ func (center *DeicticCenter) Copy() *DeicticCenter {
 	}
 }
 
-func (center *DeicticCenter) SetTime(time mentalese.RelationSet) {
-	center.Binding.Set(DeixisTime, mentalese.NewTermRelationSet(time))
+func (center *DeicticCenter) SetTime(time RelationSet) {
+	center.Binding.Set(DeixisTime, NewTermRelationSet(time))
 }
 
-func (center *DeicticCenter) GetTime() mentalese.RelationSet {
+func (center *DeicticCenter) GetTime() RelationSet {
 	time, found := center.Binding.Get(DeixisTime)
 	if found {
 		return time.TermValueRelationSet
 	} else {
-		return mentalese.RelationSet{}
+		return RelationSet{}
 	}
 }
 
 func (center *DeicticCenter) SetCenter(variable string) {
-	center.Binding.Set(DeixisCenter, mentalese.NewTermVariable(variable))
+	center.Binding.Set(DeixisCenter, NewTermVariable(variable))
 }
 
 func (center *DeicticCenter) GetCenter() string {

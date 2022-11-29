@@ -1,24 +1,22 @@
-package central
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 type EntityDefinitions struct {
-	definitions map[string]mentalese.RelationSet
+	definitions map[string]RelationSet
 }
 
 func NewEntityDefinitions() *EntityDefinitions {
 	return &EntityDefinitions{
-		definitions: map[string]mentalese.RelationSet{},
+		definitions: map[string]RelationSet{},
 	}
 }
 
 func (e *EntityDefinitions) Clear() {
-	e.definitions = map[string]mentalese.RelationSet{}
+	e.definitions = map[string]RelationSet{}
 }
 
 func (p *EntityDefinitions) Copy() *EntityDefinitions {
 
-	newDefinitions := map[string]mentalese.RelationSet{}
+	newDefinitions := map[string]RelationSet{}
 	for k, v := range p.definitions {
 		newDefinitions[k] = v
 	}
@@ -28,15 +26,15 @@ func (p *EntityDefinitions) Copy() *EntityDefinitions {
 	}
 }
 
-func (d *EntityDefinitions) Add(variable string, definition mentalese.RelationSet) {
+func (d *EntityDefinitions) Add(variable string, definition RelationSet) {
 	d.definitions[variable] = definition
 }
 
-func (d *EntityDefinitions) Get(variable string) mentalese.RelationSet {
+func (d *EntityDefinitions) Get(variable string) RelationSet {
 	definition, found := d.definitions[variable]
 	if found {
 		return definition
 	} else {
-		return mentalese.RelationSet{}
+		return RelationSet{}
 	}
 }

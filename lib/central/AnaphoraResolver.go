@@ -9,15 +9,15 @@ import (
 type AnaphoraResolver struct {
 	clauseList        *mentalese.ClauseList
 	entityBindings    *mentalese.EntityBindings
-	entityTags        *TagList
+	entityTags        *mentalese.TagList
 	entitySorts       *mentalese.EntitySorts
-	entityLabels      *EntityLabels
-	entityDefinitions *EntityDefinitions
+	entityLabels      *mentalese.EntityLabels
+	entityDefinitions *mentalese.EntityDefinitions
 	meta              *mentalese.Meta
 	messenger         api.ProcessMessenger
 }
 
-func NewAnaphoraResolver(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, entitySorts *mentalese.EntitySorts, entityLabels *EntityLabels, entityDefinitions *EntityDefinitions, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+func NewAnaphoraResolver(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *mentalese.TagList, entitySorts *mentalese.EntitySorts, entityLabels *mentalese.EntityLabels, entityDefinitions *mentalese.EntityDefinitions, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
 	return &AnaphoraResolver{
 		clauseList:        clauseList,
 		entityBindings:    entityBindings,
@@ -257,7 +257,7 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, label string
 	if found {
 		resolver.entityLabels.IncreaseActivation(label)
 		// use the reference of the existing label
-		referencedVariable := aLabel.variable
+		referencedVariable := aLabel.GetVariable()
 		return referencedVariable
 	} else {
 		referencedVariable := resolver.reference(variable, binding, collection)

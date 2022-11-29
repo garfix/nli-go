@@ -1,9 +1,13 @@
-package central
+package mentalese
 
 type EntityLabel struct {
 	label      string
 	variable   string
 	activation int
+}
+
+func (e EntityLabel) GetVariable() string {
+	return e.variable
 }
 
 type EntityLabels struct {

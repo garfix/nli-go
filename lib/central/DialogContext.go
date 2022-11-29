@@ -111,4 +111,6 @@ func (dc *DialogContext) Initialize() {
 	dc.EntityTags.Clear()
 	dc.EntitySorts.Clear()
 	dc.ClauseList.Clear()
+	dc.EntityLabels.Clear()
+	dc.EntityDefinitions.Clear()
 }

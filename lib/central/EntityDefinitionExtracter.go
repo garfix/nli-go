@@ -5,12 +5,12 @@ import (
 )
 
 type EntityDefinitionsExtracter struct {
-	dialogContext *DialogContext
+	entityDefinitions *EntityDefinitions
 }
 
-func NewEntityDefinitionsExtracter(dialogContext *DialogContext) *EntityDefinitionsExtracter {
+func NewEntityDefinitionsExtracter(entityDefinitions *EntityDefinitions) *EntityDefinitionsExtracter {
 	return &EntityDefinitionsExtracter{
-		dialogContext: dialogContext,
+		entityDefinitions: entityDefinitions,
 	}
 }
 
@@ -58,5 +58,5 @@ func (e *EntityDefinitionsExtracter) containsSelfReference(relation mentalese.Re
 }
 
 func (e *EntityDefinitionsExtracter) AddDefinition(variable string, definition mentalese.RelationSet) {
-	e.dialogContext.EntityDefinitions.Add(variable, definition)
+	e.entityDefinitions.Add(variable, definition)
 }

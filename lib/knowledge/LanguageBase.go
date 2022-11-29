@@ -65,8 +65,6 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 	rawInput := bound.Arguments[0].TermValue
 	output := ""
 
-	base.dialogContext.EntityLabels.DecreaseActivation()
-
 	originalDialogContext := base.dialogContext
 
 	locale := ""
@@ -96,6 +94,10 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			entityBindings := base.dialogContext.EntityBindings
 			entityTags := base.dialogContext.EntityTags
 			entitySorts := base.dialogContext.EntitySorts
+			entityLabels := base.dialogContext.EntityLabels
+			entityDefinitions := base.dialogContext.EntityDefinitions
+
+			entityLabels.DecreaseActivation()
 
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
@@ -110,7 +112,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			rootClauses := parse.NewRootClauseExtracter().Extract(&ellipsizedParseTree)
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, grammar, rootClauseTree, locale, rawInput)
+				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -134,6 +136,8 @@ func (base *LanguageBase) processRootClause(
 	entityBindings *mentalese.EntityBindings,
 	entityTags *central.TagList,
 	entitySorts *mentalese.EntitySorts,
+	entityLabels *central.EntityLabels,
+	entityDefinitions *central.EntityDefinitions,
 	grammar parse.Grammar,
 	rootClauseTree *mentalese.ParseTreeNode,
 	locale string,
@@ -172,10 +176,10 @@ func (base *LanguageBase) processRootClause(
 
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
-	extracter := central.NewEntityDefinitionsExtracter(base.dialogContext)
+	extracter := central.NewEntityDefinitionsExtracter(entityDefinitions)
 	extracter.Extract(requestRelations)
 
-	resolver := central.NewAnaphoraResolver(base.dialogContext, clauseList, entityBindings, entityTags, entitySorts, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
 	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false

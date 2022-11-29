@@ -12,6 +12,10 @@ func NewEntityDefinitions() *EntityDefinitions {
 	}
 }
 
+func (e *EntityDefinitions) Clear() {
+	e.definitions = map[string]mentalese.RelationSet{}
+}
+
 func (p *EntityDefinitions) Copy() *EntityDefinitions {
 
 	newDefinitions := map[string]mentalese.RelationSet{}

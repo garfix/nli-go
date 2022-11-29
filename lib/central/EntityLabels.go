@@ -16,6 +16,10 @@ func NewEntityLabels() *EntityLabels {
 	}
 }
 
+func (e *EntityLabels) Clear() {
+	e.labels = []EntityLabel{}
+}
+
 func (e *EntityLabels) Copy() *EntityLabels {
 	newLabels := []EntityLabel{}
 	newLabels = append(newLabels, e.labels...)

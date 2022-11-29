@@ -7,24 +7,26 @@ import (
 )
 
 type AnaphoraResolver struct {
-	dialogContext  *DialogContext
-	clauseList     *mentalese.ClauseList
-	entityBindings *mentalese.EntityBindings
-	entityTags     *TagList
-	entitySorts    *mentalese.EntitySorts
-	meta           *mentalese.Meta
-	messenger      api.ProcessMessenger
+	clauseList        *mentalese.ClauseList
+	entityBindings    *mentalese.EntityBindings
+	entityTags        *TagList
+	entitySorts       *mentalese.EntitySorts
+	entityLabels      *EntityLabels
+	entityDefinitions *EntityDefinitions
+	meta              *mentalese.Meta
+	messenger         api.ProcessMessenger
 }
 
-func NewAnaphoraResolver(dialogContext *DialogContext, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, entitySorts *mentalese.EntitySorts, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
+func NewAnaphoraResolver(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *TagList, entitySorts *mentalese.EntitySorts, entityLabels *EntityLabels, entityDefinitions *EntityDefinitions, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
 	return &AnaphoraResolver{
-		dialogContext:  dialogContext,
-		clauseList:     clauseList,
-		entityBindings: entityBindings,
-		entityTags:     entityTags,
-		entitySorts:    entitySorts,
-		meta:           meta,
-		messenger:      messenger,
+		clauseList:        clauseList,
+		entityBindings:    entityBindings,
+		entityTags:        entityTags,
+		entitySorts:       entitySorts,
+		entityLabels:      entityLabels,
+		entityDefinitions: entityDefinitions,
+		meta:              meta,
+		messenger:         messenger,
 	}
 }
 
@@ -202,7 +204,7 @@ func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, bin
 			variable := relation.Arguments[0].TermValue
 			found, referentVariable := resolver.sortalReference(variable)
 			if found {
-				oneAnaphor := resolver.dialogContext.EntityDefinitions.Get(referentVariable).
+				oneAnaphor := resolver.entityDefinitions.Get(referentVariable).
 					ReplaceTerm(mentalese.NewTermVariable(referentVariable), mentalese.NewTermVariable(variable))
 				collection.AddOneAnaphor(variable, oneAnaphor)
 
@@ -220,7 +222,7 @@ func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, bin
 
 func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
-	set := resolver.dialogContext.EntityDefinitions.Get(variable) //node.Rule.Sense
+	set := resolver.entityDefinitions.Get(variable) //node.Rule.Sense
 	resolvedVariable := variable
 
 	// if the variable has been bound already, don't try to look for a reference
@@ -251,9 +253,9 @@ func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.B
 
 func (resolver *AnaphoraResolver) labeledReference(variable string, label string, condition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) string {
 
-	aLabel, found := resolver.dialogContext.EntityLabels.GetLabel(label)
+	aLabel, found := resolver.entityLabels.GetLabel(label)
 	if found {
-		resolver.dialogContext.EntityLabels.IncreaseActivation(label)
+		resolver.entityLabels.IncreaseActivation(label)
 		// use the reference of the existing label
 		referencedVariable := aLabel.variable
 		return referencedVariable
@@ -264,7 +266,7 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, label string
 			conditionBindings := resolver.messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 			if conditionBindings.GetLength() > 0 {
 				// create a new label
-				resolver.dialogContext.EntityLabels.SetLabel(label, referencedVariable)
+				resolver.entityLabels.SetLabel(label, referencedVariable)
 			} else {
 				return variable
 			}
@@ -289,7 +291,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 			continue
 		}
 
-		definition := resolver.dialogContext.EntityDefinitions.Get(foundVariable)
+		definition := resolver.entityDefinitions.Get(foundVariable)
 		if definition.IsEmpty() {
 			continue
 		}

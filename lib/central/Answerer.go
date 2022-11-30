@@ -28,9 +28,7 @@ func (answerer *Answerer) AddIntents(intents []mentalese.Intent) {
 }
 
 // Returns the solutions whose condition matches the goal, and a set of bindings per solution
-func (answerer Answerer) FindIntents(goal mentalese.RelationSet) []mentalese.Intent {
-
-	var intents []mentalese.Intent
+func (answerer Answerer) FindIntent(goal mentalese.RelationSet) (mentalese.Intent, bool) {
 
 	for _, anIntent := range answerer.intents {
 
@@ -41,12 +39,12 @@ func (answerer Answerer) FindIntents(goal mentalese.RelationSet) []mentalese.Int
 
 			for _, binding := range bindings.GetAll() {
 				boundIntent := anIntent.BindSingle(binding)
-				intents = append(intents, boundIntent)
+				return boundIntent, true
 			}
 		}
 	}
 
-	return intents
+	return mentalese.Intent{}, false
 }
 
 func (answerer Answerer) Build(template mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.RelationSet {

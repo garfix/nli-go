@@ -193,25 +193,25 @@ func (base *LanguageBase) processRootClause(
 
 	// find intents
 	intentRelations := base.relationizer.ExtractIntents(resolvedTree)
-	intents := base.answerer.FindIntents(append(resolvedRequest, intentRelations...))
+	intent, intentFound := base.answerer.FindIntent(append(resolvedRequest, intentRelations...))
+	if !intentFound {
+		return "No intent found", true
+	}
 
 	// execute intent
-	anOutput, acceptedIntent, acceptedBindings := base.executeIntent(messenger, resolvedRequest, resolvedBindings, intents)
-	if anOutput != "" {
-		return anOutput, false
-	}
+	executionBindings := messenger.ExecuteChildStackFrame(resolvedRequest, resolvedBindings)
 
 	// center
 	base.updateCenter(clauseList, deicticCenter)
 
 	// response
-	responseBindings, responseIndex, responseFound := base.findResponse(messenger, acceptedIntent, acceptedBindings)
+	responseBindings, responseIndex, responseFound := base.findResponse(messenger, intent, executionBindings)
 	if !responseFound {
 		return "", false
 	}
 
 	// answer
-	answerRelations, essentialBindings := base.createAnswer(messenger, acceptedIntent, responseBindings, responseIndex)
+	answerRelations, essentialBindings := base.createAnswer(messenger, intent, responseBindings, responseIndex)
 
 	base.dialogWriteBindings(responseBindings, entityBindings, entitySorts)
 	base.dialogWriteBindings(essentialBindings, entityBindings, entitySorts)
@@ -227,24 +227,6 @@ func (base *LanguageBase) processRootClause(
 	surface := surfacer.Create(tokens)
 
 	return surface, false
-}
-
-func (base *LanguageBase) executeIntent(messenger api.ProcessMessenger, resolvedRequest mentalese.RelationSet, resolvedBindings mentalese.BindingSet, intents []mentalese.Intent) (string, mentalese.Intent, mentalese.BindingSet) {
-
-	output := ""
-	accepted := mentalese.Intent{}
-	acceptedBindings := mentalese.BindingSet{}
-
-	for index, sol := range intents {
-		resultBindings := messenger.ExecuteChildStackFrame(resolvedRequest, resolvedBindings)
-		if resultBindings.GetLength() > 0 || index == len(intents)-1 {
-			accepted = sol
-			acceptedBindings = resultBindings
-			break
-		}
-	}
-
-	return output, accepted, acceptedBindings
 }
 
 func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) mentalese.BindingSet {

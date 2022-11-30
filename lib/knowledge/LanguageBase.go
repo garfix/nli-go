@@ -143,78 +143,90 @@ func (base *LanguageBase) processRootClause(
 	rawInput string,
 ) (string, bool) {
 
-	rootClauseOutput := ""
+	// request clause
 	entities := mentalese.ExtractEntities(rootClauseTree)
 	clause := mentalese.NewClause(rootClauseTree, false, entities)
 	clauseList.AddClause(clause)
 
+	// tags
 	tags := base.relationizer.ExtractTags(*rootClauseTree)
 	entityTags.AddTags(tags)
 
+	// intent relations
 	intentRelations := base.relationizer.ExtractIntents(*rootClauseTree)
-	clauseList.GetLastClause().SetIntents(intentRelations)
+	clause.SetIntents(intentRelations)
 
+	// sorts
 	sortFinder := central.NewSortFinder(base.meta, messenger)
 	sorts, sortFound := sortFinder.FindSorts(rootClauseTree)
 	if !sortFound {
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
 		return "", true
 	}
-
 	for variable, sort := range sorts {
 		entitySorts.SetSorts(variable, []string{sort})
 	}
 
+	// name resolution
 	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags, entitySorts)
 	if unresolvedName != "" {
-		rootClauseOutput = common.GetString("name_not_found", unresolvedName)
-		return rootClauseOutput, true
+		return common.GetString("name_not_found", unresolvedName), true
 	}
 
+	// relationize
 	requestRelations := base.relationizer.Relationize(rootClauseTree, []string{"S"})
-
 	base.log.AddProduction("Relations", requestRelations.IndentedString(""))
 
+	// entity definitions
 	extracter := central.NewEntityDefinitionsExtracter(entityDefinitions)
 	extracter.Extract(requestRelations)
 
+	// anaphora
 	resolver := central.NewAnaphoraResolver(clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
 	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false
 	}
 
+	// agreement
 	agreementChecker := central.NewAgreementChecker()
 	_, agreementOutput := agreementChecker.CheckAgreement(rootClauseTree, entityTags)
 	if agreementOutput != "" {
 		return agreementOutput, true
 	}
 
-	intentRelations2 := clauseList.GetLastClause().GetIntents()
-	conditionSubject := append(resolvedRequest, intentRelations2...)
-	intents := base.answerer.FindIntents(conditionSubject)
+	// find intents
+	intentRelations2 := clause.GetIntents()
+	intents := base.answerer.FindIntents(append(resolvedRequest, intentRelations2...))
 
+	// execute intent
 	anOutput, acceptedIntent, acceptedBindings := base.executeIntent(messenger, resolvedRequest, resolvedBindings, intents)
 	if anOutput != "" {
 		return anOutput, false
 	}
 
+	// center
 	base.updateCenter(clauseList, deicticCenter)
 
+	// response
 	responseBindings, responseIndex, responseFound := base.findResponse(messenger, acceptedIntent, acceptedBindings)
 	if !responseFound {
 		return "", false
 	}
 
+	// answer
 	answerRelations, essentialBindings := base.createAnswer(messenger, acceptedIntent, responseBindings, responseIndex)
 
 	base.dialogWriteBindings(responseBindings, entityBindings, entitySorts)
 	base.dialogWriteBindings(essentialBindings, entityBindings, entitySorts)
 
+	// response clause
 	base.dialogAddResponseClause(clauseList, deicticCenter, essentialBindings)
 
+	// tokens
 	tokens := base.generator.Generate(grammar.GetWriteRules(), answerRelations)
 
+	// output
 	surfacer := generate.NewSurfaceRepresentation(base.log)
 	surface := surfacer.Create(tokens)
 

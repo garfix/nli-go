@@ -24,15 +24,14 @@ func (node *ParseTreeNode) PartialCopy() ParseTreeNode {
 	}
 }
 
-func (node *ParseTreeNode) ReplaceVariable(fromVar string, toVar string) ParseTreeNode {
+func (node *ParseTreeNode) ReplaceVariable(fromVar string, toVar string) *ParseTreeNode {
 	constituents := []*ParseTreeNode{}
 	for _, constituent := range node.Constituents {
 		newConstituent := constituent.ReplaceVariable(fromVar, toVar)
-		constituents = append(constituents, &newConstituent)
+		constituents = append(constituents, newConstituent)
 	}
-	rule := node.Rule.Copy()
-	rule = rule.ReplaceVariable(fromVar, toVar)
-	return ParseTreeNode{
+	rule := node.Rule.ReplaceVariable(fromVar, toVar)
+	return &ParseTreeNode{
 		Category:     node.Category,
 		Constituents: constituents,
 		Form:         node.Form,

@@ -36,13 +36,13 @@ func (e *Ellipsizer) Ellipsize(tree *mentalese.ParseTreeNode) (*mentalese.ParseT
 
 func (e *Ellipsizer) replaceVariables(node *mentalese.ParseTreeNode, variableMapping *map[string]string) *mentalese.ParseTreeNode {
 
-	newNode := *node
+	newNode := node
 
 	for fromVar, toVar := range *variableMapping {
 		newNode = newNode.ReplaceVariable(fromVar, toVar)
 	}
 
-	return &newNode
+	return newNode
 }
 
 // quick check

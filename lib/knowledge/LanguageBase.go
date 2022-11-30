@@ -152,10 +152,6 @@ func (base *LanguageBase) processRootClause(
 	tags := base.relationizer.ExtractTags(*rootClauseTree)
 	entityTags.AddTags(tags)
 
-	// intent relations
-	intentRelations := base.relationizer.ExtractIntents(*rootClauseTree)
-	clause.SetIntents(intentRelations)
-
 	// sorts
 	sortFinder := central.NewSortFinder(base.meta, messenger)
 	sorts, sortFound := sortFinder.FindSorts(rootClauseTree)
@@ -183,21 +179,21 @@ func (base *LanguageBase) processRootClause(
 
 	// anaphora
 	resolver := central.NewAnaphoraResolver(clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
-	resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
+	resolvedTree, resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false
 	}
 
 	// agreement
 	agreementChecker := central.NewAgreementChecker()
-	_, agreementOutput := agreementChecker.CheckAgreement(rootClauseTree, entityTags)
+	_, agreementOutput := agreementChecker.CheckAgreement(resolvedTree, entityTags)
 	if agreementOutput != "" {
 		return agreementOutput, true
 	}
 
 	// find intents
-	intentRelations2 := clause.GetIntents()
-	intents := base.answerer.FindIntents(append(resolvedRequest, intentRelations2...))
+	intentRelations := base.relationizer.ExtractIntents(resolvedTree)
+	intents := base.answerer.FindIntents(append(resolvedRequest, intentRelations...))
 
 	// execute intent
 	anOutput, acceptedIntent, acceptedBindings := base.executeIntent(messenger, resolvedRequest, resolvedBindings, intents)

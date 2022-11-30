@@ -30,7 +30,7 @@ func NewAnaphoraResolver(clauseList *mentalese.ClauseList, entityBindings *menta
 	}
 }
 
-func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (mentalese.RelationSet, mentalese.BindingSet, string) {
+func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
 
 	//println("---")
 	// println(request.String())
@@ -76,7 +76,9 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	//println(resolvedRequest.String())
 	//println(resolvedRoot.String())
 
-	return resolvedRequest, newBindings, collection.output
+	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
+
+	return resolvedTree, resolvedRequest, newBindings, collection.output
 }
 
 func (resolver *AnaphoraResolver) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {

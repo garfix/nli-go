@@ -9,7 +9,6 @@ type Clause struct {
 	ParseTree        *ParseTreeNode
 	Functions        []*ClauseEntity
 	ResolvedEntities []string
-	Intents          RelationSet
 }
 
 func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*ClauseEntity) *Clause {
@@ -19,27 +18,16 @@ func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*Clause
 		ParseTree:        parseTree,
 		Functions:        entities,
 		ResolvedEntities: []string{},
-		Intents:          RelationSet{},
 	}
-}
-
-func (clause *Clause) SetIntents(intents RelationSet) {
-	clause.Intents = intents
-}
-
-func (clause *Clause) GetIntents() RelationSet {
-	return clause.Intents
 }
 
 func (clause *Clause) ReplaceVariable(fromVariable string, toVariable string) {
 	newTree := clause.ParseTree.ReplaceVariable(fromVariable, toVariable)
-	clause.ParseTree = &newTree
+	clause.ParseTree = newTree
 
 	for _, e := range clause.Functions {
 		e.Replacevariable(fromVariable, toVariable)
 	}
-
-	clause.Intents = clause.Intents.ReplaceTerm(NewTermVariable(fromVariable), NewTermVariable(toVariable))
 }
 
 func ExtractEntities(node *ParseTreeNode) []*ClauseEntity {

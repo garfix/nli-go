@@ -40,12 +40,12 @@ func (relationizer Relationizer) ExtractTags(node mentalese.ParseTreeNode) menta
 	return tags
 }
 
-func (relationizer Relationizer) ExtractIntents(node mentalese.ParseTreeNode) mentalese.RelationSet {
+func (relationizer Relationizer) ExtractIntents(node *mentalese.ParseTreeNode) mentalese.RelationSet {
 
 	intents := node.Rule.Intent
 
 	for _, childNode := range node.Constituents {
-		intents = append(intents, relationizer.ExtractIntents(*childNode)...)
+		intents = append(intents, relationizer.ExtractIntents(childNode)...)
 	}
 
 	return intents

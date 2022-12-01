@@ -5,19 +5,20 @@ import (
 )
 
 type Clause struct {
-	AuthorIsSystem   bool
-	ParseTree        *ParseTreeNode
-	Functions        []*ClauseEntity
-	ResolvedEntities []string
+	AuthorIsSystem bool
+	ParseTree      *ParseTreeNode
+	Functions      []*ClauseEntity
+	// entities as they are encountered when resolving anaphora, used to build the anaphora queue
+	QueuedEntities []string
 }
 
 func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*ClauseEntity) *Clause {
 
 	return &Clause{
-		AuthorIsSystem:   authorIsSystem,
-		ParseTree:        parseTree,
-		Functions:        entities,
-		ResolvedEntities: []string{},
+		AuthorIsSystem: authorIsSystem,
+		ParseTree:      parseTree,
+		Functions:      entities,
+		QueuedEntities: []string{},
 	}
 }
 
@@ -110,5 +111,5 @@ func createOrderedEntities(variables []string, functions map[string]string) []*C
 }
 
 func (c *Clause) AddEntity(entity string) {
-	c.ResolvedEntities = append(c.ResolvedEntities, entity)
+	c.QueuedEntities = append(c.QueuedEntities, entity)
 }

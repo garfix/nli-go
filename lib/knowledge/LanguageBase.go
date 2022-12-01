@@ -366,14 +366,14 @@ func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deictic
 		mentalese.AtomFunctionObject:  5,
 	}
 
-	c := clauseList.GetLastClause()
+	clause := clauseList.GetLastClause()
 
 	// new clause has no entities? keep existing center
-	if len(c.Functions) == 0 {
+	if len(clause.Functions) == 0 {
 		center = previousCenter
 	}
 
-	for _, entity := range c.Functions {
+	for _, entity := range clause.Functions {
 		if previousCenter != "" {
 			priority = priorities["previousCenter"]
 			center = entity.DiscourseVariable

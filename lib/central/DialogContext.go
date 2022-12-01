@@ -59,7 +59,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 	first := len(clauses) - 1 - MaxSizeAnaphoraQueue
 	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
 		clause := clauses[i]
-		for _, discourseVariable := range clause.ResolvedEntities {
+		for _, discourseVariable := range clause.QueuedEntities {
 
 			// add each variable only once
 			_, found := variableUsed[discourseVariable]

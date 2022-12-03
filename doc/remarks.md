@@ -1,3 +1,11 @@
+## 2022-12-02
+
+I will disallow an entity to have multiple sorts. Each antity can only have a single sort. Only this way I can check for sortal collisions.
+
+But what about Tweety, who is both a bird and a cartoon character? Well, Tweety is a cartoon-canary, if you must. A cartoon-canary is a cartoon character, and a cartoon-canary is also a canary.
+
+For the large majority of the nli-projects this is not an issue at all, and multi-type will only add to complexity. It is the odd project that has to adapt, and resort to cartoon-canaries.
+
 ## 2022-11-28
 
 As some predicates need access to the deictic center. I can use slots to pass values from system to application and back. I can also use the active dialog context to do this. Or somehow the predicate should get access to the active deictic center.

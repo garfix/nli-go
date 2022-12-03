@@ -73,26 +73,20 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 			if found {
 				if value.IsList() {
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
-					sorts := entitySorts.GetSorts(discourseVariable)
-					for i, item := range value.TermValueList {
-						sort := sorts[i]
+					sort := entitySorts.GetSort(discourseVariable)
+					for _, item := range value.TermValueList {
 						reference := AnaphoraQueueElementValue{sort, item.TermValue}
 						group.values = append(group.values, reference)
 					}
 					ids = append(ids, group)
 				} else {
-					sorts := entitySorts.GetSorts(discourseVariable)
-					sort := sorts[0]
+					sort := entitySorts.GetSort(discourseVariable)
 					reference := AnaphoraQueueElementValue{sort, value.TermValue}
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 					ids = append(ids, group)
 				}
 			} else {
-				sorts := entitySorts.GetSorts(discourseVariable)
-				sort := mentalese.SortEntity
-				if len(sorts) > 0 {
-					sort = sorts[0]
-				}
+				sort := entitySorts.GetSort(discourseVariable)
 				reference := AnaphoraQueueElementValue{sort, ""}
 				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 				ids = append(ids, group)

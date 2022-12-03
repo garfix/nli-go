@@ -5,20 +5,20 @@ import (
 )
 
 type Clause struct {
-	AuthorIsSystem bool
-	ParseTree      *ParseTreeNode
-	Functions      []*ClauseEntity
+	AuthorIsSystem     bool
+	ParseTree          *ParseTreeNode
+	SyntacticFunctions []*ClauseEntity
 	// entities as they are encountered when resolving anaphora, used to build the anaphora queue
 	QueuedEntities []string
 }
 
-func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, entities []*ClauseEntity) *Clause {
+func NewClause(parseTree *ParseTreeNode, authorIsSystem bool, syntacticFunctions []*ClauseEntity) *Clause {
 
 	return &Clause{
-		AuthorIsSystem: authorIsSystem,
-		ParseTree:      parseTree,
-		Functions:      entities,
-		QueuedEntities: []string{},
+		AuthorIsSystem:     authorIsSystem,
+		ParseTree:          parseTree,
+		SyntacticFunctions: syntacticFunctions,
+		QueuedEntities:     []string{},
 	}
 }
 
@@ -26,12 +26,12 @@ func (clause *Clause) ReplaceVariable(fromVariable string, toVariable string) {
 	newTree := clause.ParseTree.ReplaceVariable(fromVariable, toVariable)
 	clause.ParseTree = newTree
 
-	for _, e := range clause.Functions {
+	for _, e := range clause.SyntacticFunctions {
 		e.Replacevariable(fromVariable, toVariable)
 	}
 }
 
-func ExtractEntities(node *ParseTreeNode) []*ClauseEntity {
+func ExtractSyntacticFunctions(node *ParseTreeNode) []*ClauseEntity {
 	variables := collectVariables(node)
 	functions := collectFunctions(node)
 	entities := createOrderedEntities(variables, functions)

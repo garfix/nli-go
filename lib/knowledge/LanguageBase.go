@@ -70,12 +70,15 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 	locale := ""
 	for _, grammar := range base.grammars {
 
+		// set locale
 		locale = grammar.GetLocale()
 		messenger.SetProcessSlot("locale", mentalese.NewTermString(locale))
 
+		// tokenize
 		tokens := grammar.GetTokenizer().Process(rawInput)
 		base.log.AddProduction("Tokens", strings.Join(tokens, " "))
 
+		// parse
 		parser := parse.NewParser(grammar.GetReadRules(), base.log)
 		parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
 		parseTrees := parser.Parse(tokens, "s", []string{"S"})
@@ -97,18 +100,23 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			entityLabels := base.dialogContext.EntityLabels
 			entityDefinitions := base.dialogContext.EntityDefinitions
 
+			// slowly forget about named references ("it")
 			entityLabels.DecreaseActivation()
 
+			// use dialog variables
 			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
+			// ellipsis
 			ellipsizedParseTree, ok := parse.NewEllipsizer(clauseList.GetRootNodes(), base.log).Ellipsize(dialogizedParseTree)
 			if !ok {
 				break
 			}
 			base.log.AddProduction("Ellipsized parse tree", ellipsizedParseTree.IndentedString(""))
 
+			// extract root clauses
 			rootClauses := parse.NewRootClauseExtracter().Extract(ellipsizedParseTree)
+
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
 				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
@@ -143,9 +151,11 @@ func (base *LanguageBase) processRootClause(
 	rawInput string,
 ) (string, bool) {
 
+	// syntactic functions
+	syntacticFunctions := mentalese.ExtractSyntacticFunctions(rootClauseTree)
+
 	// request clause
-	entities := mentalese.ExtractEntities(rootClauseTree)
-	clause := mentalese.NewClause(rootClauseTree, false, entities)
+	clause := mentalese.NewClause(rootClauseTree, false, syntacticFunctions)
 	clauseList.AddClause(clause)
 
 	// tags
@@ -153,14 +163,13 @@ func (base *LanguageBase) processRootClause(
 	entityTags.AddTags(tags)
 
 	// sorts
-	sortFinder := central.NewSortFinder(base.meta, messenger)
-	sorts, sortFound := sortFinder.FindSorts(rootClauseTree)
+	sorts, sortFound := central.NewSortFinder(base.meta, messenger).FindSorts(rootClauseTree)
 	if !sortFound {
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
 		return "", true
 	}
 	for variable, sort := range sorts {
-		entitySorts.SetSorts(variable, []string{sort})
+		entitySorts.SetSort(variable, sort)
 	}
 
 	// name resolution
@@ -273,7 +282,7 @@ func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseLi
 func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet, entityBindings *mentalese.EntityBindings, entitySorts *mentalese.EntitySorts) {
 
 	groupedValues := map[string][]mentalese.Term{}
-	groupedSorts := map[string][]string{}
+	groupedSorts := map[string]string{}
 
 	for _, someBinding := range someBindings.GetAll() {
 		for key, value := range someBinding.GetAll() {
@@ -282,7 +291,7 @@ func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet,
 				_, found := groupedValues[key]
 				if !found {
 					groupedValues[key] = []mentalese.Term{}
-					groupedSorts[key] = []string{}
+					groupedSorts[key] = "entity"
 				}
 
 				alreadyAdded := false
@@ -294,7 +303,7 @@ func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet,
 
 				if !alreadyAdded {
 					groupedValues[key] = append(groupedValues[key], value)
-					groupedSorts[key] = append(groupedSorts[key], value.TermSort)
+					groupedSorts[key] = value.TermSort
 				}
 
 			}
@@ -307,7 +316,7 @@ func (base *LanguageBase) dialogWriteBindings(someBindings mentalese.BindingSet,
 		} else {
 			entityBindings.Set(key, mentalese.NewTermList(values))
 		}
-		entitySorts.SetSorts(key, groupedSorts[key])
+		entitySorts.SetSort(key, groupedSorts[key])
 	}
 }
 
@@ -369,11 +378,11 @@ func (base *LanguageBase) updateCenter(clauseList *mentalese.ClauseList, deictic
 	clause := clauseList.GetLastClause()
 
 	// new clause has no entities? keep existing center
-	if len(clause.Functions) == 0 {
+	if len(clause.SyntacticFunctions) == 0 {
 		center = previousCenter
 	}
 
-	for _, entity := range clause.Functions {
+	for _, entity := range clause.SyntacticFunctions {
 		if previousCenter != "" {
 			priority = priorities["previousCenter"]
 			center = entity.DiscourseVariable
@@ -443,10 +452,10 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 		}
 
 		// find name information
-		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort[0], messenger)
+		nameInformations := base.nameResolver.ResolveName(name.TermValue, sort, messenger)
 		if len(nameInformations) == 0 {
 			base.log.AddProduction("Info",
-				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort[0]+"' did not give any results")
+				"Database lookup for name '"+name.TermValue+"'  with sort '"+sort+"' did not give any results")
 			nameNotFound = name.TermValue
 			goto next
 		}

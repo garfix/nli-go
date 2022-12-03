@@ -17,7 +17,7 @@ In the blocks world, for example, we get:
 
 ## Sort hierarchy
 
-A sorts can have a sort of itself. Here's how we declare a block to be an object:
+A sort can have a sort of itself. Here's how we declare a block to be an object:
 
     go:has_sort(block, object)
 

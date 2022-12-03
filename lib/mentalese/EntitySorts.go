@@ -1,15 +1,13 @@
 package mentalese
 
-import "strings"
-
-type EntitySorts map[string][]string
+type EntitySorts map[string]string
 
 func NewEntitySorts() *EntitySorts {
 	return &EntitySorts{}
 }
 
 func (s *EntitySorts) Clear() {
-	*s = map[string][]string{}
+	*s = map[string]string{}
 }
 
 func (p *EntitySorts) Copy() *EntitySorts {
@@ -22,18 +20,18 @@ func (p *EntitySorts) Copy() *EntitySorts {
 	return &newSorts
 }
 
-func (s *EntitySorts) SetSorts(variable string, sorts []string) {
-	(*s)[variable] = sorts
+func (s *EntitySorts) SetSort(variable string, sort string) {
+	(*s)[variable] = sort
 }
 
 // an entity usually has a single value, but it can also contain a list of values
 // this function always returns a list
-func (s *EntitySorts) GetSorts(variable string) []string {
+func (s *EntitySorts) GetSort(variable string) string {
 	sort, found := (*s)[variable]
 	if found {
 		return sort
 	} else {
-		return []string{}
+		return ""
 	}
 }
 
@@ -49,7 +47,7 @@ func (s *EntitySorts) String() string {
 	str := ""
 
 	for key, value := range *s {
-		str += key + "=" + strings.Join(value, ",") + ";"
+		str += key + "=" + value
 	}
 
 	return str

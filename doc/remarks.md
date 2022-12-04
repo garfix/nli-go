@@ -1,3 +1,11 @@
+## 2012-12-04
+
+I'm creating a list of topics. Good approach!
+
+Here's the current system diagram:
+
+![diagram](archive/system-20221204.png)
+
 ## 2022-12-02
 
 I will disallow an entity to have multiple sorts. Each antity can only have a single sort. Only this way I can check for sortal collisions.

@@ -1,4 +1,4 @@
-# Response generation
+# Code
 
 The relations of the response are constructed in the solution file. These are language agnostic.
 

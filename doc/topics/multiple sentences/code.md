@@ -1,4 +1,6 @@
-# Root clause
+# Code
+
+## Root clause
 
 In most cases the root clause coincides with the sentence. Some sentences, like the one below
 

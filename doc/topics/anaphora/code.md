@@ -1,6 +1,4 @@
-# Anaphora resolution
-
-Language has a number of ways in which one noun phrase refers to another, in the same dialog. Typically this can take the form of pronouns (he, she, it), but the range of expressions is actually quite extensive. Here's how to deal with them. 
+# Anaphora - code
 
 ## Pronouns
 

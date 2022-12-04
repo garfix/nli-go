@@ -1,0 +1,36 @@
+# Anaphora - implementation
+
+NLI-GO handles pronouns like "he", "she", "it", "they", but also expressions like "the block" and "the red one". These
+expressions are called commonly called anaphora. Some refer to recent user input and some to a recent system response.
+
+## The anaphora queue
+
+To resolve an unbound variable of a sentence, it is matched to all variables in the anaphora queue, until a match is found.
+
+The anaphora queue is built on demand, whenever it is needed. It is built from the entities stored in the clauses of the dialog context.
+
+Each clause has a list of entities ordered as they appear in the sentence.
+
+The anaphora queue is built from the last clause encountered to the first, and the entities within a clause in order. In general an entity that appears earlier in a sentence is more likely to be the referent. 
+
+It is also possible to tag entities as subject and object, and there functions will be used to determine the order of appearance. The subject is more important than the object, and this in turn is more important than other entities.
+
+The anaphora queue is extended at the same of anaphora resolution itself. This is necessary because of intrasentential anaphora: a reference to an entity within the same sentence.
+
+The anaphora queue is also extended when the system creates an answer sentence. At that time it creates a new clause, and its entities.
+
+Each entity is added to the anaphora queue only once.
+
+## Features
+
+When the sentence is parsed, the system does not only build the representation of the intention, it also produces "features" for each of the entities.
+
+These features are used to constrain the options in anaphora resolution. They are:
+
+- sort: `person`, `car`, `event`, ...
+- gender: `male`, `female`, `neuter`
+- number: `singular`, `plural`
+- reflexivity: `true` ("himself"), `false` ("him")
+- determinacy: `determinate` ("the") `indeterminate` ("a")
+- resolved: `true`, `false` (a forward reference is unresolved for some time)
+

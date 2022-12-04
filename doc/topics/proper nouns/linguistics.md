@@ -1,6 +1,6 @@
 # Proper nouns - linguistics
 
-In linguistics, a proper noun (or proper name) is the name of an entity.
+In linguistics, a proper noun (or proper name) is the name of an entity. Examples: Jack, Madonna, IBM, Lord Byron, The The, Commodore 64.
 
 https://en.wikipedia.org/wiki/Proper_noun
 

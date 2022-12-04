@@ -14,4 +14,5 @@ Also, from personal experience, I noticed that people tend to write names in all
 
 but of course we can teach our users to write correct sentences.
 
+And thoses are just the problems with human names. Things have names too. A name like "Commodore 64" will fall outside the words-with-capitals scheme.
 

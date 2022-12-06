@@ -74,7 +74,7 @@
 { rule: imperative(P1) -> imperative_clause(P1) }
 
 { 
-    rule: imperative_clause(C) -> imperative_clause(P1) and(_) imperative_clause(P2), 
+    rule: imperative_clause(C) -> imperative_clause(P1) 'and' imperative_clause(P2), 
     sense: $imperative_clause1 $imperative_clause2,
     tag: go:root_clause(P1) go:root_clause(P2) 
 }

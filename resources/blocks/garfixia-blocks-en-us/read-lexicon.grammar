@@ -90,7 +90,3 @@
 { rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', go:isa(E1, object)) }
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }
-
-/* conjunctions */
-
-{ rule: and(C1) -> 'and' }

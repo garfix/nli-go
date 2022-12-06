@@ -31,6 +31,9 @@ func (e *RootClauseExtracter) findRootClauses(node *mentalese.ParseTreeNode) []*
 				if i == 0 {
 					continue
 				}
+				if len(entityVariable) == 0 {
+					continue
+				}
 				if entityVariable[0] == variable {
 					rootClauses = append(rootClauses, node.Constituents[i-1])
 				}

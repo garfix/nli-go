@@ -531,20 +531,26 @@ func (base *LanguageBase) translate(messenger api.ProcessMessenger, input mental
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ssv", base.log) {
+	if !Validate(bound, "sv", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	source := bound.Arguments[0].TermValue
-	locale := bound.Arguments[1].TermValue
-	translatedVar := input.Arguments[2].TermValue
+	translatedVar := input.Arguments[1].TermValue
 
-	grammar, found := base.getGrammar(locale)
-	if !found {
-		return mentalese.NewBindingSet()
+	translation := ""
+
+	locale, localeFound := messenger.GetProcessSlot("locale")
+	if !localeFound {
+		translation = source
+	} else {
+		grammar, found := base.getGrammar(locale.TermValue)
+		if !found {
+			return mentalese.NewBindingSet()
+		}
+
+		translation = grammar.GetText(source)
 	}
-
-	translation := grammar.GetText(source)
 
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(translatedVar, mentalese.NewTermString(translation))

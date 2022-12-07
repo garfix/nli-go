@@ -42,10 +42,9 @@ form(E, Form) :-
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [Y1 > Y2];
 
 on(A, B) :-
-    go:slot(locale, Locale)
-    go:translate('which one', Locale, Q)
-    go:translate('directly on the surface', Locale, A1)
-    go:translate('anywhere on top of', Locale, A2)
+    go:translate('which one', Q)
+    go:translate('directly on the surface', A1)
+    go:translate('anywhere on top of', A2)
     go:wait_for(
         go:user_select(Q, [A1, A2], Sel))
     if [Sel == 0] then

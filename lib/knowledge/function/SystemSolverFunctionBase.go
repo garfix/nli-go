@@ -54,9 +54,6 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateExec:         base.exec,
 		mentalese.PredicateExecResponse: base.execResponse,
 
-		// process slots
-		mentalese.PredicateSlot: base.slot,
-
 		// dialog context
 		mentalese.PredicateContextSet:    base.contextSet,
 		mentalese.PredicateContextExtend: base.contextExtend,

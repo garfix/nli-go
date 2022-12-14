@@ -63,7 +63,7 @@
 }
 
 { rule: time_modifier(P1) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
-{ rule: time_modifier(P1) -> 'while' vp(P2),                               sense: $mem_vp dom:while(P1, P2) }
+{ rule: time_modifier(P1) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) }
 
 
 /* imperative sentences */

@@ -17,6 +17,20 @@ Use of variables:
 * `$?X` read the contents of the variable
 * `$_X` write the contents of a variable by unification.
 
+## Facts
+
+A stored fact is represented as
+
+    (#SUPPORT $?Z $?X)
+
+It is stored with 
+
+    (THASSERT (#SUPPORT $?Z $?X))
+
+and read with
+
+    (THGOAL (#SUPPORT $?X $_Y))
+
 ## Theorems
 
 THGOAL

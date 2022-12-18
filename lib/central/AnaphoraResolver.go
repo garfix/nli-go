@@ -30,6 +30,43 @@ func NewAnaphoraResolver(clauseList *mentalese.ClauseList, entityBindings *menta
 	}
 }
 
+func (resolver *AnaphoraResolver) collectCoArguments(set mentalese.RelationSet, collection *AnaphoraResolverCollection) {
+
+	for _, relation := range set {
+		if relation.Predicate == mentalese.PredicateCheck || relation.Predicate == mentalese.PredicateDo {
+			body := relation.Arguments[mentalese.CheckBodyIndex].TermValueRelationSet
+
+			for _, bodyRelation1 := range body {
+				for _, argument1 := range bodyRelation1.Arguments {
+
+					if !argument1.IsVariable() {
+						continue
+					}
+
+					for _, bodyRelation2 := range body {
+						for _, argument2 := range bodyRelation2.Arguments {
+
+							if !argument2.IsVariable() {
+								continue
+							}
+
+							if argument1.TermValue != argument2.TermValue {
+								collection.AddCoArgument(argument1.TermValue, argument2.TermValue)
+							}
+						}
+					}
+				}
+			}
+		}
+
+		for _, argument := range relation.Arguments {
+			if argument.IsRelationSet() {
+				resolver.collectCoArguments(argument.TermValueRelationSet, collection)
+			}
+		}
+	}
+}
+
 func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
 
 	//println("---")
@@ -37,6 +74,8 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 
 	newBindings := mentalese.InitBindingSet(binding)
 	collection := NewAnaphoraResolverCollection()
+
+	resolver.collectCoArguments(request, collection)
 
 	resolver.resolveNode(root, binding, collection)
 
@@ -73,8 +112,9 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 		}
 	}
 
-	//println(resolvedRequest.String())
+	// println(resolvedRequest.String())
 	//println(resolvedRoot.String())
+	// println(newBindings.String())
 
 	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
 
@@ -233,7 +273,7 @@ func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.B
 		return variable
 	}
 
-	found, referentVariable, referentValue := resolver.findReferent(variable, set, binding)
+	found, referentVariable, referentValue := resolver.findReferent(variable, set, binding, collection)
 	if found {
 		if referentVariable != "" {
 			collection.AddReplacement(variable, referentVariable)
@@ -247,6 +287,14 @@ func (resolver *AnaphoraResolver) reference(variable string, binding mentalese.B
 		if newBindings.GetLength() > 1 {
 			// ask the user which of the specified entities he/she means
 			collection.output = "I don't understand which one you mean"
+		} else {
+			// non-anaphoric reference ("the red cube", found in the scene)
+			// newBinding := newBindings.Get(0)
+			// value, found := newBinding.Get(variable)
+			// if found {
+			// 	collection.AddReference(variable, value)
+			// 	resolver.entityBindings.Set(variable, value)
+			// }
 		}
 	}
 
@@ -315,7 +363,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 	return found, foundVariable
 }
 
-func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding) (bool, string, mentalese.Term) {
+func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) (bool, string, mentalese.Term) {
 
 	found := false
 	foundVariable := ""
@@ -327,6 +375,11 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 		// there may be 1..n groups (bindings)
 		referentVariable := group.Variable
 
+		// the entity itself is in the queue
+		if referentVariable == variable {
+			continue
+		}
+
 		agreementChecker := NewAgreementChecker()
 
 		agree, _, _ := agreementChecker.CheckForCategoryConflictBetween(variable, referentVariable, resolver.entityTags)
@@ -334,15 +387,24 @@ func (resolver *AnaphoraResolver) findReferent(variable string, set mentalese.Re
 			continue
 		}
 
+		// disallow reflective references
+		if collection.IsCoArgument(variable, referentVariable) {
+			continue
+		}
+
 		// if there's 1 group and its id = "", it is unbound
 		isBound := group.values[0].Id != ""
 
-		if isBound {
+		sameSentence := group.SentenceDistance == 0
+
+		if isBound || sameSentence {
 			// empty set ("it")
 			if len(set) == 0 {
-				found = true
-				foundVariable = referentVariable
-				break
+				if group.values[0].Sort != "" {
+					found = true
+					foundVariable = referentVariable
+					break
+				}
 			}
 		}
 

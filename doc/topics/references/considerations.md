@@ -35,6 +35,22 @@ Information about entities then exists on these layers:
 
 multiple S can reference the same R
 
+## Reflective references
+
+The word "himself" is a reflective reference, wheras "him" isn't. The difference between these words is that "himself" somehow has a very narrow scope, while "him" can span a great length. But what exactly determines this scope?
+
+In "Syntax and Semantics" - Dalrymple (p.280) we find:
+
+  "The antecedent of the English reflective himself must appear in the Minimal Complete Nucleus containing the pronoun".
+
+Leaves us to determine this Nucleus. But since this definition presumes an f-structure, which we don't have, we must cast it in another form.
+
+Currently I'm using this definition:
+
+  "The Minimal Complete Nucleus can be described as the relation set that forms the body of a do/check predication"
+
+Two variables that occur in the same nucleus are called co-arguments.
+
 ## References
 
 - https://en.wikipedia.org/wiki/Anaphora_(linguistics)

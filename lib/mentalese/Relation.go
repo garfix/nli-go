@@ -150,6 +150,9 @@ const QuantQuantifierIndex = 0
 const QuantRangeVariableIndex = 1
 const QuantRangeSetIndex = 2
 
+const CheckQuantIndex = 0
+const CheckBodyIndex = 1
+
 const SeqFirstOperandIndex = 0
 const SeqSecondOperandIndex = 1
 

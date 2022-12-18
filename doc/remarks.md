@@ -1,4 +1,65 @@
-## 2012-12-04
+## 2022-12-17
+
+    {"How many objects did you touch while you were doing it?", "Four of them"},
+	{"What did the red cube support before you started to clean it off?", "The green pyramid"},
+
+Problem "it" in the second sentence is still a labeled reference that refers to the event that the "it" in the first sentence refers to.
+
+## 2022-12-13
+
+"A second kind of memory keeps track of the actual physical motions of objects, noting each time one is moved, and recording its name and the location it went to. This list can be used to establish where any object was at any past time." (p. 125)
+
+This is what's needed.
+
+## 2022-12-12
+
+What would it mean to deduce what the red cube supported (just) before some event? From the fact that it was a clean-off event, we can deduce that the object removed was on top of it before. 
+
+But what about the next interaction (#33)?
+
+    H: There were five blocks to the left of the box then
+    C: No, only four of them: the red cube, two large green cubes and a large red block.
+
+To this Winograd remarks: "the system knows that it has complete information about the basic properties of objects, including location. It checks any statements about location or other such properties to see whether it agrees or disagrees."
+
+This bit is remarkable: "it has complete information about the basic properties of objects, including location". This seems to imply that SHRDLU has a episodal memory that remembers previous states.
+
+## 2022-12-08
+
+Interaction #32
+
+    H: What did the red cube support before you started to clean it off?
+    C: The green pyramid
+
+Winograd: "By remembering what has been removed, it is possible to deduce things about earlier states of the scene. We can use complex nestings of clauses like 'before you started to clean it off'"
+
+First of all: it takes courage to even imagine this sentence. It's intimidating.
+
+Without Winograd's comment, a possible approach would be to remember all states of the scenes completely. In this toy world, this is actually rediculously simple to do. We have already seen how we can resolve "before you started to clean it off" into a timestamp. So we would track all states and apply this sentence to an earlier state of the scene.
+
+On page 126 Winograd adds: "To ask 'Was :B1 on :B2 before ...?' we bind the variable TIME to the representation of the time we are interested in and ask"
+
+    (THGOAL (#ON :B1 :B2 $?TIME) (THUSE TCT-ON))
+
+"The theorem TCT-ON is the same as TC-ON except that it deals with the specified time instead of the present."
+
+From this information we may assume that the following code applies to #32:
+
+    (DEFPROP TCT-SUPPORT
+        (THCONSE (X Y Z TIME)
+            (#SUPPORT $?X $?Y $?TIME)
+            (THOR (THGOAL (#MANIP $?Y)) (THGOAL (#IS $?Y #BOX)))
+            (THAMONG $?Z (TFIND $?Y $?TIME))
+            (NOT (LESSP (CAR $?Z) (OR (START? $?TIME) -1)))
+            (THAMONG $?X (LIST (CADDR $?Z))))
+        THEOREM)
+
+This reads something like: if we want to establish that $?X supported $?Y at time $?TIME,
+ we would need to find out if either Y should be manipulable or Y should be a box.
+
+But I don't understand the rest of it... What's Z? If TFIND has 2 parameters, the first one should be a number.
+
+## 2022-12-04
 
 I'm creating a list of topics. Good approach!
 

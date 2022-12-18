@@ -35,15 +35,28 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	//println("---")
 	// println(request.String())
 
-	newBindings := mentalese.InitBindingSet(binding)
+	// prepare
 	collection := NewAnaphoraResolverCollection()
-
 	NewCoArgumentCollector().collectCoArguments(request, collection)
 
 	resolver.resolveNode(root, binding, collection)
 
-	resolvedRequest := request
-	resolvedRequest = resolver.replaceOneAnaphora(resolvedRequest, collection.oneAnaphors)
+	// post process
+	resolvedRequest, newBindings := resolver.processCollection(request, binding, collection)
+	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
+
+	// println(resolvedRequest.String())
+	//println(resolvedRoot.String())
+	// println(newBindings.String())
+
+	return resolvedTree, resolvedRequest, newBindings, collection.output
+}
+
+func (resolver *AnaphoraResolver) processCollection(request mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) (mentalese.RelationSet, mentalese.BindingSet) {
+
+	newBindings := mentalese.InitBindingSet(binding)
+
+	resolvedRequest := resolver.replaceOneAnaphora(request, collection.oneAnaphors)
 
 	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
 	for fromVariable, value := range collection.values {
@@ -75,13 +88,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 		}
 	}
 
-	// println(resolvedRequest.String())
-	//println(resolvedRoot.String())
-	// println(newBindings.String())
-
-	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
-
-	return resolvedTree, resolvedRequest, newBindings, collection.output
+	return resolvedRequest, newBindings
 }
 
 func (resolver *AnaphoraResolver) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {

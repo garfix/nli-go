@@ -56,6 +56,12 @@ phys_move_object(E1, X, Y, Z) :-
     go:assert(end_time(EventId, T1))
 
     db_object(E1, X, Y, Z)
+
+    go:uuid(EventId2, event)
+    go:assert(location(EventId2, E1, X, Y, Z))
+    go:assert(start_time(EventId2, T1))
+    go:assert(end_time(EventId2, T1))
+
     go:ignore(phys_remove_support_relations(E1))
     go:ignore(phys_create_support_relations(E1))
     go:ignore(phys_remove_contain_relations(E1))
@@ -63,11 +69,12 @@ phys_move_object(E1, X, Y, Z) :-
 ;
 
 phys_remove_support_relations(E1) :-
-    support(E2, E1)
+    support(now, E2, E1)
     db_unsupport(E2, E1)
-    db_cleartop(E2);
+    db_cleartop(E2)
+;
 
-phys_create_support_relations(E1) :-
+check_on_top_of(E1, E2) :-
     at(E1, Left1, Front1, Bottom1)
     at(E2, Left2, Front2, Bottom2)
     size(E2, Width2, Length2, Height2)
@@ -78,6 +85,10 @@ phys_create_support_relations(E1) :-
     [[Left2 + Width2] >= Left1]
     [Front2 <= [Front1 + Length1]]
     [[Front2 + Length2] >= Front1]
+;
+
+phys_create_support_relations(E1) :-
+    check_on_top_of(E1, E2)
     db_support(E2, E1)
     db_uncleartop(E2)
 ;

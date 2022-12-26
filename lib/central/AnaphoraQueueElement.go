@@ -6,6 +6,7 @@ type AnaphoraQueueElementValue struct {
 }
 
 type AnaphoraQueueElement struct {
-	Variable string
-	values   []AnaphoraQueueElementValue
+	SentenceDistance int
+	Variable         string
+	values           []AnaphoraQueueElementValue
 }

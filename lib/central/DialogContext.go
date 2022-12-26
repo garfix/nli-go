@@ -57,7 +57,11 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 	variableUsed := map[string]bool{}
 
 	first := len(clauses) - 1 - MaxSizeAnaphoraQueue
+	distance := -1
 	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
+
+		distance++
+
 		clause := clauses[i]
 		for _, discourseVariable := range clause.QueuedEntities {
 
@@ -72,7 +76,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 			value, found := entityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
-					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
+					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}, SentenceDistance: distance}
 					sort := entitySorts.GetSort(discourseVariable)
 					for _, item := range value.TermValueList {
 						reference := AnaphoraQueueElementValue{sort, item.TermValue}
@@ -82,13 +86,13 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 				} else {
 					sort := entitySorts.GetSort(discourseVariable)
 					reference := AnaphoraQueueElementValue{sort, value.TermValue}
-					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
+					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}, SentenceDistance: distance}
 					ids = append(ids, group)
 				}
 			} else {
 				sort := entitySorts.GetSort(discourseVariable)
 				reference := AnaphoraQueueElementValue{sort, ""}
-				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
+				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}, SentenceDistance: distance}
 				ids = append(ids, group)
 			}
 		}

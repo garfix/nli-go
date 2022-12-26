@@ -187,7 +187,7 @@ func (base *LanguageBase) processRootClause(
 	extracter.Extract(requestRelations)
 
 	// anaphora
-	resolver := central.NewAnaphoraResolver(clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
+	resolver := central.NewAnaphoraResolver(base.log, clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
 	resolvedTree, resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
 		return resolvedOutput, false

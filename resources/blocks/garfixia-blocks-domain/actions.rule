@@ -61,7 +61,7 @@ do_put_in(ParentEventId, E1, E2) :-
 /* remove all blocks that are on top of X */
 do_cleartop(ParentEventId, E1) :- cleartop(E1);
 do_cleartop(ParentEventId, E1) :-
-    support(E1, E2)
+    support(now, E1, E2)
 
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,

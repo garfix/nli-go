@@ -21,6 +21,26 @@ The anaphora queue is also extended when the system creates an answer sentence. 
 
 Each entity is added to the anaphora queue only once.
 
+## The anaphora resolver
+
+This resolver traverses the parse tree, and fully processes a node before proceeding to its children.
+
+For each node it checks if it contains:
+
+- a reference tagged reference ("him"), only a category
+- a definite reference ("the red block"), only an entity definition
+- a "labeled" reference ("it"), only a category
+- one anaphora ("pick one")
+- reflection ("himself"), only a category
+
+To find a referent, it checks
+
+- if there is agreement in person, number, etc
+- the the reflection is correct
+- for definite references: if the referent has an id
+
+If the referent is a group, it tries to match a member of the group.
+
 ## Features
 
 When the sentence is parsed, the system does not only build the representation of the intention, it also produces "features" for each of the entities.

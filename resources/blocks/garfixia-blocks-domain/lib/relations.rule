@@ -48,12 +48,20 @@ on(A, B) :-
     go:wait_for(
         go:user_select(Q, [A1, A2], Sel))
     if [Sel == 0] then
-        support(B, A)
+        support(now, B, A)
     else
         anywhere_on(A, B)
     end
 ;
 
-anywhere_on(A, B) :- support(B, A);
-anywhere_on(A, B) :- support(C, A) anywhere_on(C, B);
+anywhere_on(A, B) :- support(now, B, A);
+anywhere_on(A, B) :- support(now, C, A) anywhere_on(C, B);
 
+/* historical support event */
+support(P1, A, B) :-
+    go:log(P1, A, B)
+    dom:location(P1, A, X, Y, Z)
+    go:log(P1, A, X, Y, Z)
+    dom:check_on_top_of(B, A)
+    go:log(B)
+;

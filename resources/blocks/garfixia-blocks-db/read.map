@@ -6,7 +6,7 @@ dom:green(E) :- color(E, green);
 dom:color(E, C) :- color(E, C);
 
 dom:at(E, X, Y, Z) :- at(E, X, Y, Z);
-dom:support(A, B) :- support(A, B);
+dom:support(now, A, B) :- support(A, B);
 dom:contain(P, A, B) :- contain(A, B);
 dom:grasping(P1, E1) :- grasping(P1, E1);
 dom:size(E, Width, Length, Height) :- size(E, Width, Length, Height);
@@ -20,6 +20,8 @@ dom:time(T) :- time(T);
 dom:start_time(Id, Start) :- start_time(Id, Start);
 dom:end_time(Id, End) :- end_time(Id, End);
 dom:parent_event(EventId, ParentEventId) :- parent_event(EventId, ParentEventId);
+
+dom:location(EventId, E1, X, Y, Z) :- location(EventId, E1, X, Y, Z);
 
 dom:touch(EventId, S, A) :- touch(EventId, S, A);
 dom:pick_up(EventId, S, A) :- pick_up(EventId, S, A);

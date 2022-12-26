@@ -3,7 +3,7 @@ dom:grasping(P1, E1) :- grasping(P1, E1);
 dom:contain(P, A, B) :- contain(A, B);
 dom:pick_up(P1, E1, E2) :- pick_up(P1, E1, E2);
 dom:cleartop(E1) :- cleartop(E1);
-dom:support(E1, E2) :- support(E1, E2);
+dom:support(now, E1, E2) :- support(E1, E2);
 
 dom:grid(Grid, X, Y, Value) :- dom:grid(Grid, X, Y, Value);
 
@@ -11,6 +11,8 @@ dom:time(T) :- time(T);
 dom:start_time(Id, Start) :- start_time(Id, Start);
 dom:end_time(Id, End) :- end_time(Id, End);
 dom:parent_event(EventId, ParentEventId) :- parent_event(EventId, ParentEventId);
+
+dom:location(EventId, E1, X, Y, Z) :- location(EventId, E1, X, Y, Z);
 
 dom:touch(EventId, S, A) :- touch(EventId, S, A);
 dom:pick_up(EventId, S, A) :- pick_up(EventId, S, A);

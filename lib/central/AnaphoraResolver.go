@@ -38,6 +38,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 
 	println("---")
 	println(request.String())
+	println(binding.String())
 
 	// prepare
 	collection := NewAnaphoraResolverCollection()
@@ -49,8 +50,9 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	resolvedRequest, newBindings := resolver.processCollection(request, binding, collection)
 	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
 
+	println("---")
 	println(resolvedRequest.String())
-	// println(newBindings.String())
+	println(newBindings.String())
 	// println(resolvedRoot.String())
 
 	return resolvedTree, resolvedRequest, newBindings, collection.output
@@ -65,6 +67,7 @@ func (resolver *AnaphoraResolver) processCollection(request mentalese.RelationSe
 	// binding the reference variable to one of the values of its referent (when the referent is a group and we need just one element from it)
 	for fromVariable, value := range collection.values {
 		binding.Set(fromVariable, value)
+		resolver.entityBindings.Set(fromVariable, value)
 	}
 
 	// update the binding by replacing the variables
@@ -464,12 +467,12 @@ func (resolver *AnaphoraResolver) findReferentSingleEntity(variable string, refe
 		found = true
 		foundVariable = referentVariable
 	} else {
-		// reference with restriction
+		// definite reference
+		// a definite reference can only be checked against an id
 		if referentId == "" {
 			resolver.log.AddProduction("ref", referentVariable+" has no id "+entityDefinition.String()+"\n")
 			goto end
 		} else {
-			// referent := group.values[0]
 			b := mentalese.NewBinding()
 			value := mentalese.NewTermId(referentId, referentSort)
 			b.Set(variable, value)

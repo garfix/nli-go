@@ -38,6 +38,18 @@ at(`box:box`, 600, 600, 0)
 at(`hand:hand`, 40, 0, 0)
 at(`table:table`, 0, 0, 0)
 
+location(start, `block:small-red`, 100, 100, 0)
+location(start, `block:green-front`, 400, 0, 0)
+location(start, `block:big-red`, 0, 300, 0)
+location(start, `block:green-back`, 0, 240, 300)
+location(start, `block:blue`, 300, 640, 0)
+location(start, `pyramid:green`, 100, 100, 100)
+location(start, `pyramid:blue`, 640, 640, 1)
+location(start, `pyramid:red`, 500, 100, 200)
+location(start, `box:box`, 600, 600, 0)
+location(start, `hand:hand`, 40, 0, 0)
+location(start, `table:table`, 0, 0, 0)
+
 size(`pyramid:green`, 100, 100, 100)
 
 size(`block:small-red`, 100, 100, 100)

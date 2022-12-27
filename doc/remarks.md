@@ -4,6 +4,10 @@ Removed `argument-sort.relation` files. Added `tag:sort(E1, a_sort)`, necessary 
 
 Rewrote the anaphora resolver once again. This time with almost no dependency on id's in the referents.
 
+===
+
+#32 passed!
+
 ## 2022-12-17
 
     {"How many objects did you touch while you were doing it?", "Four of them"},

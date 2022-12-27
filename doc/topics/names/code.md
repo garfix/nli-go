@@ -15,7 +15,9 @@ The syntax scheme is as follows. Here's an example:
 
 It starts with a sense from a rule; here: marry(P1, E1, E2)
 
-    { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
+    { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+
+Notice the `go:sort` tags that tell the system what sorts the arguments have.
 
 You also need to tell the system how to find the name of such a sort. This is done in `sort-properties.yml`:
 

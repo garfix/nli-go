@@ -39,7 +39,10 @@ To find a referent, it checks
 - if the reflection is correct (checking co-occurance)
 - for definite references (with a non-empty definition): if the referent has an id, the definition should resolve with it (NB: we don't check for nonanaphoric references)
 
-If the referent is a group, it tries to match a member of the group, the same way an individual is matched. References to the complete group are not yet supported.
+If the referent is a group, it tries to match each member of the group, the same way an individual is matched. References to the complete group are not yet supported.
+
+In case if definite references, where an id is certainly available, we bind the reference variable to the id of the referent.
+In all other cases, we replace the reference variable with the referent variable. This variable may or may not have a binding.
 
 ## Features
 

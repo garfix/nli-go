@@ -58,11 +58,12 @@ on(A, B) :-
 anywhere_on(A, B) :- support(now, B, A);
 anywhere_on(A, B) :- support(now, C, A) anywhere_on(C, B);
 
+
 /* historical support event */
 support(P1, A, B) :-
-    go:log(P1, A, B)
-    dom:location(P1, A, X, Y, Z)
-    go:log(P1, A, X, Y, Z)
-    dom:check_on_top_of(B, A)
-    go:log(B)
+    location(P1, A, X, Y, Z)
+    check_on_top_of(B, A)
 ;
+
+start_time(start, 0);
+end_time(start, 0);

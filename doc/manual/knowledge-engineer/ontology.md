@@ -26,13 +26,6 @@ The relations of the ontology look simply like this
 Although there are also relations in the databases you use, try to design the relations in the ontology independently.
 The relations should model the way users think about the domain.
 
-Each relation has a predicate and some arguments. The arguments are slots for entities and you need to specify their
-types. This is done in argument-sort.relation:
-
-    write(person, work)
-
-Currently you only need to do this for entities that have names that need to be looked up in the database.
-
 You also need to specify sort-properties.yml
 
     person:

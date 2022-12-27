@@ -1,3 +1,9 @@
+## 2022-12-27
+
+Removed `argument-sort.relation` files. Added `tag:sort(E1, a_sort)`, necessary because "how old is X" can't be captured with argument sort information.
+
+Rewrote the anaphora resolver once again. This time with almost no dependency on id's in the referents.
+
 ## 2022-12-17
 
     {"How many objects did you touch while you were doing it?", "Four of them"},

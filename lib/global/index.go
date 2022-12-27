@@ -21,7 +21,6 @@ type index struct {
 	Password        string
 	Tables          []table
 	Sorts           string
-	Predicates      string
 	TokenExpression string
 	Morphology      map[string]string
 }

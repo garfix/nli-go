@@ -17,13 +17,6 @@ It starts with a sense from a rule; here: marry(P1, E1, E2)
 
     { rule: np_comp4(P1) -> np(E1) marry(P1) to(P1) np(E2),     sense: marry(P1, E1, E2) }
 
-It introduces two noun phrases (E1 and E2). You define their types in `argument-sort.relation`:
-
-    marry(event, person, person)
-
-Both noun phrases are persons. This type of definition is called s-selection (semantic selection of predicate
-arguments).
-
 You also need to tell the system how to find the name of such a sort. This is done in `sort-properties.yml`:
 
     person:

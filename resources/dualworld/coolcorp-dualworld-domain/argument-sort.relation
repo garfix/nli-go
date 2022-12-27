@@ -1,3 +1,0 @@
-has_grandfather(person, person)
-has_parent(person, person)
-write(person, work)

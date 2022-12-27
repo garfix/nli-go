@@ -1,6 +1,5 @@
 type: domain
 version: 1.0.0
 rules: [ relationships.rule ]
-predicates: argument-sort.relation
 sorts: sort-properties.yml
 

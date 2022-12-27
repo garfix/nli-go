@@ -296,15 +296,7 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, referenceSor
 	} else {
 		referencedVariable := resolver.reference(variable, referenceSort, binding, collection, false)
 		if referencedVariable != variable {
-
-			// conditionBindings := resolver.messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
-			// if conditionBindings.GetLength() > 0 {
-			// create a new label
 			resolver.entityLabels.SetLabel(label, referencedVariable)
-			// } else {
-			// 	return variable
-			// }
-
 		}
 		return referencedVariable
 	}
@@ -375,28 +367,6 @@ func (resolver *AnaphoraResolver) findAnaphoricReferent(variable string, referen
 				if found {
 					goto end
 				}
-
-				// if referent.Id == "" {
-				// 	continue
-				// }
-
-				// b := mentalese.NewBinding()
-				// value := mentalese.NewTermId(referent.Id, referent.Sort)
-				// b.Set(variable, value)
-
-				// refBinding := binding.Merge(b)
-				// testRangeBindings := resolver.messenger.ExecuteChildStackFrame(entityDefinition, mentalese.InitBindingSet(refBinding))
-
-				// if testRangeBindings.GetLength() > 0 {
-				// 	found = true
-				// 	if len(group.values) == 1 {
-				// 		foundVariable = referentVariable
-				// 	} else {
-				// 		// select one id from a group (that contains diverse elements)
-				// 		foundTerm = value
-				// 	}
-				// 	goto end
-				// }
 			}
 		}
 
@@ -457,11 +427,6 @@ func (resolver *AnaphoraResolver) findReferentSingleEntity(variable string, refe
 			goto end
 		}
 	}
-
-	// if there's 1 group and its id = "", it is unbound
-	// isBound := group.values[0].Sort != ""
-
-	// sameSentence := group.SentenceDistance == 0
 
 	if len(entityDefinition) == 0 {
 		found = true

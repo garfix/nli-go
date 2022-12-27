@@ -160,32 +160,6 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	}
 }
 
-func (builder *systemBuilder) AddPredicates(path string, system *System) bool {
-
-	if path != "" {
-
-		content, err := common.ReadFile(path)
-		if err != nil {
-			builder.log.AddError("Error reading relation types file " + path + " (" + err.Error() + ")")
-			return false
-		}
-
-		relationTypes := builder.parser.CreateRelationSet(content)
-
-		for _, relationType := range relationTypes {
-			name := strings.Replace(relationType.Predicate, ":", "_", 1)
-			sorts := []string{}
-			for _, argument := range relationType.Arguments {
-				sorts = append(sorts, argument.TermValue)
-			}
-
-			system.meta.AddPredicate(name, sorts)
-		}
-	}
-
-	return true
-}
-
 func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]index, system *System) {
 
 	parts := strings.Split(moduleSpec, ":")
@@ -392,12 +366,6 @@ func (builder *systemBuilder) buildDomain(index index, system *System, moduleBas
 
 	path = common.AbsolutePath(moduleBaseDir, index.Sorts)
 	ok = builder.AddSorts(path, system)
-	if !ok {
-		return
-	}
-
-	path = common.AbsolutePath(moduleBaseDir, index.Predicates)
-	ok = builder.AddPredicates(path, system)
 	if !ok {
 		return
 	}

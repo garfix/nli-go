@@ -14,28 +14,12 @@ type ArgumentSorts struct {
 
 func NewMeta() *Meta {
 	return &Meta{
-		argumentSorts:  map[string]ArgumentSorts{},
 		sortProperties: SortProperties{},
-	}
-}
-
-func (meta Meta) AddPredicate(name string, sorts []string) {
-	meta.argumentSorts[name] = ArgumentSorts{
-		Sorts: sorts,
 	}
 }
 
 func (meta Meta) AddSortInfo(name string, info SortProperty) {
 	meta.sortProperties[name] = info
-}
-
-func (meta Meta) GetSort(predicate string, argumentIndex int) string {
-
-	pred, found := meta.argumentSorts[predicate]
-	if found {
-		return pred.Sorts[argumentIndex]
-	}
-	return ""
 }
 
 func (meta Meta) GetSorts() SortProperties {

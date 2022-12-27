@@ -57,7 +57,6 @@ A domain module contains the knowledge about a single domain, like blocks, books
 A sample index.yml:
 
     rules: [dbpedia.rule]
-    predicates: argument-sort.relation
     write: [ write.yml ]
     sorts: sort-properties.yml
     
@@ -72,12 +71,6 @@ but facts are also allowed:
     taller(`jack`, `john`);    
 
 Currently sorts are only needed to locate proper names in databases. It helps to know that "Madonna" is a person, to avoid confusion with other entities with the same name. The sort is used in combination with the `entities` file of the database domain.
-
-`predicates` contains the name of a argument-sort.relation file, which looks like this:
-
-    has_capital(country, city)
-
-This file contains domain specific predicates, the ones that are used in transformation files.
 
 `write` has yml files that name the predicates of the goals of rules that can be written to this rule base. 
 

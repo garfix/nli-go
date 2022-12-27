@@ -36,9 +36,9 @@ func NewAnaphoraResolver(log *common.SystemLog, clauseList *mentalese.ClauseList
 
 func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
 
-	println("---")
-	println(request.String())
-	println(binding.String())
+	// println("---")
+	// println(request.String())
+	// println(binding.String())
 
 	// prepare
 	collection := NewAnaphoraResolverCollection()
@@ -50,9 +50,9 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	resolvedRequest, newBindings := resolver.processCollection(request, binding, collection)
 	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
 
-	println("---")
-	println(resolvedRequest.String())
-	println(newBindings.String())
+	// println("---")
+	// println(resolvedRequest.String())
+	// println(newBindings.String())
 	// println(resolvedRoot.String())
 
 	return resolvedTree, resolvedRequest, newBindings, collection.output

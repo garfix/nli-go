@@ -84,9 +84,12 @@ func TestDBPedia(t *testing.T) {
 
 			if !log.IsOk() {
 				t.Errorf(log.GetErrors()[0])
+				t.Errorf("\n%s", log.String())
+				break
 			} else if answer != test.answer {
 				t.Errorf("Test relationships: got %v, want %v", answer, test.answer)
-				//t.Errorf("\n%s", log.String())
+				t.Errorf("\n%s", log.String())
+				break
 			}
 
 		}

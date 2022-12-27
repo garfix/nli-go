@@ -15,8 +15,8 @@
 { rule: an(E1) -> 'a' }
 { rule: an(E1) -> 'an' }
 
-{ rule: event_ref(P1) -> 'that',                                       tag: go:reference(P1, dom:event(P1)) }
-{ rule: event_ref(P1) -> 'it',                                         tag: go:labeled_reference(P1, 'it', dom:event(P1)) }
+{ rule: event_ref(P1) -> 'that',                                       tag: go:reference(P1, 'event') }
+{ rule: event_ref(P1) -> 'it',                                         tag: go:labeled_reference(P1, 'it', 'event') }
 
 /* verbs */
 
@@ -89,6 +89,6 @@
 
 { rule: pronoun(E1) -> 'you',                                          sense: dom:you(E1) }
 { rule: pronoun(E1) -> 'i',                                            sense: dom:i(E1) }
-{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', go:isa(E1, object)) }
+{ rule: pronoun(E1) -> 'it',                                           tag: go:labeled_reference(E1, 'it', 'object') }
 
 { rule: poss_pronoun(E1) -> 'mine',                                    sense: dom:i(E1) }

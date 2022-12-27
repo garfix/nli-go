@@ -75,8 +75,8 @@
 /* noun phrases */
 
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
-{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1, none) }
-{ rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1, none) }
+{ rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1, entity) }
+{ rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1, entity) }
 { rule: np(E1) -> nbar(E1),                                            sense: go:quant(none, E1, $nbar) }
 { rule: np(E1) -> pronoun(E1),                                         sense: go:quant(some, E1, $pronoun) }
 { rule: np(E1) -> poss_pronoun(E1),                                    sense: go:quant(some, E1, $poss_pronoun) }
@@ -88,7 +88,7 @@
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }
 { rule: nbar(E1) -> noun(E1) relative_clause(E1) }
 { rule: nbar(E1) -> noun(E1) }
-{ rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them', none) }
+{ rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them', entity) }
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
 

@@ -7,16 +7,8 @@
 { rule: np(E1) -> 'the' nbar(E1),                                     sense: go:quant(some, E1, $nbar) } /* definite reference? */
 { rule: np(E1) -> nbar(E1),                                           sense: go:quant(some, E1, $nbar) } /* definite reference? */
 { rule: np(E1) -> proper_noun_group(E1),                              sense: go:quant(go:quantifier(Result, Range, [Result == Range]), E1, none) }
-{ rule: np(E1) -> 'she',                                              sense: go:quant(
-                                                                        go:quantifier(Result, Range, [Result == 1]),
-                                                                        E1,
-                                                                        dom:gender(E1, female)),
-                                                                      tag: go:reference(E1) }
-{ rule: np(E1) -> 'he',                                               sense: go:quant(
-                                                                        go:quantifier(Result, Range, [Result == 1]),
-                                                                        E1,
-                                                                        dom:gender(E1, male)),
-                                                                      tag: go:reference(E1) }
+{ rule: np(E1) -> 'she',                                              sense: go:quant(some, E1, none),    tag: go:reference(E1, person) go:category(E1, gender, female) }
+{ rule: np(E1) -> 'he',                                               sense: go:quant(some, E1, none),    tag: go:reference(E1, person) go:category(E1, gender, male) }
 
 { rule: nbar(E1) -> noun(E1) }
 /* child of b */
@@ -41,16 +33,16 @@
 { rule: attr(E1, Q1) -> 'by' 'area',                                  sense: dom:land_area(E1, Q1) }
 { rule: attr(E1, Q1) -> 'by' 'population',                            sense: dom:has_population(E1, Q1) }
 
-{ rule: relation(E1, E2) -> 'state',                                  sense: dom:has_state(E1, E2) }
-{ rule: relation(E1, E2) -> 'states',                                 sense: dom:has_state(E1, E2) }
-{ rule: relation(E1, E2) -> 'daughter',                               sense: dom:has_daughter(E1, E2) }
-{ rule: relation(E1, E2) -> 'son',                                    sense: dom:has_son(E1, E2) }
-{ rule: relation(E1, E2) -> 'wife',                                   sense: dom:has_wife(E1, E2) }
-{ rule: relation(E1, E2) -> 'husband',                                sense: dom:has_husband(E1, E2) }
-{ rule: relation(E1, E2) -> 'father',                                 sense: dom:has_father(E1, E2) }
-{ rule: relation(E1, E2) -> 'mother',                                 sense: dom:has_mother(E1, E2) }
-{ rule: relation(E1, E2) -> 'capital',                                sense: dom:has_capital(E1, E2) }
-{ rule: relation(E1, E2) -> 'population',                             sense: dom:has_population(E1, E2) }
+{ rule: relation(E1, E2) -> 'state',                                  sense: dom:has_state(E1, E2),   tag: go:sort(E1, country) go:sort(E2, state) }
+{ rule: relation(E1, E2) -> 'states',                                 sense: dom:has_state(E1, E2),   tag: go:sort(E1, country) go:sort(E2, state) }
+{ rule: relation(E1, E2) -> 'daughter',                               sense: dom:has_daughter(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'son',                                    sense: dom:has_son(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'wife',                                   sense: dom:has_wife(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'husband',                                sense: dom:has_husband(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'father',                                 sense: dom:has_father(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'mother',                                 sense: dom:has_mother(E1, E2),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: relation(E1, E2) -> 'capital',                                sense: dom:has_capital(E1, E2),   tag: go:sort(E1, country) go:sort(E2, city) }
+{ rule: relation(E1, E2) -> 'population',                             sense: dom:has_population(E1, E2),   tag: go:sort(E1, area) }
 
 { rule: child(E1) -> 'children' }
 { rule: birthday(E1) -> 'birthday' }
@@ -89,26 +81,26 @@
 
 /* sentence */
 
-{ rule: np_comp(E1) -> marry(P1) np(E2),                                sense: go:check($np, dom:marry(P1, E1, E2)) }
-{ rule: np_comp(E1) -> marry(P1) 'to' np(E2),                           sense: go:check($np, dom:marry(P1, E1, E2)) }
+{ rule: np_comp(E1) -> marry(P1) np(E2),                                sense: go:check($np, dom:marry(P1, E1, E2)),   tag: go:sort(E1, person) go:sort(E2, person) }
+{ rule: np_comp(E1) -> marry(P1) 'to' np(E2),                           sense: go:check($np, dom:marry(P1, E1, E2)),   tag: go:sort(E1, person) go:sort(E2, person) }
 
-{ rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: go:check($np, dom:have_child(E2, E1)) }
-{ rule: np_comp2(E1) -> country(E1) have(_) 'population' pp(E2),         sense: dom:has_population(E1, E2) $pp }
+{ rule: np_comp2(E1) -> child(E1) have(_) np(E2),                        sense: go:check($np, dom:have_child(E2, E1)), tag: go:sort(E2, person) go:sort(E1, person) }
+{ rule: np_comp2(E1) -> country(E1) have(_) 'population' pp(E2),         sense: dom:has_population(E1, E2) $pp,        tag: go:sort(E1, area) }
 
-{ rule: np_comp3(P1) -> aux_be(_) np(E1) born(P1),                       sense: go:check($np, dom:born(P1, E1)) }
-{ rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: go:check($np, dom:birth_date(E1, Ymd)) }
-{ rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: go:check($np, dom:die(P1, E1)) }
+{ rule: np_comp3(P1) -> aux_be(_) np(E1) born(P1),                       sense: go:check($np, dom:born(P1, E1)),       tag: go:sort(E1, person) }
+{ rule: np_comp3(Ymd) -> aux_be(_) np(E1) possessive_marker(_) birthday(Ymd),   sense: go:check($np, dom:birth_date(E1, Ymd)),   tag: go:sort(E1, person) }
+{ rule: np_comp3(P1) -> aux_do(_) np(E1) die(P1),                        sense: go:check($np, dom:die(P1, E1)),        tag: go:sort(E1, person) }
 
-{ rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:check($np1, go:check($np2, dom:marry(P1, E1, E2))) }
+{ rule: np_comp4(P1) -> np(E1) marry(P1) 'to' np(E2),                    sense: go:check($np1, go:check($np2, dom:marry(P1, E1, E2))),   tag: go:sort(E1, person) go:sort(E2, person) }
 
-{ rule: interrogative(P1) -> 'who' np_comp(E1),                         intent: go:intent(who, E1) }
-{ rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     intent: go:intent(describe, E1),  sense: dom:person(E1) }
-{ rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np(E1), intent: go:intent(who, E1),       sense: go:check($np, none) }
-{ rule: interrogative(P1) -> 'who' copula(_) np(E1),                    intent: go:intent(who, E1),       sense: go:check($np, dom:person(E1)) }
+{ rule: interrogative(P1) -> 'who' np_comp(E1),                         intent: go:intent(who, E1),   tag: go:sort(E1, person) }
+{ rule: interrogative(P1) -> 'who' copula(_) proper_noun_group(E1),     intent: go:intent(describe, E1),  sense: dom:person(E1),   tag: go:sort(E1, person) }
+{ rule: interrogative(P1) -> 'what' copula(_) 'the' 'name' 'of' np(E1), intent: go:intent(who, E1),       sense: go:check($np, none),   tag: go:sort(E1, person) }
+{ rule: interrogative(P1) -> 'who' copula(_) np(E1),                    intent: go:intent(who, E1),       sense: go:check($np, dom:person(E1)),   tag: go:sort(E1, person) go:sort(E2, person) }
 { rule: interrogative(P1) -> 'what' copula(_) np(E1),                   intent: go:intent(what, E1),      sense: go:check($np, none) }
 { rule: interrogative(P1) -> 'when' np_comp3(P1),                       intent: go:intent(when, P1) }
 { rule: interrogative(P1) -> 'how' 'many' np_comp2(E1),                 intent: go:intent(how_many, E1) }
-{ rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              intent: go:intent(how_old, E1),   sense: go:check($np, dom:person(E1))  }
+{ rule: interrogative(P1) -> 'how' 'old' copula(_) np(E1),              intent: go:intent(how_old, E1),   sense: go:check($np, none),   tag: go:sort(E1, person) }
 { rule: interrogative(P1) -> aux_be(P1) np_comp4(P1),                   intent: go:intent(yes_no) }
 
 { rule: interrogative(S1) -> interrogative(S1) '?' }

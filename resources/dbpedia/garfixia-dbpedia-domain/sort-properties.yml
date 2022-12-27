@@ -1,5 +1,6 @@
 person:
   name: person_name(Id, Name)
+  gender: gender(Id, Value)
   knownby:
     description: description(Id, Value)
 country:

@@ -21,7 +21,9 @@ func (p *EntitySorts) Copy() *EntitySorts {
 }
 
 func (s *EntitySorts) SetSort(variable string, sort string) {
-	(*s)[variable] = sort
+	if sort != "" {
+		(*s)[variable] = sort
+	}
 }
 
 // an entity usually has a single value, but it can also contain a list of values

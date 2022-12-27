@@ -117,7 +117,7 @@ func TestBlocksWorld(t *testing.T) {
 			log.Clear()
 
 			//if test.question == "Why?" {
-			if test.question == "What did the red cube support before you started to clean it off?" {
+			if test.question == "Is at least one of them narrower than the one which I told you to pick up?" {
 				test.question = test.question
 				//log.SetDebug(true)
 				//log.SetPrint(true)
@@ -136,8 +136,8 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				// t.Errorf("\n%s", log.String())
-				t.Errorf("\n%s", log.GetErrors())
+				t.Errorf("\n%s", log.GetProductions())
+				// t.Errorf("\n%s", log.GetErrors())
 				break
 			}
 		}

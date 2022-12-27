@@ -27,19 +27,19 @@ This resolver traverses the parse tree, and fully processes a node before procee
 
 For each node it checks if it contains:
 
-- a reference tagged reference ("him"), only a category
-- a definite reference ("the red block"), only an entity definition
-- a "labeled" reference ("it"), only a category
-- one anaphora ("pick one")
-- reflection ("himself"), only a category
+- a reference ("him", "the red block"): `go:reference(E1, person)`
+- a "labeled" reference ("it"): `go:labeled_reference(E1, 'it', object)`
+- one anaphora ("pick one"): `go:reference_slot(E1)`
+- reflection ("himself") `go:reflective(E1)`
 
 To find a referent, it checks
 
-- if there is agreement in person, number, etc
-- the the reflection is correct
-- for definite references: if the referent has an id
+- does the sort in the reference predication match the one in the referent?
+- if there is agreement in person, number, etc (using tag:category)
+- if the reflection is correct (checking co-occurance)
+- for definite references (with a non-empty definition): if the referent has an id, the definition should resolve with it (NB: we don't check for nonanaphoric references)
 
-If the referent is a group, it tries to match a member of the group.
+If the referent is a group, it tries to match a member of the group, the same way an individual is matched. References to the complete group are not yet supported.
 
 ## Features
 

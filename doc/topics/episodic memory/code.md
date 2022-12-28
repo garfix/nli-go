@@ -1,5 +1,44 @@
 # Code
 
+In the blocks world, episodic memory is implemented in two ways, according to Winograd's suggestion.
+
+## Events
+
+The application stores the actions it deems important in the database. These actions are stored as events, using a predication, an event id, and a parent event id. The parent event is the "cause" of the event, and events form a hierarchy.
+
+This is the function that executes and persist an action:
+
+    persist_action(EventId, ParentEventId, Action) :-
+        increase_time()
+        time(T1)
+        go:assert(parent_event(EventId, ParentEventId))
+        go:assert(start_time(EventId, T1))
+
+        go:call(Action)
+
+        time(T2)
+        go:assert(end_time(EventId, T2))
+    ;
+
+`increase_time()` increments the internal timer by 1. The time is retrieved by `time(T1)`. For an event, its `parent_event` and its `start_time` and `end_time` are stored. `go:call` executes the action.
+
+`persist_action` is called like this (a "pick up" action)
+
+    do_pick_up(ParentEventId, E1) :-
+        go:uuid(EventId, event)
+        persist_action(EventId, ParentEventId,
+            
+            go:assert(pick_up(EventId, `:shrdlu`, E1))
+
+            top_center(E1, X, Y, Z)
+            phys_move_hand(X, Y, Z)
+            phys_grasp(E1)
+            phys_raise_hand(_)
+        )
+    ;
+
+Note that a parent event id is passed to the function. It creates an event id and it stores (asserts) the predication of the event `pick_up(EventId, `:shrdlu`, E1)`
+
 The database thus contains these relations:
 
     time(T)

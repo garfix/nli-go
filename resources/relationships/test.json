@@ -1,0 +1,28 @@
+[
+    [
+		{"H": "Who married Jacqueline de Boer?", "C": "Mark van Dongen married her"},
+		{"H": "Did Mark van Dongen marry Jacqueline de Boer?", "C": "Yes"},
+		{"H": "Did Jacqueline de Boer marry Gerard van As?", "C": "Name not found: Gerard van As"},
+		{"H": "Are Mark van Dongen and Suzanne van Dongen siblings?", "C": "Yes"},
+		{"H": "Are Mark van Dongen and John van Dongen siblings?", "C": "No"},
+		{"H": "Which children has John van Dongen?", "C": "Mark van Dongen, Suzanne van Dongen, Dirk van Dongen and Durkje van Dongen"},
+		{"H": "How many children has John van Dongen?", "C": "He has 4 children"},
+
+		{"H": "Does every parent have 4 children?", "C": "Yes"},
+		{"H": "Does every parent have 3 children?", "C": "No"},
+
+		{"H": "Suzanne van Dongen is married to Henk Smit", "C": "Ok"},
+		{"H": "Did Suzanne van Dongen marry Henk Smit?", "C": "Yes"},
+
+		{"H": "Is Jacqueline de Boer married to a man?", "C": "Yes"},
+		{"H": "Who is he?", "C": "Mark van Dongen"},
+
+		{"H": "Was Jacqueline de Boer married by a river?", "C": "Yes"},
+		{"H": "Was Jacqueline de Boer married by Father Brown?", "C": "Yes"},
+
+		{"H": "Is Jacqueline de Boer in love with herself?", "C": "No"},
+		{"H": "Is Henk Smit in love with himself?", "C": "Yes"},
+
+		{"H": "Are Jacqueline de Boer married to a man?", "C": "Agreement mismatch: plural / singular"}
+    ]
+]

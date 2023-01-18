@@ -46,6 +46,12 @@ func main() {
 	resetOut := resetCmd.String(optOutput, defaultOutputDir, txtOutput)
 	resetPort := resetCmd.String(optPort, "3333", txtPort)
 
+	testCmd := flag.NewFlagSet("test", flag.ExitOnError)
+	testApp := testCmd.String(optApplication, "", txtApplication)
+	testSes := testCmd.String(optSession, "", txtSession)
+	testOut := testCmd.String(optOutput, defaultOutputDir, txtOutput)
+	testPort := testCmd.String(optPort, "3333", txtPort)
+
 	queryCmd := flag.NewFlagSet("query", flag.ExitOnError)
 	queryApp := queryCmd.String(optApplication, "", txtApplication)
 	querySes := queryCmd.String(optSession, "", txtSession)
@@ -83,6 +89,12 @@ func main() {
 			showUsage()
 		}
 		resetSession(*resetApp, *resetSes, *resetOut, *resetPort)
+	case "test":
+		testCmd.Parse(os.Args[2:])
+		if *testApp == "" || *testSes == "" {
+			showUsage()
+		}
+		test(*testApp, *testSes, *testOut, *testPort)
 	default:
 		println("Unknown command: " + os.Args[1])
 	}
@@ -228,4 +240,40 @@ func resetSession(appDir string, sessionId string, workDir string, port string) 
 	}
 
 	println("OK")
+}
+
+func test(appDir string, sessionId string, workDir string, port string) {
+
+	cwd, _ := os.Getwd()
+	request := server.Request{
+		SessionId:      sessionId,
+		ApplicationDir: common.AbsolutePath(cwd, appDir),
+		WorkDir:        common.AbsolutePath(cwd, workDir),
+		Command:        "test",
+	}
+
+	requestString, _ := json.Marshal(request)
+
+	connection, err := net.Dial("tcp", "127.0.0.1:"+port)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Fprintf(connection, string(requestString)+"\n")
+
+	resultString, err2 := ioutil.ReadAll(connection)
+	if err2 != nil {
+		println(err2.Error())
+		os.Exit(1)
+	}
+
+	result := server.ResponseAnswer{}
+	json.Unmarshal(resultString, &result)
+
+	if result.Success {
+		println(result.Answer)
+	} else {
+		println(strings.Join(result.ErrorLines, "\n"))
+	}
 }

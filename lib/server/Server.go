@@ -120,6 +120,10 @@ func (server *Server) handleRequest(conn net.Conn) {
 		client := &RequestHandler{conn: conn}
 		go client.handleAnswer(system, request.Query)
 
+	case "test":
+		client := &RequestHandler{conn: conn}
+		go client.performTests(system, request.ApplicationDir)
+
 	default:
 		response := Response{
 			Success:    false,

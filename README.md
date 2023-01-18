@@ -32,19 +32,27 @@ A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/a
 * A generator to produce human readable responses
 * Modules and namespaces, for modular development
 
-## Build the nli executable
+## Build the nli client and server
 
 NLI-GO is a command-line application called "nli". It's written in Go and you must compile it into an executable for your OS.
 
 You can download and install GO from [here](https://golang.org/dl/)
 
-From the root of NLI-GO build the executable with
+From the root of NLI-GO build the client with
 
     go build -o bin/nli bin/nli.go
     
 On Windows, you may want to use `go build -o bin/nli.exe bin/nli.go`.
 
-You can and move the executable to another location if you like.    
+Build the server with
+
+    go build -o bin/server bin/server.go
+
+## Start the server
+
+Start the server and make it listen at port 3333
+
+    bin/server 3333
 
 ## Run NLI-GO in interactive mode
 

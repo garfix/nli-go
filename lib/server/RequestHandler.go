@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"nli-go/lib/mentalese"
 	"runtime/debug"
@@ -69,6 +70,63 @@ func (handler *RequestHandler) handleAnswer(system *global.System, query string)
 	if options.HasOptions() {
 		message = options.String()
 	}
+
+	response := ResponseAnswer{
+		Success:     log.IsOk(),
+		ErrorLines:  log.GetErrors(),
+		Productions: log.GetProductions(),
+		Answer:      message,
+	}
+	responseJSON, _ := json.Marshal(response)
+
+	handler.conn.Write(responseJSON)
+	handler.conn.Close()
+}
+
+type Test struct {
+	H string
+	C string
+}
+
+func (handler *RequestHandler) performTests(system *global.System, applicationDir string) {
+
+	defer handler.panicHandler()
+
+	log := system.GetLog()
+	tests := [][]Test{}
+	message := "OK"
+
+	testString, err := common.ReadFile(applicationDir + "/test.json")
+	if err != nil {
+		message = err.Error()
+		goto end
+	}
+
+	err = json.Unmarshal([]byte(testString), &tests)
+	if err != nil {
+		message = err.Error()
+		goto end
+	}
+
+	for _, testGroup := range tests {
+		for _, test := range testGroup {
+
+			log.Clear()
+
+			human := test.H
+			computer := test.C
+
+			answer, _ := system.Answer(human)
+
+			if computer != answer {
+				message = fmt.Sprintf("\nTest relationships: %v\n\ngot:      %v\nexpected: %v\n", human, answer, computer)
+				goto end
+			}
+
+		}
+	}
+
+end:
 
 	response := ResponseAnswer{
 		Success:     log.IsOk(),

@@ -2,6 +2,12 @@
 
 { rule: number(N1) -> ~^[0-9]+~ }
 
+{ rule: number(N1) -> 'two', sense: [N1 := 2] }
+{ rule: number(N1) -> 'three', sense: [N1 := 3] }
+{ rule: number(N1) -> 'four', sense: [N1 := 4] }
+{ rule: number(N1) -> 'five', sense: [N1 := 5] }
+
+
 /* determiners */
 
 { rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
@@ -9,8 +15,7 @@
 { rule: quantifier(Result, Range) -> 'any',                            sense: [Result > 0] }
 { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: [Result > 0] }
 { rule: quantifier(Result, Range) -> 'both' 'of' 'the',                sense: [Result == 2] }
-{ rule: quantifier(Result, Range) -> number(N1),                       sense: [Result == N1] }
-{ rule: quantifier(Result, Range) -> 'two',                            sense: [Result == 2] }
+{ rule: quantifier(Result, Range) -> number(N1),                       sense: $number [Result == N1] }
 
 { rule: an(E1) -> 'a' }
 { rule: an(E1) -> 'an' }
@@ -43,6 +48,7 @@
 
 { rule: copula(C1) -> 'is' }
 { rule: copula(C1) -> 'are' }
+{ rule: copula(C1) -> 'were' }
 
 { rule: aux_be(A1) -> 'is'}
 { rule: aux_be(A1) -> 'are' }

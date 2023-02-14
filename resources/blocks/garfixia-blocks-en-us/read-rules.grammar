@@ -1,6 +1,6 @@
 /* quantifier phrases */
 
-{ rule: qp(_) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
+{ rule: qp(Result) -> quantifier(Result, Range),                            sense: go:quantifier(Result, Range, $quantifier) }
 
 
 /* imperative vps, which are linked to action predicates */
@@ -62,6 +62,7 @@
 { rule: pp(E1) -> 'not' pp(E1),                                        sense: go:not($pp) }
 { rule: pp(E1) -> 'in' np(E2),                                         sense: go:check($np, dom:contain(_, E2, E1)) }
 { rule: pp(E1) -> 'on' 'top' 'of' np(E2),                              sense: go:check($np, dom:on(E1, E2)) }
+{ rule: pp(E1) -> 'to' 'the' 'left' 'of' np(E2),                       sense: go:check($np, dom:left_from(E1, E2)) }
 
 
 /* relative clauses */

@@ -34,13 +34,14 @@ form(E, Form) :-
     go:has_sort(E, Sort)
     go:xor(
         [Sort == block] size(E, X, X, X)
-        [Form := cube]
+        go:unify(Form, cube)
         ,
-        [Form := Sort]
+        go:unify(Form, Sort)
     )
 ;
 
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [Y1 > Y2];
+left_from(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [X1 < X2];
 
 on(A, B) :-
     go:translate('which one', Q)

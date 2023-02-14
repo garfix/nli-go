@@ -1,3 +1,47 @@
+## 2023-01-27
+
+Winograd about grouping entities in the response:
+
+"We might up with an answer like 'yes, four of them: a large blue blue, a small red cube, a small red cube and a small red cube.' To avoid this redundancy, the object-namer looks for identical descriptions and combines them with the appropriate number to get 'a large blue block and three red cubes'" (p. 168)
+
+I need to group the entities, based on the descriptions.
+
+    dom:describe(E1, '', N) go:make_list(List, E1)
+
+    dom:describe(E1, '', N) go:make_list(List, E1)
+
+## 2023-01-23
+
+If the check fails, the main entiy variable is empty. Thus the response can't show how many blocks there are, because the response is empty.
+
+## 2023-01-18
+
+Start of interaction #33:
+
+    H: There were five blocks to the left of the box then.
+    C: No, only four of them: the red cube, two large green cubes and a large red block.
+
+Winograd: "It checks any statements about location or other such properties to see whether it agrees or disagrees."
+
+This is a so called "there be" sentence, which has a copula as the basic verb: "were". It has a time modifier / time indicator: "then". 
+
+Winograd: "Earlier in the dialog, new information about 'owning' was accepted at face value."
+
+That earlier sentence ("The blue pyramid is mine") is clearly an assertion. The current sentence is more like a question. Clearly (?) the user doesn't need to teach the system what the position of the objects was like, in the past: does the user expect the system to learn this new information? I don't think so. We can even add the tag question "right?".
+
+But even if we can tell the system to interpret the sentence as a question, it is a new type of question. Basically it is a question about the number of objects. "Were there five blocks to the left of the box then?" "No, only four"
+
+Goals:
+
+- interpret the seemingly declarative sentense as a question
+- turn "then" into a time modifier (based on the current deixis of time)
+- recognize the sentence as a yes/no question about quantity
+- combine 2 distinct objects into a group, in response generation: "two large green cubes"
+
+Winograd: "The system knows that it has complete information about the basic properties of objects."
+
+We can incorporate this knowledge into an intent. The sentence can be a declaration, but since it is about blocks, it is interpreted as a question.
+
 ## 2022-12-27
 
 Removed `argument-sort.relation` files. Added `tag:sort(E1, a_sort)`, necessary because "how old is X" can't be captured with argument sort information.

@@ -47,6 +47,26 @@ func (base *SystemSolverFunctionBase) listAppend(messenger api.ProcessMessenger,
 	return mentalese.InitBindingSet(newBinding)
 }
 
+func (base *SystemSolverFunctionBase) listSet(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	listVariable := relation.Arguments[0].TermValue
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "li*", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	list := bound.Arguments[0].TermValueList
+	index, _ := bound.Arguments[1].GetIntValue()
+	element := bound.Arguments[2]
+
+	newList := list.Set(index, element)
+
+	newBinding := binding.Copy()
+	newBinding.Set(listVariable, mentalese.NewTermList(newList))
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

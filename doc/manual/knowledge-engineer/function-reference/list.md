@@ -32,6 +32,16 @@ Creates a new list from an existing list and adds an element to the end.
 * `Element`: any term
 * `NewList`: a variable (that will be bound to the ordered list)
 
+## List set
+
+Changes an existing list by replacing an element at an index.
+
+    go:list_set(List, Index, Element)
+    
+* `List`: a mutable list variable
+* `Index`: an integer
+* `Element`: any term
+
 ## List order
 
 Creates a new list, based on an existing list, but ordered by an order function.

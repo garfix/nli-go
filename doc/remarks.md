@@ -1,3 +1,7 @@
+## 2023-02-18
+
+"two large green cubes" is actually not how you would describe them, because there are no other green cubes. "the green cubes" would be more likely.
+
 ## 2023-01-27
 
 Winograd about grouping entities in the response:

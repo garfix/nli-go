@@ -96,13 +96,16 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
 
 find_span(Width, VerLines, ColIndex, ColSpan) :-
     go:list_get(VerLines, ColIndex, X1)
+    [:ColSpan1 := 0]
 
     go:list_foreach(VerLines, Index, Line,
         [W := [Line - X1]]
         [W >= Width]
-        [ColSpan := [Index - ColIndex]]
+        [:ColSpan1 := [Index - ColIndex]]
         break
     )
+
+    [ColSpan := :ColSpan1]
 ;
 
 span_free(ColStart, ColEnd, RowIndex, Grid) :-

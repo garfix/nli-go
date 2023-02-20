@@ -177,6 +177,19 @@ func (relation Relation) GetPredicateWithoutNamespace() string {
 	}
 }
 
+func (relation Relation) GetSurfaceVariableNames() []string {
+
+	var names []string
+
+	for _, argument := range relation.Arguments {
+		if argument.IsVariable() {
+			names = append(names, argument.TermValue)
+		}
+	}
+
+	return common.StringArrayDeduplicate(names)
+}
+
 func (relation Relation) GetVariableNames() []string {
 
 	var names []string

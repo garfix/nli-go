@@ -3,6 +3,35 @@
 - implement reflective_reference()
 - debug: fold structures in/out
 
+## variables in loop-functions
+
+When this list_foreach is done, the binding set has bindings for all variations of F C and V, while these should have been temporary
+Because there are too many bindings, much extra calculations are done.
+
+    go:list_foreach(List, E1, 
+        form(E1, F)
+        color(E1, C)
+        volume(E1, V)
+
+I solved this for now by changing only list_foreach, and returning it with the binding is started out with. This is too limiting, so it needs to be properly solved, and for all other body-functions as well.     
+
+What's the problem?
+
+When the loop fills one of the out-parameters of the function (ColSpan), and returns, this variable is now lost.
+
+find_span(Width, VerLines, ColIndex, ColSpan) :-
+    go:list_get(VerLines, ColIndex, X1)
+
+    go:list_foreach(VerLines, Index, Line,
+        [W := [Line - X1]]
+        [W >= Width]
+        [ColSpan := [Index - ColIndex]]
+        break
+    )
+;
+
+I solved this for now using a mutable variable.
+
 ## new 
 
 - produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.

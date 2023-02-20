@@ -97,6 +97,24 @@ func StringArrayDeduplicate(array []string) []string {
 	return newArray
 }
 
+func StringArrayDiff(a1 []string, a2 []string) []string {
+	a3 := []string{}
+
+	for _, e1 := range a1 {
+		found := false
+		for _, e2 := range a2 {
+			if e1 == e2 {
+				found = true
+			}
+		}
+		if !found {
+			a3 = append(a3, e1)
+		}
+	}
+
+	return a3
+}
+
 func StringArrayReverse(array []string) []string {
 	newStringArray := []string{}
 

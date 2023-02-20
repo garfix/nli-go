@@ -71,6 +71,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 
 	bound := relation.BindSingle(binding)
 	newBindings := mentalese.NewBindingSet()
+	loopBindings := mentalese.NewBindingSet()
 
 	cursor := messenger.GetCursor()
 	cursor.SetType(mentalese.FrameTypeLoop)
@@ -89,7 +90,7 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 			scopedBinding.Set(elementVar, element)
 
 			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-			newBindings.AddMultiple(childBindings)
+			loopBindings.AddMultiple(childBindings)
 		}
 
 	} else if len(relation.Arguments) == 4 {
@@ -108,9 +109,14 @@ func (base *SystemSolverFunctionBase) listForeach(messenger api.ProcessMessenger
 			scopedBinding.Set(elementVar, element)
 
 			childBindings := messenger.ExecuteChildStackFrame(children, mentalese.InitBindingSet(scopedBinding))
-			newBindings.AddMultiple(childBindings)
+			loopBindings.AddMultiple(childBindings)
 		}
 	}
+
+	if loopBindings.GetLength() > 0 {
+		newBindings = mentalese.InitBindingSet(binding)
+	}
+
 	return newBindings
 }
 

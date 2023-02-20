@@ -8,9 +8,13 @@ import (
 type TermList []Term
 
 func (list TermList) Equals(otherList TermList) bool {
-	if len(list) != len(otherList) { return false }
+	if len(list) != len(otherList) {
+		return false
+	}
 	for i, child := range list {
-		if !child.Equals(otherList[i]) { return false }
+		if !child.Equals(otherList[i]) {
+			return false
+		}
 	}
 	return true
 }
@@ -21,9 +25,17 @@ func (list TermList) Append(term Term) TermList {
 	return newList
 }
 
+func (list TermList) Set(index int, term Term) TermList {
+	newList := list.Copy()
+	newList[index] = term
+	return newList
+}
+
 func (list TermList) UsesVariable(variable string) bool {
 	for _, element := range list {
-		if element.UsesVariable(variable) { return true }
+		if element.UsesVariable(variable) {
+			return true
+		}
 	}
 	return false
 }

@@ -31,7 +31,7 @@ func TestBlocksWorld(t *testing.T) {
 			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
 			{"Is the blue block in the box?", "Yes"},
-			//
+
 			{"What does the box contain?", "The blue pyramid and the blue block"},
 			{"What is the pyramid supported by?", "The box"},
 			{"How many blocks are not in the box?", "Four of them"},
@@ -88,6 +88,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube"},
 			{"How many objects did you touch while you were doing it?", "Four of them"},
 			{"What did the red cube support before you started to clean it off?", "The green pyramid"},
+			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and a large red block"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -137,7 +138,7 @@ func TestBlocksWorld(t *testing.T) {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
 				// t.Errorf("\n%s", log.GetProductions())
-				// t.Errorf("\n%s", log.GetErrors())
+				t.Errorf("\n%s", log.GetErrors())
 				break
 			}
 		}

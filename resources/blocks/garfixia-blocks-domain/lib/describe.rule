@@ -1,3 +1,64 @@
+describe_as_groups(List, GroupsList, Descriptions) :-
+
+    [:GroupFeatures := []]
+    [:GroupMembers := []]
+
+    /* group elements */
+    go:list_foreach(List, E1, 
+        volume(E1, V)
+        color(E1, C)
+        form(E1, F)
+        [:Features := [V, C, F]]
+        if go:list_index(:GroupFeatures, :Features, Index) then
+            go:list_get(:GroupMembers, Index, Group)
+            go:list_append(Group, E1, NewGroup)
+            go:list_set(:GroupMembers, Index, NewGroup)
+        else
+            go:list_append(:GroupFeatures, :Features, :GroupFeatures)
+            go:list_append(:GroupMembers, [E1], :GroupMembers)
+        end
+    )
+
+    /* describe groups */
+    [:AGroupList := []]
+    [:Description := none]
+    go:list_foreach(:GroupMembers, Index, Members, 
+
+        go:list_length(Members, MemberCount)
+        go:uuid(G, object)
+        go:list_append(:AGroupList, G, :AGroupList)
+
+        go:list_get(:GroupFeatures, Index, Features)
+        go:list_get(Features, 0, Volume)
+        go:list_get(Features, 1, Color)
+        go:list_get(Features, 2, Form)
+
+        form(E2, Form) go:count(E2, CountForm)
+        color(E2, Color) go:count(E2, CountColor)
+        volume(E2, Volume) go:count(E2, CountVolume)
+
+        [:Description := {{ :Description }} description(G) shape(G, Form)]
+
+        if [MemberCount > 1] then
+            [:Description := {{ :Description }} number(G, MemberCount)]
+        end
+
+        /* Is the shape unique? */
+        if [CountForm > 1] then
+            [:Description := {{ :Description }} color(G, Color)]
+            /* Are the shape and color unique? */
+            if [CountColor > 1] then
+                [:Description := {{ :Description }} volume(G, Volume) indeterminate(G)]
+            end
+        end
+
+    )
+
+    [GroupsList := :AGroupList]
+    [Descriptions := :Description]
+;
+
+
 /* Create a description for an object in the world */
 describe(E1, Sort, DescSet) :-
 

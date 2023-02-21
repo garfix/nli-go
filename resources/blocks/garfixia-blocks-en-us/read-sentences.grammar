@@ -1,8 +1,12 @@
 
 /* declarative sentences */
 
-{ rule: s(S1) -> declarative(S1),                                                  intent: go:intent(declaration) 
-}
+{ rule: s(S1) -> declarative(S1),                                                  intent: go:intent(declaration) }
+
+{ rule: declarative(P1) -> declarative(P1) '.' }
+
+/*{ rule: declarative(P1) -> declarative(P1) time_modifier(P1) }*/
+
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
@@ -14,11 +18,14 @@
     rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           
     sense: go:assert(-$tv :- go:check($np1, go:check($np2, [A == E1] [B == E2]))) 
 }
+/*{
+    rule: assertion(P1) -> 'there' copula(P1) np(E1) pp(E1),
+    sense: go:check($np, $pp)
+}*/
 { 
     rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                
     sense: go:assert($tv :- go:check($np1, go:check($np2, [A == E1] [B == E2] go:not( -$tv )))) 
 }
-
 { rule: exception(P1) -> 'but' assertion(P1) }
 { rule: exception(P1) -> ',' exception(P1) }
 { rule: default_rule(P1) -> assertion(P1) }
@@ -28,6 +35,7 @@
 
 { rule: s(S1) -> interrogative(S1) }
 { rule: interrogative(P1) -> interrogative_clause(P1) '?' }
+{ rule: interrogative(P1) -> there_be(P1) '.' }
 
 { rule: interrogative_clause(P1) -> 'what' vp_without_np(P1, E1),                  intent: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' np(E1) vp_without_np(P1, E1),          intent: go:intent(which, E1),        sense: go:check($np, $vp_without_np) }
@@ -53,6 +61,12 @@
     intent: go:intent(why, P1),
     sense: $vp 
 }
+{
+    rule: there_be(P1) -> 'there' copula(P1) number(N1) nbar(E1) pp(E1),
+    sense: go:check(go:quant(some, E1, $nbar), $pp),
+    intent: go:intent(quantity, E1, N1)
+}
+{ rule: there_be(P1) -> there_be(P1) time_modifier(P1) }
 
 /* interrogative: time modification */
 { 
@@ -64,6 +78,7 @@
 
 { rule: time_modifier(P1) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
 { rule: time_modifier(P1) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) }
+{ rule: time_modifier(P1) -> 'then',                                       sense: go:context_call(time, P1) }
 
 
 /* imperative sentences */

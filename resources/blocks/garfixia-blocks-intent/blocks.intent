@@ -128,7 +128,6 @@
         }
 }
 
-/* Declaration */
 {
     condition: go:intent(declaration),
     responses:
@@ -194,5 +193,20 @@
         }
         {
             answer: dom:dont_know()
+        }
+}
+
+{
+    condition: go:intent(quantity, E1, Count),
+    responses:
+        {
+            condition: go:count(E1, Number) [Number == Count],
+            answer: dom:agree()                
+        }
+        {
+            /*preparation: go:count(E1, Number) dom:describe(E1, '', N) go:make_list(List, E1),
+            answer: dom:incorrect_number(Number, List) {{ N }}*/
+            preparation: go:count(E1, Number) go:make_list(List, E1) dom:describe_as_groups(List, GroupsList, Descriptions),
+            answer: dom:incorrect_number(Number, GroupsList) {{ Descriptions }}
         }
 }

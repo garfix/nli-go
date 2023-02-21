@@ -28,6 +28,7 @@
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(now, E1, E2) }
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'that',                                                   condition: go:already_generated(E1) }
+{ rule: qp(E1) -> named_number(N),                                          condition: dom:number(E1, N) }
 { rule: qp(E1) -> 'a',                                                      condition: dom:indeterminate(E1) }
 { rule: qp(E1) -> 'the' }
 
@@ -39,8 +40,11 @@
 
 { rule: noun(E1) -> 'one',                                                  condition: dom:root(E1) }
 { rule: noun(E1) -> 'one',                                                  condition: dom:shape(E1, S) dom:default_shape(E1, S) }
+{ rule: noun(E1) -> 'pyramids',                                             condition: dom:shape(E1, pyramid) dom:number(E1, N) [N > 1]}
 { rule: noun(E1) -> 'pyramid',                                              condition: dom:shape(E1, pyramid) }
+{ rule: noun(E1) -> 'blocks',                                               condition: dom:shape(E1, block) dom:number(E1, N) [N > 1]}
 { rule: noun(E1) -> 'block',                                                condition: dom:shape(E1, block) }
+{ rule: noun(E1) -> 'cubes',                                                condition: dom:shape(E1, cube) dom:number(E1, N) [N > 1]}
 { rule: noun(E1) -> 'cube',                                                 condition: dom:shape(E1, cube) }
 { rule: noun(E1) -> 'box',                                                  condition: dom:shape(E1, box) }
 { rule: noun(E1) -> 'table',                                                condition: dom:shape(E1, table) }

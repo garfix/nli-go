@@ -48,7 +48,7 @@ describe_as_groups(List, GroupsList, Descriptions) :-
             [:Description := {{ :Description }} color(G, Color)]
             /* Are the shape and color unique? */
             if [CountColor > 1] then
-                [:Description := {{ :Description }} volume(G, Volume) indeterminate(G)]
+                [:Description := {{ :Description }} volume(G, Volume)]
             end
         end
 

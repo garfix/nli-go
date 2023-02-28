@@ -1,3 +1,56 @@
+## 2023-02-27
+
+    There were five blocks to the left of the box then.
+
+Interaction #32 introduced a predication `dom:support(P1, A, B)` to tackle the problem. #33 has no need for an extra predication, but it also has no predication variable.
+
+
+    go_$assign(N$3, 5)
+    go_check(
+        go_quant(some, E$507,
+            go_has_sort(E$507, block)),
+        go_check(
+            go_quant(none, E$508,
+                go_has_sort(E$508, box)),
+            dom_left_from(E$507, E$508)))
+    go_context_call(time, Sentence$48)
+
+with context
+
+    go_check(
+        go_quant(some, E$503,
+            dom_you(E$503)),
+        go_check(
+            go_quant(some, E$502, none),
+            dom_clear_off(P$32, E$503, E$502)))
+    dom_before(Sentence$48, P$32)
+
+The constraint `dom_before(Sentence$48, P$32)` doesn't do anything because `Sentence$48` is not used by the sentence.
+
+Should I add an event variable to all relations?
+And should this variable be bound to the default value `now`, in absence of a time constraint?
+Winograd uses separate relations for historic and current events. Should I do that as well?
+
+---
+
+It occurred to me that sentences accessing episodic memory are semantically distinct from present tense sentences. A bit similar to how command sentences are different. Commands produce side effects. Episodic sentences require the reconstruction of the past.
+
+It would not be enough to add a predication variable to relations, because the relations were not stored like that in the past. A `left_from` relation is only defined for the present. The past is only defined in terms of `location` relations. The `left_from` relation in the sentence needs to be reconstructed from `location` relations.
+
+Winograd says this about time-based relations: "
+
+    we can ask "Is :B1 on :B2?" with the goal
+    (THGOAL (#ON :B1 :B2)(THUSE TC-ON))
+
+    To ask "Was :B1 on :B2 before ...?" we bind the variable TIME to the representation of the time we are interested in, and ask
+    (THGOAL (#ON :B1 :B2 $?TIME)(THUSE TCT-ON))
+
+    The theorem TCT-ON is the same as TC-ON except that it deals with the specified time instead of the present. Similar TCT-THEOREMS exist for all of the spatial relations, and for properties which change in time, such as #CLEARTOP and #AT.
+
+"
+
+A big difference between #32 and #33 is that the time-based relation `support` is a verb (which commonly has a predication variable) and `left_from` is a preposition (which don't usually have predication variables). 
+
 ## 2023-02-18
 
 "two large green cubes" is actually not how you would describe them, because there are no other green cubes. "the green cubes" would be more likely.

@@ -5,8 +5,6 @@
 
 { rule: declarative(P1) -> declarative(P1) '.' }
 
-/*{ rule: declarative(P1) -> declarative(P1) time_modifier(P1) }*/
-
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
@@ -18,10 +16,6 @@
     rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           
     sense: go:assert(-$tv :- go:check($np1, go:check($np2, [A == E1] [B == E2]))) 
 }
-/*{
-    rule: assertion(P1) -> 'there' copula(P1) np(E1) pp(E1),
-    sense: go:check($np, $pp)
-}*/
 { 
     rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                
     sense: go:assert($tv :- go:check($np1, go:check($np2, [A == E1] [B == E2] go:not( -$tv )))) 
@@ -45,8 +39,8 @@
 { rule: interrogative_clause(P1) -> 'when' vp(P1),                                 intent: go:intent(when, P1),             sense: $vp go:context_call(time, P1) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     intent: go:intent(select, E1),           sense: go:check($np, $adjp) }
 { rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             intent: go:intent(select_categoric, E1), sense: go:check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) np(E1) pp(E1),                       intent: go:intent(yes_no),               sense: go:check($np, $pp) }
-{ rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),  intent: go:intent(select_subject, E2),   sense: go:check($np, $past_participle) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) pp(P1, E1),                   intent: go:intent(yes_no),               sense: go:check($np, $pp) }
+{ rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),   intent: go:intent(select_subject, E2),   sense: go:check($np, $past_participle) }
 { rule: interrogative_clause(P1) -> aux_be(_) vp(P1),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> aux_do(_) vp(P1),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> can(_) vp(P1),                                  intent: go:intent(yes_no) }
@@ -62,7 +56,7 @@
     sense: $vp 
 }
 {
-    rule: there_be(P1) -> 'there' copula(P1) number(N1) nbar(E1) pp(E1),
+    rule: there_be(P1) -> 'there' copula(P1) number(N1) nbar(E1) pp(P1, E1),
     sense: go:check(go:quant(some, E1, $nbar), $pp),
     intent: go:intent(quantity, E1, N1)
 }

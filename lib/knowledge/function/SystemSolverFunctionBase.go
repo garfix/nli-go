@@ -56,6 +56,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 
 		// dialog context
 		mentalese.PredicateContextSet:    base.contextSet,
+		mentalese.PredicateContextGet:    base.contextGet,
 		mentalese.PredicateContextExtend: base.contextExtend,
 		mentalese.PredicateContextClear:  base.contextClear,
 		mentalese.PredicateContextCall:   base.contextCall,

@@ -13,6 +13,7 @@ do_pick_up_smart(E1) :-
     go:create_goal(
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
+            /*go:log('pick up', EventId)*/
             go:assert(pick_up(EventId, `:shrdlu`, E1))
 
             do_clear_hand(EventId)
@@ -26,6 +27,7 @@ do_put_in_smart(E1, E2) :-
     go:create_goal(
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
+            /*go:log('put in', EventId)*/
             go:assert(put_in(EventId, `:shrdlu`, E1, E2))
 
             do_clear_hand(EventId)
@@ -39,6 +41,7 @@ do_put_on_smart(E1, E2) :-
     go:create_goal(
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
+            /*go:log('pick on', EventId)*/
             go:assert(put_on(EventId, `:shrdlu`, E1, E2))
 
             do_clear_hand(EventId)
@@ -54,6 +57,8 @@ do_stack_up_smart(QBlocks) :-
     go:create_goal(
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
+            /*go:log('stack up', EventId)*/
+
             go:assert(stack_up(EventId, `:shrdlu`, SortedList))
 
             do_clear_hand(EventId)

@@ -22,6 +22,7 @@ while(Event1, Event2) :-
     end_time(Event2, End2)
     [Start1 >= Start2]
     [End1 <= End2]
+    /*go:log(Event1, Start1, End2, Event2, Start2, End2)*/
 ;
 
 get_top_level_event(EventId, TopLevelEventId) :-

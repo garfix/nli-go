@@ -5,7 +5,7 @@
 do_put_on_position(ParentEventId, E1, E2, X1, Y1) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put on', EventId)
+        /*go:log('put on', EventId)*/
         go:assert(put_on(EventId, `:shrdlu`, E1, E2))
 
         do_cleartop(EventId, E1)
@@ -19,7 +19,7 @@ do_put_on_position(ParentEventId, E1, E2, X1, Y1) :-
 do_put_on_center(ParentEventId, E1, E2) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put on', EventId)
+        /*go:log('put on', EventId)*/
         go:assert(put_on(EventId, `:shrdlu`, E1, E2))
 
         do_cleartop(EventId, E1)
@@ -35,7 +35,7 @@ do_put_on_center(ParentEventId, E1, E2) :-
 do_put_on_table(ParentEventId, E1, X, Y) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put on table', EventId)
+        /*go:log('put on table', EventId)*/
         go:assert(put_on(EventId, `:shrdlu`, E1, `table:table`))
 
         do_move(EventId, E1, X, Y, 0)

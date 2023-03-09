@@ -4,7 +4,8 @@ type DeicticCenter struct {
 	Binding Binding
 }
 
-const DeixisTime = "time"
+const DeixisTimeEvent = "time_event"
+const DeixisTimeRelation = "time"
 const DeixisCenter = "center"
 
 func NewDeicticCenter() *DeicticCenter {
@@ -23,12 +24,16 @@ func (center *DeicticCenter) Copy() *DeicticCenter {
 	}
 }
 
+func (center *DeicticCenter) SetTimeEvent(event Term) {
+	center.Binding.Set(DeixisTimeEvent, event)
+}
+
 func (center *DeicticCenter) SetTime(time RelationSet) {
-	center.Binding.Set(DeixisTime, NewTermRelationSet(time))
+	center.Binding.Set(DeixisTimeRelation, NewTermRelationSet(time))
 }
 
 func (center *DeicticCenter) GetTime() RelationSet {
-	time, found := center.Binding.Get(DeixisTime)
+	time, found := center.Binding.Get(DeixisTimeRelation)
 	if found {
 		return time.TermValueRelationSet
 	} else {

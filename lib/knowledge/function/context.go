@@ -13,16 +13,35 @@ func (base *SystemSolverFunctionBase) contextSet(messenger api.ProcessMessenger,
 	bound := input.BindSingle(binding)
 
 	slotName := bound.Arguments[0].TermValue
-	mainEntityVar := input.Arguments[1]
-	relations := input.Arguments[2].TermValueRelationSet
+	firstEventVar := input.Arguments[1]
+	secondEvent := bound.Arguments[2]
+	relations := input.Arguments[3].TermValueRelationSet
 
-	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
+	boundRelations := relations.ReplaceTerm(firstEventVar, mentalese.NewTermAtom(contextVariableAtom))
 
-	if slotName == mentalese.DeixisTime {
+	if slotName == mentalese.DeixisTimeRelation {
+		base.dialogContext.DeicticCenter.SetTimeEvent(secondEvent)
 		base.dialogContext.DeicticCenter.SetTime(boundRelations)
 	}
 
 	return mentalese.InitBindingSet(binding)
+}
+
+func (base *SystemSolverFunctionBase) contextGet(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	slotName := bound.Arguments[0].TermValue
+	variable := input.Arguments[1].TermValue
+
+	newBinding := mentalese.NewBinding()
+
+	value, found := base.dialogContext.DeicticCenter.Binding.Get(slotName)
+	if found {
+		newBinding.Set(variable, value)
+	}
+
+	return mentalese.InitBindingSet(newBinding)
 }
 
 // go:context_extend(time, P1, $time_modifier)
@@ -36,13 +55,13 @@ func (base *SystemSolverFunctionBase) contextExtend(messenger api.ProcessMesseng
 
 	slotRelations := mentalese.RelationSet{}
 
-	if slotName == mentalese.DeixisTime {
+	if slotName == mentalese.DeixisTimeRelation {
 		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
 	boundRelations := relations.ReplaceTerm(mainEntityVar, mentalese.NewTermAtom(contextVariableAtom))
 
-	if slotName == mentalese.DeixisTime {
+	if slotName == mentalese.DeixisTimeRelation {
 		base.dialogContext.DeicticCenter.SetTime(slotRelations.Merge(boundRelations))
 	}
 
@@ -56,7 +75,7 @@ func (base *SystemSolverFunctionBase) contextClear(messenger api.ProcessMessenge
 
 	slotName := bound.Arguments[0].TermValue
 
-	if slotName == mentalese.DeixisTime {
+	if slotName == mentalese.DeixisTimeRelation {
 		base.dialogContext.DeicticCenter.SetTime(mentalese.RelationSet{})
 	}
 
@@ -73,11 +92,15 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 
 	slotRelations := mentalese.RelationSet{}
 
-	if slotName == mentalese.DeixisTime {
+	if slotName == mentalese.DeixisTimeRelation {
 		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
+	// print(slotRelations.IndentedString(""))
+	// print(contextVariableAtom)
+	// print(mainEntityVar.String())
 	unboundRelations := slotRelations.ReplaceTerm(mentalese.NewTermAtom(contextVariableAtom), mainEntityVar)
+	// print(unboundRelations.IndentedString(""))
 
 	newBindings := messenger.ExecuteChildStackFrame(unboundRelations, mentalese.InitBindingSet(binding))
 

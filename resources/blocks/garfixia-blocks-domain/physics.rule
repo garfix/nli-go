@@ -57,10 +57,16 @@ phys_move_object(E1, X, Y, Z) :-
 
     db_object(E1, X, Y, Z)
 
+    /* fix the end of the previously current location event */
+    location(PrevEvent, E1, _, _, _)
+    end_time(PrevEvent, 1000000)
+    go:retract(end_time(PrevEvent, 1000000))
+    go:assert(end_time(PrevEvent, T1))
+
     go:uuid(EventId2, event)
     go:assert(location(EventId2, E1, X, Y, Z))
     go:assert(start_time(EventId2, T1))
-    go:assert(end_time(EventId2, T1))
+    go:assert(end_time(EventId2, 1000000))
 
     go:ignore(phys_remove_support_relations(E1))
     go:ignore(phys_create_support_relations(E1))
@@ -72,6 +78,29 @@ phys_remove_support_relations(E1) :-
     support(now, E2, E1)
     db_unsupport(E2, E1)
     db_cleartop(E2)
+;
+
+check_on_top_of_at_time(E1, E2, Time) :-
+    
+    location(P2, E2, Left2, Bottom2, Height2)
+    start_time(P2, Start2)
+    end_time(P2, End2)
+    [Start2 <= Time]
+    [End2 >= Time]
+    location(P1, E1, Left1, Bottom1, Height1)
+    start_time(P1, Start1)
+    end_time(P1, End1)
+    [Start1 <= Time]
+    [End1 >= Time]
+
+    size(E2, Width2, Length2, Height2)
+    [Top2 := [Bottom2 + Height2]]
+    [Top2 == Bottom1]                       /* main check, as early as possible */
+    size(E1, Width1, Length1, Height1)
+    [Left2 <= [Left1 + Width1]]
+    [[Left2 + Width2] >= Left1]
+    [Front2 <= [Front1 + Length1]]
+    [[Front2 + Length2] >= Front1]
 ;
 
 check_on_top_of(E1, E2) :-

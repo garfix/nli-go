@@ -1,3 +1,41 @@
+## 2023-03-08
+
+I had a small breakthrough yesterday, by changing `location` from the location-change-event (momentary) to the location-at-event (with duration). 
+
+## 2023-03-07
+
+I am implementing left_from, and it's very inefficient at the moment. The question can easily take half a minute to complete. Why is that? Because it takes an event parameter, but this is currently unbound. Therefore, the relation tries to match all events in the history. 
+
+This should be done differently. But this affects other time modifier sentences as well.
+
+    { 
+        rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1, P2),
+        sense: 
+            $interrogative_clause $time_modifier
+            go:context_set(time, P1, P2, $time_modifier) 
+    }
+
+    { rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
+    { rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) }
+    { rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P2) dom:while(P1, P2) }
+
+As you can see, `$time_modifier` is executed after `$interrogative_clause`. An option would be to reverse these, but this has shown to be very inefficient for `before`, which then produces all events before the given event.
+
+---
+
+Location events should not have a start/end time of the time they change, that should only specify the start; the end should be `100000`, or something, and it should change if the object changes location.
+
+## 2023-03-04
+
+    There were five blocks to the left of the box then.
+
+"then" does not refer to "before you started to clean it off"; it refers to "you started to clean it off"
+
+---
+
+thought: "Before" does not simply mean "before that event", because this is an infinite time span. It just means: "just before that event".
+But how much before is still "just"? Did not implement. 
+
 ## 2023-02-27
 
     There were five blocks to the left of the box then.

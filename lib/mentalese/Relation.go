@@ -91,6 +91,7 @@ const PredicateUserSelect = "go_user_select"
 const PredicateAlreadyGenerated = "go_already_generated"
 
 const PredicateContextSet = "go_context_set"
+const PredicateContextGet = "go_context_get"
 const PredicateContextExtend = "go_context_extend"
 const PredicateContextCall = "go_context_call"
 const PredicateContextClear = "go_context_clear"

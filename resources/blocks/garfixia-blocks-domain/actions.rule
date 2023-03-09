@@ -10,7 +10,7 @@
 do_pick_up(ParentEventId, E1) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('pick up', EventId, E1)
+        /*go:log('pick up', EventId, E1)*/
         go:assert(pick_up(EventId, `:shrdlu`, E1))
 
         top_center(E1, X, Y, Z)
@@ -24,7 +24,7 @@ do_pick_up(ParentEventId, E1) :-
 do_put_down(ParentEventId, E1, X, Y, Z) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put down', EventId)
+        /*go:log('put down', EventId)*/
         go:assert(put_down(EventId, `:shrdlu`, E1))
 
         bottom_corner_to_top_center(E1, X, Y, Z, X1, Y1, Z1)
@@ -36,7 +36,7 @@ do_put_down(ParentEventId, E1, X, Y, Z) :-
 do_put_on(ParentEventId, E1, E2) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put on', EventId)
+        /*go:log('put on', EventId)*/
         go:assert(put_on(EventId, `:shrdlu`, E1, E2))
 
         if go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1) then
@@ -50,7 +50,7 @@ do_put_on(ParentEventId, E1, E2) :-
 do_put_in(ParentEventId, E1, E2) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('put in', EventId)
+        /*go:log('put in', EventId)*/
         go:assert(put_in(EventId, `:shrdlu`, E1, E2))
         at(E2, _, _, Z)
         do_find_free_space(E2, E1, X, Y)
@@ -66,7 +66,7 @@ do_cleartop(ParentEventId, E1) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
         go:assert(clear_off(EventId, `:shrdlu`, E1))
-        go:log('clear top', EventId)
+        /*go:log('clear top', EventId)*/
         do_cleartop(EventId, E2)
         do_get_rid_of(EventId, E2)
     )
@@ -76,7 +76,7 @@ do_cleartop(ParentEventId, E1) :-
 do_get_rid_of(ParentEventId, E1) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('get rid of', EventId)
+        /*go:log('get rid of', EventId)*/
         go:assert(get_rid_of(EventId, `:shrdlu`, E1))
 
         do_find_space_on_table(E1, X, Y)
@@ -87,7 +87,7 @@ do_get_rid_of(ParentEventId, E1) :-
 do_let_go(ParentEventId) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        go:log('let go', EventId)
+        /*go:log('let go', EventId)*/
         go:assert(let_go(EventId, `:shrdlu`))
     )
 ;

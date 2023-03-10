@@ -59,18 +59,36 @@ Note that past events have the same predication as current events. The event id 
 
 ## Locations
 
-To handle the question "What did the red cube support before you started to clean it off?" another kind of memory is needed. The application stores the past locations of all objects. The function that physically moves objects records their location as location events:
+To handle the question "What did the red cube support before you started to clean it off?" another kind of memory is needed. The application stores the past locations of all objects. Each period in which an object is located at one place is a location. An object initially has a location starting at time 0 and ending at the end of times (here: 1000000).
+
+    location(start1, `block:small-red`, 100, 100, 0)
+    start_time(start1, 0) 
+    end_time(start1, 1000000)
+
+The function that physically moves an object modifies the latest event, and adds a new one:
 
     phys_move_object(E1, X, Y, Z) :-
         ...
 
-        go:uuid(EventId2, event)
-        go:assert(location(EventId2, E1, X, Y, Z))
-        go:assert(start_time(EventId2, T1))
-        go:assert(end_time(EventId2, T1))
+    /* modify latest location event of E1 */
+    location(PrevEvent, E1, _, _, _)
+    end_time(PrevEvent, 1000000)
+    go:retract(end_time(PrevEvent, 1000000))
+    go:assert(end_time(PrevEvent, T1))
 
-        ...
-    ;
+
+    /* add a new location event */
+    go:uuid(EventId2, event)
+    go:assert(location(EventId2, E1, X, Y, Z))
+    go:assert(start_time(EventId2, T1))
+    go:assert(end_time(EventId2, 1000000))
+
+After two relocations, the locations times may look something like this:
+
+    0 - 20
+    20 - 25
+    25 - 28
+    28 - 1000000
 
 Past locations are stored like events, so that they have `start_time` and an `end_time` just like the action events. By doing this, these two kinds of events can be compared with predicates like `dom:before(EventId1, EventId2)`.
 
@@ -80,10 +98,3 @@ Past locations are stored like events, so that they have `start_time` and an `en
         location(P1, A, X, Y, Z)
         check_on_top_of(B, A)
     ;
-
-To have the initial locations available as well, these are added to the database:
-
-    location(start, `block:small-red`, 100, 100, 0)
-
-Here `start` is a special event that starts and ends at time 0.
-

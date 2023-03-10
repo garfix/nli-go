@@ -2,6 +2,14 @@
 
 I had a small breakthrough yesterday, by changing `location` from the location-change-event (momentary) to the location-at-event (with duration). 
 
+---
+
+Relations operating on past events can be quite slow. It's good to evoke them only when necessary. For this reason it's good to separate to keep separate present tense sentences form past sentences. For example by introducing the event constant `now`, that is always set for present tense sentences.
+
+--- 
+
+When doing a sentence with a time modifier I now always perform the modifier first. It's essentials with "then" and is ok for the other terms (while, before). It makes sense to do so.
+
 ## 2023-03-07
 
 I am implementing left_from, and it's very inefficient at the moment. The question can easily take half a minute to complete. Why is that? Because it takes an event parameter, but this is currently unbound. Therefore, the relation tries to match all events in the history. 

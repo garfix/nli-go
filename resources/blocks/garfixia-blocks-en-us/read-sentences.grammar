@@ -60,15 +60,20 @@
     sense: go:check(go:quant(some, E1, $nbar), $pp),
     intent: go:intent(quantity, E1, N1)
 }
-{ rule: there_be(P1) -> there_be(P1) 'then',      sense: go:context_get(time_event, P1) $there_be }
 
 /* interrogative: time modification */
+{   
+    rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1, P2), 
+    sense: $time_modifier $interrogative_clause  go:context_set(time, P1, P2, $time_modifier) 
+}
 { 
-    rule: interrogative_clause(P1) -> time_modified_interrogative(P1)
+    rule: there_be(P1) -> there_be(P1) time_modifier(P1, P2), 
+    sense: $time_modifier $there_be go:context_set(time, P1, P2, $time_modifier)  
 }
 
-{ rule: time_modified_interrogative(P1) -> interrogative_clause(P1) 'before' vp(P2),                              sense: $vp dom:before(P1, P2) $interrogative_clause  go:context_set(time, P1, P2, $vp dom:before(P1, P2)) }
-{ rule: time_modified_interrogative(P1) -> interrogative_clause(P1) 'while' vp(P2),                               sense: $interrogative_clause $vp dom:while(P1, P2) go:context_set(time, P1, P2, $vp dom:while(P1, P2)) }
+{ rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P1) }
+{ rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
+{ rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) }
 
 
 /* imperative sentences */

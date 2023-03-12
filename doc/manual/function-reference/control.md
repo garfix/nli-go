@@ -2,6 +2,22 @@
 
 These predicates just affect the flow of data in an application.
 
+## Free
+
+Succeeds if the named variabled is not bound
+
+    go:free(X)
+
+* `X`: a variable
+
+## Bound
+
+Succeeds if the named variabled is bound
+
+    go:bound(X)
+
+* `X`: a variable
+
 ## And
 
 A variant on the boolean function `and` that works with bindings.

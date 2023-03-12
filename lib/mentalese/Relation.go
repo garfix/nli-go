@@ -25,6 +25,8 @@ const FrameTypeComplex = "complex"
 const SortEntity = "entity"
 const SortEvent = "event"
 
+const PredicateBound = "go_bound"
+const PredicateFree = "go_free"
 const PredicateCanned = "go_canned"
 const PredicateCheck = "go_check"
 const PredicateDo = "go_do"

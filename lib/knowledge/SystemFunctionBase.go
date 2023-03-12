@@ -29,6 +29,8 @@ func NewSystemFunctionBase(name string, meta *mentalese.Meta, log *common.System
 
 func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
+		mentalese.PredicateBound:             base.bound,
+		mentalese.PredicateFree:              base.free,
 		mentalese.PredicateSplit:             base.split,
 		mentalese.PredicateJoin:              base.join,
 		mentalese.PredicateConcat:            base.concat,
@@ -59,6 +61,22 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 func (base *SystemFunctionBase) typeFunction(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
 	// dummy function that ensures that a call to go:type() does not result in "predicate not supported"
 	return binding, false
+}
+
+func (base *SystemFunctionBase) bound(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+	if input.Arguments[0].IsVariable() {
+		return mentalese.NewBinding(), false
+	} else {
+		return binding, true
+	}
+}
+
+func (base *SystemFunctionBase) free(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+	if input.Arguments[0].IsVariable() {
+		return binding, true
+	} else {
+		return mentalese.NewBinding(), false
+	}
 }
 
 func (base *SystemFunctionBase) split(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {

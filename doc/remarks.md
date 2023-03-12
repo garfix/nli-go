@@ -1,3 +1,9 @@
+## 2023-03-12
+
+This proves to be a hard problem, because it seems that the system needs to make statements about unbound event variables, which is impossible.
+
+In the meanwhile I introduced `go:bound(X)` and `go:free(X)` to check if a variable is bound or not. This works for the temporal `support` relation.
+
 ## 2023-03-11
 
 How can I distinguish between past events and current events?

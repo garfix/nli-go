@@ -79,7 +79,7 @@ anywhere_on(A, B) :- support(now, C, A) anywhere_on(C, B);
 
 /* historical support event */
 support(P1, A, B) :-
-    [P1 != now]
+    go:bound(P1)
     location(P1, A, _, _, _)
     start_time(P1, Start)
     check_on_top_of_at_time(A, B, Start)

@@ -1,3 +1,14 @@
+## 2023-03-11
+
+How can I distinguish between past events and current events?
+
+* Bind the event variable to `now` but this can only be added to the present, and past and future events are treated alike
+* Add `go:tense(Event, past)`, `go:tense(Event, present)` but this is wrong because this is a check, not a statement
+* Add a tag `tag: go:tense(Event, past)`, `tag: go:tense(Event, present)` but these are not accessible in the execution phase
+
+The first solution would work for now, but it looks like a hack.
+I like the last solution, and I think I will implement this by creating a database for the current dialog. This is something I wanted to have for a long time! But it's not possible because the event is not bound, and only bound values can be stored into a database.
+
 ## 2023-03-08
 
 I had a small breakthrough yesterday, by changing `location` from the location-change-event (momentary) to the location-at-event (with duration). 

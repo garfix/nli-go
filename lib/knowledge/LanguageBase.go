@@ -158,9 +158,12 @@ func (base *LanguageBase) processRootClause(
 	clause := mentalese.NewClause(rootClauseTree, false, syntacticFunctions)
 	clauseList.AddClause(clause)
 
-	// tags
+	// find tags
 	tags := base.relationizer.ExtractTags(*rootClauseTree)
 	entityTags.AddTags(tags)
+
+	// write tags to dialog context db
+	base.addTagsToDatabase(tags, messenger)
 
 	// sorts
 	sorts, sortFound := central.NewSortFinder(base.meta, messenger).FindSorts(rootClauseTree)
@@ -236,6 +239,18 @@ func (base *LanguageBase) processRootClause(
 	surface := surfacer.Create(tokens)
 
 	return surface, false
+}
+
+func (base *LanguageBase) addTagsToDatabase(tags mentalese.RelationSet, messenger api.ProcessMessenger) {
+	atomized := tags.ConvertVariablesToConstants()
+	asserts := mentalese.RelationSet{}
+	for _, relation := range atomized {
+		asserts = append(asserts, mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
+		}))
+	}
+	// fmt.Println(asserts.String())
+	messenger.ExecuteChildStackFrame(asserts, mentalese.InitBindingSet(mentalese.NewBinding()))
 }
 
 func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) mentalese.BindingSet {

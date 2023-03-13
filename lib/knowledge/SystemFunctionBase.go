@@ -31,6 +31,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 	return map[string]api.SimpleFunction{
 		mentalese.PredicateBound:             base.bound,
 		mentalese.PredicateFree:              base.free,
+		mentalese.PredicateAtom:              base.atom,
 		mentalese.PredicateSplit:             base.split,
 		mentalese.PredicateJoin:              base.join,
 		mentalese.PredicateConcat:            base.concat,
@@ -77,6 +78,14 @@ func (base *SystemFunctionBase) free(messenger api.SimpleMessenger, input mental
 	} else {
 		return mentalese.NewBinding(), false
 	}
+}
+
+func (base *SystemFunctionBase) atom(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+	inVar := input.Arguments[0]
+	outVar := input.Arguments[1].TermValue
+
+	binding.Set(outVar, inVar.ConvertVariablesToConstants())
+	return binding, true
 }
 
 func (base *SystemFunctionBase) split(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
@@ -438,7 +447,12 @@ func (base *SystemFunctionBase) debug(messenger api.SimpleMessenger, input menta
 
 	for i, argument := range input.Arguments {
 		if argument.IsVariable() {
-			log += sep + argument.TermValue + ": " + bound.Arguments[i].String()
+			value, found := binding.Get(argument.TermValue)
+			if found {
+				log += sep + argument.TermValue + ": " + value.String()
+			} else {
+				log += sep + argument.TermValue + ": <not bound>"
+			}
 		} else {
 			log += sep + bound.Arguments[i].String()
 		}

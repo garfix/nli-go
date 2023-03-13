@@ -173,7 +173,7 @@ func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *Stack
 	if frame.HandlerIndex >= len(handlers) {
 		// there may just be no handlers, or handlers could have been removed from the knowledge bases
 		if frame.HandlerIndex == 0 {
-			p.log.AddError("Predicate not supported by any knowledge base: " + relation.Predicate)
+			p.log.AddError("Predicate not supported by any knowledge base: " + relation.String())
 		}
 		return nil
 	}

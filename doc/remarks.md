@@ -1,8 +1,58 @@
+## 2023-03-13
+
+Tagged relations are now stored in the dialog context database. Nice! I'm not doing anything with them , but it's good to know you can. You need to specify in which database the relations are stored (by adding them to a `write.map` file), but the built-in relations are:
+
+    go:reference(E1, Reference)
+    go:labeled_reference(E1, Label, Reference)
+    go:sort(E1, Sort)
+    go:category(E1, Category, Value)
+
+If you want to know about variable E2, you need to convert it to an atom:
+
+    go:atom(E2, A2)
+
+Then you can use it to obtain data from the dialog db. Here's how to collect the gender of an entity.
+
+    go:category(A2, gender, Value)
+
+So, this gender is specified in the sentence, but the variable needs not have been bound yet.
+
+A shorthand would be
+
+    go:category(go:atom(E1), gender, Value)
+
 ## 2023-03-12
 
 This proves to be a hard problem, because it seems that the system needs to make statements about unbound event variables, which is impossible.
 
 In the meanwhile I introduced `go:bound(X)` and `go:free(X)` to check if a variable is bound or not. This works for the temporal `support` relation.
+
+The `before` and `while` relations are quite slow now, but still, calculating the event before processing the relations that are relative to it, seems to be the way forward.
+
+---
+
+It's not actually impossible, because of an implementation detail that I used: by replacing format variables by calling variables, the call to `support` can actually see the name of the variable:
+
+    support(P1, A, B) :-
+        go:log(P1)
+        ...
+    ;
+
+shows:
+
+    Sentence$30: <not bound>
+
+or
+
+Sentence$47: `event:E67BE2644F3951C8`
+
+But, dare I use this? I could "atomize" the variable name into an atom, with something like
+
+    go:atomize(P1, A1)
+
+and then request for metadata, thus
+
+    go:category(A1, Category, Value)
 
 ## 2023-03-11
 

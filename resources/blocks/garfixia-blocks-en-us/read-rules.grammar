@@ -61,7 +61,8 @@
 
 { rule: pp(P1, E1) -> 'not' pp(P1, E1),                                    sense: go:not($pp) }
 { rule: pp(P1, E1) -> 'in' np(E2),                                         sense: go:check($np, dom:contain(_, E2, E1)) }
-{ rule: pp(P1, E1) -> 'on' 'top' 'of' np(E2),                              sense: go:check($np, dom:on(E1, E2)) }
+{ rule: pp(P1, E1) -> 'on' np(E2),                                         sense: go:check($np, dom:on(E1, E2)) }
+{ rule: pp(P1, E1) -> 'on' 'top' 'of' np(E2),                              sense: go:check($np, dom:on_top_of(E1, E2)) }
 { rule: pp(P1, E1) -> 'to' 'the' 'left' 'of' np(E2),                       sense: go:check($np, dom:left_from(P1, E1, E2)) }
 
 

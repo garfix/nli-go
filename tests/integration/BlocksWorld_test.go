@@ -90,6 +90,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"What did the red cube support before you started to clean it off?", "The green pyramid"},
 			// original: No, only four of them: the red cube, two large green cubes and a large red block
 			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block"},
+			{"Put the blue pyramid on the block in the box.", "OK"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -119,10 +120,10 @@ func TestBlocksWorld(t *testing.T) {
 			log.Clear()
 
 			//if test.question == "Why?" {
-			if test.question == "Is at least one of them narrower than the one which I told you to pick up?" {
+			if test.question == "Put the blue pyramid on the block in the box." {
 				test.question = test.question
-				//log.SetDebug(true)
-				//log.SetPrint(true)
+				// log.SetDebug(true)
+				// log.SetPrint(true)
 			}
 
 			fmt.Println(test.question)

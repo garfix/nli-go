@@ -63,7 +63,9 @@ left_from(P1, A, B) :-
     [EndE2 >= Time]
 ;
 
-on(A, B) :-
+on(A, B) :- support(now, B, A);
+
+on_top_of(A, B) :-
     go:translate('which one', Q)
     go:translate('directly on the surface', A1)
     go:translate('anywhere on top of', A2)

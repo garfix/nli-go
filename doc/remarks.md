@@ -4,6 +4,38 @@ I added `state` and `action` as subsorts of `event`, which itself I made a subso
 
 I tagged most verbs with either a `state` or `action` sort, and added a sortal filter to `while` and `before`. The filter filters on the type of events that need to be considered. This saves 3 seconds on 23 seconds, so this is relevant.
 
+---
+
+Interaction #34
+
+    Put the blue pyramid on the block in the box.
+
+The sentence succeeds immediately. But the catch is that the system doesn't regard the sentence as ambiguous, yet.
+
+I have to add "on" as a preposition next to "on top of".
+
+This works, but now I get 
+
+    [0] Directly on the surface [1] Anywhere on top of
+
+I respond with
+
+    0
+
+System says:
+
+    I don't understand what you are referring to
+
+It means that it can't figure out what "the block" refers to. And this is indeed unclear, in this interpretation.
+
+Winograd: "This is syntactically ambiguous, but is understood without ambiguity since the parsing corresponding to 'put the blue pyramid which is on the block in the box' does not make sense in the current scene, while 'put the blue pyramid  on the block which is in the box' does"
+
+This is the next challenge.
+
+I'll distinguish between the semantics of `on` and `on-top-of`.
+
+I told the sentence processor to continue looking after it found a sentence for which a referent could not be found. This solves the problem.
+
 ## 2023-03-17
 
 I want to speed up the "before" and "while" sentences. They take a few seconds, each, because they bind while a great number of events.

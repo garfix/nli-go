@@ -193,7 +193,7 @@ func (base *LanguageBase) processRootClause(
 	resolver := central.NewAnaphoraResolver(base.log, clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
 	resolvedTree, resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
-		return resolvedOutput, false
+		return resolvedOutput, true
 	}
 
 	// agreement

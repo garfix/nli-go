@@ -18,8 +18,8 @@
 
 /* verb phrases: subject, verb, object ... */
 
-{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                              sense: go:check($np1, go:do($np2, go:do($np3, dom:put_on(P1, E3, E1, E2)))) }
-{ rule: vp(P1) -> np(E1) 'pick' np(E2) 'up',                                    sense: go:check($np1, go:check($np2, dom:pick_up(P1, E1, E2))) }
+{ rule: vp(P1) -> np(E3) 'put' np(E1) 'on' np(E2),                              sense: go:check($np1, go:check($np2, go:check($np3, dom:put_on(P1, E3, E1, E2)))),   tag: go:sort(P1, dynamic) }
+{ rule: vp(P1) -> np(E1) 'pick' np(E2) 'up',                                    sense: go:check($np1, go:check($np2, dom:pick_up(P1, E1, E2))),   tag: go:sort(P1, dynamic) }
 
 { rule: vp(P1) -> aux_do(_) vp(P1) }
 { rule: vp(P1) -> np(E1) aux_do(_) event_ref(P1),                               sense: go:check($np, $event_ref) }

@@ -36,9 +36,6 @@ do_put_down(ParentEventId, E1, X, Y, Z) :-
 do_put_on(ParentEventId, E1, E2) :-
     go:uuid(EventId, event)
     persist_action(EventId, ParentEventId,
-        /*go:log('put on', EventId)*/
-        go:assert(put_on(EventId, `:shrdlu`, E1, E2))
-
         if go:not(cleartop(E2)) do_find_free_space(E2, E1, X1, Y1) then
             do_put_on_position(ParentEventId, E1, E2, X1, Y1)
         else

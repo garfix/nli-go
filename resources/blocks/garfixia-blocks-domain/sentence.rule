@@ -41,8 +41,8 @@ do_put_on_smart(E1, E2) :-
     go:create_goal(
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
-            /*go:log('pick on', EventId)*/
-            go:assert(put_on(EventId, `:shrdlu`, E1, E2))
+            /*go:log('put on', EventId)*/
+            go:assert(put_on_smart(EventId, `:shrdlu`, E1, E2))
 
             do_clear_hand(EventId)
             do_cleartop(EventId, E1)

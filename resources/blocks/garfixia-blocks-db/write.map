@@ -16,6 +16,7 @@ dom:location(EventId, E1, X, Y, Z) :- location(EventId, E1, X, Y, Z);
 
 dom:touch(EventId, S, A) :- touch(EventId, S, A);
 dom:pick_up(EventId, S, A) :- pick_up(EventId, S, A);
+dom:put_on_smart(EventId, S, A, B) :- put_on_smart(EventId, S, A, B);
 dom:put_on(EventId, S, A, B) :- put_on(EventId, S, A, B);
 dom:put_in(EventId, S, A, B) :- put_in(EventId, S, A, B);
 dom:clear_off(EventId, S, A) :- clear_off(EventId, S, A);

@@ -1,3 +1,19 @@
+## 2023-03-18
+
+I added `state` and `action` as subsorts of `event`, which itself I made a subsort of `entity`.
+
+I tagged most verbs with either a `state` or `action` sort, and added a sortal filter to `while` and `before`. The filter filters on the type of events that need to be considered. This saves 3 seconds on 23 seconds, so this is relevant.
+
+## 2023-03-17
+
+I want to speed up the "before" and "while" sentences. They take a few seconds, each, because they bind while a great number of events.
+
+The number of events could be reduced by distinguishing between events and states. I never made this distinction before because I didn't understand the need for it.
+
+"CLE" says: "Adjectives in predicative positions give rise to state variables in their translation. States are like events, but unlike events they cannot be instantaneous." - p.23
+
+To me, this never was enough to make the distinction. But it could be useful now, for efficiency. It could separate the events based on location (denoted by the verb: to be), and ones based on actions (all other verbs).
+
 ## 2023-03-13
 
 Tagged relations are now stored in the dialog context database. Nice! I'm not doing anything with them , but it's good to know you can. You need to specify in which database the relations are stored (by adding them to a `write.map` file), but the built-in relations are:

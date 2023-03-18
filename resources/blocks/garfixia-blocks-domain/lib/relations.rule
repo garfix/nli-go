@@ -6,6 +6,9 @@ go:has_sort(object, entity);
 go:has_sort(block, object);
 go:has_sort(pyramid, object);
 go:has_sort(box, object);
+go:has_sort(event, entity);
+go:has_sort(state, event);
+go:has_sort(action, event);
 
 hold(P1, E1, E2) :- grasping(E1, E2);
 you(E1) :- named(E1, 'SHRDLU');

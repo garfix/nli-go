@@ -28,17 +28,17 @@
 { rule: start(P1, E1, P1) -> 'started' }
 
 { rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(P1, E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(P1, E1, E2) }
-{ rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2) }
-{ rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2) }
-{ rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(P1, E2, E1) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2) }
-{ rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2) }
-{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(P1, E2, E1) }
+{ rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(P1, E1, E2),   tag: go:sort(P1, state) }
+{ rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(P1, E1, E2),   tag: go:sort(P1, state) }
+{ rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2),   tag: go:sort(P1, action) }
+{ rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2),   tag: go:sort(P1, action) }
+{ rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(P1, E2, E1),   tag: go:sort(P1, state) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, action) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(P1, E1, E2),   tag: go:sort(P1, state) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2),   tag: go:sort(P1, state) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, action) }
+{ rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, action) }
+{ rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(P1, E2, E1),   tag: go:sort(P1, state) }
 
 { rule: meta_verb(P1, E1, E2, P2) -> 'told',                           sense: go:function(Message, go:call(Message)) }
 /* example, not used by blocks */

@@ -47,7 +47,7 @@
 { 
     rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2),
     intent: go:intent(select, E2), 
-    sense: go:check($np1, go:check($np2, $past_participle)) 
+    sense: go:check($np1, go:check($np2, $past_participle))
 }
 { 
     rule: interrogative_clause(P1) -> 'why',
@@ -72,8 +72,8 @@
 }
 
 { rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P1) }
-{ rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
-{ rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) }
+{ rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) dom:filter_event(P1) }
+{ rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) dom:filter_event(P1) }
 
 
 /* imperative sentences */

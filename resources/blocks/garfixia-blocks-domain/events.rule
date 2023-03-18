@@ -13,6 +13,7 @@ before(Event1, Event2) :-
     end_time(Event1, End)
     start_time(Event2, Start)
     [End < Start]
+    /*go:log('before', Event1, Event2)*/
 ;
 
 while(Event1, Event2) :-
@@ -22,7 +23,19 @@ while(Event1, Event2) :-
     end_time(Event2, End2)
     [Start1 >= Start2]
     [End1 <= End2]
-    /*go:log(Event1, Start1, End2, Event2, Start2, End2)*/
+    /*go:log('while', Event1, Event2)*/
+;
+
+filter_event(Event) :- 
+    if go:atom(Event, A) go:sort(A, SortA) [SortA == action] then
+        /*go:log('Action!')*/
+        go:not(location(Event, _, _, _, _))
+    else 
+        if go:atom(Event, B) go:sort(B, SortB) [SortB == state] then
+            /*go:log('State!')*/
+            location(Event, _, _, _, _)
+        end
+    end
 ;
 
 get_top_level_event(EventId, TopLevelEventId) :-

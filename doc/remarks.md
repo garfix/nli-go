@@ -1,3 +1,7 @@
+## 2023-03-19
+
+I noticed that the in-memory database was the cause of much slowness. Especially the retrieval of data. So I added an index on predicate. This sped up all tests from 20 seconds to 9 seconds. :)
+
 ## 2023-03-18
 
 I added `state` and `action` as subsorts of `event`, which itself I made a subsort of `entity`.

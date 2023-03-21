@@ -1,6 +1,137 @@
+
+
 ## 2023-03-19
 
 I noticed that the in-memory database was the cause of much slowness. Especially the retrieval of data. So I added an index on predicate. This sped up all tests from 20 seconds to 9 seconds. :)
+
+---
+
+Interaction #35
+
+    H: Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?
+    C: Yes, the blue block
+
+The reference "it" may be a problem. There's new syntax. Define "bigger".
+
+Decomposing the sentence:
+
+    Is there anything [X] 
+        which is 
+            bigger than 
+                every pyramid 
+        but is 
+            not 
+                as wide as 
+                    the thing 
+                        that supports it [X]
+
+Complete syntax tree looks like this:
+
+    s
+        +- interrogative
+           +- interrogative_clause
+           |  +- copula
+           |  |  +- is 'Is'
+           |  +- there 'there'
+           |  +- np
+           |     +- nbar
+           |        +- noun
+           |        |  +- anything 'anything'
+           |        +- relative_clause
+           |           +- relative_clause
+           |           |  +- which 'which'
+           |           |  +- copula
+           |           |  |  +- is 'is'
+           |           |  +- adjp
+           |           |     +- bigger 'bigger'
+           |           |     +- than 'than'
+           |           |     +- np
+           |           |        +- qp
+           |           |        |  +- quantifier
+           |           |        |     +- every 'every'
+           |           |        +- nbar
+           |           |           +- noun
+           |           |              +- pyramid 'pyramid'
+           |           +- but 'but'
+           |           +- copula
+           |           |  +- is 'is'
+           |           +- adjp
+           |              +- not 'not'
+           |              +- adjp
+           |                 +- as 'as'
+           |                 +- wide 'wide'
+           |                 +- as 'as'
+           |                 +- np
+           |                    +- the 'the'
+           |                    +- nbar
+           |                       +- noun
+           |                       |  +- thing 'thing'
+           |                       +- relative_clause
+           |                          +- that 'that'
+           |                          +- tv
+           |                          |  +- supports 'supports'
+           |                          +- np
+           |                             +- pronoun
+           |                                +- it 'it'
+           +- ? '?'
+
+Current answer: 
+
+    Yes, the blue one        
+
+Should be: 
+
+    Yes, the blue block
+
+This is the sense produced:
+
+    go_check(
+       go_check(
+            go_quant(none, E$343,
+                go_isa(E$343, object)
+                go_check(
+                    go_quant(
+                        go_quantifier(_$21, Range$10,
+                            go_$equals(_$21, Range$10)), E$344,
+                        go_has_sort(E$344, pyramid)),
+                    dom_bigger(E$343, E$344))
+                go_not(
+                    go_check(
+                        go_quant(none, E$345,
+                            go_isa(E$345, object)
+                            go_check(
+                                go_quant(some, E$271, none),
+                                dom_support(P$28, E$345, E$271))),
+                        dom_as_wide_as(E$343, E$345)))), none)
+
+Where `E$271` is `block:small-red` so "it" refers to the small red block. This is incorrect. It should refer to `E$343`.
+
+The explanation of the anaphora resolver says: "ref: E$343 has no sort". So let's give "anything" a sort. 
+
+go_check(
+    go_quant(none, E$861,
+        go_isa(E$861, object)
+        go_check(
+            go_quant(
+                go_quantifier(_$91, Range$27,
+                    go_$equals(_$91, Range$27)), E$862,
+                go_has_sort(E$862, pyramid)),
+            dom_bigger(E$861, E$862))
+        go_not(
+            go_check(
+                go_quant(none, E$863,
+                    go_isa(E$863, object)
+                    go_check(
+                        go_quant(some, E$864, none),
+                        dom_support(P$37, E$863, E$864))),
+                dom_as_wide_as(E$861, E$863)))), none)
+
+    The thing that supports it
+    dom_support(P$37, E$863, E$864)
+    E$863 = "the thing", accept `block:blue`
+    E$864 = "it", accept E$86 ()
+
+This is correct.
 
 ## 2023-03-18
 
@@ -12,7 +143,8 @@ I tagged most verbs with either a `state` or `action` sort, and added a sortal f
 
 Interaction #34
 
-    Put the blue pyramid on the block in the box.
+    H: Put the blue pyramid on the block in the box.
+    C: OK
 
 The sentence succeeds immediately. But the catch is that the system doesn't regard the sentence as ambiguous, yet.
 

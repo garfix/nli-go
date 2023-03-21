@@ -611,12 +611,12 @@ Renamed entities.yml to sorts.yml and "entity type" to "sort".
 
 Interaction 21:
 
-    H: Put the listtlest pyramid on top of it.
+    H: Put the littlest pyramid on top of it.
     C: OK
     
 Winograd: Words like "little" are not in the dictionary but are either interpreted from the root forms likt "little".
 
-The meaning of the wordt "littlest" is: the smallest height. The meaning of the word "little" is: height less then 128. How can we derive the meaning of littlest from that of little?  
+The meaning of the word "littlest" is: the smallest height. The meaning of the word "little" is: height less then 128. How can we derive the meaning of littlest from that of little?  
 
 SHRDL has a morphological analyser called Morpho. I think (!) it recognizes suffixes, like this:
 

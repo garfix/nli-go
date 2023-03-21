@@ -51,10 +51,12 @@
 /* relations */
 
 { rule: adjp(E1) -> 'taller' 'than' np(E2),                            sense: go:check($np, dom:taller(E1, E2)) }
+{ rule: adjp(E1) -> 'as' 'wide' 'as' np(E2),                           sense: go:check($np, dom:as_wide_as(E1, E2)) }
+{ rule: adjp(E1) -> 'bigger' 'than' np(E2),                            sense: go:check($np, dom:bigger(E1, E2)) }
 { rule: adjp(E1) -> 'behind' np(E2),                                   sense: go:check($np, dom:behind(E1, E2)) }
 { rule: adjp(E1) -> 'narrower' 'than' np(E2),                          sense: go:check($np, dom:narrower(E1, E2)) }
 { rule: adjp(E1) -> adjective(E1) }
-{ rule: adjp(E1) -> 'not' adjective(E1),                               sense: go:not($adjective) }
+{ rule: adjp(E1) -> 'not' adjp(E1),                                    sense: go:not($adjp) }
 
 
 /* prepositional phrases */
@@ -69,9 +71,11 @@
 /* relative clauses */
 
 { rule: relative_clause(E1) -> 'which' copula(C1) adjp(E1) }
+{ rule: relative_clause(E1) -> relative_clause(E1) 'but' copula(C1) adjp(E1), sense: $relative_clause $adjp }
 { rule: relative_clause(E1) -> np(E2) aux_be(A1) tv_gerund(P1, E2, E1), sense: go:check($np, $tv_gerund) }
 { rule: relative_clause(E1) -> 'which' vp_without_np(P1, E1) }
 { rule: relative_clause(E1) -> 'which' tv(P1, E1, E2) np(E2),          sense: go:check($np, $tv)  }
+{ rule: relative_clause(E1) -> 'that' tv(P1, E1, E2) np(E2),           sense: go:check($np, $tv)  }
 
 
 /* noun phrases */

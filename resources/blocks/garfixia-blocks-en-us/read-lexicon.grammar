@@ -11,6 +11,7 @@
 /* determiners */
 
 { rule: quantifier(Result, Range) -> 'all',                            sense: [Result == Range] }
+{ rule: quantifier(Result, Range) -> 'every',                          sense: [Result == Range] }
 { rule: quantifier(Result, Range) -> an(_),                            sense: [Result > 0] }
 { rule: quantifier(Result, Range) -> 'any',                            sense: [Result > 0] }
 { rule: quantifier(Result, Range) -> 'at' 'least' 'one' 'of',          sense: [Result > 0] }
@@ -77,7 +78,7 @@
 /* nouns */
 
 { rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
-{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
+{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object), tag: go:sort(E1, object) }
 { rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }

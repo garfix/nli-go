@@ -32,6 +32,8 @@ volume(E, V) :- if big(E) then go:unify(V, big) else go:unify(V, small) end;
 cubed(E) :- size(E, Width, Width, Width);
 taller(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
+as_wide_as(A, B) :- width(A, Wa) width(B, Wb) [Wa >= Wb];
+bigger(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 
 form(E, Form) :- 
     go:has_sort(E, Sort)

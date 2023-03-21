@@ -70,7 +70,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Put the littlest pyramid on top of it", "OK"},
 			{"Does the small red block support the green pyramid?", "Yes"},
 
-			// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
+			// // original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
 			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
 			{"1", "Three of them"},
 
@@ -91,6 +91,7 @@ func TestBlocksWorld(t *testing.T) {
 			// original: No, only four of them: the red cube, two large green cubes and a large red block
 			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block"},
 			{"Put the blue pyramid on the block in the box.", "OK"},
+			{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -121,7 +122,7 @@ func TestBlocksWorld(t *testing.T) {
 
 			//if test.question == "Why?" {
 			if test.question == "Put the blue pyramid on the block in the box." {
-				test.question = test.question
+				// test.question = test.question
 				// log.SetDebug(true)
 				// log.SetPrint(true)
 			}
@@ -143,7 +144,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				t.Errorf("\n%s", log.GetProductions())
+				// t.Errorf("\n%s", log.GetProductions())
 				break
 			}
 		}

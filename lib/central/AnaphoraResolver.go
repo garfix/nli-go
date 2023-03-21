@@ -383,7 +383,11 @@ func (resolver *AnaphoraResolver) findAnaphoricReferent(variable string, referen
 end:
 
 	if found {
-		resolver.log.AddProduction("ref", "accept "+foundVariable+"\n")
+		if foundVariable != "" {
+			resolver.log.AddProduction("ref", "accept "+foundVariable+"\n")
+		} else {
+			resolver.log.AddProduction("ref", "accept "+foundTerm.String()+"\n")
+		}
 	} else {
 		resolver.log.AddProduction("ref", "reject all\n")
 	}
@@ -399,7 +403,7 @@ func (resolver *AnaphoraResolver) matchReferenceToReferent(variable string, refe
 	agree := false
 	mostSpecificFound := false
 
-	resolver.log.AddProduction("ref", variable+"\n")
+	resolver.log.AddProduction("\nresolving", variable+"\n")
 
 	// the entity itself is in the queue
 	// should not be possible

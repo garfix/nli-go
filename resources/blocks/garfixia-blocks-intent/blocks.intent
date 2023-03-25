@@ -73,11 +73,11 @@
 
 /* Is there? */
 {
-    condition: go:intent(select_categoric, B),
+    condition: go:intent(select_categoric, B) go:isa(B, ExpectedSort),
     responses:
         {
             condition: go:exists(),
-            preparation: go:has_sort(B, Sort) dom:describe_categoric(B, Sort, N) go:count(B, Count) go:make_list(List, B),
+            preparation: dom:describe_categoric(B, ExpectedSort, N) go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }},
             result: B
         }
@@ -196,6 +196,7 @@
         }
 }
 
+/* There were 5 blocks */
 {
     condition: go:intent(quantity, E1, Count),
     responses:
@@ -204,8 +205,6 @@
             answer: dom:agree()                
         }
         {
-            /*preparation: go:count(E1, Number) dom:describe(E1, '', N) go:make_list(List, E1),
-            answer: dom:incorrect_number(Number, List) {{ N }}*/
             preparation: go:count(E1, Number) go:make_list(List, E1) dom:describe_as_groups(List, GroupsList, Descriptions),
             answer: dom:incorrect_number(Number, GroupsList) {{ Descriptions }}
         }

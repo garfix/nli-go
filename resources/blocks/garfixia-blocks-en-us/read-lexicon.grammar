@@ -78,13 +78,13 @@
 /* nouns */
 
 { rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
-{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object), tag: go:sort(E1, object) }
+{ rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'object',                                          sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'objects',                                         sense: go:isa(E1, object) }
-{ rule: noun(E1) -> 'block',                                           sense: go:has_sort(E1, block) }
-{ rule: noun(E1) -> 'blocks',                                          sense: go:has_sort(E1, block) }
+{ rule: noun(E1) -> 'block',                                           sense: go:isa(E1, block) }
+{ rule: noun(E1) -> 'blocks',                                          sense: go:isa(E1, block) }
 { rule: noun(E1) -> 'cube',                                            sense: go:has_sort(E1, block) dom:cubed(E1) }
 { rule: noun(E1) -> 'cubes',                                           sense: go:has_sort(E1, block) dom:cubed(E1) }
 { rule: noun(E1) -> 'pyramid',                                         sense: go:has_sort(E1, pyramid) }

@@ -332,7 +332,7 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 
 		typeFound := false
 		for _, relation := range definition {
-			if relation.Predicate == mentalese.PredicateHasSort {
+			if relation.Predicate == mentalese.PredicateHasSort || relation.Predicate == mentalese.PredicateIsa {
 				typeFound = true
 			}
 		}

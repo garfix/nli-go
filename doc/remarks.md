@@ -1,4 +1,32 @@
+## 2023-03-25
 
+To give the right answer to #35 I think I need to distinguish between the expected sort and the actual sort.
+Or I must keep track of the sort in the question before I start answering it.
+
+The sort is not available at that time. Why not? Because it's stored in the dialog context (sorts), but not in the dialog DB.
+Is it possible to store this info in the DB?
+
+By the way, I can solve the problem by distinguishing the sort at the time of the question and the sort in the answer.
+
+The intent thus looks like this:
+
+    condition: go:intent(select_categoric, B) go:isa(B, ExpectedSort),
+
+Because the condition is executed before the answering phase, only the expected sort is known (object). And this sort can be used in the answer.
+
+So it's possible to answer this question without ressorting to new techniques. I also allowed `isa` to the sort determiners supported by the system. Used to be only `has_sort`.
+
+## 2023-03-21
+
+    H: Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?
+    C: Yes, the blue block
+
+The system responds with "Yes, the blue one". Why? Because it responds as if it selects one block out of many. This would be correct has the sentence been
+
+    H: Is there a block which is bigger ...
+    C: Yes, the blue one
+
+But that's not how the sentence goes. "anything" doesn't represent a clear type.
 
 ## 2023-03-19
 

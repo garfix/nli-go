@@ -1,3 +1,7 @@
+## 2023-03-26
+
+I started the I18n class for better translations of canned responses.
+
 ## 2023-03-25
 
 To give the right answer to #35 I think I need to distinguish between the expected sort and the actual sort.

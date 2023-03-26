@@ -70,6 +70,8 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 	locale := ""
 	for _, grammar := range base.grammars {
 
+		i18n := parse.NewI18n(&grammar)
+
 		// set locale
 		locale = grammar.GetLocale()
 		messenger.SetProcessSlot("locale", mentalese.NewTermString(locale))
@@ -81,9 +83,9 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 		// parse
 		parser := parse.NewParser(grammar.GetReadRules(), base.log)
 		parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
-		parseTrees, parseError := parser.Parse(tokens, "s", []string{"S"})
-		if parseError != "" {
-			output = parseError
+		parseTrees, parseResult := parser.Parse(tokens, "s", []string{"S"})
+		if parseResult.Error != "" {
+			output = i18n.TranslateWithParam(parseResult.Error, parseResult.ErrorArg)
 			continue
 		}
 
@@ -123,7 +125,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
+				output, continueLooking = base.processRootClause(i18n, messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -141,6 +143,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 }
 
 func (base *LanguageBase) processRootClause(
+	i18n *parse.I18n,
 	messenger api.ProcessMessenger,
 	clauseList *mentalese.ClauseList,
 	deicticCenter *mentalese.DeicticCenter,
@@ -182,7 +185,7 @@ func (base *LanguageBase) processRootClause(
 	// name resolution
 	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags, entitySorts)
 	if unresolvedName != "" {
-		return common.GetString("name_not_found", unresolvedName), true
+		return i18n.TranslateWithParam(common.NameNotFound, unresolvedName), true
 	}
 
 	// relationize
@@ -568,7 +571,8 @@ func (base *LanguageBase) translate(messenger api.ProcessMessenger, input mental
 			return mentalese.NewBindingSet()
 		}
 
-		translation = grammar.GetText(source)
+		i18n := parse.NewI18n(&grammar)
+		translation = i18n.Translate(source)
 	}
 
 	newBinding := mentalese.NewBinding()

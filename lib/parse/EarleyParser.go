@@ -17,6 +17,12 @@ type EarleyParser struct {
 	log                   *common.SystemLog
 }
 
+type ParseResult struct {
+	RootNodes []*mentalese.ParseTreeNode
+	Error     string
+	ErrorArg  string
+}
+
 func NewParser(grammarRules *mentalese.GrammarRules, log *common.SystemLog) *EarleyParser {
 	return &EarleyParser{
 		grammarRules:          grammarRules,
@@ -31,27 +37,35 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) ([]*mentalese.ParseTreeNode, string) {
+func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) ([]*mentalese.ParseTreeNode, ParseResult) {
 
 	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 
 	rootNodes := ExtractTreeRoots(chart)
 	error := ""
+	errorArg := ""
 
 	if len(rootNodes) == 0 {
 
 		lastParsedWordIndex, nextWord := FindLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
-			error = "Sorry, I don't know the word \"" + nextWord + "\""
+			error = common.UnknownWord
+			errorArg = nextWord
 		} else if len(words) == 0 {
-			error = "No sentence given."
+			error = common.NoSentence
 		} else if lastParsedWordIndex == len(words)-1 {
-			error = "I understand all words you say, but I don't understand the sentence"
+			error = common.NoUnderstandSentence
 		}
 	}
 
-	return rootNodes, error
+	result := ParseResult{
+		RootNodes: rootNodes,
+		Error:     error,
+		ErrorArg:  errorArg,
+	}
+
+	return rootNodes, result
 }
 
 // The body of Earley's algorithm

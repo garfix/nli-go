@@ -81,7 +81,11 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 		// parse
 		parser := parse.NewParser(grammar.GetReadRules(), base.log)
 		parser.SetMorphologicalAnalyzer(grammar.GetMorphologicalAnalyzer())
-		parseTrees := parser.Parse(tokens, "s", []string{"S"})
+		parseTrees, parseError := parser.Parse(tokens, "s", []string{"S"})
+		if parseError != "" {
+			output = parseError
+			continue
+		}
 
 		for _, parseTree := range parseTrees {
 

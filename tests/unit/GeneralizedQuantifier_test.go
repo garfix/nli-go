@@ -87,7 +87,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	for _, test := range tests {
 
 		words := tokenizer.Process(test.input)
-		trees := parser.Parse(words, "s", []string{"S"})
+		trees, _ := parser.Parse(words, "s", []string{"S"})
 		if len(trees) == 0 {
 			t.Errorf("Cannot parse: %s", test.input)
 			continue

@@ -31,33 +31,27 @@ func (parser *EarleyParser) SetMorphologicalAnalyzer(morphologicalAnalyzer *Morp
 
 // Parses words using EarleyParser.grammar
 // Returns parse tree roots
-func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) []*mentalese.ParseTreeNode {
+func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVariables []string) ([]*mentalese.ParseTreeNode, string) {
 
 	chart := parser.buildChart(parser.grammarRules, words, rootCategory, rootVariables)
 
 	rootNodes := ExtractTreeRoots(chart)
+	error := ""
 
 	if len(rootNodes) == 0 {
 
 		lastParsedWordIndex, nextWord := FindLastCompletedWordIndex(chart)
 
 		if nextWord != "" {
-			parser.log.AddError("Could not parse the word: " + nextWord)
+			error = "Sorry, I don't know the word \"" + nextWord + "\""
 		} else if len(words) == 0 {
-			parser.log.AddError("No sentence given.")
+			error = "No sentence given."
 		} else if lastParsedWordIndex == len(words)-1 {
-			parser.log.AddError("All words are parsed but some word or token is missing to make the sentence complete.")
+			error = "I understand all words you say, but I don't understand the sentence"
 		}
 	}
 
-	if parser.log.Active() {
-		str := ""
-		for _, node := range rootNodes {
-			str += " " + node.String()
-		}
-	}
-
-	return rootNodes
+	return rootNodes, error
 }
 
 // The body of Earley's algorithm

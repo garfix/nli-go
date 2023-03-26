@@ -16,6 +16,26 @@ Because the condition is executed before the answering phase, only the expected 
 
 So it's possible to answer this question without ressorting to new techniques. I also allowed `isa` to the sort determiners supported by the system. Used to be only `has_sort`.
 
+---
+
+Interaction #36:
+
+    H: Does a steeple
+    C: Sorry, I don't know the word "steeple"
+
+Winograd: "The system interrupts immediately when it sees a word it can't figure out."
+
+My parser only produced an error when it couldn't parse a word. I will now not consider this an error any more, but treat it as a regular output.
+
+SHRDLU interrupts the user _while he is typing_, I could build that with NLI-GO, but I don't because I don't see the added value of interrupting a user when still typing. A user that makes spelling mistakes and later corrects them will only get irritated by the feedback. Also some words only have meaning when typed in groupes. People's names for instance. For example, we don't want to see this:
+
+    H: When was Michael
+    C: I don't know the word "Michael"
+
+So while I could build the system to react like SHRDLU in this way (by re-parsing the sentence after every word the user types), I choose not to do this.
+
+I'm still able to produce the same output as SHRDLU, though.
+
 ## 2023-03-21
 
     H: Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?

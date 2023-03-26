@@ -92,6 +92,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block"},
 			{"Put the blue pyramid on the block in the box.", "OK"},
 			{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block"},
+			// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
+			{"Does a steeple", "Sorry, I don't know the word \"steeple\""},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

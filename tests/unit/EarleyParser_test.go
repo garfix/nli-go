@@ -52,7 +52,7 @@ func TestEarleyParser(test *testing.T) {
 	{
 		wordArray := tokenizer.Process(rawInput)
 
-		trees := parser.Parse(wordArray, "s", []string{"S"})
+		trees, _ := parser.Parse(wordArray, "s", []string{"S"})
 
 		if len(trees) != 1 {
 			test.Error(fmt.Sprintf("expected : 1 tree, found %d", len(trees)))
@@ -73,7 +73,7 @@ func TestEarleyParser(test *testing.T) {
 	{
 		wordArray := tokenizer.Process("a b b c")
 
-		trees := parser.Parse(wordArray, "s", []string{"S"})
+		trees, _ := parser.Parse(wordArray, "s", []string{"S"})
 
 		if len(trees) != 3 {
 			test.Error(fmt.Sprintf("expected : 3 trees, found %d", len(trees)))

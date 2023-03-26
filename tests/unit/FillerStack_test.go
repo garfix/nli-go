@@ -35,7 +35,7 @@ func TestFillerStack(t *testing.T) {
 	dialogizer := parse.NewDialogizer(variableGenerator)
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
-	parseTrees := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"}, "s", []string{"S"})
+	parseTrees, _ := parser.Parse([]string{"Which", "babies", "were", "the", "toys", "easiest", "to", "take", "from"}, "s", []string{"S"})
 
 	if len(parseTrees) == 0 {
 		t.Error(log.String())

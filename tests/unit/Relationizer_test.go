@@ -46,7 +46,7 @@ func TestRelationizer(t *testing.T) {
 	dialogizer := parse.NewDialogizer(variableGenerator)
 	relationizer := parse.NewRelationizer(variableGenerator, log)
 
-	parseTrees := parser.Parse([]string{"the", "book", "falls", "."}, "s", []string{"S"})
+	parseTrees, _ := parser.Parse([]string{"the", "book", "falls", "."}, "s", []string{"S"})
 	parseTree := dialogizer.Dialogize(parseTrees[0])
 	result := relationizer.Relationize(parseTree, []string{"S"})
 
@@ -62,7 +62,7 @@ func TestRelationizer(t *testing.T) {
 		t.Errorf("got %s, want %s", result.String(), want)
 	}
 
-	parseTrees2 := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."}, "s", []string{"S"})
+	parseTrees2, _ := parser.Parse([]string{"the", "book", "falls", "on", "the", "ground", "."}, "s", []string{"S"})
 	parseTree2 := dialogizer.Dialogize(parseTrees2[0])
 	result2 := relationizer.Relationize(parseTree2, []string{"S"})
 

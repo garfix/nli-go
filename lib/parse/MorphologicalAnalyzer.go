@@ -33,7 +33,7 @@ func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string,
 		return sense, false
 	}
 
-	trees := morph.parser.Parse(segments, lexicalCategory, variables)
+	trees, _ := morph.parser.Parse(segments, lexicalCategory, variables)
 	if trees == nil {
 		return sense, false
 	}

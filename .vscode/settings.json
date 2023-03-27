@@ -3,5 +3,6 @@
 	"go.goroot": "/snap/go/current",
     "go.testFlags": [
         "-count=1"
-    ]
+    ],
+    "files.trimTrailingWhitespace": true
 }

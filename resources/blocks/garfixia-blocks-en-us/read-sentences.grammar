@@ -8,17 +8,21 @@
 { rule: declarative(P1) -> default_rule(P1) }
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
-{ 
-    rule: assertion(P1) -> np(E1) copula(_) poss_pronoun(E2),                      
-    sense: go:assert(learn:own(A, B) :- go:check($np1, go:check(go:quant(some, E2, $poss_pronoun), [A == E2] [B == E1]))) 
+{
+    rule: assertion(P1) -> np(E1) copula(_) poss_pronoun(E2),
+    sense: go:assert(learn:own(A, B) :- go:check($np1, go:check(go:quant(some, E2, $poss_pronoun), [A == E2] [B == E1])))
 }
-{ 
-    rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           
-    sense: go:assert(-$tv :- go:check($np1, go:check($np2, [A == E1] [B == E2]))) 
+{
+    rule: assertion(P1) -> an(_) '"' dictionary_entry(W1) '"' copula(_) np(E1),
+    sense: go:define(W1, E1, go:check($np, none))
 }
-{ 
-    rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),                
-    sense: go:assert($tv :- go:check($np1, go:check($np2, [A == E1] [B == E2] go:not( -$tv )))) 
+{
+    rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),
+    sense: go:assert(-$tv :- go:check($np1, go:check($np2, [A == E1] [B == E2])))
+}
+{
+    rule: default_rule(P1) -> np(E1) tv(P1, A, B) np(E2),
+    sense: go:assert($tv :- go:check($np1, go:check($np2, [A == E1] [B == E2] go:not( -$tv ))))
 }
 { rule: exception(P1) -> 'but' assertion(P1) }
 { rule: exception(P1) -> ',' exception(P1) }
@@ -45,16 +49,16 @@
 { rule: interrogative_clause(P1) -> aux_be(_) vp(P1),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> aux_do(_) vp(P1),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> can(_) vp(P1),                                  intent: go:intent(yes_no) }
-{ 
+{
     rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2),
-    intent: go:intent(select, E2), 
+    intent: go:intent(select, E2),
     sense: go:check($np1, go:check($np2, $past_participle))
 }
-{ 
+{
     rule: interrogative_clause(P1) -> 'why',
     ellipsis: [prev_sentence]//vp(P1),
     intent: go:intent(why, P1),
-    sense: $vp 
+    sense: $vp
 }
 {
     rule: there_be(P1) -> 'there' copula(P1) number(N1) nbar(E1) pp(P1, E1),
@@ -63,13 +67,13 @@
 }
 
 /* interrogative: time modification */
-{   
-    rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1, P2), 
-    sense: $time_modifier $interrogative_clause  go:context_set(time, P1, P2, $time_modifier) 
+{
+    rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1, P2),
+    sense: $time_modifier $interrogative_clause  go:context_set(time, P1, P2, $time_modifier)
 }
-{ 
-    rule: there_be(P1) -> there_be(P1) time_modifier(P1, P2), 
-    sense: $time_modifier $there_be go:context_set(time, P1, P2, $time_modifier)  
+{
+    rule: there_be(P1) -> there_be(P1) time_modifier(P1, P2),
+    sense: $time_modifier $there_be go:context_set(time, P1, P2, $time_modifier)
 }
 
 { rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P1) }
@@ -84,12 +88,12 @@
 { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }
 { rule: imperative(P1) -> imperative_clause(P1) }
 
-{ 
-    rule: imperative_clause(C) -> imperative_clause(P1) 'and' imperative_clause(P2), 
+{
+    rule: imperative_clause(C) -> imperative_clause(P1) 'and' imperative_clause(P2),
     sense: $imperative_clause1 $imperative_clause2,
-    tag: go:root_clause(P1) go:root_clause(P2) 
+    tag: go:root_clause(P1) go:root_clause(P2)
 }
-{ 
-    rule: imperative_clause(P1) -> vp_imperative(P1),                                            
-    intent: go:intent(command) 
+{
+    rule: imperative_clause(P1) -> vp_imperative(P1),
+    intent: go:intent(command)
 }

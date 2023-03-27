@@ -90,6 +90,7 @@ const PredicateRespond = "go_respond"
 const PredicateDialogGetCenter = "go_dialog_get_center"
 const PredicateTranslate = "go_translate"
 const PredicateUserSelect = "go_user_select"
+const PredicateDefine = "go_define"
 
 const PredicateAlreadyGenerated = "go_already_generated"
 

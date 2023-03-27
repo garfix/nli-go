@@ -52,6 +52,7 @@ func (base *LanguageBase) GetFunctions() map[string]api.SolverFunction {
 		mentalese.PredicateRespond:         base.respond,
 		mentalese.PredicateDialogGetCenter: base.dialogGetCenter,
 		mentalese.PredicateTranslate:       base.translate,
+		mentalese.PredicateDefine:          base.define,
 	}
 }
 
@@ -578,4 +579,28 @@ func (base *LanguageBase) translate(messenger api.ProcessMessenger, input mental
 	newBinding := mentalese.NewBinding()
 	newBinding.Set(translatedVar, mentalese.NewTermString(translation))
 	return mentalese.InitBindingSet(newBinding)
+}
+
+func (base *LanguageBase) define(messenger api.ProcessMessenger, input mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "svr", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	word := bound.Arguments[0].TermValue
+	entityVar := input.Arguments[1].TermValue
+	relationSet := bound.Arguments[2].TermValueRelationSet
+
+	locale, _ := messenger.GetProcessSlot("locale")
+	grammar, found := base.getGrammar(locale.TermValue)
+	if !found {
+		return mentalese.NewBindingSet()
+	}
+
+	grammar.AddDefinition(word, entityVar, relationSet)
+
+	return mentalese.InitBindingSet(binding)
+
 }

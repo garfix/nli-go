@@ -1,3 +1,7 @@
+/* new words */
+
+{ rule: dictionary_entry(W1) -> ~^\w+$~ }
+
 /* numbers */
 
 { rule: number(N1) -> ~^[0-9]+~ }
@@ -31,6 +35,7 @@
 { rule: tv(P1, E1, E2) -> 'own',                                       sense: learn:own(E1, E2) }
 { rule: tv(P1, E1, E2) -> 'support',                                   sense: dom:support(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv(P1, E1, E2) -> 'supports',                                  sense: dom:support(P1, E1, E2),   tag: go:sort(P1, stative) }
+{ rule: tv(P1, E1, E2) -> 'contains',                                  sense: dom:contain(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(P1, E2, E1),   tag: go:sort(P1, stative) }
@@ -91,6 +96,7 @@
 { rule: noun(E1) -> 'pyramids',                                        sense: go:has_sort(E1, pyramid) }
 { rule: noun(E1) -> 'table',                                           sense: go:has_sort(E1, table) }
 { rule: noun(E1) -> 'box',                                             sense: go:has_sort(E1, box) }
+{ rule: noun(E1) -> 'stack',                                           sense: go:has_sort(E1, stack) }
 
 /* pronouns */
 

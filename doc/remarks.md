@@ -2,6 +2,15 @@
 
 I started the I18n class for better translations of canned responses.
 
+---
+
+Interaction #37
+
+    H: A "steeple" is a stack which contains two green cubes and a pyramid.
+    C: I understand
+
+Winograd: "The quote marks indicate that we are defining a new word."
+
 ## 2023-03-25
 
 To give the right answer to #35 I think I need to distinguish between the expected sort and the actual sort.

@@ -9,8 +9,8 @@
 { rule: declarative(P1) -> default_rule(P1) exception(P2) }
 
 { 
-    rule: assertion(P1) -> np(E1) copula(_) np(E2),                      
-    sense: go:assert(learn:own(A, B) :- go:check($np1, go:check($np2, [A == E2] [B == E1]))) 
+    rule: assertion(P1) -> np(E1) copula(_) poss_pronoun(E2),                      
+    sense: go:assert(learn:own(A, B) :- go:check($np1, go:check(go:quant(some, E2, $poss_pronoun), [A == E2] [B == E1]))) 
 }
 { 
     rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),           

@@ -177,7 +177,9 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	// morphological analysis
 	if !lexItemFound && nextPosType == mentalese.PosTypeRelation {
 		if parser.morphologicalAnalyzer != nil {
-			sense, lexItemFound = parser.morphologicalAnalyzer.Analyse(endWord, nextConsequent, nextVariables)
+			if !parser.grammarRules.WordOccurs(endWord, nextConsequent) {
+				sense, lexItemFound = parser.morphologicalAnalyzer.Analyse(endWord, nextConsequent, nextVariables)
+			}
 		}
 	}
 

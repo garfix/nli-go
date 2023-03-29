@@ -3,6 +3,7 @@ package tests
 import (
 	"nli-go/lib/common"
 	"nli-go/lib/importer"
+	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/morphology"
 	"strings"
 	"testing"
@@ -26,7 +27,7 @@ func TestSegmenter(t *testing.T) {
 		suffix: 'est'
 		suffix: 'er'
 	`)
-	segmenter := morphology.NewSegmenter(segmentationRules)
+	segmenter := morphology.NewSegmenter(segmentationRules, mentalese.NewGrammarRules())
 
 	tests := []struct {
 		input string
@@ -41,7 +42,7 @@ func TestSegmenter(t *testing.T) {
 
 	for _, test := range tests {
 
-		result := strings.Join(segmenter.Segment(test.input, test.cat), " ")
+		result := strings.Join(segmenter.Segment(test.input, test.cat, 0), " ")
 
 		if result != test.want {
 			t.Errorf("call %v: got %v, want %v", test.input, result, test.want)

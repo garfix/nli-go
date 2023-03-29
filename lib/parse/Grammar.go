@@ -67,7 +67,7 @@ func (grammar *Grammar) AddDefinition(word string, entityVariable string, defini
 	newRule := mentalese.NewGrammarRule(
 		[]string{mentalese.PosTypeRelation, mentalese.PosTypeWordForm},
 		[]string{"noun", word},
-		[][]string{{entityVariable}, {mentalese.Terminal}},
+		[][]string{{entityVariable}, {}},
 		definition,
 	)
 

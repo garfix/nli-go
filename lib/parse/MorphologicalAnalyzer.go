@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/morphology"
@@ -28,18 +29,20 @@ func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string,
 
 	sense := mentalese.RelationSet{}
 
-	segments := morph.segmenter.Segment(word, lexicalCategory)
+	segments := morph.segmenter.Segment(word, lexicalCategory, 0)
 	if len(segments) == 0 {
 		return sense, false
 	}
 
 	trees, _ := morph.parser.Parse(segments, lexicalCategory, variables)
-	if trees == nil {
+	if len(trees) == 0 {
 		return sense, false
 	}
+
+	fmt.Printf("%v\n", segments)
 
 	// keep just the first tree, for now
 	sense = morph.relationizer.Relationize(trees[0], variables)
 
-	return sense, len(sense) > 0
+	return sense, true
 }

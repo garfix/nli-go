@@ -76,6 +76,7 @@
     sense: $time_modifier $there_be go:context_set(time, P1, P2, $time_modifier)
 }
 
+{ rule: time_modifier(P1, P2) -> 'now' }
 { rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P1) }
 { rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) dom:filter_event(P1) }
 { rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) dom:filter_event(P1) }

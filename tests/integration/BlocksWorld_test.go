@@ -94,6 +94,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block"},
 			// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
 			{"Does a steeple", "Sorry, I don't know the word \"steeple\""},
+			{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand"},
+			// {"Are there any steeples now?", "No"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -109,8 +111,8 @@ func TestBlocksWorld(t *testing.T) {
 
 	for _, session := range tests {
 
-		//log.SetDebug(true)
-		//log.SetPrint(true)
+		// log.SetDebug(true)
+		// log.SetPrint(true)
 		system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
 
 		if !log.IsOk() {
@@ -179,7 +181,6 @@ func createGrid(system *global.System) {
 // Using Pinhole https://github.com/tidwall/pinhole to render the scene to a png
 //
 // go get -u github.com/tidwall/pinhole
-//
 func createImage(system *global.System) {
 
 	p := pinhole.New()

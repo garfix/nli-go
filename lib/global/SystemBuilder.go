@@ -1,7 +1,6 @@
 package global
 
 import (
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
@@ -15,6 +14,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type systemBuilder struct {
@@ -391,7 +392,7 @@ func (builder *systemBuilder) buildGrammar(index index, system *System, moduleBa
 	}
 
 	if index.Morphology != nil {
-		grammar.SetMorphologicalAnalyzer(builder.importMorphologicalAnalyzer(index.Morphology, system, moduleBaseDir))
+		grammar.SetMorphologicalAnalyzer(builder.importMorphologicalAnalyzer(index.Morphology, system, moduleBaseDir, grammar.GetReadRules()))
 	}
 
 	system.grammars = append(system.grammars, grammar)
@@ -425,9 +426,8 @@ func (builder *systemBuilder) importTexts(textFile string) map[string]string {
 	return texts
 }
 
-func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]string, system *System, moduleBaseDir string) *parse.MorphologicalAnalyzer {
+func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]string, system *System, moduleBaseDir string, readRules *mentalese.GrammarRules) *parse.MorphologicalAnalyzer {
 
-	parsingRules := mentalese.NewGrammarRules()
 	segmentationRules := morphology.NewSegmentationRules()
 
 	segmenterPath, found := parts["segmentation"]
@@ -437,15 +437,16 @@ func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]strin
 
 	parsingPath, found := parts["parsing"]
 	if found {
-		parsingRules = builder.readGrammarFromPath(moduleBaseDir + "/" + parsingPath)
+		parsingRules := builder.readGrammarFromPath(moduleBaseDir + "/" + parsingPath)
+		readRules.Merge(parsingRules)
 	}
 
-	segmenter := morphology.NewSegmenter(segmentationRules)
+	segmenter := morphology.NewSegmenter(segmentationRules, readRules)
 
 	return parse.NewMorphologicalAnalyzer(
-		parsingRules,
+		readRules,
 		segmenter,
-		parse.NewParser(parsingRules, system.log),
+		parse.NewParser(readRules, system.log),
 		parse.NewRelationizer(system.variableGenerator, system.log),
 		system.log)
 }

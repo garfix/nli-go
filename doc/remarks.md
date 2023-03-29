@@ -1,3 +1,53 @@
+## 2023-03-29
+
+A word that's available from the lexicon should not be morphologically analyzed. This is just faster, it also allows the lexicon to override the sense that's derived from a morphological analysis.
+
+---
+
+As new words should also be available in the rules of the morphological analyzer, how to solve this?
+
+- every time the morphological analyzer runs, add the rules from the general grammar
+- new lexicon rule => add to general grammar and add to morphological grammar
+
+or
+
+- just turn both grammar rule sets into a single set
+
+One effect of this is that morphological rules now also apply to normal parsing:
+
+    How many cube s are on the table?
+
+Will be parsed correctly.
+
+## 2023-03-28
+
+Currently, for the morphological analyzer to function, all morphemes have to be predefined in the morphological grammar rules. The analyzer should also check the normal grammar for entries. "steeples" is not recognized yet.
+
+---
+
+If no rule can be found any more, but at least one rule has applied, the word is added as a segment.
+
+O, now it found "contain" + "s" as a plural when looking for a noun...
+
+---
+
+No rule found, and at least one rule applied, check the regular grammar (lexicon) for a word in this category.
+
+That works, and as a "bonus" it also found "cubes" = "cube" + "s".
+
+## 2023-03-27
+
+I created a function go:define() to add a word to the current grammar. Now see if it works.
+
+Interaction #38
+
+    H: Are there any steeples now?
+    C: No
+
+Winograd: "The new defintion is used as a description to recognize steeples."
+
+Only the word "steeple" was added. The plural must be recognized by the morphological analyzer.
+
 ## 2023-03-26
 
 I started the I18n class for better translations of canned responses.
@@ -76,14 +126,14 @@ The reference "it" may be a problem. There's new syntax. Define "bigger".
 
 Decomposing the sentence:
 
-    Is there anything [X] 
-        which is 
-            bigger than 
-                every pyramid 
-        but is 
-            not 
-                as wide as 
-                    the thing 
+    Is there anything [X]
+        which is
+            bigger than
+                every pyramid
+        but is
+            not
+                as wide as
+                    the thing
                         that supports it [X]
 
 Complete syntax tree looks like this:
@@ -136,11 +186,11 @@ Complete syntax tree looks like this:
            |                                +- it 'it'
            +- ? '?'
 
-Current answer: 
+Current answer:
 
-    Yes, the blue one        
+    Yes, the blue one
 
-Should be: 
+Should be:
 
     Yes, the blue block
 
@@ -167,7 +217,7 @@ This is the sense produced:
 
 Where `E$271` is `block:small-red` so "it" refers to the small red block. This is incorrect. It should refer to `E$343`.
 
-The explanation of the anaphora resolver says: "ref: E$343 has no sort". So let's give "anything" a sort. 
+The explanation of the anaphora resolver says: "ref: E$343 has no sort". So let's give "anything" a sort.
 
 go_check(
     go_quant(none, E$861,
@@ -211,7 +261,7 @@ The sentence succeeds immediately. But the catch is that the system doesn't rega
 
 I have to add "on" as a preposition next to "on top of".
 
-This works, but now I get 
+This works, but now I get
 
     [0] Directly on the surface [1] Anywhere on top of
 
@@ -312,27 +362,27 @@ I like the last solution, and I think I will implement this by creating a databa
 
 ## 2023-03-08
 
-I had a small breakthrough yesterday, by changing `location` from the location-change-event (momentary) to the location-at-event (with duration). 
+I had a small breakthrough yesterday, by changing `location` from the location-change-event (momentary) to the location-at-event (with duration).
 
 ---
 
 Relations operating on past events can be quite slow. It's good to evoke them only when necessary. For this reason it's good to separate to keep separate present tense sentences form past sentences. For example by introducing the event constant `now`, that is always set for present tense sentences.
 
---- 
+---
 
 When doing a sentence with a time modifier I now always perform the modifier first. It's essentials with "then" and is ok for the other terms (while, before). It makes sense to do so.
 
 ## 2023-03-07
 
-I am implementing left_from, and it's very inefficient at the moment. The question can easily take half a minute to complete. Why is that? Because it takes an event parameter, but this is currently unbound. Therefore, the relation tries to match all events in the history. 
+I am implementing left_from, and it's very inefficient at the moment. The question can easily take half a minute to complete. Why is that? Because it takes an event parameter, but this is currently unbound. Therefore, the relation tries to match all events in the history.
 
 This should be done differently. But this affects other time modifier sentences as well.
 
-    { 
+    {
         rule: interrogative_clause(P1) -> interrogative_clause(P1) time_modifier(P1, P2),
-        sense: 
+        sense:
             $interrogative_clause $time_modifier
-            go:context_set(time, P1, P2, $time_modifier) 
+            go:context_set(time, P1, P2, $time_modifier)
     }
 
     { rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) }
@@ -354,7 +404,7 @@ Location events should not have a start/end time of the time they change, that s
 ---
 
 thought: "Before" does not simply mean "before that event", because this is an infinite time span. It just means: "just before that event".
-But how much before is still "just"? Did not implement. 
+But how much before is still "just"? Did not implement.
 
 ## 2023-02-27
 
@@ -407,7 +457,7 @@ Winograd says this about time-based relations: "
 
 "
 
-A big difference between #32 and #33 is that the time-based relation `support` is a verb (which commonly has a predication variable) and `left_from` is a preposition (which don't usually have predication variables). 
+A big difference between #32 and #33 is that the time-based relation `support` is a verb (which commonly has a predication variable) and `left_from` is a preposition (which don't usually have predication variables).
 
 ## 2023-02-18
 
@@ -438,7 +488,7 @@ Start of interaction #33:
 
 Winograd: "It checks any statements about location or other such properties to see whether it agrees or disagrees."
 
-This is a so called "there be" sentence, which has a copula as the basic verb: "were". It has a time modifier / time indicator: "then". 
+This is a so called "there be" sentence, which has a copula as the basic verb: "were". It has a time modifier / time indicator: "then".
 
 Winograd: "Earlier in the dialog, new information about 'owning' was accepted at face value."
 
@@ -482,7 +532,7 @@ This is what's needed.
 
 ## 2022-12-12
 
-What would it mean to deduce what the red cube supported (just) before some event? From the fact that it was a clean-off event, we can deduce that the object removed was on top of it before. 
+What would it mean to deduce what the red cube supported (just) before some event? From the fact that it was a clean-off event, we can deduce that the object removed was on top of it before.
 
 But what about the next interaction (#33)?
 
@@ -630,9 +680,9 @@ requirements:
 
 ## 2022-10-29
 
-The sort of an entity is now (also) deduced from the `go:has_sort()` sense relation. 
+The sort of an entity is now (also) deduced from the `go:has_sort()` sense relation.
 
-A sort is both stored with the variable (in the dialog context) and in the id. 
+A sort is both stored with the variable (in the dialog context) and in the id.
 
 ## 2022-10-26
 
@@ -698,13 +748,13 @@ Sometimes DBPedia lists all children of a person individually. At other times, h
 I used to have two different *intents* for these. One of them needed to *rewrite* the sentence in order to fit the database content (!)
 Clearly wrong, but how to fix?
 
-I now fixed this by *inventing* children. Given the number of children, I'm creating random identifiers for them. 
+I now fixed this by *inventing* children. Given the number of children, I'm creating random identifiers for them.
 
-    have_child(A, B) :-     
+    have_child(A, B) :-
         go:xor(
             have_1_child(A, B),
 
-            have_n_children(A, N) 
+            have_n_children(A, N)
             go:range_foreach(1, N, ChildIndex,
                 go:uuid(ChildId, person)
                 go:unify(B, ChildId)
@@ -793,7 +843,7 @@ No, "put" is the key. `dom:put()` requires the semantic object to the a `dom:obj
 In "the green one", "one" is an nbar; it can't be replaced by an np ("you").
 
     nbar(E1) -> noun(E1) -> 'one'
-    
+
     np(E1) -> pronoun(E1) -> 'you'
 
     nbar(E1) -> noun(E1) -> 'pyramid'
@@ -828,7 +878,7 @@ I haven't actually done anything with the concept of _head_. What is it?
 https://en.wikipedia.org/wiki/Head_(linguistics)
 In linguistics, the head or nucleus of a phrase is the word that determines the syntactic category of that phrase.
 
-If an object is "big" and "block", NLI-GO treats these as the same, and this is not sufficient. 
+If an object is "big" and "block", NLI-GO treats these as the same, and this is not sufficient.
 Maybe I should model the heads explicitly like this
 
     "block",        sense: go:type(E1, block)
@@ -843,7 +893,7 @@ Bug: 'one' is replaced by 'you' -> 'the green you'
 
 ## 2022-09-26
 
-Compare 
+Compare
 
     H: I own red blocks.
     C: OK
@@ -863,7 +913,7 @@ I think the only way to solve this problem is to give the system knowledge of mu
 
 How can we tell the system that large and small are mutually exclusive (mutex)? `dom:large(X)` and `dom:small(X)` are predicates. Saying something about predicates is called second order predication. Is this possible in NLI-GO?
 
-Yes it's possible. But we need the application to tell us which properties are mutex. And this not need to be done directly (`mutex(large, small)`), because this would require a lot of relations for the mutexes between all colors. We can use the `is` relation. 
+Yes it's possible. But we need the application to tell us which properties are mutex. And this not need to be done directly (`mutex(large, small)`), because this would require a lot of relations for the mutexes between all colors. We can use the `is` relation.
 
 These relations have been in the database all along, but have not been used:
 
@@ -921,7 +971,7 @@ https://files.puzzling.org/academic/gardiner03honours%20%28Identifying%20and%20r
 
 Is it possible that "one" refers to a definition with a relative clause? Yes, and that's not a problem of course.
 
-    How many blocks that support a pyramid are on the table? Pick one up.  
+    How many blocks that support a pyramid are on the table? Pick one up.
 
 A definition may not contain a reference to itself. The following construction is allowed, of course, but the definition of the `block` should not contain one-anaphora.
 
@@ -931,7 +981,7 @@ So the one-anaphora should be removed from it
 
     block
 
-This is a very edge-case restriction, but that's only because this sentence is an edge case. I wonder if Winograd picked it because of this. Anyway, the paper mentioned above, by Mary Gardiner, doesn't even mention relative clauses in one-anaphors. So it must be pretty special. 
+This is a very edge-case restriction, but that's only because this sentence is an edge case. I wonder if Winograd picked it because of this. Anyway, the paper mentioned above, by Mary Gardiner, doesn't even mention relative clauses in one-anaphors. So it must be pretty special.
 
 ## 2022-09-11
 
@@ -941,10 +991,10 @@ As lovely as this diagram is, I'm not going to use it. Changing the a relation s
 
 Ellipsis changes the syntax tree. Anaphora changes the semantics tree.
 
-But while before, I used the semantics tree to check anaphora, I will now use the syntax tree to check it. Each time a change is made to the semantics tree, the entire tree is replaced. 
+But while before, I used the semantics tree to check anaphora, I will now use the syntax tree to check it. Each time a change is made to the semantics tree, the entire tree is replaced.
 
 
-## 2022-09-04 
+## 2022-09-04
 
 I made a diagram of the syntax-to-semantics node mapping that I will make. Difference with old situation: the semantic tree will now contain pointers to semantic nodes (relation sets), where before this was not the case.
 
@@ -968,7 +1018,7 @@ This changes the way I've used the parse tree up to now. At the moment the seman
 
 It's easier to modify a tree than to rebuild it in a slightly changed way. So I copy it first, and then make changes to the copy.
 
-I can't oversee the consequences of this action, but I already know that this gives me more flexibility. It is interesting to keep the link of syntax node to semantic node. 
+I can't oversee the consequences of this action, but I already know that this gives me more flexibility. It is interesting to keep the link of syntax node to semantic node.
 
 ## 2022-08-23
 
@@ -976,7 +1026,7 @@ There is yet another problem with replacing an event referent with its semantics
 
 If I replace "it" with its (event) meaning ("stack up both of the red blocks and either a green cube or a pyramid"), we get:
 
-    How many objects did you touch while you were doing [stack up both of the red blocks and either a green cube or a pyramid]?    
+    How many objects did you touch while you were doing [stack up both of the red blocks and either a green cube or a pyramid]?
 
 Two things are wrong with this:
 
@@ -1036,7 +1086,7 @@ One-anaphora can't be simply treated as ellipsis. It uses the anaphora queue to 
 
 ---
 
-Later: 
+Later:
 
 Hahaha: I just came across this link: https://nlacara.github.io/papers/one_xe.pdf : "One-Anaphora is not Ellipsis" - Nicholas LaCara
 
@@ -1051,7 +1101,7 @@ I could also work with semantic placeholders.
 
 ---
 
-Currently I am not even treating one-anaphora well. I replace "one" by the main relation. So in this example 
+Currently I am not even treating one-anaphora well. I replace "one" by the main relation. So in this example
 
     If you happen to own a book by Dan Brown, bring one for me.
 
@@ -1097,10 +1147,10 @@ Note "Johnson" in line 2. The name of the person is shortened, but we still know
 
 In the same piece on Boris Johnson, other Johnson's are mentioned as well: https://en.wikipedia.org/wiki/Boris_Johnson
 
-    Alexander Boris de Pfeffel Johnson was born on 19 June 1964 on the Upper East Side of Manhattan, New York City, 23-year-old Stanley Johnson, then studying economics at Columbia University, and 22-year-old Charlotte Fawcett, an artist from a family of liberal intellectuals. 
+    Alexander Boris de Pfeffel Johnson was born on 19 June 1964 on the Upper East Side of Manhattan, New York City, 23-year-old Stanley Johnson, then studying economics at Columbia University, and 22-year-old Charlotte Fawcett, an artist from a family of liberal intellectuals.
     Johnson's parents had married in 1963 before moving to the US
 
-Introducing other people that are also named Johnson doesn't revoke the original label.  
+Introducing other people that are also named Johnson doesn't revoke the original label.
 
 
 
@@ -1109,7 +1159,7 @@ Introducing other people that are also named Johnson doesn't revoke the original
 Notes:
 
 - EntityLabels have been disabled (activation is set to 0)
-- The principle should be that the relations produced by relationize are not modified any more (the relation created for one-anaphora should be added to the syntax tree) / so preferably `relationize` is the last step before finding a solution.  
+- The principle should be that the relations produced by relationize are not modified any more (the relation created for one-anaphora should be added to the syntax tree) / so preferably `relationize` is the last step before finding a solution.
 
 To do:
 
@@ -1163,7 +1213,7 @@ The rule would be: as long as a variable V (that hold entity E) is in scope (wha
 Maybe "label" is a better word. "it", "she" and "he" label entities.
 
 The first use of "it" refers to a previous entity. Following "it"s refer to the previous it.
-The first use creates the label; following uses use the label. 
+The first use creates the label; following uses use the label.
 When a label is not used for a few sentences, it is removed.
 
 See also "referential chain" (2021-09-19)
@@ -1228,7 +1278,7 @@ From the "it" options, (3) applies.
 So the rules I can implement are:
 
 - mark a reference to the first event's subject with `first_reference()`; this will be generated as "it"
-- mark a reference to a further event's subjects with `second_reference()`; this will be generated as "that" <common noun>. 
+- mark a reference to a further event's subjects with `second_reference()`; this will be generated as "that" <common noun>.
 
 ## 2022-06-22
 
@@ -1239,7 +1289,7 @@ The problem in this sentence is in the _generated_ intrasentential anaphoric ref
 
 NLI-GO has no means to do that yet. Why is the first reference "it" and the second "that cube"?
 
-Anaphora generation is done in the preparation phase. NLI-GO already 
+Anaphora generation is done in the preparation phase. NLI-GO already
 
 ## 2022-06-19
 
@@ -1308,7 +1358,7 @@ Winograd: "'That' refers to the action mentioned in the answer".
 
 "that cube" refers to "the red cube" in the previous answer. So we should not only be able to refer to the answer entity, and an answer event, but also to the entities that occur in that event, the entities used to describe the event.
 
-"clear off" does not refer to any event of clearing off (there have been multiple already), but more specific to the one in the previous answer. So where we used "that" to refer to an event before, we now use an expression to refer to it. 
+"clear off" does not refer to any event of clearing off (there have been multiple already), but more specific to the one in the previous answer. So where we used "that" to refer to an event before, we now use an expression to refer to it.
 
 Btw: is "clean off" in #26 a typo, meant to say "clear off"? Or are both the same thing?
 
@@ -1318,7 +1368,7 @@ Renamed solution to intent.
 
 ## 2022-06-12
 
-Interaction #26 passed! 
+Interaction #26 passed!
 
 I had to allow the result of a solution to be specified per handler. This makes it a bit more flexible.
 
@@ -1355,7 +1405,7 @@ or
 Turn the event into a quant
 
     { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:quant_check(go:quant(some, P1, none), none),    tag: go:reference(P1) }
-  
+
 It will be treated like the other references, but P1 is still not an event. So, introduce explicit sorts?
 
     { rule: action(P1) -> 'do' demonstrative(P1),   sense: go:quant_check(go:quant(some, P1, none), none),    tag: go:reference(P1) go:sort(P1, event) }
@@ -1390,7 +1440,7 @@ No there's no use storing the sort of a temporary variable.
 
 ===
 
-There's still a big problem of how to resolve sorts. 
+There's still a big problem of how to resolve sorts.
 
 At present I assing sorts to variables in the input sentence. This makes sense, because we need to know the sorts for various reasons, and there's no other way to find them out. We can't link the sorts to ids, because there are not always ids (unbound variables).
 
@@ -1407,7 +1457,7 @@ Time for the next interaction: #26!
 
 This is another "why" question. New is that it contains a reference to an event ("that").
 
-Expaning "that", the sentence can be rewritten as 
+Expaning "that", the sentence can be rewritten as
 
     Why did you get rid of it?
 
@@ -1435,7 +1485,7 @@ The answer, without gender matching, is "Jacqueline de Boer", because it is the 
 
 To check for gender, I need not only establish that "he" has `go:agree(E1, gender, male)`, but also that "Jacqueline de Boer" has gender female. If so they don't match.
 
-But how do you establish grammatical gender for a proper noun? 
+But how do you establish grammatical gender for a proper noun?
 
 Ask the database. Since the name is resolved in the `relationize` phase; this function should also resolve the gender.
 
@@ -1447,7 +1497,7 @@ I decided it's more of a semantic process. And even though treating it as syntac
 
 ## 2022-05-15
 
-Fixing the tests again. "Why?" now fails because ellipsis resolution copies part of the previous sentence that hadn't been subjected to anaphora resolution. 
+Fixing the tests again. "Why?" now fails because ellipsis resolution copies part of the previous sentence that hadn't been subjected to anaphora resolution.
 
 ## 2022-05-14
 
@@ -1482,7 +1532,7 @@ Time to introduce sort tags.
 
 Since A is the simplest solution, I only need to specify which part of the sentence is the subject.
 I can do this by annotating it with a tag.
-But even without tags there's a way to make the earlier parts of the sentence more likely referents than latter ones: 
+But even without tags there's a way to make the earlier parts of the sentence more likely referents than latter ones:
 add the entities of the sentence from right to left to the anaphora queue, so that the first entity is at the end (and hence treated first).
 
 ... it turns out that is was already the way it is implemented. There was another problem. "the small red block" had no binding in the dialog, for some reason.
@@ -1558,14 +1608,14 @@ The SHRDLU dialog does not have any definite anaphoric references (!) (where "th
 
 References will be replaced by tags:
 
-- `go:back_reference(E1, none)` "it" "them" - 
-  - `tag: reference(E1) agree(E1, sort, object) agree(E1, number, singular)`  
+- `go:back_reference(E1, none)` "it" "them" -
+  - `tag: reference(E1) agree(E1, sort, object) agree(E1, number, singular)`
   - `tag: reference(E1) agree(E1, sort, person) agree(E1, number, plural)`
-- `go:definite_reference(E1, $nbar)` "the" 
-  - no tag, but all quants are tried to be resolved 
-- `go:sortal_back_reference(E1)` "one" 
+- `go:definite_reference(E1, $nbar)` "the"
+  - no tag, but all quants are tried to be resolved
+- `go:sortal_back_reference(E1)` "one"
   - `tag: sortal_reference(E1)`
-  - searches for a sort, then tries to resolve 
+  - searches for a sort, then tries to resolve
 
 ## 2022-04-20
 
@@ -1587,7 +1637,7 @@ This new diagram shows how I'm going to handle things:
 
 I am only going to add a meta-level of Features. This level of information (or "second order") is not about the value of the entity; it is about the possible values of the entity, or the type of the value.
 
-An important aspect of features is that they mustn't conflict. 
+An important aspect of features is that they mustn't conflict.
 
 This way you can say `plural(e5)` (`e5` is an atom that represents the object hold by the variable `E5`) while variable `E5` is not bound yet, and may not be bound at all. "I saw a dog. It chased a cat." - which dog exactly is not known at this time. Still, we know the sort and the number of the entity. Important for references.
 
@@ -1643,7 +1693,7 @@ Every sentence variable should refer to a discourse entity (DE). The discourse e
 When are sentence variables linked to discourse entities? As soon as the sentence is parsed. Each variable then links to a different DE.
 At anaphora resolution time, the sentence entity may unlink from the original DE and link to the final DE.
 
-In DRT "From discourse to logic" sentence variables are equated `x = y`. Simple to implement, but a hassle to compute. You need to check these assignments every time you do a lookup. 
+In DRT "From discourse to logic" sentence variables are equated `x = y`. Simple to implement, but a hassle to compute. You need to check these assignments every time you do a lookup.
 
 DRT
 
@@ -1694,9 +1744,9 @@ A production like `sort(E1, person)` can then be used to restrict the name-looku
 I may need meta information about these productions:
 
 - `type`: default: `entity`
-- `number`: agreement (should not conflict) 
+- `number`: agreement (should not conflict)
 - `sort`: derivable agreement (man -> person)
-- `determinate`: changable (false -> true, but not: true -> false) 
+- `determinate`: changable (false -> true, but not: true -> false)
 
 ## 2022-03-21
 
@@ -1714,16 +1764,16 @@ Another idea: both break and cancel immediately return with no bindings. This st
 
 Still rebuilding the server, and making the processes synchronous.
 
-I stumbled on a problem that I nadn't realized before. What if the process currently had multiple bindings, and the program flow is different for these bindings: 
+I stumbled on a problem that I nadn't realized before. What if the process currently had multiple bindings, and the program flow is different for these bindings:
 
 - one binding causes the execution of child procedures, while the other doesn't
 - one binding breaks while the other doesn't
 
 Before I hadn't thought about this problem, while it was there all along. Actually, by executing child procedures _inline_, as I am doing now, I solved the first problem. But I stumbled on it only because of the second problem.
 
-At the moment, if one binding causes a break, all bindings break. 
+At the moment, if one binding causes a break, all bindings break.
 
-Yesterday, for a few hours, I thought that this would collapse my entire process structure. But it doesn't have to be so catastrophic. What I need to do is to keep the state of the program flow, per binding. And treat bindings as program flows. Program flows that may have breaked, and they should store this. Once a flow has breaked, it should not execute more steps, until the root of the break (the loop or the procedure), is reached.  
+Yesterday, for a few hours, I thought that this would collapse my entire process structure. But it doesn't have to be so catastrophic. What I need to do is to keep the state of the program flow, per binding. And treat bindings as program flows. Program flows that may have breaked, and they should store this. Once a flow has breaked, it should not execute more steps, until the root of the break (the loop or the procedure), is reached.
 
 ## 2022-02-12
 
@@ -1762,15 +1812,15 @@ I'm thinking of the following technique for calling child relation sets. When a 
 
 When the child set is executed, the process runner returns to F, it notices the callback function, and calls this callback, in stead of the function (it resumes where it left off). Before calling the callback, it clears the callback.
 
-When a `break` or `return` occurs, F will be deleted and the process runner will not execute the callback. 
+When a `break` or `return` occurs, F will be deleted and the process runner will not execute the callback.
 
 ===
 
-One callback function would not have been so bad, but some functions have a large substructure of helper functions, each of which may call a child relation set (`quant_ordered_list` comes to mind). Basically you just want to call child sets; and there are only a few problems: `break`, `cancel`, `return`, `fail`. All of which break down some part of the stack. 
+One callback function would not have been so bad, but some functions have a large substructure of helper functions, each of which may call a child relation set (`quant_ordered_list` comes to mind). Basically you just want to call child sets; and there are only a few problems: `break`, `cancel`, `return`, `fail`. All of which break down some part of the stack.
 
 After the stack has been broken down, the functions that execute these stack frames need to stop, immediately. This can be done by try/catch, or in Go, with panic/recover. Each function is wrapped by a panic/recover, and this wrapper checks if more of the calling functions need to be stopped, and if so, panic again.
 
-Each of the keywords that tear down part of the stack, calls "panic", with a special control flag. The recover that catches this panic then checks if the call-stack-depth matches the process stack depth; if not, it panics again. Until the call stack depth matches the process stack depth. 
+Each of the keywords that tear down part of the stack, calls "panic", with a special control flag. The recover that catches this panic then checks if the call-stack-depth matches the process stack depth; if not, it panics again. Until the call stack depth matches the process stack depth.
 
 ## 2022-01-29
 
@@ -1794,7 +1844,7 @@ This is the drop. The process was already too slow; it had to redo the same code
 
 ===
 
-There will be an application that listens to a port for incoming JSON messages. 
+There will be an application that listens to a port for incoming JSON messages.
 A dispatcher listens for incoming messages. A message will have a dialog id.
 When this id is new, a new dialog context is created, and started. Then the message is passed to the dialog context.
 
@@ -1807,7 +1857,7 @@ send message to port:
 
 ## 2022-01-16
 
-Changed go:equals() and go:not_equals() to    
+Changed go:equals() and go:not_equals() to
 
     [T1 == T2]
     [T1 != T2]
@@ -1830,9 +1880,9 @@ Changed operations (see below for explanation) to
     [T1 / T2]
     [T1 * T2]
 
-=== 
+===
 
-I want to rewrite go:add(T1, T2, Result) and like procedures to 
+I want to rewrite go:add(T1, T2, Result) and like procedures to
 
     [T1 + T2]
 
@@ -1899,7 +1949,7 @@ One of the main points of the processes is that an application may be killed at 
 
 This is what I did: update these discourse entity values while processing the sentence. For example in `addToQueue`? This would not _add to the queue_, but update the discourse entity variables.
 
-This then finally allowed me to run all 25 interactions, and remove the anaphora queue. But it became very clear to me that anaphora resolution is far from solved. The list of open problems is large. There's a long way to go before this subject is solved to satisfaction. 
+This then finally allowed me to run all 25 interactions, and remove the anaphora queue. But it became very clear to me that anaphora resolution is far from solved. The list of open problems is large. There's a long way to go before this subject is solved to satisfaction.
 
 ## 2022-01-12
 
@@ -1969,16 +2019,16 @@ Highlighting the centers in the last interactions of the dialog:
 () = retain center
 
     H: Had [you] touched any pyramid before you put the green one on the little cube?     // subject has highest prio (syntax)
-    S: Yes, [the green one]                                                               // the answer entity gets to be the center (auto)  
-    H: When did you pick (it) up?                                                         // back_reference() is calculated and yields the entity (solve!)  
+    S: Yes, [the green one]                                                               // the answer entity gets to be the center (auto)
+    H: When did you pick (it) up?                                                         // back_reference() is calculated and yields the entity (solve!)
     S: While I was stacking up a large red block, a large green cube and the red cube     // has no answer entities, so keep (it) ! (auto)
-    H: Why (did you pick (it) up)?                                                        // ellipsis resolution creates the same entity for 'it' (auto)  
+    H: Why (did you pick (it) up)?                                                        // ellipsis resolution creates the same entity for 'it' (auto)
     S: To get rid of (it)                                                                 // note: write grammar (lookup of center)
 
 Problems to solve
 
 - `back_reference` needs access to the active clause of current input
-- `update center` needs the sentence to be solved because it needs the result of the `back_reference()`s   
+- `update center` needs the sentence to be solved because it needs the result of the `back_reference()`s
 
 Todo
 

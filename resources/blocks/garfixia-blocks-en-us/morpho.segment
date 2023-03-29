@@ -2,6 +2,8 @@ vowel: ['a', 'e', 'i', 'o', 'u', 'y']
 consonant: ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
 
 super: '*est' -> adj: '*e', suffix: 'est'
+noun: '*s' -> noun: '*', suffix: 's'
 
 adj: 'little'
 suffix: 'est'
+suffix: 's'

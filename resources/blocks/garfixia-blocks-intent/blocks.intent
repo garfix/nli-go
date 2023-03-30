@@ -82,7 +82,7 @@
             result: B
         }
         {
-            answer: dom:none()
+            answer: dom:result(false)
         }
 }
 
@@ -202,7 +202,7 @@
     responses:
         {
             condition: go:count(E1, Number) [Number == Count],
-            answer: dom:agree()                
+            answer: dom:agree()
         }
         {
             preparation: go:count(E1, Number) go:make_list(List, E1) dom:describe_as_groups(List, GroupsList, Descriptions),

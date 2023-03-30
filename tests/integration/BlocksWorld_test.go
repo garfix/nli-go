@@ -95,7 +95,7 @@ func TestBlocksWorld(t *testing.T) {
 			// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
 			{"Does a steeple", "Sorry, I don't know the word \"steeple\""},
 			{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand"},
-			// {"Are there any steeples now?", "No"},
+			{"Are there any steeples now?", "No"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

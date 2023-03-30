@@ -82,7 +82,7 @@
 
 /* nouns */
 
-{ rule: noun(E1) -> 'one',                                             sense: go:reference_slot(E1) }
+{ rule: noun(E1) -> 'one', /* as in "the one" */                       sense: go:reference_slot(E1) }
 { rule: noun(E1) -> 'anything',                                        sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'thing',                                           sense: go:isa(E1, object) }
 { rule: noun(E1) -> 'things',                                          sense: go:isa(E1, object) }

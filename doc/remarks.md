@@ -1,3 +1,16 @@
+## 2023-03-30
+
+Interaction #39
+
+    H: Build one
+    C: OK
+
+Winograd: "The description given in the definition is enough to deduce a plan for building new objects as well as recognizing them. The word "one" means "a steeple", and the plan is carried out. ..."
+
+I don't think this is true. 'A "steeple" is a stack which contains two green cubes and a pyramid.' is the given. It mentions a "stack" but a stack does not have a description yet. There is the command "stack up", but it's not the same. In general, recognizing and creating are two very different things. It's easy to recognize someone that rides a bike, but that doesn't mean you can ride one.
+
+In this case we do already have a recipe for building a stack, so we can use this. But we still need the connection of "stack" with "stack up".
+
 ## 2023-03-29
 
 A word that's available from the lexicon should not be morphologically analyzed. This is just faster, it also allows the lexicon to override the sense that's derived from a morphological analysis.

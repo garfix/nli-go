@@ -226,7 +226,7 @@ func (resolver *AnaphoraResolver) resolveNode(node *mentalese.ParseTreeNode, bin
 		}
 	}
 
-	for _, relation := range node.Rule.Sense {
+	for _, relation := range node.Rule.Sense.UnScope() {
 		if relation.Predicate == mentalese.PredicateReferenceSlot {
 			variable := relation.Arguments[0].TermValue
 			found, referentVariable := resolver.sortalReference(variable)

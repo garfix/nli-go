@@ -2,18 +2,19 @@
 
 - implement reflective_reference()
 - debug: fold structures in/out
+- create special cases for quantifiers, so that they don't look so complicated
 
 ## variables in loop-functions
 
 When this list_foreach is done, the binding set has bindings for all variations of F C and V, while these should have been temporary
 Because there are too many bindings, much extra calculations are done.
 
-    go:list_foreach(List, E1, 
+    go:list_foreach(List, E1,
         form(E1, F)
         color(E1, C)
         volume(E1, V)
 
-I solved this for now by changing only list_foreach, and returning it with the binding is started out with. This is too limiting, so it needs to be properly solved, and for all other body-functions as well.     
+I solved this for now by changing only list_foreach, and returning it with the binding is started out with. This is too limiting, so it needs to be properly solved, and for all other body-functions as well.
 
 What's the problem?
 
@@ -32,11 +33,11 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
 
 I solved this for now using a mutable variable.
 
-## new 
+## new
 
 - produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.
 
-- turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional? 
+- turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional?
 - when listed values are used in the next sentence, they should be converted to multiple bindings
 
 - create proper function diagrams for all processes
@@ -64,7 +65,7 @@ The restaurant script. Certain phrases invoke a script. (How?)
 
 This phrase causes a number of discourse entities and relationships to be created at once, in the dialog context.
 
-If the next sentence is "The waiter showed us our seat.", "the waiter" refers to an discourse entity in from the script. 
+If the next sentence is "The waiter showed us our seat.", "the waiter" refers to an discourse entity in from the script.
 
 ## The programming language "mentalese"
 
@@ -129,7 +130,7 @@ For each linguistics feature, there is a problem: how to put it into the process
 The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
 
 - When the demo is done. Do it in German as well, as proof of multilinguality.
-- Add an autoplay function for demo mode; show characters in response one-by-one  
+- Add an autoplay function for demo mode; show characters in response one-by-one
 - If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
 
 ## Documentation
@@ -141,7 +142,7 @@ The animation also reveals another problem: when the system builds a stack, it f
 Test if this works or make it work. Create a stack of current relations to be solved, and check if the stack already contains the bound relation.
 
     married_to(A, B) :- married_to(B, A);
-    
+
 * change rewrite rules from categories with variables to relations (see also Generator)
 
 ## Relations
@@ -166,7 +167,7 @@ replace np, nbar by dp, np (?)
 
 ## Stuff I'm not happy with
 
-* the entire function DialogContext::ReplaceVariable is bad; I should not change structs that are in the history list already  
+* the entire function DialogContext::ReplaceVariable is bad; I should not change structs that are in the history list already
 
 ## Interesting stuff
 

@@ -51,9 +51,12 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 	resolvedTree := resolver.clauseList.GetLastClause().ParseTree
 
 	// println("---")
+
 	// println(resolvedRequest.IndentedString("\t"))
 	// println(newBindings.String())
 	// println(resolvedRoot.String())
+
+	resolver.log.AddProduction("Resolved request", resolvedRequest.IndentedString("  "))
 
 	return resolvedTree, resolvedRequest, newBindings, collection.output
 }
@@ -322,11 +325,13 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 
 		// go:reference_slot() is inside a quant with the same variable
 		if foundVariable == variable {
+			resolver.log.AddProduction("ref", foundVariable+" equals "+variable+"\n")
 			continue
 		}
 
 		definition := resolver.entityDefinitions.Get(foundVariable)
 		if definition.IsEmpty() {
+			resolver.log.AddProduction("ref", foundVariable+" has no definition\n")
 			continue
 		}
 
@@ -337,11 +342,16 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 			}
 		}
 		if !typeFound {
+			resolver.log.AddProduction("ref", foundVariable+" has no sort\n")
 			continue
 		}
 
 		found = true
 		break
+	}
+
+	if found {
+		resolver.log.AddProduction("ref", variable+" resolves to "+foundVariable+"\n")
 	}
 
 	return found, foundVariable

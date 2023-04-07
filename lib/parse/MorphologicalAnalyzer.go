@@ -10,15 +10,17 @@ type MorphologicalAnalyzer struct {
 	segmenter    *morphology.Segmenter
 	parsingRules *mentalese.GrammarRules
 	parser       *EarleyParser
+	dialogizer   *Dialogizer
 	relationizer *Relationizer
 	log          *common.SystemLog
 }
 
-func NewMorphologicalAnalyzer(parsingRules *mentalese.GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
+func NewMorphologicalAnalyzer(parsingRules *mentalese.GrammarRules, segmenter *morphology.Segmenter, parser *EarleyParser, dialogizer *Dialogizer, relationizer *Relationizer, log *common.SystemLog) *MorphologicalAnalyzer {
 	return &MorphologicalAnalyzer{
 		segmenter:    segmenter,
 		parsingRules: parsingRules,
 		parser:       parser,
+		dialogizer:   dialogizer,
 		relationizer: relationizer,
 		log:          log,
 	}
@@ -38,8 +40,16 @@ func (morph *MorphologicalAnalyzer) Analyse(word string, lexicalCategory string,
 		return sense, false
 	}
 
+	tree := morph.dialogizer.Dialogize(trees[0], variables)
+
 	// keep just the first tree, for now
-	sense = morph.relationizer.Relationize(trees[0], variables)
+	sense = morph.relationizer.Relationize(tree, nil)
+
+	// println("---")
+	// println(tree.IndentedString("  "))
+	// println(sense.IndentedString("  "))
+	// println("")
+	// println(renamedSense.String())
 
 	return sense, true
 }

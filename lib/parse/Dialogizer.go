@@ -15,9 +15,11 @@ func NewDialogizer(variableGenerator *mentalese.VariableGenerator) *Dialogizer {
 	}
 }
 
-func (d *Dialogizer) Dialogize(node *mentalese.ParseTreeNode) *mentalese.ParseTreeNode {
+func (d *Dialogizer) Dialogize(node *mentalese.ParseTreeNode, rootVariables []string) *mentalese.ParseTreeNode {
 
-	rootVariables := []string{d.variableGenerator.GenerateVariable("Sentence").TermValue}
+	if rootVariables == nil {
+		rootVariables = []string{d.variableGenerator.GenerateVariable("Sentence").TermValue}
+	}
 
 	return d.dialogizeNode(node, rootVariables)
 }

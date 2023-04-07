@@ -1,3 +1,142 @@
+## 2023-04-06
+
+Also combinations that have not been explicitly turned into steeples should be recognizable as such. So yesterday's construction is insufficient.
+
+It makes you wonder why containment relations (for the box) are stored in the database at all...
+
+Note that "contain" for blocks in a stack is different from "contain" of an object in a box.
+
+Idea:
+
+    contain(b: box, a: object)
+    contain(s: stack, a: object)
+
+Let's analyze the sense of the definition:
+
+    go_define('steeple', E$1,
+        go_isa(E$1, stack),
+        go_check(
+            go_and(
+                go_quant(
+                    go_quantifier(_$2, Range$1,
+                        go_$assign(N$1, 2)
+                        go_$equals(_$2, N$1)), E$2,
+                    dom_green(E$2)
+                    go_has_sort(E$2, block)
+                    dom_cubed(E$2)),
+                go_quant(
+                    go_quantifier(_$3, Range$2,
+                        go_$greater_than(_$3, 0)), E$3,
+                    go_has_sort(E$3, pyramid))),
+            dom_contain(P$1, E$1, E$2)))
+
+`go_isa(E$1, stack)` is the "genus" or sort that is the basic of this new concept.
+`dom_contain(P$1, E$1, E$2)` serves for the recognition, but not for the build action
+together `stack` and `go_and(...)` define the build action
+
+
+## 2023-04-05
+
+I expanded the stack building procedure by creating a few assertions:
+
+    go:uuid(Stack, stack)
+    go:assert(go:has_sort(Stack, stack))
+    go:list_foreach(SortedList, B,
+        go:assert(contain(EventId, Stack, B))
+    )
+
+So that the stack now is an actual entity in the database and this is needed to check if there are any steeples.
+
+But can I remove the 'genus' out of the sense, and put it in a tag?
+
+## 2023-04-04
+
+I found Winograd's definition of "build":
+
+    (DEFS #BUILD
+        EXPR (LAMBDA NIL
+        (RELATION
+            (RESTRICTIONS: (((#ANIMATE)) ((#STACK)))
+    MARKERS: (#EVENT)
+            PROCEDURE: ((#EVAL (LIST '#STACKUP
+                        (#BLUEPRINT SMOB1)
+                        '*TIME)))))))
+
+As you can see, it is not at all very generic. It only works with stacks, and uses `#STACKUP` to process.
+Quite a relief! :)
+
+---
+
+Definition: https://en.wikipedia.org/wiki/Definition
+
+and then especially this concept with the beautiful name: Genus-differentia definition
+
+https://en.wikipedia.org/wiki/Genus%E2%80%93differentia_definition
+
+    A genus-differentia definition is a type of intensional definition, and it is composed of two parts:
+
+    1. a genus (or family): An existing definition that serves as a portion of the new definition; all definitions with the same genus are considered members of that genus.
+    2. the differentia: The portion of the definition that is not provided by the genus.
+
+## 2023-04-03
+
+On p.142 of UNL we read "It currently recognizes this (new words) by the quote marks, but it could just as easily declared all unfamiliar words as possible new words. We have not done this as it would eliminate the feature that the system immediately recognizes typing erros without waiting to begin parsing the sentence."
+
+(see interaction #36)
+
+Following "A 'marb' is a red block which is behind a box", on p.143 we read: "Remember that all definitions are programs, so this one fits in with no problem. When it is called on to build part of the description, it simply inserts the description used to define it. If we talk about 'two big marbs', the system will build a description exactly like the one for 'two big red blocks which are behind a box'"
+
+I coded "stack up" very rigidly, before. It needs to be much more flexible. But how does SHRDLU know how to turn a description into an action plan?
+
+---
+
+My plan now is to slice up a definition even further:
+
+    A <x> is a <y> <rel-clause>
+
+This way I don't need to extract the type <y> from the definition, and I can make the `isa` relation between x and y explicit.
+
+When storing the definition, I will
+
+- store `go:has_sort(X, Y)`
+- store the definition as <y> <rel-clause>
+- store the specification as <rel-clause>
+
+Then I need to make `one` refer to ...
+
+And I need to rewrite `stack up` as `build a stack`. Must I?
+
+## 2023-04-02
+
+Somehow I need to combine
+
+    Will you please stack up both of the red blocks and either a green cube or a pyramid?
+
+with
+
+    Build one (Build a stack which contains two green cubes and a pyramid)
+
+I can force the second one into the first one, or I can change the first one to make it handle the second one.
+
+## 2023-03-31
+
+Omg, the system parses the sentence as
+
+    A "steeple" is
+        a stack which contains two green cubes
+        and
+        a pyramid.
+
+When the parser still stopped when the first parse tree was complete, the order still dependend on the order of the syntactic rules. Now they are all extracted, the order depends on the extracter. And I don't know how it works, anymore.
+
+I noticed that the interpretation "A steeple is NP and NP" is grammatically wrong. It would require the word "both": "A steeple is both NP and NP". So I changed
+
+    rule: assertion(P1) -> an(_) '"' dictionary_entry(W1) '"' copula(_) np(E1),
+
+into
+
+    rule: assertion(P1) -> an(_) '"' dictionary_entry(W1) '"' copula(_) an(_) nbar(E1),
+
 ## 2023-03-30
 
 Interaction #39

@@ -18,12 +18,12 @@ func TestGeneralizedQuantifier(t *testing.T) {
 
 	grammarRules := internalGrammarParser.CreateGrammarRules(`
 		{ rule: qp(_) -> quantifier(Result, Range),                     	sense: go:quantifier(Result, Range, $quantifier) }
-		{ rule: quantifier(Result, Range) -> 'all', 						sense: [Result == Range] } 
+		{ rule: quantifier(Result, Range) -> 'all', 						sense: [Result == Range] }
 		{ rule: quantifier(Result, Range) -> 'some', 						sense: [Result > 0] }
 		{ rule: quantifier(Result, Range) -> 'no', 							sense: [Result == 0] }
 		{ rule: quantifier(Result, Range) -> number(N1), 	    			sense: [Result == N1] }
 		{ rule: quantifier(Result, Range) -> 'more' 'than' number(N1),		sense: [Result > N1] }
-		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),	
+		{ rule: quantifier(Result, Range) -> quantifier(Result, Range) 'or' quantifier(Result, Range),
 																			sense: go:or($quantifier1, $quantifier2) }
 
 		{ rule: number(N1) -> ~^[0-9]+~ }
@@ -95,7 +95,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 		variableGenerator := mentalese.NewVariableGenerator()
 		dialogizer := parse.NewDialogizer(variableGenerator)
 		relationizer := parse.NewRelationizer(variableGenerator, log)
-		tree := dialogizer.Dialogize(trees[0])
+		tree := dialogizer.Dialogize(trees[0], nil)
 		input := relationizer.Relationize(tree, []string{"S"})
 		result := runner.RunRelationSetWithBindings(input, mentalese.InitBindingSet(mentalese.NewBinding()))
 		if result.String() != test.want {

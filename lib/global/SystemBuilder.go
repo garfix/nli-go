@@ -447,6 +447,7 @@ func (builder *systemBuilder) importMorphologicalAnalyzer(parts map[string]strin
 		readRules,
 		segmenter,
 		parse.NewParser(readRules, system.log),
+		parse.NewDialogizer(system.variableGenerator),
 		parse.NewRelationizer(system.variableGenerator, system.log),
 		system.log)
 }

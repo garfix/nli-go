@@ -111,7 +111,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 			entityLabels.DecreaseActivation()
 
 			// use dialog variables
-			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree)
+			dialogizedParseTree := parse.NewDialogizer(base.dialogContext.VariableGenerator).Dialogize(parseTree, nil)
 			base.log.AddProduction("Dialogized parse tree", dialogizedParseTree.IndentedString(""))
 
 			// ellipsis
@@ -585,13 +585,14 @@ func (base *LanguageBase) define(messenger api.ProcessMessenger, input mentalese
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "svr", base.log) {
+	if !Validate(bound, "svrr", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	word := bound.Arguments[0].TermValue
 	entityVar := input.Arguments[1].TermValue
-	relationSet := bound.Arguments[2].TermValueRelationSet
+	sort := bound.Arguments[2].TermValueRelationSet
+	specification := bound.Arguments[3].TermValueRelationSet
 
 	locale, _ := messenger.GetProcessSlot("locale")
 	grammar, found := base.getGrammar(locale.TermValue)
@@ -599,7 +600,10 @@ func (base *LanguageBase) define(messenger api.ProcessMessenger, input mentalese
 		return mentalese.NewBindingSet()
 	}
 
-	grammar.AddDefinition(word, entityVar, relationSet)
+	definition := sort.Copy()
+	definition = append(definition, specification...)
+	// definition := specification.Copy()
+	grammar.AddDefinition(word, entityVar, definition)
 
 	return mentalese.InitBindingSet(binding)
 

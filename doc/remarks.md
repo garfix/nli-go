@@ -1,3 +1,37 @@
+## 2023-04-07
+
+A definition is meant as a way to recognize things. By itself, it does not describe how to do something. A system could still be able to reach the state described in the definition, but this involves the forming of a plan, and problem solving. SHRDLU and NLI-GO do not have this ability yet.
+
+But a definition can also be used to recognize an action, if such action has already been specified. In this case a stack already exists, so a steeple can be described as a stack, and the system should be able to build a stack from it.
+
+So, a definition should contain:
+
+- the description of an entity
+- a prescription of an entity
+
+We already have the description, so let's talk about the prescription. How do we turn "a stack that contains" into something that can be built?
+
+Note, that we can also say
+
+    a steeple is a stack _of_
+
+and that a steeple can also consist of two green blocks, a red block, and a pyramid. It can contain extra blocks apart from the definition.
+
+We also want to be able to say "How many stacks are there?" without having stacks explicitly defined in the database.
+
+If a concept 'steeple' is added later, we don't want to have to change the database with steeple objects, nor do we want to chech each time a block is moved, if all steeples need to be updated. Same thing holds for stacks. And it makes one wonder why "supports" is available in the database in the first place. It can be derived from the position of the objects. And this is in fact what happens for past events.
+
+If we think of "a stack which contains" and "a stack of", would it be useful to have these relations
+
+    stack(S) contains(S, E)
+    stack(S) of (S, E)
+
+I think this is impossible to work with. First, we need to detect a `stack(S)` without binding its elements. This is possible if we have a `stack` in the database, but we don't want that. It's also possible to do it without storing the elements, but then `of` should do the same thing again.
+
+It's better to create a relation `stack_contains(S, E)`. This should bind `S` to a new identifier.
+How to define this identifier? Hard.
+How to populate `E`?
+
 ## 2023-04-06
 
 Also combinations that have not been explicitly turned into steeples should be recognizable as such. So yesterday's construction is insufficient.

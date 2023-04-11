@@ -585,14 +585,13 @@ func (base *LanguageBase) define(messenger api.ProcessMessenger, input mentalese
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "svrr", base.log) {
+	if !Validate(bound, "svr", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
 	word := bound.Arguments[0].TermValue
 	entityVar := input.Arguments[1].TermValue
 	sort := bound.Arguments[2].TermValueRelationSet
-	specification := bound.Arguments[3].TermValueRelationSet
 
 	locale, _ := messenger.GetProcessSlot("locale")
 	grammar, found := base.getGrammar(locale.TermValue)
@@ -601,7 +600,7 @@ func (base *LanguageBase) define(messenger api.ProcessMessenger, input mentalese
 	}
 
 	definition := sort.Copy()
-	definition = append(definition, specification...)
+	// definition = append(definition, specification...)
 	// definition := specification.Copy()
 	grammar.AddDefinition(word, entityVar, definition)
 

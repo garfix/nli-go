@@ -98,6 +98,7 @@
 { rule: nbar(E1) -> 'them',                                            tag: go:labeled_reference(E1, 'them', entity) }
 { rule: nbar(E1) -> superlative(E1) nbar(E1),                          sense: $nbar $superlative }
 
+{ rule: nbar(E1) -> 'stack' 'which' 'contains' np(E2),                 sense: go:isa(E1, stack) dom:stack_spec(E1, $np) }
 
 /* superlatives */
 

@@ -96,7 +96,6 @@
 { rule: noun(E1) -> 'pyramids',                                        sense: go:has_sort(E1, pyramid) }
 { rule: noun(E1) -> 'table',                                           sense: go:has_sort(E1, table) }
 { rule: noun(E1) -> 'box',                                             sense: go:has_sort(E1, box) }
-{ rule: noun(E1) -> 'stack',                                           sense: go:isa(E1, stack) }
 
 /* pronouns */
 

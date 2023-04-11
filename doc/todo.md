@@ -3,6 +3,13 @@
 - implement reflective_reference()
 - debug: fold structures in/out
 - create special cases for quantifiers, so that they don't look so complicated
+- put a stack in the largest open space
+
+List the biggest constraints; essential for an architecture:
+
+- groups of entities
+- or
+- ...? questions
 
 ## variables in loop-functions
 

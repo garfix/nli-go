@@ -13,8 +13,8 @@
     sense: go:assert(learn:own(A, B) :- go:check($np1, go:check(go:quant(some, E2, $poss_pronoun), [A == E2] [B == E1])))
 }
 {
-    rule: assertion(P1) -> an(_) '"' dictionary_entry(W1) '"' copula(_) np(E1),
-    sense: go:define(W1, E1, go:check($np, none))
+    rule: assertion(P1) -> an(_) '"' dictionary_entry(W1) '"' copula(_) an(_) nbar(E1),
+    sense: go:define(W1, E1, $nbar)
 }
 {
     rule: assertion(P1) -> np(E1) dont(_) tv(P1, A, B) np(E2),

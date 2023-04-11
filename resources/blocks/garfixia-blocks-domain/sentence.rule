@@ -62,7 +62,27 @@ do_stack_up_smart(QBlocks) :-
             go:assert(stack_up(EventId, `:shrdlu`, SortedList))
 
             do_clear_hand(EventId)
+            do_cleartop(EventId, BaseBlock)
+
             do_find_space_on_table(BaseBlock, X, Y)
             stack_up_proper(EventId, SortedList, X, Y)
         )
     );
+
+do_build(Object) :-
+    go:unify(Object, go:quant(A, B, C))
+    go:unify(C, go:isa(Stack, stack) stack_spec(Stack, Spec))
+    do_stack_up_smart(Spec)
+;
+
+/* A stack is identified by an object on the table that supports another object */
+go:isa(E1, stack) :-
+    support(_, `table:table`, E1)
+    support(_, E1, _)
+;
+
+stack_spec(Stack, Spec) :-
+    anywhere_on(Object, Stack)
+    go:make_list(List, Stack, Object)
+    go:quant_match(Spec, List)
+;

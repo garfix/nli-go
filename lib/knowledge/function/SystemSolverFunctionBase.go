@@ -33,6 +33,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateCheck:            base.quantCheck,
 		mentalese.PredicateDo:               base.quantForeach,
 		mentalese.PredicateQuantOrderedList: base.quantOrderedList,
+		mentalese.PredicateQuantMatch:       base.quantMatch,
 
 		// control
 		mentalese.PredicateIfThen:       base.ifThen,

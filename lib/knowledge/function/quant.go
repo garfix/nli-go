@@ -13,7 +13,7 @@ func (base *SystemSolverFunctionBase) quantCheck(messenger api.ProcessMessenger,
 		panic("quant_check(quants, scope) needs two arguments")
 	}
 
-	return base.solveQuantifiedRelations(messenger, find, binding, true)
+	return base.solveQuantifiedRelations(messenger, find, binding, true, mentalese.TermList{})
 }
 
 // quant_foreach(quant() quant(), relationset)
@@ -25,7 +25,7 @@ func (base *SystemSolverFunctionBase) quantForeach(messenger api.ProcessMessenge
 	cursor := messenger.GetCursor()
 	cursor.SetType(mentalese.FrameTypeLoop)
 
-	return base.solveQuantifiedRelations(messenger, find, binding, false)
+	return base.solveQuantifiedRelations(messenger, find, binding, false, mentalese.TermList{})
 }
 
 func (base *SystemSolverFunctionBase) quantOrderedList(messenger api.ProcessMessenger, quantList mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -250,49 +250,60 @@ func (base *SystemSolverFunctionBase) applyQuantifier(messenger api.ProcessMesse
 	return rangeValues[0:scopeCount]
 }
 
-func (base *SystemSolverFunctionBase) solveQuantifiedRelations(messenger api.ProcessMessenger, find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) solveQuantifiedRelations(messenger api.ProcessMessenger, find mentalese.Relation, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 
 	quants := find.Arguments[0].TermValueRelationSet
 	scope := find.Arguments[1].TermValueRelationSet
 
-	return base.solveQuants(messenger, quants[0], scope, binding, continueAfterEnough)
+	return base.solveQuants(messenger, quants[0], scope, binding, continueAfterEnough, toMatch)
 }
 
-func (base *SystemSolverFunctionBase) solveQuants(messenger api.ProcessMessenger, quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) solveQuants(messenger api.ProcessMessenger, quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 
 	result := mentalese.NewBindingSet()
 
 	if quant.Predicate == mentalese.PredicateXor {
 
-		result = base.SolveXorQuant(messenger, quant, scopeSet, binding, continueAfterEnough)
+		result = base.SolveXorQuant(messenger, quant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	} else if quant.Predicate == mentalese.PredicateOr {
 
-		result = base.SolveOrQuant(messenger, quant, scopeSet, binding, continueAfterEnough)
+		result = base.SolveOrQuant(messenger, quant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	} else if quant.Predicate == mentalese.PredicateAnd {
 
-		result = base.SolveAndQuant(messenger, quant, scopeSet, binding, continueAfterEnough)
+		result = base.SolveAndQuant(messenger, quant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	} else if quant.Predicate != mentalese.PredicateQuant {
 		base.log.AddError("First argument of a `do` or `find` must contain only `quant`s")
 		return mentalese.NewBindingSet()
 	} else {
 
-		result = base.solveSimpleQuant(messenger, quant, scopeSet, binding, continueAfterEnough)
+		result = base.solveSimpleQuant(messenger, quant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	}
 
 	return result
 }
 
-func (base *SystemSolverFunctionBase) solveSimpleQuant(messenger api.ProcessMessenger, quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
-
-	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
-	rangeBindings := messenger.ExecuteChildStackFrame(rangeSet, mentalese.InitBindingSet(binding))
-	scopeBindings := base.solveScope(messenger, quant, scopeSet, rangeBindings, continueAfterEnough)
+func (base *SystemSolverFunctionBase) solveSimpleQuant(messenger api.ProcessMessenger, quant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 
 	rangeVariable := quant.Arguments[mentalese.QuantRangeVariableIndex].TermValue
+	rangeSet := quant.Arguments[mentalese.QuantRangeSetIndex].TermValueRelationSet
+
+	setBindings := mentalese.NewBindingSet()
+	if len(toMatch) > 0 {
+		for _, element := range toMatch {
+			b := binding.Copy()
+			b.Set(rangeVariable, element)
+			setBindings.Add(b)
+		}
+	} else {
+		setBindings = mentalese.InitBindingSet(binding)
+	}
+
+	rangeBindings := messenger.ExecuteChildStackFrame(rangeSet, setBindings)
+	scopeBindings := base.solveScope(messenger, quant, scopeSet, rangeBindings, continueAfterEnough)
 
 	rangeCount := rangeBindings.GetDistinctValueCount(rangeVariable)
 	scopeCount := scopeBindings.GetDistinctValueCount(rangeVariable)
@@ -306,39 +317,39 @@ func (base *SystemSolverFunctionBase) solveSimpleQuant(messenger api.ProcessMess
 	}
 }
 
-func (base *SystemSolverFunctionBase) SolveAndQuant(messenger api.ProcessMessenger, xorQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) SolveAndQuant(messenger api.ProcessMessenger, xorQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 
 	leftQuant := xorQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 	rightQuant := xorQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
 
-	leftResultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough)
+	leftResultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	resultBindings := mentalese.NewBindingSet()
 	for _, leftResultBinding := range leftResultBindings.GetAll() {
-		rightResultBindings := base.solveQuants(messenger, rightQuant, scopeSet, leftResultBinding, continueAfterEnough)
+		rightResultBindings := base.solveQuants(messenger, rightQuant, scopeSet, leftResultBinding, continueAfterEnough, toMatch)
 		resultBindings.AddMultiple(rightResultBindings)
 	}
 
 	return resultBindings
 }
 
-func (base *SystemSolverFunctionBase) SolveOrQuant(messenger api.ProcessMessenger, orQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) SolveOrQuant(messenger api.ProcessMessenger, orQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 	leftQuant := orQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
 	rightQuant := orQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
-	leftResultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough)
-	rightResultBindings := base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough)
+	leftResultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough, toMatch)
+	rightResultBindings := base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough, toMatch)
 
 	newBindings := leftResultBindings.Copy()
 	newBindings.AddMultiple(rightResultBindings)
 	return newBindings
 }
 
-func (base *SystemSolverFunctionBase) SolveXorQuant(messenger api.ProcessMessenger, xorQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) SolveXorQuant(messenger api.ProcessMessenger, xorQuant mentalese.Relation, scopeSet mentalese.RelationSet, binding mentalese.Binding, continueAfterEnough bool, toMatch mentalese.TermList) mentalese.BindingSet {
 	leftQuant := xorQuant.Arguments[mentalese.SeqFirstOperandIndex].TermValueRelationSet[0]
-	resultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough)
+	resultBindings := base.solveQuants(messenger, leftQuant, scopeSet, binding, continueAfterEnough, toMatch)
 	if resultBindings.IsEmpty() {
 		rightQuant := xorQuant.Arguments[mentalese.SeqSecondOperandIndex].TermValueRelationSet[0]
-		resultBindings = base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough)
+		resultBindings = base.solveQuants(messenger, rightQuant, scopeSet, binding, continueAfterEnough, toMatch)
 	}
 
 	return resultBindings
@@ -443,4 +454,32 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 	}
 
 	return success
+}
+
+func (base *SystemSolverFunctionBase) quantMatch(messenger api.ProcessMessenger, quantMatch mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	if len(quantMatch.Arguments) != 2 {
+		panic("quant match needs two arguments")
+	}
+
+	quant := quantMatch.Arguments[0].TermValueRelationSet[0]
+	entities := mentalese.TermList{}
+
+	if quantMatch.Arguments[1].IsVariable() {
+		value, found := binding.Get(quantMatch.Arguments[1].TermValue)
+		if found {
+			entities = value.TermValueList
+		} else {
+			return mentalese.NewBindingSet()
+		}
+	} else {
+		entities = quantMatch.Arguments[1].TermValueList
+	}
+
+	bindings := base.solveQuants(messenger, quant, mentalese.RelationSet{}, binding, true, entities)
+	if bindings.IsEmpty() {
+		return mentalese.NewBindingSet()
+	} else {
+		return mentalese.InitBindingSet(binding)
+	}
 }

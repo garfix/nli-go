@@ -76,7 +76,7 @@ func (set BindingSet) ToJson() string {
 func (set BindingSet) Reverse() BindingSet {
 	newSet := NewBindingSet()
 	lastIndex := len(*set.Bindings) - 1
-	for i, _ := range *set.Bindings {
+	for i := range *set.Bindings {
 		binding := (*set.Bindings)[lastIndex-i]
 		newSet.Add(binding)
 	}
@@ -148,7 +148,7 @@ func (set BindingSet) Sort(variable string) (BindingSet, bool) {
 	if len(numbers) > 0 && len(strings) == 0 {
 
 		sortedNumbers := []float64{}
-		for integer, _ := range numbers {
+		for integer := range numbers {
 			sortedNumbers = append(sortedNumbers, integer)
 		}
 		sort.Float64s(sortedNumbers)
@@ -162,7 +162,7 @@ func (set BindingSet) Sort(variable string) (BindingSet, bool) {
 	} else if len(numbers) == 0 {
 
 		sortedStrings := []string{}
-		for str, _ := range strings {
+		for str := range strings {
 			sortedStrings = append(sortedStrings, str)
 		}
 		sort.Strings(sortedStrings)

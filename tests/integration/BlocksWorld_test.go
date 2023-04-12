@@ -97,7 +97,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand"},
 			{"Are there any steeples now?", "No"},
 			{"Build one", "OK"},
-			{"Are there any steeples now?", "Yes"},
+			{"Are there any steeples now?", "Yes, a large green cube"},
 			{"Does a green cube support a green cube?", "Yes"},
 		},
 		{

@@ -42,8 +42,8 @@
 { rule: interrogative_clause(P1) -> 'how' aux_do(_) vp(P1),                        intent: go:intent(how, P1) }
 { rule: interrogative_clause(P1) -> 'when' vp(P1),                                 intent: go:intent(when, P1),             sense: $vp go:context_call(time, P1) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) adjp(E1),                     intent: go:intent(select, E1),           sense: go:check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1) adjp(E1),             intent: go:intent(select_categoric, E1), sense: go:check($np, $adjp) }
-{ rule: interrogative_clause(P1) -> copula(_) 'there' np(E1),                      intent: go:intent(select_categoric, E1), sense: go:check($np, none) }
+{ rule: interrogative_clause(P1) -> copula(P1) 'there' np(E1) adjp(E1),             intent: go:intent(select_categoric, E1), sense: go:check($np, $adjp) }
+{ rule: interrogative_clause(P1) -> copula(P1) 'there' np(E1),                      intent: go:intent(select_categoric, E1), sense: go:check($np, none) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) pp(P1, E1),                   intent: go:intent(yes_no),               sense: go:check($np, $pp) }
 { rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),   intent: go:intent(select_subject, E2),   sense: go:check($np, $past_participle) }
 { rule: interrogative_clause(P1) -> aux_be(_) vp(P1),                               intent: go:intent(yes_no) }

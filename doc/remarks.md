@@ -1,3 +1,39 @@
+## 2023-04-11
+
+I almost succedeed with the interaction.
+
+    Are there any steeples now?
+        GOT:
+          Yes, a large green cube
+        WANT:
+          Yes
+
+This is because the steeple / stack is now identified by its lowest block.
+
+Whereas all "Is there" sentences have been answered with "Yes, ..." this one apparently needs only a yes/no. But why?
+What's the difference between
+
+    Are there any steeples now?
+
+and
+
+    Is there a large block behind a pyramid?
+    Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?
+
+Well, obviously, our new sentence is in the plural.
+
+Wouldn't it be better if we answered like this:
+
+    Yes, the one that starts with a large green cube
+
+---
+
+Wait, I forgot that I added this sentence myself. So it doesn't matter what the response is.
+
+This is something that can be improved, but I prefer just to finish the conversation for now.
+
+By the way, the reason for just "Yes" could be that it's a repetitive follow up question. Are we there yet? Are we there yet?
+
 ## 2023-04-07
 
 A definition is meant as a way to recognize things. By itself, it does not describe how to do something. A system could still be able to reach the state described in the definition, but this involves the forming of a plan, and problem solving. SHRDLU and NLI-GO do not have this ability yet.

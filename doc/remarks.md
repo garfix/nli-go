@@ -1,3 +1,25 @@
+## 2023-04-12
+
+Interaction #40
+
+    H: Call the biggest block "superblock"
+    C: OK
+
+Winograd: "We can also give objects names."
+
+"biggest" is a new word. It's like "littlest".
+
+Interaction #41
+
+    H: Have you picked up superblock since we began?
+    C: Yes
+
+I get the error:
+
+    Info: The name 'superblock' could not be looked up because no sort could be derived from the relations.
+
+This is because the system can't derive the sort of "superblock" from the sentence. I have to specify the sorts of 'picked up'.
+
 ## 2023-04-11
 
 I almost succedeed with the interaction.

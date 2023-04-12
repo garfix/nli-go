@@ -80,6 +80,7 @@
 { rule: time_modifier(P1, P2) -> 'then',                                       sense: go:context_get(time_event, P1) }
 { rule: time_modifier(P1, P2) -> 'before' vp(P2),                              sense: $vp dom:before(P1, P2) dom:filter_event(P1) }
 { rule: time_modifier(P1, P2) -> 'while' vp(P2),                               sense: $vp dom:while(P1, P2) dom:filter_event(P1) }
+{ rule: time_modifier(P1, P2) -> 'since' 'we' 'began',                         sense: dom:after(P1, start) dom:filter_event(P1) }
 
 
 /* imperative sentences */
@@ -98,3 +99,9 @@
     rule: imperative_clause(P1) -> vp_imperative(P1),
     intent: go:intent(command)
 }
+{
+    rule: imperative_clause(P1) -> 'call' np(E1) '"' dictionary_entry(W1) '"',
+    sense: go:check($np, go:assert(dom:name(E1, W1))),
+    intent: go:intent(command)
+}
+

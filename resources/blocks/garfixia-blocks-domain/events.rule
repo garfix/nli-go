@@ -15,6 +15,12 @@ before(Event1, Event2) :-
     [End < Start]
 ;
 
+after(Event1, Event2) :-
+    end_time(Event1, End)
+    start_time(Event2, Start)
+    [End > Start]
+;
+
 while(Event1, Event2) :-
     start_time(Event1, Start1)
     end_time(Event1, End1)
@@ -24,11 +30,11 @@ while(Event1, Event2) :-
     [End1 <= End2]
 ;
 
-filter_event(Event) :- 
+filter_event(Event) :-
     go:atom(Event, A) go:sort(A, Sort)
     if  [Sort == dynamic] then
         go:not(location(Event, _, X, _, _))
-    else 
+    else
         if [Sort == stative] then
             location(Event, _, _, _, _)
         end

@@ -99,6 +99,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"Build one", "OK"},
 			{"Are there any steeples now?", "Yes, a large green cube"},
 			{"Does a green cube support a green cube?", "Yes"},
+			{"Call the biggest block \"superblock\".", "OK"},
+			{"Have you picked up superblock since we began?", "Yes"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -151,7 +153,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				//t.Errorf("\n%s", log.GetProductions())
+				// t.Errorf("\n%s", log.GetProductions())
 				// t.Errorf("\n%s", log.String())
 				break
 			}

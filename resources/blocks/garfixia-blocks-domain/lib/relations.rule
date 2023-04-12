@@ -11,8 +11,8 @@ go:has_sort(stative, predication);
 go:has_sort(dynamic, predication);
 
 hold(P1, E1, E2) :- grasping(E1, E2);
-you(E1) :- named(E1, 'SHRDLU');
-i(E1) :- named(E1, 'YOU');
+you(E1) :- name(E1, 'SHRDLU');
+i(E1) :- name(E1, 'YOU');
 tell(P1, P2) :- go:call(P2);
 height(E, H) :- size(E, _, _, H);
 width(E, W) :- size(E, W, _, _);
@@ -35,7 +35,7 @@ narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
 as_wide_as(A, B) :- width(A, Wa) width(B, Wb) [Wa >= Wb];
 bigger(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 
-form(E, Form) :- 
+form(E, Form) :-
     go:has_sort(E, Sort)
     go:xor(
         [Sort == block] size(E, X, X, X)
@@ -48,7 +48,7 @@ form(E, Form) :-
 behind(A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [Y1 > Y2];
 left_from(now, A, B) :- at(A, X1, Y1, Z1) at(B, X2, Y2, Z2) [X1 < X2] /*go:log('at', A, B, P1)*/;
 
-left_from(P1, A, B) :- 
+left_from(P1, A, B) :-
     location(E1, A, X1, _, _)
     location(E2, B, X2, _, _)
     [X1 < X2]

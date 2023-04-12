@@ -1,5 +1,5 @@
 go:has_sort(E, T) :- is(E, T);
-dom:named(E, Name) :- call(E, Name);
+dom:name(E, Name) :- call(E, Name);
 dom:red(E) :- color(E, red);
 dom:blue(E) :- color(E, blue);
 dom:green(E) :- color(E, green);

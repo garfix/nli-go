@@ -1,6 +1,7 @@
 { rule: super(E1) -> super_base(E1) 'est' }
 
 { rule: super_base(E1) -> 'little',                                       sense: dom:height(E1, H1) go:order(H1, asc) }
+{ rule: super_base(E1) -> 'big',                                          sense: dom:height(E1, H1) go:order(H1, desc) }
 
 { rule: noun(E1) -> noun(E1) 's' }
 

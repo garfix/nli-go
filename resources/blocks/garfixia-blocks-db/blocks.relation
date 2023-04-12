@@ -50,6 +50,7 @@ location(start9, `box:box`, 600, 600, 0)
 location(start10, `hand:hand`, 40, 0, 0)
 location(start11, `table:table`, 0, 0, 0)
 
+start_time(start, 0) end_time(start, 1000000)
 start_time(start1, 0) end_time(start1, 1000000)
 start_time(start2, 0) end_time(start2, 1000000)
 start_time(start3, 0) end_time(start3, 1000000)

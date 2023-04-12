@@ -25,3 +25,5 @@ dom:put_down(EventId, S, A) :- put_down(EventId, S, A);
 dom:get_rid_of(EventId, S, A) :- get_rid_of(EventId, S, A);
 dom:let_go(EventId, S) :- let_go(EventId, S);
 dom:stack_up(EventId, S, List) :- stack_up(EventId, S, List);
+
+dom:name(E, Name) :- call(E, Name);

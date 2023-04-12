@@ -81,6 +81,8 @@
 
 /* noun phrases */
 
+{ rule: proper_noun_group(N1) -> proper_noun(N1) }
+
 { rule: np(E1) -> qp(_) nbar(E1),                                      sense: go:quant($qp, E1, $nbar) }
 { rule: np(E1) -> 'the' nbar(E1),                                      sense: go:quant(none, E1, $nbar), tag: go:reference(E1, entity) }
 { rule: np(E1) -> 'that' nbar(E1),                                     sense: go:quant(none, E1, $nbar), tag: go:reference(E1, entity) }
@@ -90,6 +92,7 @@
 { rule: np(E1) -> np(E1) 'and' np(E2),                                 sense: go:and($np1, $np2) }
 { rule: np(E1) -> 'either' np(E1) 'or' np(E2),                         sense: go:or($np1, $np2) }
 { rule: np(E1) -> 'one',                                               sense: go:quant(one, E1, go:reference_slot(E1)) }
+{ rule: np(E1) -> proper_noun_group(E1),                               sense: go:quant(go:quantifier(Result, Range, [Result == Range]), E1, none) }
 
 { rule: nbar(E1) -> nbar(E1) pp(P1, E1) }
 { rule: nbar(E1) -> adjp(E1) nbar(E1) }

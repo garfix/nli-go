@@ -11,7 +11,7 @@ The anaphora queue is built on demand, whenever it is needed. It is built from t
 
 Each clause has a list of entities ordered as they appear in the sentence.
 
-The anaphora queue is built from the last clause encountered to the first, and the entities within a clause in order. In general an entity that appears earlier in a sentence is more likely to be the referent. 
+The anaphora queue is built from the last clause encountered to the first, and the entities within a clause in order. In general an entity that appears earlier in a sentence is more likely to be the referent.
 
 It is also possible to tag entities as subject and object, and there functions will be used to determine the order of appearance. The subject is more important than the object, and this in turn is more important than other entities.
 
@@ -54,6 +54,6 @@ These features are used to constrain the options in anaphora resolution. They ar
 - gender: `male`, `female`, `neuter`
 - number: `singular`, `plural`
 - reflexivity: `true` ("himself"), `false` ("him")
-- determinacy: `determinate` ("the") `indeterminate` ("a")
+- definiteness: `determinate` ("the") `indeterminate` ("a")
 - resolved: `true`, `false` (a forward reference is unresolved for some time)
 

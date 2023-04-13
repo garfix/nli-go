@@ -15,7 +15,7 @@ Canonical name: "Lord Byron".
 
 ## Objects
 
-In a set of objects on a table, the objects don't have individual names. The objects need to be described from their attributes and relations. The attributes are predefined. Use as little attributes as necessary. There's a very specific order in which to add attributes, 
+In a set of objects on a table, the objects don't have individual names. The objects need to be described from their attributes and relations. The attributes are predefined. Use as little attributes as necessary. There's a very specific order in which to add attributes,
 
 Every object has a form, and the form should be as specific as possible. Choose "cube" over "block". If there's only one object in the scene with this form, this is enough. For example: box. This uniquely determines the object, and thus we say "the box".
 
@@ -32,3 +32,14 @@ todo: why is this answer using indefinite articles?
 
 When two or more object descriptions are the same, they are grouped together. In stead of "the large green cube and the large green cube" we say "two large green cubes". Note the number "two" and the pluralization. Also, a new entity is introduced for the group; it replaces the instances.
 
+## Definiteness
+
+A question based on an indefinite NP will receive the specific entity in the response.
+
+    Had you touched any pyramid before you put the green one on the little cube?
+    Yes, the green one
+
+whereas a question with a definite NP will just receive yes/no
+
+    Have you picked up superblock since we began?
+    Yes

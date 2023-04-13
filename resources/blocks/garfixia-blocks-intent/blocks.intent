@@ -61,6 +61,11 @@
     condition: go:intent(select, B),
     responses:
         {
+            condition: go:exists() go:atom(B, Ba) go:category(Ba, definiteness, definite),
+            answer: dom:result(true),
+            result: B
+        }
+        {
             condition: go:exists(),
             preparation: go:has_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }},

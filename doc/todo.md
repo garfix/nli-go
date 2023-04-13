@@ -4,6 +4,7 @@
 - debug: fold structures in/out
 - create special cases for quantifiers, so that they don't look so complicated
 - put a stack in the largest open space
+- provide a description of a steeple (are there any steeples now? Yes, the one based on the green block)
 
 List the biggest constraints; essential for an architecture:
 

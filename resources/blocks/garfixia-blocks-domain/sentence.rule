@@ -86,3 +86,8 @@ stack_spec(Stack, Spec) :-
     go:make_list(List, Stack, Object)
     go:quant_match(Spec, List)
 ;
+
+drop(P1, Person, E1) :-
+    /* did not occur */
+    [1 == 2]
+;

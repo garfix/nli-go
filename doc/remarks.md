@@ -1,3 +1,18 @@
+## 2023-04-13
+
+Interaction #42
+
+    H: Why did you drop it?
+    C: By "it", I assume you mean the superblock. I can't explain a nonexistent event.
+
+Winograd: "There is no record in memory of any block being dropped."
+
+In fact, the verb "drop" doesn't event exist yet. "It" can only refer to superblock, so the first sentence seems superfluous. But it is used as an extra means of coordination with the user. It's tough.
+
+"Why x" implies the existence of x, and this assumption is violated here. Hence the somewhat annoyed sounding second sentence. This one seems easier.
+
+Let's get started.
+
 ## 2023-04-12
 
 Interaction #40

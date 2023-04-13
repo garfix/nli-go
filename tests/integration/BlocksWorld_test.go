@@ -101,6 +101,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Does a green cube support a green cube?", "Yes"},
 			{"Call the biggest block \"superblock\".", "OK"},
 			{"Have you picked up superblock since we began?", "Yes"},
+			{"Why did you drop it?", "By \"it\", I assume you mean the superblock. I can't explain a nonexistent event."},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

@@ -43,6 +43,7 @@
 { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, dynamic) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'drop',                           sense: dom:drop(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(P1, E2, E1),   tag: go:sort(P1, stative) }
 { rule: past_participle(P1, E1, E2) -> 'picked' 'up',                  sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, dynamic) go:sort(E2, object) }

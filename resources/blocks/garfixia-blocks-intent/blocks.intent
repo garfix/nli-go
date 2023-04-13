@@ -179,7 +179,7 @@
             result: ParentEventId
         }
         {
-            answer: dom:dont_know()
+            answer: dom:no_event()
         }
 }
 

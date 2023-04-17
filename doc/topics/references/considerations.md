@@ -13,8 +13,8 @@ Hard constraints
 - animatedness agreement ("it", can't match "the man")
 - selectional restrictions: relations have argument type restrictions (a table can't be "picked up", a block can't be put "into a block")
 - reflexivity in lexical scope: ("himself" can only match an entity in the same clause, and not a subclause)
-- increasing focus: ("a block" can't refer to an entity before referred to as "the block") 
-- centering: 
+- increasing focus: ("a block" can't refer to an entity before referred to as "the block")
+- centering:
 
 Soft constraints
 
@@ -55,7 +55,7 @@ Two variables that occur in the same nucleus are called co-arguments.
 
 - https://en.wikipedia.org/wiki/Anaphora_(linguistics)
 
-On using inference to determine anaphoric relations: 
+On using inference to determine anaphoric relations:
 
 Winograd schema challenge https://en.wikipedia.org/wiki/Winograd_Schema_Challenge
 Coherence and-coreference - Jerry R. Hobbs (1979)
@@ -64,3 +64,9 @@ Coherence and Coreference Revisited - ANDREW KEHLER, LAURA KERTZ, HANNAH ROHDE A
 Coreference and Bound variables
 
 https://en.wikipedia.org/wiki/Coreference
+
+## Ambiguity
+
+It's not enough to create an algorithm that provides the most likely candidate for a referent. The system needs to be able to detect that two referent are about just as likely. It should then tell the user which one it picked, or allow the user to choose.
+
+Each referent candidate should get a score.

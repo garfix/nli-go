@@ -1,3 +1,28 @@
+## 2023-04-16
+
+To establish the presence of ambiguity in anaphora resolution, it is not sufficient to pick the earliest referent that meets the restrictions, as I'm doing now.
+
+So I will give all possible referents a score, and if the highest scores are close together, this indicates ambiguity, and it should be notified to the user.
+
+## 2023-04-14
+
+Page 158 says:
+
+"If SMIT finds two different interpretations, and one is chosen because of a higher plausibility, the system types out a message to inform us of the assumption made in choosing one interpretation... we get:
+
+BY "IT" I ASSUME YOU MEAN THE BLOCK WHICH IS TALLER THAN THE ONE I AM HOLDING
+"
+
+This refers to interaction #3:
+
+    H: Find a block which is taller than the one you are holding and put it into the box.
+    C: By "it" I assume you mean the block which is taller than the one I am holding
+    C: OK
+
+which I marked as "todo" in the beginning of the project.
+
+This is a remark of the anaphora resolver. "the block which is taller than the one I am holding" is problematic because it is a description of part of the question. Note that it's not identical, because "you" is changed to "I"
+
 ## 2023-04-13
 
 Interaction #42

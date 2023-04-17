@@ -14,9 +14,8 @@ type AnaphoraResolver struct {
 	entitySorts       *mentalese.EntitySorts
 	entityLabels      *mentalese.EntityLabels
 	entityDefinitions *mentalese.EntityDefinitions
-	meta              *mentalese.Meta
 	messenger         api.ProcessMessenger
-	sortFinder        SortFinder
+	referentFinder    *ReferentFinder
 }
 
 func NewAnaphoraResolver(log *common.SystemLog, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *mentalese.TagList, entitySorts *mentalese.EntitySorts, entityLabels *mentalese.EntityLabels, entityDefinitions *mentalese.EntityDefinitions, meta *mentalese.Meta, messenger api.ProcessMessenger) *AnaphoraResolver {
@@ -28,9 +27,8 @@ func NewAnaphoraResolver(log *common.SystemLog, clauseList *mentalese.ClauseList
 		entitySorts:       entitySorts,
 		entityLabels:      entityLabels,
 		entityDefinitions: entityDefinitions,
-		meta:              meta,
 		messenger:         messenger,
-		sortFinder:        NewSortFinder(meta, messenger),
+		referentFinder:    NewReferentFinder(log, meta, messenger, clauseList, entityBindings, entityTags, entitySorts),
 	}
 }
 
@@ -261,7 +259,7 @@ func (resolver *AnaphoraResolver) reference(variable string, referenceSort strin
 		return variable
 	}
 
-	found, referentVariable, referentValue := resolver.findAnaphoricReferent(variable, referenceSort, entityDefinition, binding, collection, reflective)
+	found, referentVariable, referentValue := resolver.referentFinder.FindAnaphoricReferent(variable, referenceSort, entityDefinition, binding, collection, reflective)
 	if found {
 		// found anaphoric referent (within dialog)
 		if referentVariable != "" {
@@ -297,7 +295,7 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, referenceSor
 		oldSort := resolver.entitySorts.GetSort(oldVariable)
 		oldId, _ := resolver.entityBindings.Get(oldVariable)
 		entityDefinition := resolver.entityDefinitions.Get(variable)
-		match, _, _ := resolver.matchReferenceToReferent(variable, referenceSort, oldVariable, oldSort, oldId.TermValue, entityDefinition, binding, collection, reflective)
+		match, _, _ := resolver.referentFinder.MatchReferenceToReferent(variable, referenceSort, oldVariable, oldSort, oldId.TermValue, entityDefinition, binding, collection, reflective)
 		if match {
 			resolver.entityLabels.IncreaseActivation(label)
 			// use the reference of the existing label
@@ -355,133 +353,4 @@ func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string
 	}
 
 	return found, foundVariable
-}
-
-func (resolver *AnaphoraResolver) findAnaphoricReferent(variable string, referenceSort string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
-
-	found := false
-	foundVariable := ""
-	foundTerm := mentalese.Term{}
-
-	groups := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.entitySorts)
-	for _, group := range groups {
-
-		// check if the referent is a group
-		if len(group.values) == 1 {
-
-			referent := group.values[0]
-
-			found, foundVariable, foundTerm = resolver.matchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
-			if found {
-				goto end
-			}
-
-		} else {
-
-			// try to match an element in the group
-			for _, referent := range group.values {
-
-				found, foundVariable, foundTerm = resolver.matchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
-				if found {
-					goto end
-				}
-			}
-		}
-
-	}
-
-end:
-
-	if found {
-		if foundVariable != "" {
-			resolver.log.AddProduction("ref", "accept "+foundVariable+"\n")
-		} else {
-			resolver.log.AddProduction("ref", "accept "+foundTerm.String()+"\n")
-		}
-	} else {
-		resolver.log.AddProduction("ref", "reject all\n")
-	}
-
-	return found, foundVariable, foundTerm
-}
-
-func (resolver *AnaphoraResolver) matchReferenceToReferent(variable string, referenceSort string, referentVariable string, referentSort string, referentId string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
-
-	found := false
-	foundVariable := ""
-	foundTerm := mentalese.Term{}
-	agree := false
-	mostSpecificFound := false
-
-	resolver.log.AddProduction("\nresolving", variable+"\n")
-
-	// the entity itself is in the queue
-	// should not be possible
-	if referentVariable == variable {
-		resolver.log.AddProduction("ref", referentVariable+" equals "+variable+"\n")
-		goto end
-	}
-
-	if referentSort == "" {
-		resolver.log.AddProduction("ref", referentVariable+" has no sort\n")
-		goto end
-	}
-	_, mostSpecificFound = resolver.sortFinder.getMostSpecific(referenceSort, referentSort)
-	if !mostSpecificFound {
-		resolver.log.AddProduction("ref", referentVariable+" ("+referentSort+") does not have common sort with "+variable+" ("+referenceSort+")\n")
-		goto end
-	}
-
-	agree, _, _ = NewAgreementChecker().CheckForCategoryConflictBetween(variable, referentVariable, resolver.entityTags)
-	if !agree {
-		resolver.log.AddProduction("ref", referentVariable+" does not agree with "+variable+"\n")
-		goto end
-	}
-
-	if reflective {
-		if !collection.IsCoArgument(variable, referentVariable) {
-			resolver.log.AddProduction("ref", referentVariable+" is not co-argument "+variable+"\n")
-			goto end
-		}
-	} else {
-		if collection.IsCoArgument(variable, referentVariable) {
-			resolver.log.AddProduction("ref", referentVariable+" is co-argument of "+variable+"\n")
-			goto end
-		}
-	}
-
-	// is this a definite reference?
-	if len(entityDefinition) == 0 {
-		// no: we're done
-		found = true
-		foundVariable = referentVariable
-	} else {
-		// yes, it is a definite reference
-		// a definite reference can only be checked against an id
-		if referentId == "" {
-			resolver.log.AddProduction("ref", referentVariable+" has no id "+entityDefinition.String()+"\n")
-			goto end
-		} else {
-			b := mentalese.NewBinding()
-			value := mentalese.NewTermId(referentId, referentSort)
-			b.Set(variable, value)
-
-			refBinding := binding.Merge(b)
-			testRangeBindings := resolver.messenger.ExecuteChildStackFrame(entityDefinition, mentalese.InitBindingSet(refBinding))
-			if testRangeBindings.GetLength() > 0 {
-				// found: bind the reference variable to the id of the referent
-				// (don't replace variable)
-				found = true
-				foundTerm = value
-				goto end
-			} else {
-				resolver.log.AddProduction("ref", referentVariable+" could not be bound\n")
-				goto end
-			}
-		}
-	}
-
-end:
-
-	return found, foundVariable, foundTerm
 }

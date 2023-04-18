@@ -7,28 +7,30 @@ import (
 )
 
 type ReferentFinder struct {
-	log            *common.SystemLog
-	messenger      api.ProcessMessenger
-	clauseList     *mentalese.ClauseList
-	entityBindings *mentalese.EntityBindings
-	entityTags     *mentalese.TagList
-	entitySorts    *mentalese.EntitySorts
-	sortFinder     SortFinder
+	log               *common.SystemLog
+	messenger         api.ProcessMessenger
+	clauseList        *mentalese.ClauseList
+	entityBindings    *mentalese.EntityBindings
+	entityDefinitions *mentalese.EntityDefinitions
+	entityTags        *mentalese.TagList
+	entitySorts       *mentalese.EntitySorts
+	sortFinder        SortFinder
 }
 
-func NewReferentFinder(log *common.SystemLog, meta *mentalese.Meta, messenger api.ProcessMessenger, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityTags *mentalese.TagList, entitySorts *mentalese.EntitySorts) *ReferentFinder {
+func NewReferentFinder(log *common.SystemLog, meta *mentalese.Meta, messenger api.ProcessMessenger, clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entityDefinitions *mentalese.EntityDefinitions, entityTags *mentalese.TagList, entitySorts *mentalese.EntitySorts) *ReferentFinder {
 	return &ReferentFinder{
-		log:            log,
-		messenger:      messenger,
-		clauseList:     clauseList,
-		entityBindings: entityBindings,
-		entitySorts:    entitySorts,
-		entityTags:     entityTags,
-		sortFinder:     NewSortFinder(meta, messenger),
+		log:               log,
+		messenger:         messenger,
+		clauseList:        clauseList,
+		entityBindings:    entityBindings,
+		entityDefinitions: entityDefinitions,
+		entitySorts:       entitySorts,
+		entityTags:        entityTags,
+		sortFinder:        NewSortFinder(meta, messenger),
 	}
 }
 
-func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSort string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
+func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSort string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool, requiresDefinition bool) (bool, string, mentalese.Term) {
 
 	found := false
 	foundVariable := ""
@@ -44,7 +46,13 @@ func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSo
 
 			found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
 			if found {
-				goto end
+				if foundVariable != "" {
+					if finder.checkDefinition(requiresDefinition, foundVariable) {
+						goto end
+					}
+				} else {
+					goto end
+				}
 			}
 
 		} else {
@@ -54,7 +62,13 @@ func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSo
 
 				found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
 				if found {
-					goto end
+					if foundVariable != "" {
+						if finder.checkDefinition(requiresDefinition, foundVariable) {
+							goto end
+						}
+					} else {
+						goto end
+					}
 				}
 			}
 		}
@@ -74,6 +88,20 @@ end:
 	}
 
 	return found, foundVariable, foundTerm
+}
+
+func (finder *ReferentFinder) checkDefinition(requiresDefinition bool, foundVariable string) bool {
+	if requiresDefinition {
+		definition := finder.entityDefinitions.Get(foundVariable)
+		if !definition.IsEmpty() {
+			finder.log.AddProduction("ref", foundVariable+" has a definition\n")
+			return true
+		}
+		return false
+	} else {
+		return true
+	}
+
 }
 
 func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenceSort string, referentVariable string, referentSort string, referentId string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
@@ -126,6 +154,7 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 		// no: we're done
 		found = true
 		foundVariable = referentVariable
+		finder.log.AddProduction("ref", referentVariable+" is OK\n")
 	} else {
 		// yes, it is a definite reference
 		// a definite reference can only be checked against an id
@@ -144,6 +173,7 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 				// (don't replace variable)
 				found = true
 				foundTerm = value
+				finder.log.AddProduction("ref", referentVariable+" binding to id\n")
 				goto end
 			} else {
 				finder.log.AddProduction("ref", referentVariable+" could not be bound\n")
@@ -153,6 +183,8 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 	}
 
 end:
+
+	finder.log.AddProduction("  ref end", referentVariable)
 
 	return found, foundVariable, foundTerm
 }

@@ -6,6 +6,7 @@ go:has_sort(object, entity);
 go:has_sort(block, object);
 go:has_sort(pyramid, object);
 go:has_sort(box, object);
+go:has_sort(stack, entity);
 go:has_sort(predication, entity);
 go:has_sort(stative, predication);
 go:has_sort(dynamic, predication);

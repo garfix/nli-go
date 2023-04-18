@@ -28,7 +28,7 @@ func NewAnaphoraResolver(log *common.SystemLog, clauseList *mentalese.ClauseList
 		entityLabels:      entityLabels,
 		entityDefinitions: entityDefinitions,
 		messenger:         messenger,
-		referentFinder:    NewReferentFinder(log, meta, messenger, clauseList, entityBindings, entityTags, entitySorts),
+		referentFinder:    NewReferentFinder(log, meta, messenger, clauseList, entityBindings, entityDefinitions, entityTags, entitySorts),
 	}
 }
 
@@ -259,7 +259,7 @@ func (resolver *AnaphoraResolver) reference(variable string, referenceSort strin
 		return variable
 	}
 
-	found, referentVariable, referentValue := resolver.referentFinder.FindAnaphoricReferent(variable, referenceSort, entityDefinition, binding, collection, reflective)
+	found, referentVariable, referentValue := resolver.referentFinder.FindAnaphoricReferent(variable, referenceSort, entityDefinition, binding, collection, reflective, false)
 	if found {
 		// found anaphoric referent (within dialog)
 		if referentVariable != "" {
@@ -313,43 +313,14 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, referenceSor
 
 func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string) {
 
-	found := false
-	foundVariable := ""
-
-	queue := GetAnaphoraQueue(resolver.clauseList, resolver.entityBindings, resolver.entitySorts)
-	for _, group := range queue {
-
-		foundVariable = group.Variable
-
-		// go:reference_slot() is inside a quant with the same variable
-		if foundVariable == variable {
-			resolver.log.AddProduction("ref", foundVariable+" equals "+variable+"\n")
-			continue
-		}
-
-		definition := resolver.entityDefinitions.Get(foundVariable)
-		if definition.IsEmpty() {
-			resolver.log.AddProduction("ref", foundVariable+" has no definition\n")
-			continue
-		}
-
-		typeFound := false
-		for _, relation := range definition {
-			if relation.Predicate == mentalese.PredicateHasSort || relation.Predicate == mentalese.PredicateIsa {
-				typeFound = true
-			}
-		}
-		if !typeFound {
-			resolver.log.AddProduction("ref", foundVariable+" has no sort\n")
-			continue
-		}
-
-		found = true
-		break
-	}
+	found, foundVariable, _ := resolver.referentFinder.FindAnaphoricReferent(
+		variable,
+		mentalese.SortEntity, mentalese.RelationSet{}, mentalese.NewBinding(), NewAnaphoraResolverCollection(), false, true)
 
 	if found {
 		resolver.log.AddProduction("ref", variable+" resolves to "+foundVariable+"\n")
+	} else {
+		resolver.log.AddProduction("ref", variable+" has no referent\n")
 	}
 
 	return found, foundVariable

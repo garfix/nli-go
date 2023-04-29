@@ -5,3 +5,4 @@ go:reference(E1, Reference) :- go:reference(E1, Reference);
 go:labeled_reference(E1, Label, Reference) :- go:labeled_reference(E1, Label, Reference);
 go:sort(E1, Sort) :- go:sort(E1, Sort);
 go:category(E1, Category, Value) :- go:category(E1, Category, Value);
+go:agree(A, B) :- go:agree(A, B);

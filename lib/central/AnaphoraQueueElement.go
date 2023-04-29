@@ -1,8 +1,9 @@
 package central
 
 type AnaphoraQueueElementValue struct {
-	Sort string
-	Id   string
+	Sort  string
+	Id    string
+	Score int
 }
 
 type AnaphoraQueueElement struct {

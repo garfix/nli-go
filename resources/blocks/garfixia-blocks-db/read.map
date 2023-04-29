@@ -24,7 +24,6 @@ dom:parent_event(EventId, ParentEventId) :- parent_event(EventId, ParentEventId)
 dom:location(EventId, E1, X, Y, Z) :- location(EventId, E1, X, Y, Z);
 
 dom:touch(EventId, S, A) :- touch(EventId, S, A);
-dom:pick_up(EventId, S, A) :- pick_up(EventId, S, A);
 dom:put_on_smart(EventId, S, A, B) :- put_on_smart(EventId, S, A, B);
 dom:put_on(EventId, S, A, B) :- put_on(EventId, S, A, B);
 dom:put_in(EventId, S, A, B) :- put_in(EventId, S, A, B);
@@ -34,4 +33,4 @@ dom:put_down(EventId, S, A) :- put_down(EventId, S, A);
 dom:get_rid_of(EventId, S, A) :- get_rid_of(EventId, S, A);
 dom:let_go(EventId, S) :- let_go(EventId, S);
 dom:stack_up(EventId, S, List) :- stack_up(EventId, S, List);
-
+dom:tell(P1, S1, S2, P2) :- tell(P1, S1, S2, P2);

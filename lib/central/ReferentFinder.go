@@ -4,6 +4,8 @@ import (
 	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"sort"
+	"strconv"
 )
 
 type ReferentFinder struct {
@@ -30,11 +32,22 @@ func NewReferentFinder(log *common.SystemLog, meta *mentalese.Meta, messenger ap
 	}
 }
 
-func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSort string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool, requiresDefinition bool) (bool, string, mentalese.Term) {
+type Referent struct {
+	Variable string
+	Term     mentalese.Term
+	Score    int
+}
+
+func (finder *ReferentFinder) FindAnaphoricReferents(variable string, referenceSort string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool, requiresDefinition bool) ([]Referent, bool) {
 
 	found := false
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
+	referents := []Referent{}
+	ambiguous := false
+
+	finder.log.AddProduction("\nresolving", variable+"\n")
+	finder.log.AddProduction("definition", entityDefinition.String()+"\n\n")
 
 	groups := GetAnaphoraQueue(finder.clauseList, finder.entityBindings, finder.entitySorts)
 	for _, group := range groups {
@@ -44,14 +57,14 @@ func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSo
 
 			referent := group.values[0]
 
-			found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
+			found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, referent.Score, entityDefinition, binding, collection, reflective)
 			if found {
 				if foundVariable != "" {
 					if finder.checkDefinition(requiresDefinition, foundVariable) {
-						goto end
+						referents = append(referents, Referent{foundVariable, foundTerm, referent.Score})
 					}
 				} else {
-					goto end
+					referents = append(referents, Referent{foundVariable, foundTerm, referent.Score})
 				}
 			}
 
@@ -60,41 +73,41 @@ func (finder *ReferentFinder) FindAnaphoricReferent(variable string, referenceSo
 			// try to match an element in the group
 			for _, referent := range group.values {
 
-				found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, entityDefinition, binding, collection, reflective)
+				found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, referent.Score, entityDefinition, binding, collection, reflective)
 				if found {
 					if foundVariable != "" {
 						if finder.checkDefinition(requiresDefinition, foundVariable) {
-							goto end
+							referents = append(referents, Referent{foundVariable, foundTerm, referent.Score})
 						}
 					} else {
-						goto end
+						referents = append(referents, Referent{foundVariable, foundTerm, referent.Score})
 					}
 				}
 			}
 		}
-
 	}
 
-end:
+	// sort by score, desc
+	sort.Slice(referents, func(i, j int) bool {
+		return referents[i].Score > referents[j].Score
+	})
 
-	if found {
-		if foundVariable != "" {
-			finder.log.AddProduction("ref", "accept "+foundVariable+"\n")
-		} else {
-			finder.log.AddProduction("ref", "accept "+foundTerm.String()+"\n")
+	// check for ambiguity (2 highest scores are the same)
+	if len(referents) > 1 {
+		if referents[0].Score == referents[1].Score {
+			ambiguous = true
 		}
-	} else {
-		finder.log.AddProduction("ref", "reject all\n")
 	}
 
-	return found, foundVariable, foundTerm
+	// return found, foundVariable, foundTerm
+	return referents, ambiguous
 }
 
 func (finder *ReferentFinder) checkDefinition(requiresDefinition bool, foundVariable string) bool {
 	if requiresDefinition {
 		definition := finder.entityDefinitions.Get(foundVariable)
 		if !definition.IsEmpty() {
-			finder.log.AddProduction("ref", foundVariable+" has a definition\n")
+			// finder.log.AddProduction("ref", foundVariable+" has a definition\n")
 			return true
 		}
 		return false
@@ -104,15 +117,13 @@ func (finder *ReferentFinder) checkDefinition(requiresDefinition bool, foundVari
 
 }
 
-func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenceSort string, referentVariable string, referentSort string, referentId string, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
+func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenceSort string, referentVariable string, referentSort string, referentId string, referentScore int, entityDefinition mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection, reflective bool) (bool, string, mentalese.Term) {
 
 	found := false
 	foundVariable := ""
 	foundTerm := mentalese.Term{}
 	agree := false
 	mostSpecificFound := false
-
-	finder.log.AddProduction("\nresolving", variable+"\n")
 
 	// the entity itself is in the queue
 	// should not be possible
@@ -144,7 +155,7 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 		}
 	} else {
 		if collection.IsCoArgument(variable, referentVariable) {
-			finder.log.AddProduction("ref", referentVariable+" is co-argument of "+variable+"\n")
+			finder.log.AddProduction("ref", "[OK] "+referentVariable+" is co-argument of "+variable+"\n")
 			goto end
 		}
 	}
@@ -154,12 +165,12 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 		// no: we're done
 		found = true
 		foundVariable = referentVariable
-		finder.log.AddProduction("ref", referentVariable+" is OK\n")
+		finder.log.AddProduction("ref", "[OK] ("+strconv.Itoa(referentScore)+") "+referentVariable+" is indefinite\n")
 	} else {
 		// yes, it is a definite reference
 		// a definite reference can only be checked against an id
 		if referentId == "" {
-			finder.log.AddProduction("ref", referentVariable+" has no id "+entityDefinition.String()+"\n")
+			finder.log.AddProduction("ref", referentVariable+" has no id, which is needed for a definite reference\n")
 			goto end
 		} else {
 			b := mentalese.NewBinding()
@@ -173,18 +184,16 @@ func (finder *ReferentFinder) MatchReferenceToReferent(variable string, referenc
 				// (don't replace variable)
 				found = true
 				foundTerm = value
-				finder.log.AddProduction("ref", referentVariable+" binding to id\n")
+				finder.log.AddProduction("ref", "OK ("+strconv.Itoa(referentScore)+") "+referentVariable+" / "+value.String()+" matches the definition; binding to id\n")
 				goto end
 			} else {
-				finder.log.AddProduction("ref", referentVariable+" could not be bound\n")
+				finder.log.AddProduction("ref", referentVariable+" / "+value.String()+" could not be bound to the definition\n")
 				goto end
 			}
 		}
 	}
 
 end:
-
-	finder.log.AddProduction("  ref end", referentVariable)
 
 	return found, foundVariable, foundTerm
 }
@@ -195,6 +204,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 
 	variableUsed := map[string]bool{}
 
+	scoreBase := 0
 	first := len(clauses) - 1 - MaxSizeAnaphoraQueue
 	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
 
@@ -209,30 +219,46 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 				variableUsed[discourseVariable] = true
 			}
 
+			score := calculateScore(scoreBase, clause, discourseVariable)
+
 			value, found := entityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
 					sort := entitySorts.GetSort(discourseVariable)
 					for _, item := range value.TermValueList {
-						reference := AnaphoraQueueElementValue{sort, item.TermValue}
+						reference := AnaphoraQueueElementValue{sort, item.TermValue, score}
 						group.values = append(group.values, reference)
 					}
 					ids = append(ids, group)
 				} else {
 					sort := entitySorts.GetSort(discourseVariable)
-					reference := AnaphoraQueueElementValue{sort, value.TermValue}
+					reference := AnaphoraQueueElementValue{sort, value.TermValue, score}
 					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 					ids = append(ids, group)
 				}
 			} else {
 				sort := entitySorts.GetSort(discourseVariable)
-				reference := AnaphoraQueueElementValue{sort, ""}
+				reference := AnaphoraQueueElementValue{sort, "", score}
 				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
 				ids = append(ids, group)
 			}
 		}
+
+		scoreBase -= 10
 	}
 
 	return ids
+}
+
+func calculateScore(scoreBase int, clause *mentalese.Clause, variable string) int {
+	score := scoreBase
+	for _, function := range clause.SyntacticFunctions {
+		if function.SyntacticFunction == mentalese.AtomFunctionSubject {
+			score += 5
+		} else if function.SyntacticFunction == mentalese.AtomFunctionObject {
+			score += 3
+		}
+	}
+	return score
 }

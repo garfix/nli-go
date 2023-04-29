@@ -97,7 +97,9 @@
 }
 {
     rule: imperative_clause(P1) -> vp_imperative(P1),
-    intent: go:intent(command)
+    intent: go:intent(command),
+    sense: go:uuid(P1, event) $vp_imperative
+    go:uuid(P2, event) go:assert(dom:tell(P2, `:friend`, `:shrdlu`, P1))
 }
 {
     rule: imperative_clause(P1) -> 'call' np(E1) '"' dictionary_entry(W1) '"',

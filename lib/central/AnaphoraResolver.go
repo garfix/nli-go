@@ -1,6 +1,7 @@
 package central
 
 import (
+	"fmt"
 	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
@@ -32,10 +33,10 @@ func NewAnaphoraResolver(log *common.SystemLog, clauseList *mentalese.ClauseList
 	}
 }
 
-func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string) {
+func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request mentalese.RelationSet, binding mentalese.Binding) (*mentalese.ParseTreeNode, mentalese.RelationSet, mentalese.BindingSet, string, string) {
 
 	// println("---")
-	// println(request.String())
+	// println(request.IndentedString("  "))
 	// println(binding.String())
 
 	// prepare
@@ -56,7 +57,7 @@ func (resolver *AnaphoraResolver) Resolve(root *mentalese.ParseTreeNode, request
 
 	resolver.log.AddProduction("Resolved request", resolvedRequest.IndentedString("  "))
 
-	return resolvedTree, resolvedRequest, newBindings, collection.output
+	return resolvedTree, resolvedRequest, newBindings, collection.output, collection.remark
 }
 
 func (resolver *AnaphoraResolver) processCollection(request mentalese.RelationSet, binding mentalese.Binding, collection *AnaphoraResolverCollection) (mentalese.RelationSet, mentalese.BindingSet) {
@@ -259,8 +260,11 @@ func (resolver *AnaphoraResolver) reference(variable string, referenceSort strin
 		return variable
 	}
 
-	found, referentVariable, referentValue := resolver.referentFinder.FindAnaphoricReferent(variable, referenceSort, entityDefinition, binding, collection, reflective, false)
-	if found {
+	referents, ambiguous := resolver.referentFinder.FindAnaphoricReferents(variable, referenceSort, entityDefinition, binding, collection, reflective, false)
+	if len(referents) > 0 {
+		referentVariable := referents[0].Variable
+		referentValue := referents[0].Term
+
 		// found anaphoric referent (within dialog)
 		if referentVariable != "" {
 			collection.AddReplacement(variable, referentVariable)
@@ -268,6 +272,12 @@ func (resolver *AnaphoraResolver) reference(variable string, referenceSort strin
 		} else {
 			collection.AddReference(variable, referentValue)
 		}
+
+		if ambiguous {
+			fmt.Printf("\n===\n%v\n%v\n", variable, referents)
+			// collection.remark = "AMBIGUOUS!"
+		}
+
 	} else {
 		if len(entityDefinition) == 0 {
 			collection.output = "I don't understand what you are referring to"
@@ -295,7 +305,7 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, referenceSor
 		oldSort := resolver.entitySorts.GetSort(oldVariable)
 		oldId, _ := resolver.entityBindings.Get(oldVariable)
 		entityDefinition := resolver.entityDefinitions.Get(variable)
-		match, _, _ := resolver.referentFinder.MatchReferenceToReferent(variable, referenceSort, oldVariable, oldSort, oldId.TermValue, entityDefinition, binding, collection, reflective)
+		match, _, _ := resolver.referentFinder.MatchReferenceToReferent(variable, referenceSort, oldVariable, oldSort, oldId.TermValue, 0, entityDefinition, binding, collection, reflective)
 		if match {
 			resolver.entityLabels.IncreaseActivation(label)
 			// use the reference of the existing label
@@ -313,11 +323,14 @@ func (resolver *AnaphoraResolver) labeledReference(variable string, referenceSor
 
 func (resolver *AnaphoraResolver) sortalReference(variable string) (bool, string) {
 
-	found, foundVariable, _ := resolver.referentFinder.FindAnaphoricReferent(
+	referents, _ := resolver.referentFinder.FindAnaphoricReferents(
 		variable,
 		mentalese.SortEntity, mentalese.RelationSet{}, mentalese.NewBinding(), NewAnaphoraResolverCollection(), false, true)
 
+	foundVariable := ""
+	found := len(referents) > 0
 	if found {
+		foundVariable = referents[0].Variable
 		resolver.log.AddProduction("ref", variable+" resolves to "+foundVariable+"\n")
 	} else {
 		resolver.log.AddProduction("ref", variable+" has no referent\n")

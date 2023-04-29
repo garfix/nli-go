@@ -7,6 +7,7 @@ import (
 
 type AnaphoraResolverCollection struct {
 	output       string
+	remark       string
 	replacements map[string]string
 	values       map[string]mentalese.Term
 	oneAnaphors  map[string]mentalese.RelationSet
@@ -17,6 +18,7 @@ type AnaphoraResolverCollection struct {
 func NewAnaphoraResolverCollection() *AnaphoraResolverCollection {
 	return &AnaphoraResolverCollection{
 		output:       "",
+		remark:       "",
 		replacements: map[string]string{},
 		values:       map[string]mentalese.Term{},
 		oneAnaphors:  map[string]mentalese.RelationSet{},

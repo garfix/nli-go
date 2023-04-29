@@ -1,3 +1,59 @@
+## 2023-04-29
+
+Are Jacqueline de Boer married to a man?
+    got
+        Name not found: a man
+    want
+        Agreement mismatch: plural / singular
+
+Simply taking the first or the last failed parse for the response doesn't work, because the order of the parses is not defined well.
+
+I could improve the predictability of the parses, but it shouldn't really matter. It's better to prefer the sentence that "got farthest". In this case "name not found" got stuck in the parse phase, while "agreement mismatch" got farther, and should be chosen.
+
+So I introduced a score for all sentences that are processed. If a sentence fails, then the response will only be used as output, if it has the highest score so far.
+
+## 2023-04-28
+
+I thought "steeple" was an invented word, but it really exists:
+
+    "an ornamental construction, usually ending in a spire, erected on a roof or tower of a church, public building, etc."
+
+    -- https://www.dictionary.com/browse/steeple
+
+
+## 2023-04-27
+
+The ambiguity can be resolved by distinguishing between the blocks that were explictly told to be picked up, and the ones that were just picked up as a part of the process.
+
+Let's tag the event `tell` to every imperative sentence.
+
+---
+
+I'm running into a problem: the events in the imperative sentence don't have ID's, I can't assert them to the KB.
+This may be a fundamental issue: imperative sentences indeed create events, whereas questions don't.
+
+## 2023-04-25
+
+By making ambiguity explicit, several issues surface that previously didn't occur when I just pickked the first acceptable referent.
+
+    Is at least one of them narrower than the one which I told you to pick up?
+
+This sentence is ambiguous, because 3 blocks were picked up
+
+## 2023-04-24
+
+When exactly is anaphora resolution ambiguous? Can we quantify that? When two equally likely referents are in the same sentence? Yes I suppose. And their score is the same.
+
+--
+
+I built an ambiguity detector, based on the scores of the referents. It detects 7(!) instances of ambiguity in the text.
+
+The score is primarily based on the distance of the clause (extra clause -100), and further on syntactic function: subject +5 object +3. Almost none of these have been tagged, hence the ambiguity. It seems that giving the first NP the priority by default is a good heuristic.
+
+--
+
+Now I can say: "By \"it\", I assume you mean X", but this is not the only output. And that means that there can be an intermediary output and a final output. An intermediary output that is just informative, not clarifying.
+
 ## 2023-04-16
 
 To establish the presence of ambiguity in anaphora resolution, it is not sufficient to pick the earliest referent that meets the restrictions, as I'm doing now.

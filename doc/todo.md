@@ -12,6 +12,12 @@ List the biggest constraints; essential for an architecture:
 - or
 - ...? questions
 
+Adding info to the database is problematic:
+
+tag: dom:tell(`some_event`, `:friend`, `:shrdlu`, P1)
+or
+go:uuid(P1, event) go:uuid(P2, event) go:assert(dom:tell(P2, `:friend`, `:shrdlu`, P1))
+
 ## variables in loop-functions
 
 When this list_foreach is done, the binding set has bindings for all variations of F C and V, while these should have been temporary

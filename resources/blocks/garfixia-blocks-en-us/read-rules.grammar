@@ -6,8 +6,8 @@
 /* imperative vps, which are linked to action predicates */
 
 { rule: vp_imperative(P1) -> 'find' np(E1),                                       sense: go:do($np, none) }
-{ rule: vp_imperative(P1) -> 'pick' 'up' np(E1),                                  sense: go:do($np1, dom:do_pick_up_smart(E1)) }
-{ rule: vp_imperative(P1) -> 'grasp' np(E1),                                      sense: go:do($np1, dom:do_pick_up_smart(E1)) }
+{ rule: vp_imperative(P1) -> 'pick' 'up' np(E1),                                  sense: go:do($np1, dom:do_pick_up_smart(P1, E1)) }
+{ rule: vp_imperative(P1) -> 'grasp' np(E1),                                      sense: go:do($np1, dom:do_pick_up_smart(P1, E1)) }
 { rule: vp_imperative(P1) -> 'put' np(E1) 'into' np(E2),                          sense: go:do($np1, go:do($np2, dom:do_put_in_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'put' np(E1) 'in' np(E2),                            sense: go:do($np1, go:do($np2, dom:do_put_in_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'put' np(E1) 'onto' np(E2),                          sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
@@ -46,7 +46,8 @@
 {
     /* "... I told you to pick up" */
     rule: vp_without_np(P1, L1) -> np(E1) meta_verb(P1, E1, E2, P2) np(E2) vp_without_nps(P2, E2, L1),
-    sense: go:check($np1, go:check($np2, go:apply($meta_verb, $vp_without_nps)))
+    /*sense: go:check($np1, go:check($np2, go:apply($meta_verb, $vp_without_nps)))*/
+    sense: go:check($np1, go:check($np2, $vp_without_nps $meta_verb))
 }
 
 /* relations */

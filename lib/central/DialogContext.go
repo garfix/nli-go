@@ -4,7 +4,7 @@ import (
 	"nli-go/lib/mentalese"
 )
 
-const MaxSizeAnaphoraQueue = 10
+const MaxSizeAnaphoraQueue = 5
 
 // The dialog context stores data that should be available to multiple sentences in the dialog
 type DialogContext struct {

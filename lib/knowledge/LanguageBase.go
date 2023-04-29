@@ -65,6 +65,10 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 	rawInput := bound.Arguments[0].TermValue
 	output := ""
+	tmpOutput := ""
+	resolvedRemark := ""
+	score := 0
+	highestScore := 0
 
 	originalDialogContext := base.dialogContext
 
@@ -126,7 +130,7 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			continueLooking := false
 			for _, rootClauseTree := range rootClauses {
-				output, continueLooking = base.processRootClause(i18n, messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
+				tmpOutput, continueLooking, resolvedRemark, score = base.processRootClause(i18n, messenger, clauseList, deicticCenter, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, grammar, rootClauseTree, locale, rawInput)
 
 				if continueLooking {
 					break
@@ -135,9 +139,20 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 
 			if !continueLooking {
 				// accept this tree
+				output = tmpOutput
 				break
+			} else {
+				// there's a problem, keep looking, but accept the message of the first problem (not the last one)
+				if score > highestScore {
+					output = tmpOutput
+					highestScore = score
+				}
 			}
 		}
+	}
+
+	if resolvedRemark != "" {
+		output = resolvedRemark + "\n" + output
 	}
 
 	return base.waitForPrint(messenger, output)
@@ -157,7 +172,9 @@ func (base *LanguageBase) processRootClause(
 	rootClauseTree *mentalese.ParseTreeNode,
 	locale string,
 	rawInput string,
-) (string, bool) {
+) (string, bool, string, int) {
+
+	score := 0
 
 	// syntactic functions
 	syntacticFunctions := mentalese.ExtractSyntacticFunctions(rootClauseTree)
@@ -177,8 +194,9 @@ func (base *LanguageBase) processRootClause(
 	sorts, sortFound := central.NewSortFinder(base.meta, messenger).FindSorts(rootClauseTree)
 	if !sortFound {
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
-		return "", true
+		return "", true, "", score
 	}
+	score++
 	for variable, sort := range sorts {
 		entitySorts.SetSort(variable, sort)
 	}
@@ -186,8 +204,9 @@ func (base *LanguageBase) processRootClause(
 	// name resolution
 	requestBinding, unresolvedName := base.resolveNames(messenger, rootClauseTree, entityBindings, entityTags, entitySorts)
 	if unresolvedName != "" {
-		return i18n.TranslateWithParam(common.NameNotFound, unresolvedName), true
+		return i18n.TranslateWithParam(common.NameNotFound, unresolvedName), true, "", score
 	}
+	score++
 
 	// relationize
 	requestRelations := base.relationizer.Relationize(rootClauseTree, []string{"S"})
@@ -199,24 +218,27 @@ func (base *LanguageBase) processRootClause(
 
 	// anaphora
 	resolver := central.NewAnaphoraResolver(base.log, clauseList, entityBindings, entityTags, entitySorts, entityLabels, entityDefinitions, base.meta, messenger)
-	resolvedTree, resolvedRequest, resolvedBindings, resolvedOutput := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
+	resolvedTree, resolvedRequest, resolvedBindings, resolvedOutput, resolvedRemark := resolver.Resolve(rootClauseTree, requestRelations, requestBinding)
 	if resolvedOutput != "" {
-		return resolvedOutput, true
+		return resolvedOutput, true, "", score
 	}
+	score++
 
 	// agreement
 	agreementChecker := central.NewAgreementChecker()
 	_, agreementOutput := agreementChecker.CheckAgreement(resolvedTree, entityTags)
 	if agreementOutput != "" {
-		return agreementOutput, true
+		return agreementOutput, true, resolvedRemark, score
 	}
+	score++
 
 	// find intents
 	intentRelations := base.relationizer.ExtractIntents(resolvedTree)
 	intent, intentFound := base.answerer.FindIntent(append(resolvedRequest, intentRelations...))
 	if !intentFound {
-		return "No intent found", true
+		return "No intent found", true, resolvedRemark, score
 	}
+	score++
 
 	// execute intent
 	executionBindings := messenger.ExecuteChildStackFrame(resolvedRequest, resolvedBindings)
@@ -227,8 +249,9 @@ func (base *LanguageBase) processRootClause(
 	// response
 	responseBindings, responseIndex, responseFound := base.findResponse(messenger, intent, executionBindings)
 	if !responseFound {
-		return "", false
+		return "", false, resolvedRemark, score
 	}
+	score++
 
 	// answer
 	answerRelations, essentialBindings := base.createAnswer(messenger, intent, responseBindings, responseIndex)
@@ -246,7 +269,7 @@ func (base *LanguageBase) processRootClause(
 	surfacer := generate.NewSurfaceRepresentation(base.log)
 	surface := surfacer.Create(tokens)
 
-	return surface, false
+	return surface, false, resolvedRemark, score
 }
 
 func (base *LanguageBase) addTagsToDatabase(tags mentalese.RelationSet, messenger api.ProcessMessenger) {

@@ -174,7 +174,7 @@ func (base *LanguageBase) processRootClause(
 	rawInput string,
 ) (string, bool, string, int) {
 
-	score := 0
+	score := 1
 
 	// syntactic functions
 	syntacticFunctions := mentalese.ExtractSyntacticFunctions(rootClauseTree)

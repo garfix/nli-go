@@ -1,3 +1,7 @@
+## 2023-04-30
+
+I implemented an ambiguity detection system, but it still doesn't flag the word "it" in "Find a block ..." as ambiguous. Since "a block" is the first entity in the sentence it gets extra referent points, and thus wins. "the one you are holding" gets just one point less, and one could argue that this is still within the ambiguity range, but I don't know...
+
 ## 2023-04-29
 
 Are Jacqueline de Boer married to a man?

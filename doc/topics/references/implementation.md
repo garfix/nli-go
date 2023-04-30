@@ -44,6 +44,12 @@ If the referent is a group, it tries to match each member of the group, the same
 In case if definite references, where an id is certainly available, we bind the reference variable to the id of the referent.
 In all other cases, we replace the reference variable with the referent variable. This variable may or may not have a binding.
 
+Ambiguity score:
+
+- the older the clause, the lower the score (-10)
+- a subject gets 5 points, an object 3 point
+- first entity in the clause gets 1 point
+
 ## Features
 
 When the sentence is parsed, the system does not only build the representation of the intention, it also produces "features" for each of the entities.

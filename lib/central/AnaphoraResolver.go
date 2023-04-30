@@ -274,8 +274,8 @@ func (resolver *AnaphoraResolver) reference(variable string, referenceSort strin
 		}
 
 		if ambiguous {
-			fmt.Printf("\n===\n%v\n%v\n", variable, referents)
-			// collection.remark = "AMBIGUOUS!"
+			fmt.Printf("%v\n%v\n", variable, referents)
+			collection.remark = "AMBIGUOUS!"
 		}
 
 	} else {

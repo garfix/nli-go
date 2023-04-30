@@ -94,7 +94,15 @@ func (finder *ReferentFinder) FindAnaphoricReferents(variable string, referenceS
 
 	// check for ambiguity (2 highest scores are the same)
 	if len(referents) > 1 {
-		if referents[0].Score == referents[1].Score {
+
+		//diff := referents[0].Score - referents[1].Score
+		// if diff == 1 {
+		//println("* diff: " + strconv.Itoa(diff))
+		// }
+
+		if (referents[0].Score == referents[1].Score) &&
+			(referents[0].Variable != referents[1].Variable) {
+			println("* Ambiguity found!")
 			ambiguous = true
 		}
 	}
@@ -209,7 +217,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 	for i := len(clauses) - 1; i >= 0 && i >= first; i-- {
 
 		clause := clauses[i]
-		for _, discourseVariable := range clause.QueuedEntities {
+		for i, discourseVariable := range clause.QueuedEntities {
 
 			// add each variable only once
 			_, found := variableUsed[discourseVariable]
@@ -219,7 +227,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 				variableUsed[discourseVariable] = true
 			}
 
-			score := calculateScore(scoreBase, clause, discourseVariable)
+			score := calculateScore(scoreBase, clause, i, discourseVariable)
 
 			value, found := entityBindings.Get(discourseVariable)
 			if found {
@@ -251,8 +259,11 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 	return ids
 }
 
-func calculateScore(scoreBase int, clause *mentalese.Clause, variable string) int {
+func calculateScore(scoreBase int, clause *mentalese.Clause, index int, variable string) int {
 	score := scoreBase
+	if index == 0 {
+		score += 1
+	}
 	for _, function := range clause.SyntacticFunctions {
 		if function.SyntacticFunction == mentalese.AtomFunctionSubject {
 			score += 5

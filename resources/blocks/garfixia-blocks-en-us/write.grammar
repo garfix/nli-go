@@ -1,7 +1,7 @@
 { rule: s(S1) -> 'yes',                                                condition: dom:agree() }
 { rule: s(S1) -> 'no',                                                 condition: dom:disagree() }
 
-{ rule: s(S1) -> 'i' 'can\'t' 'explain' 'a' 'nonexisting' 'event',     condition: dom:no_event() }
+{ rule: s(S1) -> 'i' 'can\'t' 'explain' 'a' 'nonexistent' 'event',     condition: dom:no_event() }
 
 { rule: s(E1) -> np(E1),                                                    condition: dom:root(E1) dom:description(E1) }
 

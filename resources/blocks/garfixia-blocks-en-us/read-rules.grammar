@@ -46,7 +46,6 @@
 {
     /* "... I told you to pick up" */
     rule: vp_without_np(P1, L1) -> np(E1) meta_verb(P1, E1, E2, P2) np(E2) vp_without_nps(P2, E2, L1),
-    /*sense: go:check($np1, go:check($np2, go:apply($meta_verb, $vp_without_nps)))*/
     sense: go:check($np1, go:check($np2, $vp_without_nps $meta_verb))
 }
 
@@ -68,6 +67,7 @@
 { rule: pp(P1, E1) -> 'on' np(E2),                                         sense: go:check($np, dom:on(E1, E2)) }
 { rule: pp(P1, E1) -> 'on' 'top' 'of' np(E2),                              sense: go:check($np, dom:on_top_of(E1, E2)) }
 { rule: pp(P1, E1) -> 'to' 'the' 'left' 'of' np(E2),                       sense: go:check($np, dom:left_from(P1, E1, E2)) }
+{ rule: pp(P1, E1) -> 'to' 'the' 'right' 'of' np(E2),                      sense: go:check($np, dom:right_from(P1, E1, E2)) }
 
 
 /* relative clauses */

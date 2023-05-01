@@ -8,6 +8,27 @@ In 5 sentences the second best referent is scored just 1 less. I need only one. 
 
 Also Winograd did not provide a scoring algorithm. I can't even find "SMIT" in the code.
 
+---
+
+Interaction 43:
+
+    H: Is there anything to the right of the red pyramid?
+    C: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
+
+Winograd: "Once an object has a name, the name is used to help identify it in responses"
+
+The first answer the system gives is
+
+    Yes, two things: the blue block and the box
+
+And that's because the scene now looks like this:
+
+![all-to-the-left](archive/blocksworld7.png)
+
+The answer to this question depends on where the system has but the blocks, when it just needed some space. I put them on the first suitable place, searching from left to right. But I'd rather see that the object was placed in the largest empty spot.
+
+Let's see if I can do that.
+
 ## 2023-04-29
 
 Are Jacqueline de Boer married to a man?

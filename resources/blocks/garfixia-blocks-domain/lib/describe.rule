@@ -4,7 +4,7 @@ describe_as_groups(List, GroupsList, Descriptions) :-
     [:GroupMembers := []]
 
     /* group elements */
-    go:list_foreach(List, E1, 
+    go:list_foreach(List, E1,
         volume(E1, V)
         color(E1, C)
         form(E1, F)
@@ -22,7 +22,7 @@ describe_as_groups(List, GroupsList, Descriptions) :-
     /* describe groups */
     [:AGroupList := []]
     [:Description := none]
-    go:list_foreach(:GroupMembers, Index, Members, 
+    go:list_foreach(:GroupMembers, Index, Members,
 
         go:list_length(Members, MemberCount)
         go:uuid(G, object)
@@ -106,14 +106,18 @@ describe_categoric(E1, Sort, DescSet) :-
     if go:dialog_get_center(L1) [E1 == L1] then
         [:Set := center(E1)]
     else
-        [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
+        if name(E1, Name) then
+            [:Set := {{ :Set }} name(E1, Name) shape(E1, S)]
+        else
+            [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
 
-        /* Is the shape unique? */
-        if [Cs > 1] then
-            [:Set := {{ :Set }} color(E1, C)]
-            /* Are the shape and color unique? */
-            if [Cc > 1] then
-                [:Set := {{ :Set }} volume(E1, V) indeterminate(E1)]
+            /* Is the shape unique? */
+            if [Cs > 1] then
+                [:Set := {{ :Set }} color(E1, C)]
+                /* Are the shape and color unique? */
+                if [Cc > 1] then
+                    [:Set := {{ :Set }} volume(E1, V) indeterminate(E1)]
+                end
             end
         end
     end

@@ -27,6 +27,7 @@
 { rule: how_desc(P1) -> 'putting' np(A) 'on' np(B),                                 condition: dom:put_on(P1, Subject, A, B) }
 
 { rule: np(E1) -> 'it',                                                     condition: dom:center(E1) }
+{ rule: np(E1) -> 'the' text(Shape) 'named' text(Name),                     condition: dom:name(E1, Name) dom:shape(E1, Shape)}
 { rule: np(E1) -> np(E1) 'which' 'supports' np(E2),                         condition: dom:support(now, E1, E2) }
 { rule: np(E1) -> qp(E1) nbar(E1),                                          condition: dom:description(E1) }
 { rule: qp(E1) -> 'that',                                                   condition: go:already_generated(E1) }

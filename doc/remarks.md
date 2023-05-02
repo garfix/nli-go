@@ -1,3 +1,14 @@
+## 2023-05-02
+
+It is almost impossible to get the answer to #43 right. For one, my system takes the blue pyramid for the top of the steeple, whereas SHRDLU takes one of the other two, for some reason. The other thing is the position where it puts the blocks in the free area. I now use a formula that puts the object neer to where it picked it from. And then I fiddled around a bit with the promimity score to get something like the result we want:
+
+    GOT:
+        Yes, four of them: the red cube, a large red block, the block named superblock and the box
+    WANT:
+        Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
+
+This is good enough. Now have it say "four things" in stead of "four of them"
+
 ## 2023-04-30
 
 I implemented an ambiguity detection system, but it still doesn't flag the word "it" in "Find a block ..." as ambiguous. Since "a block" is the first entity in the sentence it gets extra referent points, and thus wins. "the one you are holding" gets just one point less, and one could argue that this is still within the ambiguity range, but I don't know...

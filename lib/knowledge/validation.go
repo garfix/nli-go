@@ -40,7 +40,10 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			return false
 		}
 		if c == 'i' && !arg.IsInteger() {
-			//			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i + 1) + " to be a number")
+			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a number")
+			return false
+		}
+		if c == 'n' && !arg.IsNumber() {
 			return false
 		}
 		if c == 'r' && !arg.IsRelationSet() {

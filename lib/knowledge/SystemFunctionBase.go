@@ -150,14 +150,14 @@ func (base *SystemFunctionBase) greaterThan(messenger api.SimpleMessenger, input
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii", base.log) {
+	if !Validate(bound, "nn", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	if int1 > int2 {
+	if num1 > num2 {
 		return binding, true
 	} else {
 		return mentalese.NewBinding(), false
@@ -168,14 +168,14 @@ func (base *SystemFunctionBase) lessThan(messenger api.SimpleMessenger, input me
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii", base.log) {
+	if !Validate(bound, "nn", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	if int1 < int2 {
+	if num1 < num2 {
 		return binding, true
 	} else {
 		return mentalese.NewBinding(), false
@@ -186,14 +186,14 @@ func (base *SystemFunctionBase) greaterThanEquals(messenger api.SimpleMessenger,
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii", base.log) {
+	if !Validate(bound, "nn", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	if int1 >= int2 {
+	if num1 >= num2 {
 		return binding, true
 	} else {
 		return mentalese.NewBinding(), false
@@ -204,14 +204,14 @@ func (base *SystemFunctionBase) lessThanEquals(messenger api.SimpleMessenger, in
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii", base.log) {
+	if !Validate(bound, "nn", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	if int1 <= int2 {
+	if num1 <= num2 {
 		return binding, true
 	} else {
 		return mentalese.NewBinding(), false
@@ -222,17 +222,19 @@ func (base *SystemFunctionBase) add(messenger api.SimpleMessenger, input mentale
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii*", base.log) {
+	if !Validate(bound, "nn*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	result := int1 + int2
+	result := num1 + num2
+
+	resultString := strconv.FormatFloat(result, 'f', -1, 64)
 
 	newBinding := binding.Copy()
-	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(resultString))
 
 	return newBinding, true
 }
@@ -241,17 +243,19 @@ func (base *SystemFunctionBase) subtract(messenger api.SimpleMessenger, input me
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii*", base.log) {
+	if !Validate(bound, "nn*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	result := int1 - int2
+	result := num1 - num2
+
+	resultString := strconv.FormatFloat(result, 'f', -1, 64)
 
 	newBinding := binding.Copy()
-	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(resultString))
 
 	return newBinding, true
 }
@@ -260,17 +264,19 @@ func (base *SystemFunctionBase) multiply(messenger api.SimpleMessenger, input me
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii*", base.log) {
+	if !Validate(bound, "nn*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	result := int1 * int2
+	result := num1 * num2
+
+	resultString := strconv.FormatFloat(result, 'f', -1, 64)
 
 	newBinding := binding.Copy()
-	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(resultString))
 
 	return newBinding, true
 }
@@ -279,17 +285,19 @@ func (base *SystemFunctionBase) divide(messenger api.SimpleMessenger, input ment
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "ii*", base.log) {
+	if !Validate(bound, "nn*", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	int1, _ := strconv.Atoi(bound.Arguments[0].TermValue)
-	int2, _ := strconv.Atoi(bound.Arguments[1].TermValue)
+	num1, _ := bound.Arguments[0].GetNumber()
+	num2, _ := bound.Arguments[1].GetNumber()
 
-	result := int1 / int2
+	result := num1 / num2
+
+	resultString := strconv.FormatFloat(result, 'f', -1, 64)
 
 	newBinding := binding.Copy()
-	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(strconv.Itoa(result)))
+	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(resultString))
 
 	return newBinding, true
 }

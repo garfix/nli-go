@@ -28,7 +28,7 @@ func TestBlocksWorld(t *testing.T) {
 			{"Grasp the pyramid", "I don't understand which one you mean"},
 
 			{"Is the blue block in the box?", "No"},
-			// todo "By "it", I assume you mean the block which is taller than the one I am holding"
+			// original "By "it", I assume you mean the block which is taller than the one I am holding"
 			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
 			{"Is the blue block in the box?", "Yes"},
 
@@ -87,6 +87,7 @@ func TestBlocksWorld(t *testing.T) {
 			// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
 			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube"},
 			{"How many objects did you touch while you were doing it?", "Four of them"},
+
 			{"What did the red cube support before you started to clean it off?", "The green pyramid"},
 			// original: No, only four of them: the red cube, two large green cubes and a large red block
 			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block"},
@@ -101,8 +102,10 @@ func TestBlocksWorld(t *testing.T) {
 			{"Does a green cube support a green cube?", "Yes"},
 			{"Call the biggest block \"superblock\".", "OK"},
 			{"Have you picked up superblock since we began?", "Yes"},
-			// todo: By "it", I assume you mean the superblock.
+			// original: By "it", I assume you mean the superblock.
 			{"Why did you drop it?", "I can't explain a nonexistent event"},
+			// original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
+			{"Is there anything to the right of the red pyramid?", "Yes, four things: the red cube, a large red block, the block named superblock and the box"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},

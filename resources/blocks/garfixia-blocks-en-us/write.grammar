@@ -74,6 +74,7 @@
 { rule: s(S1) -> 'none',                                                    condition: dom:none() }
 
 { rule: describe_amount(C) -> 'two' 'things' ':',                           condition: dom:select(_, 2) }
+{ rule: describe_amount(C) -> named_number(C) 'things' ':',                 condition: dom:expected(object) }
 { rule: describe_amount(C) -> named_number(C) 'of' 'them' ':' }
 
 { rule: s(S1) -> 'I understand',                                            condition: dom:understand() }

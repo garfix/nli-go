@@ -95,11 +95,12 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
             else
                 [:StartY := Y]
             end
-
         )
     )
 
+    /* fail if not found */
     [:FoundX != -1]
+
     [ResultX := :FoundX]
     [ResultY := :FoundY]
 ;

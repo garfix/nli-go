@@ -59,60 +59,70 @@ do_init_grid(Grid, Objects, HorLines, VerLines) :-
 ;
 
 do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
-    [:A1 := -1]
-    [:B1 := -1]
+    [:FoundX := -1]
+    [:FoundY := -1]
     [:StartY := -1]
+    [:MinScore := 100000000]
+
+    at(E1, X1, Y1, _)
+    size(E1, Width, Length, _)
+    [CenterX := [X1 + [Width / 2]]]
+    [CenterY := [Y1 + [Length / 2]]]
 
     size(E1, Width, Length, _)
 
-    go:list_foreach(VerLines, ColIndex, X,
-
+    go:list_foreach(VerLines, XIndex, X,
         go:list_get(HorLines, 0, :StartY)
+        find_span(Width, VerLines, XIndex, XEndIndex)
+        go:list_get(VerLines, XEndIndex, EndX)
+        go:list_foreach(HorLines, YIndex, Y,
+            [YIndex > 0]
+            if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) then
+                [SpanLength := [Y - :StartY]]
+                if [SpanLength >= Length] then
+                    [DX := [X - CenterX]]
+                    [DY := [:StartY - CenterY]]
+                    [Score := [DX + DY]]
 
-        find_span(Width, VerLines, ColIndex, ColSpan)
-        [V1 := [ColIndex + ColSpan]]
-        [ColEnd := [V1 - 1]]
-        go:list_foreach(HorLines, LineIndex, Y2,
-            [LineIndex > 0]
-            [RowIndex := [LineIndex - 1]]
-            if span_free(ColIndex, ColEnd, RowIndex, Grid) then
-                [SpanLength := [Y2 - :StartY]]
-                [SpanLength >= Length]
-                [:A1 := X]
-                [:B1 := :StartY]
-                break
+                    /* go for the lowest Score */
+                    [SpanWidth := [EndX - X]]
+                    if [Score < :MinScore] then
+                        [:MinScore := Score]
+                        [:FoundX := X]
+                        [:FoundY := :StartY]
+                    end
+                end
             else
-                [:StartY := Y2]
+                [:StartY := Y]
             end
+
         )
-        [:A1 != -1]
-        break
     )
 
-    [:A1 != -1]
-    [ResultX := :A1]
-    [ResultY := :B1]
+    [:FoundX != -1]
+    [ResultX := :FoundX]
+    [ResultY := :FoundY]
 ;
 
-find_span(Width, VerLines, ColIndex, ColSpan) :-
-    go:list_get(VerLines, ColIndex, X1)
-    [:ColSpan1 := 0]
+find_span(Width, VerLines, XIndex, XEndIndex) :-
+    go:list_get(VerLines, XIndex, X1)
+    [:XEndIndex := XIndex]
 
-    go:list_foreach(VerLines, Index, Line,
-        [W := [Line - X1]]
+    go:list_foreach(VerLines, Index, X2,
+        [W := [X2 - X1]]
         [W >= Width]
-        [:ColSpan1 := [Index - ColIndex]]
+        [:XEndIndex := Index]
         break
     )
 
-    [ColSpan := :ColSpan1]
+    [XEndIndex := :XEndIndex]
 ;
 
 span_free(ColStart, ColEnd, RowIndex, Grid) :-
     [:Success := true]
 
-    go:range_foreach(ColStart, ColEnd, ColIndex,
-        if grid(Grid, RowIndex, ColIndex, 1) then
+    go:range_foreach(ColStart, ColEnd, XIndex,
+        if grid(Grid, RowIndex, XIndex, 1) then
             [:Success := false]
             break
         end

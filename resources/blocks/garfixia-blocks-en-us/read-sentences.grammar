@@ -107,3 +107,6 @@
     intent: go:intent(command)
 }
 
+/* special expressions */
+
+{ rule: s(S1) -> 'thank' 'you',                                                  intent: go:intent(thanks) }

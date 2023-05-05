@@ -226,3 +226,11 @@
             answer: dom:dont_know()
         }
 }
+
+{
+    condition: go:intent(thanks),
+    responses:
+        {
+            answer: dom:acknowledge_thanks()
+        }
+}

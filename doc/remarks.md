@@ -24,6 +24,27 @@ In the case of a sort conflict it would be reasonable to respond like this, whic
 
 The answer is correct, but not specific. However, it is more informative than the original "No".
 
+---
+
+Let's do the last one:
+
+#44
+
+    H: Thank you
+    C: You're welcome
+
+Winograd: "Idioms can be defined without modifying the grammar"
+
+It's definetely necessary to modify the grammar in NLI-GO, and add a special intent. But it's a simple thing to do.
+
+---
+
+It's now 9:01, on Friday, the 5th of May 2023: dutch Liberation Day. I finished the 44 sentences of the famous SHRDLU interaction.
+
+Now it's time to fix the demo and put it online, _improve_ the implementation, read all the literature, examine all other systems, and write a book about it!
+
+![done](archive/blocksworld8.png)
+
 ## 2023-05-02
 
 It is almost impossible to get the answer to #43 right. For one, my system takes the blue pyramid for the top of the steeple, whereas SHRDLU takes one of the other two, for some reason. The other thing is the position where it puts the blocks in the free area. I now use a formula that puts the object neer to where it picked it from. And then I fiddled around a bit with the promimity score to get something like the result we want:

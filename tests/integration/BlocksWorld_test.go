@@ -106,6 +106,8 @@ func TestBlocksWorld(t *testing.T) {
 			{"Why did you drop it?", "I can't explain a nonexistent event"},
 			// original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
 			{"Is there anything to the right of the red pyramid?", "Yes, four things: the red cube, a large red block, the block named superblock and the box"},
+			// original: You're welcome!
+			{"Thank you", "You're welcome !"},
 		},
 		{
 			//{"Stack up 2 green blocks and a small red block", "OK"},
@@ -158,7 +160,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				t.Errorf("\n%s", log.GetProductions())
+				// t.Errorf("\n%s", log.GetProductions())
 				// t.Errorf("\n%s", log.String())
 				break
 			}

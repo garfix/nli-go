@@ -48,7 +48,7 @@
 { rule: interrogative_clause(P1) -> copula(_) np(E1) past_participle(P1, E2, E1),   intent: go:intent(select_subject, E2),   sense: go:check($np, $past_participle) }
 { rule: interrogative_clause(P1) -> aux_be(_) vp(P1),                               intent: go:intent(yes_no) }
 { rule: interrogative_clause(P1) -> aux_do(_) vp(P1),                               intent: go:intent(yes_no) }
-{ rule: interrogative_clause(P1) -> can(_) vp(P1),                                  intent: go:intent(yes_no) }
+{ rule: interrogative_clause(P1) -> can(_) vp(P1),                                  intent: go:intent(possible) }
 {
     rule: interrogative_clause(P1) -> aux_have(_) np(E1) past_participle(P1, E1, E2) np(E2),
     intent: go:intent(select, E2),

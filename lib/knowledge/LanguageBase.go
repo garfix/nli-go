@@ -194,7 +194,7 @@ func (base *LanguageBase) processRootClause(
 	sorts, sortFound := central.NewSortFinder(base.meta, messenger).FindSorts(rootClauseTree)
 	if !sortFound {
 		base.log.AddProduction("Break", "Breaking due to conflicting sorts: "+sorts.String())
-		return "", true, "", score
+		return i18n.Translate(common.SortConflict), true, "", score
 	}
 	score++
 	for variable, sort := range sorts {

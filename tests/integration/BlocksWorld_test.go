@@ -37,10 +37,10 @@ func TestBlocksWorld(t *testing.T) {
 			{"How many blocks are not in the box?", "Four of them"},
 			{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube"},
 			{"Is it supported?", "Yes, by the table"},
-			{"Can the table pick up blocks?", "No"},
+			// original: No
+			{"Can the table pick up blocks?", "It doesn't make sense"},
 			{"Can a pyramid be supported by a block?", "Yes"},
-			// todo: must be: I don't know
-			{"Can a pyramid support a pyramid?", "No"},
+			{"Can a pyramid support a pyramid?", "I don't know"},
 			{"Stack up two pyramids.", "I can't"},
 
 			{"Do I own the blue pyramid?", "No"},
@@ -158,7 +158,7 @@ func TestBlocksWorld(t *testing.T) {
 			if answer != test.answer {
 				fmt.Printf(test.question)
 				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				// t.Errorf("\n%s", log.GetProductions())
+				t.Errorf("\n%s", log.GetProductions())
 				// t.Errorf("\n%s", log.String())
 				break
 			}

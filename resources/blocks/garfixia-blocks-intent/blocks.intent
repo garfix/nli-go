@@ -214,3 +214,15 @@
             answer: dom:incorrect_number(Number, GroupsList) {{ Descriptions }}
         }
 }
+
+{
+    condition: go:intent(possible),
+    responses:
+        {
+            condition: go:exists(),
+            answer: dom:result(true)
+        }
+        {
+            answer: dom:dont_know()
+        }
+}

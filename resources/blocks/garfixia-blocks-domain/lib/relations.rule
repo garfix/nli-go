@@ -2,6 +2,7 @@
  * These rules restrict possible entities by specifying the relations that hold between them.
  */
 
+go:has_sort(person, entity);
 go:has_sort(object, entity);
 go:has_sort(block, object);
 go:has_sort(pyramid, object);

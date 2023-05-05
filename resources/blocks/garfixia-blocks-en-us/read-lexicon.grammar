@@ -39,14 +39,14 @@
 { rule: tv(P1, E1, E2) -> 'clear' 'off',                               sense: dom:clear_off(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: tv_gerund(P1, E1, E2) -> 'holding',                            sense: dom:hold(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: tv_gerund(P1, E1, E2) -> 'sitting' 'on',                       sense: dom:support(P1, E2, E1),   tag: go:sort(P1, stative) }
-{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, dynamic) }
+{ rule: tv_infinitive(P1, E1, E2) -> 'pick' 'up',                      sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, dynamic) go:sort(E1, person) go:sort(E2, object) }
 { rule: tv_infinitive(P1, E1, E2) -> 'support',                        sense: dom:support(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv_infinitive(P1, E1, E2) -> 'contain',                        sense: dom:contain(P1, E1, E2),   tag: go:sort(P1, stative) }
 { rule: tv_infinitive(P1, E1, E2) -> 'touch',                          sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: tv_infinitive(P1, E1, E2) -> 'drop',                           sense: dom:drop(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: past_participle(P1, E1, E2) -> 'touched',                      sense: dom:touch(P1, E1, E2),   tag: go:sort(P1, dynamic) }
 { rule: past_participle(P1, E2, E1) -> 'supported',                    sense: dom:support(P1, E2, E1),   tag: go:sort(P1, stative) }
-{ rule: past_participle(P1, E1, E2) -> 'picked' 'up',                  sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, dynamic) go:sort(E2, object) }
+{ rule: past_participle(P1, E1, E2) -> 'picked' 'up',                  sense: dom:pick_up(P1, E1, E2),   tag: go:sort(P1, dynamic) go:sort(E1, person) go:sort(E2, object) }
 { rule: meta_verb(P1, E1, E2, P2) -> 'told',                           sense: dom:tell(P1, E1, E2, P2),   tag: go:sort(P1, dynamic) }
 
 { rule: dont(P1) -> 'don' '\'' 't' }

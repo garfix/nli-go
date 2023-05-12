@@ -34,6 +34,8 @@ func (server *Server) Run() {
 	}
 	defer listener.Close()
 
+	println("NLI-GO server listening on port " + server.port + "\n")
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -84,7 +86,7 @@ func (server *Server) handleRequest(conn net.Conn) {
 		return
 	}
 
-	fmt.Printf("%s\n", request)
+	fmt.Printf("%s\t%s\t%s\n", request.SessionId, request.Command, request.Query+request.Message.String())
 
 	system := server.getSystem(request)
 	if !system.GetLog().IsOk() {

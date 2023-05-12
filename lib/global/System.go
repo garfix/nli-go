@@ -59,11 +59,7 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 	// https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018
 	done := make(chan struct{})
 
-	println("client: " + clientMessage.String())
-
 	callback := func(serverMessage mentalese.RelationSet) {
-
-		fmt.Println("server: " + serverMessage.String())
 
 		if len(serverMessage) > 0 {
 			responseMessage = responseMessage.Merge(serverMessage)
@@ -86,8 +82,10 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 	// wait until done
 	<-done
 
-	fmt.Println("done!")
-	println("")
+	fmt.Println("response: " + responseMessage.String() + "\n")
+	if responseMessage.IsEmpty() {
+		fmt.Println("------------------------------\n")
+	}
 
 	return responseMessage
 }

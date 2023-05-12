@@ -1,25 +1,25 @@
 # NLI-GO
 
-This is a research project with the following purpose: 
+This is a research project with the following purpose:
 
-> To create a programming environment that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The environment should be easy to use and the range of language constructs should be very wide.   
+> To create a programming environment that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The environment should be easy to use and the range of language constructs should be very wide.
 
 The emphasis of the project is on developing declarative structures that are both easy to use and very expressive. To this end, different forms of linguistic and logical representations are considered. From these, a new representation is distilled, that focuses on programmability.
 
-Its product is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French. 
- 
+Its product is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French.
+
 It is a rule based system that requires the developer to write rules by hand. Thus, the developer has full control over the behaviour of the system. Its semantics are not functional, but procedural.
 
 The application is not production ready, but you can use it to experiment. The system is not at all robust and will break easily. Backward-incompatible changes will be made from time to time.
 
 ## Web demo
 
-A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia. 
+A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia.
 
 ## Features
 
 * An Earley parser to create a syntax tree from an input sentence, with semantic attachments
-* Morphological analysis that performs segmentation and parsing of morphemes  
+* Morphological analysis that performs segmentation and parsing of morphemes
 * Mentalese, a based internal language, based on Predicate Logic, to process the user input
 * A language with a Prolog-like syntax for rule based reasoning
 * Support for access to Sparql and MySQL databases as well as in-memory data stores
@@ -41,7 +41,7 @@ You can download and install GO from [here](https://golang.org/dl/)
 From the root of NLI-GO build the client with
 
     go build -o bin/nli bin/nli.go
-    
+
 On Windows, you may want to use `go build -o bin/nli.exe bin/nli.go`.
 
 Build the server with
@@ -58,33 +58,33 @@ Start the server and make it listen at port 3333
 
 NLI-GO comes with some sample applications, located in the directory "resources". The application `resources/blocks`, for example, is an attempt to recreate the results of [SHRDLU](https://en.wikipedia.org/wiki/SHRDLU). Start an interactive session with it like this:
 
-    bin/nli inter -a resources/blocks   
-    
+    bin/nli inter -a resources/blocks
+
 NLI-GO will then show
 
     NLI-GO session with resources/blocks. Type 'exit' to stop.
-    
-    > 
+
+    >
 
 and you can type, for instance:
 
     > Pick up a big red block
-    
+
 and NLI-GO, like SHRDLU in the old days, will reply with
 
     OK
-    
-The sentences that this applications can currently handle can be found in `tests/integration/BlocksWorld_test.go`, but you can try other sentences to see if they work.           
+
+The sentences that this applications can currently handle can be found in `tests/integration/BlocksWorld_test.go`, but you can try other sentences to see if they work.
 
 When done, just type
 
-    exit 
+    exit
 
 ## Run NLI-GO in single-request mode
 
 NLI-GO can also be used just to give a single response. This allows you to use it as part of a larger system. This variant is used by the web demo, for instance. In this example you tell "Hello World" to the hello world application:
 
-    bin/nli answer -a resources/helloworld "Hello World"    
+    bin/nli answer -a resources/helloworld "Hello World"
 
 and it responds with
 
@@ -92,8 +92,8 @@ and it responds with
 
 This is the response of the application, or the error, if something went wrong. If you need more control over the output of the system, you can add `-r json`; like this
 
-    bin/nli answer -a resources/helloworld -r json "Hello World"    
-  
+    bin/nli answer -a resources/helloworld -r json "Hello World"
+
 and NLI-GO responds with a JSON string like this:
 
     {
@@ -113,16 +113,16 @@ and NLI-GO responds with a JSON string like this:
         "OptionKeys": [],
         "OptionValues": []
     }
-    
+
 If the system responds with a clarification question, it does this with a number of options the user can choose from
 
 * OptionKeys: the keys of these options
 * OptionValues: the values of these options
 
-And if you want to specify a session identifier to allow NLI-GO to resolve back-references to earlier parts of the dialog, use `-s` with an identifier of your choice.     
+And if you want to specify a session identifier to allow NLI-GO to resolve back-references to earlier parts of the dialog, use `-s` with an identifier of your choice.
 
-    bin/nli answer -a resources/helloworld -s 64152 "Hello World"    
-    
+    bin/nli answer -a resources/helloworld -s 64152 "Hello World"
+
 To reset the session, use
 
     bin/nli reset -s 64152

@@ -1,3 +1,42 @@
+## 2023-05-12
+
+I realize that my system is thoroughly unsuited to process multiple interactions concurrently. Accomplishing this would mean a massive adaptation. Maybe later.
+
+For now I best make sure that only one interaction can take place at one time.
+
+I do want to allow the user to say "stop" and "continue".
+
+Maybe have 2 processes: a conversation process and an action process. Only one of each can be active at a time.
+
+If a new action process is started, the previous one halts. "stop" would then suspend the action process.
+
+## 2023-05-11
+
+The client-server interaction is too complicated. It tries to minimize client-server interaction, but it does this by sending messages and listening to messages all in the same call, and this is error-prone and hard to follow. I should separate sending messages and listening to responses.
+
+If a timeout occurs, the interaction should be aborted. Currently it fails, and still gives a response.
+
+A dialog consists of processes. One process is
+
+- request
+- [clarification]*
+- response
+
+A system can start a process of its own
+
+- [action]*
+
+
+## 2023-05-09
+
+I'm preparing the demo for publication. I want to improve the user interface, but the main thing is that the interaction with the server must be fixed. The server gets stuck in a state sometimes and this leads to confusing interaction with the user. Sometimes it's not even possible to reset the server.
+
+At the moment multiple processes can run on the same system. Each sentence the user types starts a new process. But when a user starts a process while the previous one is waiting for input, this previous process will not complete. However, it may time out after 30 seconds.
+
+The ideal behind multiple processes is that you can ask the system to start a long-running background task, and while it's doing that, start smaller tasks, concurrently. This is quite a bad idea for a blocks world scenario, because you can start building a steeple, while building a stack, and this will fail miserably.
+
+Maybe it could be possible to do that, but I think it could be better modelled as having multiple conversations with the same system.
+
 ## 2023-05-05
 
 I'm working on the last "todo" in the conversation:

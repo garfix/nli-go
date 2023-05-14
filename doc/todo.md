@@ -1,5 +1,20 @@
 # Todo
 
+## up to 2 processes, websockets
+
+- change the process list into just 2 processes
+- change the server into a websockets server
+- `create_goal` should create an action process, if possible
+- `createOrUpdateProcess` should create or update a language process
+- `sendMessage` should directly send a message to the client
+- if a message comes in, the system notifies the waiting process https://medium.com/@josueparra2892/golang-channels-8b22570cbfca
+- make the javascript routine use websockets
+
+## inbox
+
+Intent detection: provide access to the main clause variable: condition(P1)
+Tags: maak duidelijk onderscheid tussen this-sentence-only tags en dialog-wide tags
+
 - implement reflective_reference()
 - debug: fold structures in/out
 - create special cases for quantifiers, so that they don't look so complicated

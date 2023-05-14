@@ -11,6 +11,7 @@
 /* pick up E1 and hold it in your hand */
 do_pick_up_smart(EventId, E1) :-
     go:create_goal(
+        'robot',
         /*go:uuid(EventId, event)*/
         persist_action(EventId, `event:root`,
             /*go:log('pick up', EventId)*/
@@ -25,6 +26,7 @@ do_pick_up_smart(EventId, E1) :-
 /* pick up E1 and put it in E2 */
 do_put_in_smart(E1, E2) :-
     go:create_goal(
+        'robot',
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
             /*go:log('put in', EventId)*/
@@ -39,6 +41,7 @@ do_put_in_smart(E1, E2) :-
 /* pick up E1 and put it on E2 */
 do_put_on_smart(E1, E2) :-
     go:create_goal(
+        'robot',
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
             /*go:log('put on', EventId)*/
@@ -55,6 +58,7 @@ do_stack_up_smart(QBlocks) :-
     create_plan_for_stack(QBlocks, SortedList)
     go:list_get(SortedList, 0, BaseBlock)
     go:create_goal(
+        'robot',
         go:uuid(EventId, event)
         persist_action(EventId, `event:root`,
             /*go:log('stack up', EventId)*/

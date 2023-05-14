@@ -10,6 +10,8 @@ Maybe have 2 processes: a conversation process and an action process. Only one o
 
 If a new action process is started, the previous one halts. "stop" would then suspend the action process.
 
+I think it's time for websockets.
+
 ## 2023-05-11
 
 The client-server interaction is too complicated. It tries to minimize client-server interaction, but it does this by sending messages and listening to messages all in the same call, and this is error-prone and hard to follow. I should separate sending messages and listening to responses.

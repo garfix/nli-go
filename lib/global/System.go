@@ -38,7 +38,7 @@ func (system *System) GetLog() *common.SystemLog {
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)
-	result := system.processRunner.RunRelationSet(set)
+	result := system.processRunner.RunRelationSet(central.SIMPLE_PROCESS, set)
 
 	return result
 }
@@ -77,7 +77,7 @@ func (system *System) SendAndWaitForResponse(clientMessage mentalese.RelationSet
 	defer system.RemoveListener(callback)
 
 	// enter the message into the system
-	system.processRunner.RunRelationSet(clientMessage)
+	system.processRunner.RunRelationSet(central.LANGUAGE_PROCESS, clientMessage)
 
 	// wait until done
 	<-done
@@ -153,7 +153,7 @@ func (system *System) assert(relation mentalese.Relation) {
 			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
 		}),
 	}
-	system.processRunner.RunRelationSet(set)
+	system.processRunner.RunRelationSet(central.SIMPLE_PROCESS, set)
 }
 
 func (system *System) createOrUpdateProcess(input string) {
@@ -168,11 +168,13 @@ func (system *System) createOrUpdateProcess(input string) {
 		return
 	}
 
-	system.processRunner.StartProcess([]mentalese.Relation{
-		mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
-			mentalese.NewTermString(input),
-		}),
-	}, mentalese.NewBinding())
+	system.processRunner.StartProcess(
+		central.LANGUAGE_PROCESS,
+		[]mentalese.Relation{
+			mentalese.NewRelation(false, mentalese.PredicateRespond, []mentalese.Term{
+				mentalese.NewTermString(input),
+			}),
+		}, mentalese.NewBinding())
 }
 
 func (system *System) readAnswer(message mentalese.RelationSet) (string, *common.Options, bool) {

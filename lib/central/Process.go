@@ -5,14 +5,16 @@ import (
 )
 
 type Process struct {
-	GoalId string
-	Stack  []*StackFrame
-	Slots  map[string]mentalese.Term
+	ProcessType string
+	GoalId      string
+	Stack       []*StackFrame
+	Slots       map[string]mentalese.Term
 }
 
-func NewProcess(goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
+func NewProcess(processType string, goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
 	return &Process{
-		GoalId: goalId,
+		ProcessType: processType,
+		GoalId:      goalId,
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},

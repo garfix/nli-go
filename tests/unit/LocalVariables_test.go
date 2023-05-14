@@ -41,12 +41,12 @@ func TestLocalVariables(t *testing.T) {
 	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
-		pow(Base, Number, Pow) :- 
+		pow(Base, Number, Pow) :-
 			[:Result := 1]
 			go:range_foreach(1, Number, _,
 				[:Result := [:Result * Base]]
 			)
-			[Pow := :Result];	
+			[Pow := :Result];
 
 		first(In, Out) :-
 			[:X := In]
@@ -62,7 +62,7 @@ func TestLocalVariables(t *testing.T) {
 		;
 
 		break_out(Start, End, Result) :-
-			go:range_foreach(Start, End, Index, 
+			go:range_foreach(Start, End, Index,
 				if [Index == 5] then
 					[Result := Index]
 					break
@@ -71,14 +71,14 @@ func TestLocalVariables(t *testing.T) {
 		;
 
 		return_out(Start, End, Result) :-
-			go:list_foreach([1, 2, 3, 4, 5, 6, 7], Index, 
+			go:list_foreach([1, 2, 3, 4, 5, 6, 7], Index,
 				if [Index == 5] then
 					[Result := Index]
 					return
 				end
 			)
 		;
-	
+
 	`)
 	ruleBase := knowledge.NewInMemoryRuleBase("mem", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
@@ -103,7 +103,7 @@ func TestLocalVariables(t *testing.T) {
 		goal := parser.CreateRelation(test.goal)
 		binding := parser.CreateBinding(test.binding)
 
-		resultBindings := runner.RunRelationSetWithBindings(mentalese.RelationSet{goal}, mentalese.InitBindingSet(binding)).String()
+		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, mentalese.RelationSet{goal}, mentalese.InitBindingSet(binding)).String()
 
 		if !log.IsOk() {
 			t.Errorf(log.String())

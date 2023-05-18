@@ -139,9 +139,92 @@ func TestBlocksWorld(t *testing.T) {
 	defer client.Close()
 
 	client.Run([]server.Test{
-		{"Does the table support the big red block?", "Yes"},
-		{"Pick up a big red block", "OK"},
-		{"Does the table support the big red block?", "No"},
+		{"Does the table support the big red block?", "Yes", []string{}},
+		{"Pick up a big red block", "OK", []string{}},
+		{"Does the table support the big red block?", "No", []string{}},
+		// original "I don't understand which pyramid you mean"
+		{"Grasp the pyramid", "I don't understand which one you mean", []string{}},
+
+		{"Is the blue block in the box?", "No", []string{}},
+		// original "By "it", I assume you mean the block which is taller than the one I am holding"
+		{"Find a block which is taller than the one you are holding and put it into the box.", "OK", []string{}},
+		{"Is the blue block in the box?", "Yes", []string{}},
+
+		{"What does the box contain?", "The blue pyramid and the blue block", []string{}},
+		{"What is the pyramid supported by?", "The box", []string{}},
+		{"How many blocks are not in the box?", "Four of them", []string{}},
+		{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube", []string{}},
+		{"Is it supported?", "Yes, by the table", []string{}},
+		// original: No
+		{"Can the table pick up blocks?", "It doesn't make sense", []string{}},
+		{"Can a pyramid be supported by a block?", "Yes", []string{}},
+		{"Can a pyramid support a pyramid?", "I don't know", []string{}},
+		{"Stack up two pyramids.", "I can't", []string{}},
+
+		{"Do I own the blue pyramid?", "No", []string{}},
+		{"The blue pyramid is mine", "I understand", []string{}},
+		{"Do I own the blue pyramid?", "Yes", []string{}},
+
+		{"Do I own a green block?", "No", []string{}},
+		{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand", []string{}},
+		{"Do I own a green block?", "Yes", []string{}},
+		{"Do I own all green blocks?", "No", []string{}},
+
+		{"Do I own the box?", "No", []string{}},
+
+		{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid", []string{}},
+
+		{"Does a green block support a pyramid?", "Yes", []string{}},
+		{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK", []string{}},
+		{"Is the small red block supported by a green block?", "Yes", []string{}},
+		{"Is a green block supported by the big red block?", "Yes", []string{}},
+		{"Does a green block support a pyramid?", "Yes", []string{}},
+
+		{"Which cube is sitting on the table?", "The large green one which supports the red pyramid", []string{}},
+		{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and the blue one", []string{}},
+		{"Put a small one onto the green cube which supports a pyramid", "OK", []string{}},
+
+		{"Does the small red block support the green pyramid?", "No", []string{}},
+		{"Put the littlest pyramid on top of it", "OK", []string{}},
+		{"Does the small red block support the green pyramid?", "Yes", []string{}},
+
+		// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
+		{"How many things are on top of green cubes?", "Three of them", []string{"1"}},
+
+		{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green one", []string{}},
+
+		// original: While I was stacking up the red cube, a large red block and a large green cube
+		{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube", []string{}},
+		{"Why?", "To get rid of it", []string{}},
+		{"Why did you do that?", "To clean off the red cube", []string{}},
+		{"Why did you clear off that cube?", "To put it on a large green cube", []string{}},
+		// original: To stack up the red cube, a large red block and a large green cube
+		{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube", []string{}},
+		{"Why did you do that?", "Because you asked me to", []string{}},
+		// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
+		{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube", []string{}},
+		{"How many objects did you touch while you were doing it?", "Four of them", []string{}},
+
+		{"What did the red cube support before you started to clean it off?", "The green pyramid", []string{}},
+		// original: No, only four of them: the red cube, two large green cubes and a large red block
+		{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block", []string{}},
+		{"Put the blue pyramid on the block in the box.", "OK", []string{}},
+		{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block", []string{}},
+		// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
+		{"Does a steeple", "Sorry, I don't know the word \"steeple\"", []string{}},
+		{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand", []string{}},
+		{"Are there any steeples now?", "No", []string{}},
+		{"Build one", "OK", []string{}},
+		{"Are there any steeples now?", "Yes, a large green cube", []string{}},
+		{"Does a green cube support a green cube?", "Yes", []string{}},
+		{"Call the biggest block \"superblock\".", "OK", []string{}},
+		{"Have you picked up superblock since we began?", "Yes", []string{}},
+		// original: By "it", I assume you mean the superblock.
+		{"Why did you drop it?", "I can't explain a nonexistent event", []string{}},
+		// original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
+		{"Is there anything to the right of the red pyramid?", "Yes, four things: the red cube, a large red block, the block named superblock and the box", []string{}},
+		// original: You're welcome!
+		{"Thank you", "You're welcome !", []string{}},
 	})
 
 	// createImage(system)

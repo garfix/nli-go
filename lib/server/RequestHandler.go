@@ -84,8 +84,9 @@ func (handler *RequestHandler) handleAnswer(system *global.System, query string)
 }
 
 type Test struct {
-	H string
-	C string
+	H              string
+	C              string
+	Clarifications []string
 }
 
 func (handler *RequestHandler) performTests(system *global.System, applicationDir string) {

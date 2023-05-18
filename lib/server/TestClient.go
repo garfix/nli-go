@@ -41,6 +41,8 @@ func (c *TestClient) Run(tests []Test) {
 
 	for _, test := range tests {
 
+		clarificationIndex := 0
+
 		println("TEST: " + test.H)
 
 		request := mentalese.Request{
@@ -104,6 +106,16 @@ func (c *TestClient) Run(tests []Test) {
 					)
 				}
 
+			}
+			if first.Predicate == "go_user_select" {
+				answer := first.Copy()
+				answer.Arguments[2] = mentalese.NewTermString(test.Clarifications[clarificationIndex])
+				clarificationIndex++
+				c.Send(
+					mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+						mentalese.NewTermRelationSet([]mentalese.Relation{answer}),
+					}),
+				)
 			}
 			if first.Predicate == "go_processlist_clear" {
 				println("cool! notification of all empty processes!")

@@ -17,115 +17,9 @@ type Req struct {
 	Hello int
 }
 
-// Mimics some of SHRDLU's functions, but in the nli-go way
+// Mimics Terry Winograd's SHRDLU dialog, but in the NLI-GO way
 
 func TestBlocksWorld(t *testing.T) {
-
-	var tests = [][]struct {
-		question string
-		answer   string
-	}{
-		{
-			{"Does the table support the big red block?", "Yes"},
-			{"Pick up a big red block", "OK"},
-			{"Does the table support the big red block?", "No"},
-
-			// original "I don't understand which pyramid you mean"
-			{"Grasp the pyramid", "I don't understand which one you mean"},
-
-			{"Is the blue block in the box?", "No"},
-			// original "By "it", I assume you mean the block which is taller than the one I am holding"
-			{"Find a block which is taller than the one you are holding and put it into the box.", "OK"},
-			{"Is the blue block in the box?", "Yes"},
-
-			{"What does the box contain?", "The blue pyramid and the blue block"},
-			{"What is the pyramid supported by?", "The box"},
-			{"How many blocks are not in the box?", "Four of them"},
-			{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube"},
-			{"Is it supported?", "Yes, by the table"},
-			// original: No
-			{"Can the table pick up blocks?", "It doesn't make sense"},
-			{"Can a pyramid be supported by a block?", "Yes"},
-			{"Can a pyramid support a pyramid?", "I don't know"},
-			{"Stack up two pyramids.", "I can't"},
-
-			{"Do I own the blue pyramid?", "No"},
-			{"The blue pyramid is mine", "I understand"},
-			{"Do I own the blue pyramid?", "Yes"},
-
-			{"Do I own a green block?", "No"},
-			{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand"},
-			{"Do I own a green block?", "Yes"},
-			{"Do I own all green blocks?", "No"},
-
-			{"Do I own the box?", "No"},
-
-			{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid"},
-
-			{"Does a green block support a pyramid?", "Yes"},
-			{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
-			{"Is the small red block supported by a green block?", "Yes"},
-			{"Is a green block supported by the big red block?", "Yes"},
-			{"Does a green block support a pyramid?", "Yes"},
-
-			{"Which cube is sitting on the table?", "The large green one which supports the red pyramid"},
-			{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and the blue one"},
-			{"Put a small one onto the green cube which supports a pyramid", "OK"},
-
-			{"Does the small red block support the green pyramid?", "No"},
-			{"Put the littlest pyramid on top of it", "OK"},
-			{"Does the small red block support the green pyramid?", "Yes"},
-
-			// // original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
-			{"How many things are on top of green cubes?", " [0] Directly on the surface [1] Anywhere on top of"},
-			{"1", "Three of them"},
-
-			{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green one"},
-
-			// original: While I was stacking up the red cube, a large red block and a large green cube
-			{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube"},
-			{"Why?", "To get rid of it"},
-			{"Why did you do that?", "To clean off the red cube"},
-			{"Why did you clear off that cube?", "To put it on a large green cube"},
-			// original: To stack up the red cube, a large red block and a large green cube
-			{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube"},
-			{"Why did you do that?", "Because you asked me to"},
-			// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
-			{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube"},
-			{"How many objects did you touch while you were doing it?", "Four of them"},
-
-			{"What did the red cube support before you started to clean it off?", "The green pyramid"},
-			// original: No, only four of them: the red cube, two large green cubes and a large red block
-			{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block"},
-			{"Put the blue pyramid on the block in the box.", "OK"},
-			{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block"},
-			// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
-			{"Does a steeple", "Sorry, I don't know the word \"steeple\""},
-			{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand"},
-			{"Are there any steeples now?", "No"},
-			{"Build one", "OK"},
-			{"Are there any steeples now?", "Yes, a large green cube"},
-			{"Does a green cube support a green cube?", "Yes"},
-			{"Call the biggest block \"superblock\".", "OK"},
-			{"Have you picked up superblock since we began?", "Yes"},
-			// original: By "it", I assume you mean the superblock.
-			{"Why did you drop it?", "I can't explain a nonexistent event"},
-			// original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
-			{"Is there anything to the right of the red pyramid?", "Yes, four things: the red cube, a large red block, the block named superblock and the box"},
-			// original: You're welcome!
-			{"Thank you", "You're welcome !"},
-		},
-		{
-			//{"Stack up 2 green blocks and a small red block", "OK"},
-			//{"stack up a blue block and a blue pyramid", "OK1"},
-			//{"Put a blue block into the box", "OK"},
-			//{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK"},
-			//{"Stack up 3 objects", "OK"},
-			//{"Stack up 3 objects", "OK"},
-		},
-	}
-
-	log := common.NewSystemLog()
 
 	srv := server.NewServer("3333")
 	srv.Run()
@@ -139,148 +33,95 @@ func TestBlocksWorld(t *testing.T) {
 	defer client.Close()
 
 	client.Run([]server.Test{
-		{"Does the table support the big red block?", "Yes", []string{}},
-		{"Pick up a big red block", "OK", []string{}},
-		{"Does the table support the big red block?", "No", []string{}},
+		{H: "Does the table support the big red block?", C: "Yes", Clarifications: []string{}},
+		{H: "Pick up a big red block", C: "OK", Clarifications: []string{}},
+		{H: "Does the table support the big red block?", C: "No", Clarifications: []string{}},
 		// original "I don't understand which pyramid you mean"
-		{"Grasp the pyramid", "I don't understand which one you mean", []string{}},
+		{H: "Grasp the pyramid", C: "I don't understand which one you mean", Clarifications: []string{}},
 
-		{"Is the blue block in the box?", "No", []string{}},
+		{H: "Is the blue block in the box?", C: "No", Clarifications: []string{}},
 		// original "By "it", I assume you mean the block which is taller than the one I am holding"
-		{"Find a block which is taller than the one you are holding and put it into the box.", "OK", []string{}},
-		{"Is the blue block in the box?", "Yes", []string{}},
+		{H: "Find a block which is taller than the one you are holding and put it into the box.", C: "OK", Clarifications: []string{}},
+		{H: "Is the blue block in the box?", C: "Yes", Clarifications: []string{}},
 
-		{"What does the box contain?", "The blue pyramid and the blue block", []string{}},
-		{"What is the pyramid supported by?", "The box", []string{}},
-		{"How many blocks are not in the box?", "Four of them", []string{}},
-		{"Is at least one of them narrower than the one which I told you to pick up?", "Yes, the red cube", []string{}},
-		{"Is it supported?", "Yes, by the table", []string{}},
+		{H: "What does the box contain?", C: "The blue pyramid and the blue block", Clarifications: []string{}},
+		{H: "What is the pyramid supported by?", C: "The box", Clarifications: []string{}},
+		{H: "How many blocks are not in the box?", C: "Four of them", Clarifications: []string{}},
+		{H: "Is at least one of them narrower than the one which I told you to pick up?", C: "Yes, the red cube", Clarifications: []string{}},
+		{H: "Is it supported?", C: "Yes, by the table", Clarifications: []string{}},
 		// original: No
-		{"Can the table pick up blocks?", "It doesn't make sense", []string{}},
-		{"Can a pyramid be supported by a block?", "Yes", []string{}},
-		{"Can a pyramid support a pyramid?", "I don't know", []string{}},
-		{"Stack up two pyramids.", "I can't", []string{}},
+		{H: "Can the table pick up blocks?", C: "It doesn't make sense", Clarifications: []string{}},
+		{H: "Can a pyramid be supported by a block?", C: "Yes", Clarifications: []string{}},
+		{H: "Can a pyramid support a pyramid?", C: "I don't know", Clarifications: []string{}},
+		{H: "Stack up two pyramids.", C: "I can't", Clarifications: []string{}},
 
-		{"Do I own the blue pyramid?", "No", []string{}},
-		{"The blue pyramid is mine", "I understand", []string{}},
-		{"Do I own the blue pyramid?", "Yes", []string{}},
+		{H: "Do I own the blue pyramid?", C: "No", Clarifications: []string{}},
+		{H: "The blue pyramid is mine", C: "I understand", Clarifications: []string{}},
+		{H: "Do I own the blue pyramid?", C: "Yes", Clarifications: []string{}},
 
-		{"Do I own a green block?", "No", []string{}},
-		{"I own blocks which are not red, but I don't own anything which supports a pyramid", "I understand", []string{}},
-		{"Do I own a green block?", "Yes", []string{}},
-		{"Do I own all green blocks?", "No", []string{}},
+		{H: "Do I own a green block?", C: "No", Clarifications: []string{}},
+		{H: "I own blocks which are not red, but I don't own anything which supports a pyramid", C: "I understand", Clarifications: []string{}},
+		{H: "Do I own a green block?", C: "Yes", Clarifications: []string{}},
+		{H: "Do I own all green blocks?", C: "No", Clarifications: []string{}},
 
-		{"Do I own the box?", "No", []string{}},
+		{H: "Do I own the box?", C: "No", Clarifications: []string{}},
 
-		{"Do I own anything in the box?", "Yes, two things: the blue block and the blue pyramid", []string{}},
+		{H: "Do I own anything in the box?", C: "Yes, two things: the blue block and the blue pyramid", Clarifications: []string{}},
 
-		{"Does a green block support a pyramid?", "Yes", []string{}},
-		{"Will you please stack up both of the red blocks and either a green cube or a pyramid?", "OK", []string{}},
-		{"Is the small red block supported by a green block?", "Yes", []string{}},
-		{"Is a green block supported by the big red block?", "Yes", []string{}},
-		{"Does a green block support a pyramid?", "Yes", []string{}},
+		{H: "Does a green block support a pyramid?", C: "Yes", Clarifications: []string{}},
+		{H: "Will you please stack up both of the red blocks and either a green cube or a pyramid?", C: "OK", Clarifications: []string{}},
+		{H: "Is the small red block supported by a green block?", C: "Yes", Clarifications: []string{}},
+		{H: "Is a green block supported by the big red block?", C: "Yes", Clarifications: []string{}},
+		{H: "Does a green block support a pyramid?", C: "Yes", Clarifications: []string{}},
 
-		{"Which cube is sitting on the table?", "The large green one which supports the red pyramid", []string{}},
-		{"Is there a large block behind a pyramid?", "Yes, three of them: a large red one, a large green cube and the blue one", []string{}},
-		{"Put a small one onto the green cube which supports a pyramid", "OK", []string{}},
+		{H: "Which cube is sitting on the table?", C: "The large green one which supports the red pyramid", Clarifications: []string{}},
+		{H: "Is there a large block behind a pyramid?", C: "Yes, three of them: a large red one, a large green cube and the blue one", Clarifications: []string{}},
+		{H: "Put a small one onto the green cube which supports a pyramid", C: "OK", Clarifications: []string{}},
 
-		{"Does the small red block support the green pyramid?", "No", []string{}},
-		{"Put the littlest pyramid on top of it", "OK", []string{}},
-		{"Does the small red block support the green pyramid?", "Yes", []string{}},
+		{H: "Does the small red block support the green pyramid?", C: "No", Clarifications: []string{}},
+		{H: "Put the littlest pyramid on top of it", C: "OK", Clarifications: []string{}},
+		{H: "Does the small red block support the green pyramid?", C: "Yes", Clarifications: []string{}},
 
 		// original: I'm not sure what you mean by "on top of" in the phrase "on top of green cubes", do you mean:
-		{"How many things are on top of green cubes?", "Three of them", []string{"1"}},
+		{H: "How many things are on top of green cubes?", C: "Three of them", Clarifications: []string{"1"}},
 
-		{"Had you touched any pyramid before you put the green one on the little cube?", "Yes, the green one", []string{}},
+		{H: "Had you touched any pyramid before you put the green one on the little cube?", C: "Yes, the green one", Clarifications: []string{}},
 
 		// original: While I was stacking up the red cube, a large red block and a large green cube
-		{"When did you pick it up?", "While I was stacking up a large red block, a large green cube and the red cube", []string{}},
-		{"Why?", "To get rid of it", []string{}},
-		{"Why did you do that?", "To clean off the red cube", []string{}},
-		{"Why did you clear off that cube?", "To put it on a large green cube", []string{}},
+		{H: "When did you pick it up?", C: "While I was stacking up a large red block, a large green cube and the red cube", Clarifications: []string{}},
+		{H: "Why?", C: "To get rid of it", Clarifications: []string{}},
+		{H: "Why did you do that?", C: "To clean off the red cube", Clarifications: []string{}},
+		{H: "Why did you clear off that cube?", C: "To put it on a large green cube", Clarifications: []string{}},
 		// original: To stack up the red cube, a large red block and a large green cube
-		{"Why did you do that?", "To stack up a large red block, a large green cube and the red cube", []string{}},
-		{"Why did you do that?", "Because you asked me to", []string{}},
+		{H: "Why did you do that?", C: "To stack up a large red block, a large green cube and the red cube", Clarifications: []string{}},
+		{H: "Why did you do that?", C: "Because you asked me to", Clarifications: []string{}},
 		// original: By putting a large red block on the table; then letting go of it; then putting a large green cube on it; then letting go of that cube; then putting the red cube on top of that cube; then letting go of that cube
-		{"How did you do it?", "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube", []string{}},
-		{"How many objects did you touch while you were doing it?", "Four of them", []string{}},
+		{H: "How did you do it?", C: "By putting a large red block on the table ; then putting a large green cube on that large red block ; then putting the red cube on that large green cube", Clarifications: []string{}},
+		{H: "How many objects did you touch while you were doing it?", C: "Four of them", Clarifications: []string{}},
 
-		{"What did the red cube support before you started to clean it off?", "The green pyramid", []string{}},
+		{H: "What did the red cube support before you started to clean it off?", C: "The green pyramid", Clarifications: []string{}},
 		// original: No, only four of them: the red cube, two large green cubes and a large red block
-		{"There were five blocks to the left of the box then.", "No, only four of them: the red cube, two large green cubes and the large red block", []string{}},
-		{"Put the blue pyramid on the block in the box.", "OK", []string{}},
-		{"Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", "Yes, the blue block", []string{}},
+		{H: "There were five blocks to the left of the box then.", C: "No, only four of them: the red cube, two large green cubes and the large red block", Clarifications: []string{}},
+		{H: "Put the blue pyramid on the block in the box.", C: "OK", Clarifications: []string{}},
+		{H: "Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?", C: "Yes, the blue block", Clarifications: []string{}},
 		// original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
-		{"Does a steeple", "Sorry, I don't know the word \"steeple\"", []string{}},
-		{"A \"steeple\" is a stack which contains two green cubes and a pyramid.", "I understand", []string{}},
-		{"Are there any steeples now?", "No", []string{}},
-		{"Build one", "OK", []string{}},
-		{"Are there any steeples now?", "Yes, a large green cube", []string{}},
-		{"Does a green cube support a green cube?", "Yes", []string{}},
-		{"Call the biggest block \"superblock\".", "OK", []string{}},
-		{"Have you picked up superblock since we began?", "Yes", []string{}},
+		{H: "Does a steeple", C: "Sorry, I don't know the word \"steeple\"", Clarifications: []string{}},
+		{H: "A \"steeple\" is a stack which contains two green cubes and a pyramid.", C: "I understand", Clarifications: []string{}},
+		{H: "Are there any steeples now?", C: "No", Clarifications: []string{}},
+		{H: "Build one", C: "OK", Clarifications: []string{}},
+		{H: "Are there any steeples now?", C: "Yes, a large green cube", Clarifications: []string{}},
+		{H: "Does a green cube support a green cube?", C: "Yes", Clarifications: []string{}},
+		{H: "Call the biggest block \"superblock\".", C: "OK", Clarifications: []string{}},
+		{H: "Have you picked up superblock since we began?", C: "Yes", Clarifications: []string{}},
 		// original: By "it", I assume you mean the superblock.
-		{"Why did you drop it?", "I can't explain a nonexistent event", []string{}},
+		{H: "Why did you drop it?", C: "I can't explain a nonexistent event", Clarifications: []string{}},
 		// original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
-		{"Is there anything to the right of the red pyramid?", "Yes, four things: the red cube, a large red block, the block named superblock and the box", []string{}},
+		{H: "Is there anything to the right of the red pyramid?", C: "Yes, four things: the red cube, a large red block, the block named superblock and the box", Clarifications: []string{}},
 		// original: You're welcome!
-		{"Thank you", "You're welcome !", []string{}},
+		{H: "Thank you", C: "You're welcome !", Clarifications: []string{}},
 	})
 
 	// createImage(system)
-
-	return
-
-	for _, session := range tests {
-
-		// log.SetDebug(true)
-		// log.SetPrint(true)
-		// system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
-
-		if !log.IsOk() {
-			t.Errorf(log.String())
-			return
-		}
-
-		for _, test := range session {
-
-			log.Clear()
-
-			//if test.question == "Why?" {
-			if test.question == "Put the blue pyramid on the block in the box." {
-				// test.question = test.question
-				// log.SetDebug(true)
-				// log.SetPrint(true)
-			}
-
-			fmt.Println(test.question)
-
-			answer := "x"
-
-			// answer, options := system.Answer(test.question)
-
-			// if options.HasOptions() {
-			// 	answer += options.String()
-			// }
-
-			//createImage(system)
-
-			if len(log.GetErrors()) > 0 {
-				t.Errorf("\n%s", log.GetErrors())
-			}
-
-			if answer != test.answer {
-				fmt.Printf(test.question)
-				t.Errorf("Test relationships:\nGOT:\n  %v\nWANT:\n  %v", answer, test.answer)
-				// t.Errorf("\n%s", log.GetProductions())
-				// t.Errorf("\n%s", log.String())
-				break
-			}
-		}
-
-		// createImage(system)
-		break
-	}
 }
 
 func createGrid(system *global.System) {

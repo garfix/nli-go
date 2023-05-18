@@ -8,6 +8,7 @@ import (
 	"nli-go/lib/server"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/tidwall/pinhole"
 )
@@ -130,6 +131,8 @@ func TestBlocksWorld(t *testing.T) {
 	srv.Run()
 	defer srv.Close()
 
+	time.Sleep(500 * time.Millisecond)
+
 	client := server.CreateTestClient(
 		common.Dir()+"/../../resources/blocks", common.Dir()+"/../../var",
 	)
@@ -137,6 +140,8 @@ func TestBlocksWorld(t *testing.T) {
 
 	client.Run([]server.Test{
 		{"Does the table support the big red block?", "Yes"},
+		{"Pick up a big red block", "OK"},
+		{"Does the table support the big red block?", "No"},
 	})
 
 	// createImage(system)

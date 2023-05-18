@@ -112,6 +112,7 @@ func (builder *systemBuilder) build(system *System) {
 func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.meta = mentalese.NewMeta()
+	system.clientConnector = system.CreatClientConnector(builder.conn)
 
 	systemFunctionBase := knowledge.NewSystemFunctionBase("System-function", system.meta, builder.log)
 	matcher := central.NewRelationMatcher(builder.log)
@@ -141,7 +142,16 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.solver = solverAsync
 
 	system.processRunner = central.NewProcessRunner(system.processList, solverAsync, builder.log)
-	system.clientConnector = system.CreatClientConnector(builder.conn)
+
+	callback := func(serverMessage mentalese.RelationSet) {
+		if system.processList.IsEmpty() {
+			system.clientConnector.SendToClient(central.SIMPLE_PROCESS, []mentalese.Relation{
+				mentalese.NewRelation(false, "go_processlist_clear", []mentalese.Term{}),
+			})
+		}
+	}
+
+	system.processList.AddListener(callback)
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)

@@ -102,7 +102,6 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 			conn.Close()
 		}
 
-		break
 	}
 }
 

@@ -41,6 +41,8 @@ func (c *TestClient) Run(tests []Test) {
 
 	for _, test := range tests {
 
+		println("TEST: " + test.H)
+
 		request := mentalese.Request{
 			SessionId: SESSION_ID,
 			// todo: just send the application's name; this is insecure information
@@ -48,7 +50,7 @@ func (c *TestClient) Run(tests []Test) {
 			WorkDir:        c.workDir,
 			Command:        "send",
 			Message: mentalese.RelationSet{
-				mentalese.NewRelation(false, "go_tell", []mentalese.Term{
+				mentalese.NewRelation(false, "go_respond", []mentalese.Term{
 					mentalese.NewTermString(test.H),
 				}),
 			},
@@ -56,19 +58,77 @@ func (c *TestClient) Run(tests []Test) {
 
 		err = websocket.JSON.Send(c.conn, request)
 		if err != nil {
-			panic("Could not connect to server: " + err.Error())
+			panic("Could not send to server: " + err.Error())
 		}
+
+		ok := true
 
 		for true {
 
 			response := mentalese.Response{}
+			var err error = nil
 
-			websocket.JSON.Receive(c.conn, &response)
+			err = websocket.JSON.Receive(c.conn, &response)
+			if err != nil {
+				fmt.Println(err)
+			}
 
-			fmt.Printf("result: %v", response)
+			fmt.Printf("result: %v\n", response)
 
+			first := response.Message[0]
+			if first.Predicate == mentalese.PredicatePrint {
+
+				c.Send(
+					mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+						mentalese.NewTermRelationSet([]mentalese.Relation{first}),
+					}),
+				)
+
+				answer := first.Arguments[1].TermValue
+				println("      " + answer)
+				if answer != test.C {
+					ok = false
+					println("ERROR expected " + test.C + ", got: " + answer)
+				}
+
+				// break
+			}
+			if first.Predicate == "dom_action_move_to" {
+
+				println("move")
+				for _, relation := range response.Message {
+					c.Send(
+						mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
+							mentalese.NewTermRelationSet([]mentalese.Relation{relation}),
+						}),
+					)
+				}
+
+			}
+			if first.Predicate == "go_processlist_clear" {
+				println("cool! notification of all empty processes!")
+				break
+			}
+		}
+
+		if !ok {
 			break
 		}
 
+	}
+}
+
+func (c *TestClient) Send(message mentalese.Relation) {
+	request := mentalese.Request{
+		SessionId:      SESSION_ID,
+		ApplicationDir: c.applicationDir,
+		WorkDir:        c.workDir,
+		Command:        "send",
+		Message:        []mentalese.Relation{message},
+	}
+
+	err := websocket.JSON.Send(c.conn, request)
+	if err != nil {
+		panic("Could not send to server: " + err.Error())
 	}
 }

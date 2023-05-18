@@ -2,13 +2,14 @@
 
 ## up to 2 processes, websockets
 
-- change the process list into just 2 processes
+- OK change the process list into just 2 processes
+- OK `create_goal` should create an action process, if possible
+- OK `createOrUpdateProcess` should create or update a language process
 - change the server into a websockets server
-- `create_goal` should create an action process, if possible
-- `createOrUpdateProcess` should create or update a language process
 - `sendMessage` should directly send a message to the client
 - if a message comes in, the system notifies the waiting process https://medium.com/@josueparra2892/golang-channels-8b22570cbfca
 - make the javascript routine use websockets
+- send errors and productions as separate messages
 
 ## inbox
 

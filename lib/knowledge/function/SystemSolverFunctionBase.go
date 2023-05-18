@@ -15,14 +15,16 @@ type SystemSolverFunctionBase struct {
 	dialogContext *central.DialogContext
 	meta          *mentalese.Meta
 	log           *common.SystemLog
+	client        api.ClientConnector
 }
 
-func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog) *SystemSolverFunctionBase {
+func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog, client api.ClientConnector) *SystemSolverFunctionBase {
 	return &SystemSolverFunctionBase{
 		KnowledgeBaseCore: knowledge.KnowledgeBaseCore{Name: "nested-structure"},
 		dialogContext:     dialogContext,
 		meta:              meta,
 		log:               log,
+		client:            client,
 	}
 }
 

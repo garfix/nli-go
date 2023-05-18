@@ -1,12 +1,10 @@
-package server
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 type Response struct {
 	Success     bool
 	ErrorLines  []string
 	Productions []string
-	Message     mentalese.RelationSet
+	Message     RelationSet
 }
 
 type ResponseAnswer struct {

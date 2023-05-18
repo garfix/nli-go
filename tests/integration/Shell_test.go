@@ -11,7 +11,7 @@ import (
 func TestShell(t *testing.T) {
 
 	log := common.NewSystemLog()
-	system := global.NewSystem(common.Dir() + "/../../resources/shell", "", common.Dir() + "/../../var", log)
+	system := global.NewSystem(common.Dir()+"/../../resources/shell", "", common.Dir()+"/../../var", log, nil)
 
 	if !log.IsOk() {
 		t.Errorf(log.String())

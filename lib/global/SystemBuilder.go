@@ -15,6 +15,7 @@ import (
 	"regexp"
 	"strings"
 
+	"golang.org/x/net/websocket"
 	"gopkg.in/yaml.v2"
 )
 
@@ -26,12 +27,13 @@ type systemBuilder struct {
 	parser             *importer.InternalGrammarParser
 	loadedModules      []string
 	applicationAliases map[string]string
+	conn               *websocket.Conn
 }
 
 // systemDir: absolute base dir of the interaction system
 // outputDir: absolute base dir of all output files
 // log: the log file that will store progress and errors
-func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog) *System {
+func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog, conn *websocket.Conn) *System {
 
 	system := &System{log: log}
 
@@ -41,13 +43,13 @@ func NewSystem(systemDir string, sessionId string, varDir string, log *common.Sy
 		return system
 	}
 
-	builder := newSystemBuilder(absolutePath, sessionId, varDir, log)
+	builder := newSystemBuilder(absolutePath, sessionId, varDir, log, conn)
 	builder.build(system)
 
 	return system
 }
 
-func newSystemBuilder(baseDir string, sessionId string, varDir string, log *common.SystemLog) *systemBuilder {
+func newSystemBuilder(baseDir string, sessionId string, varDir string, log *common.SystemLog, conn *websocket.Conn) *systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
@@ -58,6 +60,7 @@ func newSystemBuilder(baseDir string, sessionId string, varDir string, log *comm
 		varDir:    varDir,
 		parser:    parser,
 		log:       log,
+		conn:      conn,
 	}
 }
 
@@ -133,11 +136,12 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	solverAsync.AddMultipleBindingBase(systemMultiBindingBase)
 
 	system.dialogContext = central.NewDialogContext(variableGenerator)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(system.dialogContext, system.meta, builder.log, system.clientConnector)
 	solverAsync.AddSolverFunctionBase(nestedStructureBase)
-
 	system.solver = solverAsync
+
 	system.processRunner = central.NewProcessRunner(system.processList, solverAsync, builder.log)
+	system.clientConnector = system.CreatClientConnector(builder.conn)
 
 	system.nameResolver = central.NewNameResolver(solverAsync, system.meta, builder.log)
 	system.answerer = central.NewAnswerer(matcher, builder.log)

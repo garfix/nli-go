@@ -5,11 +5,16 @@ import (
 	"image/color"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
+	"nli-go/lib/server"
 	"strconv"
 	"testing"
 
 	"github.com/tidwall/pinhole"
 )
+
+type Req struct {
+	Hello int
+}
 
 // Mimics some of SHRDLU's functions, but in the nli-go way
 
@@ -121,11 +126,28 @@ func TestBlocksWorld(t *testing.T) {
 
 	log := common.NewSystemLog()
 
+	srv := server.NewServer("3333")
+	srv.Run()
+	defer srv.Close()
+
+	client := server.CreateTestClient(
+		common.Dir()+"/../../resources/blocks", common.Dir()+"/../../var",
+	)
+	defer client.Close()
+
+	client.Run([]server.Test{
+		{"Does the table support the big red block?", "Yes"},
+	})
+
+	// createImage(system)
+
+	return
+
 	for _, session := range tests {
 
 		// log.SetDebug(true)
 		// log.SetPrint(true)
-		system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
+		// system := global.NewSystem(common.Dir()+"/../../resources/blocks", "blocks-demo", common.Dir()+"/../../var", log)
 
 		if !log.IsOk() {
 			t.Errorf(log.String())
@@ -145,11 +167,13 @@ func TestBlocksWorld(t *testing.T) {
 
 			fmt.Println(test.question)
 
-			answer, options := system.Answer(test.question)
+			answer := "x"
 
-			if options.HasOptions() {
-				answer += options.String()
-			}
+			// answer, options := system.Answer(test.question)
+
+			// if options.HasOptions() {
+			// 	answer += options.String()
+			// }
 
 			//createImage(system)
 
@@ -166,7 +190,7 @@ func TestBlocksWorld(t *testing.T) {
 			}
 		}
 
-		createImage(system)
+		// createImage(system)
 		break
 	}
 }

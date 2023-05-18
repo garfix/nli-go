@@ -1,12 +1,11 @@
-package server
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 type Request struct {
 	SessionId      string
 	ApplicationDir string
 	WorkDir        string
 	Command        string
-	Message        mentalese.RelationSet
+	Message        RelationSet
 	Query          string
+	ProcessType    string
 }

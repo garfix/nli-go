@@ -2,6 +2,7 @@ package global
 
 import (
 	"fmt"
+	"nli-go/lib/api"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/generate"
@@ -9,6 +10,8 @@ import (
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse"
 	"strconv"
+
+	"golang.org/x/net/websocket"
 )
 
 type System struct {
@@ -27,12 +30,24 @@ type System struct {
 	surfacer              *generate.SurfaceRepresentation
 	processList           *central.ProcessList
 	processRunner         *central.ProcessRunner
+	clientConnector       api.ClientConnector
 
 	waitingFor *mentalese.Relation
 }
 
 func (system *System) GetLog() *common.SystemLog {
 	return system.log
+}
+
+func (system *System) GetClientConnector() api.ClientConnector {
+	return system.clientConnector
+}
+
+func (system *System) CreatClientConnector(conn *websocket.Conn) *ClientConnector {
+	return &ClientConnector{
+		conn:   conn,
+		system: system,
+	}
 }
 
 // Low-level function to inspect the internal state of the system

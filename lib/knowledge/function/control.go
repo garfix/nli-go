@@ -6,7 +6,6 @@ import (
 	"nli-go/lib/mentalese"
 	"os/exec"
 	"strconv"
-	"time"
 )
 
 func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -208,30 +207,36 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 
 	newBindings := mentalese.NewBindingSet()
 
-	sent := false
+	println("sent " + child.String())
 
-	const timeout = 20000
+	base.client.SendToClient("", child)
 
-	// todo: refine, timeout configurable
-	for i := 0; true; i++ {
+	// response := base.client.WaitForResponse()
 
-		newBindings = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
-		if !newBindings.IsEmpty() {
-			break
-		}
+	// sent := false
 
-		if !sent {
-			sent = true
-			messenger.SendMessage(child.BindSingle(binding))
-		}
+	// const timeout = 20000
 
-		if i == timeout {
-			// make sure that the process finishes
-			break
-		}
+	// // todo: refine, timeout configurable
+	// for i := 0; true; i++ {
 
-		time.Sleep(time.Millisecond)
-	}
+	// 	newBindings = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
+	// 	if !newBindings.IsEmpty() {
+	// 		break
+	// 	}
+
+	// 	if !sent {
+	// 		sent = true
+	// 		messenger.SendMessage(child.BindSingle(binding))
+	// 	}
+
+	// 	if i == timeout {
+	// 		// make sure that the process finishes
+	// 		break
+	// 	}
+
+	// 	time.Sleep(time.Millisecond)
+	// }
 
 	return newBindings
 }

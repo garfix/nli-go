@@ -18,7 +18,7 @@ type RequestHandler struct {
 func (handler *RequestHandler) panicHandler() {
 	if r := recover(); r != nil {
 		errorString := fmt.Sprintf("%s\n%s", r, debug.Stack())
-		response := Response{
+		response := mentalese.Response{
 			Success:    false,
 			ErrorLines: strings.Split(errorString, "\n"),
 		}
@@ -37,7 +37,7 @@ func (handler *RequestHandler) handleSend(system *global.System, inMessage menta
 
 	outMMessage := system.SendAndWaitForResponse(inMessage)
 
-	response := Response{
+	response := mentalese.Response{
 		Success:     log.IsOk(),
 		ErrorLines:  log.GetErrors(),
 		Productions: log.GetProductions(),
@@ -71,7 +71,7 @@ func (handler *RequestHandler) handleAnswer(system *global.System, query string)
 		message = options.String()
 	}
 
-	response := ResponseAnswer{
+	response := mentalese.ResponseAnswer{
 		Success:     log.IsOk(),
 		ErrorLines:  log.GetErrors(),
 		Productions: log.GetProductions(),
@@ -128,7 +128,7 @@ func (handler *RequestHandler) performTests(system *global.System, applicationDi
 
 end:
 
-	response := ResponseAnswer{
+	response := mentalese.ResponseAnswer{
 		Success:     log.IsOk(),
 		ErrorLines:  log.GetErrors(),
 		Productions: log.GetProductions(),

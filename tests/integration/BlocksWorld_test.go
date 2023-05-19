@@ -27,9 +27,7 @@ func TestBlocksWorld(t *testing.T) {
 
 	time.Sleep(500 * time.Millisecond)
 
-	client := server.CreateTestClient(
-		common.Dir()+"/../../resources/blocks", common.Dir()+"/../../var",
-	)
+	client := server.CreateTestClient("blocks")
 	defer client.Close()
 
 	client.Run([]server.Test{

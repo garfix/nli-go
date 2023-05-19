@@ -89,8 +89,8 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 			go client.handleAnswer(system, request.Query)
 
 		case "test":
-			client := &RequestHandler{conn: conn}
-			go client.performTests(system, request.ApplicationDir)
+			// client := &RequestHandler{conn: conn}
+			// go client.performTests(system, request.ApplicationDir)
 
 		default:
 			response := mentalese.Response{
@@ -222,7 +222,11 @@ func (server *Server) Close() {
 func (server *Server) getSystem(request mentalese.Request, conn *websocket.Conn) *global.System {
 	system, found := server.systems[request.SessionId]
 	if !found {
-		system = buildSystem(request.WorkDir, request.ApplicationDir, request.SessionId, request.WorkDir, conn)
+
+		applicationDir := common.Dir() + "/../../resources/blocks"
+		workDir := common.Dir() + "/../../var"
+
+		system = buildSystem(workDir, applicationDir, request.SessionId, workDir, conn)
 		server.systems[request.SessionId] = system
 	}
 	return system

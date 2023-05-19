@@ -8,14 +8,13 @@ import (
 )
 
 type TestClient struct {
-	conn           *websocket.Conn
-	applicationDir string
-	workDir        string
+	conn       *websocket.Conn
+	systemName string
 }
 
 const SESSION_ID = "test123"
 
-func CreateTestClient(applicationDir string, workDir string) *TestClient {
+func CreateTestClient(systemName string) *TestClient {
 
 	address := "ws://localhost:3333/"
 	conn, err := websocket.Dial(address, "", address)
@@ -24,9 +23,8 @@ func CreateTestClient(applicationDir string, workDir string) *TestClient {
 	}
 
 	return &TestClient{
-		conn:           conn,
-		applicationDir: applicationDir,
-		workDir:        workDir,
+		conn:       conn,
+		systemName: systemName,
 	}
 }
 
@@ -46,11 +44,9 @@ func (c *TestClient) Run(tests []Test) {
 		println("TEST: " + test.H)
 
 		request := mentalese.Request{
+			System:    c.systemName,
 			SessionId: SESSION_ID,
-			// todo: just send the application's name; this is insecure information
-			ApplicationDir: c.applicationDir,
-			WorkDir:        c.workDir,
-			Command:        "send",
+			Command:   "send",
 			Message: mentalese.RelationSet{
 				mentalese.NewRelation(false, "go_respond", []mentalese.Term{
 					mentalese.NewTermString(test.H),
@@ -132,11 +128,10 @@ func (c *TestClient) Run(tests []Test) {
 
 func (c *TestClient) Send(message mentalese.Relation) {
 	request := mentalese.Request{
-		SessionId:      SESSION_ID,
-		ApplicationDir: c.applicationDir,
-		WorkDir:        c.workDir,
-		Command:        "send",
-		Message:        []mentalese.Relation{message},
+		SessionId: SESSION_ID,
+		System:    c.systemName,
+		Command:   "send",
+		Message:   []mentalese.Relation{message},
 	}
 
 	err := websocket.JSON.Send(c.conn, request)

@@ -32,17 +32,18 @@ func (server *Server) Run() {
 
 	http.Handle("/", websocket.Handler(server.HandleSingleConnection))
 
-	go func() {
+	println("NLI-GO server listening on " + server.httpServer.Addr + "\n")
 
-		println("NLI-GO server listening on " + server.httpServer.Addr + "\n")
+	err := server.httpServer.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		panic("ListenAndServe: " + err.Error())
+	}
 
-		err := server.httpServer.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
-			panic("ListenAndServe: " + err.Error())
-		}
+	println("Server closed")
+}
 
-		println("Server closed")
-	}()
+func (server *Server) RunInBackground() {
+	go server.Run()
 }
 
 func (server *Server) HandleSingleConnection(conn *websocket.Conn) {

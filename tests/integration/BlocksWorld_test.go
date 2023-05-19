@@ -22,7 +22,7 @@ type Req struct {
 func TestBlocksWorld(t *testing.T) {
 
 	srv := server.NewServer("3333")
-	srv.Run()
+	srv.RunInBackground()
 	defer srv.Close()
 
 	time.Sleep(500 * time.Millisecond)

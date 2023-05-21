@@ -50,6 +50,27 @@ func (system *System) CreatClientConnector(conn *websocket.Conn) *ClientConnecto
 	}
 }
 
+func (system *System) HandleRequest(request mentalese.Request) {
+	switch request.Command {
+	case "send":
+		message := request.Message
+		first := message[0]
+		// todo: remove this!
+		if first.Predicate == mentalese.PredicateRespond {
+			system.processRunner.StartProcess(
+				central.LANGUAGE_PROCESS,
+				message,
+				mentalese.NewBinding())
+		} else {
+			system.RunRelationSet(request.ProcessType, message)
+		}
+	}
+}
+
+func (system *System) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
+	return system.processRunner.RunRelationSet(processType, relationSet)
+}
+
 // Low-level function to inspect the internal state of the system
 func (system *System) Query(relations string) mentalese.BindingSet {
 	set := system.internalGrammarParser.CreateRelationSet(relations)

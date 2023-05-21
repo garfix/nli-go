@@ -4,12 +4,13 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"nli-go/lib/api"
 	"nli-go/lib/common"
 	"nli-go/lib/global"
 	"nli-go/lib/mentalese"
+	"nli-go/resources/blocks"
 	"path/filepath"
 
 	"golang.org/x/net/websocket"
@@ -17,14 +18,14 @@ import (
 
 type Server struct {
 	httpServer *http.Server
-	systems    map[string]*global.System
+	systems    map[string]api.System
 }
 
 func NewServer(port string) *Server {
 	server := &http.Server{Addr: ":" + port}
 	return &Server{
 		httpServer: server,
-		systems:    map[string]*global.System{},
+		systems:    map[string]api.System{},
 	}
 }
 
@@ -65,43 +66,47 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
 		fmt.Printf("%s\t%s\t%s\n", request.SessionId, request.Command, request.Query+request.Message.String())
 
-		system := server.getSystem(request, conn)
-		switch request.Command {
-		case "send":
-			// client := &RequestHandler{conn: conn}
-			// go client.handleSend(system, request.Message)
-			system.GetClientConnector().SendToProcess(request.ProcessType, request.Message)
+		system := server.getSystem(conn, request)
 
-		case "reset":
-			delete(server.systems, request.SessionId)
-			response := mentalese.Response{
-				Success: true,
-			}
-			responseJSON, _ := json.Marshal(response)
-			conn.Write(responseJSON)
-			conn.Close()
+		system.HandleRequest(request)
 
-		case "query":
-			client := &RequestHandler{conn: conn}
-			go client.handleQuery(system, request.Query)
+		// switch request.Command {
+		// case "send":
+		// 	// client := &RequestHandler{conn: conn}
+		// 	// go client.handleSend(system, request.Message)
+		// 	system.GetClientConnector().SendToProcess(request.ProcessType, request.Message)
 
-		case "answer":
-			client := &RequestHandler{conn: conn}
-			go client.handleAnswer(system, request.Query)
+		// case "reset":
+		// 	delete(server.systems, request.SessionId)
+		// 	response := mentalese.Response{
+		// 		Success: true,
+		// 	}
+		// 	responseJSON, _ := json.Marshal(response)
+		// 	conn.Write(responseJSON)
+		// 	conn.Close()
 
-		case "test":
-			// client := &RequestHandler{conn: conn}
-			// go client.performTests(system, request.ApplicationDir)
+		// case "query":
+		// 	// client := &RequestHandler{conn: conn}
+		// 	// go client.handleQuery(system, request.Query)
+		// 	println("query!")
 
-		default:
-			response := mentalese.Response{
-				Success:    false,
-				ErrorLines: []string{"Unknown command: " + request.Command},
-			}
-			responseJSON, _ := json.Marshal(response)
-			conn.Write(responseJSON)
-			conn.Close()
-		}
+		// case "answer":
+		// 	client := &RequestHandler{conn: conn}
+		// 	go client.handleAnswer(system, request.Query)
+
+		// case "test":
+		// 	// client := &RequestHandler{conn: conn}
+		// 	// go client.performTests(system, request.ApplicationDir)
+
+		// default:
+		// 	response := mentalese.Response{
+		// 		Success:    false,
+		// 		ErrorLines: []string{"Unknown command: " + request.Command},
+		// 	}
+		// 	responseJSON, _ := json.Marshal(response)
+		// 	conn.Write(responseJSON)
+		// 	// conn.Close()
+		// }
 
 	}
 }
@@ -220,20 +225,34 @@ func (server *Server) Close() {
 // 	}
 // }
 
-func (server *Server) getSystem(request mentalese.Request, conn *websocket.Conn) *global.System {
-	system, found := server.systems[request.SessionId]
-	if !found {
+func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request) api.System {
+	// system, found := server.systems[request.SessionId]
+	// if !found {
 
-		applicationDir := common.Dir() + "/../../resources/blocks"
-		workDir := common.Dir() + "/../../var"
-
-		system = buildSystem(workDir, applicationDir, request.SessionId, workDir, conn)
-		server.systems[request.SessionId] = system
+	system, found := server.systems[request.System]
+	if found {
+		return system
 	}
+
+	applicationDir := common.Dir() + "/../../resources/" + request.System
+	workDir := common.Dir() + "/../../var"
+
+	sessionId := common.CreateUuid()
+
+	system = buildSystem(workDir, applicationDir, sessionId, workDir, conn)
+	// server.systems[request.SessionId] = system
+	// }
+
+	if request.System == "blocks" {
+		blocks.CreateBlocksSystem(system)
+	}
+
+	server.systems[request.System] = system
+
 	return system
 }
 
-func buildSystem(workingDir string, applicationPath string, sessionId string, outputDir string, conn *websocket.Conn) *global.System {
+func buildSystem(workingDir string, applicationPath string, sessionId string, outputDir string, conn *websocket.Conn) api.System {
 	absApplicationPath := common.AbsolutePath(workingDir, applicationPath)
 
 	systemLog := common.NewSystemLog()

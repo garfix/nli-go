@@ -10,6 +10,9 @@
 - if a message comes in, the system notifies the waiting process https://medium.com/@josueparra2892/golang-channels-8b22570cbfca
 - make the javascript routine use websockets
 - send errors and productions as separate messages
+- DON'T allow the client to send random actions to the server (it has the exec function! that allows execution of random code)
+- make client/server generic or specific?
+- split the repo in two: generic / demos, with demos depending on generic and creating a custom server
 
 ## inbox
 

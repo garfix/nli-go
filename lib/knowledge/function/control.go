@@ -237,6 +237,7 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 			break
 		}
 
+		// println(child.BindSingle(binding).String())
 		time.Sleep(time.Millisecond)
 	}
 

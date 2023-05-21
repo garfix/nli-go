@@ -20,7 +20,10 @@ $(function(){
     let scene = createScene();
     let currentInput = "";
 
+    let webSocket = null;
+
     function setup() {
+
         monitor.style.height = displayHeight + "px";
 
         optionPopupCloseButton.onclick = function() {
@@ -66,7 +69,17 @@ $(function(){
             }
         }
 
-        updateScene(true)
+        webSocket = new WebSocket("ws://127.0.0.1:3333/");
+        webSocket.onopen = () => {
+            updateScene(true)
+        }
+        webSocket.onmessage = (event) => {
+            handleIncomingMessage(JSON.parse(event.data))
+        }
+    }
+
+    function handleIncomingMessage(message) {
+        console.log(message)
     }
 
     function clearProductions() {
@@ -223,15 +236,29 @@ $(function(){
     }
 
     function tell(input) {
-        sendRequest([{
-            predicate: 'go_tell',
-            arguments: [
-                {
-                    type: 'string',
-                    value: input
-                }
-            ]
-        }]);
+        // sendRequest([{
+        //     predicate: 'go_tell',
+        //     arguments: [
+        //         {
+        //             type: 'string',
+        //             value: input
+        //         }
+        //     ]
+        // }]);
+
+        webSocket.send(JSON.stringify({
+            System: "blocks",
+            Command: "send",
+            Message: {
+                predicate: 'go_respond',
+                arguments: [
+                    {
+                        type: 'string',
+                        value: input
+                    }
+                ]
+            }
+        }))
     }
 
     function getAssert(assertion) {
@@ -288,22 +315,27 @@ $(function(){
     }
 
     function updateScene(initial) {
-        $.ajax({
-            url: 'scene.php',
-            data: { format: "json", action: "state" },
-            dataType: 'json',
-            type: 'GET',
-            success: function (data) {
-                if (initial) {
-                    scene.build(monitor, data, displayWidth, displayHeight)
-                } else {
-                    scene.update(data)
-                }
-            },
-            error: function (request, status, error) {
-                showError(error)
-            }
-        });
+        // $.ajax({
+        //     url: 'scene.php',
+        //     data: { format: "json", action: "state" },
+        //     dataType: 'json',
+        //     type: 'GET',
+        //     success: function (data) {
+        //         if (initial) {
+        //             scene.build(monitor, data, displayWidth, displayHeight)
+        //         } else {
+        //             scene.update(data)
+        //         }
+        //     },
+        //     error: function (request, status, error) {
+        //         showError(error)
+        //     }
+        // });
+        webSocket.send(JSON.stringify({
+            System: "blocks",
+            Command: "query",
+            Query: "dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)"
+        }))
     }
 
     setup();

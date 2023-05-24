@@ -8,6 +8,7 @@
 - change the server into a websockets server
 - `sendMessage` should directly send a message to the client
 - if a message comes in, the system notifies the waiting process https://medium.com/@josueparra2892/golang-channels-8b22570cbfca
+- remove processType from sending relations
 - make the javascript routine use websockets
 - send errors and productions as separate messages
 - DON'T allow the client to send random actions to the server (it has the exec function! that allows execution of random code)

@@ -25,9 +25,11 @@ func (c *ClientConnector) SendToProcess(processType string, message mentalese.Re
 	}
 }
 
-func (c *ClientConnector) SendToClient(processType string, message mentalese.RelationSet) {
-	println("client connector sending!")
+func (c *ClientConnector) SendToClient(processType string, messageType string, message interface{}) {
+	println("client connector sending! " + messageType)
 	response := mentalese.Response{
+		ProcessType: processType,
+		MessageType: messageType,
 		Success:     true,
 		ErrorLines:  []string{},
 		Productions: []string{},

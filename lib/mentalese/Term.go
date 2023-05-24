@@ -319,6 +319,35 @@ func (term Term) Resolve(binding Binding) Term {
 	return resolved
 }
 
+func (term Term) AsSimple() interface{} {
+	switch term.TermType {
+	case TermTypePredicateAtom:
+		return term.TermValue
+	case TermTypeStringConstant:
+		number, ok := term.GetNumber()
+		if !ok {
+			return "NaN"
+		} else {
+			return number
+		}
+	case TermTypeRelationSet:
+		list := []interface{}{}
+		for _, relation := range term.TermValueRelationSet {
+			list = append(list, relation.AsSimple())
+		}
+		return list
+	case TermTypeId:
+		return term.TermSort + ":" + term.TermValue
+	case TermTypeList:
+		list := []interface{}{}
+		for _, item := range term.TermValueList {
+			list = append(list, item.AsSimple())
+		}
+		return list
+	}
+	return "unsupported: " + term.TermType
+}
+
 func (term Term) String() string {
 
 	s := ""

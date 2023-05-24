@@ -134,12 +134,18 @@ func (b Binding) Copy() Binding {
 // Binds the variables of b to the values of c
 // example:
 // b: A = E
-//    B = 3
+//
+//	B = 3
+//
 // c: E = 5
-//    F = 6
+//
+//	F = 6
+//
 // result:
-//    A = 5
-//    B = 3
+//
+//	A = 5
+//	B = 3
+//
 // note: F is discarded
 func (b Binding) Bind(c Binding) Binding {
 
@@ -290,4 +296,13 @@ func (b Binding) Equals(c Binding) bool {
 	}
 
 	return true
+}
+
+func (b Binding) AsSimple() map[string]interface{} {
+	result := map[string]interface{}{}
+	for key, value := range b.GetAll() {
+		result[key] = value.AsSimple()
+	}
+
+	return result
 }

@@ -12,15 +12,16 @@ import (
 
 type LanguageBase struct {
 	KnowledgeBaseCore
-	matcher       *central.RelationMatcher
-	grammars      []parse.Grammar
-	relationizer  *parse.Relationizer
-	meta          *mentalese.Meta
-	dialogContext *central.DialogContext
-	nameResolver  *central.NameResolver
-	answerer      *central.Answerer
-	generator     *generate.Generator
-	log           *common.SystemLog
+	matcher         *central.RelationMatcher
+	grammars        []parse.Grammar
+	relationizer    *parse.Relationizer
+	meta            *mentalese.Meta
+	dialogContext   *central.DialogContext
+	nameResolver    *central.NameResolver
+	answerer        *central.Answerer
+	generator       *generate.Generator
+	clientConnector api.ClientConnector
+	log             *common.SystemLog
 }
 
 func NewLanguageBase(
@@ -32,6 +33,7 @@ func NewLanguageBase(
 	nameResolver *central.NameResolver,
 	answerer *central.Answerer,
 	generator *generate.Generator,
+	clientConnector api.ClientConnector,
 	log *common.SystemLog) *LanguageBase {
 	return &LanguageBase{
 		KnowledgeBaseCore: KnowledgeBaseCore{name},
@@ -43,6 +45,7 @@ func NewLanguageBase(
 		nameResolver:      nameResolver,
 		answerer:          answerer,
 		generator:         generator,
+		clientConnector:   clientConnector,
 		log:               log,
 	}
 }
@@ -155,7 +158,12 @@ func (base *LanguageBase) respond(messenger api.ProcessMessenger, input mentales
 		output = resolvedRemark + "\n" + output
 	}
 
-	return base.waitForPrint(messenger, output)
+	ok := base.waitForPrint(messenger, output)
+	if !ok {
+		return mentalese.NewBindingSet()
+	}
+
+	return mentalese.InitBindingSet(binding)
 }
 
 func (base *LanguageBase) processRootClause(
@@ -284,21 +292,29 @@ func (base *LanguageBase) addTagsToDatabase(tags mentalese.RelationSet, messenge
 	messenger.ExecuteChildStackFrame(asserts, mentalese.InitBindingSet(mentalese.NewBinding()))
 }
 
-func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) mentalese.BindingSet {
-	uuid := common.CreateUuid()
-	set := mentalese.RelationSet{
-		mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
-			mentalese.NewTermRelationSet(
-				mentalese.RelationSet{
-					mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
-						mentalese.NewTermId(uuid, "entity"),
-						mentalese.NewTermString(output),
-					}),
-				}),
-		}),
+func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) bool {
+	// uuid := common.CreateUuid()
+	// set := mentalese.RelationSet{
+	// 	mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
+	// 		mentalese.NewTermRelationSet(
+	// 			mentalese.RelationSet{
+	// 				mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
+	// 					mentalese.NewTermId(uuid, "entity"),
+	// 					mentalese.NewTermString(output),
+	// 				}),
+	// 			}),
+	// 	}),
+	// }
+	// bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
+	//clientConnector?
+	base.clientConnector.SendToClient(central.LANGUAGE_PROCESS, "print", output)
+
+	message := <-messenger.GetProcess().GetChannel()
+	if message.Message.(string) == "OK" {
+		return true
+	} else {
+		return false
 	}
-	bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-	return bindings
 }
 
 func (base *LanguageBase) dialogAddResponseClause(clauseList *mentalese.ClauseList, deicticCenter *mentalese.DeicticCenter, essentialResponseBindings mentalese.BindingSet) {

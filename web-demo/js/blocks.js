@@ -80,6 +80,41 @@ $(function(){
 
     function handleIncomingMessage(message) {
         console.log(message)
+        switch (message.MessageType) {
+            case "description":
+                scene.build(monitor, message.Message, displayWidth, displayHeight)
+                break
+            case "print":
+                print(message.Message)
+                send("language", "ok", "")
+                break
+            case "move_to":
+                doMoveTo(message.ProcessType, message.Message[0])
+                break
+        }
+    }
+
+    function doMoveTo(processType, moves) {
+        let maxDuration = 0;
+        let animations = [];
+
+        for (const move of moves) {
+            let result = scene.createObjectAnimation({
+                E: move[0],
+                X: move[1],
+                Y: move[3],
+                Z: move[2]
+            })
+            animations.push(result.animation)
+            maxDuration = Math.max(maxDuration, result.duration)
+        }
+
+        if (animations.length > 0) {
+            scene.runAnimations(animations, maxDuration)
+        }
+        window.setTimeout(function (){
+            send("robot", "ok", "")
+        }, maxDuration);
     }
 
     function clearProductions() {
@@ -144,95 +179,104 @@ $(function(){
     }
 
     function reset() {
-        $.ajax({
-            url: 'scene.php',
-            data: { format: "json", action: 'reset' },
-            dataType: 'json',
-            type: 'GET',
-            success: function () {
-                window.location.reload();
-            },
-            error: function (request, status, error) {
-                showError(error)
-            }
-        });
+        // $.ajax({
+        //     url: 'scene.php',
+        //     data: { format: "json", action: 'reset' },
+        //     dataType: 'json',
+        //     type: 'GET',
+        //     success: function () {
+        //         window.location.reload();
+        //     },
+        //     error: function (request, status, error) {
+        //         showError(error)
+        //     }
+        // });
     }
 
-    function sendRequest(request) {
-        $.ajax({
-            url: 'ajax-answer.php',
-            data: { format: "json", request: JSON.stringify(request), app: "blocks" },
-            dataType: 'json',
-            type: 'POST',
-            success: function (data) {
+    // function sendRequest(request) {
+    //     $.ajax({
+    //         url: 'ajax-answer.php',
+    //         data: { format: "json", request: JSON.stringify(request), app: "blocks" },
+    //         dataType: 'json',
+    //         type: 'POST',
+    //         success: function (data) {
 
-                showProductions(data.Productions);
+    //             showProductions(data.Productions);
 
-                if (data.Success) {
-                    processResponse(data.Message)
-                    showError([]);
-                } else {
-                    showAnswer("")
-                    showError(data.ErrorLines);
-                    log(currentInput, errorToHtml(data.ErrorLines))
-                }
-            },
-            error: function (request, status, error) {
-                showError(error)
-            }
-        });
-    }
+    //             if (data.Success) {
+    //                 processResponse(data.Message)
+    //                 showError([]);
+    //             } else {
+    //                 showAnswer("")
+    //                 showError(data.ErrorLines);
+    //                 log(currentInput, errorToHtml(data.ErrorLines))
+    //             }
+    //         },
+    //         error: function (request, status, error) {
+    //             showError(error)
+    //         }
+    //     });
+    // }
 
-    function processResponse(response) {
-        let asserts = [];
-        let assert;
-        let maxDuration = 0;
-        let animations = [];
+    // function processResponse(response) {
+    //     let asserts = [];
+    //     let assert;
+    //     let maxDuration = 0;
+    //     let animations = [];
 
-        for (let i = 0; i < response.length; i++) {
-            let relation = response[i];
-            switch (relation.predicate) {
-                case 'dom_action_move_to':
-                    assert = moveObject(relation)
-                    asserts.push(assert)
-                    let result = scene.createObjectAnimation({
-                        E: "`" + relation.arguments[1].sort + ":" + relation.arguments[1].value + "`",
-                        X: relation.arguments[2].value,
-                        Y: relation.arguments[4].value,
-                        Z: relation.arguments[3].value
-                    })
-                    animations.push(result.animation)
-                    maxDuration = Math.max(maxDuration, result.duration)
-                    break;
-                case 'go_print':
-                    assert = print(relation)
-                    asserts.push(assert)
-                    break;
-                case 'go_user_select':
-                    showOptionsPopup(relation)
-                    break;
-            }
-        }
+    //     for (let i = 0; i < response.length; i++) {
+    //         let relation = response[i];
+    //         switch (relation.predicate) {
+    //             case 'dom_action_move_to':
+    //                 assert = moveObject(relation)
+    //                 asserts.push(assert)
+    //                 let result = scene.createObjectAnimation({
+    //                     E: "`" + relation.arguments[1].sort + ":" + relation.arguments[1].value + "`",
+    //                     X: relation.arguments[2].value,
+    //                     Y: relation.arguments[4].value,
+    //                     Z: relation.arguments[3].value
+    //                 })
+    //                 animations.push(result.animation)
+    //                 maxDuration = Math.max(maxDuration, result.duration)
+    //                 break;
+    //             case 'go_print':
+    //                 assert = print(relation)
+    //                 asserts.push(assert)
+    //                 break;
+    //             case 'go_user_select':
+    //                 showOptionsPopup(relation)
+    //                 break;
+    //         }
+    //     }
 
-        if (animations.length > 0) {
-            scene.runAnimations(animations, maxDuration)
-        }
-        if (asserts.length > 0) {
-            window.setTimeout(function (){
-                sendRequest(asserts)
-            }, maxDuration);
-        }
-    }
+    //     if (animations.length > 0) {
+    //         scene.runAnimations(animations, maxDuration)
+    //     }
+    //     if (asserts.length > 0) {
+    //         window.setTimeout(function (){
+    //             sendRequest(asserts)
+    //         }, maxDuration);
+    //     }
+    // }
 
-    function print(relation) {
-        let answer = relation.arguments[1].value;
+    function print(answer) {
         showAnswer(answer)
         log(currentInput, answer)
-        return getAssert(relation);
+        //return getAssert(relation);
     }
 
-    function moveObject(relation) {
-        return getAssert(relation);
+    // function moveObject(relation) {
+    //     return getAssert(relation);
+    // }
+
+    function send(processType, messageType, message) {
+        console.log("send", messageType, message)
+        webSocket.send(JSON.stringify({
+            System: "blocks",
+            ProcessType: processType,
+            MessageType: messageType,
+            Message: message
+        }))
     }
 
     function tell(input) {
@@ -246,32 +290,20 @@ $(function(){
         //     ]
         // }]);
 
-        webSocket.send(JSON.stringify({
-            System: "blocks",
-            Command: "send",
-            Message: {
-                predicate: 'go_respond',
-                arguments: [
-                    {
-                        type: 'string',
-                        value: input
-                    }
-                ]
-            }
-        }))
+        send("language", "respond", input)
     }
 
-    function getAssert(assertion) {
-        return {
-            predicate: 'go_assert',
-            arguments: [
-                {
-                    "type": "relation-set",
-                    "set": [assertion]
-                }
-            ]
-        }
-    }
+    // function getAssert(assertion) {
+    //     return {
+    //         predicate: 'go_assert',
+    //         arguments: [
+    //             {
+    //                 "type": "relation-set",
+    //                 "set": [assertion]
+    //             }
+    //         ]
+    //     }
+    // }
 
     function showOptionsPopup(relation) {
 
@@ -331,11 +363,7 @@ $(function(){
         //         showError(error)
         //     }
         // });
-        webSocket.send(JSON.stringify({
-            System: "blocks",
-            Command: "query",
-            Query: "dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)"
-        }))
+        send("simple", "describe", '')
     }
 
     setup();

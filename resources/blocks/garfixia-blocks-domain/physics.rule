@@ -15,10 +15,7 @@ phys_move_hand(X, Y, Z) :-
 ;
 
 phys_move_hand_partial(X, Y, Z) :-
-    go:uuid(Uuid, event)
-    go:wait_for(
-        action_move_to(Uuid, `hand:hand`, X, Y, Z)
-    )
+    go:wait_for('move_to', _, [[`hand:hand`, X, Y, Z]])
     db_hand(X, Y, Z)
 ;
 
@@ -33,10 +30,10 @@ phys_move_hand(X, Y, Z) :-
 phys_move_hand_with_object(E1, X, Y, Z) :-
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
     go:uuid(Uuid, event)
-    go:wait_for(
-        action_move_to(Uuid, `hand:hand`, X, Y, Z)
-        action_move_to(Uuid, E1, X1, Y1, Z1)
-    )
+    go:wait_for('move_to', _, [
+        [`hand:hand`, X, Y, Z],
+        [E1, X1, Y1, Z1]
+    ])
     phys_move_object(E1, X1, Y1, Z1)
     db_hand(X, Y, Z)
 ;
@@ -81,7 +78,7 @@ phys_remove_support_relations(E1) :-
 ;
 
 check_on_top_of_at_time(E1, E2, Time) :-
-    
+
     location(P2, E2, Left2, Bottom2, Height2)
     start_time(P2, Start2)
     end_time(P2, End2)

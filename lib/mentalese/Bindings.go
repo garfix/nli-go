@@ -342,3 +342,11 @@ func (s BindingSet) SetAll(variable string, value Term) {
 		binding.Set(variable, value)
 	}
 }
+
+func (s BindingSet) AsSimple() []map[string]interface{} {
+	result := []map[string]interface{}{}
+	for _, binding := range *s.Bindings {
+		result = append(result, binding.AsSimple())
+	}
+	return result
+}

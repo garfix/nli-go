@@ -103,6 +103,7 @@ func (builder *systemBuilder) build(system *System) {
 		system.nameResolver,
 		system.answerer,
 		system.generator,
+		system.clientConnector,
 		builder.log)
 	system.solver.AddSolverFunctionBase(languageBase)
 
@@ -145,9 +146,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	callback := func(serverMessage mentalese.RelationSet) {
 		if system.processList.IsEmpty() {
-			system.clientConnector.SendToClient(central.SIMPLE_PROCESS, []mentalese.Relation{
-				mentalese.NewRelation(false, "go_processlist_clear", []mentalese.Term{}),
-			})
+			system.clientConnector.SendToClient(central.SIMPLE_PROCESS, "processlist_clear", nil)
 		}
 	}
 

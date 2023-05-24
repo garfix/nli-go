@@ -39,6 +39,13 @@ func (p *ProcessRunner) StartProcessNow(process *Process) {
 	p.list.NotifyListeners(mentalese.RelationSet{})
 }
 
+func (p *ProcessRunner) SendMessage(message mentalese.Request) {
+	process := p.list.GetProcessByType(message.ProcessType)
+	if process != nil {
+		process.GetChannel() <- message
+	}
+}
+
 func (p *ProcessRunner) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
 	bindings := mentalese.InitBindingSet(mentalese.NewBinding())
 	return p.RunRelationSetWithBindings(processType, relationSet, bindings)

@@ -9,9 +9,6 @@ func CreateSimpleClientConnector() *SimpleClientConnector {
 	return &SimpleClientConnector{}
 }
 
-func (c *SimpleClientConnector) SendToProcess(processType string, message mentalese.RelationSet) {
-
-}
-func (c *SimpleClientConnector) SendToClient(processType string, message mentalese.RelationSet) {
+func (c *SimpleClientConnector) SendToClient(processType string, messageType string, message mentalese.RelationSet) {
 
 }

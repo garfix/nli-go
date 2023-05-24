@@ -44,14 +44,9 @@ func (c *TestClient) Run(tests []Test) {
 		println("TEST: " + test.H)
 
 		request := mentalese.Request{
-			System:    c.systemName,
-			SessionId: SESSION_ID,
-			Command:   "send",
-			Message: mentalese.RelationSet{
-				mentalese.NewRelation(false, "go_respond", []mentalese.Term{
-					mentalese.NewTermString(test.H),
-				}),
-			},
+			System:      c.systemName,
+			MessageType: mentalese.MessageRespond,
+			Message:     test.H,
 		}
 
 		err = websocket.JSON.Send(c.conn, request)
@@ -73,14 +68,12 @@ func (c *TestClient) Run(tests []Test) {
 
 			fmt.Printf("result: %v\n", response)
 
-			first := response.Message[0]
-			if first.Predicate == mentalese.PredicatePrint {
+			if response.MessageType == mentalese.PredicatePrint {
 
-				c.Send(
-					mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-						mentalese.NewTermRelationSet([]mentalese.Relation{first}),
-					}),
-				)
+				var relations []interface{} = (response.Message).([]interface{})
+				first := relations[0].(mentalese.Relation)
+
+				c.Send(mentalese.MessageAnswer, "OK")
 
 				answer := first.Arguments[1].TermValue
 				println("      " + answer)
@@ -91,29 +84,21 @@ func (c *TestClient) Run(tests []Test) {
 
 				// break
 			}
-			if first.Predicate == "dom_action_move_to" {
+			if response.MessageType == "move_to" {
 
 				println("move")
-				for _, relation := range response.Message {
-					c.Send(
-						mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-							mentalese.NewTermRelationSet([]mentalese.Relation{relation}),
-						}),
-					)
-				}
+				c.Send(mentalese.MessageAnswer, "OK")
 
 			}
-			if first.Predicate == "go_user_select" {
+			if response.MessageType == "choice" {
+				var relations []interface{} = (response.Message).([]interface{})
+				first := relations[0].(mentalese.Relation)
 				answer := first.Copy()
 				answer.Arguments[2] = mentalese.NewTermString(test.Clarifications[clarificationIndex])
 				clarificationIndex++
-				c.Send(
-					mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
-						mentalese.NewTermRelationSet([]mentalese.Relation{answer}),
-					}),
-				)
+				c.Send(mentalese.MessageAnswer, test.Clarifications[clarificationIndex])
 			}
-			if first.Predicate == "go_processlist_clear" {
+			if response.MessageType == "done" {
 				println("cool! notification of all empty processes!")
 				break
 			}
@@ -126,12 +111,11 @@ func (c *TestClient) Run(tests []Test) {
 	}
 }
 
-func (c *TestClient) Send(message mentalese.Relation) {
+func (c *TestClient) Send(messageType string, message string) {
 	request := mentalese.Request{
-		SessionId: SESSION_ID,
-		System:    c.systemName,
-		Command:   "send",
-		Message:   []mentalese.Relation{message},
+		System:      c.systemName,
+		MessageType: messageType,
+		Message:     message,
 	}
 
 	err := websocket.JSON.Send(c.conn, request)

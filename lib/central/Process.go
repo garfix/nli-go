@@ -9,6 +9,7 @@ type Process struct {
 	GoalId      string
 	Stack       []*StackFrame
 	Slots       map[string]mentalese.Term
+	channel     chan mentalese.Request
 }
 
 func NewProcess(processType string, goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
@@ -18,8 +19,17 @@ func NewProcess(processType string, goalId string, goalSet mentalese.RelationSet
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},
-		Slots: map[string]mentalese.Term{},
+		Slots:   map[string]mentalese.Term{},
+		channel: make(chan mentalese.Request),
 	}
+}
+
+func (p *Process) GetType() string {
+	return p.ProcessType
+}
+
+func (p *Process) GetChannel() chan mentalese.Request {
+	return p.channel
 }
 
 func (p *Process) PushFrame(frame *StackFrame) {

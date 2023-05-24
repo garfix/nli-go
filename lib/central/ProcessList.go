@@ -2,9 +2,9 @@ package central
 
 import "nli-go/lib/mentalese"
 
-const LANGUAGE_PROCESS = "language process"
-const ROBOT_PROCESS = "robot process"
-const SIMPLE_PROCESS = "simple process"
+const LANGUAGE_PROCESS = "language"
+const ROBOT_PROCESS = "robot"
+const SIMPLE_PROCESS = "simple"
 
 type ProcessList struct {
 	List           []*Process
@@ -81,6 +81,16 @@ func (p *ProcessList) GetProcesses() []*Process {
 func (p *ProcessList) GetProcess(goalId string) *Process {
 	for _, process := range p.List {
 		if process.GoalId == goalId {
+			return process
+		}
+	}
+
+	return nil
+}
+
+func (p *ProcessList) GetProcessByType(processType string) *Process {
+	for _, process := range p.List {
+		if process.ProcessType == processType {
 			return process
 		}
 	}

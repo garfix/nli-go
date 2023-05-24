@@ -64,7 +64,7 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
 		websocket.JSON.Receive(conn, &request)
 
-		fmt.Printf("%s\t%s\t%s\n", request.SessionId, request.Command, request.Query+request.Message.String())
+		fmt.Printf("Server receives: %s\n", request.MessageType)
 
 		system := server.getSystem(conn, request)
 
@@ -242,9 +242,8 @@ func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request)
 	system = buildSystem(workDir, applicationDir, sessionId, workDir, conn)
 	// server.systems[request.SessionId] = system
 	// }
-
 	if request.System == "blocks" {
-		blocks.CreateBlocksSystem(system)
+		system = blocks.CreateBlocksSystem(system)
 	}
 
 	server.systems[request.System] = system

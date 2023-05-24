@@ -166,6 +166,13 @@ const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
 
+const MessageOk = "ok"
+const MessagePrint = "print"
+const MessageChoice = "choice"
+const MessageAnswer = "answer"
+const MessageDone = "done"
+const MessageRespond = "respond"
+
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{
 		Negate:    negate,
@@ -341,4 +348,16 @@ func (relation Relation) IndentedString(indent string) string {
 	}
 
 	return "\n" + indent + sign + relation.Predicate + "(" + args + ")"
+}
+
+func (relation Relation) AsSimple() interface{} {
+	predicate := relation.Predicate
+	if relation.Negate {
+		predicate = "-" + predicate
+	}
+	simple := []interface{}{predicate}
+	for _, argument := range relation.Arguments {
+		simple = append(simple, argument.AsSimple())
+	}
+	return simple
 }

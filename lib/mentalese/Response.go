@@ -1,10 +1,12 @@
 package mentalese
 
 type Response struct {
+	ProcessType string
+	MessageType string
 	Success     bool
 	ErrorLines  []string
 	Productions []string
-	Message     RelationSet
+	Message     interface{}
 }
 
 type ResponseAnswer struct {

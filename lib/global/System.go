@@ -51,24 +51,41 @@ func (system *System) CreatClientConnector(conn *websocket.Conn) *ClientConnecto
 }
 
 func (system *System) HandleRequest(request mentalese.Request) {
-	switch request.Command {
-	case "send":
-		message := request.Message
-		first := message[0]
-		// todo: remove this!
-		if first.Predicate == mentalese.PredicateRespond {
-			system.processRunner.StartProcess(
-				central.LANGUAGE_PROCESS,
-				message,
-				mentalese.NewBinding())
-		} else {
-			system.RunRelationSet(request.ProcessType, message)
-		}
+	switch request.MessageType {
+	case mentalese.MessageRespond:
+		system.processRunner.StartProcess(
+			central.LANGUAGE_PROCESS,
+			mentalese.RelationSet{
+				mentalese.NewRelation(false, mentalese.PredicateRespond,
+					[]mentalese.Term{mentalese.NewTermString(request.Message.(string))},
+				),
+			},
+			mentalese.NewBinding(),
+		)
 	}
+	// case "send":
+	// 	message := request.Message
+	// 	first := message[0]
+	// 	// todo: remove this!
+	// 	if first.Predicate == mentalese.PredicateRespond {
+	// 		system.processRunner.StartProcess(
+	// 			central.LANGUAGE_PROCESS,
+	// 			message,
+	// 			mentalese.NewBinding())
+	// 	} else {
+	// 		system.RunRelationSet(request.ProcessType, message)
+	// 	}
+	// }
+	system.processRunner.SendMessage(request)
 }
 
 func (system *System) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
 	return system.processRunner.RunRelationSet(processType, relationSet)
+}
+
+func (system *System) RunRelationSetString(processType string, relationSet string) mentalese.BindingSet {
+	relations := system.internalGrammarParser.CreateRelationSet(relationSet)
+	return system.processRunner.RunRelationSet(processType, relations)
 }
 
 // Low-level function to inspect the internal state of the system

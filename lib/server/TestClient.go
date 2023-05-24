@@ -17,7 +17,7 @@ const SESSION_ID = "test123"
 
 func CreateTestClient(systemName string) *TestClient {
 
-	address := "ws://localhost:3333/"
+	address := "ws://localhost:3334/"
 	conn, err := websocket.Dial(address, "", address)
 	if err != nil {
 		panic("Could not connect to server: " + err.Error())

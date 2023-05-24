@@ -13,15 +13,11 @@ import (
 	"github.com/tidwall/pinhole"
 )
 
-type Req struct {
-	Hello int
-}
-
 // Mimics Terry Winograd's SHRDLU dialog, but in the NLI-GO way
 
 func TestBlocksWorld(t *testing.T) {
 
-	srv := server.NewServer("3333")
+	srv := server.NewServer("3334")
 	srv.RunInBackground()
 	defer srv.Close()
 

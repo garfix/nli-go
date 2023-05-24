@@ -62,6 +62,8 @@ func (system *System) HandleRequest(request mentalese.Request) {
 			},
 			mentalese.NewBinding(),
 		)
+	default:
+		system.processRunner.SendMessage(request)
 	}
 	// case "send":
 	// 	message := request.Message
@@ -76,7 +78,6 @@ func (system *System) HandleRequest(request mentalese.Request) {
 	// 		system.RunRelationSet(request.ProcessType, message)
 	// 	}
 	// }
-	system.processRunner.SendMessage(request)
 }
 
 func (system *System) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {

@@ -206,8 +206,10 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 	command := relation.Arguments[0].TermValue
 	resultVar := relation.Arguments[1].TermValue
 
+	bound := relation.BindSingle(binding)
+
 	parameters := []interface{}{}
-	for i, param := range relation.BindSingle(binding).Arguments {
+	for i, param := range bound.Arguments {
 		if i > 1 {
 			parameters = append(parameters, param.AsSimple())
 		}
@@ -248,11 +250,31 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 	// 	time.Sleep(time.Millisecond)
 	// }
 
+	choiceKey := ""
+	if command == mentalese.MessageChoose {
+		choiceKey = bound.Arguments[2].TermValue
+		for _, option := range bound.Arguments[3].TermValueList {
+			choiceKey += "|" + option.TermValue
+		}
+	}
+
+	if command == mentalese.MessageChoose {
+		answer, found := base.choices[choiceKey]
+		if found {
+			binding.Set(resultVar, mentalese.NewTermString(answer))
+			return mentalese.InitBindingSet(binding)
+		}
+	}
+
 	base.clientConnector.SendToClient(messenger.GetProcess().GetType(), command, parameters)
 
 	message := <-messenger.GetProcess().GetChannel()
 
 	binding.Set(resultVar, mentalese.NewTermString(message.Message.(string)))
+
+	if command == mentalese.MessageChoose {
+		base.choices[choiceKey] = message.Message.(string)
+	}
 
 	return mentalese.InitBindingSet(binding)
 }

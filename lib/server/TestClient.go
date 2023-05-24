@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"nli-go/lib/central"
 	"nli-go/lib/mentalese"
 
 	"golang.org/x/net/websocket"
@@ -35,24 +36,13 @@ func (c *TestClient) Close() {
 
 func (c *TestClient) Run(tests []Test) {
 
-	var err error
-
 	for _, test := range tests {
 
 		clarificationIndex := 0
 
 		println("TEST: " + test.H)
 
-		request := mentalese.Request{
-			System:      c.systemName,
-			MessageType: mentalese.MessageRespond,
-			Message:     test.H,
-		}
-
-		err = websocket.JSON.Send(c.conn, request)
-		if err != nil {
-			panic("Could not send to server: " + err.Error())
-		}
+		c.Send(central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
 
 		ok := true
 
@@ -68,14 +58,12 @@ func (c *TestClient) Run(tests []Test) {
 
 			fmt.Printf("result: %v\n", response)
 
-			if response.MessageType == mentalese.PredicatePrint {
+			if response.MessageType == mentalese.MessagePrint {
 
-				var relations []interface{} = (response.Message).([]interface{})
-				first := relations[0].(mentalese.Relation)
+				var answer string = (response.Message).(string)
 
-				c.Send(mentalese.MessageAnswer, "OK")
+				c.Send(central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
 
-				answer := first.Arguments[1].TermValue
 				println("      " + answer)
 				if answer != test.C {
 					ok = false
@@ -87,18 +75,14 @@ func (c *TestClient) Run(tests []Test) {
 			if response.MessageType == "move_to" {
 
 				println("move")
-				c.Send(mentalese.MessageAnswer, "OK")
+				c.Send(central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
 
 			}
-			if response.MessageType == "choice" {
-				var relations []interface{} = (response.Message).([]interface{})
-				first := relations[0].(mentalese.Relation)
-				answer := first.Copy()
-				answer.Arguments[2] = mentalese.NewTermString(test.Clarifications[clarificationIndex])
+			if response.MessageType == mentalese.MessageChoose {
+				c.Send(central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
 				clarificationIndex++
-				c.Send(mentalese.MessageAnswer, test.Clarifications[clarificationIndex])
 			}
-			if response.MessageType == "done" {
+			if response.MessageType == mentalese.MessageProcessListClear {
 				println("cool! notification of all empty processes!")
 				break
 			}
@@ -111,9 +95,10 @@ func (c *TestClient) Run(tests []Test) {
 	}
 }
 
-func (c *TestClient) Send(messageType string, message string) {
+func (c *TestClient) Send(processType string, messageType string, message string) {
 	request := mentalese.Request{
 		System:      c.systemName,
+		ProcessType: processType,
 		MessageType: messageType,
 		Message:     message,
 	}

@@ -16,6 +16,7 @@ type SystemSolverFunctionBase struct {
 	meta            *mentalese.Meta
 	log             *common.SystemLog
 	clientConnector api.ClientConnector
+	choices         map[string]string
 }
 
 func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *mentalese.Meta, log *common.SystemLog, clientConnector api.ClientConnector) *SystemSolverFunctionBase {
@@ -25,6 +26,7 @@ func NewSystemSolverFunctionBase(dialogContext *central.DialogContext, meta *men
 		meta:              meta,
 		log:               log,
 		clientConnector:   clientConnector,
+		choices:           map[string]string{},
 	}
 }
 

@@ -74,7 +74,7 @@ on_top_of(A, B) :-
     go:translate('which one', Q)
     go:translate('directly on the surface', A1)
     go:translate('anywhere on top of', A2)
-    go:wait_for('choice', Sel, Q, [A1, A2])
+    go:wait_for('choose', Sel, Q, [A1, A2])
     if [Sel == 0] then
         support(now, B, A)
     else

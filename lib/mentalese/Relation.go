@@ -166,12 +166,15 @@ const SeqSecondOperandIndex = 1
 
 const NotScopeIndex = 0
 
-const MessageOk = "ok"
+// from server
 const MessagePrint = "print"
-const MessageChoice = "choice"
-const MessageAnswer = "answer"
-const MessageDone = "done"
+const MessageChoose = "choose"
+const MessageProcessListClear = "processlist_clear"
+
+// from client
 const MessageRespond = "respond"
+const MessageAcknowledge = "acknowledge"
+const MessageChosen = "chosen"
 
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{

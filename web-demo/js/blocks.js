@@ -86,7 +86,7 @@ $(function(){
                 break
             case "print":
                 print(message.Message)
-                send("language", "ok", "")
+                send("language", "acknowledge", "")
                 break
             case "move_to":
                 doMoveTo(message.ProcessType, message.Message[0])
@@ -113,7 +113,7 @@ $(function(){
             scene.runAnimations(animations, maxDuration)
         }
         window.setTimeout(function (){
-            send("robot", "ok", "")
+            send("robot", "acknowledge", "")
         }, maxDuration);
     }
 

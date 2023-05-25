@@ -18,14 +18,12 @@ import (
 
 type Server struct {
 	httpServer *http.Server
-	systems    map[string]api.System
 }
 
 func NewServer(port string) *Server {
 	server := &http.Server{Addr: ":" + port}
 	return &Server{
 		httpServer: server,
-		systems:    map[string]api.System{},
 	}
 }
 
@@ -49,6 +47,8 @@ func (server *Server) RunInBackground() {
 
 func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
+	systems := map[string]api.System{}
+
 	// println(request.Message.String())
 
 	//io.Copy(ws, ws)
@@ -66,7 +66,7 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
 		fmt.Printf("Server receives: %s\n", request.MessageType)
 
-		system := server.getSystem(conn, request)
+		system := server.getSystem(conn, request, &systems)
 
 		system.HandleRequest(request)
 
@@ -225,11 +225,11 @@ func (server *Server) Close() {
 // 	}
 // }
 
-func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request) api.System {
+func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request, systems *map[string]api.System) api.System {
 	// system, found := server.systems[request.SessionId]
 	// if !found {
 
-	system, found := server.systems[request.System]
+	system, found := (*systems)[request.System]
 	if found {
 		return system
 	}
@@ -246,7 +246,7 @@ func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request)
 		system = blocks.CreateBlocksSystem(system)
 	}
 
-	server.systems[request.System] = system
+	(*systems)[request.System] = system
 
 	return system
 }

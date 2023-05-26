@@ -1,6 +1,7 @@
 package global
 
 import (
+	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/mentalese"
 
@@ -35,5 +36,6 @@ func (c *ClientConnector) SendToClient(processType string, messageType string, m
 		Productions: []string{},
 		Message:     message,
 	}
+	fmt.Printf("%v sent:     %s\n", &c.conn, messageType)
 	websocket.JSON.Send(c.conn, response)
 }

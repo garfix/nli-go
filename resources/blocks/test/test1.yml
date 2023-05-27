@@ -1,3 +1,7 @@
+#
+# Misc
+#
+
 - H: "Does the table support the big red block?"
   C: "Yes"
 - H: "Pick up a big red block"
@@ -24,6 +28,11 @@
   C: "Yes, the red cube"
 - H: "Is it supported?"
   C: "Yes, by the table"
+
+#
+# Capability
+#
+
 # original: No
 - H: "Can the table pick up blocks?"
   C: "It doesn't make sense"
@@ -33,6 +42,11 @@
   C: "I don't know"
 - H: "Stack up two pyramids."
   C: "I can't"
+
+#
+# Ownership
+#
+
 - H: "Do I own the blue pyramid?"
   C: "No"
 - H: "The blue pyramid is mine"
@@ -51,6 +65,10 @@
   C: "No"
 - H: "Do I own anything in the box?"
   C: "Yes, two things: the blue block and the blue pyramid"
+
+#
+# Moving things around
+#
 
 - H: "Does a green block support a pyramid?"
   C: "Yes"
@@ -79,6 +97,11 @@
   C: "Three of them"
   Clarifications:
     - "1"
+
+#
+# Historical
+#
+
 - H: "Had you touched any pyramid before you put the green one on the little cube?"
   C: "Yes, the green one"
 # original: While I was stacking up the red cube, a large red block and a large green cube
@@ -105,10 +128,20 @@
 # original: No, only four of them: the red cube, two large green cubes and a large red block
 - H: "There were five blocks to the left of the box then."
   C: "No, only four of them: the red cube, two large green cubes and the large red block"
+
+#
+# Misc
+#
+
 - H: "Put the blue pyramid on the block in the box."
   C: "OK"
 - H: "Is there anything which is bigger than every pyramid but is not as wide as the thing that supports it?"
   C: "Yes, the blue block"
+
+#
+# Steeple
+#
+
 # original: Respond immediately after typeing "steeple" (without the return), and say 'Sorry, I don't know the word "steeple"'
 - H: "Does a steeple"
   C: "Sorry, I don't know the word \"steeple\""
@@ -122,6 +155,11 @@
   C: "Yes, a large green cube"
 - H: "Does a green cube support a green cube?"
   C: "Yes"
+
+#
+# Superblock!
+#
+
 - H: "Call the biggest block \"superblock\"."
   C: "OK"
 - H: "Have you picked up superblock since we began?"
@@ -132,6 +170,16 @@
 # original: Yes, four things: the box, the red cube, the blue pyramid and the block named superblock
 - H: "Is there anything to the right of the red pyramid?"
   C: "Yes, four things: the red cube, a large red block, the block named superblock and the box"
+
+#
+# Closing
+#
+
 # original: You're welcome!
 - H: "Thank you"
   C: "You're welcome !"
+
+#
+# Draw png image of scene
+#
+- Send: create_png

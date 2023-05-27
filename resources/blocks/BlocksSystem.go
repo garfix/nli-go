@@ -33,6 +33,7 @@ func (system *BlocksSystem) HandleRequest(request mentalese.Request) {
 		system.base.GetClientConnector().SendToClient(central.SIMPLE_PROCESS, MESSAGE_DESCRIPTION, bindings.AsSimple())
 	case MESSAGE_CREATE_PNG:
 		createImage(system.base)
+		system.base.GetClientConnector().SendToClient(central.SIMPLE_PROCESS, mentalese.MessageAcknowledge, "")
 	default:
 		system.base.HandleRequest(request)
 	}

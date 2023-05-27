@@ -38,6 +38,7 @@ type Test struct {
 	H              string   `yaml:"H"`
 	C              string   `yaml:"C"`
 	Clarifications []string `yaml:"Clarifications"`
+	Send           string   `yaml:"Send"`
 }
 
 func (c *TestClient) RunFile(system string, filename string) {
@@ -59,58 +60,70 @@ func (c *TestClient) RunFile(system string, filename string) {
 
 func (c *TestClient) Run(system string, tests []Test) {
 
+	response := mentalese.Response{}
+	var err error = nil
+
 	for _, test := range tests {
 
 		clarificationIndex := 0
 
-		println(test.H)
+		if test.Send != "" {
 
-		c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
-
-		ok := true
-
-		for true {
-
-			response := mentalese.Response{}
-			var err error = nil
+			println(test.Send)
+			c.Send(system, central.LANGUAGE_PROCESS, test.Send, "")
 
 			err = websocket.JSON.Receive(c.conn, &response)
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			if response.MessageType == mentalese.MessagePrint {
+		} else {
 
-				var answer string = (response.Message).(string)
+			println(test.H)
+			c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
 
-				c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
+			ok := true
 
-				println("  " + answer)
-				if answer != test.C {
-					ok = false
-					println("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
+			for true {
+
+				err = websocket.JSON.Receive(c.conn, &response)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				if response.MessageType == mentalese.MessagePrint {
+
+					var answer string = (response.Message).(string)
+
+					c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
+
+					println("  " + answer)
+					if answer != test.C {
+						ok = false
+						println("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
+						break
+					}
+				}
+				if response.MessageType == "move_to" {
+					c.Send(system, central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
+				}
+				if response.MessageType == mentalese.MessageChoose {
+					if clarificationIndex >= len(test.Clarifications) {
+						ok = false
+						println("Missing clarification for " + response.Message.(string))
+						break
+					}
+					c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
+					clarificationIndex++
+				}
+				if response.MessageType == mentalese.MessageProcessListClear {
 					break
 				}
 			}
-			if response.MessageType == "move_to" {
-				c.Send(system, central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
-			}
-			if response.MessageType == mentalese.MessageChoose {
-				if clarificationIndex >= len(test.Clarifications) {
-					ok = false
-					println("Missing clarification for " + response.Message.(string))
-					break
-				}
-				c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
-				clarificationIndex++
-			}
-			if response.MessageType == mentalese.MessageProcessListClear {
+
+			if !ok {
 				break
 			}
-		}
-
-		if !ok {
-			break
 		}
 
 	}

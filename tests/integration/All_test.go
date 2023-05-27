@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-// Mimics Terry Winograd's SHRDLU dialog, but in the NLI-GO way
-
 func TestAll(t *testing.T) {
 
 	srv := server.NewServer("3334")

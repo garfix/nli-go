@@ -6,6 +6,7 @@ import (
 	"nli-go/lib/mentalese"
 	"os/exec"
 	"strconv"
+	"strings"
 )
 
 func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
@@ -296,7 +297,7 @@ func (base *SystemSolverFunctionBase) execResponse(messenger api.ProcessMessenge
 
 	newBinding := binding.Copy()
 
-	newBinding.Set(responseVar, mentalese.NewTermString(string(output)))
+	newBinding.Set(responseVar, mentalese.NewTermString(strings.TrimSpace(string(output))))
 
 	return mentalese.InitBindingSet(newBinding)
 }

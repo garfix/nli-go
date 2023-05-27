@@ -38,7 +38,7 @@ func TestLocalVariables(t *testing.T) {
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(variableGenerator)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
 	solver.AddSolverFunctionBase(nestedBase)
 	rules := parser.CreateRules(`
 		pow(Base, Number, Pow) :-

@@ -59,7 +59,7 @@ func TestGeneralizedQuantifier(t *testing.T) {
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(variableGenerator)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)

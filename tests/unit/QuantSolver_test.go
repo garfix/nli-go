@@ -115,7 +115,7 @@ func TestQuantSolver(t *testing.T) {
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(variableGenerator)
-	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
 	solver.AddSolverFunctionBase(nestedStructureBase)
 
 	aggregateBase := knowledge.NewSystemMultiBindingBase("system-aggregate", log)

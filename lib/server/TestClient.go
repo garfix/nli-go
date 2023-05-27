@@ -11,13 +11,12 @@ import (
 )
 
 type TestClient struct {
-	conn       *websocket.Conn
-	systemName string
+	conn *websocket.Conn
 }
 
 const SESSION_ID = "test123"
 
-func CreateTestClient(systemName string) *TestClient {
+func CreateTestClient() *TestClient {
 
 	address := "ws://localhost:3334/"
 	conn, err := websocket.Dial(address, "", address)
@@ -26,8 +25,7 @@ func CreateTestClient(systemName string) *TestClient {
 	}
 
 	return &TestClient{
-		conn:       conn,
-		systemName: systemName,
+		conn: conn,
 	}
 }
 
@@ -42,7 +40,7 @@ type Test struct {
 	Clarifications []string `yaml:"Clarifications"`
 }
 
-func (c *TestClient) RunFile(filename string) {
+func (c *TestClient) RunFile(system string, filename string) {
 	yml, err := common.ReadFile(filename)
 	if err != nil {
 		println("Error reading " + filename)
@@ -56,10 +54,10 @@ func (c *TestClient) RunFile(filename string) {
 		println("Error parsing " + filename + ": " + err.Error())
 	}
 
-	c.Run(tests)
+	c.Run(system, tests)
 }
 
-func (c *TestClient) Run(tests []Test) {
+func (c *TestClient) Run(system string, tests []Test) {
 
 	for _, test := range tests {
 
@@ -67,7 +65,7 @@ func (c *TestClient) Run(tests []Test) {
 
 		println(test.H)
 
-		c.Send(central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
+		c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
 
 		ok := true
 
@@ -85,17 +83,17 @@ func (c *TestClient) Run(tests []Test) {
 
 				var answer string = (response.Message).(string)
 
-				c.Send(central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
+				c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
 
 				println("  " + answer)
 				if answer != test.C {
 					ok = false
-					println("ERROR expected " + test.C + ", got: " + answer)
+					println("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
 					break
 				}
 			}
 			if response.MessageType == "move_to" {
-				c.Send(central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
+				c.Send(system, central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
 			}
 			if response.MessageType == mentalese.MessageChoose {
 				if clarificationIndex >= len(test.Clarifications) {
@@ -103,7 +101,7 @@ func (c *TestClient) Run(tests []Test) {
 					println("Missing clarification for " + response.Message.(string))
 					break
 				}
-				c.Send(central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
+				c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
 				clarificationIndex++
 			}
 			if response.MessageType == mentalese.MessageProcessListClear {
@@ -118,9 +116,9 @@ func (c *TestClient) Run(tests []Test) {
 	}
 }
 
-func (c *TestClient) Send(processType string, messageType string, message string) {
+func (c *TestClient) Send(system string, processType string, messageType string, message string) {
 	request := mentalese.Request{
-		System:      c.systemName,
+		System:      system,
 		ProcessType: processType,
 		MessageType: messageType,
 		Message:     message,

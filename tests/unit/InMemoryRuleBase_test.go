@@ -41,7 +41,7 @@ func TestInMemoryRuleBase(t *testing.T) {
 	messageManager := central.NewMessageManager()
 	processList := central.NewProcessList(messageManager)
 	dialogContext := central.NewDialogContext(variableGenerator)
-	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
 	solver.AddSolverFunctionBase(nestedBase)
 	runner := central.NewProcessRunner(processList, solver, log)
 	rules := parser.CreateRules(`

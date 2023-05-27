@@ -1,7 +1,6 @@
 package global
 
 import (
-	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/mentalese"
 
@@ -27,7 +26,6 @@ func (c *ClientConnector) SendToProcess(processType string, message mentalese.Re
 }
 
 func (c *ClientConnector) SendToClient(processType string, messageType string, message interface{}) {
-	println("client connector sending! " + messageType)
 	response := mentalese.Response{
 		ProcessType: processType,
 		MessageType: messageType,
@@ -36,6 +34,6 @@ func (c *ClientConnector) SendToClient(processType string, messageType string, m
 		Productions: []string{},
 		Message:     message,
 	}
-	fmt.Printf("%v sent:     %s\n", &c.conn, messageType)
+	// fmt.Printf("%v sent:     %s\n", &c.conn, messageType)
 	websocket.JSON.Send(c.conn, response)
 }

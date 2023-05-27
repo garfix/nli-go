@@ -215,41 +215,6 @@ func (base *SystemSolverFunctionBase) waitFor(messenger api.ProcessMessenger, re
 		}
 	}
 
-	// newBindings := mentalese.NewBindingSet()
-
-	println("wait for")
-
-	// response := base.client.WaitForResponse()
-
-	// sent := false
-
-	// const timeout = 20000
-
-	// // todo: refine, timeout configurable
-	// for i := 0; true; i++ {
-
-	// 	// println(child.BindSingle(binding).String())
-
-	// 	newBindings = messenger.ExecuteChildStackFrame(child, mentalese.InitBindingSet(binding))
-	// 	if !newBindings.IsEmpty() {
-	// 		break
-	// 	}
-
-	// 	if !sent {
-	// 		sent = true
-	// 		// messenger.SendMessage(child.BindSingle(binding))
-	// 		base.client.SendToClient("", child.BindSingle(binding))
-	// 	}
-
-	// 	if i == timeout {
-	// 		// make sure that the process finishes
-	// 		break
-	// 	}
-
-	// 	// println(child.BindSingle(binding).String())
-	// 	time.Sleep(time.Millisecond)
-	// }
-
 	choiceKey := ""
 	if command == mentalese.MessageChoose {
 		choiceKey = bound.Arguments[2].TermValue

@@ -4,7 +4,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"nli-go/lib/api"
 	"nli-go/lib/common"
@@ -49,15 +48,6 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
 	systems := map[string]api.System{}
 
-	// println(request.Message.String())
-
-	//io.Copy(ws, ws)
-
-	// response := Response{
-	// 	ErrorLines: []string{"niet ok"},
-	// }
-	// websocket.JSON.Send(ws, response)
-
 	for true {
 
 		request := mentalese.Request{}
@@ -68,7 +58,7 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 			break
 		}
 
-		fmt.Printf("%v received: %s\n", &conn, request.MessageType)
+		// fmt.Printf("%v received: %s\n", &conn, request.MessageType)
 
 		system := server.getSystem(conn, request, &systems)
 
@@ -120,8 +110,6 @@ func (server *Server) Close() {
 }
 
 func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request, systems *map[string]api.System) api.System {
-	// system, found := server.systems[request.SessionId]
-	// if !found {
 
 	system, found := (*systems)[request.System]
 	if found {
@@ -134,8 +122,6 @@ func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request,
 	sessionId := common.CreateUuid()
 
 	system = buildSystem(workDir, applicationDir, sessionId, workDir, conn)
-	// server.systems[request.SessionId] = system
-	// }
 	if request.System == "blocks" {
 		system = blocks.CreateBlocksSystem(system)
 	}

@@ -2,20 +2,18 @@
 
 ## up to 2 processes, websockets
 
-- OK change the process list into just 2 processes
-- OK `create_goal` should create an action process, if possible
-- OK `createOrUpdateProcess` should create or update a language process
-- change the server into a websockets server
-- `sendMessage` should directly send a message to the client
-- if a message comes in, the system notifies the waiting process https://medium.com/@josueparra2892/golang-channels-8b22570cbfca
 - remove processType from sending relations
-- make the javascript routine use websockets
 - send errors and productions as separate messages
-- DON'T allow the client to send random actions to the server (it has the exec function! that allows execution of random code)
-- make client/server generic or specific?
 - split the repo in two: generic / demos, with demos depending on generic and creating a custom server
 
 ## inbox
+
+documentation websocket server
+documentation resources / process types: what's the official name?
+
+Stop/pause, continue/rensume : new topic
+
+Initiate conversation: new topic
 
 Intent detection: provide access to the main clause variable: condition(P1)
 Tags: maak duidelijk onderscheid tussen this-sentence-only tags en dialog-wide tags

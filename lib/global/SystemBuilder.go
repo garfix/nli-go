@@ -283,6 +283,10 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 		}
 
 		dirName := fileInfo.Name()
+		if dirName == "test" {
+			continue
+		}
+
 		anIndex := index{}
 		anIndex, ok = builder.buildIndex(builder.baseDir + "/" + dirName)
 		if !ok {

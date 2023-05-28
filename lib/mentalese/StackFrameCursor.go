@@ -1,24 +1,20 @@
-package central
-
-import (
-	"nli-go/lib/mentalese"
-)
+package mentalese
 
 const StateOk = "ok"
 const StateInterrupted = "interrupted"
 
 type StackFrameCursor struct {
 	Type                     string
-	MutableVariableValues    mentalese.Binding
-	ChildFrameResultBindings mentalese.BindingSet
+	MutableVariableValues    Binding
+	ChildFrameResultBindings BindingSet
 	State                    string
 }
 
 func NewStackFrameCursor() *StackFrameCursor {
 	return &StackFrameCursor{
-		Type:                     mentalese.FrameTypePlain,
-		MutableVariableValues:    mentalese.NewBinding(),
-		ChildFrameResultBindings: mentalese.NewBindingSet(),
+		Type:                     FrameTypePlain,
+		MutableVariableValues:    NewBinding(),
+		ChildFrameResultBindings: NewBindingSet(),
 		State:                    StateOk,
 	}
 }

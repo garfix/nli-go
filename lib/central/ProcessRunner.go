@@ -51,7 +51,7 @@ func (p *ProcessRunner) RunRelationSet(processType string, relationSet mentalese
 
 func (p *ProcessRunner) PushAndRun(process *Process, relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 	level := len(process.Stack)
-	process.PushFrame(NewStackFrame(relations, bindings))
+	process.PushFrame(mentalese.NewStackFrame(relations, bindings))
 	return p.RunProcessLevel(process, level)
 }
 
@@ -118,7 +118,7 @@ func (p *ProcessRunner) step(process *Process) bool {
 	debug = p.after(process, currentFrame, outBindings, len(process.Stack))
 	p.log.AddDebug("frame", debug)
 
-	if messenger.GetCursor().GetState() == StateInterrupted {
+	if messenger.GetCursor().GetState() == mentalese.StateInterrupted {
 
 		debug = p.breaked(len(process.Stack))
 		p.log.AddDebug("frame", debug)
@@ -169,7 +169,7 @@ func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Re
 	}
 }
 
-func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *StackFrame, process *Process) api.RelationHandler {
+func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *mentalese.StackFrame, process *Process) api.RelationHandler {
 
 	handlers := p.solver.GetHandlers(relation)
 
@@ -186,7 +186,7 @@ func (p *ProcessRunner) PrepareHandler(relation mentalese.Relation, frame *Stack
 	return handlers[frame.HandlerIndex]
 }
 
-func (p *ProcessRunner) before(process *Process, frame *StackFrame, stackDepth int) string {
+func (p *ProcessRunner) before(process *Process, frame *mentalese.StackFrame, stackDepth int) string {
 
 	padding := strings.Repeat("  ", stackDepth)
 
@@ -208,7 +208,7 @@ func (p *ProcessRunner) before(process *Process, frame *StackFrame, stackDepth i
 	return padding + text
 }
 
-func (p *ProcessRunner) after(process *Process, frame *StackFrame, bindings mentalese.BindingSet, stackDepth int) string {
+func (p *ProcessRunner) after(process *Process, frame *mentalese.StackFrame, bindings mentalese.BindingSet, stackDepth int) string {
 	padding := strings.Repeat("  ", stackDepth)
 	debug := padding + "╰ " + bindings.String()
 	if process.GetLastFrame() != frame {

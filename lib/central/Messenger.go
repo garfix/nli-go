@@ -8,14 +8,14 @@ import (
 type Messenger struct {
 	processRunner       *ProcessRunner
 	process             *Process
-	cursor              *StackFrameCursor
+	cursor              *mentalese.StackFrameCursor
 	outBindings         mentalese.BindingSet
 	processInstructions map[string]string
 	oldSlots            map[string]mentalese.Term
 	newSlots            map[string]mentalese.Term
 }
 
-func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
+func NewMessenger(processRunner *ProcessRunner, process *Process, cursor *mentalese.StackFrameCursor, slots map[string]mentalese.Term) *Messenger {
 	return &Messenger{
 		processRunner:       processRunner,
 		process:             process,
@@ -73,7 +73,7 @@ func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bind
 	}
 
 	// when a loop has been breaked, the remaining calls are nullified
-	if i.cursor.GetState() == StateInterrupted {
+	if i.cursor.GetState() == mentalese.StateInterrupted {
 		return mentalese.NewBindingSet()
 	}
 

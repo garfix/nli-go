@@ -6,7 +6,7 @@ import (
 
 type Process struct {
 	ProcessType string
-	Stack       []*StackFrame
+	Stack       []*mentalese.StackFrame
 	Slots       map[string]mentalese.Term
 	channel     chan mentalese.Request
 }
@@ -14,8 +14,8 @@ type Process struct {
 func NewProcess(processType string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
 	return &Process{
 		ProcessType: processType,
-		Stack: []*StackFrame{
-			NewStackFrame(goalSet, bindings),
+		Stack: []*mentalese.StackFrame{
+			mentalese.NewStackFrame(goalSet, bindings),
 		},
 		Slots:   map[string]mentalese.Term{},
 		channel: make(chan mentalese.Request),
@@ -30,12 +30,12 @@ func (p *Process) GetChannel() chan mentalese.Request {
 	return p.channel
 }
 
-func (p *Process) PushFrame(frame *StackFrame) {
+func (p *Process) PushFrame(frame *mentalese.StackFrame) {
 	p.Stack = append(p.Stack, frame)
 }
 
 func (p *Process) Clear() {
-	p.Stack = []*StackFrame{}
+	p.Stack = []*mentalese.StackFrame{}
 }
 
 func (p *Process) EmptyRelationCheck() {
@@ -48,7 +48,7 @@ func (p *Process) EmptyRelationCheck() {
 func (p *Process) Advance() {
 
 	frame := p.GetLastFrame()
-	frame.Cursor = NewStackFrameCursor()
+	frame.Cursor = mentalese.NewStackFrameCursor()
 
 	p.AdvanceHandler()
 }
@@ -74,7 +74,7 @@ func (p *Process) AdvanceBinding() {
 	}
 }
 
-func (p *Process) advanceRelation(frame *StackFrame) {
+func (p *Process) advanceRelation(frame *mentalese.StackFrame) {
 
 	frame.InBindings = frame.OutBindings
 	frame.InBindingIndex = 0
@@ -91,7 +91,7 @@ func (p *Process) advanceRelation(frame *StackFrame) {
 	}
 }
 
-func (p *Process) advanceFrame(frame *StackFrame) {
+func (p *Process) advanceFrame(frame *mentalese.StackFrame) {
 
 	p.PopFrame()
 
@@ -104,7 +104,7 @@ func (p *Process) advanceFrame(frame *StackFrame) {
 }
 
 // prepare the active binding to be fed to a function
-func (p *Process) GetPreparedBinding(f *StackFrame) mentalese.Binding {
+func (p *Process) GetPreparedBinding(f *mentalese.StackFrame) mentalese.Binding {
 
 	binding := f.GetCurrentInBinding()
 	relation := f.GetCurrentRelation()
@@ -149,7 +149,7 @@ func (p *Process) CreateMessenger(processRunner *ProcessRunner, process *Process
 	return NewMessenger(processRunner, process, frame.Cursor, p.Slots)
 }
 
-func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) *StackFrame {
+func (p *Process) ProcessMessenger(messenger *Messenger, frame *mentalese.StackFrame) *mentalese.StackFrame {
 
 	for slot, value := range messenger.newSlots {
 		p.Slots[slot] = value
@@ -183,7 +183,7 @@ func (p *Process) ProcessMessenger(messenger *Messenger, frame *StackFrame) *Sta
 	return frame
 }
 
-func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *StackFrame) {
+func (p *Process) ProcessMessengerMultipleBindings(messenger *Messenger, frame *mentalese.StackFrame) {
 
 	outBindings := messenger.GetOutBindings()
 	outBindingsWithoutMutables := outBindings.RemoveMutableVariables()
@@ -214,9 +214,9 @@ func (p *Process) executeProcessInstructions(messenger *Messenger, outBindings m
 	return outBindings
 }
 
-func (p *Process) GetCurrentScope() *StackFrame {
+func (p *Process) GetCurrentScope() *mentalese.StackFrame {
 
-	var scope *StackFrame = nil
+	var scope *mentalese.StackFrame = nil
 	i := len(p.Stack) - 1
 
 	for i >= 0 {
@@ -232,9 +232,9 @@ func (p *Process) GetCurrentScope() *StackFrame {
 	return scope
 }
 
-func (p *Process) GetContextScope() *StackFrame {
+func (p *Process) GetContextScope() *mentalese.StackFrame {
 
-	var scope *StackFrame = nil
+	var scope *mentalese.StackFrame = nil
 	i := len(p.Stack) - 2
 
 	for i >= 0 {
@@ -258,7 +258,7 @@ func (p *Process) executeBreak(bindings mentalese.BindingSet) {
 
 		frame := p.Stack[i]
 		frameType := frame.Cursor.GetType()
-		frame.Cursor.SetState(StateInterrupted)
+		frame.Cursor.SetState(mentalese.StateInterrupted)
 
 		if frameType == mentalese.FrameTypeLoop {
 			frame.Cursor.ChildFrameResultBindings.AddMultiple(bindings)
@@ -280,14 +280,14 @@ func (p *Process) executeReturn(bindings mentalese.BindingSet) {
 			frame.Cursor.ChildFrameResultBindings.AddMultiple(bindings)
 			done = true
 		} else {
-			frame.Cursor.SetState(StateInterrupted)
+			frame.Cursor.SetState(mentalese.StateInterrupted)
 		}
 
 		i--
 	}
 }
 
-func (p *Process) GetCursor() *StackFrameCursor {
+func (p *Process) GetCursor() *mentalese.StackFrameCursor {
 	frame := p.GetLastFrame()
 	if frame == nil {
 		return nil
@@ -295,7 +295,7 @@ func (p *Process) GetCursor() *StackFrameCursor {
 	return frame.Cursor
 }
 
-func (p *Process) GetLastFrame() *StackFrame {
+func (p *Process) GetLastFrame() *mentalese.StackFrame {
 	if len(p.Stack) == 0 {
 		return nil
 	} else {
@@ -304,7 +304,7 @@ func (p *Process) GetLastFrame() *StackFrame {
 	}
 }
 
-func (p *Process) GetBeforeLastFrame() *StackFrame {
+func (p *Process) GetBeforeLastFrame() *mentalese.StackFrame {
 	if len(p.Stack) < 2 {
 		return nil
 	} else {

@@ -1,25 +1,23 @@
-package central
-
-import "nli-go/lib/mentalese"
+package mentalese
 
 // RelationIndex must always point to a real relation!
 
 type StackFrame struct {
-	Relations      mentalese.RelationSet
+	Relations      RelationSet
 	RelationIndex  int
-	InBindings     mentalese.BindingSet
+	InBindings     BindingSet
 	InBindingIndex int
 	HandlerIndex   int
 	HandlerCount   int
-	OutBindings    mentalese.BindingSet
+	OutBindings    BindingSet
 	Cursor         *StackFrameCursor
 }
 
-func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) *StackFrame {
+func NewStackFrame(relations RelationSet, bindings BindingSet) *StackFrame {
 	return &StackFrame{
 		Relations:      relations,
 		InBindings:     bindings,
-		OutBindings:    mentalese.NewBindingSet(),
+		OutBindings:    NewBindingSet(),
 		HandlerCount:   0,
 		InBindingIndex: 0,
 		HandlerIndex:   0,
@@ -28,7 +26,7 @@ func NewStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSe
 	}
 }
 
-func (f *StackFrame) UpdateMutableVariable(variable string, value mentalese.Term) {
+func (f *StackFrame) UpdateMutableVariable(variable string, value Term) {
 	for _, binding := range f.InBindings.GetAll() {
 		if binding.ContainsVariable(variable) {
 			binding.Set(variable, value)
@@ -45,14 +43,14 @@ func (f *StackFrame) IsDone() bool {
 	return f.RelationIndex >= len(f.Relations)
 }
 
-func (f *StackFrame) GetCurrentRelation() mentalese.Relation {
+func (f *StackFrame) GetCurrentRelation() Relation {
 	return f.Relations[f.RelationIndex]
 }
 
-func (f *StackFrame) GetCurrentInBinding() mentalese.Binding {
+func (f *StackFrame) GetCurrentInBinding() Binding {
 	return f.InBindings.Get(f.InBindingIndex)
 }
 
-func (f *StackFrame) AddOutBinding(outBinding mentalese.Binding) {
+func (f *StackFrame) AddOutBinding(outBinding Binding) {
 	f.OutBindings.Add(outBinding)
 }

@@ -133,10 +133,6 @@ func (p *ProcessRunner) step(process *Process) bool {
 	return hasStopped
 }
 
-func (p *ProcessRunner) removeMutableVariables(bindings mentalese.BindingSet) mentalese.BindingSet {
-	return bindings.RemoveMutableVariables()
-}
-
 func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.Relation, binding mentalese.Binding) mentalese.Relation {
 	newRelation := relation
 

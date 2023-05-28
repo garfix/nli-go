@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.17 websockets - 28-05-2023
+
+- completed the blocks-world interaction
+- use of websockets replaces the complicated client-server interaction
+
 ## 1.16 agreement / more anaphora - 07-11-2022
 
 - add agreement checks to grammar, for example `go:agree(E1, gender, male)`
@@ -10,7 +15,7 @@
 ## 1.15 client / server - 12-03-2022
 
 * a permanent server keeps processes active
-* keywords if/then/else/end 
+* keywords if/then/else/end
 * assignment via [X := n]
 * expressions for common procedure calls
 * use procedure-calls as arguments
@@ -21,23 +26,23 @@
 * ellipsis / path DSL
 * discourse entities
 * centering
-* parsing multiple sentences on a line 
+* parsing multiple sentences on a line
 
 ## 1.13 asynchronous execution - 26-03-2021
 
 * asynchronous execution of mentalese code
-* processing of input has been rewritten as a mentalese program  
+* processing of input has been rewritten as a mentalese program
 * goals, actions
 * explicit declaration of the rule base that accepts a new rule
 
 ## 1.12 morphological analyzer - 20-12-2020
 
-* nli executable allows interactive session 
+* nli executable allows interactive session
 * insert / delete in MySQL
 * relation tags {{ Variable }} to help generate compound sentences
 * allow for left recursion in generation grammar
 * local variables; let
-* separated sort extraction from parsing 
+* separated sort extraction from parsing
 * support for comparatives and superlatives
 * morphological analyzer
 

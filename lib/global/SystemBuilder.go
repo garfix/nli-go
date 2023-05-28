@@ -126,7 +126,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 	system.grammars = []parse.Grammar{}
 	system.relationizer = parse.NewRelationizer(variableGenerator, builder.log)
 	system.internalGrammarParser = builder.parser
-	system.processList = central.NewProcessList(central.NewMessageManager())
+	system.processList = central.NewProcessList()
 
 	modifier := central.NewFactBaseModifier(builder.log, variableGenerator)
 
@@ -144,7 +144,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	system.processRunner = central.NewProcessRunner(system.processList, solverAsync, builder.log)
 
-	callback := func(serverMessage mentalese.RelationSet) {
+	callback := func() {
 		if system.processList.IsEmpty() {
 			system.clientConnector.SendToClient(central.SIMPLE_PROCESS, "processlist_clear", nil)
 		}

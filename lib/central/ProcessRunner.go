@@ -35,8 +35,6 @@ func (p *ProcessRunner) StartProcessNow(process *Process) {
 	p.list.Add(process)
 	p.RunProcessLevel(process, 0)
 	p.list.Remove(process)
-	// notify listeners we're done
-	p.list.NotifyListeners(mentalese.RelationSet{})
 }
 
 func (p *ProcessRunner) SendMessage(message mentalese.Request) {

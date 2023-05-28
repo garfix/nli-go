@@ -63,10 +63,6 @@ func (i *Messenger) AddOutBindings(bindings mentalese.BindingSet) {
 	i.outBindings.AddMultiple(bindings)
 }
 
-func (i *Messenger) SendMessage(message mentalese.RelationSet) {
-	i.processRunner.list.messageManager.NotifyListeners(message)
-}
-
 func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	// mark the calling function as non-plain;

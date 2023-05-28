@@ -47,8 +47,7 @@ func TestSolver(t *testing.T) {
 	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 	solver.AddFactBase(factBase)
 	solver.Reindex()
-	messageManager := central.NewMessageManager()
-	processList := central.NewProcessList(messageManager)
+	processList := central.NewProcessList()
 	runner := central.NewProcessRunner(processList, solver, log)
 
 	tests := []struct {

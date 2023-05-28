@@ -112,8 +112,7 @@ func TestQuantSolver(t *testing.T) {
 	systemFunctionBase := knowledge.NewSystemFunctionBase("system-function", meta, log)
 	solver.AddFunctionBase(systemFunctionBase)
 
-	messageManager := central.NewMessageManager()
-	processList := central.NewProcessList(messageManager)
+	processList := central.NewProcessList()
 	dialogContext := central.NewDialogContext(variableGenerator)
 	nestedStructureBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
 	solver.AddSolverFunctionBase(nestedStructureBase)

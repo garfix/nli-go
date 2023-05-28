@@ -6,15 +6,16 @@ const LANGUAGE_PROCESS = "language"
 const ROBOT_PROCESS = "robot"
 const SIMPLE_PROCESS = "simple"
 
+type MessageListener func()
+
 type ProcessList struct {
-	List           []*Process
-	messageManager *MessageManager
+	List      []*Process
+	listeners []MessageListener
 }
 
-func NewProcessList(messageManager *MessageManager) *ProcessList {
+func NewProcessList() *ProcessList {
 	return &ProcessList{
-		List:           []*Process{},
-		messageManager: messageManager,
+		List: []*Process{},
 	}
 }
 
@@ -56,18 +57,20 @@ func (p *ProcessList) Remove(process *Process) {
 	}
 
 	p.List = newList
+
+	if len(p.List) == 0 {
+		p.NotifyListeners()
+	}
 }
 
-func (p *ProcessList) AddListener(l MessageListener) []mentalese.RelationSet {
-	return p.messageManager.AddListener(l)
+func (p *ProcessList) AddListener(l MessageListener) {
+	p.listeners = append(p.listeners, l)
 }
 
-func (p *ProcessList) RemoveListener(l MessageListener) {
-	p.messageManager.RemoveListener(l)
-}
-
-func (p *ProcessList) NotifyListeners(message mentalese.RelationSet) {
-	p.messageManager.NotifyListeners(message)
+func (p *ProcessList) NotifyListeners() {
+	for _, l := range p.listeners {
+		l()
+	}
 }
 
 func (p *ProcessList) Initialize() {

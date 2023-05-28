@@ -1,7 +1,5 @@
 package central
 
-import "nli-go/lib/mentalese"
-
 const LANGUAGE_PROCESS = "language"
 const ROBOT_PROCESS = "robot"
 const SIMPLE_PROCESS = "simple"
@@ -73,14 +71,6 @@ func (p *ProcessList) NotifyListeners() {
 	}
 }
 
-func (p *ProcessList) Initialize() {
-	p.List = []*Process{}
-}
-
-func (p *ProcessList) GetProcesses() []*Process {
-	return p.List
-}
-
 func (p *ProcessList) GetProcessByType(processType string) *Process {
 	for _, process := range p.List {
 		if process.ProcessType == processType {
@@ -89,8 +79,4 @@ func (p *ProcessList) GetProcessByType(processType string) *Process {
 	}
 
 	return nil
-}
-
-func (p *ProcessList) CreateProcess(processType string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
-	return NewProcess(processType, goalSet, bindings)
 }

@@ -96,11 +96,7 @@ func (base *SystemSolverFunctionBase) contextCall(messenger api.ProcessMessenger
 		slotRelations = base.dialogContext.DeicticCenter.GetTime()
 	}
 
-	// print(slotRelations.IndentedString(""))
-	// print(contextVariableAtom)
-	// print(mainEntityVar.String())
 	unboundRelations := slotRelations.ReplaceTerm(mentalese.NewTermAtom(contextVariableAtom), mainEntityVar)
-	// print(unboundRelations.IndentedString(""))
 
 	newBindings := messenger.ExecuteChildStackFrame(unboundRelations, mentalese.InitBindingSet(binding))
 

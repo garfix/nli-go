@@ -23,7 +23,7 @@ func NewProcessRunner(list *ProcessList, solver *ProblemSolver, log *common.Syst
 }
 
 func (p *ProcessRunner) StartProcess(processType string, relationSet mentalese.RelationSet, binding mentalese.Binding) bool {
-	process := p.list.CreateProcess(processType, relationSet, mentalese.InitBindingSet(binding))
+	process := NewProcess(processType, relationSet, mentalese.InitBindingSet(binding))
 	if p.list.IsProcessTypeActive(processType) {
 		return false
 	}
@@ -56,7 +56,7 @@ func (p *ProcessRunner) PushAndRun(process *Process, relations mentalese.Relatio
 }
 
 func (p *ProcessRunner) RunRelationSetWithBindings(processType string, relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
-	process := p.list.CreateProcess(processType, relationSet, bindings)
+	process := NewProcess(processType, relationSet, bindings)
 	frame := process.Stack[0]
 	p.RunProcessLevel(process, 0)
 	// note: frame has already been deleted; frame is now just the last reference

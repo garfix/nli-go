@@ -58,7 +58,7 @@ func TestFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings.Get(0), wantBindings)
@@ -113,7 +113,7 @@ func TestAggregateFunctions(t *testing.T) {
 		bindings := parser.CreateBindings(test.bindings)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, input, bindings)
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, bindings)
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, bindings, resultBindings, wantBindings)
@@ -160,7 +160,7 @@ func TestControlFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -233,7 +233,7 @@ func TestListFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("call %v with %v: got %v, want %v", input, binding, resultBindings, wantBindings)
@@ -365,7 +365,7 @@ func TestQuantFunctions(t *testing.T) {
 		binding := parser.CreateBinding(test.binding)
 		wantBindings := parser.CreateBindings(test.wantBindings)
 
-		resultBindings := runner.RunRelationSetWithBindings(central.SIMPLE_PROCESS, input, mentalese.InitBindingSet(binding))
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, mentalese.InitBindingSet(binding))
 
 		if resultBindings.String() != wantBindings.String() {
 			t.Errorf("got %v, want %v", resultBindings, wantBindings)

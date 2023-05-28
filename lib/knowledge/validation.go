@@ -50,10 +50,6 @@ func Validate(input mentalese.Relation, format string, log *common.SystemLog) bo
 			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a relation set")
 			return false
 		}
-		if c == 'j' && !arg.IsBinary() {
-			log.AddError("Function '" + input.Predicate + "' expects argument " + strconv.Itoa(i+1) + " to be a json string")
-			return false
-		}
 		if c == 'S' {
 			expectedLength = len(input.Arguments)
 			for j := i; j < len(input.Arguments); j++ {

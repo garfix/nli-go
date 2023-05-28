@@ -26,7 +26,6 @@ const TermTypeRelationSet = "relation-set"
 const TermTypeRule = "rule"
 const TermTypeId = "id"
 const TermTypeList = "list"
-const TermTypeBinary = "binary"
 
 func NewTermVariable(name string) Term {
 	return Term{TermType: TermTypeVariable, TermValue: name, TermValueRelationSet: nil}
@@ -58,10 +57,6 @@ func NewTermId(id string, sort string) Term {
 
 func NewTermList(list TermList) Term {
 	return Term{TermType: TermTypeList, TermValueList: list}
-}
-
-func NewTermBinary(value interface{}) Term {
-	return Term{TermType: TermTypeBinary, TermBinary: value}
 }
 
 func (term Term) IsVariable() bool {
@@ -157,10 +152,6 @@ func (term Term) ListContains(t Term) bool {
 		}
 	}
 	return contains
-}
-
-func (term Term) IsBinary() bool {
-	return term.TermType == TermTypeBinary
 }
 
 func (term Term) Equals(otherTerm Term) bool {
@@ -376,12 +367,6 @@ func (term Term) String() string {
 		s = "`" + term.TermSort + ":" + term.TermValue + "`"
 	case TermTypeList:
 		s = term.TermValueList.String()
-	case TermTypeBinary:
-		if term.TermBinary != nil {
-			s = "<" + fmt.Sprintf("%v", &term.TermBinary) + ">"
-		} else {
-			s = "nil"
-		}
 	default:
 		s = "<unknown>"
 	}

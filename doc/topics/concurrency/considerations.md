@@ -10,7 +10,12 @@ A "language process" is the process of responding to user input. It may interact
 
 A "robot process" involves the execution of a plan by the robot.
 
+## Critical sections
+
 The language process and the robot process are [critical sections](https://en.wikipedia.org/wiki/Critical_section). Each of them can be executed only once within one system at any moment. If this is violated, the robot performs two actions at once and this is clearly impossible. The language process would mess up the dialog context.
 
 In order to prevent this, the process is given a "resource", like "language" or "robot". The process list refuses a new process that wants to use a resource that's already in use. A simple process uses no resource.
 
+## Locking
+
+Some shared resources can be used by multiple processes. These are the in-memory database and the variable generator. They use locking to prevent data corruption.

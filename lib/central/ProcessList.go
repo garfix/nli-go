@@ -17,14 +17,14 @@ func NewProcessList() *ProcessList {
 	}
 }
 
-func (p *ProcessList) IsProcessTypeActive(processType string) bool {
-	if processType == NO_RESOURCE {
+func (p *ProcessList) IsResourceActive(resource string) bool {
+	if resource == NO_RESOURCE {
 		return false
 	}
 
 	for _, p := range p.List {
 		// each process type can occur only once
-		if p.ProcessType == processType {
+		if p.resource == resource {
 			return true
 		}
 	}
@@ -37,7 +37,7 @@ func (p *ProcessList) IsEmpty() bool {
 }
 
 func (p *ProcessList) Add(process *Process) bool {
-	if p.IsProcessTypeActive(process.ProcessType) {
+	if p.IsResourceActive(process.resource) {
 		return false
 	}
 
@@ -71,9 +71,9 @@ func (p *ProcessList) NotifyListeners() {
 	}
 }
 
-func (p *ProcessList) GetProcessByType(processType string) *Process {
+func (p *ProcessList) GetProcessByResource(resource string) *Process {
 	for _, process := range p.List {
-		if process.ProcessType == processType {
+		if process.resource == resource {
 			return process
 		}
 	}

@@ -9,7 +9,7 @@ type ProcessMessenger interface {
 	GetProcess() Process
 	GetCursor() ProcessCursor
 	ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet
-	StartProcess(processType string, relations mentalese.RelationSet, binding mentalese.Binding) bool
+	StartProcess(resource string, relations mentalese.RelationSet, binding mentalese.Binding) bool
 	AddProcessInstruction(name string, value string)
 	GetProcessSlot(slot string) (mentalese.Term, bool)
 	SetProcessSlot(slot string, value mentalese.Term)

@@ -22,9 +22,9 @@ func NewProcessRunner(list *ProcessList, solver *ProblemSolver, log *common.Syst
 	}
 }
 
-func (p *ProcessRunner) StartProcess(processType string, relationSet mentalese.RelationSet, binding mentalese.Binding) bool {
-	process := NewProcess(processType, relationSet, mentalese.InitBindingSet(binding))
-	if p.list.IsProcessTypeActive(processType) {
+func (p *ProcessRunner) StartProcess(resource string, relationSet mentalese.RelationSet, binding mentalese.Binding) bool {
+	process := NewProcess(resource, relationSet, mentalese.InitBindingSet(binding))
+	if p.list.IsResourceActive(resource) {
 		return false
 	}
 	go p.StartProcessNow(process)
@@ -38,15 +38,15 @@ func (p *ProcessRunner) StartProcessNow(process *Process) {
 }
 
 func (p *ProcessRunner) SendMessage(message mentalese.Request) {
-	process := p.list.GetProcessByType(message.ProcessType)
+	process := p.list.GetProcessByResource(message.Resource)
 	if process != nil {
 		process.GetChannel() <- message
 	}
 }
 
-func (p *ProcessRunner) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
+func (p *ProcessRunner) RunRelationSet(resource string, relationSet mentalese.RelationSet) mentalese.BindingSet {
 	bindings := mentalese.InitBindingSet(mentalese.NewBinding())
-	return p.RunRelationSetWithBindings(processType, relationSet, bindings)
+	return p.RunRelationSetWithBindings(resource, relationSet, bindings)
 }
 
 func (p *ProcessRunner) PushAndRun(process *Process, relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
@@ -55,8 +55,8 @@ func (p *ProcessRunner) PushAndRun(process *Process, relations mentalese.Relatio
 	return p.RunProcessLevel(process, level)
 }
 
-func (p *ProcessRunner) RunRelationSetWithBindings(processType string, relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
-	process := NewProcess(processType, relationSet, bindings)
+func (p *ProcessRunner) RunRelationSetWithBindings(resource string, relationSet mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
+	process := NewProcess(resource, relationSet, bindings)
 	frame := process.Stack[0]
 	p.RunProcessLevel(process, 0)
 	// note: frame has already been deleted; frame is now just the last reference

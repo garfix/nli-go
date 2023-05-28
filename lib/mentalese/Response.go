@@ -1,7 +1,7 @@
 package mentalese
 
 type Response struct {
-	ProcessType string
+	Resource    string
 	MessageType string
 	Success     bool
 	ErrorLines  []string

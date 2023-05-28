@@ -89,12 +89,12 @@ $(function(){
                 send("language", "acknowledge", "")
                 break
             case "move_to":
-                doMoveTo(message.ProcessType, message.Message[0])
+                doMoveTo(message.Resource, message.Message[0])
                 break
         }
     }
 
-    function doMoveTo(processType, moves) {
+    function doMoveTo(resource, moves) {
         let maxDuration = 0;
         let animations = [];
 
@@ -179,131 +179,27 @@ $(function(){
     }
 
     function reset() {
-        // $.ajax({
-        //     url: 'scene.php',
-        //     data: { format: "json", action: 'reset' },
-        //     dataType: 'json',
-        //     type: 'GET',
-        //     success: function () {
-        //         window.location.reload();
-        //     },
-        //     error: function (request, status, error) {
-        //         showError(error)
-        //     }
-        // });
     }
 
-    // function sendRequest(request) {
-    //     $.ajax({
-    //         url: 'ajax-answer.php',
-    //         data: { format: "json", request: JSON.stringify(request), app: "blocks" },
-    //         dataType: 'json',
-    //         type: 'POST',
-    //         success: function (data) {
-
-    //             showProductions(data.Productions);
-
-    //             if (data.Success) {
-    //                 processResponse(data.Message)
-    //                 showError([]);
-    //             } else {
-    //                 showAnswer("")
-    //                 showError(data.ErrorLines);
-    //                 log(currentInput, errorToHtml(data.ErrorLines))
-    //             }
-    //         },
-    //         error: function (request, status, error) {
-    //             showError(error)
-    //         }
-    //     });
-    // }
-
-    // function processResponse(response) {
-    //     let asserts = [];
-    //     let assert;
-    //     let maxDuration = 0;
-    //     let animations = [];
-
-    //     for (let i = 0; i < response.length; i++) {
-    //         let relation = response[i];
-    //         switch (relation.predicate) {
-    //             case 'dom_action_move_to':
-    //                 assert = moveObject(relation)
-    //                 asserts.push(assert)
-    //                 let result = scene.createObjectAnimation({
-    //                     E: "`" + relation.arguments[1].sort + ":" + relation.arguments[1].value + "`",
-    //                     X: relation.arguments[2].value,
-    //                     Y: relation.arguments[4].value,
-    //                     Z: relation.arguments[3].value
-    //                 })
-    //                 animations.push(result.animation)
-    //                 maxDuration = Math.max(maxDuration, result.duration)
-    //                 break;
-    //             case 'go_print':
-    //                 assert = print(relation)
-    //                 asserts.push(assert)
-    //                 break;
-    //             case 'go_user_select':
-    //                 showOptionsPopup(relation)
-    //                 break;
-    //         }
-    //     }
-
-    //     if (animations.length > 0) {
-    //         scene.runAnimations(animations, maxDuration)
-    //     }
-    //     if (asserts.length > 0) {
-    //         window.setTimeout(function (){
-    //             sendRequest(asserts)
-    //         }, maxDuration);
-    //     }
-    // }
 
     function print(answer) {
         showAnswer(answer)
         log(currentInput, answer)
-        //return getAssert(relation);
     }
 
-    // function moveObject(relation) {
-    //     return getAssert(relation);
-    // }
-
-    function send(processType, messageType, message) {
+    function send(resource, messageType, message) {
         console.log("send", messageType, message)
         webSocket.send(JSON.stringify({
             System: "blocks",
-            ProcessType: processType,
+            Resource: resource,
             MessageType: messageType,
             Message: message
         }))
     }
 
     function tell(input) {
-        // sendRequest([{
-        //     predicate: 'go_tell',
-        //     arguments: [
-        //         {
-        //             type: 'string',
-        //             value: input
-        //         }
-        //     ]
-        // }]);
-
         send("language", "respond", input)
     }
-
-    // function getAssert(assertion) {
-    //     return {
-    //         predicate: 'go_assert',
-    //         arguments: [
-    //             {
-    //                 "type": "relation-set",
-    //                 "set": [assertion]
-    //             }
-    //         ]
-    //     }
-    // }
 
     function showOptionsPopup(relation) {
 

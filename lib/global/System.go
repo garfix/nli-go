@@ -63,13 +63,13 @@ func (system *System) HandleRequest(request mentalese.Request) {
 	}
 }
 
-func (system *System) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
-	return system.processRunner.RunRelationSet(processType, relationSet)
+func (system *System) RunRelationSet(resource string, relationSet mentalese.RelationSet) mentalese.BindingSet {
+	return system.processRunner.RunRelationSet(resource, relationSet)
 }
 
-func (system *System) RunRelationSetString(processType string, relationSet string) mentalese.BindingSet {
+func (system *System) RunRelationSetString(resource string, relationSet string) mentalese.BindingSet {
 	relations := system.internalGrammarParser.CreateRelationSet(relationSet)
-	return system.processRunner.RunRelationSet(processType, relations)
+	return system.processRunner.RunRelationSet(resource, relations)
 }
 
 func (system *System) Answer(input string) (string, *common.Options) {

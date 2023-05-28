@@ -39,12 +39,12 @@ func (system *BlocksSystem) HandleRequest(request mentalese.Request) {
 	}
 }
 
-func (system *BlocksSystem) RunRelationSet(processType string, relationSet mentalese.RelationSet) mentalese.BindingSet {
-	return system.base.RunRelationSet(processType, relationSet)
+func (system *BlocksSystem) RunRelationSet(resource string, relationSet mentalese.RelationSet) mentalese.BindingSet {
+	return system.base.RunRelationSet(resource, relationSet)
 }
 
-func (system *BlocksSystem) RunRelationSetString(processType string, relationSet string) mentalese.BindingSet {
-	return system.base.RunRelationSetString(processType, relationSet)
+func (system *BlocksSystem) RunRelationSetString(resource string, relationSet string) mentalese.BindingSet {
+	return system.base.RunRelationSetString(resource, relationSet)
 }
 
 func (system *BlocksSystem) GetClientConnector() api.ClientConnector {

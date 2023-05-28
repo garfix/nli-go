@@ -2,7 +2,7 @@ package mentalese
 
 type Request struct {
 	System      string
-	ProcessType string
+	Resource    string
 	MessageType string
 	Message     interface{}
 }

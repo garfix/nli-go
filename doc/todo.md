@@ -2,7 +2,6 @@
 
 ## up to 2 processes, websockets
 
-- remove processType from sending relations
 - send errors and productions as separate messages
 - split the repo in two: generic / demos, with demos depending on generic and creating a custom server
 

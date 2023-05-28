@@ -11,9 +11,9 @@ type ClientConnector struct {
 	system *System
 }
 
-func (c *ClientConnector) SendToClient(processType string, messageType string, message interface{}) {
+func (c *ClientConnector) SendToClient(resource string, messageType string, message interface{}) {
 	response := mentalese.Response{
-		ProcessType: processType,
+		Resource:    resource,
 		MessageType: messageType,
 		Success:     true,
 		ErrorLines:  []string{},

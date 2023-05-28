@@ -107,13 +107,13 @@ func (base *SystemSolverFunctionBase) createGoal(messenger api.ProcessMessenger,
 
 	bound := input.BindSingle(binding)
 
-	processType := bound.Arguments[0].TermValue
+	resource := bound.Arguments[0].TermValue
 	set := bound.Arguments[1].TermValueRelationSet
 
 	// add it to the list; run it (async); remove it from the list
-	result := messenger.StartProcess(processType, set, binding)
+	result := messenger.StartProcess(resource, set, binding)
 	if !result {
-		base.log.AddError("A process for " + processType + " is already active")
+		base.log.AddError("A process for " + resource + " is already active")
 		return mentalese.NewBindingSet()
 	}
 

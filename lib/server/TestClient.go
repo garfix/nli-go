@@ -129,10 +129,10 @@ func (c *TestClient) Run(system string, tests []Test) {
 	}
 }
 
-func (c *TestClient) Send(system string, processType string, messageType string, message string) {
+func (c *TestClient) Send(system string, resource string, messageType string, message string) {
 	request := mentalese.Request{
 		System:      system,
-		ProcessType: processType,
+		Resource:    resource,
 		MessageType: messageType,
 		Message:     message,
 	}

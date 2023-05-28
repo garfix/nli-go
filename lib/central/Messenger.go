@@ -88,8 +88,8 @@ func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bind
 	return i.processRunner.PushAndRun(i.process, relations, bindings)
 }
 
-func (i *Messenger) StartProcess(processType string, relations mentalese.RelationSet, binding mentalese.Binding) bool {
-	return i.processRunner.StartProcess(processType, relations, binding)
+func (i *Messenger) StartProcess(resource string, relations mentalese.RelationSet, binding mentalese.Binding) bool {
+	return i.processRunner.StartProcess(resource, relations, binding)
 }
 
 func (i *Messenger) GetProcessSlot(slot string) (mentalese.Term, bool) {

@@ -5,15 +5,15 @@ import (
 )
 
 type Process struct {
-	ProcessType string
-	Stack       []*mentalese.StackFrame
-	Slots       map[string]mentalese.Term
-	channel     chan mentalese.Request
+	resource string
+	Stack    []*mentalese.StackFrame
+	Slots    map[string]mentalese.Term
+	channel  chan mentalese.Request
 }
 
-func NewProcess(processType string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
+func NewProcess(resource string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
 	return &Process{
-		ProcessType: processType,
+		resource: resource,
 		Stack: []*mentalese.StackFrame{
 			mentalese.NewStackFrame(goalSet, bindings),
 		},
@@ -23,7 +23,7 @@ func NewProcess(processType string, goalSet mentalese.RelationSet, bindings ment
 }
 
 func (p *Process) GetType() string {
-	return p.ProcessType
+	return p.resource
 }
 
 func (p *Process) GetChannel() chan mentalese.Request {

@@ -1,4 +1,4 @@
-package central
+package mentalese
 
 type AnaphoraQueueElementValue struct {
 	Sort  string
@@ -8,5 +8,5 @@ type AnaphoraQueueElementValue struct {
 
 type AnaphoraQueueElement struct {
 	Variable string
-	values   []AnaphoraQueueElementValue
+	Values   []AnaphoraQueueElementValue
 }

@@ -53,9 +53,9 @@ func (finder *ReferentFinder) FindAnaphoricReferents(variable string, referenceS
 	for _, group := range groups {
 
 		// check if the referent is a group
-		if len(group.values) == 1 {
+		if len(group.Values) == 1 {
 
-			referent := group.values[0]
+			referent := group.Values[0]
 
 			found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, referent.Score, entityDefinition, binding, collection, reflective)
 			if found {
@@ -71,7 +71,7 @@ func (finder *ReferentFinder) FindAnaphoricReferents(variable string, referenceS
 		} else {
 
 			// try to match an element in the group
-			for _, referent := range group.values {
+			for _, referent := range group.Values {
 
 				found, foundVariable, foundTerm = finder.MatchReferenceToReferent(variable, referenceSort, group.Variable, referent.Sort, referent.Id, referent.Score, entityDefinition, binding, collection, reflective)
 				if found {
@@ -94,15 +94,9 @@ func (finder *ReferentFinder) FindAnaphoricReferents(variable string, referenceS
 
 	// check for ambiguity (2 highest scores are the same)
 	if len(referents) > 1 {
-
-		//diff := referents[0].Score - referents[1].Score
-		// if diff == 1 {
-		//println("* diff: " + strconv.Itoa(diff))
-		// }
-
 		if (referents[0].Score == referents[1].Score) &&
 			(referents[0].Variable != referents[1].Variable) {
-			println("* Ambiguity found!")
+			// println("* Ambiguity found!")
 			ambiguous = true
 		}
 	}
@@ -206,8 +200,8 @@ end:
 	return found, foundVariable, foundTerm
 }
 
-func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entitySorts *mentalese.EntitySorts) []AnaphoraQueueElement {
-	ids := []AnaphoraQueueElement{}
+func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentalese.EntityBindings, entitySorts *mentalese.EntitySorts) []mentalese.AnaphoraQueueElement {
+	ids := []mentalese.AnaphoraQueueElement{}
 	clauses := clauseList.Clauses
 
 	variableUsed := map[string]bool{}
@@ -232,23 +226,23 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 			value, found := entityBindings.Get(discourseVariable)
 			if found {
 				if value.IsList() {
-					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{}}
+					group := mentalese.AnaphoraQueueElement{Variable: discourseVariable, Values: []mentalese.AnaphoraQueueElementValue{}}
 					sort := entitySorts.GetSort(discourseVariable)
 					for _, item := range value.TermValueList {
-						reference := AnaphoraQueueElementValue{sort, item.TermValue, score}
-						group.values = append(group.values, reference)
+						reference := mentalese.AnaphoraQueueElementValue{sort, item.TermValue, score}
+						group.Values = append(group.Values, reference)
 					}
 					ids = append(ids, group)
 				} else {
 					sort := entitySorts.GetSort(discourseVariable)
-					reference := AnaphoraQueueElementValue{sort, value.TermValue, score}
-					group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
+					reference := mentalese.AnaphoraQueueElementValue{Sort: sort, Id: value.TermValue, Score: score}
+					group := mentalese.AnaphoraQueueElement{Variable: discourseVariable, Values: []mentalese.AnaphoraQueueElementValue{reference}}
 					ids = append(ids, group)
 				}
 			} else {
 				sort := entitySorts.GetSort(discourseVariable)
-				reference := AnaphoraQueueElementValue{sort, "", score}
-				group := AnaphoraQueueElement{Variable: discourseVariable, values: []AnaphoraQueueElementValue{reference}}
+				reference := mentalese.AnaphoraQueueElementValue{Sort: sort, Id: "", Score: score}
+				group := mentalese.AnaphoraQueueElement{Variable: discourseVariable, Values: []mentalese.AnaphoraQueueElementValue{reference}}
 				ids = append(ids, group)
 			}
 		}

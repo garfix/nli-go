@@ -6,13 +6,11 @@ import (
 )
 
 type SortFinder struct {
-	meta      *mentalese.Meta
 	messenger api.ProcessMessenger
 }
 
-func NewSortFinder(meta *mentalese.Meta, messenger api.ProcessMessenger) SortFinder {
+func NewSortFinder(messenger api.ProcessMessenger) SortFinder {
 	return SortFinder{
-		meta:      meta,
 		messenger: messenger,
 	}
 }

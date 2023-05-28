@@ -28,7 +28,7 @@ func NewReferentFinder(log *common.SystemLog, meta *mentalese.Meta, messenger ap
 		entityDefinitions: entityDefinitions,
 		entitySorts:       entitySorts,
 		entityTags:        entityTags,
-		sortFinder:        NewSortFinder(meta, messenger),
+		sortFinder:        NewSortFinder(messenger),
 	}
 }
 

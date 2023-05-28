@@ -2,9 +2,7 @@ package mentalese
 
 // maps a predicate to information about a relation
 type Meta struct {
-	argumentSorts  map[string]ArgumentSorts
 	sortProperties SortProperties
-	sortHierachy   map[string][]string
 }
 
 // for each argument a sort
@@ -24,9 +22,4 @@ func (meta Meta) AddSortInfo(name string, info SortProperty) {
 
 func (meta Meta) GetSorts() SortProperties {
 	return meta.sortProperties
-}
-
-func (meta Meta) GetSortProperty(sort string) (SortProperty, bool) {
-	info, found := meta.sortProperties[sort]
-	return info, found
 }

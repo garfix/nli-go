@@ -31,6 +31,7 @@ A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/a
 * The distinction between classic negation (`not`) and strong negation (`-`)
 * A generator to produce human readable responses
 * Modules and namespaces, for modular development
+* Uses websockets to communicate from client to server
 
 ## Build the nli client and server
 

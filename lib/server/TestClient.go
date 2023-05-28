@@ -84,7 +84,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 			ok := true
 
-			for true {
+			for {
 
 				err = websocket.JSON.Receive(c.conn, &response)
 				if err != nil {

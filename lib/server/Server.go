@@ -1,7 +1,5 @@
 package server
 
-// idea from: https://gist.github.com/miguelmota/301340db93de42b537df5588c1380863
-
 import (
 	"context"
 	"net/http"
@@ -48,8 +46,7 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 
 	systems := map[string]api.System{}
 
-	for true {
-
+	for {
 		request := mentalese.Request{}
 
 		err := websocket.JSON.Receive(conn, &request)
@@ -58,50 +55,8 @@ func (server *Server) HandleSingleConnection(conn *websocket.Conn) {
 			break
 		}
 
-		// fmt.Printf("%v received: %s\n", &conn, request.MessageType)
-
 		system := server.getSystem(conn, request, &systems)
-
 		system.HandleRequest(request)
-
-		// switch request.Command {
-		// case "send":
-		// 	// client := &RequestHandler{conn: conn}
-		// 	// go client.handleSend(system, request.Message)
-		// 	system.GetClientConnector().SendToProcess(request.ProcessType, request.Message)
-
-		// case "reset":
-		// 	delete(server.systems, request.SessionId)
-		// 	response := mentalese.Response{
-		// 		Success: true,
-		// 	}
-		// 	responseJSON, _ := json.Marshal(response)
-		// 	conn.Write(responseJSON)
-		// 	conn.Close()
-
-		// case "query":
-		// 	// client := &RequestHandler{conn: conn}
-		// 	// go client.handleQuery(system, request.Query)
-		// 	println("query!")
-
-		// case "answer":
-		// 	client := &RequestHandler{conn: conn}
-		// 	go client.handleAnswer(system, request.Query)
-
-		// case "test":
-		// 	// client := &RequestHandler{conn: conn}
-		// 	// go client.performTests(system, request.ApplicationDir)
-
-		// default:
-		// 	response := mentalese.Response{
-		// 		Success:    false,
-		// 		ErrorLines: []string{"Unknown command: " + request.Command},
-		// 	}
-		// 	responseJSON, _ := json.Marshal(response)
-		// 	conn.Write(responseJSON)
-		// 	// conn.Close()
-		// }
-
 	}
 }
 

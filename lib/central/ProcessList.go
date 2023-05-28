@@ -81,16 +81,6 @@ func (p *ProcessList) GetProcesses() []*Process {
 	return p.List
 }
 
-func (p *ProcessList) GetProcess(goalId string) *Process {
-	for _, process := range p.List {
-		if process.GoalId == goalId {
-			return process
-		}
-	}
-
-	return nil
-}
-
 func (p *ProcessList) GetProcessByType(processType string) *Process {
 	for _, process := range p.List {
 		if process.ProcessType == processType {
@@ -101,32 +91,6 @@ func (p *ProcessList) GetProcessByType(processType string) *Process {
 	return nil
 }
 
-func (p *ProcessList) RemoveProcess(goalId string) {
-
-	newList := []*Process{}
-
-	for _, process := range p.List {
-		if process.GoalId != goalId {
-			newList = append(newList, process)
-		}
-	}
-
-	p.List = newList
-}
-
-func (p *ProcessList) GetOrCreateProcess(processType string, goalId string, goalSet mentalese.RelationSet) *Process {
-	for _, process := range p.List {
-		if process.GoalId == goalId {
-			return process
-		}
-	}
-
-	process := p.CreateProcess(processType, goalId, goalSet, mentalese.InitBindingSet(mentalese.NewBinding()))
-	p.List = append(p.List, process)
-
-	return process
-}
-
-func (p *ProcessList) CreateProcess(processType string, goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
-	return NewProcess(processType, goalId, goalSet, bindings)
+func (p *ProcessList) CreateProcess(processType string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
+	return NewProcess(processType, goalSet, bindings)
 }

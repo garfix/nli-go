@@ -6,16 +6,14 @@ import (
 
 type Process struct {
 	ProcessType string
-	GoalId      string
 	Stack       []*StackFrame
 	Slots       map[string]mentalese.Term
 	channel     chan mentalese.Request
 }
 
-func NewProcess(processType string, goalId string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
+func NewProcess(processType string, goalSet mentalese.RelationSet, bindings mentalese.BindingSet) *Process {
 	return &Process{
 		ProcessType: processType,
-		GoalId:      goalId,
 		Stack: []*StackFrame{
 			NewStackFrame(goalSet, bindings),
 		},

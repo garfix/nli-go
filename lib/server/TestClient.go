@@ -70,7 +70,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 		if test.Send != "" {
 
 			println(test.Send)
-			c.Send(system, central.LANGUAGE_PROCESS, test.Send, "")
+			c.Send(system, central.RESOURCE_LANGUAGE, test.Send, "")
 
 			err = websocket.JSON.Receive(c.conn, &response)
 			if err != nil {
@@ -80,7 +80,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 		} else {
 
 			println(test.H)
-			c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageRespond, test.H)
+			c.Send(system, central.RESOURCE_LANGUAGE, mentalese.MessageRespond, test.H)
 
 			ok := true
 
@@ -95,7 +95,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 					var answer string = (response.Message).(string)
 
-					c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageAcknowledge, "")
+					c.Send(system, central.RESOURCE_LANGUAGE, mentalese.MessageAcknowledge, "")
 
 					println("  " + answer)
 					if answer != test.C {
@@ -105,7 +105,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 					}
 				}
 				if response.MessageType == "move_to" {
-					c.Send(system, central.ROBOT_PROCESS, mentalese.MessageAcknowledge, "")
+					c.Send(system, central.RESOURCE_ROBOT, mentalese.MessageAcknowledge, "")
 				}
 				if response.MessageType == mentalese.MessageChoose {
 					if clarificationIndex >= len(test.Clarifications) {
@@ -113,7 +113,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 						println("Missing clarification for " + response.Message.(string))
 						break
 					}
-					c.Send(system, central.LANGUAGE_PROCESS, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
+					c.Send(system, central.RESOURCE_LANGUAGE, mentalese.MessageChosen, test.Clarifications[clarificationIndex])
 					clarificationIndex++
 				}
 				if response.MessageType == mentalese.MessageProcessListClear {

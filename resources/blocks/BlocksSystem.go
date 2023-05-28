@@ -29,11 +29,11 @@ func (system *BlocksSystem) HandleRequest(request mentalese.Request) {
 	switch request.MessageType {
 	case MESSAGE_DESCRIBE:
 		scene := "dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)"
-		bindings := system.base.RunRelationSetString(central.SIMPLE_PROCESS, scene)
-		system.base.GetClientConnector().SendToClient(central.SIMPLE_PROCESS, MESSAGE_DESCRIPTION, bindings.AsSimple())
+		bindings := system.base.RunRelationSetString(central.NO_RESOURCE, scene)
+		system.base.GetClientConnector().SendToClient(central.NO_RESOURCE, MESSAGE_DESCRIPTION, bindings.AsSimple())
 	case MESSAGE_CREATE_PNG:
 		createImage(system.base)
-		system.base.GetClientConnector().SendToClient(central.SIMPLE_PROCESS, mentalese.MessageAcknowledge, "")
+		system.base.GetClientConnector().SendToClient(central.NO_RESOURCE, mentalese.MessageAcknowledge, "")
 	default:
 		system.base.HandleRequest(request)
 	}
@@ -63,7 +63,7 @@ func createImage(system api.System) {
 
 	//data := system.Query("dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)")
 	scene := "dom:at(E, X, Z, Y) go:has_sort(E, Type) dom:color(E, Color) dom:size(E, Width, Length, Height)"
-	bindings := system.RunRelationSetString(central.SIMPLE_PROCESS, scene)
+	bindings := system.RunRelationSetString(central.NO_RESOURCE, scene)
 
 	p.DrawCube(-.99, -.99, -.99, .99, .99, .99)
 

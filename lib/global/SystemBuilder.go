@@ -146,7 +146,7 @@ func (builder *systemBuilder) buildBasic(system *System) {
 
 	callback := func() {
 		if system.processList.IsEmpty() {
-			system.clientConnector.SendToClient(central.SIMPLE_PROCESS, "processlist_clear", nil)
+			system.clientConnector.SendToClient(central.NO_RESOURCE, "processlist_clear", nil)
 		}
 	}
 

@@ -307,7 +307,7 @@ func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output st
 	// }
 	// bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
 	//clientConnector?
-	base.clientConnector.SendToClient(central.LANGUAGE_PROCESS, "print", output)
+	base.clientConnector.SendToClient(central.RESOURCE_LANGUAGE, "print", output)
 
 	message := <-messenger.GetProcess().GetChannel()
 	if message.Message.(string) == "OK" {

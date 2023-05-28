@@ -1,8 +1,8 @@
 package central
 
-const LANGUAGE_PROCESS = "language"
-const ROBOT_PROCESS = "robot"
-const SIMPLE_PROCESS = "simple"
+const RESOURCE_LANGUAGE = "language"
+const RESOURCE_ROBOT = "robot"
+const NO_RESOURCE = "no-resource"
 
 type MessageListener func()
 
@@ -18,7 +18,7 @@ func NewProcessList() *ProcessList {
 }
 
 func (p *ProcessList) IsProcessTypeActive(processType string) bool {
-	if processType == SIMPLE_PROCESS {
+	if processType == NO_RESOURCE {
 		return false
 	}
 

@@ -50,7 +50,7 @@ func (system *System) HandleRequest(request mentalese.Request) {
 	switch request.MessageType {
 	case mentalese.MessageRespond:
 		system.processRunner.StartProcess(
-			central.LANGUAGE_PROCESS,
+			central.RESOURCE_LANGUAGE,
 			mentalese.RelationSet{
 				mentalese.NewRelation(false, mentalese.PredicateRespond,
 					[]mentalese.Term{mentalese.NewTermString(request.Message.(string))},

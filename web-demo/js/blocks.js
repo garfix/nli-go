@@ -347,23 +347,7 @@ $(function(){
     }
 
     function updateScene(initial) {
-        // $.ajax({
-        //     url: 'scene.php',
-        //     data: { format: "json", action: "state" },
-        //     dataType: 'json',
-        //     type: 'GET',
-        //     success: function (data) {
-        //         if (initial) {
-        //             scene.build(monitor, data, displayWidth, displayHeight)
-        //         } else {
-        //             scene.update(data)
-        //         }
-        //     },
-        //     error: function (request, status, error) {
-        //         showError(error)
-        //     }
-        // });
-        send("simple", "describe", '')
+        send("no-resource", "describe", '')
     }
 
     setup();

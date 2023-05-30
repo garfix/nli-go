@@ -1,6 +1,9 @@
 package parse
 
-import "nli-go/lib/mentalese"
+import (
+	"nli-go/lib/mentalese"
+	"strings"
+)
 
 // no backtracking! uses custom stacks
 
@@ -141,10 +144,10 @@ func (ex *treeExtracter) createNode(state chartState) *mentalese.ParseTreeNode {
 }
 
 // Returns the word that could not be parsed (or ""), and the index of the last completed word
-func FindLastCompletedWordIndex(chart *chart) (int, string) {
+func FindUnknownWord(chart *chart) string {
 
 	nextWord := ""
-	lastIndex := -1
+	lastUnderstoodIndex := -1
 
 	// find the last completed nextWord
 
@@ -152,18 +155,18 @@ func FindLastCompletedWordIndex(chart *chart) (int, string) {
 		states := chart.states[i]
 		for _, state := range states {
 			if state.isComplete() {
-
-				lastIndex = state.endWordIndex - 1
-				goto done
+				if state.endWordIndex > lastUnderstoodIndex {
+					lastUnderstoodIndex = state.endWordIndex - 1
+				}
 			}
 		}
 	}
 
-done:
-
-	if lastIndex <= len(chart.words)-2 {
-		nextWord = chart.words[lastIndex+1]
+	if lastUnderstoodIndex+1 < len(chart.words) {
+		nextWord = chart.words[lastUnderstoodIndex+1]
+	} else {
+		nextWord = strings.Join(chart.words, " ")
 	}
 
-	return lastIndex, nextWord
+	return nextWord
 }

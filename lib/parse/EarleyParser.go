@@ -47,15 +47,17 @@ func (parser *EarleyParser) Parse(words []string, rootCategory string, rootVaria
 
 	if len(rootNodes) == 0 {
 
-		lastParsedWordIndex, nextWord := FindLastCompletedWordIndex(chart)
+		nextWord := FindUnknownWord(chart)
 
 		if nextWord != "" {
 			error = common.UnknownWord
 			errorArg = nextWord
 		} else if len(words) == 0 {
 			error = common.NoSentence
-		} else if lastParsedWordIndex == len(words)-1 {
+			errorArg = ""
+		} else {
 			error = common.NoUnderstandSentence
+			errorArg = ""
 		}
 	}
 

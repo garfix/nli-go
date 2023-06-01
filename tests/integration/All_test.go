@@ -9,7 +9,10 @@ import (
 
 func TestAll(t *testing.T) {
 
-	srv := server.NewServer("3334")
+	appDir := common.Dir() + "/../../resources"
+	workDir := common.Dir() + "/../../var"
+
+	srv := server.NewServer("3334", appDir, workDir)
 	srv.RunInBackground()
 	defer srv.Close()
 

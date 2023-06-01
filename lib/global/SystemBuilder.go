@@ -21,43 +21,34 @@ import (
 
 type systemBuilder struct {
 	log                *common.SystemLog
-	baseDir            string
+	appDir             string
+	workDir            string
 	sessionId          string
-	varDir             string
 	parser             *importer.InternalGrammarParser
 	loadedModules      []string
 	applicationAliases map[string]string
 	conn               *websocket.Conn
 }
 
-// systemDir: absolute base dir of the interaction system
-// outputDir: absolute base dir of all output files
-// log: the log file that will store progress and errors
-func NewSystem(systemDir string, sessionId string, varDir string, log *common.SystemLog, conn *websocket.Conn) *System {
+func NewSystem(appDir string, workDir string, sessionId string, log *common.SystemLog, conn *websocket.Conn) *System {
 
 	system := &System{log: log}
 
-	absolutePath, err := filepath.Abs(systemDir)
-	if err != nil {
-		log.AddError(err.Error())
-		return system
-	}
-
-	builder := newSystemBuilder(absolutePath, sessionId, varDir, log, conn)
+	builder := newSystemBuilder(appDir, workDir, sessionId, log, conn)
 	builder.build(system)
 
 	return system
 }
 
-func newSystemBuilder(baseDir string, sessionId string, varDir string, log *common.SystemLog, conn *websocket.Conn) *systemBuilder {
+func newSystemBuilder(appDir string, workDir string, sessionId string, log *common.SystemLog, conn *websocket.Conn) *systemBuilder {
 
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
 	return &systemBuilder{
-		baseDir:   baseDir,
+		appDir:    appDir,
+		workDir:   workDir,
 		sessionId: sessionId,
-		varDir:    varDir,
 		parser:    parser,
 		log:       log,
 		conn:      conn,
@@ -65,7 +56,7 @@ func newSystemBuilder(baseDir string, sessionId string, varDir string, log *comm
 }
 
 func (builder *systemBuilder) getSystemName() string {
-	return filepath.Base(builder.baseDir)
+	return filepath.Base(builder.appDir)
 }
 
 func (builder *systemBuilder) build(system *System) {
@@ -207,7 +198,7 @@ func (builder *systemBuilder) loadModule(moduleSpec string, indexes *map[string]
 
 	aliasMap := builder.createAliasMap(index, moduleName)
 
-	moduleBaseDir := builder.baseDir + "/" + moduleName
+	moduleBaseDir := builder.appDir + "/" + moduleName
 	applicationAlias := builder.applicationAliases[moduleName]
 	builder.processIndex(index, system, applicationAlias, moduleBaseDir, aliasMap)
 
@@ -249,7 +240,7 @@ func (builder *systemBuilder) loadDependentModules(index index, indexes *map[str
 func (builder *systemBuilder) readConfig() (config, bool) {
 
 	config := config{}
-	configPath := builder.baseDir + "/config.yml"
+	configPath := builder.appDir + "/config.yml"
 	configYml, err := common.ReadFile(configPath)
 	if err != nil {
 		builder.log.AddError(err.Error())
@@ -270,7 +261,7 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 	indexes := map[string]index{}
 	ok := true
 
-	files, err := ioutil.ReadDir(builder.baseDir)
+	files, err := ioutil.ReadDir(builder.appDir)
 	if err != nil {
 		builder.log.AddError(err.Error())
 		ok = false
@@ -288,7 +279,7 @@ func (builder *systemBuilder) readIndexes() (map[string]index, bool) {
 		}
 
 		anIndex := index{}
-		anIndex, ok = builder.buildIndex(builder.baseDir + "/" + dirName)
+		anIndex, ok = builder.buildIndex(builder.appDir + "/" + dirName)
 		if !ok {
 			goto end
 		}
@@ -589,7 +580,7 @@ func (builder *systemBuilder) buildSparqlDatabase(index index, system *System, b
 		return
 	}
 
-	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.varDir+"/sparql-cache", builder.log)
+	database := knowledge.NewSparqlFactBase(applicationAlias, index.BaseUrl, index.DefaultGraphUri, system.matcher, readMap, names, index.Cache, builder.workDir+"/sparql-cache", builder.log)
 
 	sharedIds, ok := builder.buildSharedIds(index, baseDir)
 	if ok {

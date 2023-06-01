@@ -8,19 +8,22 @@ import (
 	"nli-go/lib/global"
 	"nli-go/lib/mentalese"
 	"nli-go/resources/blocks"
-	"path/filepath"
 
 	"golang.org/x/net/websocket"
 )
 
 type Server struct {
 	httpServer *http.Server
+	baseDir    string
+	workdDir   string
 }
 
-func NewServer(port string) *Server {
+func NewServer(port string, appDir string, workdDir string) *Server {
 	server := &http.Server{Addr: ":" + port}
 	return &Server{
 		httpServer: server,
+		baseDir:    appDir,
+		workdDir:   workdDir,
 	}
 }
 
@@ -71,30 +74,16 @@ func (server *Server) getSystem(conn *websocket.Conn, request mentalese.Request,
 		return system
 	}
 
-	applicationDir := common.Dir() + "/../../resources/" + request.System
-	workDir := common.Dir() + "/../../var"
-
 	sessionId := common.CreateUuid()
+	systemLog := common.NewSystemLog()
+	appDir := server.baseDir + "/" + request.System
 
-	system = buildSystem(workDir, applicationDir, sessionId, workDir, conn)
+	system = global.NewSystem(appDir, server.workdDir, sessionId, systemLog, conn)
 	if request.System == "blocks" {
 		system = blocks.CreateBlocksSystem(system)
 	}
 
 	(*systems)[request.System] = system
-
-	return system
-}
-
-func buildSystem(workingDir string, applicationPath string, sessionId string, outputDir string, conn *websocket.Conn) api.System {
-	absApplicationPath := common.AbsolutePath(workingDir, applicationPath)
-
-	systemLog := common.NewSystemLog()
-
-	outputDir, _ = filepath.Abs(outputDir)
-	outputDir = filepath.Clean(outputDir)
-
-	system := global.NewSystem(absApplicationPath, sessionId, outputDir, systemLog, conn)
 
 	return system
 }

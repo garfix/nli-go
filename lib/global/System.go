@@ -71,7 +71,3 @@ func (system *System) RunRelationSetString(resource string, relationSet string) 
 	relations := system.internalGrammarParser.CreateRelationSet(relationSet)
 	return system.processRunner.RunRelationSet(resource, relations)
 }
-
-func (system *System) Answer(input string) (string, *common.Options) {
-	return "", common.NewOptions()
-}

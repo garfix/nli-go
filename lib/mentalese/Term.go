@@ -317,7 +317,7 @@ func (term Term) AsSimple() interface{} {
 	case TermTypeStringConstant:
 		number, ok := term.GetNumber()
 		if !ok {
-			return "NaN"
+			return term.TermValue
 		} else {
 			return number
 		}

@@ -1,5 +1,11 @@
 # Todo
 
+put x => place x (katja)
+put it down
+drop it
+
+The combination of multiple results per relation and returning a single relation is absolutely counter-intuitive and leads to hard to detect and fix errors.
+
 ## up to 2 processes, websockets
 
 - send errors and productions as separate messages

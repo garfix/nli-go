@@ -6,11 +6,34 @@ Enforces "physics" rules: it updates the object-object relations and object prop
 
 */
 
+high_enough_for_hand(Z) :-
+    /* max top of all objects (except the hand and the object it's holding) */
+    at(E1, _, _, Bottom1)
+    go:not([E1 == `hand:hand`])
+    if grasping(`:shrdlu`, G) then
+        go:not([E1 == G])
+    end
+    size(E1, _, _, Height1)
+    [Top1 := [Bottom1 + Height1]]
+    go:largest(Top1)
+    go:first()
+
+    /* add the height of the carrying object */
+    [:MaxTop := Top1]
+    if grasping(`:shrdlu`, E) then
+        size(E, _, _, Height)
+        [:MaxTop := [Top1 + Height]]
+    end
+
+    [Z := [:MaxTop + 10]]
+;
+
 phys_move_hand(X, Y, Z) :-
     go:not(grasping(`:shrdlu`, _))
+    high_enough_for_hand(Max)
     at(`hand:hand`, X1, Y1, Z1)
-    phys_move_hand_partial(X1, Y1, 600)
-    phys_move_hand_partial(X, Y, 600)
+    phys_move_hand_partial(X1, Y1, Max)
+    phys_move_hand_partial(X, Y, Max)
     phys_move_hand_partial(X, Y, Z)
 ;
 
@@ -21,9 +44,10 @@ phys_move_hand_partial(X, Y, Z) :-
 
 phys_move_hand(X, Y, Z) :-
     grasping(`:shrdlu`, E1)
+    high_enough_for_hand(Max)
     at(`hand:hand`, X1, Y1, Z1)
-    phys_move_hand_with_object(E1, X1, Y1, 600)
-    phys_move_hand_with_object(E1, X, Y, 600)
+    phys_move_hand_with_object(E1, X1, Y1, Max)
+    phys_move_hand_with_object(E1, X, Y, Max)
     phys_move_hand_with_object(E1, X, Y, Z)
 ;
 
@@ -43,7 +67,8 @@ phys_release(E1) :- db_release(E1);
 
 phys_raise_hand(_) :-
     at(`hand:hand`, X, Y, Z)
-    phys_move_hand(X, Y, 600);
+    high_enough_for_hand(Max)
+    phys_move_hand(X, Y, Max);
 
 phys_move_object(E1, X, Y, Z) :-
     time(T1)

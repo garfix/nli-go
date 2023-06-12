@@ -32,8 +32,10 @@
 /* interrogative sentences */
 
 { rule: s(S1) -> interrogative(S1) }
-{ rule: interrogative(P1) -> interrogative_clause(P1) '?' }
+{ rule: interrogative(P1) -> interrogative_clause(P1) }
 { rule: interrogative(P1) -> there_be(P1) '.' }
+
+{ rule: interrogative_clause(P1) -> interrogative_clause(P1) '?' }
 
 { rule: interrogative_clause(P1) -> 'what' vp_without_np(P1, E1),                  intent: go:intent(what, E1) }
 { rule: interrogative_clause(P1) -> 'which' np(E1) vp_without_np(P1, E1),          intent: go:intent(which, E1),        sense: go:check($np, $vp_without_np) }

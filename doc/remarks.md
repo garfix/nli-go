@@ -1,3 +1,17 @@
+## 2023-06-12
+
+I'm working on the block's demo @ https://github.com/garfix/blocks-world
+
+Funny mistake:
+
+    Pick up the table
+
+The system starts moving all objects from the table to a different location on the table, then picks up the table top. The legs of the table are just for show, so they stay behind ...
+
+![table without legs](archive/Screenshot%20from%202023-06-12%2019-48-08.png)
+
+Today I'm adding speech to text, which is built-in into the browser, but only Chrome.
+
 ## 2023-05-12
 
 I realize that my system is thoroughly unsuited to process multiple interactions concurrently. Accomplishing this would mean a massive adaptation. Maybe later.

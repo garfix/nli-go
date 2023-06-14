@@ -25,6 +25,10 @@ func CreateBlocksSystem(base api.System) *BlocksSystem {
 	}
 }
 
+func (system *BlocksSystem) GetLog() *common.SystemLog {
+	return system.base.GetLog()
+}
+
 func (system *BlocksSystem) HandleRequest(request mentalese.Request) {
 	switch request.MessageType {
 	case MESSAGE_DESCRIBE:

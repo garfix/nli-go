@@ -4,6 +4,8 @@ put x => place x (katja)
 put it down
 drop it
 
+A blob is a green block (doesn't work at the moment)
+
 The combination of multiple results per relation and returning a single relation is absolutely counter-intuitive and leads to hard to detect and fix errors.
 
 ## up to 2 processes, websockets

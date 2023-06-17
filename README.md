@@ -16,6 +16,10 @@ The application is not production ready, but you can use it to experiment. The s
 
 A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia.
 
+A recent demo mimicks Terry Winograd's SHRDLU (1970). It can be found [here](https://patrickvanbergen.com/blocks-world/)
+
+![blocks world](doc/archive/blocks-world.png)
+
 ## Features
 
 * An Earley parser to create a syntax tree from an input sentence, with semantic attachments

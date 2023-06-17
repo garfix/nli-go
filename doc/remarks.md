@@ -1,3 +1,15 @@
+## 2023-06-17
+
+The use of grammars is not implemented in Chrome. I tried using `webkitSpeechGrammarList` with `speechRecognitionList.addFromString(grammar, 1);` add while this is syntactically correct, it doesn't seem to do anything. I also found this in several comments on the internet. So unfortunately I can't use it. It would have been nice to generate a JSGF grammer from an NLI-GO grammar.
+
+Speech recognition is ok for now. If you speak slowly and articulate well, most of the times the sentence is recognized perfectly.
+
+But I did add text to speech, which Chrome supports, and so if you ask a question using your voice, the system will now talk back to you.
+
+===
+
+I made a link to the online demo in the blocks world demo and added a video to the readme. That releases the demo. I'm not ready to make it public, because i'd like to add some more types of sentences, and variations on words and expressions (mainly of commands).
+
 ## 2023-06-12
 
 I'm working on the block's demo @ https://github.com/garfix/blocks-world

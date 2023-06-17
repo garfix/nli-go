@@ -10,6 +10,9 @@ import (
 	"nli-go/lib/global"
 	"nli-go/lib/mentalese"
 	"nli-go/resources/blocks"
+	"os"
+	"strconv"
+	"time"
 
 	"golang.org/x/net/websocket"
 )
@@ -83,8 +86,26 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 		}
 	}()
 
+	server.logRequest(request)
+
 	system := server.getSystem(conn, request, &systems)
 	system.HandleRequest(request)
+}
+
+func (server *Server) logRequest(request mentalese.Request) {
+
+	year, month, _ := time.Now().Date()
+	filename := server.workdDir + "/log/" + strconv.Itoa(year) + "-" + strconv.Itoa(int(month)) + "-queries.log"
+
+	if request.Resource == central.RESOURCE_LANGUAGE && request.Message != "" {
+		text := fmt.Sprintf("%s %s", time.Now().Local(), request.Message.(string)+"\n")
+
+		f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err == nil {
+			f.WriteString(text)
+		}
+		f.Close()
+	}
 }
 
 func (server *Server) Close() {

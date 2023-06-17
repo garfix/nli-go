@@ -5,7 +5,7 @@ This is just for me, Patrick, to copy files to the server
 start the server
 
     cd bin
-    ./server 3333 /data/go/src/nli-go/resources /data/go/nli-go/var
+    ./server 3333 /data/go/src/nli-go/resources /data/go/src/nli-go/var
 
 The frontend has a separate repository: https://github.com/garfix/blocks-world
 

@@ -2,7 +2,7 @@
 
 This is a research project with the following purpose:
 
-> To create a sofware system that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The system should be easy to use and the range of language constructs should be very wide.
+> To create a software system that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The system should be easy to use and the range of language constructs should be very wide.
 
 As this is a hard problem, the chance of succeeding is not high. Therefore the second purpose of the project is to gain knowledge about this discipline. This knowledge has been accumulating since the beginning and can mainly be found in the docs/topics section. It can be interesting to you if you're building a linguistics system.
 

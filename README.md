@@ -2,11 +2,11 @@
 
 This is a research project with the following purpose:
 
-> To create a programming environment that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The environment should be easy to use and the range of language constructs should be very wide.
+> To create a sofware system that allows a regular programmer, untrained in linguistics and logic, to program a computer to interact with users in natural language. The system should be easy to use and the range of language constructs should be very wide.
 
-The emphasis of the project is on developing declarative structures that are both easy to use and very expressive. To this end, different forms of linguistic and logical representations are considered. From these, a new representation is distilled, that focuses on programmability.
+As this is a hard problem, the chance of succeeding is not high. Therefore the second purpose of the project is to gain knowledge about this discipline. This knowledge has been accumulating since the beginning and can mainly be found in the docs/topics section. It can be interesting to you if you're building a linguistics system.
 
-Its product is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French.
+The system is a semantic parser and execution engine (an executable program, written in Go) that provides a Natural Language Interface to a database, a service or another application. It allows the user to interact with a computer system using natural language like English or French.
 
 It is a rule based system that requires the developer to write rules by hand. Thus, the developer has full control over the behaviour of the system. Its semantics are not functional, but procedural.
 
@@ -14,7 +14,7 @@ The application is not production ready, but you can use it to experiment. The s
 
 ## Web demo
 
-A demo of this program can be found [here](http://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia.
+A old demo of this program can be found [here](https://patrickvanbergen.com/dbpedia/app/). It allows you to use a few sentences to query DBPedia.
 
 A recent demo mimicks Terry Winograd's SHRDLU (1970). It can be found [here](https://patrickvanbergen.com/blocks-world/)
 
@@ -38,6 +38,8 @@ A recent demo mimicks Terry Winograd's SHRDLU (1970). It can be found [here](htt
 * Uses websockets to communicate from client to server
 
 ## Build the nli client and server
+
+(outdated! needs update)
 
 NLI-GO is a command-line application called "nli". It's written in Go and you must compile it into an executable for your OS.
 

@@ -1,5 +1,8 @@
 # Todo
 
+- no need to put down a block when you're holding it
+- repair the command-line tools and document them
+
 put x => place x (katja)
 put it down
 drop it

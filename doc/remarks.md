@@ -1,3 +1,11 @@
+## 2023-06-24
+
+I made the demo public, but did not try to get it any attention, because so much still work needs to be done. I did notify Terry Winograd of the demo, and I was very happy with his response. I had also asked him about how the sentences in the demo conversation had come about. He says:
+
+> I made them up bit by bit as I went along. When I got one to work, I would think "what would be interesting to do next?" with an eye towards showing off as many linguistic abilities as possible.
+
+Sounds like a very satisfying way to do a project. No large plan up front, just see how far you can go within the time that you have.
+
 ## 2023-06-17
 
 The use of grammars is not implemented in Chrome. I tried using `webkitSpeechGrammarList` with `speechRecognitionList.addFromString(grammar, 1);` add while this is syntactically correct, it doesn't seem to do anything. I also found this in several comments on the internet. So unfortunately I can't use it. It would have been nice to generate a JSGF grammer from an NLI-GO grammar.

@@ -1,3 +1,9 @@
+## 2023-06-27
+
+I made the system not put down the block when it was asked to put the block it was holding into the box, or on top of another block.
+
+It took me a long time, and once again I realized how brittle the system still is. I broke a "why" question later on when working on this, and I don't even know why that happened. Undoing one of the changes helped.
+
 ## 2023-06-24
 
 I made the demo public, but did not try to get it any attention, because so much still work needs to be done. I did notify Terry Winograd of the demo, and I was very happy with his response. I had also asked him about how the sentences in the demo conversation had come about. He says:

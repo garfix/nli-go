@@ -4,7 +4,9 @@
 
 /* move an object to lower left position (X, Y, Z) */
 do_move(ParentEventId, E1, X, Y, Z) :-
-    do_pick_up(ParentEventId, E1)
+    if go:not(grasping(`:shrdlu`, E1)) then
+        do_pick_up(ParentEventId, E1)
+    end
     do_put_down(ParentEventId, E1, X, Y, Z);
 
 /* move an object to the table */

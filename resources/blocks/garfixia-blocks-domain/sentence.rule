@@ -32,8 +32,10 @@ do_put_in_smart(E1, E2) :-
             /*go:log('put in', EventId)*/
             go:assert(put_in(EventId, `:shrdlu`, E1, E2))
 
-            do_clear_hand(EventId)
-            do_cleartop(EventId, E1)
+            if go:not(grasping(`:shrdlu`, E1)) then
+                do_clear_hand(EventId)
+                do_cleartop(EventId, E1)
+            end
             do_put_in(EventId, E1, E2)
         )
     );
@@ -47,8 +49,11 @@ do_put_on_smart(E1, E2) :-
             /*go:log('put on', EventId)*/
             go:assert(put_on_smart(EventId, `:shrdlu`, E1, E2))
 
-            do_clear_hand(EventId)
-            do_cleartop(EventId, E1)
+            if go:not(grasping(`:shrdlu`, E1)) then
+                do_clear_hand(EventId)
+                do_cleartop(EventId, E1)
+            end
+
             do_put_on(EventId, E1, E2)
         )
     );

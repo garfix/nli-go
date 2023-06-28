@@ -1,0 +1,9 @@
+- H: "Does the table support the big red block?"
+  C: "Yes"
+- H: "Place the green pyramid on the blue block"
+  C: "OK"
+- H: "Does the blue block support the green pyramid?"
+  C: "Yes"
+# on top of => on
+# Put A down
+# Drop it

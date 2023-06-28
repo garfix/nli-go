@@ -296,7 +296,8 @@ func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output st
 	base.clientConnector.SendToClient(central.RESOURCE_LANGUAGE, mentalese.MessagePrint, output)
 
 	message := <-messenger.GetProcess().GetChannel()
-	if message.Message.(string) == "OK" {
+
+	if message.MessageType == mentalese.MessageAcknowledge {
 		return true
 	} else {
 		return false

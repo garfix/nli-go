@@ -76,10 +76,7 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 			response := mentalese.Response{
 				Resource:    central.NO_RESOURCE,
 				MessageType: mentalese.MessageError,
-				Success:     true,
-				ErrorLines:  []string{},
-				Productions: []string{},
-				Message:     []string{message},
+				Message:     message,
 			}
 
 			websocket.JSON.Send(conn, response)
@@ -93,10 +90,7 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 		response := mentalese.Response{
 			Resource:    central.NO_RESOURCE,
 			MessageType: mentalese.MessageAcknowledge,
-			Success:     true,
-			ErrorLines:  []string{},
-			Productions: []string{},
-			Message:     []string{},
+			Message:     "",
 		}
 
 		websocket.JSON.Send(conn, response)

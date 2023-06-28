@@ -293,21 +293,7 @@ func (base *LanguageBase) addTagsToDatabase(tags mentalese.RelationSet, messenge
 }
 
 func (base *LanguageBase) waitForPrint(messenger api.ProcessMessenger, output string) bool {
-	// uuid := common.CreateUuid()
-	// set := mentalese.RelationSet{
-	// 	mentalese.NewRelation(false, mentalese.PredicateWaitFor, []mentalese.Term{
-	// 		mentalese.NewTermRelationSet(
-	// 			mentalese.RelationSet{
-	// 				mentalese.NewRelation(false, mentalese.PredicatePrint, []mentalese.Term{
-	// 					mentalese.NewTermId(uuid, "entity"),
-	// 					mentalese.NewTermString(output),
-	// 				}),
-	// 			}),
-	// 	}),
-	// }
-	// bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
-	//clientConnector?
-	base.clientConnector.SendToClient(central.RESOURCE_LANGUAGE, "print", output)
+	base.clientConnector.SendToClient(central.RESOURCE_LANGUAGE, mentalese.MessagePrint, output)
 
 	message := <-messenger.GetProcess().GetChannel()
 	if message.Message.(string) == "OK" {

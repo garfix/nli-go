@@ -15,9 +15,6 @@ func (c *ClientConnector) SendToClient(resource string, messageType string, mess
 	response := mentalese.Response{
 		Resource:    resource,
 		MessageType: messageType,
-		Success:     true,
-		ErrorLines:  []string{},
-		Productions: []string{},
 		Message:     message,
 	}
 	// fmt.Printf("%v sent:     %s\n", &c.conn, messageType)

@@ -170,11 +170,13 @@ const NotScopeIndex = 0
 const MessagePrint = "print"
 const MessageChoose = "choose"
 const MessageProcessListClear = "processlist_clear"
+const MessageError = "error"
 
 // from client
 const MessageRespond = "respond"
 const MessageAcknowledge = "acknowledge"
 const MessageChosen = "chosen"
+const MessageReset = "reset"
 
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{

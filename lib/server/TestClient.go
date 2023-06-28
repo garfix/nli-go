@@ -41,7 +41,7 @@ type Test struct {
 	Send           string   `yaml:"Send"`
 }
 
-func (c *TestClient) RunFile(system string, filename string) {
+func (c *TestClient) RunTests(system string, filename string) {
 	yml, err := common.ReadFile(filename)
 	if err != nil {
 		println("Error reading " + filename)
@@ -62,6 +62,14 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 	response := mentalese.Response{}
 	var err error = nil
+
+	c.Send(system, central.NO_RESOURCE, mentalese.MessageReset, "")
+
+	err = websocket.JSON.Receive(c.conn, &response)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	for _, test := range tests {
 

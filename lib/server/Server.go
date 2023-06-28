@@ -75,7 +75,7 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 
 			response := mentalese.Response{
 				Resource:    central.NO_RESOURCE,
-				MessageType: "error",
+				MessageType: mentalese.MessageError,
 				Success:     true,
 				ErrorLines:  []string{},
 				Productions: []string{},
@@ -88,8 +88,22 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 
 	server.logRequest(request)
 
-	system := server.getSystem(conn, request, &systems)
-	system.HandleRequest(request)
+	if request.MessageType == mentalese.MessageReset {
+		delete(systems, request.System)
+		response := mentalese.Response{
+			Resource:    central.NO_RESOURCE,
+			MessageType: mentalese.MessageAcknowledge,
+			Success:     true,
+			ErrorLines:  []string{},
+			Productions: []string{},
+			Message:     []string{},
+		}
+
+		websocket.JSON.Send(conn, response)
+	} else {
+		system := server.getSystem(conn, request, &systems)
+		system.HandleRequest(request)
+	}
 }
 
 func (server *Server) logRequest(request mentalese.Request) {

@@ -12,14 +12,29 @@
 do_pick_up_smart(EventId, E1) :-
     go:create_goal(
         'robot',
-        /*go:uuid(EventId, event)*/
         persist_action(EventId, `event:root`,
-            /*go:log('pick up', EventId)*/
             go:assert(pick_up(EventId, `:shrdlu`, E1))
 
             do_clear_hand(EventId)
             do_cleartop(EventId, E1)
             do_pick_up(EventId, E1)
+        )
+    );
+
+do_put_down_smart(EventId, E1) :-
+    go:create_goal(
+        'robot',
+        persist_action(EventId, `event:root`,
+            go:assert(put_down(EventId, `:shrdlu`, E1))
+
+            if go:not(grasping(`:shrdlu`, E1)) then
+                do_clear_hand(EventId)
+                do_cleartop(EventId, E1)
+                do_pick_up(EventId, E1)
+            end
+
+            do_find_space_on_table(E1, X, Y)
+            do_move_to_table(EventId, E1, X, Y)
         )
     );
 

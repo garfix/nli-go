@@ -4,6 +4,9 @@
   C: "OK"
 - H: "Does the blue block support the green pyramid?"
   C: "Yes"
-# on top of => on
+- H: "Pick up the green pyramid"
+  C: "OK"
+- H: "Put it down"
+  C: "OK"
 # Put A down
 # Drop it

@@ -49,6 +49,7 @@ func (system *System) CreatClientConnector(conn *websocket.Conn) *ClientConnecto
 func (system *System) HandleRequest(request mentalese.Request) {
 	switch request.MessageType {
 	case mentalese.MessageRespond:
+		// start a process
 		system.processRunner.StartProcess(
 			central.RESOURCE_LANGUAGE,
 			mentalese.RelationSet{
@@ -59,6 +60,7 @@ func (system *System) HandleRequest(request mentalese.Request) {
 			mentalese.NewBinding(),
 		)
 	default:
+		// send a message to a process
 		system.processRunner.SendMessage(request)
 	}
 }

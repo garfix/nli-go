@@ -1,8 +1,2 @@
-/*go:tell(Input) :-
-    go:create_goal(
-        'language',
-        go:respond(Input)
-    );
-*/
 go:isa(E, Type) :- go:has_sort(E, Type);
 go:isa(E, Type) :- go:has_sort(E, S) go:isa(S, Type);

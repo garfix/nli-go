@@ -6,7 +6,6 @@
   C: "Yes"
 - H: "Pick up the green pyramid"
   C: "OK"
-- H: "Put it down"
+- H: "Put it down again"
   C: "OK"
-# Put A down
 # Drop it

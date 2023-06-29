@@ -92,7 +92,8 @@
 /* imperative sentences */
 
 { rule: s(S1) -> imperative(S1) }
-{ rule: imperative(P1) -> imperative_clause(P1) '.' }
+{ rule: imperative(P1) -> imperative(P1) '.' }
+{ rule: imperative(P1) -> imperative_clause(P1) 'again' }
 { rule: imperative(P1) -> 'will' 'you' 'please' imperative_clause(P1) '?' }
 { rule: imperative(P1) -> imperative_clause(P1) }
 

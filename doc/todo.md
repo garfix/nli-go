@@ -3,9 +3,7 @@
 - no need to put down a block when you're holding it
 - repair the command-line tools and document them
 
-put x => place x (katja)
-put it down
-drop it
+A function should not be able to call any other function: dependency and public / private
 
 A blob is a green block (doesn't work at the moment)
 

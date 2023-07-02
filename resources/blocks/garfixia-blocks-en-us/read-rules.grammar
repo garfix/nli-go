@@ -21,7 +21,7 @@
 { rule: vp_imperative(P1) -> 'place' np(E1) 'on' np(E2),                          sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
 { rule: vp_imperative(P1) -> 'stack' 'up' np(E1),                                 sense: dom:do_stack_up_smart($np) }
 { rule: vp_imperative(P1) -> 'build' np(E1),                                      sense: dom:do_build($np) }
-
+{ rule: vp_imperative(P1) -> 'drop' np(E1),                                       sense: go:do($np1, dom:do_drop_smart(P1, E1)) }
 
 /* verb phrases: subject, verb, object ... */
 

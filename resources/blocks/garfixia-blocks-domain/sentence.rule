@@ -38,6 +38,26 @@ do_put_down_smart(EventId, E1) :-
         )
     );
 
+do_drop_smart(EventId, E1) :-
+    go:create_goal(
+        'robot',
+        persist_action(EventId, `event:root`,
+            go:assert(put_down(EventId, `:shrdlu`, E1))
+
+            if go:not(grasping(`:shrdlu`, E1)) then
+                do_clear_hand(EventId)
+                do_cleartop(EventId, E1)
+                do_pick_up(EventId, E1)
+            end
+
+            do_find_space_on_table(E1, X, Y)
+            high_enough_for_hand(Max)
+            phys_move_hand(X, Y, Max)
+            phys_release(E1)
+            phys_move_just_object(E1, X, Y, 0)
+        )
+    );
+
 /* pick up E1 and put it in E2 */
 do_put_in_smart(E1, E2) :-
     go:create_goal(

@@ -53,13 +53,19 @@ phys_move_hand(X, Y, Z) :-
 
 phys_move_hand_with_object(E1, X, Y, Z) :-
     top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1)
-    go:uuid(Uuid, event)
     go:wait_for('move_to', _, [
         [`hand:hand`, X, Y, Z],
         [E1, X1, Y1, Z1]
     ])
     phys_move_object(E1, X1, Y1, Z1)
     db_hand(X, Y, Z)
+;
+
+phys_move_just_object(E1, X, Y, Z) :-
+    go:wait_for('move_to', _, [
+        [E1, X, Y, Z]
+    ])
+    phys_move_object(E1, X, Y, Z)
 ;
 
 phys_grasp(E1) :- db_grasp(E1);

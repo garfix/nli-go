@@ -8,4 +8,9 @@
   C: "OK"
 - H: "Put it down again"
   C: "OK"
-# Drop it
+- H: "Pick up the green pyramid"
+  C: "OK"
+- H: "Drop it"
+  C: "OK"
+- H: "Is the green pyramid supported by the table?"
+  C: "Yes"

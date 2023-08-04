@@ -167,6 +167,17 @@ For each linguistics feature, there is a problem: how to put it into the process
 * database mappings: allow a rule to be used only for given sorts; for performance
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
 
+## Language games / skills
+
+A system should be able to handle multiple games in a single dialog.
+
+## Intents
+
+Multiple conditions should be allowed in a single intent.
+
+- How can i buy X?
+- help me buy X?
+
 ## Blocks demo
 
 The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.

@@ -1,36 +1,57 @@
 # Todo
 
-- no need to put down a block when you're holding it
-- repair the command-line tools and document them
+Top priority:
 
-A function should not be able to call any other function: dependency and public / private
+- set up development client
+- solve Nettie problem
 
-A blob is a green block (doesn't work at the moment)
-
-The combination of multiple results per relation and returning a single relation is absolutely counter-intuitive and leads to hard to detect and fix errors.
-
-## up to 2 processes, websockets
+## Development client
 
 - send errors and productions as separate messages
-- split the repo in two: generic / demos, with demos depending on generic and creating a custom server
 
-## inbox
+## Command line application
 
-documentation websocket server
-documentation resources / process types: what's the official name?
+- repair the command-line tools and document them
 
-Stop/pause, continue/rensume : new topic
+## Integrate a Speech recognizer and generator
+
+Open source
+Accessible from Go
+
+## Skills / games
+
+Start / stop games, skills
+Multiple skills in a dialog
+Multiple games at the same time: start playing a song, do something else at the same time
+
+See also: MyCroft https://github.com/MycroftAI/mycroft-skills
+
+## Stop - resume
+
+Stop/pause, continue/resume : new topic
+
+## Initiate dialog
 
 Initiate conversation: new topic
 
-Intent detection: provide access to the main clause variable: condition(P1)
-Tags: maak duidelijk onderscheid tussen this-sentence-only tags en dialog-wide tags
+## Documentation
 
-- implement reflective_reference()
-- debug: fold structures in/out
-- create special cases for quantifiers, so that they don't look so complicated
-- put a stack in the largest open space
-- provide a description of a steeple (are there any steeples now? Yes, the one based on the green block)
+* write a good tutorial
+
+- create proper function diagrams for all processes
+  - input
+  - output
+  - dependencies
+  - side effects (which data stores are involved?)
+
+Describe documentation files per linguistic feature, with the following sections
+
+- topic description (anaphora, multiple sentences, conjunctions, etc)
+- examples that should be covered
+- possible approaches
+- nli-go's approach
+
+This is how to write a book about it.
 
 List the biggest constraints; essential for an architecture:
 
@@ -38,15 +59,34 @@ List the biggest constraints; essential for an architecture:
 - or
 - ...? questions
 
-Adding info to the database is problematic:
 
-tag: dom:tell(`some_event`, `:friend`, `:shrdlu`, P1)
-or
-go:uuid(P1, event) go:uuid(P2, event) go:assert(dom:tell(P2, `:friend`, `:shrdlu`, P1))
+## Scripts and Frames
+
+The restaurant script. Certain phrases invoke a script. (How?)
+
+    "We went into a restaurant"
+
+This phrase causes a number of discourse entities and relationships to be created at once, in the dialog context.
+
+If the next sentence is "The waiter showed us our seat.", "the waiter" refers to an discourse entity in from the script.
+
+## The programming language "mentalese"
 
 Language: the difference between relations that are executed, and declarative relations must be syntactically clear
 
-## variables in loop-functions
+The combination of multiple results per relation and returning a single relation is absolutely counter-intuitive and leads to hard to detect and fix errors.
+
+Make it consistent, complete, robust, etc. Have it conform existing paradigms.
+
+- maybe remove `result` from `responses` in the intent; it is not used now
+- I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
+- typed arguments
+- operators > = [H|T]
+- n-dimensional arrays as local variables
+- extend a module with another module
+* quant_foreach: add as second parameter the variable to which the ids must be bound
+
+## mentalese: variables in loop-functions
 
 When this list_foreach is done, the binding set has bindings for all variations of F C and V, while these should have been temporary
 Because there are too many bindings, much extra calculations are done.
@@ -75,58 +115,23 @@ find_span(Width, VerLines, ColIndex, ColSpan) :-
 
 I solved this for now using a mutable variable.
 
-## new
-
-- produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.
-
-- turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional?
-- when listed values are used in the next sentence, they should be converted to multiple bindings
-
-- create proper function diagrams for all processes
-  - input
-  - output
-  - dependencies
-  - side effects (which data stores are involved?)
-
-## Documentation
-
-Describe documentation files per linguistic feature, with the following sections
-
-- topic description (anaphora, multiple sentences, conjunctions, etc)
-- examples that should be covered
-- possible approaches
-- nli-go's approach
-
-This is how to write a book about it.
-
-## Scripts and Frames
-
-The restaurant script. Certain phrases invoke a script. (How?)
-
-    "We went into a restaurant"
-
-This phrase causes a number of discourse entities and relationships to be created at once, in the dialog context.
-
-If the next sentence is "The waiter showed us our seat.", "the waiter" refers to an discourse entity in from the script.
-
-## The programming language "mentalese"
-
-Make it consistent, complete, robust, etc. Have it conform existing paradigms.
-
-- maybe remove `result` from `responses` in the intent; it is not used now
-- I must implement all entities with atoms. Currently they are variables, but it means that variables are used as values, and this is clumsy. Then there must be a mapping from these atoms to database ids.
-- typed arguments
-- operators > = [H|T]
-- n-dimensional arrays as local variables
-- extend a module with another module
-* quant_foreach: add as second parameter the variable to which the ids must be bound
-
 ## Code
+
+Tags: maak duidelijk onderscheid tussen this-sentence-only tags en dialog-wide tags
 
 * binding set -> results / binding list
 * relation set -> relation list
 * better validation for built-in functions; especially multi-binding ones
 * use functional programming: make all data immutable; use copy-on-write everywhere; stop making deep copies
+
+- turn the type `id` into `entity`. It's id and type are required. Is it possible that the id is optional?
+- when listed values are used in the next sentence, they should be converted to multiple bindings
+
+Adding info to the database is problematic:
+
+tag: dom:tell(`some_event`, `:friend`, `:shrdlu`, P1)
+or
+go:uuid(P1, event) go:uuid(P2, event) go:assert(dom:tell(P2, `:friend`, `:shrdlu`, P1))
 
 ## Parsing source files
 
@@ -140,13 +145,11 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 
 - use parse tree as slot
 
-## Quantifier scoping
-
-Should be reintroduced. Syntactic or semantic? Find a good test-case.
-
 ## Anaphora
 
 I have not given any attention yet to "bound variable anaphora" https://en.wikipedia.org/wiki/Bound_variable_pronoun
+
+- implement reflective_reference()
 
 ## Collect solution types
 
@@ -156,6 +159,10 @@ For each linguistics feature, there is a problem: how to put it into the process
 - insert several steps, for different aspects of the same feature (syntactic, semantic)
 - create a tag
 - create a relation
+
+## Producing data at parse time
+
+produce information in the parsing process. If A is parsed, information B is implied and can thus be added to the dialog context knowledge base.
 
 ## Performance
 
@@ -167,17 +174,23 @@ For each linguistics feature, there is a problem: how to put it into the process
 * database mappings: allow a rule to be used only for given sorts; for performance
 * SparqlFactBase: todo predicates does not contain database relations (just ontology relations), so this needs to be solve some other way
 
+## Intents
+
+Intent detection: provide access to the main clause variable: condition(P1)
+
+Multiple conditions should be allowed in a single intent.
+
+- How can i buy X?
+- help me buy X?
+
 ## Blocks demo
 
-The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
-
+- put a stack in the largest open space
+- provide a description of a steeple (are there any steeples now? Yes, the one based on the green block)
+- A blob is a green block (doesn't work at the moment)
 - When the demo is done. Do it in German as well, as proof of multilinguality.
-- Add an autoplay function for demo mode; show characters in response one-by-one
-- If you hold block A and are told to put block A in the box (or on something), don't put it down first (don't clear hand)
 
-## Documentation
-
-* write a good tutorial
+The animation also reveals another problem: when the system builds a stack, it first decides on a location, then builds it. When building the first block, it may need to place the objects on top of it in some location. And it chooses the exact location where the stack should be. Later, the rest of the stack is still placed there. A solution could be to exclude this intended location from free space.
 
 ## Rules
 
@@ -193,21 +206,23 @@ Find a way to ensure completeness of information about all relations used in a s
 
 * convert number words into numbers
 
-## Syntax
-
-replace np, nbar by dp, np (?)
-
 ## Planning
 
 - replanning: once a plan is being executed, it may need to be discarded and replanned, due to new circumstances
 - stop / continue commands
 
+## Quantifiers
+
+- create special cases for quantifiers, so that they don't look so complicated
+- Make "more than" "less than" work
+
 ## Quantifier Scoping
 
-- Make "more than" "less than" work
+Should be reintroduced. Syntactic or semantic? Find a good test-case.
+
 - A range itself can contain quantified nouns (the oldest child in every family). The algorithm is not up to it. (See CLE)
 
-## Stuff I'm not happy with
+## Dialog context
 
 * the entire function DialogContext::ReplaceVariable is bad; I should not change structs that are in the history list already
 

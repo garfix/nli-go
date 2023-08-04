@@ -1,3 +1,27 @@
+## 2023-08-04
+
+During my vacation I read a bit about Wittgenstein's [language games](https://en.wikipedia.org/wiki/Language_game_(philosophy)), a concept that seems to be now way ahead of its time. I don't know much about it yet, but it treats all language utterances as being moves in a game. I think multiple games can be played in a single conversation. Importantly, words, phrases and sentences can have different meanings when uttered in different games. This corresponds well with the way NLI-GO was set up. SHRDLU is said to be a toy world. This can be then be interpreted as being able to run just a single game. While a normal conversation there are multiple games going on.
+
+It language game related to the concept of `skill`? It seems similar.
+
+To integrate language games, we need to
+
+* Create explicit representations for these games
+* Be able to detect which game is being played
+
+## 2023-07-02
+
+I showed the demo to my mother-in-law, Nettie. She was reluctant to talk to the computer, so I did. After a while a bug showed up, and she was a bit shocked. This is what it looked like:
+
+![error](archive/Screenshot%20from%202023-07-02%2020-48-03.png)
+
+She urged me to fix it. Fortunately it can be easily reproduced:
+
+    H: Pick up a big red block
+    H: put the red pyramid on top of a green block
+
+It seems like the system puts the red pyramid on a position that is a combination of the two green blocks.
+
 ## 2023-06-27
 
 I made the system not put down the block when it was asked to put the block it was holding into the box, or on top of another block.

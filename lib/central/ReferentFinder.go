@@ -229,7 +229,7 @@ func GetAnaphoraQueue(clauseList *mentalese.ClauseList, entityBindings *mentales
 					group := mentalese.AnaphoraQueueElement{Variable: discourseVariable, Values: []mentalese.AnaphoraQueueElementValue{}}
 					sort := entitySorts.GetSort(discourseVariable)
 					for _, item := range value.TermValueList {
-						reference := mentalese.AnaphoraQueueElementValue{sort, item.TermValue, score}
+						reference := mentalese.AnaphoraQueueElementValue{Sort: sort, Id: item.TermValue, Score: score}
 						group.Values = append(group.Values, reference)
 					}
 					ids = append(ids, group)

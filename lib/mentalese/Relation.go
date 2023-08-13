@@ -171,6 +171,7 @@ const MessagePrint = "print"
 const MessageChoose = "choose"
 const MessageProcessListClear = "processlist_clear"
 const MessageError = "error"
+const MessageLog = "log"
 
 // from client
 const MessageRespond = "respond"

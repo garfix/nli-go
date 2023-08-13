@@ -1,3 +1,9 @@
+## 2023-08-06
+
+Mycroft is an interesting voice-activated AI that you can run on your own computer. It's language syntax features are as basic as can be, but it has a lot of information about building an actual useful voice AI: https://mycroft-ai.gitbook.io/docs
+
+Mycroft uses a Python class to wrap the main code of a skill.
+
 ## 2023-08-04
 
 During my vacation I read a bit about Wittgenstein's [language games](https://en.wikipedia.org/wiki/Language_game_(philosophy)), a concept that seems to be now way ahead of its time. I don't know much about it yet, but it treats all language utterances as being moves in a game. I think multiple games can be played in a single conversation. Importantly, words, phrases and sentences can have different meanings when uttered in different games. This corresponds well with the way NLI-GO was set up. SHRDLU is said to be a toy world. This can be then be interpreted as being able to run just a single game. While a normal conversation there are multiple games going on.

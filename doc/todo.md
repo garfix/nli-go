@@ -1,9 +1,10 @@
 # Todo
 
-Top priority:
+Priority:
 
 - set up development client
 - solve Nettie problem
+- tackle the procedural language
 
 ## Development client
 
@@ -13,10 +14,20 @@ Top priority:
 
 - repair the command-line tools and document them
 
+## Conditional sentences
+
+Like "If I pick up a blue block, would there be a blue block on the table?" Can temporal questions like "When I picked up the block, were they any blocks on the table?" be treated similarly?
+
+- Add temporary facts? Add rules that fire in this condition?
+- Remove or hide the existing facts (blue block is on the table) so they don't interfere with the conditional facts?
+
 ## Integrate a Speech recognizer and generator
 
 Open source
 Accessible from Go
+
+See also:
+https://deepspeech.readthedocs.io/en/r0.9/?badge=latest
 
 ## Skills / games
 
@@ -24,7 +35,8 @@ Start / stop games, skills
 Multiple skills in a dialog
 Multiple games at the same time: start playing a song, do something else at the same time
 
-See also: MyCroft https://github.com/MycroftAI/mycroft-skills
+See also:
+MyCroft https://en.wikipedia.org/wiki/Mycroft_(software)   https://github.com/MycroftAI/mycroft-skills
 
 ## Stop - resume
 
@@ -85,6 +97,14 @@ Make it consistent, complete, robust, etc. Have it conform existing paradigms.
 - n-dimensional arrays as local variables
 - extend a module with another module
 * quant_foreach: add as second parameter the variable to which the ids must be bound
+
+## mentalese 2 Go
+
+NB: it will always be necessary to add more language features. Can't I just use Go for the producedural language? Yes, this means that the application needs to be recompiled each time the code changes, and that the application gets linked to one language.
+
+What brings this up? The reason is that when you need to call and process an API call in response to an action, you will need many functions built-in into Go, but not available in the mentalese language.
+
+Perhaps make a separate Go module for each library that a skill produces. Then guide the process of building a custom server for a user. Teach the user that's it's simple to build a new server.
 
 ## mentalese: variables in loop-functions
 

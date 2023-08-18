@@ -63,7 +63,7 @@ func (generator *Generator) GenerateNode(grammarRules *mentalese.GrammarRules, u
 		hash := generator.createRuleHash(rule, binding)
 		usedRules = append(usedRules, hash)
 
-		if generator.log.Active() {
+		if generator.log.IsActive() {
 			generator.log.AddDebug("Found", fmt.Sprintf("%v %v ", rule.String(), binding.String()))
 		}
 

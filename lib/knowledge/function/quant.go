@@ -391,7 +391,7 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 	// special case: the existential quantifier `some`
 	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.AtomSome {
 		if scopeCount == 0 {
-			if base.log.Active() {
+			if base.log.IsActive() {
 				base.log.AddDebug("Do/Find", "Quantifier Some mismatch: no results")
 			}
 			return false
@@ -403,7 +403,7 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 	// special case: the existential quantifier `one`
 	if firstArgument.IsAtom() && firstArgument.TermValue == mentalese.AtomOne {
 		if scopeCount != 1 {
-			if base.log.Active() {
+			if base.log.IsActive() {
 				base.log.AddDebug("Do/Find", "Quantifier One mismatch: results not equal to 1")
 			}
 			return false
@@ -445,7 +445,7 @@ func (base *SystemSolverFunctionBase) tryQuantifier(messenger api.ProcessMesseng
 	success := !quantifierBindings.IsEmpty()
 
 	if !success {
-		if base.log.Active() {
+		if base.log.IsActive() {
 			base.log.AddDebug("Do/Find", "Quantifier mismatch")
 			base.log.AddDebug("Do/Find", "  Range count: "+rangeCountVariable+" = "+strconv.Itoa(rangeCount))
 			base.log.AddDebug("Do/Find", "  Scope count: "+scopeCountVariable+" = "+strconv.Itoa(scopeCount))

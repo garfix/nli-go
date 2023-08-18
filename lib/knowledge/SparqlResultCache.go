@@ -31,7 +31,9 @@ func (factBase *SparqlFactBase) doCachedQuery(query string) sparqlResponse {
 		sparqlResponse = factBase.populateCache(query, queryCachePath)
 	} else {
 		sparqlResponse = factBase.readFromCache(queryCachePath)
-		if factBase.log.Active() { factBase.log.AddDebug("SPARQL", query + " (from cache) " + strconv.Itoa(len(sparqlResponse.Results.Bindings)) + " results)") }
+		if factBase.log.IsActive() {
+			factBase.log.AddDebug("SPARQL", query+" (from cache) "+strconv.Itoa(len(sparqlResponse.Results.Bindings))+" results)")
+		}
 	}
 
 	return sparqlResponse

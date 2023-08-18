@@ -57,6 +57,6 @@ func (f *StackFrame) AddOutBinding(outBinding Binding) {
 	f.OutBindings.Add(outBinding)
 }
 
-func (f *StackFrame) AsCode() string {
+func (f *StackFrame) AsId() string {
 	return fmt.Sprintf("%p-%d-%d-%d", f, f.RelationIndex, f.HandlerIndex, f.InBindingIndex)
 }

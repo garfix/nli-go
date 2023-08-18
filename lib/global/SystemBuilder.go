@@ -45,6 +45,19 @@ func newSystemBuilder(appDir string, workDir string, sessionId string, log *comm
 	parser := importer.NewInternalGrammarParser()
 	parser.SetPanicOnParseFail(false)
 
+	logListener := func(production common.LogMessage) {
+
+		response := mentalese.Response{
+			Resource:    central.NO_RESOURCE,
+			MessageType: mentalese.MessageLog,
+			Message:     production,
+		}
+
+		websocket.JSON.Send(conn, response)
+	}
+
+	log.AddListener(logListener)
+
 	return &systemBuilder{
 		appDir:    appDir,
 		workDir:   workDir,

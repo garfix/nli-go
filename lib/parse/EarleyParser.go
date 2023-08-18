@@ -118,7 +118,7 @@ func (parser *EarleyParser) predict(grammarRules *mentalese.GrammarRules, chart 
 	nextConsequentVariables := state.rule.GetConsequentVariables(consequentIndex)
 	endWordIndex := state.endWordIndex
 
-	if parser.log.Active() {
+	if parser.log.IsActive() {
 		parser.log.AddDebug("predict", state.ToString(chart))
 	}
 
@@ -128,7 +128,7 @@ func (parser *EarleyParser) predict(grammarRules *mentalese.GrammarRules, chart 
 		predictedState := newChartState(rule, 1, endWordIndex, endWordIndex)
 		chart.enqueue(predictedState, endWordIndex)
 
-		if parser.log.Active() {
+		if parser.log.IsActive() {
 			parser.log.AddDebug("> predicted", predictedState.ToString(chart))
 		}
 	}
@@ -148,7 +148,7 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 	newPosType := mentalese.PosTypeRelation
 	sense := mentalese.RelationSet{}
 
-	if parser.log.Active() {
+	if parser.log.IsActive() {
 		parser.log.AddDebug("scan", state.ToString(chart))
 	}
 
@@ -195,7 +195,7 @@ func (parser *EarleyParser) scan(chart *chart, state chartState) {
 		scannedState := newChartState(rule, 2, endWordIndex, endWordIndex+1)
 		chart.enqueue(scannedState, endWordIndex+1)
 
-		if parser.log.Active() {
+		if parser.log.IsActive() {
 			parser.log.AddDebug("> scanned", scannedState.ToString(chart)+" "+endWord)
 		}
 	}
@@ -211,7 +211,7 @@ func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 
 	completedAntecedent := completedState.rule.GetAntecedent()
 
-	if parser.log.Active() {
+	if parser.log.IsActive() {
 		parser.log.AddDebug("complete", completedState.ToString(chart))
 	}
 
@@ -239,7 +239,7 @@ func (parser *EarleyParser) complete(chart *chart, completedState chartState) {
 		// enqueue the new state
 		chart.enqueue(advancedState, completedState.endWordIndex)
 
-		if parser.log.Active() {
+		if parser.log.IsActive() {
 			parser.log.AddDebug("> advanced", advancedState.ToString(chart))
 		}
 	}

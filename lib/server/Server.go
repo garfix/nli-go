@@ -94,6 +94,14 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 		}
 
 		websocket.JSON.Send(conn, response)
+	} else if request.MessageType == mentalese.MessageDebug {
+		system := server.getSystem(conn, request, &systems)
+		if request.Message == "on" {
+			system.GetLog().SetDebug(true)
+		} else {
+			system.GetLog().SetDebug(false)
+		}
+
 	} else {
 		system := server.getSystem(conn, request, &systems)
 		system.HandleRequest(request)

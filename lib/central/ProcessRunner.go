@@ -82,15 +82,24 @@ func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.B
 }
 
 func (p *ProcessRunner) step(process *Process) bool {
-	currentFrame := process.GetLastFrame()
 	hasStopped := false
+
+	currentFrame := process.GetLastFrame()
+	currentFrameId := currentFrame.AsId()
+
+	parentFrameId := "root"
+	if process.GetBeforeLastFrame() != nil {
+		parentFrameId = process.GetBeforeLastFrame().AsId()
+	}
 
 	debug := p.before(process, currentFrame, len(process.Stack))
 	p.log.AddDebug("frame", debug)
 
+	p.log.AddFrame(debug, "execute", "create", currentFrameId, parentFrameId)
+
 	messenger := process.CreateMessenger(p, process)
 	relation := currentFrame.GetCurrentRelation()
-	outBindings := mentalese.NewBindingSet()
+	var outBindings mentalese.BindingSet
 
 	_, found := p.solver.multiBindingFunctions[relation.Predicate]
 	if found {
@@ -111,12 +120,12 @@ func (p *ProcessRunner) step(process *Process) bool {
 			preparedRelation := p.evaluateArguments(process, relation, preparedBinding)
 			outBindings = handler(messenger, preparedRelation, preparedBinding)
 			messenger.AddOutBindings(outBindings)
-			currentFrame = process.ProcessMessenger(messenger, currentFrame)
+			process.ProcessMessenger(messenger, currentFrame)
 		}
 	}
 
-	debug = p.after(process, currentFrame, outBindings, len(process.Stack))
-	p.log.AddDebug("frame", debug)
+	debug = outBindings.String()
+	p.log.AddFrame(debug, "execute", "append", currentFrameId, parentFrameId)
 
 	if messenger.GetCursor().GetState() == mentalese.StateInterrupted {
 
@@ -124,11 +133,7 @@ func (p *ProcessRunner) step(process *Process) bool {
 		p.log.AddDebug("frame", debug)
 	}
 
-	if currentFrame == process.GetLastFrame() {
-		process.Advance()
-	} else {
-		process.EmptyRelationCheck()
-	}
+	process.Advance()
 
 	return hasStopped
 }
@@ -206,15 +211,6 @@ func (p *ProcessRunner) before(process *Process, frame *mentalese.StackFrame, st
 
 	text := fromChild + frame.Relations[frame.RelationIndex].String() + ":" + handlerIndex + "  " + prepared + " " + child
 	return padding + text
-}
-
-func (p *ProcessRunner) after(process *Process, frame *mentalese.StackFrame, bindings mentalese.BindingSet, stackDepth int) string {
-	padding := strings.Repeat("  ", stackDepth)
-	debug := padding + "╰ " + bindings.String()
-	if process.GetLastFrame() != frame {
-		debug = ""
-	}
-	return debug
 }
 
 func (p *ProcessRunner) breaked(stackDepth int) string {

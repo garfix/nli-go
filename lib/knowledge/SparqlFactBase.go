@@ -18,12 +18,12 @@ const MaxQueries = 200
 
 type SparqlFactBase struct {
 	KnowledgeBaseCore
-	cacheDir		string
+	cacheDir        string
 	baseUrl         string
 	defaultGraphUri string
 	ds2db           []mentalese.Rule
 	names           mentalese.ConfigMap
-	sharedIds 		SharedIds
+	sharedIds       SharedIds
 	matcher         *central.RelationMatcher
 	queryCount      int
 	doCache         bool
@@ -33,13 +33,13 @@ type SparqlFactBase struct {
 func NewSparqlFactBase(name string, baseUrl string, defaultGraphUri string, matcher *central.RelationMatcher, ds2db []mentalese.Rule, names mentalese.ConfigMap, doCache bool, cacheDir string, log *common.SystemLog) *SparqlFactBase {
 
 	return &SparqlFactBase{
-		KnowledgeBaseCore: KnowledgeBaseCore{ Name: name},
+		KnowledgeBaseCore: KnowledgeBaseCore{Name: name},
 		cacheDir:          cacheDir,
 		baseUrl:           baseUrl,
 		defaultGraphUri:   defaultGraphUri,
 		ds2db:             ds2db,
 		names:             names,
-		sharedIds: 		   SharedIds{},
+		sharedIds:         SharedIds{},
 		matcher:           matcher,
 		queryCount:        0,
 		doCache:           doCache,
@@ -63,7 +63,9 @@ func (factBase *SparqlFactBase) GetLocalId(inId string, sort string) string {
 	outId := ""
 
 	_, found := factBase.sharedIds[sort]
-	if !found { return inId }
+	if !found {
+		return inId
+	}
 
 	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == sharedId {
@@ -79,7 +81,9 @@ func (factBase *SparqlFactBase) GetSharedId(inId string, sort string) string {
 	outId := ""
 
 	_, found := factBase.sharedIds[sort]
-	if !found { return inId }
+	if !found {
+		return inId
+	}
 
 	for localId, sharedId := range factBase.sharedIds[sort] {
 		if inId == localId {
@@ -158,11 +162,11 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 		variables = append(variables, var2)
 	} else {
 		if relation.Arguments[1].IsString() {
-//todo make this into a config value
+			//todo make this into a config value
 			arg1 := relation.Arguments[1].TermValue
 			if false {
 				var2 = relation.Arguments[1].String() + "@en"
-			// searching for punctuation marks leads to errors
+				// searching for punctuation marks leads to errors
 			} else if arg1 == "'?'" {
 				return ""
 			} else {
@@ -191,7 +195,7 @@ func (factBase *SparqlFactBase) createQuery(relation mentalese.Relation) string 
 		return ""
 	}
 
-	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2  + extra + "} limit " + strconv.Itoa(maxSparqlResults)
+	query := "select " + strings.Join(variables, ", ") + " where { " + var1 + " <" + relationUri + "> " + var2 + extra + "} limit " + strconv.Itoa(maxSparqlResults)
 
 	return query
 }
@@ -207,8 +211,8 @@ func (factBase *SparqlFactBase) callSparql(query string) sparqlResponse {
 	resp, err := http.PostForm(factBase.baseUrl,
 		url.Values{
 			"default-graph-uri": {factBase.defaultGraphUri},
-			"query": {query},
-			"format": {"application/json"},
+			"query":             {query},
+			"format":            {"application/json"},
 		})
 
 	t := time.Now()
@@ -240,12 +244,14 @@ func (factBase *SparqlFactBase) callSparql(query string) sparqlResponse {
 		return sparqlResponse
 	}
 
-	if factBase.log.Active() { factBase.log.AddDebug("SPARQL", query + " (" + elapsed.String() + ", " + strconv.Itoa(len(sparqlResponse.Results.Bindings)) + " results)") }
+	if factBase.log.IsActive() {
+		factBase.log.AddDebug("SPARQL", query+" ("+elapsed.String()+", "+strconv.Itoa(len(sparqlResponse.Results.Bindings))+" results)")
+	}
 
 	return sparqlResponse
 }
 
-func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relation,  sparqlResponse sparqlResponse) mentalese.BindingSet {
+func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relation, sparqlResponse sparqlResponse) mentalese.BindingSet {
 
 	bindings := mentalese.NewBindingSet()
 
@@ -253,7 +259,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		binding := mentalese.NewBinding()
 
-		for i, variable := range []sparqlResponseVariable{ resultBinding.Variable1, resultBinding.Variable2 } {
+		for i, variable := range []sparqlResponseVariable{resultBinding.Variable1, resultBinding.Variable2} {
 
 			if relation.Arguments[i].IsVariable() {
 
@@ -273,7 +279,7 @@ func (factBase *SparqlFactBase) processSparqlResponse(relation mentalese.Relatio
 
 		bindings.Add(binding)
 
-		next:
+	next:
 	}
 
 	return bindings

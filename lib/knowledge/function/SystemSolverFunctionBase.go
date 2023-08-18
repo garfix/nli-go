@@ -74,6 +74,7 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		mentalese.PredicateListForeach:     base.listForeach,
 		mentalese.PredicateListDeduplicate: base.listDeduplicate,
 		mentalese.PredicateListSort:        base.listSort,
+		mentalese.PredicateListRemove:      base.listRemove,
 		mentalese.PredicateListIndex:       base.listIndex,
 		mentalese.PredicateListExpand:      base.listExpand,
 	}

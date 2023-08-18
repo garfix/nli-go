@@ -160,6 +160,25 @@ func (base *SystemSolverFunctionBase) listSort(messenger api.ProcessMessenger, r
 	return mentalese.InitBindingSet(newBinding)
 }
 
+func (base *SystemSolverFunctionBase) listRemove(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "l*v", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	list := bound.Arguments[0].TermValueList
+	element := bound.Arguments[1]
+	newlistVar := bound.Arguments[2].TermValue
+
+	newList := list.Remove(element)
+
+	newBinding := binding.Copy()
+	newBinding.Set(newlistVar, mentalese.NewTermList(newList))
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *SystemSolverFunctionBase) listIndex(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

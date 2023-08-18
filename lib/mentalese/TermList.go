@@ -105,6 +105,16 @@ func (list TermList) ReplaceTerm(from Term, to Term) TermList {
 	return newList
 }
 
+func (list TermList) Remove(t Term) TermList {
+	newList := TermList{}
+	for _, element := range list {
+		if !element.Equals(t) {
+			newList = append(newList, element)
+		}
+	}
+	return newList
+}
+
 func (list TermList) Sort() (TermList, bool) {
 	newList := TermList{}
 

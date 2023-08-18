@@ -47,6 +47,7 @@ const PredicateListGet = "go_list_get"
 const PredicateListHead = "go_list_head"
 const PredicateListLength = "go_list_length"
 const PredicateListExpand = "go_list_expand"
+const PredicateListRemove = "go_list_remove"
 const PredicateRangeForeach = "go_range_foreach"
 const PredicateAnd = "go_and"
 const PredicateNot = "go_not"
@@ -178,6 +179,7 @@ const MessageRespond = "respond"
 const MessageAcknowledge = "acknowledge"
 const MessageChosen = "chosen"
 const MessageReset = "reset"
+const MessageDebug = "debug"
 
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {
 	return Relation{

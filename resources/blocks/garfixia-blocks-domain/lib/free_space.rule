@@ -34,13 +34,39 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines
     [X1 <= BoundX2]
     [Y2 >= BoundY1]
     [Y1 <= BoundY2]
+
+    [:BoundX1 := BoundX1]
+    [:BoundY1 := BoundY1]
+    [:BoundX2 := BoundX2]
+    [:BoundY2 := BoundY2]
+
     go:make_list(Objects, O1)
     go:make_list(V1, BoundX1, X1, X2, BoundX2)
     go:make_list(H1, BoundY1, Y1, Y2, BoundY2)
     go:list_deduplicate(V1, V2)
     go:list_deduplicate(H1, H2)
-    go:list_sort(V2, VerLines)
-    go:list_sort(H2, HorLines)
+    go:list_sort(V2, V3)
+    go:list_sort(H2, H3)
+
+    [:V3 := []]
+    go:list_foreach(V3, E1,
+        if [E1 >= :BoundX1] then
+            if [E1 <= :BoundX2] then
+                go:list_append(:V3, E1, :V3)
+            end
+        end
+    )
+    [VerLines := :V3]
+
+    [:H3 := []]
+    go:list_foreach(H3, E2,
+        if [E2 >= :BoundY1] then
+            if [E2 <= :BoundY2] then
+                go:list_append(:H3, E2, :H3)
+            end
+        end
+    )
+    [HorLines := :H3]
 ;
 
 do_init_grid(Grid, Objects, HorLines, VerLines) :-

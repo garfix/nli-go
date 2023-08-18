@@ -1,3 +1,9 @@
+## 2023-08-19
+
+The programming language I created for this project is a monster. If I try to change something in the application code, it doesn't behave as one expects it, and you have to think really hard how this could happen. It needs to be thoroughly changed.
+
+Fixing the function `do_find_objects`, which was just a matter of ensuring that values outside of the bounds were not included in the lines arrays, took me multiple hours to solve, and the result is still a dirty hack.
+
 ## 2023-08-06
 
 Mycroft is an interesting voice-activated AI that you can run on your own computer. It's language syntax features are as basic as can be, but it has a lot of information about building an actual useful voice AI: https://mycroft-ai.gitbook.io/docs

@@ -198,6 +198,12 @@ produce information in the parsing process. If A is parsed, information B is imp
 
 Intent detection: provide access to the main clause variable: condition(P1)
 
+## Language games / skills
+
+A system should be able to handle multiple games in a single dialog.
+
+## Intents
+
 Multiple conditions should be allowed in a single intent.
 
 - How can i buy X?

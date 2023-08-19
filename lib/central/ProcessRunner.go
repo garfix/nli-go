@@ -67,6 +67,7 @@ func (p *ProcessRunner) RunProcessLevel(process *Process, level int) mentalese.B
 	for len(process.Stack) > level {
 		hasStopped := p.step(process)
 		if hasStopped {
+			process.TruncateStack(level)
 			return mentalese.NewBindingSet()
 		}
 	}

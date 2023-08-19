@@ -22,11 +22,11 @@ func TestAll(t *testing.T) {
 	defer client.Close()
 
 	// client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test1.yml")
-	// client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test2.yml")
-	// client.RunTests("dbpedia", common.Dir()+"/../../resources/dbpedia/test/test1.yml")
-	// client.RunTests("dualworld", common.Dir()+"/../../resources/dualworld/test/test1.yml")
-	// client.RunTests("expressions", common.Dir()+"/../../resources/expressions/test/test1.yml")
-	// client.RunTests("helloworld", common.Dir()+"/../../resources/helloworld/test/test1.yml")
-	// client.RunTests("shell", common.Dir()+"/../../resources/shell/test/test1.yml")
+	client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test2.yml")
+	client.RunTests("dbpedia", common.Dir()+"/../../resources/dbpedia/test/test1.yml")
+	client.RunTests("dualworld", common.Dir()+"/../../resources/dualworld/test/test1.yml")
+	client.RunTests("expressions", common.Dir()+"/../../resources/expressions/test/test1.yml")
+	client.RunTests("helloworld", common.Dir()+"/../../resources/helloworld/test/test1.yml")
+	client.RunTests("shell", common.Dir()+"/../../resources/shell/test/test1.yml")
 	client.RunTests("relationships", common.Dir()+"/../../resources/relationships/test/test1.yml")
 }

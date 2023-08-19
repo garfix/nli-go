@@ -319,3 +319,7 @@ func (p *Process) PopFrame() {
 func (p *Process) IsDone() bool {
 	return len(p.Stack) == 0
 }
+
+func (p *Process) TruncateStack(length int) {
+	p.Stack = p.Stack[0:length]
+}

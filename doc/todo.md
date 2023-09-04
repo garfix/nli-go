@@ -1,10 +1,16 @@
 # Todo
 
-Priority:
+First up:
 
-- set up development client
-- solve Nettie problem
-- tackle the procedural language
+- replace multiple binding functions with functions that take relations as an argument
+- abc(x, y) {} // x and y are input or output variables (either bound or unbound)
+- abc(x, y) => z {} // x and y are (bound) input variables
+
+- turn all function variables into modifiable variables
+- turn all "functions" into functions
+- disallow loops in rules
+- disallow rules as function results ( a := abs(X) ) // abs should be a function, not an implication
+
 
 ## Development client
 

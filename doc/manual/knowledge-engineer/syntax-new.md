@@ -23,42 +23,51 @@
 * list of terms (`[2, 4, 6, 8]`)
 * function (see below)
 
-## Clauses
-
-A clause can be a rule or a fact. Both are used to establish facts: either directly or indirectly.
-
-A clause execution results in multiple bindings. When a variable is bound, it cannot be rebound again, instead it should match the previous binding.
-
-A rule has a consequent, and zero or more antecedents.
-
-    father(A, B) if [ parent(A, B) male(A) ]
+## Fact
 
 A fact has no antecedents
 
     father(john, jack)
 
+## Procedure
+
+A procedure is a goal and consists of n sub-goals.
+
+A procedure execution results in multiple bindings. When a variable is bound, it cannot be rebound again, instead it should match the previous binding. Unbound variables should be bound when done. A clause ends when one of its statements fails.
+
+There may be multiple procedures with the same name.
+
+A rule has a consequent, and zero or more antecedents.
+
+    father(A, B) :- [ parent(A, B) male(A) ]
+
 An antecedent is matched against one of the clauses in code, but also against data in the database.
 
 An antecedent can also be an assignment or boolean expression. An assignment doesn't change the number of bindings. When the boolean expression returns false, the binding is dropped.
 
-    too_old(A) if [ birth(A, Birth) A := age(Birth) A > 40 ]
+    too_old(A) :- [ birth(A, Birth) A := age(Birth) A > 40 ]
 
 More complex behaviour should be solved by defining separate sub-clauses.
 
 ## Function
 
-A function is defined by its name, its parameters (name), a body, and a return section.
+A function is a defined by its name, its parameters (name), a body, and a return section.
 The (number of) values returned is important for the framework, and hence declared explicitly.
 
-A function execution results in one binding. All variables are rewriteable and local.
+The parameters should be bound, and the function returns 1 value.
+
+A function execution results in one binding. All variables in a function are mutable.
+
+NB: A function can't call a procedure directly.
+NB: There can only be 1 function with a given name.
 
 Example:
 
-    hypothenuse(Width, Height) {
+    hypothenuse(Width, Height) => Hypo [
         WidthSquared := Width * Width
         HeightSquared := Height * Height
         Hypo := go:sqrt(WidthSquared + HeightSquared)
-    } (Hypo)
+    ]
 
 ## Loops
 

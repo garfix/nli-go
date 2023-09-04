@@ -1,8 +1,62 @@
+## 2023-08-30
+
+I'm reading "The dawn of language". It mentions Construction Grammar, which seems to have a lot in common with what I have been building so far.
+
 ## 2023-08-19
 
 The programming language I created for this project is a monster. If I try to change something in the application code, it doesn't behave as one expects it, and you have to think really hard how this could happen. It needs to be thoroughly changed.
 
 Fixing the function `do_find_objects`, which was just a matter of ensuring that values outside of the bounds were not included in the lines arrays, took me multiple hours to solve, and the result is still a dirty hack.
+
+===
+
+I will add a function construct to the language. I have some of my own ideas how it should look:
+
+    do_find_objects(Container: object, BoundX1: int, BoundY1: int, BoundX2: int, BoundY2: int, Objects: []object)
+    HorLines: []int = []
+    VerLines: []int = []
+    V1: []int = 0
+    {
+
+    }
+    (HorLines, VerLines)
+
+or
+
+    do_find_objects(Container: object, BoundX1: int, BoundY1: int, BoundX2: int, BoundY2: int, Objects: []object)
+    var
+        HorLines: []int = []
+        VerLines: []int = []
+        V1: []int = 0
+    begin
+
+    end
+    (HorLines, VerLines)
+
+
+function name, parameters, local variable declarations (with initializers), body, returned variables (just names)
+The var-section is optional
+As the return variables must be initialized, the function is already working without a body
+
+Assignment:
+
+    A := sqr(9)
+    H, V := do_find_objects(Container, ...)
+
+what about this?
+
+    do_find_objects(Container: object, BoundX1: int, BoundY1: int, BoundX2: int, BoundY2: int, Objects: []object)
+
+        HorLines: []int = []
+        VerLines: []int = []
+        V1: []int = 0
+
+        x := code()
+
+    return (HorLines, VerLines)
+
+
+I will continue on the syntax page
 
 ## 2023-08-06
 

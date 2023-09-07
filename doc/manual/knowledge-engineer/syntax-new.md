@@ -29,49 +29,49 @@ A fact has no antecedents
 
     father(john, jack)
 
-## Procedure
+## Inference rule
 
-A procedure is a goal and consists of n sub-goals.
+An inference rule is a conditional fact.
 
-A procedure execution results in multiple bindings. When a variable is bound, it cannot be rebound again, instead it should match the previous binding. Unbound variables should be bound when done. A clause ends when one of its statements fails.
+An inference results in multiple bindings. When a variable is bound, it cannot be bound again, instead it should match the previous binding. Unbound variables should be bound when done. An inference fails when one of its conditions fails.
 
-There may be multiple procedures with the same name.
+* There may be multiple inference rules with the same name.
+* A condition is matched against one of the inference rules in code, but also against the data in the databases.
 
-A rule has a consequent, and zero or more antecedents.
+An inference rule has a fact, and zero or more conditions.
 
     father(A, B) :- [ parent(A, B) male(A) ]
 
-An antecedent is matched against one of the clauses in code, but also against data in the database.
-
-An antecedent can also be an assignment or boolean expression. An assignment doesn't change the number of bindings. When the boolean expression returns false, the binding is dropped.
+A condition can also be an assignment or boolean expression. An assignment doesn't change the number of bindings. When the boolean expression returns false, the binding is dropped.
 
     too_old(A) :- [ birth(A, Birth) A := age(Birth) A > 40 ]
 
-More complex behaviour should be solved by defining separate sub-clauses.
-
 ## Function
 
-A function is a defined by its name, its parameters (name), a body, and a return section.
-The (number of) values returned is important for the framework, and hence declared explicitly.
+A function is a procedure to calculate a value.
 
-The parameters should be bound, and the function returns 1 value.
+It's defined by its name, its parameters, the return variable, and a body.
 
-A function execution results in one binding. All variables in a function are mutable.
-
-NB: A function can't call a procedure directly.
-NB: There can only be 1 function with a given name.
+* A function execution results in one binding.
+* All variables in a function are mutable.
+* A function can't call a procedure directly.
+* There can only be 1 function with a given name.
 
 Example:
 
-    hypothenuse(Width, Height) => Hypo [
+    hypothenuse(Width, Height) => Hypo {
         WidthSquared := Width * Width
         HeightSquared := Height * Height
         Hypo := go:sqrt(WidthSquared + HeightSquared)
-    ]
+    }
+
+The result can be assigned to a variable. A returned list can be destructured:
+
+    [HorLines, VerLines] := createLines(Inputs)
 
 ## Loops
 
-Using a relation inference rule in a function:
+Using a relation list in a function:
 
     for [ father(A, B) father(B, C) ] {
 

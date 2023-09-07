@@ -1,3 +1,45 @@
+## 2023-09-06
+
+I'm working on workable version of the language that combines the logical and the functional paradigm: combining goals (having 0-n bindings) with functions (1 binding).
+
+Goals are exploratory and are about finding. Functions are about division of labour.
+
+These are my language constructs:
+
+- assignment        A := 5
+- operation         X > Y
+- loop              FOR goal+ DO statement+ END
+- conditional       IF expression THEN statement+ END
+- goal              color(E, C)     go:xor(multiple, multiple)
+- expression        A + (B * C) | go:sin(B)
+
+Loop and conditional created multiple bindings before, but they should not modify bindings at all.
+Traditionally conditionals take a function call.
+
+I could distinguish between a FIND routine and a TASK. A task would then be a single function, wrapping goal executions by special constructions.
+
+A find construction could then be:
+
+find(A) :- multiple+
+           multiple (multiple bindings) = goal | bool-operation | assignment
+
+A task:
+
+task(A) => B {
+    statement*
+    statement (ignore bindings) = assignment | conditional | loop
+}
+
+## 2023-09-04
+
+I was trying to find a solution to the problem that my for-loops produced a lot of bindings that one doesn't expect.
+
+Looking at SWI Prolog's functions I now understand why they were build this way.
+
+`forall` simply ignores all bindings after the call. `findall` produces a list of the bindings of a single variable. `foreach` uses `forall` internally.
+
+So, using for loops as I have is a bad idea.
+
 ## 2023-08-30
 
 I'm reading "The dawn of language". It mentions Construction Grammar, which seems to have a lot in common with what I have been building so far.

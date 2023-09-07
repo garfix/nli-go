@@ -12,6 +12,8 @@ Wittgenstein ("Philosophical Investigations") says that the meaning of a word is
 "two plus two is four": "two (2) is used to check an expression
 "my brother is two years younger": approximately 2 years, 1.5 year - 2.5 year
 
+Each language game has its own use (procedure) of a word. What would be the equivalent of a language game in NLI-GO?
+
 ## Toy problems
 
 AI systems are often said to solve only [toy problems](https://en.wikipedia.org/wiki/Toy_problem), and that the system does not scale to real world problems. But what if the world is just a combination of a great deal of toy problems?

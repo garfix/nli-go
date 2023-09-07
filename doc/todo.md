@@ -171,6 +171,18 @@ go:uuid(P1, event) go:uuid(P2, event) go:assert(dom:tell(P2, `:friend`, `:shrdlu
 
 - use parse tree as slot
 
+## Sense -> use
+
+To clarify that the meaning of a word is its use, we can use the word "use" in stead of "sense".
+
+## Check -> find
+
+For a Prolog user it would be more natural to use "find" for a function that produces multiple bindings.
+
+## Combine the sentence and morphology grammars
+
+I think it should be possible to create a single grammar (constructicon) that is able to parse both sentences and morphemes. Space would then be an explicit token in the grammar, and the tokenization phase must be skipped.
+
 ## Anaphora
 
 I have not given any attention yet to "bound variable anaphora" https://en.wikipedia.org/wiki/Bound_variable_pronoun

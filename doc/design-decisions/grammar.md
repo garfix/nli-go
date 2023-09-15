@@ -8,3 +8,7 @@ Idioms may be constructions that would normally be ungrammatical, such as "by an
 Idioms are not always fixed strings, but may also be patterns, such, "as <AdjP> as <NP>".
 
 Such a combination of lexiocon and grammar is called a _constructicon_, it's grammar of constructions, that contains a mix of phrases and individual words.
+
+## No thematic roles
+
+Why doesn't the grammar support thematic roles? Thematic roles as AGENT, PATIENT, THEME, are mainly used to separate legitimate from illegitimate constructions. They are neither useful to interpret a sentence, nor to generate one. Furthermore, thematic roles are complex and have many idiosyncrasies.

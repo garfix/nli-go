@@ -1,5 +1,7 @@
 # Syntax
 
+Mentalese has logical and imperative language constructs.
+
 ## Identifiers
 
 * variable names are CamelCased: A, Verb, Entity1, OrderedBlocks
@@ -31,9 +33,9 @@ A fact has no antecedents
 
 ## Inference rule
 
-An inference rule is a conditional fact.
+An inference rule is a procedure that generates 0 or more facts.
 
-An inference results in multiple bindings. When a variable is bound, it cannot be bound again, instead it should match the previous binding. Unbound variables should be bound when done. An inference fails when one of its conditions fails.
+An inference results in multiple variable bindings. When a variable is bound, it cannot be bound again, instead it should match the previous binding. Unbound variables should be bound when done. An inference fails when one of its conditions fails.
 
 * There may be multiple inference rules with the same name.
 * A condition is matched against one of the inference rules in code, but also against the data in the databases.
@@ -56,6 +58,7 @@ It's defined by its name, its parameters, the return variable, and a body.
 * All variables in a function are mutable.
 * A function can't call a procedure directly.
 * There can only be 1 function with a given name.
+* The body contains only statements: conditionals, assignments, and loops
 
 Example:
 
@@ -148,9 +151,9 @@ When binding the varables of this relation set, `{{ VarB }}` will be expanded to
 The syntax of the language, in Extended Backus-Naur Form:
 
     variable-name-list = variable-name [",", variable-name-list]
-    applied-predicate = predicate, "(", [ variable-name-list ], ")"
+    literal = predicate, "(", [ variable-name-list ], ")"
 
-    expression = applied-predicate
+    expression = literal
     expression = expression, "+", expression
     expression = expression, "-", expression
     expression = expression, "/", expression
@@ -171,21 +174,21 @@ The syntax of the language, in Extended Backus-Naur Form:
     boolean-expression = expression, "!=", expression
 
     assignment = variable-name, { ",", variable-name } ":=", expression
-    assignment = applied-predicate                  // discard any results
+    assignment = literal                  // discard any results
     for = "for", goal-list function-body
     if = "if" expression function-body
 
     statement = for | if | assignment
 
-    goal = applied-predicate | assignment | boolean-expression
+    goal = literal | assignment | boolean-expression
     goal-list = "[", { goal }, "]"
 
     function = function-header, function-body, function-footer
-    function-header = applied-predicate
+    function-header = literal
     function-body = "{", { statement }, "}"
     function-footer = "(", [ variable-name-list ], ")"
 
-    implication = applied-predicate, "if", goal-list
+    implication = literal, "if", goal-list
 
 ## Struct
 

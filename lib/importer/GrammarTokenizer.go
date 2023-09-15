@@ -25,6 +25,7 @@ const (
 	tNumber
 	tComma
 	tRewrite
+	tMaps
 	tImplication
 	tColon
 	tAmpersand
@@ -79,6 +80,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tNumber, "-?[0-9]+\\.?[0-9]*"},
 		{tComma, ","},
 		{tRewrite, "->"},
+		{tMaps, "=>"},
 		{tImplication, ":-"},
 		{tColon, ":"},
 		{tAmpersand, "&"},

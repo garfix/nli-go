@@ -32,8 +32,27 @@ func (parser *InternalGrammarParser) parseRules(tokens []Token, startIndex int) 
 
 func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
 
+	var rule mentalese.Rule
 	newStartIndex := 0
-	rule := mentalese.Rule{}
+	ok := true
+
+	rule, newStartIndex, ok = parser.parseFunction(tokens, startIndex)
+	if ok {
+		startIndex = newStartIndex
+	} else {
+		rule, newStartIndex, ok = parser.parseFactOrInferenceRule(tokens, startIndex)
+		if ok {
+			startIndex = newStartIndex
+		}
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseFactOrInferenceRule(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
+
+	newStartIndex := 0
+	rule := mentalese.Rule{IsFunction: false, ReturnVar: ""}
 	ok := true
 
 	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, true)
@@ -56,6 +75,62 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 	}
 
 	return rule, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseFunction(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
+	rule := mentalese.Rule{IsFunction: true}
+	ok := false
+
+	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, false)
+
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tMaps)
+		if ok {
+			rule.ReturnVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+			if ok {
+				rule.Pattern, startIndex, ok = parser.parseBody(tokens, startIndex)
+			}
+		}
+	}
+
+	return rule, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseBody(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
+	ok := false
+	relations := mentalese.RelationSet{}
+
+	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBrace)
+	if ok {
+		relations, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+		if ok {
+			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
+			if ok {
+				ok = parser.checkStatements(relations)
+			}
+		}
+	}
+
+	return relations, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) checkStatements(relations mentalese.RelationSet) bool {
+	ok := true
+	statements := []string{
+		mentalese.PredicateAssign,
+		mentalese.PredicateIfThen,
+		mentalese.PredicateIfThenElse,
+		mentalese.PredicateForIndexValue,
+		mentalese.PredicateForRelations,
+	}
+	for _, relation := range relations {
+		predicate := relation.Predicate
+		if !common.StringArrayContains(statements, predicate) {
+			ok = false
+			break
+		}
+	}
+	return ok
 }
 
 func (parser *InternalGrammarParser) parseIntents(tokens []Token, startIndex int) ([]mentalese.Intent, int, bool) {
@@ -635,6 +710,7 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 	s2 := mentalese.RelationSet{}
 	s3 := mentalese.RelationSet{}
 	newStartIndex := 0
+	var oldIndex int
 
 	keyword, newStartIndex, ok1 = parser.parseSingleToken(tokens, startIndex, tPredicate)
 	if ok1 {
@@ -642,14 +718,22 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 		switch keyword {
 		case "if":
 			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex, useAlias)
+			oldIndex = startIndex
 			startIndex, ok2 = parser.parseKeyword(tokens, startIndex, "then")
+			if !ok2 {
+				_, startIndex, ok2 = parser.parseSingleToken(tokens, oldIndex, tOpeningBrace)
+			}
 			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex, useAlias)
 			newStartIndex, ok4 = parser.parseKeyword(tokens, startIndex, "else")
 			if ok4 {
 				startIndex = newStartIndex
 				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex, useAlias)
 			}
+			oldIndex = startIndex
 			startIndex, ok5 = parser.parseKeyword(tokens, startIndex, "end")
+			if !ok5 {
+				_, startIndex, ok5 = parser.parseSingleToken(tokens, oldIndex, tClosingBrace)
+			}
 			ok = ok1 && ok2 && ok3 && ok5
 			if ok {
 				if ok4 {
@@ -665,6 +749,63 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 					})
 				}
 			}
+		case "for":
+			oldIndex = startIndex
+			var iterator []mentalese.Relation
+			var body []mentalese.Relation
+			iterator, startIndex, ok = parser.parseRelations(tokens, startIndex, useAlias)
+			if ok {
+				body, startIndex, ok = parser.parseBody(tokens, startIndex)
+				if ok {
+					relation = mentalese.NewRelation(false, mentalese.PredicateForRelations, []mentalese.Term{
+						mentalese.NewTermRelationSet(iterator),
+						mentalese.NewTermRelationSet(body),
+					})
+				}
+			}
+
+			if !ok {
+				startIndex = oldIndex
+				var indexVar string
+				var elementVar string
+				var listVar string
+				var list mentalese.TermList
+				var listTerm mentalese.Term
+				indexVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+				if ok {
+					_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tComma)
+					elementVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+					if ok {
+						startIndex, ok = parser.parseKeyword(tokens, startIndex, "in")
+						if ok {
+							listVar, newStartIndex, ok = parser.parseVariable(tokens, startIndex)
+							if ok {
+								startIndex = newStartIndex
+								listTerm = mentalese.NewTermVariable(listVar)
+							} else {
+								list, newStartIndex, ok = parser.parseTermList(tokens, startIndex)
+								if ok {
+									startIndex = newStartIndex
+									listTerm = mentalese.NewTermList(list)
+								}
+							}
+						}
+						if ok {
+							body, startIndex, ok = parser.parseBody(tokens, startIndex)
+							if ok {
+								relation = mentalese.NewRelation(false, mentalese.PredicateForIndexValue, []mentalese.Term{
+									mentalese.NewTermVariable(indexVar),
+									mentalese.NewTermVariable(elementVar),
+									listTerm,
+									mentalese.NewTermRelationSet(body),
+								})
+							}
+						}
+					}
+				}
+
+			}
+
 		case "return":
 			relation = mentalese.NewRelation(false, mentalese.PredicateReturn, []mentalese.Term{})
 			ok = true

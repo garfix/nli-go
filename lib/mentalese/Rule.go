@@ -3,8 +3,10 @@ package mentalese
 import "nli-go/lib/common"
 
 type Rule struct {
-	Goal    Relation
-	Pattern RelationSet
+	Goal       Relation
+	Pattern    RelationSet
+	IsFunction bool
+	ReturnVar  string
 }
 
 func (rule Rule) BindSingle(binding Binding) Rule {

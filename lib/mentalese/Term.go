@@ -13,8 +13,6 @@ type Term struct {
 	TermValueRelationSet RelationSet `json:"set,omitempty"`
 	TermValueRule        *Rule       `json:"rule,omitempty"`
 	TermValueList        TermList    `json:"list,omitempty"`
-	TermBinary           interface{}
-	sharedTerm           *Term
 }
 
 const TermTypeVariable = "variable"
@@ -107,10 +105,6 @@ func (term Term) GetNumber() (float64, bool) {
 	return value, err == nil
 }
 
-func (term Term) GetBinaryValue() interface{} {
-	return term.TermBinary
-}
-
 func (term Term) IsString() bool {
 	return term.TermType == TermTypeStringConstant
 }
@@ -159,9 +153,6 @@ func (term Term) Equals(otherTerm Term) bool {
 		return false
 	}
 	if term.TermSort != otherTerm.TermSort {
-		return false
-	}
-	if term.TermBinary != otherTerm.TermBinary {
 		return false
 	}
 	switch term.TermType {
@@ -233,7 +224,6 @@ func (term Term) Copy() Term {
 	newTerm.TermType = term.TermType
 	newTerm.TermValue = term.TermValue
 	newTerm.TermSort = term.TermSort
-	newTerm.TermBinary = term.TermBinary
 	if term.IsRelationSet() {
 		newTerm.TermValueRelationSet = term.TermValueRelationSet.Copy()
 	} else if term.IsRule() {

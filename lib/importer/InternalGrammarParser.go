@@ -159,7 +159,7 @@ func (parser *InternalGrammarParser) CreateRelationSet(source string) mentalese.
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	relationSet, _, parseOk := parser.parseRelations(tokens, 0, true)
+	relationSet, _, parseOk := parser.parseRelations(tokens, 0)
 	parser.processResult(service_parser, parseOk, source, parser.lastParsedResult.LineNumber)
 
 	return relationSet

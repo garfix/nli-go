@@ -60,7 +60,7 @@ func (parser *InternalGrammarParser) parseFactOrInferenceRule(tokens []Token, st
 		_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tImplication)
 		if ok {
 			startIndex = newStartIndex
-			rule.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			rule.Pattern, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		} else {
 			startIndex = newStartIndex
 			ok = true
@@ -102,7 +102,7 @@ func (parser *InternalGrammarParser) parseBody(tokens []Token, startIndex int) (
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBrace)
 	if ok {
-		relations, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+		relations, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		if ok {
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
 			if ok {
@@ -198,7 +198,7 @@ func (parser *InternalGrammarParser) parseIntent(tokens []Token, startIndex int)
 
 		switch key {
 		case field_condition:
-			intent.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			intent.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !conditionFound
 			conditionFound = true
 		case field_responses:
@@ -246,13 +246,13 @@ func (parser *InternalGrammarParser) parseResultHandler(tokens []Token, startInd
 
 		switch key {
 		case field_condition:
-			resultHandler.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			resultHandler.Condition, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		case field_preparation:
-			resultHandler.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			resultHandler.Preparation, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !preparationFound
 			preparationFound = true
 		case field_answer:
-			resultHandler.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			resultHandler.Answer, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !answerFound
 			answerFound = true
 		case field_result:
@@ -328,7 +328,7 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 			ok = ok && !ruleFound
 			ruleFound = true
 		case field_sense:
-			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !senseFound
 			senseFound = true
 		case field_ellipsis:
@@ -336,11 +336,11 @@ func (parser *InternalGrammarParser) parseGrammarRule(tokens []Token, startIndex
 			ok = ok && !ellipsisFound
 			ellipsisFound = true
 		case field_tag:
-			rule.Tag, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			rule.Tag, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !tagFound
 			tagFound = true
 		case field_intent:
-			rule.Intent, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			rule.Intent, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !intentFound
 			intentFound = true
 		default:
@@ -370,7 +370,7 @@ func (parser *InternalGrammarParser) parseGenerationGrammarRule(tokens []Token, 
 			ok = ok && !ruleFound
 			ruleFound = true
 		case field_condition:
-			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex, true)
+			rule.Sense, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			ok = ok && !conditionFound
 			conditionFound = true
 		default:
@@ -579,7 +579,21 @@ done:
 	return node, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int, useAlias bool) ([]mentalese.Relation, int, bool) {
+func (parser *InternalGrammarParser) parseRelationsTerm(tokens []Token, startIndex int) ([]mentalese.Relation, int, bool) {
+	var found bool
+	var relations mentalese.RelationSet
+	_, startIndex, found = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
+	if found {
+		relations, startIndex, found = parser.parseRelations(tokens, startIndex)
+		if found {
+			_, startIndex, found = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
+		}
+	}
+
+	return relations, startIndex, found
+}
+
+func (parser *InternalGrammarParser) parseRelations(tokens []Token, startIndex int) ([]mentalese.Relation, int, bool) {
 
 	relation := mentalese.Relation{}
 	relationSet := mentalese.RelationSet{}
@@ -717,17 +731,17 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 		startIndex = newStartIndex
 		switch keyword {
 		case "if":
-			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex, useAlias)
+			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex)
 			oldIndex = startIndex
 			startIndex, ok2 = parser.parseKeyword(tokens, startIndex, "then")
 			if !ok2 {
 				_, startIndex, ok2 = parser.parseSingleToken(tokens, oldIndex, tOpeningBrace)
 			}
-			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex, useAlias)
+			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex)
 			newStartIndex, ok4 = parser.parseKeyword(tokens, startIndex, "else")
 			if ok4 {
 				startIndex = newStartIndex
-				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex, useAlias)
+				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex)
 			}
 			oldIndex = startIndex
 			startIndex, ok5 = parser.parseKeyword(tokens, startIndex, "end")
@@ -753,7 +767,7 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			oldIndex = startIndex
 			var iterator []mentalese.Relation
 			var body []mentalese.Relation
-			iterator, startIndex, ok = parser.parseRelations(tokens, startIndex, useAlias)
+			iterator, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			if ok {
 				body, startIndex, ok = parser.parseBody(tokens, startIndex)
 				if ok {
@@ -1379,8 +1393,8 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 		}
 	}
 	{
-		relationSet := mentalese.RelationSet{}
-		relationSet, newStartIndex, ok = parser.parseRelations(tokens, startIndex, true)
+		var relationSet mentalese.RelationSet
+		relationSet, newStartIndex, ok = parser.parseRelations(tokens, startIndex)
 		if ok {
 			term.TermType = mentalese.TermTypeRelationSet
 			term.TermValueRelationSet = relationSet
@@ -1398,6 +1412,16 @@ func (parser *InternalGrammarParser) parseTerm(tokens []Token, startIndex int) (
 			goto end
 		}
 	}
+	// {
+	// 	var relation mentalese.Relation
+	// 	relation, newStartIndex, ok = parser.parseRelation(tokens, startIndex, true)
+	// 	if ok {
+	// 		term.TermType = mentalese.TermTypeFunctionCall
+	// 		term.TermValueRelationSet = mentalese.RelationSet{relation}
+	// 		startIndex = newStartIndex
+	// 		goto end
+	// 	}
+	// }
 	{
 		tokenValue, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tPredicate)
 		if ok {

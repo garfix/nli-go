@@ -21,6 +21,7 @@ const TermTypeStringConstant = "string"
 const TermTypeAnonymousVariable = "anonymous"
 const TermTypeRegExp = "regexp"
 const TermTypeRelationSet = "relation-set"
+const TermTypeFunctionCall = "function-call"
 const TermTypeRule = "rule"
 const TermTypeId = "id"
 const TermTypeList = "list"
@@ -127,6 +128,10 @@ func (term Term) IsAtom() bool {
 
 func (term Term) IsRelationSet() bool {
 	return term.TermType == TermTypeRelationSet
+}
+
+func (term Term) IsFunctionCall() bool {
+	return term.TermType == TermTypeFunctionCall
 }
 
 func (term Term) IsRule() bool {

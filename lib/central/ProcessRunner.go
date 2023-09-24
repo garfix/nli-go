@@ -146,10 +146,10 @@ func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.R
 		if argument.IsRelationSet() && len(argument.TermValueRelationSet) == 1 {
 			firstRelation := argument.TermValueRelationSet[0]
 
-			returnVariable, found := p.solver.functionReturnVariables[firstRelation.Predicate]
+			_, found := p.solver.functions[firstRelation.Predicate]
 			if found {
 				newRelation = newRelation.Copy()
-				newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, returnVariable, binding)
+				newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, binding)
 			} else {
 
 				for j, arg := range firstRelation.Arguments {
@@ -166,7 +166,7 @@ func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.R
 	return newRelation
 }
 
-func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Relation, returnVariable string, binding mentalese.Binding) mentalese.Term {
+func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Relation, binding mentalese.Binding) mentalese.Term {
 	variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
 	newRelation := relation.Copy()
 	newRelation.Arguments = append(newRelation.Arguments, variable)

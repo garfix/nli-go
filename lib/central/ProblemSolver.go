@@ -10,35 +10,35 @@ import (
 const handleLinkChar = "-"
 
 type ProblemSolver struct {
-	factBases               []api.FactBase
-	ruleBases               []api.RuleBase
-	functionBases           []api.FunctionBase
-	multiBindingBases       []api.MultiBindingBase
-	solverFunctionBases     []api.SolverFunctionBase
-	simpleFunctions         map[string][]api.SimpleFunction
-	multiBindingFunctions   map[string][]api.MultiBindingFunction
-	matcher                 *RelationMatcher
-	variableGenerator       *mentalese.VariableGenerator
-	relationHandlers        map[string][]api.RelationHandler
-	functionReturnVariables map[string]string
-	modifier                *FactBaseModifier
-	log                     *common.SystemLog
+	factBases             []api.FactBase
+	ruleBases             []api.RuleBase
+	functionBases         []api.FunctionBase
+	multiBindingBases     []api.MultiBindingBase
+	solverFunctionBases   []api.SolverFunctionBase
+	simpleFunctions       map[string][]api.SimpleFunction
+	multiBindingFunctions map[string][]api.MultiBindingFunction
+	matcher               *RelationMatcher
+	variableGenerator     *mentalese.VariableGenerator
+	relationHandlers      map[string][]api.RelationHandler
+	functions             map[string]bool
+	modifier              *FactBaseModifier
+	log                   *common.SystemLog
 }
 
 func NewProblemSolver(matcher *RelationMatcher, variableGenerator *mentalese.VariableGenerator, log *common.SystemLog) *ProblemSolver {
 	solver := ProblemSolver{
-		factBases:               []api.FactBase{},
-		ruleBases:               []api.RuleBase{},
-		functionBases:           []api.FunctionBase{},
-		multiBindingBases:       []api.MultiBindingBase{},
-		solverFunctionBases:     []api.SolverFunctionBase{},
-		simpleFunctions:         map[string][]api.SimpleFunction{},
-		multiBindingFunctions:   map[string][]api.MultiBindingFunction{},
-		matcher:                 matcher,
-		variableGenerator:       variableGenerator,
-		relationHandlers:        map[string][]api.RelationHandler{},
-		functionReturnVariables: map[string]string{},
-		log:                     log,
+		factBases:             []api.FactBase{},
+		ruleBases:             []api.RuleBase{},
+		functionBases:         []api.FunctionBase{},
+		multiBindingBases:     []api.MultiBindingBase{},
+		solverFunctionBases:   []api.SolverFunctionBase{},
+		simpleFunctions:       map[string][]api.SimpleFunction{},
+		multiBindingFunctions: map[string][]api.MultiBindingFunction{},
+		matcher:               matcher,
+		variableGenerator:     variableGenerator,
+		relationHandlers:      map[string][]api.RelationHandler{},
+		functions:             map[string]bool{},
+		log:                   log,
 	}
 
 	return &solver
@@ -123,7 +123,7 @@ func (solver *ProblemSolver) createRuleHandlers() {
 	for _, base := range solver.ruleBases {
 		for _, rule := range base.GetRules() {
 			if rule.IsFunction {
-				solver.functionReturnVariables[rule.Goal.Predicate] = rule.ReturnVar
+				solver.functions[rule.Goal.Predicate] = true
 			}
 			solver.addRelationHandler(rule.Goal.Predicate, solver.createRuleClosure(rule))
 		}

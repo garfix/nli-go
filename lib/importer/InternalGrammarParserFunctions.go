@@ -52,7 +52,7 @@ func (parser *InternalGrammarParser) parseRule(tokens []Token, startIndex int) (
 func (parser *InternalGrammarParser) parseFactOrInferenceRule(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
 
 	newStartIndex := 0
-	rule := mentalese.Rule{IsFunction: false, ReturnVar: ""}
+	rule := mentalese.Rule{IsFunction: false}
 	ok := true
 
 	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, true)
@@ -92,7 +92,6 @@ func (parser *InternalGrammarParser) parseFunction(tokens []Token, startIndex in
 				rule.Pattern, startIndex, ok = parser.parseBody(tokens, startIndex)
 				rule.Goal.Arguments = append(rule.Goal.Arguments, mentalese.NewTermVariable(returnVar))
 				rule = rule.ConvertVariablesToMutables()
-				println(rule.String())
 			}
 		}
 	}

@@ -6,8 +6,6 @@ type Rule struct {
 	Goal       Relation
 	Pattern    RelationSet
 	IsFunction bool
-	// to be removed:
-	ReturnVar string
 }
 
 func (rule Rule) BindSingle(binding Binding) Rule {
@@ -22,7 +20,6 @@ func (rule Rule) InstantiateUnboundVariables(binding Binding, variableGenerator 
 	newRule.Goal = rule.Goal
 	newRule.Pattern = rule.Pattern.InstantiateUnboundVariables(binding, variableGenerator)
 	newRule.IsFunction = rule.IsFunction
-	newRule.ReturnVar = rule.ReturnVar
 	return newRule
 }
 
@@ -35,7 +32,6 @@ func (rule Rule) Copy() Rule {
 	newRule.Goal = rule.Goal.Copy()
 	newRule.Pattern = rule.Pattern.Copy()
 	newRule.IsFunction = rule.IsFunction
-	newRule.ReturnVar = rule.ReturnVar
 	return newRule
 }
 
@@ -44,7 +40,6 @@ func (rule Rule) ConvertVariablesToConstants() Rule {
 	newRule.Goal = rule.Goal.ConvertVariablesToConstants()
 	newRule.Pattern = rule.Pattern.ConvertVariablesToConstants()
 	newRule.IsFunction = rule.IsFunction
-	newRule.ReturnVar = rule.ReturnVar
 	return newRule
 }
 
@@ -61,10 +56,6 @@ func (rule Rule) ConvertVariablesToMutables() Rule {
 		}}
 		newRule.Pattern = append([]Relation{assignment}, newRule.Pattern...)
 	}
-	// turn the return value into a mutable
-	// if newRule.ReturnVar[0:1] != ":" {
-	// 	newRule.ReturnVar = ":" + newRule.ReturnVar
-	// }
 	// assign the return value to the last argument
 	assignment := Relation{false, PredicateAssign, []Term{
 		NewTermVariable(returnVar),

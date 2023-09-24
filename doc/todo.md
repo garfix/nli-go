@@ -2,12 +2,15 @@
 
 First up:
 
-- replace multiple binding functions with functions that take relations as an argument
+- create an if/then that takes an expression as a condition
+- turn all "functions" into functions
+
+Later:
+- remove all functionality for multiple binding functions
+
 - abc(x, y) {} // x and y are input or output variables (either bound or unbound)
 - abc(x, y) => z {} // x and y are (bound) input variables
 
-- turn all function variables into modifiable variables
-- turn all "functions" into functions
 - disallow loops in rules
 - disallow rules as function results ( a := abs(X) ) // abs should be a function, not an implication
 

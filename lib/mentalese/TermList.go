@@ -48,6 +48,14 @@ func (list TermList) ConvertVariablesToConstants() TermList {
 	return newList
 }
 
+func (list TermList) ConvertVariablesToMutables() TermList {
+	newList := TermList{}
+	for _, element := range list {
+		newList = append(newList, element.ConvertVariablesToMutables())
+	}
+	return newList
+}
+
 func (list TermList) Deduplicate() TermList {
 	newList := TermList{}
 	for _, element := range list {

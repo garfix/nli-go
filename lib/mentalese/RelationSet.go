@@ -383,3 +383,13 @@ func (set RelationSet) ConvertVariablesToConstants() RelationSet {
 
 	return newSet
 }
+
+func (set RelationSet) ConvertVariablesToMutables() RelationSet {
+	newSet := RelationSet{}
+
+	for _, relation := range set {
+		newSet = append(newSet, relation.ConvertVariablesToMutables())
+	}
+
+	return newSet
+}

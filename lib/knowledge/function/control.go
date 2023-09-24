@@ -176,6 +176,54 @@ func (base *SystemSolverFunctionBase) rangeForEach(messenger api.ProcessMessenge
 	return newBindings
 }
 
+func (base *SystemSolverFunctionBase) forRelations(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "rr", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	cursor := messenger.GetCursor()
+	cursor.SetType(mentalese.FrameTypeLoop)
+
+	forRelations := bound.Arguments[0].TermValueRelationSet
+	bodyRelations := bound.Arguments[1].TermValueRelationSet
+
+	forBindings := messenger.ExecuteChildStackFrame(forRelations, mentalese.InitBindingSet(binding))
+
+	for _, forBinding := range forBindings.GetAll() {
+		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(forBinding))
+	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *SystemSolverFunctionBase) forIndexValue(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "vvlr", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	cursor := messenger.GetCursor()
+	cursor.SetType(mentalese.FrameTypeLoop)
+
+	indexVar := relation.Arguments[0].TermValue
+	valueVar := relation.Arguments[1].TermValue
+	list := bound.Arguments[2].TermValueList
+	bodyRelations := relation.Arguments[3].TermValueRelationSet
+
+	for i, element := range list {
+		messenger.SetMutableVariable(indexVar, mentalese.NewTermString(strconv.Itoa(i)))
+		messenger.SetMutableVariable(valueVar, element)
+		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(binding))
+	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
 func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

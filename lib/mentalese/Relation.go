@@ -121,6 +121,8 @@ const PredicateAdd = "go_$add"
 const PredicateSubtract = "go_$subtract"
 const PredicateMultiply = "go_$multiply"
 const PredicateDivide = "go_$divide"
+const PredicateForRelations = "go_$for_relations"
+const PredicateForIndexValue = "go_$for_index_value"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"
@@ -301,6 +303,19 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 	for _, argument := range relation.Arguments {
 
 		newArgument := argument.ConvertVariablesToConstants()
+		newArguments = append(newArguments, newArgument)
+	}
+
+	return NewRelation(relation.Negate, relation.Predicate, newArguments)
+}
+
+func (relation Relation) ConvertVariablesToMutables() Relation {
+
+	newArguments := []Term{}
+
+	for _, argument := range relation.Arguments {
+
+		newArgument := argument.ConvertVariablesToMutables()
 		newArguments = append(newArguments, newArgument)
 	}
 

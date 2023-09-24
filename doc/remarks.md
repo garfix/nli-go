@@ -1,3 +1,47 @@
+## 2023-09-18
+
+Thinking about how to implement function calls.
+
+I forgot I already implemented "Procedures as functions":
+
+    process(add(A, B, rv))
+
+## 2023-09-17
+
+A big problem in syntax is the assignment of a relation list to a variable:
+
+    X := red(E) big(E) block(E)
+
+because it's not clear where the relation list ends. `block(E)` may well be the next goal in the body.
+
+In order to solve this I will not allow relation lists in assignments. I will just allow single relations. To compensate, you can append relations with the `+` operator:
+
+    X := red(E) + big(E) + block(E)
+
+New problem: the + operator still allows a relation list.
+
+    X := red(E) + big(E) block(E)
+
+I could just allow a semicolon
+
+    X := red(E) big(E) block(E) ;
+
+But they're easy to forget. I could also use brackets
+
+    X := [ red(E) big(E) block(E) ]
+
+The problem is that relation list are used as terms all the time
+
+    go:do(Quant, find(X) build(X))
+
+and I don't want to use brackets everywhere. It's both a lot of work, and when composing the sense, it's not clear where to put the brackets.
+
+I could use parentheses:
+
+    X := ( red(E) big(E) block(E) )
+
+as they are commonly used to make a single term explicit.
+
 ## 2023-09-06
 
 I'm working on workable version of the language that combines the logical and the functional paradigm: combining goals (having 0-n bindings) with functions (1 binding).

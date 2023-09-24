@@ -6,7 +6,8 @@ type Rule struct {
 	Goal       Relation
 	Pattern    RelationSet
 	IsFunction bool
-	ReturnVar  string
+	// to be removed:
+	ReturnVar string
 }
 
 func (rule Rule) BindSingle(binding Binding) Rule {
@@ -20,6 +21,8 @@ func (rule Rule) InstantiateUnboundVariables(binding Binding, variableGenerator 
 	newRule := Rule{}
 	newRule.Goal = rule.Goal
 	newRule.Pattern = rule.Pattern.InstantiateUnboundVariables(binding, variableGenerator)
+	newRule.IsFunction = rule.IsFunction
+	newRule.ReturnVar = rule.ReturnVar
 	return newRule
 }
 
@@ -31,6 +34,8 @@ func (rule Rule) Copy() Rule {
 	newRule := Rule{}
 	newRule.Goal = rule.Goal.Copy()
 	newRule.Pattern = rule.Pattern.Copy()
+	newRule.IsFunction = rule.IsFunction
+	newRule.ReturnVar = rule.ReturnVar
 	return newRule
 }
 
@@ -38,6 +43,35 @@ func (rule Rule) ConvertVariablesToConstants() Rule {
 	newRule := Rule{}
 	newRule.Goal = rule.Goal.ConvertVariablesToConstants()
 	newRule.Pattern = rule.Pattern.ConvertVariablesToConstants()
+	newRule.IsFunction = rule.IsFunction
+	newRule.ReturnVar = rule.ReturnVar
+	return newRule
+}
+
+func (rule Rule) ConvertVariablesToMutables() Rule {
+	returnVar := rule.Goal.Arguments[len(rule.Goal.Arguments)-1].TermValue
+	newRule := rule.Copy()
+	// convert the variables in the body
+	newRule.Pattern = rule.Pattern.ConvertVariablesToMutables()
+	// assign the arguments to local variables at the beginning of the body
+	for _, argument := range rule.Goal.Arguments[0 : len(rule.Goal.Arguments)-1] {
+		assignment := Relation{false, PredicateAssign, []Term{
+			NewTermVariable(":" + argument.TermValue),
+			NewTermVariable(argument.TermValue),
+		}}
+		newRule.Pattern = append([]Relation{assignment}, newRule.Pattern...)
+	}
+	// turn the return value into a mutable
+	// if newRule.ReturnVar[0:1] != ":" {
+	// 	newRule.ReturnVar = ":" + newRule.ReturnVar
+	// }
+	// assign the return value to the last argument
+	assignment := Relation{false, PredicateAssign, []Term{
+		NewTermVariable(returnVar),
+		NewTermVariable(":" + returnVar),
+	}}
+	newRule.Pattern = append(newRule.Pattern, assignment)
+
 	return newRule
 }
 

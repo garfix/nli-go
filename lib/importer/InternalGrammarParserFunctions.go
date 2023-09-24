@@ -80,15 +80,19 @@ func (parser *InternalGrammarParser) parseFactOrInferenceRule(tokens []Token, st
 func (parser *InternalGrammarParser) parseFunction(tokens []Token, startIndex int) (mentalese.Rule, int, bool) {
 	rule := mentalese.Rule{IsFunction: true}
 	ok := false
+	returnVar := ""
 
-	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, false)
+	rule.Goal, startIndex, ok = parser.parseRelation(tokens, startIndex, true)
 
 	if ok {
 		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tMaps)
 		if ok {
-			rule.ReturnVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+			returnVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
 			if ok {
 				rule.Pattern, startIndex, ok = parser.parseBody(tokens, startIndex)
+				rule.Goal.Arguments = append(rule.Goal.Arguments, mentalese.NewTermVariable(returnVar))
+				rule = rule.ConvertVariablesToMutables()
+				println(rule.String())
 			}
 		}
 	}
@@ -122,6 +126,10 @@ func (parser *InternalGrammarParser) checkStatements(relations mentalese.Relatio
 		mentalese.PredicateIfThenElse,
 		mentalese.PredicateForIndexValue,
 		mentalese.PredicateForRelations,
+		mentalese.PredicateLog,
+		mentalese.PredicateBreak,
+		mentalese.PredicateCancel,
+		mentalese.PredicateReturn,
 	}
 	for _, relation := range relations {
 		predicate := relation.Predicate

@@ -99,8 +99,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
 
     go:list_foreach(VerLines, XIndex, X,
         go:list_get(HorLines, 0, :StartY)
-        /*find_span(Width, VerLines, XIndex, Q)*/
-        [XEndIndex := find_span_t(Width, VerLines, XIndex)]
+        [XEndIndex := find_span(Width, VerLines, XIndex)]
         go:list_get(VerLines, XEndIndex, EndX)
         go:list_foreach(HorLines, YIndex, Y,
             [YIndex > 0]
@@ -132,28 +131,11 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
     [ResultY := :FoundY]
 ;
 
-find_span(Width, VerLines, XIndex, XEndIndex) :-
-    go:list_get(VerLines, XIndex, X1)
-    [:XEndIndex := XIndex]
-
-    go:list_foreach(VerLines, Index, X2,
-        [W := [X2 - X1]]
-        [W >= Width]
-        [:XEndIndex := Index]
-        break
-    )
-
-    [XEndIndex := :XEndIndex]
-;
-
-find_span_t(Width, VerLines, XIndex) => XEndIndex {
+find_span(Width, VerLines, XIndex) => XEndIndex {
     [X1 := go:list_get(VerLines, XIndex, rv)]
     [XEndIndex := XIndex]
-
     for Index, X2 in VerLines {
         [W := [X2 - X1]]
-
-    /* todo should be a expression in if condition */
         if [W >= Width] {
             [XEndIndex := Index]
             break

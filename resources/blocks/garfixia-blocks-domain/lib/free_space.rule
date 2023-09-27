@@ -132,7 +132,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
 ;
 
 find_span(Width, VerLines, XIndex) => XEndIndex {
-    [X1 := go:list_get(VerLines, XIndex, rv)]
+    [X1 := VerLines[XIndex]]
     [XEndIndex := XIndex]
     for Index, X2 in VerLines {
         [W := [X2 - X1]]

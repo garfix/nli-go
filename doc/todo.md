@@ -1,8 +1,11 @@
 # Todo
 
+Test-driven!
+
 First up:
 
 - create an if/then that takes an expression as a condition
+- go:list_get(VerLines, XIndex, rv) => xIndex := VerLines[XIndex]
 - turn all "functions" into functions
 
 Later:

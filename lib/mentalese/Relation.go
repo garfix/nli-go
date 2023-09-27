@@ -123,6 +123,7 @@ const PredicateMultiply = "go_$multiply"
 const PredicateDivide = "go_$divide"
 const PredicateForRelations = "go_$for_relations"
 const PredicateForIndexValue = "go_$for_index_value"
+const PredicateListIndex2 = "go_$list_index"
 
 const CategoryText = "text"
 const CategoryProperNoun = "proper_noun"

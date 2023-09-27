@@ -224,6 +224,32 @@ func (base *SystemSolverFunctionBase) forIndexValue(messenger api.ProcessMesseng
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) listIndex2(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "liv", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	index, _ := bound.Arguments[1].GetIntValue()
+	list := bound.Arguments[0].TermValueList
+	returnVar := relation.Arguments[2].TermValue
+
+	if index > len(list) {
+		return mentalese.NewBindingSet()
+	}
+	if index < 0 {
+		return mentalese.NewBindingSet()
+	}
+
+	element := list[index]
+	newBinding := mentalese.NewBinding()
+	newBinding.Set(returnVar, element)
+
+	return mentalese.InitBindingSet(newBinding)
+}
+
 func (base *SystemSolverFunctionBase) doBreak(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

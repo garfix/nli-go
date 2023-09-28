@@ -1,10 +1,10 @@
 package server
 
 import (
-	"fmt"
 	"nli-go/lib/central"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
+	"testing"
 
 	"golang.org/x/net/websocket"
 	"gopkg.in/yaml.v2"
@@ -12,11 +12,12 @@ import (
 
 type TestClient struct {
 	conn *websocket.Conn
+	t    *testing.T
 }
 
 const SESSION_ID = "test123"
 
-func CreateTestClient() *TestClient {
+func CreateTestClient(t *testing.T) *TestClient {
 
 	address := "ws://localhost:3334/"
 	conn, err := websocket.Dial(address, "", address)
@@ -26,6 +27,7 @@ func CreateTestClient() *TestClient {
 
 	return &TestClient{
 		conn: conn,
+		t:    t,
 	}
 }
 
@@ -67,7 +69,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 	err = websocket.JSON.Receive(c.conn, &response)
 	if err != nil {
-		fmt.Println(err)
+		c.t.Error(err)
 		return
 	}
 
@@ -82,7 +84,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 			err = websocket.JSON.Receive(c.conn, &response)
 			if err != nil {
-				fmt.Println(err)
+				c.t.Error(err)
 			}
 
 		} else {
@@ -96,7 +98,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 				err = websocket.JSON.Receive(c.conn, &response)
 				if err != nil {
-					fmt.Println(err)
+					c.t.Error(err)
 				}
 
 				if response.MessageType == mentalese.MessagePrint {
@@ -108,7 +110,7 @@ func (c *TestClient) Run(system string, tests []Test) {
 					println("  " + answer)
 					if answer != test.C {
 						ok = false
-						println("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
+						c.t.Error("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
 						break
 					}
 				}
@@ -147,6 +149,6 @@ func (c *TestClient) Send(system string, resource string, messageType string, me
 
 	err := websocket.JSON.Send(c.conn, request)
 	if err != nil {
-		panic("Could not send to server: " + err.Error())
+		c.t.Error("Could not send to server: " + err.Error())
 	}
 }

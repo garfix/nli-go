@@ -7,7 +7,9 @@ https://en.wikipedia.org/wiki/Construction_grammar
 Idioms may be constructions that would normally be ungrammatical, such as "by and large".
 Idioms are not always fixed strings, but may also be patterns, such, "as <AdjP> as <NP>".
 
-Such a combination of lexiocon and grammar is called a _constructicon_, it's grammar of constructions, that contains a mix of phrases and individual words.
+Such a combination of lexicon and grammar is called a _constructicon_, it's grammar of constructions, that contains a mix of phrases and individual words.
+
+Note that construction grammar also pleads for the same treatment of morphology as syntax. This is an interesting option I'd like to apply NLI-GO.
 
 ## No thematic roles
 

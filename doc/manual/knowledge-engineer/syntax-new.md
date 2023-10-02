@@ -90,6 +90,12 @@ Loop through array
 
     }
 
+Loop through range
+
+    for E is A to B {
+
+    }
+
 ## Conditional
 
 If-then

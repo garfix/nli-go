@@ -769,23 +769,16 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 		startIndex = newStartIndex
 		switch keyword {
 		case "if":
-			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex)
 			oldIndex = startIndex
+			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex)
 			startIndex, ok2 = parser.parseKeyword(tokens, startIndex, "then")
-			if !ok2 {
-				_, startIndex, ok2 = parser.parseSingleToken(tokens, oldIndex, tOpeningBrace)
-			}
 			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex)
 			newStartIndex, ok4 = parser.parseKeyword(tokens, startIndex, "else")
 			if ok4 {
 				startIndex = newStartIndex
 				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex)
 			}
-			oldIndex = startIndex
 			startIndex, ok5 = parser.parseKeyword(tokens, startIndex, "end")
-			if !ok5 {
-				_, startIndex, ok5 = parser.parseSingleToken(tokens, oldIndex, tClosingBrace)
-			}
 			ok = ok1 && ok2 && ok3 && ok5
 			if ok {
 				if ok4 {
@@ -799,6 +792,34 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 						mentalese.NewTermRelationSet(s1),
 						mentalese.NewTermRelationSet(s2),
 					})
+				}
+			}
+
+			if !ok {
+				startIndex = oldIndex
+				s1, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				if ok {
+					s2, startIndex, ok = parser.parseBody(tokens, startIndex)
+					if ok {
+						newStartIndex, ok = parser.parseKeyword(tokens, startIndex, "else")
+						if ok {
+							startIndex = newStartIndex
+							s3, startIndex, ok = parser.parseBody(tokens, startIndex)
+							if ok {
+								relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse, []mentalese.Term{
+									mentalese.NewTermRelationSet(s1),
+									mentalese.NewTermRelationSet(s2),
+									mentalese.NewTermRelationSet(s3),
+								})
+							}
+						} else {
+							ok = true
+							relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
+								mentalese.NewTermRelationSet(s1),
+								mentalese.NewTermRelationSet(s2),
+							})
+						}
+					}
 				}
 			}
 		case "for":
@@ -856,6 +877,37 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 					}
 				}
 
+			}
+
+			if !ok {
+				startIndex = oldIndex
+				var elementVar string
+				var startValue mentalese.Term
+				var endValue mentalese.Term
+				elementVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+				if ok {
+					startIndex, ok = parser.parseKeyword(tokens, startIndex, "is")
+					if ok {
+						startValue, startIndex, ok = parser.parseTerm(tokens, startIndex)
+						if ok {
+							startIndex, ok = parser.parseKeyword(tokens, startIndex, "to")
+							if ok {
+								endValue, startIndex, ok = parser.parseTerm(tokens, startIndex)
+								if ok {
+									body, startIndex, ok = parser.parseBody(tokens, startIndex)
+									if ok {
+										relation = mentalese.NewRelation(false, mentalese.PredicateForRange, []mentalese.Term{
+											mentalese.NewTermVariable(elementVar),
+											startValue,
+											endValue,
+											mentalese.NewTermRelationSet(body),
+										})
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 
 		case "return":

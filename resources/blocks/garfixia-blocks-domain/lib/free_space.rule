@@ -155,3 +155,23 @@ span_free(ColStart, ColEnd, RowIndex, Grid) :-
 
     [:Success == true]
 ;
+
+/*
+not_span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
+    [Success := true]
+
+    go:log('start')
+
+    for XIndex is ColStart to ColEnd {
+        go:log(XIndex)
+
+        for grid(Grid, RowIndex, XIndex, 1) {
+            [Success := false]
+            break
+        }
+
+        if [Success == false] {
+            break
+        }
+    }
+};

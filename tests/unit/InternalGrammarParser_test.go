@@ -97,8 +97,10 @@ func TestInternalGrammarParser(t *testing.T) {
 	parser.CreateRules("a(X) :- cancel;")
 	parser.CreateRules("a(X) :- fail;")
 	parser.CreateRules("a(X) => Y { [Y := X] };")
-	parser.CreateRules("describe_event(P1, DescSet) :- if a(1) a(2) { b(1) b(2) else c(1) c(2) };")
+	parser.CreateRules("describe_event(P1, DescSet) :- if [A == 1] { [C := 1] };")
+	parser.CreateRules("describe_event(P1, DescSet) :- if [A == 1] { [C := 1] } else { [C := 2] };")
 	parser.CreateRelationSet("[X1 := VerLines[XIndex]]")
+	parser.CreateRelationSet("for N is A to B { [C := [A + B]] }")
 
 	set := parser.CreateRelationSet("quant_foreach($np, quant_foreach($np2, none))")
 	if set.String() != "quant_foreach(go_sem(np, 1), quant_foreach(go_sem(np, 2), none))" {

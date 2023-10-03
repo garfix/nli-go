@@ -103,7 +103,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
         go:list_get(VerLines, XEndIndex, EndX)
         go:list_foreach(HorLines, YIndex, Y,
             [YIndex > 0]
-            if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) then
+            if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) {
                 [SpanLength := [Y - :StartY]]
                 if [SpanLength >= Length] then
                     [DX := [X - CenterX]]
@@ -118,9 +118,9 @@ do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
                         [:FoundY := :StartY]
                     end
                 end
-            else
+            } else {
                 [:StartY := Y]
-            end
+            }
         )
     )
 
@@ -143,27 +143,10 @@ find_span(Width, VerLines, XIndex) => XEndIndex {
     }
 };
 
-span_free(ColStart, ColEnd, RowIndex, Grid) :-
-    [:Success := true]
-
-    go:range_foreach(ColStart, ColEnd, XIndex,
-        if grid(Grid, RowIndex, XIndex, 1) then
-            [:Success := false]
-            break
-        end
-    )
-
-    [:Success == true]
-;
-
-/*
-not_span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
+span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
     [Success := true]
 
-    go:log('start')
-
     for XIndex is ColStart to ColEnd {
-        go:log(XIndex)
 
         for grid(Grid, RowIndex, XIndex, 1) {
             [Success := false]

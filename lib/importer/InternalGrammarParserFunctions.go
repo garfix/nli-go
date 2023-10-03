@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/morphology"
@@ -125,6 +126,7 @@ func (parser *InternalGrammarParser) checkStatements(relations mentalese.Relatio
 		mentalese.PredicateIfThenElse,
 		mentalese.PredicateForIndexValue,
 		mentalese.PredicateForRelations,
+		mentalese.PredicateForRange,
 		mentalese.PredicateLog,
 		mentalese.PredicateBreak,
 		mentalese.PredicateCancel,
@@ -134,6 +136,7 @@ func (parser *InternalGrammarParser) checkStatements(relations mentalese.Relatio
 		predicate := relation.Predicate
 		if !common.StringArrayContains(statements, predicate) {
 			ok = false
+			fmt.Println("Not allowed as statement in body: " + relation.Predicate)
 			break
 		}
 	}

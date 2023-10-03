@@ -36,8 +36,9 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 		}
 	}
 
-	binding = binding.Copy()
+	// if !relation.Arguments[0].IsMutableVariable() {
 	binding.Set(variable, value)
+	// }
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -45,10 +46,20 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 func (base *SystemSolverFunctionBase) ifThen(messenger api.ProcessMessenger, ifThenElse mentalese.Relation,
 	binding mentalese.Binding) mentalese.BindingSet {
 
+	conditionArg := ifThenElse.Arguments[0]
 	condition := ifThenElse.Arguments[0].TermValueRelationSet
 	action := ifThenElse.Arguments[1].TermValueRelationSet
 
-	newBindings := mentalese.NewBindingSet()
+	var newBindings mentalese.BindingSet
+
+	if conditionArg.IsAtom() {
+		if conditionArg.TermValue == "true" {
+			newBindings = messenger.ExecuteChildStackFrame(action, mentalese.InitBindingSet(binding))
+		} else {
+			newBindings = mentalese.InitBindingSet(binding)
+		}
+		return newBindings
+	}
 
 	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	if conditionBindings.IsEmpty() {
@@ -62,47 +73,21 @@ func (base *SystemSolverFunctionBase) ifThen(messenger api.ProcessMessenger, ifT
 
 func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
+	conditionArg := ifThenElse.Arguments[0]
 	condition := ifThenElse.Arguments[0].TermValueRelationSet
 	action := ifThenElse.Arguments[1].TermValueRelationSet
 	alternative := ifThenElse.Arguments[2].TermValueRelationSet
 
-	newBindings := mentalese.NewBindingSet()
+	var newBindings mentalese.BindingSet
 
-	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
-	if !conditionBindings.IsEmpty() {
-		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
-	} else {
-		newBindings = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
+	if conditionArg.IsAtom() {
+		if conditionArg.TermValue == "true" {
+			newBindings = messenger.ExecuteChildStackFrame(action, mentalese.InitBindingSet(binding))
+		} else {
+			newBindings = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
+		}
+		return newBindings
 	}
-
-	return newBindings
-}
-
-func (base *SystemSolverFunctionBase) ifThenBool(messenger api.ProcessMessenger, ifThenElse mentalese.Relation,
-	binding mentalese.Binding) mentalese.BindingSet {
-
-	condition := ifThenElse.Arguments[0].TermValueRelationSet
-	action := ifThenElse.Arguments[1].TermValueRelationSet
-
-	newBindings := mentalese.NewBindingSet()
-
-	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
-	if conditionBindings.IsEmpty() {
-		newBindings = mentalese.InitBindingSet(binding)
-	} else {
-		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
-	}
-
-	return newBindings
-}
-
-func (base *SystemSolverFunctionBase) ifThenElseBool(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
-
-	condition := ifThenElse.Arguments[0].TermValueRelationSet
-	action := ifThenElse.Arguments[1].TermValueRelationSet
-	alternative := ifThenElse.Arguments[2].TermValueRelationSet
-
-	newBindings := mentalese.NewBindingSet()
 
 	conditionBindings := messenger.ExecuteChildStackFrame(condition, mentalese.InitBindingSet(binding))
 	if !conditionBindings.IsEmpty() {
@@ -223,13 +208,16 @@ func (base *SystemSolverFunctionBase) forRelations(messenger api.ProcessMessenge
 	cursor := messenger.GetCursor()
 	cursor.SetType(mentalese.FrameTypeLoop)
 
-	forRelations := bound.Arguments[0].TermValueRelationSet
-	bodyRelations := bound.Arguments[1].TermValueRelationSet
+	forRelations := relation.Arguments[0].TermValueRelationSet
+	bodyRelations := relation.Arguments[1].TermValueRelationSet
 
 	forBindings := messenger.ExecuteChildStackFrame(forRelations, mentalese.InitBindingSet(binding))
 
 	for _, forBinding := range forBindings.GetAll() {
-		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(forBinding))
+		for variable, value := range forBinding.GetAll() {
+			messenger.SetMutableVariable(variable, value)
+		}
+		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(binding))
 	}
 
 	return mentalese.InitBindingSet(binding)

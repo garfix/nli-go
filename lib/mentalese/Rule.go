@@ -66,6 +66,29 @@ func (rule Rule) ConvertVariablesToMutables() Rule {
 	return newRule
 }
 
+func (rule Rule) ConvertVariablesToImmutables() Rule {
+	returnVar := rule.Goal.Arguments[len(rule.Goal.Arguments)-1].TermValue
+	newRule := rule.Copy()
+	// convert the variables in the body
+	newRule.Pattern = rule.Pattern.ConvertVariablesToImmutables()
+	// assign the arguments to local variables at the beginning of the body
+	for _, argument := range rule.Goal.Arguments[0 : len(rule.Goal.Arguments)-1] {
+		assignment := Relation{false, PredicateAssign, []Term{
+			NewTermVariable(":" + argument.TermValue),
+			NewTermVariable(argument.TermValue),
+		}}
+		newRule.Pattern = append([]Relation{assignment}, newRule.Pattern...)
+	}
+	// assign the return value to the last argument
+	assignment := Relation{false, PredicateAssign, []Term{
+		NewTermVariable(returnVar),
+		NewTermVariable(":" + returnVar),
+	}}
+	newRule.Pattern = append(newRule.Pattern, assignment)
+
+	return newRule
+}
+
 func (rule Rule) GetVariableNames() []string {
 	var names []string
 

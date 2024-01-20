@@ -112,3 +112,12 @@ func (p *Messenger) SetMutableVariable(variable string, value mentalese.Term) {
 		scope.Cursor.MutableVariableValues.Set(variable, value)
 	}
 }
+
+func (p *Messenger) GetMutableVariable(variable string) (mentalese.Term, bool) {
+	scope := p.process.GetCurrentScope()
+	if scope != nil {
+		value, found := scope.Cursor.MutableVariableValues.Get(variable)
+		return value, found
+	}
+	return mentalese.Term{}, false
+}

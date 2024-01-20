@@ -34,6 +34,7 @@ const (
 	tGt
 	tLtEq
 	tLt
+	tAppend
 	tOpeningParenthesis
 	tClosingParenthesis
 	tOpeningBracket
@@ -89,6 +90,7 @@ func (tok *GrammarTokenizer) Tokenize(source string) ([]Token, int, bool) {
 		{tGt, ">"},
 		{tLtEq, "<="},
 		{tLt, "<"},
+		{tAppend, "\\[\\]="},
 		{tOpeningParenthesis, "\\("},
 		{tClosingParenthesis, "\\)"},
 		{tOpeningBracket, "\\["},

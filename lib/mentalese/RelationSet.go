@@ -393,3 +393,13 @@ func (set RelationSet) ConvertVariablesToMutables() RelationSet {
 
 	return newSet
 }
+
+func (set RelationSet) ConvertVariablesToImmutables() RelationSet {
+	newSet := RelationSet{}
+
+	for _, relation := range set {
+		newSet = append(newSet, relation.ConvertVariablesToImmutables())
+	}
+
+	return newSet
+}

@@ -131,12 +131,13 @@ func (parser *InternalGrammarParser) checkStatements(relations mentalese.Relatio
 		mentalese.PredicateBreak,
 		mentalese.PredicateCancel,
 		mentalese.PredicateReturn,
+		mentalese.PredicateAppend,
 	}
 	for _, relation := range relations {
 		predicate := relation.Predicate
 		if !common.StringArrayContains(statements, predicate) {
 			ok = false
-			fmt.Println("Not allowed as statement in body: " + relation.Predicate)
+			fmt.Println("checkStatements: Not allowed as statement in body: " + relation.Predicate)
 			break
 		}
 	}
@@ -938,6 +939,7 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			tGtEq:      mentalese.PredicateGreaterThanEquals,
 			tLt:        mentalese.PredicateLessThan,
 			tLtEq:      mentalese.PredicateLessThanEquals,
+			tAppend:    mentalese.PredicateAppend,
 			tPositive:  mentalese.PredicateAdd,
 			tNegative:  mentalese.PredicateSubtract,
 			tMultiply:  mentalese.PredicateMultiply,

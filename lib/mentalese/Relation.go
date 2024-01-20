@@ -117,6 +117,7 @@ const PredicateGreaterThan = "go_$greater_than"
 const PredicateLessThan = "go_$less_than"
 const PredicateGreaterThanEquals = "go_$greater_than_equals"
 const PredicateLessThanEquals = "go_$less_than_equals"
+const PredicateAppend = "go_$append"
 const PredicateAdd = "go_$add"
 const PredicateSubtract = "go_$subtract"
 const PredicateMultiply = "go_$multiply"
@@ -318,6 +319,19 @@ func (relation Relation) ConvertVariablesToMutables() Relation {
 	for _, argument := range relation.Arguments {
 
 		newArgument := argument.ConvertVariablesToMutables()
+		newArguments = append(newArguments, newArgument)
+	}
+
+	return NewRelation(relation.Negate, relation.Predicate, newArguments)
+}
+
+func (relation Relation) ConvertVariablesToImmutables() Relation {
+
+	newArguments := []Term{}
+
+	for _, argument := range relation.Arguments {
+
+		newArgument := argument.ConvertVariablesToImmutables()
 		newArguments = append(newArguments, newArgument)
 	}
 

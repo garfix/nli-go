@@ -2,6 +2,7 @@ package function
 
 import (
 	"nli-go/lib/api"
+	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"os/exec"
@@ -39,6 +40,48 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 	// if !relation.Arguments[0].IsMutableVariable() {
 	binding.Set(variable, value)
 	// }
+
+	return mentalese.InitBindingSet(binding)
+}
+
+func (base *SystemSolverFunctionBase) append(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "v*", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	variable := relation.Arguments[0].TermValue
+	value := bound.Arguments[1]
+
+	if value.IsVariable() {
+		base.log.AddError("Value of " + variable + " is unassigned")
+		return mentalese.NewBindingSet()
+	}
+
+	if !relation.Arguments[0].IsMutableVariable() {
+		existingValue, found := binding.Get(variable)
+		if found {
+			if !existingValue.Equals(value) {
+				base.log.AddError("Attempt to assign new value to " + variable + "(" + existingValue.String() + " -> " + value.String() + ")")
+				return mentalese.NewBindingSet()
+			}
+		}
+	}
+
+	termValue, found := messenger.GetMutableVariable(variable)
+	if !found {
+		base.log.AddError("Attempt to append to initialized variable " + variable)
+		return mentalese.NewBindingSet()
+	}
+
+	list := termValue.TermValueList
+	list = append(list, value)
+	newTermValue := mentalese.NewTermList((list))
+
+	messenger.SetMutableVariable(variable, newTermValue)
+
+	binding.Set(variable, newTermValue)
 
 	return mentalese.InitBindingSet(binding)
 }
@@ -211,11 +254,18 @@ func (base *SystemSolverFunctionBase) forRelations(messenger api.ProcessMessenge
 	forRelations := relation.Arguments[0].TermValueRelationSet
 	bodyRelations := relation.Arguments[1].TermValueRelationSet
 
-	forBindings := messenger.ExecuteChildStackFrame(forRelations, mentalese.InitBindingSet(binding))
+	forRelationsIm := forRelations.ConvertVariablesToImmutables()
+	forRelationVariablesIm := forRelationsIm.GetVariableNames()
+	bindingIm := binding.ConvertVariablesToImmutables()
+
+	forBindings := messenger.ExecuteChildStackFrame(forRelationsIm, mentalese.InitBindingSet(bindingIm))
 
 	for _, forBinding := range forBindings.GetAll() {
 		for variable, value := range forBinding.GetAll() {
-			messenger.SetMutableVariable(variable, value)
+			if common.StringArrayContains(forRelationVariablesIm, variable) {
+				variableMut := ":" + variable
+				messenger.SetMutableVariable(variableMut, value)
+			}
 		}
 		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(binding))
 	}

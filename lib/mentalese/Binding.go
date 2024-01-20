@@ -3,6 +3,7 @@ package mentalese
 import (
 	"nli-go/lib/common"
 	"sort"
+	"strings"
 )
 
 type Binding struct {
@@ -228,6 +229,20 @@ func (b Binding) FilterMutableVariables() Binding {
 
 	for key, value := range b.Key2vvalue {
 		if key[0] == ':' {
+			result.Set(key, value)
+		}
+	}
+
+	return result
+}
+
+func (b Binding) ConvertVariablesToImmutables() Binding {
+	result := NewBinding()
+
+	for key, value := range b.Key2vvalue {
+		if key[0] == ':' {
+			result.Set(strings.Replace(key, ":", "", 1), value)
+		} else {
 			result.Set(key, value)
 		}
 	}

@@ -14,9 +14,14 @@
 /* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
 do_find_free_space(Container, E1, X1, Y1) :-
     rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
-    do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines)
-    do_init_grid(fixed, Objects, HorLines, VerLines)
-    do_find_free_position(E1, fixed, HorLines, VerLines, X1, Y1)
+
+    [O := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)]
+    [HorLines1 := O[0]]
+    [VerLines1 := O[1]]
+    [Objects := O[2]]
+
+    do_init_grid(fixed, Objects, HorLines1, VerLines1)
+    do_find_free_position(E1, fixed, HorLines1, VerLines1, X1, Y1)
 ;
 
 rectangle(R1, X1, X2, Y1, Y2) :-
@@ -26,48 +31,42 @@ rectangle(R1, X1, X2, Y1, Y2) :-
     [Y2 := [Y1 + Length]]
 ;
 
-do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2, Objects, HorLines, VerLines) :-
-    rectangle(O1, X1, X2, Y1, Y2)
-    [O1 != Container]
-    go:isa(O1, object)
-    [X2 >= BoundX1]
-    [X1 <= BoundX2]
-    [Y2 >= BoundY1]
-    [Y1 <= BoundY2]
+do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
 
-    [:BoundX1 := BoundX1]
-    [:BoundY1 := BoundY1]
-    [:BoundX2 := BoundX2]
-    [:BoundY2 := BoundY2]
+    [V1 := [BoundX1, BoundX2]]
+    [H1 := [BoundY1, BoundY2]]
+    [Objects := []]
 
-    go:make_list(Objects, O1)
-    go:make_list(V1, BoundX1, X1, X2, BoundX2)
-    go:make_list(H1, BoundY1, Y1, Y2, BoundY2)
-    go:list_deduplicate(V1, V2)
-    go:list_deduplicate(H1, H2)
-    go:list_sort(V2, V3)
-    go:list_sort(H2, H3)
+    for rectangle(O1, X1, X2, Y1, Y2) {
 
-    [:V3 := []]
-    go:list_foreach(V3, E1,
-        if [E1 >= :BoundX1] then
-            if [E1 <= :BoundX2] then
-                go:list_append(:V3, E1, :V3)
-            end
-        end
-    )
-    [VerLines := :V3]
+        if [O1 != Container] go:isa(O1, object) [X2 >= BoundX1] [X1 <= BoundX2] [Y2 >= BoundY1] [Y1 <= BoundY2] {
 
-    [:H3 := []]
-    go:list_foreach(H3, E2,
-        if [E2 >= :BoundY1] then
-            if [E2 <= :BoundY2] then
-                go:list_append(:H3, E2, :H3)
-            end
-        end
-    )
-    [HorLines := :H3]
-;
+            [Objects []= O1]
+
+            if [X1 >= BoundX1] [X1 <= BoundX2] {
+                [V1 []= X1]
+            }
+            if [X2 >= BoundX1] [X2 <= BoundX2] {
+                [V1 []= X2]
+            }
+
+            if [Y1 >= BoundY1] [Y1 <= BoundY2] {
+                [H1 []= Y1]
+            }
+            if [Y2 >= BoundY1] [Y2 <= BoundY2] {
+                [H1 []= Y2]
+            }
+        }
+    }
+
+    [V2 := go:list_deduplicate(V1, rv)]
+    [H2 := go:list_deduplicate(H1, rv)]
+    [V3 := go:list_sort(V2, rv)]
+    [H3 := go:list_sort(H2, rv)]
+
+    [O := [H3, V3, Objects]]
+};
+
 
 do_init_grid(Grid, Objects, HorLines, VerLines) :-
     go:retract( grid(Grid, _, _, _) )

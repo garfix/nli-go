@@ -14,4 +14,5 @@ type ProcessMessenger interface {
 	GetProcessSlot(slot string) (mentalese.Term, bool)
 	SetProcessSlot(slot string, value mentalese.Term)
 	SetMutableVariable(variable string, value mentalese.Term)
+	GetMutableVariable(variable string) (mentalese.Term, bool)
 }

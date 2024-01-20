@@ -233,6 +233,19 @@ func (term Term) ConvertVariablesToMutables() Term {
 	return term
 }
 
+func (term Term) ConvertVariablesToImmutables() Term {
+	if term.IsVariable() && term.IsMutableVariable() {
+		return NewTermVariable(strings.Replace(term.TermValue, ":", "", 1))
+	} else if term.IsRelationSet() {
+		return NewTermRelationSet(term.TermValueRelationSet.ConvertVariablesToImmutables())
+	} else if term.IsRule() {
+		return NewTermRule(term.TermValueRule.ConvertVariablesToImmutables())
+	} else if term.IsList() {
+		return NewTermList(term.TermValueList.ConvertVariablesToImmutables())
+	}
+	return term
+}
+
 func (term Term) AsKey() string {
 	return fmt.Sprintf("%s/%s/%s", term.TermType, term.TermValue, term.TermSort)
 }

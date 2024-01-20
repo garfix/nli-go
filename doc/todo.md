@@ -1,5 +1,17 @@
 # Todo
 
+if [O1 != Container] go:isa(O1, object) [X2 >= BoundX1] [X1 <= BoundX2] [Y2 >= BoundY1] [Y1 <= BoundY2] {
+
+go:isa(O1, object) should not be allowed
+
+## go as scripting language
+
+start: ProcessRunner::RunProcessLevel(process, level)
+    process has relations
+input: a quantized semantic relation tree
+vind een manier om een standaard relatie door Go te laten uitvoeren
+it's possible to call a method by its name in Go
+
 Test-driven!
 
 First up:

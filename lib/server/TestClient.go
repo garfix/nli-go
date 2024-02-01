@@ -111,6 +111,15 @@ func (c *TestClient) Run(system string, tests []Test) {
 					if answer != test.C {
 						ok = false
 						c.t.Error("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
+
+						c.Send(system, central.NO_RESOURCE, mentalese.MessageSendLog, "")
+						err = websocket.JSON.Receive(c.conn, &response)
+						if err != nil {
+							c.t.Error(err)
+						} else {
+							c.t.Error((response.Message).(string))
+						}
+
 						break
 					}
 				}

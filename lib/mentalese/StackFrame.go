@@ -28,19 +28,6 @@ func NewStackFrame(relations RelationSet, bindings BindingSet) *StackFrame {
 	}
 }
 
-func (f *StackFrame) UpdateMutableVariable(variable string, value Term) {
-	for _, binding := range f.InBindings.GetAll() {
-		if binding.ContainsVariable(variable) {
-			binding.Set(variable, value)
-		}
-	}
-	for _, binding := range f.OutBindings.GetAll() {
-		if binding.ContainsVariable(variable) {
-			binding.Set(variable, value)
-		}
-	}
-}
-
 func (f *StackFrame) IsDone() bool {
 	return f.RelationIndex >= len(f.Relations)
 }

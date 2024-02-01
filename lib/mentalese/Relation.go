@@ -184,6 +184,7 @@ const MessageRespond = "respond"
 const MessageAcknowledge = "acknowledge"
 const MessageChosen = "chosen"
 const MessageReset = "reset"
+const MessageSendLog = "send-log"
 const MessageDebug = "debug"
 
 func NewRelation(negate bool, predicate string, arguments []Term) Relation {

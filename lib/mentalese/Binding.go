@@ -250,6 +250,20 @@ func (b Binding) ConvertVariablesToImmutables() Binding {
 	return result
 }
 
+func (b Binding) ConvertVariablesToMutables() Binding {
+	result := NewBinding()
+
+	for key, value := range b.Key2vvalue {
+		if key[0] != ':' {
+			result.Set(":"+key, value)
+		} else {
+			result.Set(key, value)
+		}
+	}
+
+	return result
+}
+
 func (b Binding) RemoveMutableVariables() Binding {
 	result := NewBinding()
 

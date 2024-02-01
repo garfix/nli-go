@@ -122,6 +122,8 @@ func (parser *InternalGrammarParser) checkStatements(relations mentalese.Relatio
 	ok := true
 	statements := []string{
 		mentalese.PredicateAssign,
+		mentalese.PredicateAssert,
+		mentalese.PredicateRetract,
 		mentalese.PredicateIfThen,
 		mentalese.PredicateIfThenElse,
 		mentalese.PredicateForIndexValue,

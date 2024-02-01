@@ -12,6 +12,7 @@ import (
 	"nli-go/resources/blocks"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"golang.org/x/net/websocket"
@@ -94,6 +95,14 @@ func (server *Server) HandleSingleRequest(conn *websocket.Conn, request mentales
 		}
 
 		websocket.JSON.Send(conn, response)
+	} else if request.MessageType == mentalese.MessageSendLog {
+		system := server.getSystem(conn, request, &systems)
+		response := mentalese.Response{
+			Resource:    central.NO_RESOURCE,
+			MessageType: mentalese.MessageAcknowledge,
+			Message:     strings.Join(system.GetLog().GetErrors(), "\n"),
+		}
+		websocket.JSON.Send(conn, response) //
 	} else if request.MessageType == mentalese.MessageDebug {
 		system := server.getSystem(conn, request, &systems)
 		if request.Message == "on" {

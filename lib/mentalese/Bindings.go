@@ -188,6 +188,22 @@ func (set BindingSet) Copy() BindingSet {
 	return newSet
 }
 
+func (set BindingSet) ConvertVariablesToImmutables() BindingSet {
+	newSet := NewBindingSet()
+	for _, binding := range *set.Bindings {
+		newSet.Add(binding.ConvertVariablesToImmutables())
+	}
+	return newSet
+}
+
+func (set BindingSet) ConvertVariablesToMutables() BindingSet {
+	newSet := NewBindingSet()
+	for _, binding := range *set.Bindings {
+		newSet.Add(binding.ConvertVariablesToMutables())
+	}
+	return newSet
+}
+
 func (set BindingSet) String() string {
 	str := ""
 	sep := ""

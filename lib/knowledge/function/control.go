@@ -2,7 +2,6 @@ package function
 
 import (
 	"nli-go/lib/api"
-	"nli-go/lib/common"
 	"nli-go/lib/knowledge"
 	"nli-go/lib/mentalese"
 	"os/exec"
@@ -55,7 +54,7 @@ func (base *SystemSolverFunctionBase) append(messenger api.ProcessMessenger, rel
 	value := bound.Arguments[1]
 
 	if value.IsVariable() {
-		base.log.AddError("Value of " + variable + " is unassigned")
+		base.log.AddError("Value of array " + variable + " is unassigned")
 		return mentalese.NewBindingSet()
 	}
 
@@ -254,20 +253,10 @@ func (base *SystemSolverFunctionBase) forRelations(messenger api.ProcessMessenge
 	forRelations := relation.Arguments[0].TermValueRelationSet
 	bodyRelations := relation.Arguments[1].TermValueRelationSet
 
-	forRelationsIm := forRelations.ConvertVariablesToImmutables()
-	forRelationVariablesIm := forRelationsIm.GetVariableNames()
-	bindingIm := binding.ConvertVariablesToImmutables()
-
-	forBindings := messenger.ExecuteChildStackFrame(forRelationsIm, mentalese.InitBindingSet(bindingIm))
+	forBindings := messenger.ExecuteChildStackFrameMutable(forRelations, mentalese.NewBinding())
 
 	for _, forBinding := range forBindings.GetAll() {
-		for variable, value := range forBinding.GetAll() {
-			if common.StringArrayContains(forRelationVariablesIm, variable) {
-				variableMut := ":" + variable
-				messenger.SetMutableVariable(variableMut, value)
-			}
-		}
-		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(binding))
+		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(forBinding))
 	}
 
 	return mentalese.InitBindingSet(binding)

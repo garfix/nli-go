@@ -85,7 +85,46 @@ func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bind
 		return bindings
 	}
 
-	return i.processRunner.PushAndRun(i.process, relations, bindings)
+	// save the old state of mutable variables
+	saved := i.GetMutableVariables()
+
+	newBindings := i.processRunner.PushAndRun(i.process, relations, bindings)
+
+	// update saved values with result
+	for key, value := range i.GetMutableVariables().GetAll() {
+		_, found := saved.Get(key)
+		if found {
+			saved.Set(key, value)
+		}
+	}
+	i.SetMutableVariables(saved)
+
+	return newBindings
+}
+
+// relations: relations with mutable variables
+// return: mutable variables
+func (i *Messenger) ExecuteChildStackFrameMutable(relationsMut mentalese.RelationSet, binding mentalese.Binding) mentalese.BindingSet {
+
+	relationsIm := relationsMut.ConvertVariablesToImmutables()
+
+	// create an immutable variable binding from mutable variables
+	bindingIm := i.collectImmutableVariablesForRelations(relationsMut).ConvertVariablesToImmutables()
+	newBindings := i.ExecuteChildStackFrame(relationsIm, mentalese.InitBindingSet(bindingIm))
+
+	return newBindings.ConvertVariablesToMutables()
+}
+
+func (i *Messenger) collectImmutableVariablesForRelations(relations mentalese.RelationSet) mentalese.Binding {
+	binding := mentalese.NewBinding()
+	variables := relations.GetVariableNames()
+	for _, variable := range variables {
+		value, found := i.GetMutableVariable(variable)
+		if found {
+			binding.Set(variable, value)
+		}
+	}
+	return binding
 }
 
 func (i *Messenger) StartProcess(resource string, relations mentalese.RelationSet, binding mentalese.Binding) bool {
@@ -120,4 +159,19 @@ func (p *Messenger) GetMutableVariable(variable string) (mentalese.Term, bool) {
 		return value, found
 	}
 	return mentalese.Term{}, false
+}
+
+func (p *Messenger) SetMutableVariables(binding mentalese.Binding) {
+	scope := p.process.GetCurrentScope()
+	if scope != nil {
+		scope.Cursor.MutableVariableValues = binding
+	}
+}
+
+func (p *Messenger) GetMutableVariables() mentalese.Binding {
+	scope := p.process.GetCurrentScope()
+	if scope != nil {
+		return scope.Cursor.MutableVariableValues.Copy()
+	}
+	return mentalese.NewBinding()
 }

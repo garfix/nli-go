@@ -1,3 +1,29 @@
+## 2024-01-28
+
+A simple solution would be to restore the previous state of the loop-variables after the loop.
+
+Make a difference between immutable statements and mutable statements (difference variable treatments)?
+
+What statements would then be mutable?
+
+* for loops
+* if statements
+* assert / retract
+* break / cancel / return
+
+What statements could be both mutable and immutable?
+
+* all operators
+* assignment (needed for function calls in immutable environment)
+* append
+* log
+
+I'm creating a scope by restoring the variables after the execution. The scope is not part of a data structure.
+
+## 2024-01-21
+
+Start a lexical scope within a for-loop: variables that are set here should loose there value when the scope is closed.
+
 ## 2024-01-20
 
 Current problem: in a function all relations are mutable. When they are passed to `ExecuteChildStackFrame`, this will bring only 1 result, formed by the last values of the mutable variables.

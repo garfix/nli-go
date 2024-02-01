@@ -20,7 +20,7 @@ do_find_free_space(Container, E1, X1, Y1) :-
     [VerLines1 := O[1]]
     [Objects := O[2]]
 
-    do_init_grid(fixed, Objects, HorLines1, VerLines1)
+    [None := do_init_grid(fixed, Objects, HorLines1, VerLines1)]
     do_find_free_position(E1, fixed, HorLines1, VerLines1, X1, Y1)
 ;
 
@@ -67,21 +67,26 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
     [O := [H3, V3, Objects]]
 };
 
-
-do_init_grid(Grid, Objects, HorLines, VerLines) :-
+do_init_grid(Grid, Objects, HorLines, VerLines) => None {
     go:retract( grid(Grid, _, _, _) )
-    go:list_expand(Objects, O1)
-    rectangle(O1, X1, X2, Y1, Y2)
-    go:list_index(VerLines, X1, V1)
-    go:list_index(VerLines, X2, V2)
-    go:list_index(HorLines, Y1, H1)
-    go:list_index(HorLines, Y2, H2)
-    go:range_foreach(V1, [V2 - 1], V,
-        go:range_foreach(H1, [H2 - 1], H,
-             go:assert( grid(Grid, H, V, 1) )
-        )
-    )
-;
+
+    for I1, O1 in Objects {
+        for rectangle(O1, X1, X2, Y1, Y2) {
+            [V1 := go:list_index(VerLines, X1, rv)]
+            [V2 := go:list_index(VerLines, X2, rv)]
+            [H1 := go:list_index(HorLines, Y1, rv)]
+            [H2 := go:list_index(HorLines, Y2, rv)]
+
+            for V is V1 to [V2 - 1] {
+                for H is H1 to [H2 - 1] {
+                    go:assert( grid(Grid, H, V, 1) )
+                }
+            }
+        }
+    }
+
+    [None := false]
+};
 
 do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
     [:FoundX := -1]

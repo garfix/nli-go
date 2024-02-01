@@ -103,6 +103,8 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
+    [:Set := '']
+
     if go:dialog_get_center(L1) [E1 == L1] then
         [:Set := center(E1)]
     else

@@ -21,7 +21,11 @@ do_find_free_space(Container, E1, X1, Y1) :-
     [Objects := O[2]]
 
     [None := do_init_grid(fixed, Objects, HorLines1, VerLines1)]
-    do_find_free_position(E1, fixed, HorLines1, VerLines1, X1, Y1)
+
+    [R := do_find_free_position(E1, fixed, HorLines1, VerLines1)]
+    [R != [-1, -1]]
+    [X1 := R[0]]
+    [Y1 := R[1]]
 ;
 
 rectangle(R1, X1, X2, Y1, Y2) :-
@@ -88,52 +92,48 @@ do_init_grid(Grid, Objects, HorLines, VerLines) => None {
     [None := false]
 };
 
-do_find_free_position(E1, Grid, HorLines, VerLines, ResultX, ResultY) :-
-    [:FoundX := -1]
-    [:FoundY := -1]
-    [:StartY := -1]
-    [:MinScore := 100000000]
+do_find_free_position(E1, Grid, HorLines, VerLines) => Result {
+    [FoundX := -1]
+    [FoundY := -1]
+    [StartY := -1]
+    [MinScore := 100000000]
 
-    at(E1, X1, Y1, _)
-    size(E1, Width, Length, _)
-    [CenterX := [X1 + [Width / 2]]]
-    [CenterY := [Y1 + [Length / 2]]]
+    for at(E1, X1, Y1, _) size(E1, Width, Length, _) {
 
-    size(E1, Width, Length, _)
+        [CenterX := [X1 + [Width / 2]]]
+        [CenterY := [Y1 + [Length / 2]]]
 
-    go:list_foreach(VerLines, XIndex, X,
-        go:list_get(HorLines, 0, :StartY)
-        [XEndIndex := find_span(Width, VerLines, XIndex)]
-        go:list_get(VerLines, XEndIndex, EndX)
-        go:list_foreach(HorLines, YIndex, Y,
-            [YIndex > 0]
-            if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) {
-                [SpanLength := [Y - :StartY]]
-                if [SpanLength >= Length] then
-                    [DX := [X - CenterX]]
-                    [DY := [:StartY - CenterY]]
-                    [Score := [DX + DY]]
+        for XIndex, X in VerLines {
+            [StartY := HorLines[0]]
+            [XEndIndex := find_span(Width, VerLines, XIndex)]
+            [EndX := VerLines[XEndIndex]]
+            for YIndex, Y in HorLines {
+                if [YIndex > 0] {
+                    if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) {
+                        [SpanLength := [Y - StartY]]
+                        if [SpanLength >= Length] {
+                            [DX := [X - CenterX]]
+                            [DY := [StartY - CenterY]]
+                            [Score := [DX + DY]]
 
-                    /* go for the lowest Score */
-                    [SpanWidth := [EndX - X]]
-                    if [Score < :MinScore] then
-                        [:MinScore := Score]
-                        [:FoundX := X]
-                        [:FoundY := :StartY]
-                    end
-                end
-            } else {
-                [:StartY := Y]
+                            /* go for the lowest Score */
+                            [SpanWidth := [EndX - X]]
+                            if [Score < MinScore] {
+                                [MinScore := Score]
+                                [FoundX := X]
+                                [FoundY := StartY]
+                            }
+                        }
+                    } else {
+                        [StartY := Y]
+                    }
+                }
             }
-        )
-    )
+        }
+    }
 
-    /* fail if not found */
-    [:FoundX != -1]
-
-    [ResultX := :FoundX]
-    [ResultY := :FoundY]
-;
+    [Result := [FoundX, FoundY]]
+};
 
 find_span(Width, VerLines, XIndex) => XEndIndex {
     [X1 := VerLines[XIndex]]

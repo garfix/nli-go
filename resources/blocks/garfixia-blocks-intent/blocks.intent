@@ -168,13 +168,13 @@
             condition: go:exists(),
             preparation:
                 dom:parent_event(P1, ParentEventId)
-                if [ParentEventId == `event:root`] then
+                if [ParentEventId == `event:root`] {
                     [CenterId := P1]
                     [Desc := dom:you_asked_me_to(CenterId)]
-                else
+                } else {
                     [CenterId := ParentEventId]
                     dom:describe_event(CenterId, Desc)
-                end,
+                },
             answer:  dom:cause_description(CenterId) {{ Desc }},
             result: ParentEventId
         }

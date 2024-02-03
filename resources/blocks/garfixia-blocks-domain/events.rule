@@ -32,22 +32,22 @@ while(Event1, Event2) :-
 
 filter_event(Event) :-
     go:atom(Event, A) go:sort(A, Sort)
-    if  [Sort == dynamic] then
+    if  [Sort == dynamic] {
         go:not(location(Event, _, X, _, _))
-    else
-        if [Sort == stative] then
+    } else {
+        if [Sort == stative] {
             location(Event, _, _, _, _)
-        end
-    end
+        }
+    }
 ;
 
 get_top_level_event(EventId, TopLevelEventId) :-
     parent_event(EventId, ParentEventId)
-    if [ParentEventId == `event:root`]  then
+    if [ParentEventId == `event:root`]  {
         [TopLevelEventId := EventId]
-    else
+    } else {
         get_top_level_event(ParentEventId, TopLevelEventId)
-    end
+    }
 ;
 
 persist_action(EventId, ParentEventId, Action) :-

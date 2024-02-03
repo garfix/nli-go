@@ -10,9 +10,9 @@ high_enough_for_hand(Z) :-
     /* max top of all objects (except the hand and the object it's holding) */
     at(E1, _, _, Bottom1)
     go:not([E1 == `hand:hand`])
-    if grasping(`:shrdlu`, G) then
+    if grasping(`:shrdlu`, G) {
         go:not([E1 == G])
-    end
+    }
     size(E1, _, _, Height1)
     [Top1 := [Bottom1 + Height1]]
     go:largest(Top1)
@@ -20,10 +20,10 @@ high_enough_for_hand(Z) :-
 
     /* add the height of the carrying object */
     [:MaxTop := Top1]
-    if grasping(`:shrdlu`, E) then
+    if grasping(`:shrdlu`, E) {
         size(E, _, _, Height)
         [:MaxTop := [Top1 + Height]]
-    end
+    }
 
     [Z := [:MaxTop + 10]]
 ;

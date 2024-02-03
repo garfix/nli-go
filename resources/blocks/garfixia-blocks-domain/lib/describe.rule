@@ -9,14 +9,14 @@ describe_as_groups(List, GroupsList, Descriptions) :-
         color(E1, C)
         form(E1, F)
         [:Features := [V, C, F]]
-        if go:list_index(:GroupFeatures, :Features, Index) then
+        if go:list_index(:GroupFeatures, :Features, Index) {
             go:list_get(:GroupMembers, Index, Group)
             go:list_append(Group, E1, NewGroup)
             go:list_set(:GroupMembers, Index, NewGroup)
-        else
+        } else {
             go:list_append(:GroupFeatures, :Features, :GroupFeatures)
             go:list_append(:GroupMembers, [E1], :GroupMembers)
-        end
+        }
     )
 
     /* describe groups */
@@ -39,18 +39,18 @@ describe_as_groups(List, GroupsList, Descriptions) :-
 
         [:Description := {{ :Description }} description(G) shape(G, Form)]
 
-        if [MemberCount > 1] then
+        if [MemberCount > 1] {
             [:Description := {{ :Description }} number(G, MemberCount)]
-        end
+        }
 
         /* Is the shape unique? */
-        if [CountForm > 1] then
+        if [CountForm > 1] {
             [:Description := {{ :Description }} color(G, Color)]
             /* Are the shape and color unique? */
-            if [CountColor > 1] then
+            if [CountColor > 1] {
                 [:Description := {{ :Description }} volume(G, Volume)]
-            end
-        end
+            }
+        }
 
     )
 
@@ -73,21 +73,21 @@ describe(E1, Sort, DescSet) :-
     [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
 
     /* Is the shape unique? */
-    if [Cs > 1] then
+    if [Cs > 1] {
         [:Set := {{ :Set }} color(E1, C)]
         /* Are the shape and color unique? */
-        if [Cc > 1] then
+        if [Cc > 1] {
             [:Set := {{ :Set }} volume(E1, V)]
             /* Are the shape, color, and volume unique? */
-            if [Cv > 1] then
+            if [Cv > 1] {
                 /* Add the object it supports and presume that this is enough */
-                if support(now, E1, E3) then
+                if support(now, E1, E3) {
                     describe(E3, Sort, E3Desc)
                     [:Set := {{ :Set }} support(now, E1, E3) description(E3) {{ E3Desc }}]
-                end
-            end
-        end
-    end
+                }
+            }
+        }
+    }
 
     [DescSet := :Set]
 ;
@@ -105,24 +105,24 @@ describe_categoric(E1, Sort, DescSet) :-
 
     [:Set := '']
 
-    if go:dialog_get_center(L1) [E1 == L1] then
+    if go:dialog_get_center(L1) [E1 == L1] {
         [:Set := center(E1)]
-    else
-        if name(E1, Name) then
+    } else {
+        if name(E1, Name) {
             [:Set := {{ :Set }} name(E1, Name) shape(E1, S)]
-        else
+        } else {
             [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
 
             /* Is the shape unique? */
-            if [Cs > 1] then
+            if [Cs > 1] {
                 [:Set := {{ :Set }} color(E1, C)]
                 /* Are the shape and color unique? */
-                if [Cc > 1] then
+                if [Cc > 1] {
                     [:Set := {{ :Set }} volume(E1, V) indeterminate(E1)]
-                end
-            end
-        end
-    end
+                }
+            }
+        }
+    }
     [DescSet := :Set]
 ;
 

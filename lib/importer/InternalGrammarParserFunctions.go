@@ -109,9 +109,9 @@ func (parser *InternalGrammarParser) parseBody(tokens []Token, startIndex int) (
 		relations, startIndex, ok = parser.parseRelations(tokens, startIndex)
 		if ok {
 			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
-			if ok {
-				ok = parser.checkStatements(relations)
-			}
+			// if ok {
+			// 	ok = parser.checkStatements(relations)
+			// }
 		}
 	}
 
@@ -776,58 +776,32 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 		switch keyword {
 		case "if":
 			oldIndex = startIndex
-			s1, startIndex, ok1 = parser.parseRelations(tokens, startIndex)
-			startIndex, ok2 = parser.parseKeyword(tokens, startIndex, "then")
-			s2, startIndex, ok3 = parser.parseRelations(tokens, startIndex)
-			newStartIndex, ok4 = parser.parseKeyword(tokens, startIndex, "else")
-			if ok4 {
-				startIndex = newStartIndex
-				s3, startIndex, ok4 = parser.parseRelations(tokens, startIndex)
-			}
-			startIndex, ok5 = parser.parseKeyword(tokens, startIndex, "end")
-			ok = ok1 && ok2 && ok3 && ok5
+			startIndex = oldIndex
+			s1, startIndex, ok = parser.parseRelations(tokens, startIndex)
 			if ok {
-				if ok4 {
-					relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse, []mentalese.Term{
-						mentalese.NewTermRelationSet(s1),
-						mentalese.NewTermRelationSet(s2),
-						mentalese.NewTermRelationSet(s3),
-					})
-				} else {
-					relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
-						mentalese.NewTermRelationSet(s1),
-						mentalese.NewTermRelationSet(s2),
-					})
-				}
-			}
-
-			if !ok {
-				startIndex = oldIndex
-				s1, startIndex, ok = parser.parseRelations(tokens, startIndex)
+				s2, startIndex, ok = parser.parseBody(tokens, startIndex)
 				if ok {
-					s2, startIndex, ok = parser.parseBody(tokens, startIndex)
+					newStartIndex, ok = parser.parseKeyword(tokens, startIndex, "else")
 					if ok {
-						newStartIndex, ok = parser.parseKeyword(tokens, startIndex, "else")
+						startIndex = newStartIndex
+						s3, startIndex, ok = parser.parseBody(tokens, startIndex)
 						if ok {
-							startIndex = newStartIndex
-							s3, startIndex, ok = parser.parseBody(tokens, startIndex)
-							if ok {
-								relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse, []mentalese.Term{
-									mentalese.NewTermRelationSet(s1),
-									mentalese.NewTermRelationSet(s2),
-									mentalese.NewTermRelationSet(s3),
-								})
-							}
-						} else {
-							ok = true
-							relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
+							relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse, []mentalese.Term{
 								mentalese.NewTermRelationSet(s1),
 								mentalese.NewTermRelationSet(s2),
+								mentalese.NewTermRelationSet(s3),
 							})
 						}
+					} else {
+						ok = true
+						relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
+							mentalese.NewTermRelationSet(s1),
+							mentalese.NewTermRelationSet(s2),
+						})
 					}
 				}
 			}
+
 		case "for":
 			oldIndex = startIndex
 			var iterator []mentalese.Relation

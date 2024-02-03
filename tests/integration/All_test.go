@@ -21,7 +21,7 @@ func TestAll(t *testing.T) {
 	client := server.CreateTestClient(t)
 	defer client.Close()
 
-	const all = 0
+	const all = 1
 
 	if all == 0 {
 		client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test1.yml")

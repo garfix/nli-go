@@ -30,7 +30,7 @@ top_center(E, X, Y, Z) :-
 big(E) :- size(E, Width, Length, Height) [Width > 128] [Length > 128] [Height > 128];
 large(E) :- size(E, Width, Length, Height) [Height > 128];
 small(E) :- size(E, Width, Length, Height) [Width < 128] [Length < 128] [Height < 128];
-volume(E, V) :- if big(E) then go:unify(V, big) else go:unify(V, small) end;
+volume(E, V) :- if big(E) { go:unify(V, big) } else { go:unify(V, small) };
 cubed(E) :- size(E, Width, Width, Width);
 taller(A, B) :- height(A, Ha) height(B, Hb) [Ha > Hb];
 narrower(A, B) :- width(A, Wa) width(B, Wb) [Wa < Wb];
@@ -75,11 +75,11 @@ on_top_of(A, B) :-
     go:translate('directly on the surface', A1)
     go:translate('anywhere on top of', A2)
     go:wait_for('choose', Sel, Q, [A1, A2])
-    if [Sel == 0] then
+    if [Sel == 0] {
         support(now, B, A)
-    else
+    } else {
         anywhere_on(A, B)
-    end
+    }
 ;
 
 anywhere_on(A, B) :- support(now, B, A);

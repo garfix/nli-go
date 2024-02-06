@@ -222,19 +222,37 @@ func (base *SystemFunctionBase) add(messenger api.SimpleMessenger, input mentale
 
 	bound := input.BindSingle(binding)
 
-	if !Validate(bound, "nn*", base.log) {
+	if !Validate(bound, "***", base.log) {
 		return mentalese.NewBinding(), false
 	}
 
-	num1, _ := bound.Arguments[0].GetNumber()
-	num2, _ := bound.Arguments[1].GetNumber()
-
-	result := num1 + num2
-
-	resultString := strconv.FormatFloat(result, 'f', -1, 64)
-
+	variable := input.Arguments[2].TermValue
 	newBinding := binding.Copy()
-	newBinding.Set(input.Arguments[2].TermValue, mentalese.NewTermString(resultString))
+	var value mentalese.Term
+
+	if bound.Arguments[0].IsNumber() {
+
+		num1, _ := bound.Arguments[0].GetNumber()
+		num2, _ := bound.Arguments[1].GetNumber()
+
+		result := num1 + num2
+		resultString := strconv.FormatFloat(result, 'f', -1, 64)
+		value = mentalese.NewTermString(resultString)
+
+	} else if bound.Arguments[0].IsRelationSet() || bound.Arguments[1].IsRelationSet() {
+
+		set1 := bound.Arguments[0].TermValueRelationSet
+		set2 := bound.Arguments[1].TermValueRelationSet
+
+		result := set1.Copy()
+		result = append(result, set2...)
+		value = mentalese.NewTermRelationSet(result)
+
+	} else {
+		return mentalese.NewBinding(), false
+	}
+
+	newBinding.Set(variable, value)
 
 	return newBinding, true
 }

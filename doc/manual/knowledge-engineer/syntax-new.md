@@ -8,7 +8,7 @@ Mentalese has logical and imperative language constructs.
 * predicates are snake_cased
 * atoms are snake_cased
 * string constants: use single quotes: 'De Nachtwacht'; also numbers: '25' '1.5'
-* id: sort and identifier between backticks: `person:38911` `:http://dbpedia.org/page/Michael_Jackson_(actor)`
+* id: sort and identifier between backticks: \`person:38911\`, \`:http://dbpedia.org/page/Michael_Jackson_(actor)\`
 
  ## Terms
 
@@ -19,7 +19,8 @@ Mentalese has logical and imperative language constructs.
 * string constant (`"Some text"`; also numbers: `"1.25"`)
 * anonymous variable (`_`)
 * regular expression (`r"a(b*)"`)
-* relation list (`[apple(A) red(A)]`)
+* relation list (`apple(A) red(A)` or relation block `{ apple(A) red(A) }`)
+* single relation (`apple(A)`); only as right-hand side of assignment
 * id (&#96;`block:blue`&#96;)
 * rule (`apple(A) if [fruit(A) round(A)]`)
 * list of terms (`[2, 4, 6, 8]`)

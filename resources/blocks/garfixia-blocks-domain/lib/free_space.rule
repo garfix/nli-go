@@ -15,31 +15,31 @@
 do_find_free_space(Container, E1, X1, Y1) :-
     rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
 
-    [O := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)]
-    [HorLines1 := O[0]]
-    [VerLines1 := O[1]]
-    [Objects := O[2]]
+    O := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
+    HorLines1 := O[0]
+    VerLines1 := O[1]
+    Objects := O[2]
 
-    [None := do_init_grid(fixed, Objects, HorLines1, VerLines1)]
+    None := do_init_grid(fixed, Objects, HorLines1, VerLines1)
 
-    [R := do_find_free_position(E1, fixed, HorLines1, VerLines1)]
+    R := do_find_free_position(E1, fixed, HorLines1, VerLines1)
     [R != [-1, -1]]
-    [X1 := R[0]]
-    [Y1 := R[1]]
+    X1 := R[0]
+    Y1 := R[1]
 ;
 
 rectangle(R1, X1, X2, Y1, Y2) :-
     at(R1, X1, Y1, _)
     size(R1, Width, Length, _)
-    [X2 := [X1 + Width]]
-    [Y2 := [Y1 + Length]]
+    X2 := [X1 + Width]
+    Y2 := [Y1 + Length]
 ;
 
 do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
 
-    [V1 := [BoundX1, BoundX2]]
-    [H1 := [BoundY1, BoundY2]]
-    [Objects := []]
+    V1 := [BoundX1, BoundX2]
+    H1 := [BoundY1, BoundY2]
+    Objects := []
 
     for rectangle(O1, X1, X2, Y1, Y2) {
 
@@ -63,12 +63,12 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
         }
     }
 
-    [V2 := go:list_deduplicate(V1, rv)]
-    [H2 := go:list_deduplicate(H1, rv)]
-    [V3 := go:list_sort(V2, rv)]
-    [H3 := go:list_sort(H2, rv)]
+    V2 := go:list_deduplicate(V1, rv)
+    H2 := go:list_deduplicate(H1, rv)
+    V3 := go:list_sort(V2, rv)
+    H3 := go:list_sort(H2, rv)
 
-    [O := [H3, V3, Objects]]
+    O := [H3, V3, Objects]
 };
 
 do_init_grid(Grid, Objects, HorLines, VerLines) => None {
@@ -76,10 +76,10 @@ do_init_grid(Grid, Objects, HorLines, VerLines) => None {
 
     for I1, O1 in Objects {
         for rectangle(O1, X1, X2, Y1, Y2) {
-            [V1 := go:list_index(VerLines, X1, rv)]
-            [V2 := go:list_index(VerLines, X2, rv)]
-            [H1 := go:list_index(HorLines, Y1, rv)]
-            [H2 := go:list_index(HorLines, Y2, rv)]
+            V1 := go:list_index(VerLines, X1, rv)
+            V2 := go:list_index(VerLines, X2, rv)
+            H1 := go:list_index(HorLines, Y1, rv)
+            H2 := go:list_index(HorLines, Y2, rv)
 
             for V is V1 to [V2 - 1] {
                 for H is H1 to [H2 - 1] {
@@ -89,71 +89,71 @@ do_init_grid(Grid, Objects, HorLines, VerLines) => None {
         }
     }
 
-    [None := false]
+    None := false
 };
 
 do_find_free_position(E1, Grid, HorLines, VerLines) => Result {
-    [FoundX := -1]
-    [FoundY := -1]
-    [StartY := -1]
-    [MinScore := 100000000]
+    FoundX := -1
+    FoundY := -1
+    StartY := -1
+    MinScore := 100000000
 
     for at(E1, X1, Y1, _) size(E1, Width, Length, _) {
 
-        [CenterX := [X1 + [Width / 2]]]
-        [CenterY := [Y1 + [Length / 2]]]
+        CenterX := [X1 + [Width / 2]]
+        CenterY := [Y1 + [Length / 2]]
 
         for XIndex, X in VerLines {
-            [StartY := HorLines[0]]
-            [XEndIndex := find_span(Width, VerLines, XIndex)]
-            [EndX := VerLines[XEndIndex]]
+            StartY := HorLines[0]
+            XEndIndex := find_span(Width, VerLines, XIndex)
+            EndX := VerLines[XEndIndex]
             for YIndex, Y in HorLines {
                 if [YIndex > 0] {
                     if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) {
-                        [SpanLength := [Y - StartY]]
+                        SpanLength := [Y - StartY]
                         if [SpanLength >= Length] {
-                            [DX := [X - CenterX]]
-                            [DY := [StartY - CenterY]]
-                            [Score := [DX + DY]]
+                            DX := [X - CenterX]
+                            DY := [StartY - CenterY]
+                            Score := [DX + DY]
 
                             /* go for the lowest Score */
-                            [SpanWidth := [EndX - X]]
+                            SpanWidth := [EndX - X]
                             if [Score < MinScore] {
-                                [MinScore := Score]
-                                [FoundX := X]
-                                [FoundY := StartY]
+                                MinScore := Score
+                                FoundX := X
+                                FoundY := StartY
                             }
                         }
                     } else {
-                        [StartY := Y]
+                        StartY := Y
                     }
                 }
             }
         }
     }
 
-    [Result := [FoundX, FoundY]]
+    Result := [FoundX, FoundY]
 };
 
 find_span(Width, VerLines, XIndex) => XEndIndex {
-    [X1 := VerLines[XIndex]]
-    [XEndIndex := XIndex]
+    X1 := VerLines[XIndex]
+    XEndIndex := XIndex
     for Index, X2 in VerLines {
-        [W := [X2 - X1]]
+        W := [X2 - X1]
         if [W >= Width] {
-            [XEndIndex := Index]
+            XEndIndex := Index
             break
         }
     }
 };
 
 span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
-    [Success := true]
+    Success := true
 
     for XIndex is ColStart to ColEnd {
 
         for grid(Grid, RowIndex, XIndex, 1) {
-            [Success := false]
+            Success := false
             break
         }
 

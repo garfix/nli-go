@@ -132,10 +132,10 @@ func TestMatchRelationToSet(t *testing.T) {
 	log := common.NewSystemLog()
 	matcher := central.NewRelationMatcher(log)
 	haystack := parser.CreateRelationSet(`
-		gender('Luke', male) 
-		gender('George', male) 
-		parent('Luke', 'George') 
-		parent('Carry', 'Steven') 
+		gender('Luke', male)
+		gender('George', male)
+		parent('Luke', 'George')
+		parent('Carry', 'Steven')
 		gender('Carry', female)
 	`)
 

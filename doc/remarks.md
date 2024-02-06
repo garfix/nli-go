@@ -1,3 +1,7 @@
+## 2024-02-04
+
+Removing the [] brackets around assignments. In order to do this relations need to be visually grouped. So I'm adding {} around relations when they form a term. But since this happens to much, I make this optional. If that works it would be great.
+
 ## 2024-01-28
 
 A simple solution would be to restore the previous state of the loop-variables after the loop.

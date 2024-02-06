@@ -4,7 +4,7 @@
 
 increase_time() :-
     time(T)
-    [T2 := [T + 1]]
+    T2 := [T + 1]
     go:retract(time(_))
     go:assert(time(T2))
 ;
@@ -44,7 +44,7 @@ filter_event(Event) :-
 get_top_level_event(EventId, TopLevelEventId) :-
     parent_event(EventId, ParentEventId)
     if [ParentEventId == `event:root`]  {
-        [TopLevelEventId := EventId]
+        TopLevelEventId := EventId
     } else {
         get_top_level_event(ParentEventId, TopLevelEventId)
     }

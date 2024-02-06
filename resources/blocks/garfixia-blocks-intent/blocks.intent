@@ -169,10 +169,10 @@
             preparation:
                 dom:parent_event(P1, ParentEventId)
                 if [ParentEventId == `event:root`] {
-                    [CenterId := P1]
-                    [Desc := dom:you_asked_me_to(CenterId)]
+                    CenterId := P1
+                    Desc := { dom:you_asked_me_to(CenterId) }
                 } else {
-                    [CenterId := ParentEventId]
+                    CenterId := ParentEventId
                     dom:describe_event(CenterId, Desc)
                 },
             answer:  dom:cause_description(CenterId) {{ Desc }},

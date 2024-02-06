@@ -6,10 +6,10 @@
 
 { rule: number(N1) -> ~^[0-9]+~ }
 
-{ rule: number(N1) -> 'two', sense: [N1 := 2] }
-{ rule: number(N1) -> 'three', sense: [N1 := 3] }
-{ rule: number(N1) -> 'four', sense: [N1 := 4] }
-{ rule: number(N1) -> 'five', sense: [N1 := 5] }
+{ rule: number(N1) -> 'two', sense: N1 := 2 }
+{ rule: number(N1) -> 'three', sense: N1 := 3 }
+{ rule: number(N1) -> 'four', sense: N1 := 4 }
+{ rule: number(N1) -> 'five', sense: N1 := 5 }
 
 
 /* determiners */

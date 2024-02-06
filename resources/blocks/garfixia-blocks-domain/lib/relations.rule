@@ -21,11 +21,11 @@ width(E, W) :- size(E, W, _, _);
 top_center(E, X, Y, Z) :-
     at(E, X1, Y1, Z1)
     size(E, Width, Length, Height)
-    [Wh := [Width / 2]]
-    [Lh := [Length / 2]]
-    [X := [X1 + Wh]]
-    [Y := [Y1 + Lh]]
-    [Z := [Z1 + Height]]
+    Wh := [Width / 2]
+    Lh := [Length / 2]
+    X := [X1 + Wh]
+    Y := [Y1 + Lh]
+    Z := [Z1 + Height]
 ;
 big(E) :- size(E, Width, Length, Height) [Width > 128] [Length > 128] [Height > 128];
 large(E) :- size(E, Width, Length, Height) [Height > 128];

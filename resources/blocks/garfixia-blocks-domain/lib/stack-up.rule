@@ -6,7 +6,7 @@ create_plan_for_stack(QBlocks, SortedList) :-
     go:quant_ordered_list(QBlocks, &by_easiness, List)
     go:list_order(List, &by_size, SortedList)
     go:list_length(SortedList, Size)
-    [Last := [Size - 1]]
+    Last := [Size - 1]
     go:list_foreach(SortedList, Index, E1,
         if [Index != Last] go:not(go:has_sort(E1, block)) {
             cancel
@@ -14,31 +14,31 @@ create_plan_for_stack(QBlocks, SortedList) :-
     );
 
 stack_up_proper(ParentEventId, List1, X, Y) :-
-    [:Base := `table:table`]
+    :Base := `table:table`
     go:list_foreach(List1, E1,
         if [:Base == `table:table`] {
             go:has_sort(E1, block) do_put_on_table(ParentEventId, E1, X, Y)
         } else {
             go:has_sort(:Base, block)
-            [B1 := :Base]
+            B1 := :Base
             do_put_on_center(ParentEventId, E1, B1)
             do_let_go(ParentEventId)
         }
-        [:Base := E1]
+        :Base := E1
     )
 ;
 
 by_easiness(E1, E2, R) :-
     if go:has_sort(E1, pyramid) {
-        if go:has_sort(E2, pyramid) { [R := 0] } else { [R := 1] }
+        if go:has_sort(E2, pyramid) { R := 0 } else { R := 1 }
     } else {
         if go:has_sort(E2, pyramid) {
-            [R := -1]
+            R := -1
         } else {
             if cleartop(E1) {
-                if cleartop(E2) { [R := 0] } else { [R := -1] }
+                if cleartop(E2) { R := 0 } else { R := -1 }
             } else {
-                if cleartop(E2) { [R := 1] } else { [R := 0] }
+                if cleartop(E2) { R := 1 } else { R := 0 }
             }
         }
     }
@@ -47,10 +47,10 @@ by_easiness(E1, E2, R) :-
 /* Order decreasingly by width or depth */
 by_size(E1, E2, R) :-
     if go:has_sort(E1, pyramid) {
-        [R := 1]
+        R := 1
     } else {
         if go:has_sort(E2, pyramid) {
-            [R := -1]
+            R := -1
         } else {
             size(E1, Width1, Depth1, _)
             size(E2, Width2, Depth2, _)

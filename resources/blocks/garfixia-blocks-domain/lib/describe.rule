@@ -1,14 +1,14 @@
 describe_as_groups(List, GroupsList, Descriptions) :-
 
-    [:GroupFeatures := []]
-    [:GroupMembers := []]
+    :GroupFeatures := []
+    :GroupMembers := []
 
     /* group elements */
     go:list_foreach(List, E1,
         volume(E1, V)
         color(E1, C)
         form(E1, F)
-        [:Features := [V, C, F]]
+        :Features := [V, C, F]
         if go:list_index(:GroupFeatures, :Features, Index) {
             go:list_get(:GroupMembers, Index, Group)
             go:list_append(Group, E1, NewGroup)
@@ -20,8 +20,8 @@ describe_as_groups(List, GroupsList, Descriptions) :-
     )
 
     /* describe groups */
-    [:AGroupList := []]
-    [:Description := none]
+    :AGroupList := []
+    :Description := none
     go:list_foreach(:GroupMembers, Index, Members,
 
         go:list_length(Members, MemberCount)
@@ -37,25 +37,25 @@ describe_as_groups(List, GroupsList, Descriptions) :-
         color(E2, Color) go:count(E2, CountColor)
         volume(E2, Volume) go:count(E2, CountVolume)
 
-        [:Description := {{ :Description }} description(G) shape(G, Form)]
+        :Description := { {{ :Description }} description(G) shape(G, Form) }
 
         if [MemberCount > 1] {
-            [:Description := {{ :Description }} number(G, MemberCount)]
+            :Description := { {{ :Description }} number(G, MemberCount) }
         }
 
         /* Is the shape unique? */
         if [CountForm > 1] {
-            [:Description := {{ :Description }} color(G, Color)]
+            :Description := { {{ :Description }} color(G, Color) }
             /* Are the shape and color unique? */
             if [CountColor > 1] {
-                [:Description := {{ :Description }} volume(G, Volume)]
+                :Description := { {{ :Description }} volume(G, Volume) }
             }
         }
 
     )
 
-    [GroupsList := :AGroupList]
-    [Descriptions := :Description]
+    GroupsList := :AGroupList
+    Descriptions := :Description
 ;
 
 
@@ -70,26 +70,26 @@ describe(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
+    :Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
 
     /* Is the shape unique? */
     if [Cs > 1] {
-        [:Set := {{ :Set }} color(E1, C)]
+        :Set := { {{ :Set }} color(E1, C) }
         /* Are the shape and color unique? */
         if [Cc > 1] {
-            [:Set := {{ :Set }} volume(E1, V)]
+            :Set := { {{ :Set }} volume(E1, V) }
             /* Are the shape, color, and volume unique? */
             if [Cv > 1] {
                 /* Add the object it supports and presume that this is enough */
                 if support(now, E1, E3) {
                     describe(E3, Sort, E3Desc)
-                    [:Set := {{ :Set }} support(now, E1, E3) description(E3) {{ E3Desc }}]
+                    :Set := { {{ :Set }} support(now, E1, E3) description(E3) {{ E3Desc }} }
                 }
             }
         }
     }
 
-    [DescSet := :Set]
+    DescSet := :Set
 ;
 
 /* Create a description that uses indeterminate nouns in stead of complex refinements */
@@ -103,64 +103,64 @@ describe_categoric(E1, Sort, DescSet) :-
     color(E2, C) go:count(E2, Cc)
     volume(E2, V) go:count(E2, Cv)
 
-    [:Set := '']
+    :Set := none
 
     if go:dialog_get_center(L1) [E1 == L1] {
-        [:Set := center(E1)]
+        :Set := { center(E1) }
     } else {
         if name(E1, Name) {
-            [:Set := {{ :Set }} name(E1, Name) shape(E1, S)]
+            :Set := { {{ :Set }} name(E1, Name) shape(E1, S) }
         } else {
-            [:Set := description(E1) default_shape(E1, Sort) shape(E1, S)]
+            :Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
 
             /* Is the shape unique? */
             if [Cs > 1] {
-                [:Set := {{ :Set }} color(E1, C)]
+                :Set := { {{ :Set }} color(E1, C) }
                 /* Are the shape and color unique? */
                 if [Cc > 1] {
-                    [:Set := {{ :Set }} volume(E1, V) indeterminate(E1)]
+                    :Set := { {{ :Set }} volume(E1, V) indeterminate(E1) }
                 }
             }
         }
     }
-    [DescSet := :Set]
+    DescSet := :Set
 ;
 
 describe_event(P1, DescSet) :-
     pick_up(P1, Subject, Object)
     describe_categoric(Object, '', ItemDesc)
-    [DescSet := pick_up(P1, Subject, Object) {{ ItemDesc }}]
+    DescSet := { pick_up(P1, Subject, Object) {{ ItemDesc }} }
 ;
 
 describe_event(P1, DescSet) :-
     put_on(P1, Subject, Object1, Object2)
     describe_categoric(Object1, '', ItemDesc1)
     describe_categoric(Object2, '', ItemDesc2)
-    [DescSet := put_on(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
+    DescSet := { put_on(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }} }
 ;
 
 describe_event(P1, DescSet) :-
     put_in(P1, Subject, Object1, Object2)
     describe_categoric(Object1, '', ItemDesc1)
     describe_categoric(Object2, '', ItemDesc2)
-    [DescSet := put_in(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }}]
+    DescSet := { put_in(P1, Subject, Object1, Object2) {{ ItemDesc1 }} {{ ItemDesc2 }} }
 ;
 
 describe_event(P1, DescSet) :-
     stack_up(P1, Subject, List)
     go:list_expand(List, Item)
     describe_categoric(Item, '', ItemDesc)
-    [DescSet := stack_up(P1, Subject, List) {{ ItemDesc }}]
+    DescSet := { stack_up(P1, Subject, List) {{ ItemDesc }} }
 ;
 
 describe_event(P1, DescSet) :-
     get_rid_of(P1, Subject, A)
     describe_categoric(A, '', ItemDesc)
-    [DescSet := get_rid_of(P1, Subject, A) {{ ItemDesc }}]
+    DescSet := { get_rid_of(P1, Subject, A) {{ ItemDesc }} }
 ;
 
 describe_event(P1, DescSet) :-
     clear_off(P1, Subject, A)
     describe_categoric(A, '', ItemDesc)
-    [DescSet := clear_off(P1, Subject, A) {{ ItemDesc }}]
+    DescSet := { clear_off(P1, Subject, A) {{ ItemDesc }} }
 ;

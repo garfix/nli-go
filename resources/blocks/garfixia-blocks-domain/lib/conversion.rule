@@ -1,11 +1,19 @@
 
 top_center_to_bottom_corner(E1, X, Y, Z, X1, Y1, Z1) :-
     size(E1, Width, Length, Height)
-    [Wh := [Width / 2]] [Lh := [Length / 2]]
-    [X1 := [X - Wh]] [Y1 := [Y - Lh]] [Z1 := [Z - Height]];
+    Wh := [Width / 2]
+    Lh := [Length / 2]
+    X1 := [X - Wh]
+    Y1 := [Y - Lh]
+    Z1 := [Z - Height]
+;
 
 bottom_corner_to_top_center(E1, X, Y, Z, X1, Y1, Z1) :-
     size(E1, Width, Length, Height)
-    [Wh := [Width / 2]] [Lh := [Length / 2]]
-    [X1 := [X + Wh]] [Y1 := [Y + Lh]] [Z1 := [Z + Height]];
+    Wh := [Width / 2]
+    Lh := [Length / 2]
+    X1 := [X + Wh]
+    Y1 := [Y + Lh]
+    Z1 := [Z + Height]
+;
 

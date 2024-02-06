@@ -14,18 +14,18 @@ high_enough_for_hand(Z) :-
         go:not([E1 == G])
     }
     size(E1, _, _, Height1)
-    [Top1 := [Bottom1 + Height1]]
+    Top1 := [Bottom1 + Height1]
     go:largest(Top1)
     go:first()
 
     /* add the height of the carrying object */
-    [:MaxTop := Top1]
+    :MaxTop := Top1
     if grasping(`:shrdlu`, E) {
         size(E, _, _, Height)
-        [:MaxTop := [Top1 + Height]]
+        :MaxTop := [Top1 + Height]
     }
 
-    [Z := [:MaxTop + 10]]
+    Z := [:MaxTop + 10]
 ;
 
 phys_move_hand(X, Y, Z) :-
@@ -122,7 +122,7 @@ check_on_top_of_at_time(E1, E2, Time) :-
     [End1 >= Time]
 
     size(E2, Width2, Length2, Height2)
-    [Top2 := [Bottom2 + Height2]]
+    Top2 := [Bottom2 + Height2]
     [Top2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     [Left2 <= [Left1 + Width1]]
@@ -135,7 +135,7 @@ check_on_top_of(E1, E2) :-
     at(E1, Left1, Front1, Bottom1)
     at(E2, Left2, Front2, Bottom2)
     size(E2, Width2, Length2, Height2)
-    [Top2 := [Bottom2 + Height2]]
+    Top2 := [Bottom2 + Height2]
     [Top2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     [Left2 <= [Left1 + Width1]]
@@ -160,10 +160,10 @@ phys_create_contain_relations(E1) :-
     [Bottom2 == Bottom1]                       /* main check, as early as possible */
     size(E1, Width1, Length1, Height1)
     size(E2, Width2, Length2, Height2)
-    [Right1 := [Left1 + Width1]]
-    [Back1 := [Front1 + Length1]]
-    [Right2 := [Left2 + Width2]]
-    [Back2 := [Front2 + Length2]]
+    Right1 := [Left1 + Width1]
+    Back1 := [Front1 + Length1]
+    Right2 := [Left2 + Width2]
+    Back2 := [Front2 + Length2]
     [Left2 <= Left1]
     [Right2 >= Right1]
     [Front2 <= Front1]

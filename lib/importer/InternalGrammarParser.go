@@ -217,7 +217,7 @@ func (parser *InternalGrammarParser) CreateTerm(source string) mentalese.Term {
 
 	// parse
 	parser.lastParsedResult.LineNumber = 0
-	term, _, tokensOk := parser.parseTerm(tokens, 0)
+	term, _, tokensOk := parser.parseTerm(tokens, 0, false)
 	parser.processResult(service_parser, tokensOk, source, parser.lastParsedResult.LineNumber)
 
 	return term

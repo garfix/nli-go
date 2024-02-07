@@ -866,7 +866,7 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 				var endValue mentalese.Term
 				elementVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
 				if ok {
-					startIndex, ok = parser.parseKeyword(tokens, startIndex, "is")
+					startIndex, ok = parser.parseKeyword(tokens, startIndex, "in")
 					if ok {
 						startValue, startIndex, ok = parser.parseTerm(tokens, startIndex, false)
 						if ok {

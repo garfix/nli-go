@@ -71,7 +71,16 @@ Example:
 
 The result can be assigned to a variable. A returned list can be destructured:
 
-    [HorLines, VerLines] := createLines(Inputs)
+    countLines(Inputs) => X, Y {
+        X := 1
+        Y := 2
+    }
+
+    A, B := countLines(Inputs)
+
+Functions without return value look like this:
+
+    doSomething()
 
 ## Loops
 
@@ -93,7 +102,7 @@ Loop through array
 
 Loop through range
 
-    for E is A to B {
+    for E in A to B {
 
     }
 
@@ -196,6 +205,14 @@ The syntax of the language, in Extended Backus-Naur Form:
     function-footer = "(", [ variable-name-list ], ")"
 
     implication = literal, "if", goal-list
+
+## Include relations
+
+Mostly used in answer clauses
+
+    answer: color(X) {{ Description }}
+
+`{{ Description }}` expands to the contents of the relation-set variable `Description`.
 
 ## Struct
 

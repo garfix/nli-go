@@ -81,8 +81,8 @@ do_init_grid(Grid, Objects, HorLines, VerLines) => None {
             H1 := go:list_index(HorLines, Y1, rv)
             H2 := go:list_index(HorLines, Y2, rv)
 
-            for V is V1 to [V2 - 1] {
-                for H is H1 to [H2 - 1] {
+            for V in V1 to [V2 - 1] {
+                for H in H1 to [H2 - 1] {
                     go:assert( grid(Grid, H, V, 1) )
                 }
             }
@@ -150,7 +150,7 @@ find_span(Width, VerLines, XIndex) => XEndIndex {
 span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
     Success := true
 
-    for XIndex is ColStart to ColEnd {
+    for XIndex in ColStart to ColEnd {
 
         for grid(Grid, RowIndex, XIndex, 1) {
             Success := false

@@ -914,7 +914,6 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			tGtEq:      mentalese.PredicateGreaterThanEquals,
 			tLt:        mentalese.PredicateLessThan,
 			tLtEq:      mentalese.PredicateLessThanEquals,
-			tAppend:    mentalese.PredicateAppend,
 			tPositive:  mentalese.PredicateAdd,
 			tNegative:  mentalese.PredicateSubtract,
 			tMultiply:  mentalese.PredicateMultiply,
@@ -959,6 +958,11 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			relation, newStartIndex, ok = parser.parseAssignment(tokens, startIndex)
 			if ok {
 				startIndex = newStartIndex
+			} else {
+				relation, newStartIndex, ok = parser.parseAppend(tokens, startIndex)
+				if ok {
+					startIndex = newStartIndex
+				}
 			}
 		}
 	}
@@ -979,6 +983,29 @@ func (parser *InternalGrammarParser) parseAssignment(tokens []Token, startIndex 
 			term2, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
 			if ok {
 				relation = mentalese.NewRelation(false, mentalese.PredicateAssign, []mentalese.Term{
+					mentalese.NewTermVariable(variable),
+					term2,
+				})
+			}
+		}
+	}
+
+	return relation, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseAppend(tokens []Token, startIndex int) (mentalese.Relation, int, bool) {
+	ok := false
+	relation := mentalese.Relation{}
+	variable := ""
+	var term2 mentalese.Term
+
+	variable, startIndex, ok = parser.parseVariable(tokens, startIndex)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tAppend)
+		if ok {
+			term2, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
+			if ok {
+				relation = mentalese.NewRelation(false, mentalese.PredicateAppend, []mentalese.Term{
 					mentalese.NewTermVariable(variable),
 					term2,
 				})

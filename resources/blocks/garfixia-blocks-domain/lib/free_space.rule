@@ -45,20 +45,20 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
 
         if [O1 != Container] go:isa(O1, object) [X2 >= BoundX1] [X1 <= BoundX2] [Y2 >= BoundY1] [Y1 <= BoundY2] {
 
-            [Objects []= O1]
+            Objects []= O1
 
             if [X1 >= BoundX1] [X1 <= BoundX2] {
-                [V1 []= X1]
+                V1 []= X1
             }
             if [X2 >= BoundX1] [X2 <= BoundX2] {
-                [V1 []= X2]
+                V1 []= X2
             }
 
             if [Y1 >= BoundY1] [Y1 <= BoundY2] {
-                [H1 []= Y1]
+                H1 []= Y1
             }
             if [Y2 >= BoundY1] [Y2 <= BoundY2] {
-                [H1 []= Y2]
+                H1 []= Y2
             }
         }
     }

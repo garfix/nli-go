@@ -15,17 +15,12 @@
 do_find_free_space(Container, E1, X1, Y1) :-
     rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
 
-    O := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
-    HorLines1 := O[0]
-    VerLines1 := O[1]
-    Objects := O[2]
+    HorLines1, VerLines1, Objects := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
 
-    None := do_init_grid(fixed, Objects, HorLines1, VerLines1)
+    do_init_grid(fixed, Objects, HorLines1, VerLines1)
 
-    R := do_find_free_position(E1, fixed, HorLines1, VerLines1)
-    [R != [-1, -1]]
-    X1 := R[0]
-    Y1 := R[1]
+    X1, Y1 := do_find_free_position(E1, fixed, HorLines1, VerLines1)
+    [X1 != -1]
 ;
 
 rectangle(R1, X1, X2, Y1, Y2) :-
@@ -35,7 +30,7 @@ rectangle(R1, X1, X2, Y1, Y2) :-
     Y2 := [Y1 + Length]
 ;
 
-do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
+do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => H3, V3, Objects {
 
     V1 := [BoundX1, BoundX2]
     H1 := [BoundY1, BoundY2]
@@ -67,11 +62,9 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => O {
     H2 := go:list_deduplicate(H1, rv)
     V3 := go:list_sort(V2, rv)
     H3 := go:list_sort(H2, rv)
-
-    O := [H3, V3, Objects]
 };
 
-do_init_grid(Grid, Objects, HorLines, VerLines) => None {
+do_init_grid(Grid, Objects, HorLines, VerLines) {
     go:retract( grid(Grid, _, _, _) )
 
     for I1, O1 in Objects {
@@ -88,11 +81,9 @@ do_init_grid(Grid, Objects, HorLines, VerLines) => None {
             }
         }
     }
-
-    None := false
 };
 
-do_find_free_position(E1, Grid, HorLines, VerLines) => Result {
+do_find_free_position(E1, Grid, HorLines, VerLines) => FoundX, FoundY {
     FoundX := -1
     FoundY := -1
     StartY := -1
@@ -131,8 +122,6 @@ do_find_free_position(E1, Grid, HorLines, VerLines) => Result {
             }
         }
     }
-
-    Result := [FoundX, FoundY]
 };
 
 find_span(Width, VerLines, XIndex) => XEndIndex {

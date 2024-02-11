@@ -12,33 +12,42 @@ import (
 func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := relation.BindSingle(binding)
 
-	if !knowledge.Validate(bound, "v*", base.log) {
+	if !knowledge.Validate(bound, "**", base.log) {
 		return mentalese.NewBindingSet()
 	}
 
-	variable := relation.Arguments[0].TermValue
-	value := bound.Arguments[1]
+	variables := []mentalese.Term{}
+	values := []mentalese.Term{}
 
-	if value.IsVariable() {
-		base.log.AddError("Value of " + variable + " is unassigned")
-		return mentalese.NewBindingSet()
-	}
-
-	if relation.Arguments[0].IsMutableVariable() {
-		messenger.SetMutableVariable(variable, value)
+	if relation.Arguments[0].IsList() {
+		variables = relation.Arguments[0].TermValueList
+		values = bound.Arguments[1].TermValueList
 	} else {
-		existingValue, found := binding.Get(variable)
-		if found {
-			if !existingValue.Equals(value) {
-				base.log.AddError("Attempt to assign new value to " + variable + "(" + existingValue.String() + " -> " + value.String() + ")")
-				return mentalese.NewBindingSet()
+		variables = []mentalese.Term{relation.Arguments[0]}
+		values = []mentalese.Term{bound.Arguments[1]}
+	}
+
+	for i, variable := range variables {
+		value := values[i]
+
+		if value.IsVariable() {
+			base.log.AddError("Value of " + value.TermValue + " is unassigned")
+			return mentalese.NewBindingSet()
+		}
+
+		if variable.IsMutableVariable() {
+			messenger.SetMutableVariable(variable.TermValue, value)
+		} else {
+			existingValue, found := binding.Get(variable.TermValue)
+			if found {
+				if !existingValue.Equals(value) {
+					base.log.AddError("Attempt to assign new value to " + variable.TermValue + "(" + existingValue.String() + " -> " + value.String() + ")")
+					return mentalese.NewBindingSet()
+				}
 			}
 		}
+		binding.Set(variable.TermValue, value)
 	}
-
-	// if !relation.Arguments[0].IsMutableVariable() {
-	binding.Set(variable, value)
-	// }
 
 	return mentalese.InitBindingSet(binding)
 }

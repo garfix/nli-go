@@ -103,7 +103,7 @@ func (resolver *AnaphoraResolver) processCollection(request mentalese.RelationSe
 func (resolver *AnaphoraResolver) replaceOneAnaphora(set mentalese.RelationSet, replacements map[string]mentalese.RelationSet) mentalese.RelationSet {
 	newSet := set
 	for variable, definition := range replacements {
-		relation := mentalese.NewRelation(false, mentalese.PredicateReferenceSlot, []mentalese.Term{mentalese.NewTermVariable(variable)})
+		relation := mentalese.NewRelation(false, mentalese.PredicateReferenceSlot, []mentalese.Term{mentalese.NewTermVariable(variable)}, 0)
 		newSet = resolver.ReplaceRelation(newSet, relation, definition)
 	}
 	return newSet
@@ -146,7 +146,7 @@ func (resolver *AnaphoraResolver) ReplaceRelation(source mentalese.RelationSet, 
 				newArguments = append(newArguments, newArgument)
 			}
 
-			newRelation := mentalese.NewRelation(relation.Negate, relation.Predicate, newArguments)
+			newRelation := mentalese.NewRelation(relation.Negate, relation.Predicate, newArguments, placeholder.ReturnVariables)
 			target = append(target, newRelation)
 		}
 	}
@@ -172,7 +172,7 @@ func (resolver *AnaphoraResolver) findSortsSingle(relation mentalese.Relation) [
 	isa := mentalese.NewRelation(false, mentalese.PredicateHasSort, []mentalese.Term{
 		mentalese.NewTermAtom(relation.GetPredicateWithoutNamespace()),
 		mentalese.NewTermVariable("Type"),
-	})
+	}, 0)
 	bindings := resolver.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
 	for _, binding := range bindings.GetAll() {
 		sort := binding.MustGet("Type").TermValue

@@ -69,7 +69,7 @@ Example:
         Hypo := go:sqrt(WidthSquared + HeightSquared)
     }
 
-The result can be assigned to a variable. A returned list can be destructured:
+The result can be assigned to a variable. A function may return multiple values. For example:
 
     countLines(Inputs) => X, Y {
         X := 1
@@ -80,7 +80,9 @@ The result can be assigned to a variable. A returned list can be destructured:
 
 Functions without return value look like this:
 
-    doSomething()
+    doSomething() {
+
+    }
 
 ## Loops
 

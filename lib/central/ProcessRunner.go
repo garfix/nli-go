@@ -146,10 +146,10 @@ func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.R
 		if argument.IsRelationSet() && len(argument.TermValueRelationSet) == 1 {
 			firstRelation := argument.TermValueRelationSet[0]
 
-			_, found := p.solver.functions[firstRelation.Predicate]
+			f, found := p.solver.functions[firstRelation.Predicate]
 			if found {
 				newRelation = newRelation.Copy()
-				newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, binding)
+				newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, f.ReturnVariables, binding)
 			} else {
 
 				for j, arg := range firstRelation.Arguments {
@@ -166,19 +166,33 @@ func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.R
 	return newRelation
 }
 
-func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Relation, binding mentalese.Binding) mentalese.Term {
-	variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
+func (p *ProcessRunner) evaluateFunction(process *Process, relation mentalese.Relation, returnVariableCount int, binding mentalese.Binding) mentalese.Term {
+	returnVariables := []mentalese.Term{}
+
 	newRelation := relation.Copy()
-	newRelation.Arguments = append(newRelation.Arguments, variable)
+	for i := 0; i < returnVariableCount; i++ {
+		variable := p.solver.variableGenerator.GenerateVariable("ReturnVal")
+		returnVariables = append(returnVariables, variable)
+		newRelation.Arguments = append(newRelation.Arguments, variable)
+	}
 	resultBindings := p.PushAndRun(process, mentalese.RelationSet{newRelation}, mentalese.InitBindingSet(binding))
 	if resultBindings.GetLength() == 0 {
 		return mentalese.NewTermAtom(mentalese.AtomNone)
 	} else {
-		returnValue, found := resultBindings.Get(0).Get(variable.TermValue)
-		if found {
-			return returnValue
+		returnValues := []mentalese.Term{}
+		for i := 0; i < len(returnVariables); i++ {
+			variable := returnVariables[i]
+			returnValue, found := resultBindings.Get(0).Get(variable.TermValue)
+			if !found {
+				return mentalese.NewTermAtom(mentalese.AtomNone)
+			} else {
+				returnValues = append(returnValues, returnValue)
+			}
+		}
+		if returnVariableCount == 1 {
+			return returnValues[0]
 		} else {
-			return mentalese.NewTermAtom(mentalese.AtomNone)
+			return mentalese.NewTermList(returnValues)
 		}
 	}
 }

@@ -226,7 +226,7 @@ func (term Term) ConvertVariablesToMutables() Term {
 	} else if term.IsRelationSet() {
 		return NewTermRelationSet(term.TermValueRelationSet.ConvertVariablesToMutables())
 	} else if term.IsRule() {
-		return NewTermRule(term.TermValueRule.ConvertVariablesToMutables())
+		return NewTermRule(term.TermValueRule.ConvertToFunction())
 	} else if term.IsList() {
 		return NewTermList(term.TermValueList.ConvertVariablesToMutables())
 	}

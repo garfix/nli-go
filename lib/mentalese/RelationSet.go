@@ -190,7 +190,7 @@ func (relations RelationSet) ReplaceTerm(from Term, to Term) RelationSet {
 			arguments = append(arguments, relationArgument)
 		}
 
-		relation := NewRelation(negative, predicate, arguments)
+		relation := NewRelation(negative, predicate, arguments, 0)
 		newRelations = append(newRelations, relation)
 	}
 

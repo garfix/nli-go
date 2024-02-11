@@ -286,7 +286,7 @@ func (base *LanguageBase) addTagsToDatabase(tags mentalese.RelationSet, messenge
 	for _, relation := range atomized {
 		asserts = append(asserts, mentalese.NewRelation(false, mentalese.PredicateAssert, []mentalese.Term{
 			mentalese.NewTermRelationSet(mentalese.RelationSet{relation}),
-		}))
+		}, 0))
 	}
 	// fmt.Println(asserts.String())
 	messenger.ExecuteChildStackFrame(asserts, mentalese.InitBindingSet(mentalese.NewBinding()))
@@ -522,14 +522,14 @@ func (base *LanguageBase) findNames(messenger api.ProcessMessenger, names mental
 					mentalese.NewTermVariable(variable),
 					mentalese.NewTermAtom(mentalese.AtomGender),
 					mentalese.NewTermAtom(nameInformation.Gender),
-				}))
+				}, 0))
 			}
 			if nameInformation.Number != "" {
 				numberTags = append(numberTags, mentalese.NewRelation(false, mentalese.TagCategory, []mentalese.Term{
 					mentalese.NewTermVariable(variable),
 					mentalese.NewTermAtom(mentalese.AtomNumber),
 					mentalese.NewTermAtom(nameInformation.Number),
-				}))
+				}, 0))
 			}
 		}
 	}

@@ -376,3 +376,59 @@ func TestQuantFunctions(t *testing.T) {
 		t.Errorf("errors: %v", log.String())
 	}
 }
+
+func TestFunctionReturns(t *testing.T) {
+
+	log := common.NewSystemLog()
+	matcher := central.NewRelationMatcher(log)
+	meta := mentalese.NewMeta()
+	parser := importer.NewInternalGrammarParser()
+
+	rules := parser.CreateRules(`
+		square(X) => Squared { Squared := [X * X] };
+		no_result(P) { X := P };
+		two_numbers(A) => B, C {
+			B := A
+			C := [A + 1]
+		};
+	`)
+
+	variableGenerator := mentalese.NewVariableGenerator()
+	solver := central.NewProblemSolver(matcher, variableGenerator, log)
+	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
+	solver.AddFunctionBase(functionBase)
+	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
+	solver.AddRuleBase(ruleBase)
+	processList := central.NewProcessList()
+	dialogContext := central.NewDialogContext(variableGenerator)
+	nestedBase := function.NewSystemSolverFunctionBase(dialogContext, meta, log, nil)
+	solver.AddSolverFunctionBase(nestedBase)
+	solver.Reindex()
+	runner := central.NewProcessRunner(processList, solver, log)
+	tests := []struct {
+		input        string
+		binding      string
+		wantBindings string
+	}{
+		{`X := square(5)`, "{}", "[{X: 25}]"},
+		{`X, Y := two_numbers(5)`, "{}", "[{X: 5, Y: 6}]"},
+		{`A := 1 no_result(5) B := 2`, "{}", "[{A: 1, B: 2}]"},
+	}
+
+	for _, test := range tests {
+
+		input := parser.CreateRelationSet(test.input)
+		binding := parser.CreateBinding(test.binding)
+		wantBindings := parser.CreateBindings(test.wantBindings)
+
+		resultBindings := runner.RunRelationSetWithBindings(central.NO_RESOURCE, input, mentalese.InitBindingSet(binding))
+
+		if resultBindings.String() != wantBindings.String() {
+			t.Errorf("got %v, want %v", resultBindings, wantBindings)
+		}
+	}
+
+	if len(log.GetErrors()) > 0 {
+		t.Errorf("errors: %v", log.String())
+	}
+}

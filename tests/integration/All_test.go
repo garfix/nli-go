@@ -26,7 +26,7 @@ func TestAll(t *testing.T) {
 	if all == 0 {
 		client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test1.yml")
 	} else {
-		client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test1.yml")
+		// client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test1.yml")
 		client.RunTests("blocks", common.Dir()+"/../../resources/blocks/test/test2.yml")
 		client.RunTests("dbpedia", common.Dir()+"/../../resources/dbpedia/test/test1.yml")
 		client.RunTests("dualworld", common.Dir()+"/../../resources/dualworld/test/test1.yml")

@@ -1,3 +1,9 @@
+## 2024-02-11
+
+Implemented returning zero values or multiple values. More work than I thought, but it's done. Yes!
+
+If a function returns 1 value, it returns this value. If it returns multiple values, or no values, it returns a list. The number of return values is stored in a special field.
+
 ## 2024-02-07
 
 Returning multiple values.

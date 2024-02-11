@@ -6,9 +6,10 @@ import (
 )
 
 type Relation struct {
-	Negate    bool   `json:"negate,omitempty"`
-	Predicate string `json:"predicate"`
-	Arguments []Term `json:"arguments"`
+	Negate          bool   `json:"negate,omitempty"`
+	Predicate       string `json:"predicate"`
+	Arguments       []Term `json:"arguments"`
+	ReturnVariables int    `json:"omit"`
 }
 
 const Terminal = "terminal"
@@ -187,11 +188,12 @@ const MessageReset = "reset"
 const MessageSendLog = "send-log"
 const MessageDebug = "debug"
 
-func NewRelation(negate bool, predicate string, arguments []Term) Relation {
+func NewRelation(negate bool, predicate string, arguments []Term, returnVariables int) Relation {
 	return Relation{
-		Negate:    negate,
-		Predicate: predicate,
-		Arguments: arguments,
+		Negate:          negate,
+		Predicate:       predicate,
+		Arguments:       arguments,
+		ReturnVariables: returnVariables,
 	}
 }
 
@@ -247,6 +249,7 @@ func (relation Relation) Copy() Relation {
 	newRelation.Predicate = relation.Predicate
 	newRelation.Negate = relation.Negate
 	newRelation.Arguments = []Term{}
+	newRelation.ReturnVariables = relation.ReturnVariables
 	for _, argument := range relation.Arguments {
 		newRelation.Arguments = append(newRelation.Arguments, argument.Copy())
 	}
@@ -263,7 +266,7 @@ func (relation Relation) BindSingle(binding Binding) Relation {
 		boundArguments = append(boundArguments, arg)
 	}
 
-	return NewRelation(relation.Negate, relation.Predicate, boundArguments)
+	return NewRelation(relation.Negate, relation.Predicate, boundArguments, relation.ReturnVariables)
 }
 
 // Returns multiple relations, that has all variables bound to bindings
@@ -310,7 +313,7 @@ func (relation Relation) ConvertVariablesToConstants() Relation {
 		newArguments = append(newArguments, newArgument)
 	}
 
-	return NewRelation(relation.Negate, relation.Predicate, newArguments)
+	return NewRelation(relation.Negate, relation.Predicate, newArguments, relation.ReturnVariables)
 }
 
 func (relation Relation) ConvertVariablesToMutables() Relation {
@@ -323,7 +326,7 @@ func (relation Relation) ConvertVariablesToMutables() Relation {
 		newArguments = append(newArguments, newArgument)
 	}
 
-	return NewRelation(relation.Negate, relation.Predicate, newArguments)
+	return NewRelation(relation.Negate, relation.Predicate, newArguments, relation.ReturnVariables)
 }
 
 func (relation Relation) ConvertVariablesToImmutables() Relation {
@@ -336,11 +339,11 @@ func (relation Relation) ConvertVariablesToImmutables() Relation {
 		newArguments = append(newArguments, newArgument)
 	}
 
-	return NewRelation(relation.Negate, relation.Predicate, newArguments)
+	return NewRelation(relation.Negate, relation.Predicate, newArguments, relation.ReturnVariables)
 }
 
 func (relation Relation) ReplaceTerm(from Term, to Term) Relation {
-	newRelation := NewRelation(relation.Negate, relation.Predicate, []Term{})
+	newRelation := NewRelation(relation.Negate, relation.Predicate, []Term{}, relation.ReturnVariables)
 	for _, argument := range relation.Arguments {
 		newArgument := argument.ReplaceTerm(from, to)
 		newRelation.Arguments = append(newRelation.Arguments, newArgument)

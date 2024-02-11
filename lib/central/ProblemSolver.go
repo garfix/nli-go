@@ -20,7 +20,7 @@ type ProblemSolver struct {
 	matcher               *RelationMatcher
 	variableGenerator     *mentalese.VariableGenerator
 	relationHandlers      map[string][]api.RelationHandler
-	functions             map[string]mentalese.Relation
+	functions             map[string]mentalese.Rule
 	modifier              *FactBaseModifier
 	log                   *common.SystemLog
 }
@@ -37,7 +37,7 @@ func NewProblemSolver(matcher *RelationMatcher, variableGenerator *mentalese.Var
 		matcher:               matcher,
 		variableGenerator:     variableGenerator,
 		relationHandlers:      map[string][]api.RelationHandler{},
-		functions:             map[string]mentalese.Relation{},
+		functions:             map[string]mentalese.Rule{},
 		log:                   log,
 	}
 
@@ -123,7 +123,7 @@ func (solver *ProblemSolver) createRuleHandlers() {
 	for _, base := range solver.ruleBases {
 		for _, rule := range base.GetRules() {
 			if rule.IsFunction {
-				solver.functions[rule.Goal.Predicate] = rule.Goal
+				solver.functions[rule.Goal.Predicate] = rule
 			}
 			solver.addRelationHandler(rule.Goal.Predicate, solver.createRuleClosure(rule))
 		}

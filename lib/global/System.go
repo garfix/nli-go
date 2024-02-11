@@ -54,7 +54,7 @@ func (system *System) HandleRequest(request mentalese.Request) {
 			central.RESOURCE_LANGUAGE,
 			mentalese.RelationSet{
 				mentalese.NewRelation(false, mentalese.PredicateRespond,
-					[]mentalese.Term{mentalese.NewTermString(request.Message.(string))}, 0),
+					[]mentalese.Term{mentalese.NewTermString(request.Message.(string))}),
 			},
 			mentalese.NewBinding(),
 		)

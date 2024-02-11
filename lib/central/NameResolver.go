@@ -83,7 +83,7 @@ func (resolver *NameResolver) Choose(messenger api.ProcessMessenger, nameInforma
 			mentalese.NewTermVariable("Selection"),
 			mentalese.NewTermString(common.WhichOne),
 			mentalese.NewTermList(names),
-		}, 0),
+		}),
 	}
 
 	bindings := messenger.ExecuteChildStackFrame(set, mentalese.InitBindingSet(mentalese.NewBinding()))
@@ -121,7 +121,7 @@ func (resolver *NameResolver) resolveNameInFactBase(name string, inducedSort str
 			isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
 				mentalese.NewTermAtom(aSort),
 				mentalese.NewTermAtom(inducedSort),
-			}, 0)
+			})
 
 			bindings := messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
 			if bindings.IsEmpty() {

@@ -70,7 +70,7 @@ func (base *SystemSolverFunctionBase) compare(messenger api.ProcessMessenger, id
 		mentalese.NewTermVariable("E1"),
 		mentalese.NewTermVariable("E2"),
 		mentalese.NewTermVariable("R"),
-	}, 0)
+	})
 
 	b := mentalese.NewBinding()
 	b.Set("E1", id1)

@@ -93,7 +93,7 @@ func (finder SortFinder) getMostSpecific(sort1 string, sort2 string) (string, bo
 	isa := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
 		mentalese.NewTermAtom(sort1),
 		mentalese.NewTermAtom(sort2),
-	}, 0)
+	})
 
 	bindings := finder.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa}, mentalese.InitBindingSet(mentalese.NewBinding()))
 	if !bindings.IsEmpty() {
@@ -103,7 +103,7 @@ func (finder SortFinder) getMostSpecific(sort1 string, sort2 string) (string, bo
 	isa2 := mentalese.NewRelation(false, mentalese.PredicateIsa, []mentalese.Term{
 		mentalese.NewTermAtom(sort2),
 		mentalese.NewTermAtom(sort1),
-	}, 0)
+	})
 
 	bindings2 := finder.messenger.ExecuteChildStackFrame(mentalese.RelationSet{isa2}, mentalese.InitBindingSet(mentalese.NewBinding()))
 	if !bindings2.IsEmpty() {

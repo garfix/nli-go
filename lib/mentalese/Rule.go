@@ -3,15 +3,17 @@ package mentalese
 import "nli-go/lib/common"
 
 type Rule struct {
-	Goal       Relation
-	Pattern    RelationSet
-	IsFunction bool
+	Goal                Relation
+	Pattern             RelationSet
+	IsFunction          bool
+	ReturnVariableCount int
 }
 
 func (rule Rule) BindSingle(binding Binding) Rule {
 	return Rule{
-		Goal:    rule.Goal.BindSingle(binding),
-		Pattern: rule.Pattern.BindSingle(binding),
+		Goal:                rule.Goal.BindSingle(binding),
+		Pattern:             rule.Pattern.BindSingle(binding),
+		ReturnVariableCount: 0,
 	}
 }
 
@@ -32,6 +34,7 @@ func (rule Rule) Copy() Rule {
 	newRule.Goal = rule.Goal.Copy()
 	newRule.Pattern = rule.Pattern.Copy()
 	newRule.IsFunction = rule.IsFunction
+	newRule.ReturnVariableCount = rule.ReturnVariableCount
 	return newRule
 }
 
@@ -40,6 +43,7 @@ func (rule Rule) ConvertVariablesToConstants() Rule {
 	newRule.Goal = rule.Goal.ConvertVariablesToConstants()
 	newRule.Pattern = rule.Pattern.ConvertVariablesToConstants()
 	newRule.IsFunction = rule.IsFunction
+	newRule.ReturnVariableCount = rule.ReturnVariableCount
 	return newRule
 }
 
@@ -50,16 +54,16 @@ func (rule Rule) ConvertToFunction() Rule {
 
 	// convert the variables in the body
 	// assign the arguments to local variables at the beginning of the body
-	for _, argument := range rule.Goal.Arguments[0 : len(rule.Goal.Arguments)-rule.Goal.ReturnVariables] {
+	for _, argument := range rule.Goal.Arguments[0 : len(rule.Goal.Arguments)-rule.ReturnVariableCount] {
 		assignment := NewRelation(false, PredicateAssign, []Term{
 			NewTermVariable(":" + argument.TermValue),
 			NewTermVariable(argument.TermValue),
-		}, 0)
+		})
 		newRule.Pattern = append([]Relation{assignment}, newRule.Pattern...)
 	}
 
 	returnVariables := []string{}
-	for i := 0; i < rule.Goal.ReturnVariables; i++ {
+	for i := 0; i < rule.ReturnVariableCount; i++ {
 		returnVariables = append(returnVariables, rule.Goal.Arguments[len(rule.Goal.Arguments)-i-1].TermValue)
 	}
 
@@ -69,7 +73,7 @@ func (rule Rule) ConvertToFunction() Rule {
 		assignment := NewRelation(false, PredicateAssign, []Term{
 			NewTermVariable(returnVar),
 			NewTermVariable(":" + returnVar),
-		}, 0)
+		})
 		newRule.Pattern = append(newRule.Pattern, assignment)
 	}
 
@@ -86,14 +90,14 @@ func (rule Rule) ConvertVariablesToImmutables() Rule {
 		assignment := NewRelation(false, PredicateAssign, []Term{
 			NewTermVariable(":" + argument.TermValue),
 			NewTermVariable(argument.TermValue),
-		}, 0)
+		})
 		newRule.Pattern = append([]Relation{assignment}, newRule.Pattern...)
 	}
 	// assign the return value to the last argument
 	assignment := NewRelation(false, PredicateAssign, []Term{
 		NewTermVariable(returnVar),
 		NewTermVariable(":" + returnVar),
-	}, 0)
+	})
 	newRule.Pattern = append(newRule.Pattern, assignment)
 
 	return newRule

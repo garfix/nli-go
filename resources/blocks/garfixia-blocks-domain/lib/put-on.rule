@@ -25,9 +25,9 @@ do_put_on_center(ParentEventId, E1, E2) :-
         do_cleartop(EventId, E1)
 
         at(E2, X1, Y1, Z1)
-        bottom_corner_to_top_center(E2, X1, Y1, Z1, X2, Y2, Z2)
+        X2, Y2, Z2 := bottom_corner_to_top_center(E2, X1, Y1, Z1)
         height(E1, Height)
-        top_center_to_bottom_corner(E1, X2, Y2, [Z2 + Height], X3, Y3, Z3)
+        X3, Y3, Z3 := top_center_to_bottom_corner(E1, X2, Y2, [Z2 + Height])
         do_move(EventId, E1, X3, Y3, Z3)
     )
 ;

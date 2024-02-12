@@ -88,7 +88,7 @@ Functions without return value look like this:
 
 Using a relation list in a function:
 
-    for [ father(A, B) father(B, C) ] {
+    for father(A, B) father(B, C) {
 
     }
 
@@ -107,6 +107,14 @@ Loop through range
     for E in A to B {
 
     }
+
+## One
+
+To pick one and only one result from a relation list:
+
+    one { relation-list }
+
+This fills variables in the current scope (whereas a loop creates a new scope), and returns from the function if 0 or 2+ results were found.
 
 ## Conditional
 

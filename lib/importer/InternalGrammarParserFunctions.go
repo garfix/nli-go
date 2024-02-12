@@ -898,6 +898,14 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 				}
 			}
 
+		case "one":
+			var body mentalese.RelationSet
+			body, startIndex, ok = parser.parseBody(tokens, startIndex)
+			if ok {
+				relation = mentalese.NewRelation(false, mentalese.PredicateOne, []mentalese.Term{
+					mentalese.NewTermRelationSet(body),
+				})
+			}
 		case "return":
 			relation = mentalese.NewRelation(false, mentalese.PredicateReturn, []mentalese.Term{})
 			ok = true

@@ -320,6 +320,27 @@ func (base *SystemSolverFunctionBase) forRange(messenger api.ProcessMessenger, r
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) forOne(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "r", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	body := relation.Arguments[0].TermValueRelationSet
+
+	bindings := messenger.ExecuteChildStackFrameMutable(body, binding)
+	if len(bindings.GetAll()) != 1 {
+		return mentalese.NewBindingSet()
+	}
+	for key, value := range bindings.GetAll()[0].GetAll() {
+		messenger.SetMutableVariable(key, value)
+	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
 func (base *SystemSolverFunctionBase) listIndex2(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)

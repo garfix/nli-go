@@ -384,6 +384,11 @@ func TestFunctionReturns(t *testing.T) {
 	meta := mentalese.NewMeta()
 	parser := importer.NewInternalGrammarParser()
 
+	facts := parser.CreateRelationSet("" +
+		"size(jake, 5)")
+	readMap := parser.CreateRules(`
+		size(E, Size) :- size(E, Size);
+	`)
 	rules := parser.CreateRules(`
 		square(X) => Squared { Squared := [X * X] };
 		no_result(P) { X := P };
@@ -391,12 +396,21 @@ func TestFunctionReturns(t *testing.T) {
 			B := A
 			C := [A + 1]
 		};
+		size(E1, Size) :- Size := 5;
+		uses_one_plus(E1) => Size {
+			one { size(E1, S) }
+			go:log('pass', E1, S)
+			Size := [S + 1]
+		};
 	`)
 
 	variableGenerator := mentalese.NewVariableGenerator()
 	solver := central.NewProblemSolver(matcher, variableGenerator, log)
 	functionBase := knowledge.NewSystemFunctionBase("name", meta, log)
 	solver.AddFunctionBase(functionBase)
+	writeMap := []mentalese.Rule{}
+	factBase := knowledge.NewInMemoryFactBase("facts", facts, matcher, readMap, writeMap, log)
+	solver.AddFactBase(factBase)
 	ruleBase := knowledge.NewInMemoryRuleBase("rules", rules, []string{}, log)
 	solver.AddRuleBase(ruleBase)
 	processList := central.NewProcessList()
@@ -413,6 +427,7 @@ func TestFunctionReturns(t *testing.T) {
 		{`X := square(5)`, "{}", "[{X: 25}]"},
 		{`X, Y := two_numbers(5)`, "{}", "[{X: 5, Y: 6}]"},
 		{`A := 1 no_result(5) B := 2`, "{}", "[{A: 1, B: 2}]"},
+		{`S := uses_one_plus(X)`, "{X: jake}", "[{S: 6, X: jake}]"},
 	}
 
 	for _, test := range tests {

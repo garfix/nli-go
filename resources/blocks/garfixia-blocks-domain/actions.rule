@@ -27,7 +27,7 @@ do_put_down(ParentEventId, E1, X, Y, Z) :-
         /*go:log('put down', EventId)*/
         go:assert(put_down(EventId, `:shrdlu`, E1))
 
-        bottom_corner_to_top_center(E1, X, Y, Z, X1, Y1, Z1)
+        X1, Y1, Z1 := bottom_corner_to_top_center(E1, X, Y, Z)
         phys_move_hand(X1, Y1, Z1)
         phys_release(E1)
     )

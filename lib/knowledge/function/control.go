@@ -150,6 +150,42 @@ func (base *SystemSolverFunctionBase) ifThenElse(messenger api.ProcessMessenger,
 	return newBindings
 }
 
+func (base *SystemSolverFunctionBase) ifThen2(messenger api.ProcessMessenger, ifThenElse mentalese.Relation,
+	binding mentalese.Binding) mentalese.BindingSet {
+
+	condition := ifThenElse.Arguments[0].TermValueRelationSet
+	action := ifThenElse.Arguments[1].TermValueRelationSet
+
+	var newBindings mentalese.BindingSet
+
+	conditionBindings := messenger.ExecuteChildStackFrameMutable(condition, binding)
+	if conditionBindings.IsEmpty() {
+		newBindings = mentalese.InitBindingSet(binding)
+	} else {
+		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
+	}
+
+	return newBindings
+}
+
+func (base *SystemSolverFunctionBase) ifThenElse2(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+
+	condition := ifThenElse.Arguments[0].TermValueRelationSet
+	action := ifThenElse.Arguments[1].TermValueRelationSet
+	alternative := ifThenElse.Arguments[2].TermValueRelationSet
+
+	var newBindings mentalese.BindingSet
+
+	conditionBindings := messenger.ExecuteChildStackFrameMutable(condition, binding)
+	if !conditionBindings.IsEmpty() {
+		newBindings = messenger.ExecuteChildStackFrame(action, conditionBindings)
+	} else {
+		newBindings = messenger.ExecuteChildStackFrame(alternative, mentalese.InitBindingSet(binding))
+	}
+
+	return newBindings
+}
+
 func (base *SystemSolverFunctionBase) fail(messenger api.ProcessMessenger, ifThenElse mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	return mentalese.NewBindingSet()

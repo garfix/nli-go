@@ -82,7 +82,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:describe_categoric(B, ExpectedSort, N) go:count(B, Count) go:make_list(List, B),
+            preparation: N := dom:describe_categoric(B, ExpectedSort) go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }} dom:expected(ExpectedSort),
             result: B
         }

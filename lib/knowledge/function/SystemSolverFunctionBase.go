@@ -42,6 +42,8 @@ func (base *SystemSolverFunctionBase) GetFunctions() map[string]api.SolverFuncti
 		// control
 		mentalese.PredicateIfThen:        base.ifThen,
 		mentalese.PredicateIfThenElse:    base.ifThenElse,
+		mentalese.PredicateIfThen2:       base.ifThen2,
+		mentalese.PredicateIfThenElse2:   base.ifThenElse2,
 		mentalese.PredicateFail:          base.fail,
 		mentalese.PredicateReturn:        base.returnStatement,
 		mentalese.PredicateAssign:        base.assign,

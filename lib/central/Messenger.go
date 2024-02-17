@@ -63,6 +63,8 @@ func (i *Messenger) AddOutBindings(bindings mentalese.BindingSet) {
 	i.outBindings.AddMultiple(bindings)
 }
 
+// executes `relations` expecting immutable variables
+// modifies only pre-existing mutable variables
 func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bindings mentalese.BindingSet) mentalese.BindingSet {
 
 	// mark the calling function as non-plain;
@@ -102,6 +104,7 @@ func (i *Messenger) ExecuteChildStackFrame(relations mentalese.RelationSet, bind
 	return newBindings
 }
 
+// as `ExecuteChildStackFrame`, but expecting and returning mutable variables
 // relations: relations with mutable variables
 // return: mutable variables
 func (i *Messenger) ExecuteChildStackFrameMutable(relationsMut mentalese.RelationSet, binding mentalese.Binding) mentalese.BindingSet {

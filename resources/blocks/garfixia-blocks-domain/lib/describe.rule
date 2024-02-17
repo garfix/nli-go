@@ -94,74 +94,82 @@ describe(E1, Sort, DescSet) :-
 ;
 
 /* Create a description that uses indeterminate nouns in stead of complex refinements */
-describe_categoric(E1, Sort, DescSet) :-
+describe_categoric(E1, Sort) => DescSet {
 
-    form(E1, S)
-    color(E1, C)
-    volume(E1, V)
+    one { form(E1, S) color(E1, C) volume(E1, V) }
 
-    form(E2, S) go:count(E2, Cs)
-    color(E2, C) go:count(E2, Cc)
-    volume(E2, V) go:count(E2, Cv)
+    Cs := 0
+    Cc := 0
+    Cv := 0
 
-    :Set := none
+    for form(E2, S) {
+        Cs := [Cs + 1]
+    }
+    for form(E2, S) color(E2, C) {
+        Cc := [Cc + 1]
+    }
+    for form(E2, S) color(E2, C) volume(E2, V) {
+        Cv := [Cv + 1]
+    }
 
-    if go:dialog_get_center(L1) [E1 == L1] {
-        :Set := { center(E1) }
+    Set := none
+
+    if2 go:dialog_get_center(L1) [E1 == L1] {
+        Set := { center(E1) }
     } else {
-        if name(E1, Name) {
-            :Set := [:Set + { name(E1, Name) shape(E1, S) }]
+        if2 name(E1, Name) {
+            Set := [Set + { name(E1, Name) shape(E1, S) }]
         } else {
-            :Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
+            Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
 
             /* Is the shape unique? */
-            if [Cs > 1] {
-                :Set := [:Set + { color(E1, C) }]
+            if2 [Cs > 1] {
+                Set := [Set + { color(E1, C) }]
                 /* Are the shape and color unique? */
-                if [Cc > 1] {
-                    :Set := [:Set + { volume(E1, V) indeterminate(E1) }]
+                if2 [Cc > 1] {
+                    Set := [Set + { volume(E1, V) indeterminate(E1) }]
                 }
             }
         }
     }
-    DescSet := :Set
-;
+    DescSet := Set
+};
 
 describe_event(P1, DescSet) :-
     pick_up(P1, Subject, Object)
-    describe_categoric(Object, '', ItemDesc)
+    ItemDesc := describe_categoric(Object, '')
     DescSet := [{ pick_up(P1, Subject, Object) } + ItemDesc]
 ;
 
 describe_event(P1, DescSet) :-
     put_on(P1, Subject, Object1, Object2)
-    describe_categoric(Object1, '', ItemDesc1)
-    describe_categoric(Object2, '', ItemDesc2)
+    ItemDesc1 := describe_categoric(Object1, '')
+    ItemDesc2 := describe_categoric(Object2, '')
     DescSet := [[{ put_on(P1, Subject, Object1, Object2) } + ItemDesc1] + ItemDesc2]
 ;
 
 describe_event(P1, DescSet) :-
     put_in(P1, Subject, Object1, Object2)
-    describe_categoric(Object1, '', ItemDesc1)
-    describe_categoric(Object2, '', ItemDesc2)
+    ItemDesc1 := describe_categoric(Object1, '')
+    ItemDesc2 := describe_categoric(Object2, '')
     DescSet := [[{ put_in(P1, Subject, Object1, Object2) } + ItemDesc1] + ItemDesc2]
 ;
 
 describe_event(P1, DescSet) :-
     stack_up(P1, Subject, List)
     go:list_expand(List, Item)
-    describe_categoric(Item, '', ItemDesc)
+    ItemDesc := describe_categoric(Item, '')
     DescSet := [{ stack_up(P1, Subject, List) } + ItemDesc]
 ;
 
 describe_event(P1, DescSet) :-
     get_rid_of(P1, Subject, A)
-    describe_categoric(A, '', ItemDesc)
+    ItemDesc := describe_categoric(A, '')
     DescSet := [{ get_rid_of(P1, Subject, A) } + ItemDesc]
 ;
 
 describe_event(P1, DescSet) :-
     clear_off(P1, Subject, A)
-    describe_categoric(A, '', ItemDesc)
+    ItemDesc := describe_categoric(A, '')
     DescSet := [{ clear_off(P1, Subject, A) } + ItemDesc]
 ;

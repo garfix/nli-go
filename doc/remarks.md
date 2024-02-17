@@ -1,3 +1,7 @@
+## 2024-02-17
+
+I created a function-specific version of if-then / if-then-else, called if2. I'm using this only in functions. Once all procedures with `if` have been rewritten to functions, if2 can be renamed to if, and the old if can go.
+
 ## 2024-02-11
 
 Implemented returning zero values or multiple values. More work than I thought, but it's done. Yes!

@@ -120,9 +120,21 @@ This fills variables in the current scope (whereas a loop creates a new scope), 
 
 If-then
 
-    if Exp {
-
+    if { Relations } {
+        Body
     }
+
+    if Relations {
+        Body
+    } else {
+        Alternative
+    }
+
+The simple if-conditional works just like a for-loop on relations. If Relations has multiple bindings, Body will be executed once for each of them.
+
+The if-else-conditional executes its Alternative body if Relations yields no results.
+
+Both constructs don't change the existing binding.
 
 ## List processing
 

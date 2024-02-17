@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"fmt"
 	"nli-go/lib/common"
 	"nli-go/lib/mentalese"
 	"nli-go/lib/parse/morphology"
@@ -126,33 +125,33 @@ func (parser *InternalGrammarParser) parseBody(tokens []Token, startIndex int) (
 	return relations, startIndex, ok
 }
 
-func (parser *InternalGrammarParser) checkStatements(relations mentalese.RelationSet) bool {
-	ok := true
-	statements := []string{
-		mentalese.PredicateAssign,
-		mentalese.PredicateAssert,
-		mentalese.PredicateRetract,
-		mentalese.PredicateIfThen,
-		mentalese.PredicateIfThenElse,
-		mentalese.PredicateForIndexValue,
-		mentalese.PredicateForRelations,
-		mentalese.PredicateForRange,
-		mentalese.PredicateLog,
-		mentalese.PredicateBreak,
-		mentalese.PredicateCancel,
-		mentalese.PredicateReturn,
-		mentalese.PredicateAppend,
-	}
-	for _, relation := range relations {
-		predicate := relation.Predicate
-		if !common.StringArrayContains(statements, predicate) {
-			ok = false
-			fmt.Println("checkStatements: Not allowed as statement in body: " + relation.Predicate)
-			break
-		}
-	}
-	return ok
-}
+// func (parser *InternalGrammarParser) checkStatements(relations mentalese.RelationSet) bool {
+// 	ok := true
+// 	statements := []string{
+// 		mentalese.PredicateAssign,
+// 		mentalese.PredicateAssert,
+// 		mentalese.PredicateRetract,
+// 		mentalese.PredicateIfThen,
+// 		mentalese.PredicateIfThenElse,
+// 		mentalese.PredicateForIndexValue,
+// 		mentalese.PredicateForRelations,
+// 		mentalese.PredicateForRange,
+// 		mentalese.PredicateLog,
+// 		mentalese.PredicateBreak,
+// 		mentalese.PredicateCancel,
+// 		mentalese.PredicateReturn,
+// 		mentalese.PredicateAppend,
+// 	}
+// 	for _, relation := range relations {
+// 		predicate := relation.Predicate
+// 		if !common.StringArrayContains(statements, predicate) {
+// 			ok = false
+// 			fmt.Println("checkStatements: Not allowed as statement in body: " + relation.Predicate)
+// 			break
+// 		}
+// 	}
+// 	return ok
+// }
 
 func (parser *InternalGrammarParser) parseIntents(tokens []Token, startIndex int) ([]mentalese.Intent, int, bool) {
 
@@ -803,6 +802,34 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 					} else {
 						ok = true
 						relation = mentalese.NewRelation(false, mentalese.PredicateIfThen, []mentalese.Term{
+							mentalese.NewTermRelationSet(s1),
+							mentalese.NewTermRelationSet(s2),
+						})
+					}
+				}
+			}
+
+		case "if2":
+			oldIndex = startIndex
+			startIndex = oldIndex
+			s1, startIndex, ok = parser.parseRelations(tokens, startIndex)
+			if ok {
+				s2, startIndex, ok = parser.parseBody(tokens, startIndex)
+				if ok {
+					newStartIndex, ok = parser.parseKeyword(tokens, startIndex, "else")
+					if ok {
+						startIndex = newStartIndex
+						s3, startIndex, ok = parser.parseBody(tokens, startIndex)
+						if ok {
+							relation = mentalese.NewRelation(false, mentalese.PredicateIfThenElse2, []mentalese.Term{
+								mentalese.NewTermRelationSet(s1),
+								mentalese.NewTermRelationSet(s2),
+								mentalese.NewTermRelationSet(s3),
+							})
+						}
+					} else {
+						ok = true
+						relation = mentalese.NewRelation(false, mentalese.PredicateIfThen2, []mentalese.Term{
 							mentalese.NewTermRelationSet(s1),
 							mentalese.NewTermRelationSet(s2),
 						})

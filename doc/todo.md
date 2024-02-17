@@ -1,8 +1,6 @@
 # Todo
 
-if [O1 != Container] go:isa(O1, object) [X2 >= BoundX1] [X1 <= BoundX2] [Y2 >= BoundY1] [Y1 <= BoundY2] {
-
-go:isa(O1, object) should not be allowed
+I'm creating an if2 that only works within functions. When all procedures that use if have been rewritten, the if can go and if2 be renamed to if.
 
 ## go as scripting language
 

@@ -52,6 +52,61 @@ func (base *SystemSolverFunctionBase) assign(messenger api.ProcessMessenger, rel
 	return mentalese.InitBindingSet(binding)
 }
 
+func (base *SystemSolverFunctionBase) assignListElement(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+	bound := relation.BindSingle(binding)
+
+	if !knowledge.Validate(bound, "v*", base.log) {
+		return mentalese.NewBindingSet()
+	}
+
+	variable := relation.Arguments[0]
+	index, is_int := bound.Arguments[1].GetIntValue()
+	value := bound.Arguments[2]
+
+	if !is_int {
+		base.log.AddError("Index must be integer: " + bound.Arguments[1].String())
+		return mentalese.NewBindingSet()
+	}
+
+	if variable.IsMutableVariable() {
+		list, found := messenger.GetMutableVariable(variable.TermValue)
+		if !found {
+			base.log.AddError("List does not exist: " + bound.Arguments[0].String())
+			return mentalese.NewBindingSet()
+		}
+		if !list.IsList() {
+			base.log.AddError("Is not a list: " + bound.Arguments[0].String())
+			return mentalese.NewBindingSet()
+		}
+		values := list.TermValueList
+		if len(values) <= index {
+			base.log.AddError("Index out of range: " + bound.Arguments[1].String())
+			return mentalese.NewBindingSet()
+		}
+		values[index] = value
+
+		messenger.SetMutableVariable(variable.TermValue, mentalese.NewTermList(values))
+	} else {
+		list, found := binding.Get(variable.TermValue)
+		if !found {
+			base.log.AddError("List does not exist: " + bound.Arguments[0].String())
+			return mentalese.NewBindingSet()
+		}
+		if !list.IsList() {
+			base.log.AddError("Is not a list: " + bound.Arguments[0].String())
+			return mentalese.NewBindingSet()
+		}
+		values := list.TermValueList
+		if len(values) <= index {
+			base.log.AddError("Index out of range: " + bound.Arguments[1].String())
+			return mentalese.NewBindingSet()
+		}
+		binding.Set(variable.TermValue, mentalese.NewTermList(values))
+	}
+
+	return mentalese.InitBindingSet(binding)
+}
+
 func (base *SystemSolverFunctionBase) append(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 	bound := relation.BindSingle(binding)
 
@@ -318,14 +373,25 @@ func (base *SystemSolverFunctionBase) forIndexValue(messenger api.ProcessMesseng
 	cursor := messenger.GetCursor()
 	cursor.SetType(mentalese.FrameTypeLoop)
 
-	indexVar := relation.Arguments[0].TermValue
-	valueVar := relation.Arguments[1].TermValue
+	firstVar := relation.Arguments[0].TermValue
+	secondTerm := relation.Arguments[1]
 	list := bound.Arguments[2].TermValueList
 	bodyRelations := relation.Arguments[3].TermValueRelationSet
 
+	indexVar := ""
+	elementVar := ""
+	if secondTerm.IsAtom() {
+		elementVar = firstVar
+	} else {
+		indexVar = firstVar
+		elementVar = secondTerm.TermValue
+	}
+
 	for i, element := range list {
-		messenger.SetMutableVariable(indexVar, mentalese.NewTermString(strconv.Itoa(i)))
-		messenger.SetMutableVariable(valueVar, element)
+		if !secondTerm.IsAtom() {
+			messenger.SetMutableVariable(indexVar, mentalese.NewTermString(strconv.Itoa(i)))
+		}
+		messenger.SetMutableVariable(elementVar, element)
 		messenger.ExecuteChildStackFrame(bodyRelations, mentalese.InitBindingSet(binding))
 	}
 
@@ -377,7 +443,7 @@ func (base *SystemSolverFunctionBase) forOne(messenger api.ProcessMessenger, rel
 	return mentalese.InitBindingSet(binding)
 }
 
-func (base *SystemSolverFunctionBase) listIndex2(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
+func (base *SystemSolverFunctionBase) listElement(messenger api.ProcessMessenger, relation mentalese.Relation, binding mentalese.Binding) mentalese.BindingSet {
 
 	bound := relation.BindSingle(binding)
 

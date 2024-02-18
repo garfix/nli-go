@@ -744,7 +744,7 @@ func (parser *InternalGrammarParser) parseVariableStructureRelation(tokens []Tok
 			if ok {
 				_, newStartIndex, ok = parser.parseSingleToken(tokens, newStartIndex, tClosingBracket)
 				if ok {
-					relation = mentalese.NewRelation(false, mentalese.PredicateListIndex2, []mentalese.Term{
+					relation = mentalese.NewRelation(false, mentalese.PredicateListElement, []mentalese.Term{
 						mentalese.NewTermVariable(variable),
 						indexTerm,
 						mentalese.NewTermAtom(mentalese.AtomReturnValue),
@@ -854,15 +854,23 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 
 			if !ok {
 				startIndex = oldIndex
-				var indexVar string
-				var elementVar string
+				var firstVar string
+				var secondVar string
+				var secondTerm mentalese.Term
 				var listVar string
 				var list mentalese.TermList
 				var listTerm mentalese.Term
-				indexVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+				firstVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
 				if ok {
-					_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tComma)
-					elementVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+					_, newStartIndex, ok = parser.parseSingleToken(tokens, startIndex, tComma)
+					if ok {
+						startIndex = newStartIndex
+						secondVar, startIndex, ok = parser.parseVariable(tokens, startIndex)
+						secondTerm = mentalese.NewTermVariable(secondVar)
+					} else {
+						ok = true
+						secondTerm = mentalese.NewTermAtom("none")
+					}
 					if ok {
 						startIndex, ok = parser.parseKeyword(tokens, startIndex, "in")
 						if ok {
@@ -882,8 +890,8 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 							body, startIndex, ok = parser.parseBody(tokens, startIndex)
 							if ok {
 								relation = mentalese.NewRelation(false, mentalese.PredicateForIndexValue, []mentalese.Term{
-									mentalese.NewTermVariable(indexVar),
-									mentalese.NewTermVariable(elementVar),
+									mentalese.NewTermVariable(firstVar),
+									secondTerm,
 									listTerm,
 									mentalese.NewTermRelationSet(body),
 								})
@@ -1005,6 +1013,11 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 				relation, newStartIndex, ok = parser.parseAppend(tokens, startIndex)
 				if ok {
 					startIndex = newStartIndex
+				} else {
+					relation, newStartIndex, ok = parser.parseListElementAssignment(tokens, startIndex)
+					if ok {
+						startIndex = newStartIndex
+					}
 				}
 			}
 		}
@@ -1062,6 +1075,41 @@ func (parser *InternalGrammarParser) parseAppend(tokens []Token, startIndex int)
 					mentalese.NewTermVariable(variable),
 					term2,
 				})
+			}
+		}
+	}
+
+	return relation, startIndex, ok
+}
+
+func (parser *InternalGrammarParser) parseListElementAssignment(tokens []Token, startIndex int) (mentalese.Relation, int, bool) {
+	ok := false
+	relation := mentalese.Relation{}
+	var variable string
+	var term1 mentalese.Term
+	var term2 mentalese.Term
+
+	variable, startIndex, ok = parser.parseVariable(tokens, startIndex)
+	if ok {
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBracket)
+		if ok {
+			term1, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
+			if ok {
+				_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBracket)
+				if ok {
+					_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tAssign)
+					if ok {
+						term2, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
+						if ok {
+							relation = mentalese.NewRelation(false, mentalese.PredicateAssignListElement, []mentalese.Term{
+								mentalese.NewTermVariable(variable),
+								term1,
+								term2,
+							})
+						}
+					}
+
+				}
 			}
 		}
 	}

@@ -1,63 +1,70 @@
-describe_as_groups(List, GroupsList, Descriptions) :-
+describe_as_groups(List) => GroupList, Description {
 
-    :GroupFeatures := []
-    :GroupMembers := []
+    GroupFeatures := []
+    GroupMembers := []
 
     /* group elements */
-    go:list_foreach(List, E1,
-        volume(E1, V)
-        color(E1, C)
-        form(E1, F)
-        :Features := [V, C, F]
-        if go:list_index(:GroupFeatures, :Features, Index) {
-            go:list_get(:GroupMembers, Index, Group)
-            go:list_append(Group, E1, NewGroup)
-            go:list_set(:GroupMembers, Index, NewGroup)
-        } else {
-            go:list_append(:GroupFeatures, :Features, :GroupFeatures)
-            go:list_append(:GroupMembers, [E1], :GroupMembers)
+    for I, E1 in List {
+        for volume(E1, V) color(E1, C) form(E1, F) {
+            Features := [V, C, F]
+            if2 go:list_index(GroupFeatures, Features, Index) {
+                Group := GroupMembers[Index]
+                Group []= E1
+                GroupMembers[Index] := Group
+            } else {
+                GroupFeatures []= Features
+                GroupMembers []= [E1]
+            }
         }
-    )
+    }
 
     /* describe groups */
-    :AGroupList := []
-    :Description := none
-    go:list_foreach(:GroupMembers, Index, Members,
+    GroupList := []
+    Description := none
+    for Index, Members in GroupMembers {
 
-        go:list_length(Members, MemberCount)
-        go:uuid(G, object)
-        go:list_append(:AGroupList, G, :AGroupList)
+        one { go:list_length(Members, MemberCount) }
+        one { go:uuid(G, object) }
 
-        go:list_get(:GroupFeatures, Index, Features)
-        go:list_get(Features, 0, Volume)
-        go:list_get(Features, 1, Color)
-        go:list_get(Features, 2, Form)
+        GroupList []= G
 
-        form(E2, Form) go:count(E2, CountForm)
-        color(E2, Color) go:count(E2, CountColor)
-        volume(E2, Volume) go:count(E2, CountVolume)
+        Features := GroupFeatures[Index]
+        Volume := Features[0]
+        Color := Features[1]
+        Form := Features[2]
 
-        :Description := [:Description + { description(G) shape(G, Form) }]
+        CountForm := 0
+        CountColor := 0
+        CountVolume := 0
 
-        if [MemberCount > 1] {
-            :Description := [:Description + { number(G, MemberCount) }]
+        for form(E2, Form) {
+            CountForm := [CountForm + 1]
+        }
+        for form(E2, Form) color(E2, Color) {
+            CountColor := [CountColor + 1]
+        }
+        for form(E2, Form) color(E2, Color) volume(E2, Volume) {
+            CountVolume := [CountVolume + 1]
+        }
+
+        Description := [Description + { description(G) shape(G, Form) }]
+
+        if2 [MemberCount > 1] {
+            Description := [Description + { number(G, MemberCount) }]
         }
 
         /* Is the shape unique? */
-        if [CountForm > 1] {
-            :Description := [:Description + { color(G, Color) }]
+        if2 [CountForm > 1] {
+            Description := [Description + { color(G, Color) }]
 
             /* Are the shape and color unique? */
-            if [CountColor > 1] {
-                :Description := [:Description + {  volume(G, Volume) }]
+            if2 [CountColor > 1] {
+                Description := [Description + { volume(G, Volume) }]
             }
         }
 
-    )
-
-    GroupsList := :AGroupList
-    Descriptions := :Description
-;
+    }
+};
 
 
 /* Create a description for an object in the world */

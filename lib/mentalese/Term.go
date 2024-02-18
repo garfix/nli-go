@@ -67,6 +67,9 @@ func (term Term) IsMutableVariable() bool {
 }
 
 func IsMutableVariable(variable string) bool {
+	if variable == "" {
+		panic("Empty variable detected")
+	}
 	return variable[0:1] == ":"
 }
 

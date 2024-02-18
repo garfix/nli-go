@@ -210,7 +210,7 @@
             answer: dom:agree()
         }
         {
-            preparation: go:count(E1, Number) go:make_list(List, E1) dom:describe_as_groups(List, GroupsList, Descriptions),
+            preparation: go:count(E1, Number) go:make_list(List, E1) GroupsList, Descriptions := dom:describe_as_groups(List),
             answer: dom:incorrect_number(Number, GroupsList) {{ Descriptions }}
         }
 }

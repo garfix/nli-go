@@ -17,7 +17,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:make_list(List, B),
+            preparation: N := dom:describe(B, '') go:make_list(List, B),
             answer: dom:list(List) {{ N }},
             result: B
         }
@@ -32,7 +32,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: go:has_sort(A, Sort) dom:describe(A, Sort, Desc),
+            preparation: go:has_sort(A, Sort) Desc := dom:describe(A, Sort),
             answer: dom:root(A) {{ Desc }},
             result: A
         }
@@ -67,7 +67,7 @@
         }
         {
             condition: go:exists(),
-            preparation: go:has_sort(B, Sort) dom:describe(B, Sort, N) go:count(B, Count) go:make_list(List, B),
+            preparation: go:has_sort(B, Sort) N := dom:describe(B, Sort) go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }},
             result: B
         }
@@ -97,7 +97,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:make_list(List, B),
+            preparation: N := dom:describe(B, '') go:make_list(List, B),
             answer: dom:select_subject(List) {{ N }},
             result: B
         }
@@ -112,7 +112,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:describe(B, '', N) go:count(B, Count) go:make_list(List, B),
+            preparation: N := dom:describe(B, '') go:count(B, Count) go:make_list(List, B),
             answer: dom:select(List, Count) {{ N }},
             result: B
         }

@@ -68,37 +68,43 @@ describe_as_groups(List) => GroupList, Description {
 
 
 /* Create a description for an object in the world */
-describe(E1, Sort, DescSet) :-
+describe(E1, Sort) => Set {
 
-    form(E1, S)
-    color(E1, C)
-    volume(E1, V)
+    one { form(E1, S) color(E1, C) volume(E1, V) }
 
-    form(E2, S) go:count(E2, Cs)
-    color(E2, C) go:count(E2, Cc)
-    volume(E2, V) go:count(E2, Cv)
+    Cs := 0
+    Cc := 0
+    Cv := 0
 
-    :Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
+    for form(E2, S) {
+        Cs := [Cs + 1]
+    }
+    for form(E2, S) color(E2, C) {
+        Cc := [Cc + 1]
+    }
+    for form(E2, S) color(E2, C) volume(E2, V) {
+        Cv := [Cv + 1]
+    }
+
+    Set := { description(E1) default_shape(E1, Sort) shape(E1, S) }
 
     /* Is the shape unique? */
-    if [Cs > 1] {
-        :Set := [:Set + { color(E1, C) }]
+    if2 [Cs > 1] {
+        Set := [Set + { color(E1, C) }]
         /* Are the shape and color unique? */
-        if [Cc > 1] {
-            :Set := [:Set + { volume(E1, V) }]
+        if2 [Cc > 1] {
+            Set := [Set + { volume(E1, V) }]
             /* Are the shape, color, and volume unique? */
-            if [Cv > 1] {
+            if2 [Cv > 1] {
                 /* Add the object it supports and presume that this is enough */
-                if support(now, E1, E3) {
-                    describe(E3, Sort, E3Desc)
-                    :Set := [[:Set + { support(now, E1, E3) description(E3) }] + E3Desc]
+                if2 support(now, E1, E3) {
+                    E3Desc := describe(E3, Sort)
+                    Set := [[Set + { support(now, E1, E3) description(E3) }] + E3Desc]
                 }
             }
         }
     }
-
-    DescSet := :Set
-;
+};
 
 /* Create a description that uses indeterminate nouns in stead of complex refinements */
 describe_categoric(E1, Sort) => DescSet {

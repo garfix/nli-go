@@ -151,7 +151,7 @@
     responses:
         {
             condition: go:exists(),
-            preparation: dom:get_top_level_event(P1, TopId) dom:describe_event(TopId, Desc),
+            preparation: dom:get_top_level_event(P1, TopId) Desc := dom:describe_event(TopId),
             answer: dom:time_description(TopId) {{ Desc }},
             result: P1
         }
@@ -173,7 +173,7 @@
                     Desc := { dom:you_asked_me_to(CenterId) }
                 } else {
                     CenterId := ParentEventId
-                    dom:describe_event(CenterId, Desc)
+                    Desc := dom:describe_event(CenterId)
                 },
             answer:  dom:cause_description(CenterId) {{ Desc }},
             result: ParentEventId
@@ -191,7 +191,8 @@
             condition: go:exists(),
             preparation:
                 dom:parent_event(SubGoalId, P1)
-                dom:describe_event(SubGoalId, Desc)
+                Desc := dom:describe_event(SubGoalId)
+                [Desc != {}]
                 go:make_list(List, SubGoalId)
             ,
             answer: dom:how_description(List) {{ Desc }}

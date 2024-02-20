@@ -110,16 +110,19 @@ func (parser *InternalGrammarParser) parseFunction(tokens []Token, startIndex in
 func (parser *InternalGrammarParser) parseBody(tokens []Token, startIndex int) (mentalese.RelationSet, int, bool) {
 	ok := false
 	relations := mentalese.RelationSet{}
+	newStartIndex := 0
 
 	_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tOpeningBrace)
 	if ok {
-		relations, startIndex, ok = parser.parseRelations(tokens, startIndex)
+		relations, newStartIndex, ok = parser.parseRelations(tokens, startIndex)
 		if ok {
-			_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
-			// if ok {
-			// 	ok = parser.checkStatements(relations)
-			// }
+			startIndex = newStartIndex
 		}
+		_, startIndex, ok = parser.parseSingleToken(tokens, startIndex, tClosingBrace)
+		// if ok {
+		// 	ok = parser.checkStatements(relations)
+		// }
+		// }
 	}
 
 	return relations, startIndex, ok

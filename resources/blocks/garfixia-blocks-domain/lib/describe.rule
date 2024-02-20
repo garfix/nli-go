@@ -148,41 +148,38 @@ describe_categoric(E1, Sort) => DescSet {
     DescSet := Set
 };
 
-describe_event(P1, DescSet) :-
-    pick_up(P1, Subject, Object)
-    ItemDesc := describe_categoric(Object, '')
-    DescSet := [{ pick_up(P1, Subject, Object) } + ItemDesc]
-;
+describe_event(P1) => DescSet {
 
-describe_event(P1, DescSet) :-
-    put_on(P1, Subject, Object1, Object2)
-    ItemDesc1 := describe_categoric(Object1, '')
-    ItemDesc2 := describe_categoric(Object2, '')
-    DescSet := [[{ put_on(P1, Subject, Object1, Object2) } + ItemDesc1] + ItemDesc2]
-;
+    DescSet := {}
 
-describe_event(P1, DescSet) :-
-    put_in(P1, Subject, Object1, Object2)
-    ItemDesc1 := describe_categoric(Object1, '')
-    ItemDesc2 := describe_categoric(Object2, '')
-    DescSet := [[{ put_in(P1, Subject, Object1, Object2) } + ItemDesc1] + ItemDesc2]
-;
-
-describe_event(P1, DescSet) :-
-    stack_up(P1, Subject, List)
-    go:list_expand(List, Item)
-    ItemDesc := describe_categoric(Item, '')
-    DescSet := [{ stack_up(P1, Subject, List) } + ItemDesc]
-;
-
-describe_event(P1, DescSet) :-
-    get_rid_of(P1, Subject, A)
-    ItemDesc := describe_categoric(A, '')
-    DescSet := [{ get_rid_of(P1, Subject, A) } + ItemDesc]
-;
-
-describe_event(P1, DescSet) :-
-    clear_off(P1, Subject, A)
-    ItemDesc := describe_categoric(A, '')
-    DescSet := [{ clear_off(P1, Subject, A) } + ItemDesc]
-;
+    if2 pick_up(P1, Subject, Object) {
+        ItemDesc := describe_categoric(Object, '')
+        DescSet := [{ pick_up(P1, Subject, Object) } + ItemDesc]
+    }
+    for put_on(P1, Subject, Object1, Object2) {
+        ItemDesc1 := describe_categoric(Object1, '')
+        ItemDesc2 := describe_categoric(Object2, '')
+        DescSet := [DescSet + ItemDesc1]
+        DescSet := [DescSet + ItemDesc2]
+        DescSet := [DescSet + { put_on(P1, Subject, Object1, Object2) }]
+    }
+    if2 put_in(P1, Subject, Object1, Object2) {
+        ItemDesc1 := describe_categoric(Object1, '')
+        ItemDesc2 := describe_categoric(Object2, '')
+        DescSet := [[{ put_in(P1, Subject, Object1, Object2) } + ItemDesc1] + ItemDesc2]
+    }
+    for stack_up(P1, Subject, List) {
+        for Item in List {
+            ItemDesc := describe_categoric(Item, '')
+            DescSet := [DescSet + [{ stack_up(P1, Subject, List) } + ItemDesc]]
+        }
+    }
+    if2 get_rid_of(P1, Subject, A) {
+        ItemDesc := describe_categoric(A, '')
+        DescSet := [{ get_rid_of(P1, Subject, A) } + ItemDesc]
+    }
+    if2 clear_off(P1, Subject, A) {
+        ItemDesc := describe_categoric(A, '')
+        DescSet := [{ clear_off(P1, Subject, A) } + ItemDesc]
+    }
+};

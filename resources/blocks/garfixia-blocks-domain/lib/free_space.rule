@@ -12,8 +12,8 @@
 */
 
 /* Returns the lower-left point of a space inside given bounds that is big enough for E1 */
-do_find_free_space(Container, E1, X1, Y1) :-
-    rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2)
+do_find_free_space(Container, E1) => X1, Y1 {
+    one { rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2) }
 
     HorLines1, VerLines1, Objects := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
 
@@ -21,7 +21,7 @@ do_find_free_space(Container, E1, X1, Y1) :-
 
     X1, Y1 := do_find_free_position(E1, fixed, HorLines1, VerLines1)
     [X1 != -1]
-;
+};
 
 rectangle(R1, X1, X2, Y1, Y2) :-
     at(R1, X1, Y1, _)

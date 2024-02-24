@@ -914,11 +914,11 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 				if ok {
 					startIndex, ok = parser.parseKeyword(tokens, startIndex, "in")
 					if ok {
-						startValue, startIndex, ok = parser.parseTerm(tokens, startIndex, false)
+						startValue, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
 						if ok {
 							startIndex, ok = parser.parseKeyword(tokens, startIndex, "to")
 							if ok {
-								endValue, startIndex, ok = parser.parseTerm(tokens, startIndex, false)
+								endValue, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
 								if ok {
 									body, startIndex, ok = parser.parseBody(tokens, startIndex)
 									if ok {
@@ -942,6 +942,14 @@ func (parser *InternalGrammarParser) parseKeywordRelation(tokens []Token, startI
 			if ok {
 				relation = mentalese.NewRelation(false, mentalese.PredicateOne, []mentalese.Term{
 					mentalese.NewTermRelationSet(body),
+				})
+			}
+		case "len":
+			term1, startIndex, ok = parser.parseTerm(tokens, startIndex, true)
+			if ok {
+				relation = mentalese.NewRelation(false, mentalese.PredicateLen, []mentalese.Term{
+					term1,
+					mentalese.NewTermAtom(mentalese.AtomReturnValue),
 				})
 			}
 		case "return":

@@ -105,10 +105,10 @@ func (c *TestClient) Run(system string, tests []Test) {
 
 					var answer string = (response.Message).(string)
 
-					c.Send(system, central.RESOURCE_LANGUAGE, mentalese.MessageAcknowledge, "")
-
 					println("  " + answer)
-					if answer != test.C {
+					if answer == test.C {
+						c.Send(system, central.RESOURCE_LANGUAGE, mentalese.MessageAcknowledge, "")
+					} else {
 						ok = false
 						c.t.Error("ERROR expected \"" + test.C + "\", got: \"" + answer + "\"")
 

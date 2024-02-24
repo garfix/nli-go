@@ -143,7 +143,6 @@ Lists are initialized on demand.
 Get
 
     X := List[I]
-    X := List[Y][X]
 
 If an element does not exist, it is created
 
@@ -155,9 +154,7 @@ If an element does not exist, it is created
 
 Extend
 
-    List append 5
-    List prepend 5
-
+    List []= 5
     List = ListA + ListB
 
 Split (with start and end-index + 1)
@@ -169,6 +166,10 @@ Split (with start and end-index + 1)
 Find index of element
 
     I := List find E
+
+The length of a list
+
+    L := len List
 
 ## Relation list
 

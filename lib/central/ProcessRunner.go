@@ -147,7 +147,10 @@ func (p *ProcessRunner) evaluateArguments(process *Process, relation mentalese.R
 			firstRelation := argument.TermValueRelationSet[0]
 
 			f, found := p.solver.functions[firstRelation.Predicate]
-			if found {
+			if found && f.ReturnVariableCount != 0 {
+				if f.ReturnVariableCount != 1 {
+					found = true
+				}
 				newRelation = newRelation.Copy()
 				newRelation.Arguments[i] = p.evaluateFunction(process, firstRelation, f.ReturnVariableCount, binding)
 			} else {

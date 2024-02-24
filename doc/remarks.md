@@ -1,3 +1,9 @@
+## 2024-02-24
+
+The fact that a function-call term is implemented as a 1-relation relation set can get me into trouble. A relation set with one function-call that doesn't return any values is not treated as a function call.
+
+I used to use the internal database to store 2d grids. I turned the 2d grid in a 1d list, and expected it to be faster, but in stead it got slower. This means that the overhead of each step is way too big at the moment and simple structures like [A * B] take up too much time and must be optmized.
+
 ## 2024-02-17
 
 I created a function-specific version of if-then / if-then-else, called if2. I'm using this only in functions. Once all procedures with `if` have been rewritten to functions, if2 can be renamed to if, and the old if can go.

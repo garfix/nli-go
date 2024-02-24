@@ -15,11 +15,11 @@
 do_find_free_space(Container, E1) => X1, Y1 {
     one { rectangle(Container, BoundX1, BoundX2, BoundY1, BoundY2) }
 
-    HorLines1, VerLines1, Objects := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
+    HorLines, VerLines, Objects := do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2)
 
-    do_init_grid(fixed, Objects, HorLines1, VerLines1)
+    Grid := do_init_grid(Objects, HorLines, VerLines)
 
-    X1, Y1 := do_find_free_position(E1, fixed, HorLines1, VerLines1)
+    X1, Y1 := do_find_free_position(E1, Grid, HorLines, VerLines)
     [X1 != -1]
 };
 
@@ -64,8 +64,9 @@ do_find_objects(Container, BoundX1, BoundY1, BoundX2, BoundY2) => H3, V3, Object
     H3 := go:list_sort(H2, rv)
 };
 
-do_init_grid(Grid, Objects, HorLines, VerLines) {
-    go:retract( grid(Grid, _, _, _) )
+do_init_grid(Objects, HorLines, VerLines) => Grid {
+    Width := len HorLines
+    Grid := create_grid(Width, len VerLines)
 
     for I1, O1 in Objects {
         for rectangle(O1, X1, X2, Y1, Y2) {
@@ -76,11 +77,28 @@ do_init_grid(Grid, Objects, HorLines, VerLines) {
 
             for V in V1 to [V2 - 1] {
                 for H in H1 to [H2 - 1] {
-                    go:assert( grid(Grid, H, V, 1) )
+                    set_grid_pos(Grid, Width, H, V, 1)
                 }
             }
         }
     }
+};
+
+create_grid(Width, Height) => Grid {
+    Grid := []
+    for I in 1 to [Width * Height] {
+        Grid []= 0
+    }
+};
+
+set_grid_pos(Grid, Width, X, Y, V) {
+    P := [[Y * Width] + X]
+    Grid[P] := V
+};
+
+get_grid_pos(Grid, Width, X, Y) => V {
+    P := [[Y * Width] + X]
+    V := Grid[P]
 };
 
 do_find_free_position(E1, Grid, HorLines, VerLines) => FoundX, FoundY {
@@ -88,6 +106,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines) => FoundX, FoundY {
     FoundY := -1
     StartY := -1
     MinScore := 100000000
+    GridWidth := len HorLines
 
     for at(E1, X1, Y1, _) size(E1, Width, Length, _) {
 
@@ -100,7 +119,7 @@ do_find_free_position(E1, Grid, HorLines, VerLines) => FoundX, FoundY {
             EndX := VerLines[XEndIndex]
             for YIndex, Y in HorLines {
                 if [YIndex > 0] {
-                    if span_free(XIndex, XEndIndex, [YIndex - 1], Grid) {
+                    if span_free(XIndex, XEndIndex, [YIndex - 1], Grid, GridWidth) {
                         SpanLength := [Y - StartY]
                         if [SpanLength >= Length] {
                             DX := [X - CenterX]
@@ -136,12 +155,13 @@ find_span(Width, VerLines, XIndex) => XEndIndex {
     }
 };
 
-span_free(ColStart, ColEnd, RowIndex, Grid) => Success {
+span_free(ColStart, ColEnd, RowIndex, Grid, Width) => Success {
     Success := true
 
     for XIndex in ColStart to ColEnd {
 
-        for grid(Grid, RowIndex, XIndex, 1) {
+        V := get_grid_pos(Grid, Width, RowIndex, XIndex)
+        if  [V == 1] {
             Success := false
             break
         }

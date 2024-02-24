@@ -43,6 +43,7 @@ func (base *SystemFunctionBase) GetFunctions() map[string]api.SimpleFunction {
 		mentalese.PredicateNotEquals:         base.notEquals,
 		mentalese.PredicateCompare:           base.compare,
 		mentalese.PredicateUnify:             base.unify,
+		mentalese.PredicateLen:               base.len,
 		mentalese.PredicateAdd:               base.add,
 		mentalese.PredicateSubtract:          base.subtract,
 		mentalese.PredicateMultiply:          base.multiply,
@@ -216,6 +217,22 @@ func (base *SystemFunctionBase) lessThanEquals(messenger api.SimpleMessenger, in
 	} else {
 		return mentalese.NewBinding(), false
 	}
+}
+
+func (base *SystemFunctionBase) len(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
+
+	bound := input.BindSingle(binding)
+
+	if !Validate(bound, "l*", base.log) {
+		return mentalese.NewBinding(), false
+	}
+
+	list := bound.Arguments[0].TermValueList
+
+	variable := input.Arguments[1].TermValue
+	binding.Set(variable, mentalese.NewTermString(strconv.Itoa(len(list))))
+
+	return binding, true
 }
 
 func (base *SystemFunctionBase) add(messenger api.SimpleMessenger, input mentalese.Relation, binding mentalese.Binding) (mentalese.Binding, bool) {
